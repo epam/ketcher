@@ -199,58 +199,82 @@ export class Render {
   }
 
   update(force = false, viewSz: Vec2 | null = null) {
-    // eslint-disable-line max-statements
-    viewSz =
-      viewSz ||
-      new Vec2(
-        this.clientArea.clientWidth || 100,
-        this.clientArea.clientHeight || 100,
-      );
-
     const changes = this.ctab.update(force);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
     if (changes) {
-      const bb = this.ctab
-        .getVBoxObj()
-        .transform(Scale.modelToCanvas, this.options)
-        .translate(this.options.offset || new Vec2());
-
       if (this.options.downScale) {
         this.ctab.molecule.rescale();
       }
-
       const isAutoScale = this.options.autoScale || this.options.downScale;
       if (!isAutoScale) {
         if (!this.oldCb) this.oldCb = new Box2Abs();
         this.scrollbar.update();
         this.options.offset = this.options.offset || new Vec2();
       } else {
-        const sz1 = bb.sz();
+        viewSz = this.getViewSize(viewSz);
+        const boundingBox = this.getBoundingBox();
+        const boundingBoxSize = boundingBox.sz();
         const marg = this.options.autoScaleMargin;
-        const mv = new Vec2(marg, marg);
-        const csz = viewSz;
-        if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
+        const margVector = new Vec2(marg, marg);
+        if (marg && (viewSz.x < 2 * marg + 1 || viewSz.y < 2 * marg + 1)) {
           throw new Error('View box too small for the given margin');
         }
-        let rescale =
-          this.options.rescaleAmount ||
-          Math.max(sz1.x / (csz.x - 2 * marg), sz1.y / (csz.y - 2 * marg));
-
-        const isForceDownscale = this.options.downScale && rescale < 1;
-        const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
-        if (isBondsLengthFit || isForceDownscale) {
-          rescale = 1;
-        }
-        const sz2 = sz1.add(mv.scaled(2 * rescale));
+        const rescale = this.calculateRescale();
+        const scaledBoundingBoxSize = boundingBoxSize.add(
+          margVector.scaled(2 * rescale),
+        );
         this.paper.setViewBox(
-          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
-          csz.x * rescale,
-          csz.y * rescale,
+          boundingBox.pos().x -
+            marg * rescale -
+            (viewSz.x * rescale - scaledBoundingBoxSize.x) / 2,
+          boundingBox.pos().y -
+            marg * rescale -
+            (viewSz.y * rescale - scaledBoundingBoxSize.y) / 2,
+          viewSz.x * rescale,
+          viewSz.y * rescale,
         );
       }
 
       notifyRenderComplete();
     }
+  }
+
+  private getViewSize(viewSz: Vec2 | null) {
+    viewSz =
+      viewSz ||
+      new Vec2(
+        this.clientArea.clientWidth || 100,
+        this.clientArea.clientHeight || 100,
+      );
+    return viewSz;
+  }
+
+  calculateRescale(viewSz: Vec2 | null = null) {
+    const marg = this.options.autoScaleMargin;
+    viewSz = this.getViewSize(viewSz);
+    const boundingBox = this.getBoundingBox();
+    const boundingBoxSize = boundingBox.sz();
+    let rescale =
+      this.options.rescaleAmount ||
+      Math.max(
+        boundingBoxSize.x / (viewSz.x - 2 * marg),
+        boundingBoxSize.y / (viewSz.y - 2 * marg),
+      );
+    if (this.ctab.molecule.minPreviewRescale) {
+      rescale = Math.min(this.ctab.molecule.minPreviewRescale, rescale);
+    }
+    const isForceDownscale = this.options.downScale && rescale < 1;
+    const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
+    if (isBondsLengthFit || isForceDownscale) {
+      rescale = 1;
+    }
+    return rescale;
+  }
+
+  private getBoundingBox() {
+    return this.ctab
+      .getVBoxObj()
+      .transform(Scale.modelToCanvas, this.options)
+      .translate(this.options.offset || new Vec2());
   }
 }

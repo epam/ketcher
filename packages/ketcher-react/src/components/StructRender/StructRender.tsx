@@ -42,6 +42,7 @@ const StructRender = ({
   options,
   className,
   update,
+  monomerConnectionMode,
 }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -50,7 +51,14 @@ const StructRender = ({
     if (container) {
       container.innerHTML = '';
       const normalizedStruct = normalizeStruct(struct);
-      RenderStruct.render(container, normalizedStruct, options);
+      RenderStruct.render(
+        container,
+        normalizedStruct,
+        options,
+        struct,
+        update,
+        monomerConnectionMode,
+      );
     }
   }, [struct, options, update]);
 

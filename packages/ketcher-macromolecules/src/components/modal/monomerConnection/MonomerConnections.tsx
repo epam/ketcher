@@ -94,6 +94,24 @@ const MonomerConnection = ({
     useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
   const [modalExpanded, setModalExpanded] = useState(false);
 
+  const [rescaleForMonomers, setRescaleForMonomers] = useState<number | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (modalExpanded) {
+      const rescale = Math.max(
+        firstMonomer.monomerItem.struct.previewRescale,
+        secondMonomer.monomerItem.struct.previewRescale,
+      );
+      setRescaleForMonomers(rescale);
+    }
+  }, [
+    firstMonomer.monomerItem.struct.previewRescale,
+    modalExpanded,
+    secondMonomer.monomerItem.struct.previewRescale,
+  ]);
+
   const cancelBondCreationAndClose = () => {
     editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
     onClose();
@@ -114,6 +132,11 @@ const MonomerConnection = ({
     onClose();
   };
 
+  const handleExpanded = (expand: boolean) => {
+    setModalExpanded(expand);
+    setRescaleForMonomers(null);
+  };
+
   return (
     <StyledModal
       title="Select connection points"
@@ -122,7 +145,7 @@ const MonomerConnection = ({
       showExpandButton
       modalWidth="358px"
       expanded={modalExpanded}
-      setExpanded={setModalExpanded}
+      setExpanded={handleExpanded}
     >
       <Modal.Content>
         <ModalContent>
@@ -135,6 +158,7 @@ const MonomerConnection = ({
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
               expanded={modalExpanded}
+              rescaleForMonomers={rescaleForMonomers}
             />
             <span />
             <ConnectionSymbol />
@@ -148,6 +172,7 @@ const MonomerConnection = ({
               selectedAttachmentPoint={secondSelectedAttachmentPoint}
               onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
               expanded={modalExpanded}
+              rescaleForMonomers={rescaleForMonomers}
             />
           </AttachmentPointsRow>
         </ModalContent>
@@ -176,6 +201,7 @@ interface AttachmentPointSelectionPanelProps {
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
   expanded?: boolean;
+  rescaleForMonomers: number | null;
 }
 
 function AttachmentPointSelectionPanel({
@@ -183,6 +209,7 @@ function AttachmentPointSelectionPanel({
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
   expanded = false,
+  rescaleForMonomers,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
   const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
@@ -236,8 +263,11 @@ function AttachmentPointSelectionPanel({
             selectedAttachmentPoint ?? undefined,
           labelInMonomerConnectionsModal: true,
           needCache: false,
+          autoScaleMargin: 1,
+          rescaleAmount: rescaleForMonomers,
         }}
         update={expanded}
+        monomerConnectionMode={true}
         isExpanded={expanded}
       />
       <AttachmentPointList>

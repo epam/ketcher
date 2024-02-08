@@ -75,6 +75,8 @@ export class Struct {
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
+  previewRescale: number;
+  minPreviewRescale: number;
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -95,6 +97,8 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+    this.previewRescale = 0;
+    this.minPreviewRescale = 0;
   }
 
   hasRxnProps(): boolean {

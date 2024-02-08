@@ -160,8 +160,8 @@ function bondToKet(source) {
     ifDef(result, 'topology', source.topology, 0);
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
-    ifDef(result, 'selected', source.getInitiallySelected());
   }
+  ifDef(result, 'selected', source.getInitiallySelected());
   return result;
 }
 

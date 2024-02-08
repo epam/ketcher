@@ -215,7 +215,6 @@ export class KetSerializer implements Serializer<Struct> {
         'ketSerializer.ts::KetSerializer::parseAndValidateMacromolecules',
         e,
       );
-      editor.events.error.dispatch('Error during file parsing');
       return { error: true };
     }
     let error = false;

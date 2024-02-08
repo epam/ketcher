@@ -27,7 +27,6 @@ import {
   EditorHistory,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
-import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
 import { Loader, StyledDropdown, stylesForExpanded } from '../save/Save.styles';
@@ -118,7 +117,11 @@ const addToCanvas = ({
   struct: string;
 }) => {
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
-  assert(deserialisedKet);
+
+  if (!deserialisedKet) {
+    throw new Error('Error during parsing file');
+  }
+
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
@@ -145,23 +148,43 @@ const onOk = async ({
   dispatch: Dispatch<AnyAction>;
 }) => {
   const isKet = formatSelection === KET;
+  const isSeq = formatSelection === SEQ;
   const ketSerializer = new KetSerializer();
   const editor = CoreEditor.provideEditorInstance();
+  let inputFormat;
+  let fileData = struct;
+
+  const showParsingError = (stringError) => {
+    const errorMessage = 'Convert error! ' + stringError;
+    dispatch(
+      openErrorModal({
+        errorMessage,
+        errorTitle: isSeq ? 'Unsupported symbols' : '',
+      }),
+    );
+  };
+
   if (isKet) {
-    addToCanvas({ struct, ketSerializer, editor });
-    onCloseCallback();
+    try {
+      addToCanvas({ struct, ketSerializer, editor });
+      onCloseCallback();
+    } catch (e) {
+      showParsingError('Error during file parsing.');
+    }
     return;
+  } else if (isSeq) {
+    inputFormat = inputFormats[sequenceSelection];
+    fileData = fileData.toUpperCase();
+  } else {
+    inputFormat = inputFormats[formatSelection];
   }
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const inputFormat =
-    formatSelection === SEQ
-      ? inputFormats[sequenceSelection]
-      : inputFormats[formatSelection];
 
   try {
     setIsLoading(true);
+
     const ketStruct = await indigo.convert({
-      struct,
+      struct: fileData,
       output_format: ChemicalMimeType.KET,
       input_format: inputFormat,
     });
@@ -170,10 +193,7 @@ const onOk = async ({
   } catch (error) {
     const stringError =
       typeof error === 'string' ? error : JSON.stringify(error);
-    const errorMessage = 'Convert error! ' + stringError;
-    dispatch(
-      openErrorModal({ errorMessage, errorTitle: 'Unsupported symbols' }),
-    );
+    showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {
     setIsLoading(false);
@@ -197,7 +217,9 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [sequenceSelection, setSequenceSelection] = useState(RNA);
 
   useEffect(() => {
-    const fileExtension = fileName?.split('.')[1];
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension =
+      splittedFilenameByDot[splittedFilenameByDot.length - 1];
 
     if (fileExtension) {
       const option = options.find((el) => el.id === fileExtension);
@@ -243,6 +265,13 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+
+    history.update(modelChanges);
+    editor.renderersContainer.update(modelChanges);
+
     onOk({
       struct: structStr,
       formatSelection,

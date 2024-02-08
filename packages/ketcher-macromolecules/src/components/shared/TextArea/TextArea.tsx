@@ -33,7 +33,7 @@ const StyledTextarea = styled.textarea`
   width: 100%;
   height: 100%;
   overflow: auto;
-  white-space: pre;
+  white-space: pre-wrap;
   resize: none;
   box-sizing: border-box;
   outline: transparent;

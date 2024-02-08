@@ -2,10 +2,8 @@ import { Page, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   receiveFileComparisonData,
-  DELAY_IN_SECONDS,
   openFileAndAddToCanvas,
   saveToFile,
-  delay,
   waitForPageInit,
 } from '@utils';
 import { getCml } from '@utils/formats';
@@ -27,7 +25,6 @@ test.describe('CML files', () => {
      * The input field contains <?xml version="1.0" ?> <cml> <molecule title="" /> </cml>.
      */
 
-    await delay(DELAY_IN_SECONDS.EIGHT);
     const { fileExpected: cmlFileExpected, file: cmlFile } =
       await receiveFileComparisonData({
         page,

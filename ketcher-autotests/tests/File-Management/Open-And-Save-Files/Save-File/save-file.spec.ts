@@ -20,7 +20,7 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
+  waitForRender,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
@@ -331,7 +331,7 @@ test.describe('Open/Save/Paste files', () => {
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
+    await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);

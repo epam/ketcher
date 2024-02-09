@@ -12,6 +12,8 @@ import {
   LeftPanelButton,
   waitForPageInit,
   waitForRender,
+  clickOnBond,
+  clickOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -89,16 +91,17 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
-    let point: { x: number; y: number };
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Double', { exact: true }).click();
-
-    point = await getAtomByIndex(page, { label: 'C' }, 1);
     await waitForRender(page, async () => {
-      await page.mouse.click(point.x, point.y);
+      await clickOnBond(page, BondType.SINGLE, 0, 'right');
+    });
+    await waitForRender(page, async () => {
+      await page.getByText('Double', { exact: true }).click();
+    });
+
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', 1);
     });
     await resetCurrentTool(page);
   });

@@ -38,7 +38,10 @@ async function atomDefaultSettings(page: Page) {
 
 async function ringBondCountQuery(page: Page, menuItem: string) {
   await page.getByText(menuItem).click();
-  await page.locator('button:nth-child(5)').first().click();
+  await page
+    .getByRole('menuitem', { name: 'Ring bond count', exact: true })
+    .getByTestId('2-option')
+    .click();
 }
 
 async function substitutionCountQuery(page: Page, menuItem: string) {

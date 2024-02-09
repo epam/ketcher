@@ -167,12 +167,15 @@ export async function selectElementFromExtendedTable(
 export async function selectRingBondCountOption(
   page: Page,
   atomIndex: number,
-  optionIndex: number,
+  optionTestId: string,
 ) {
   await clickOnAtom(page, 'C', atomIndex, 'right');
   await page.getByText('Query properties').click();
   await page.getByText('Ring bond count').click();
-  await page.locator(`button:nth-child(${optionIndex})`).first().click();
+  await page
+    .getByRole('menuitem', { name: 'Ring bond count', exact: true })
+    .getByTestId(optionTestId)
+    .click();
   await resetCurrentTool(page);
 }
 

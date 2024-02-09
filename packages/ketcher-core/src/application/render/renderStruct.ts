@@ -61,7 +61,7 @@ export class RenderStruct {
     options: any = {},
     originalStruct: Struct,
     update = false,
-    monomerConnectionMode = false,
+    needRescale = false,
   ) {
     if (el && struct) {
       const { cachePrefix = '', needCache = true } = options;
@@ -90,7 +90,7 @@ export class RenderStruct {
 
       preparedStruct.rescale();
       rnd.setMolecule(preparedStruct);
-      if (monomerConnectionMode) {
+      if (needRescale) {
         const rescale = rnd.calculateRescale();
         if (update) {
           originalStruct.previewRescale = rescale;

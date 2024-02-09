@@ -42,7 +42,7 @@ const StructRender = ({
   options,
   className,
   update,
-  monomerConnectionMode,
+  needRescale,
 }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -57,10 +57,10 @@ const StructRender = ({
         options,
         struct,
         update,
-        monomerConnectionMode,
+        needRescale,
       );
     }
-  }, [struct, options, update]);
+  }, [struct, options, update, needRescale]);
 
   return <Container ref={renderRef} className={className}></Container>;
 };

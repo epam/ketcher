@@ -26,5 +26,5 @@ export interface IStructRenderProps {
   options?: (RenderOptions & CasheOptions) | CasheOptions;
   className?: string;
   update?: boolean;
-  monomerConnectionMode?: boolean;
+  needRescale?: boolean;
 }

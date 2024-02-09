@@ -93,10 +93,7 @@ const MonomerConnection = ({
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
     useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
   const [modalExpanded, setModalExpanded] = useState(false);
-
-  const [rescaleForMonomers, setRescaleForMonomers] = useState<number | null>(
-    null,
-  );
+  const [commonRescale, setCommonRescale] = useState<number | null>(null);
 
   useEffect(() => {
     if (modalExpanded) {
@@ -104,7 +101,7 @@ const MonomerConnection = ({
         firstMonomer.monomerItem.struct.previewRescale,
         secondMonomer.monomerItem.struct.previewRescale,
       );
-      setRescaleForMonomers(rescale);
+      setCommonRescale(rescale);
     }
   }, [
     firstMonomer.monomerItem.struct.previewRescale,
@@ -134,7 +131,7 @@ const MonomerConnection = ({
 
   const handleExpanded = (expand: boolean) => {
     setModalExpanded(expand);
-    setRescaleForMonomers(null);
+    setCommonRescale(null);
   };
 
   return (
@@ -158,7 +155,7 @@ const MonomerConnection = ({
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
               expanded={modalExpanded}
-              rescaleForMonomers={rescaleForMonomers}
+              commonRescale={commonRescale}
             />
             <span />
             <ConnectionSymbol />
@@ -172,7 +169,7 @@ const MonomerConnection = ({
               selectedAttachmentPoint={secondSelectedAttachmentPoint}
               onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
               expanded={modalExpanded}
-              rescaleForMonomers={rescaleForMonomers}
+              commonRescale={commonRescale}
             />
           </AttachmentPointsRow>
         </ModalContent>
@@ -200,8 +197,8 @@ interface AttachmentPointSelectionPanelProps {
   monomer: BaseMonomer;
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
+  commonRescale: number | null;
   expanded?: boolean;
-  rescaleForMonomers: number | null;
 }
 
 function AttachmentPointSelectionPanel({
@@ -209,7 +206,7 @@ function AttachmentPointSelectionPanel({
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
   expanded = false,
-  rescaleForMonomers,
+  commonRescale,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
   const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
@@ -264,10 +261,10 @@ function AttachmentPointSelectionPanel({
           labelInMonomerConnectionsModal: true,
           needCache: false,
           autoScaleMargin: 1,
-          rescaleAmount: rescaleForMonomers,
+          rescaleAmount: commonRescale,
         }}
         update={expanded}
-        monomerConnectionMode={true}
+        needRescale={true}
         isExpanded={expanded}
       />
       <AttachmentPointList>

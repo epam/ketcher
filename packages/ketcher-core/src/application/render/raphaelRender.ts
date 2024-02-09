@@ -239,16 +239,6 @@ export class Render {
     }
   }
 
-  private getViewSize(viewSz: Vec2 | null) {
-    viewSz =
-      viewSz ||
-      new Vec2(
-        this.clientArea.clientWidth || 100,
-        this.clientArea.clientHeight || 100,
-      );
-    return viewSz;
-  }
-
   calculateRescale(viewSz: Vec2 | null = null) {
     const marg = this.options.autoScaleMargin;
     viewSz = this.getViewSize(viewSz);
@@ -260,8 +250,11 @@ export class Render {
         boundingBoxSize.x / (viewSz.x - 2 * marg),
         boundingBoxSize.y / (viewSz.y - 2 * marg),
       );
-    if (this.ctab.molecule.minPreviewRescale) {
-      rescale = Math.min(this.ctab.molecule.minPreviewRescale, rescale);
+    if (
+      this.ctab.molecule.minPreviewRescale &&
+      rescale > this.ctab.molecule.minPreviewRescale
+    ) {
+      rescale = this.ctab.molecule.minPreviewRescale;
     }
     const isForceDownscale = this.options.downScale && rescale < 1;
     const isBondsLengthFit = this.options.maxBondLength / rescale > 1;
@@ -269,6 +262,16 @@ export class Render {
       rescale = 1;
     }
     return rescale;
+  }
+
+  private getViewSize(viewSz: Vec2 | null) {
+    viewSz =
+      viewSz ||
+      new Vec2(
+        this.clientArea.clientWidth || 100,
+        this.clientArea.clientHeight || 100,
+      );
+    return viewSz;
   }
 
   private getBoundingBox() {

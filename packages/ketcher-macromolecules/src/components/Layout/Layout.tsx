@@ -39,6 +39,7 @@ const RowMain = styled.div(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   columnGap: '12px',
+  containerType: 'size',
 }));
 
 const Row = styled.div(({ theme }) => ({

@@ -1560,7 +1560,7 @@ test.describe('Atom Properties', () => {
     // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
     // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+    const optionIndices = ['As drawn-option', '3-option', '9-option'];
 
     await drawBenzeneRing(page);
 
@@ -1737,7 +1737,7 @@ test.describe('Atom Properties', () => {
     // eslint-disable-next-line no-magic-numbers
     const anyAtom = [0, 1, 2, 3, 4, 5];
     // eslint-disable-next-line no-magic-numbers
-    const optionIndex = [3, 2, 3, 'Unsaturated', 7, 'aliphatic'];
+    const optionIndex = ['0-option', 2, 3, 'Unsaturated', 7, 'aliphatic'];
 
     await drawBenzeneRing(page);
 
@@ -1747,7 +1747,7 @@ test.describe('Atom Properties', () => {
 
       switch (i) {
         case 0:
-          await selectRingBondCountOption(page, atomIndex, option as number);
+          await selectRingBondCountOption(page, atomIndex, option as string);
           break;
         case 1:
           await selectHCountOption(page, atomIndex, option as number);

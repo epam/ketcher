@@ -75,8 +75,6 @@ export const AbbreviationLookup = ({ options }: Props) => {
   );
 
   useLayoutEffect(() => {
-    inputRef.current?.focus();
-
     const containerHeight = autocompleteRef.current?.offsetHeight ?? 0;
     const containerWidth = autocompleteRef.current?.offsetWidth ?? 0;
 
@@ -97,6 +95,8 @@ export const AbbreviationLookup = ({ options }: Props) => {
       left: `${left}px`,
       top: `${top}px`,
     });
+
+    inputRef.current?.focus();
 
     // TODO extract to a separate hook or utils
     return () => {

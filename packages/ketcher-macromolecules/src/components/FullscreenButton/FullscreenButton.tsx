@@ -16,7 +16,7 @@
 
 import { IconButton } from 'ketcher-react';
 import styled from '@emotion/styled';
-import { EditorQuerySelector } from '../../constants';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from '../../constants';
 import { useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {
@@ -61,7 +61,8 @@ export const FullscreenButton = (props) => {
   const toggleFullscreen = () => {
     // TODO: add selector / ref prop when will be shared component
     const fullscreenElement: HTMLElement =
-      document.querySelector(EditorQuerySelector) || document.documentElement;
+      document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR) ||
+      document.documentElement;
     fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
     setFullScreenMode(!fullScreenMode);
   };

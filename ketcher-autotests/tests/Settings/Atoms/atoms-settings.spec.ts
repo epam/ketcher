@@ -40,7 +40,7 @@ async function ringBondCountQuery(page: Page, menuItem: string) {
   await page.getByText(menuItem).click();
   await page
     .getByRole('menuitem', { name: 'Ring bond count', exact: true })
-    .getByTestId('2-option')
+    .getByTestId('3-option')
     .click();
 }
 

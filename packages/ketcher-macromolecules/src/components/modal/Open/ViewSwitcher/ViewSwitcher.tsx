@@ -32,7 +32,7 @@ type SwitchProps = {
   AnalyzingFileProps;
 
 const StyledTextField = styled(TextArea)`
-  width: 405px;
+  width: 100%;
   height: 320px;
 `;
 

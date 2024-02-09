@@ -42,6 +42,9 @@ export interface WithFormat {
 export interface WithOutputFormat {
   output_format: ChemicalMimeType;
 }
+export interface WithInputFormat {
+  input_format?: ChemicalMimeType;
+}
 
 export interface WithSelection {
   selected?: Array<number>;
@@ -68,7 +71,10 @@ export interface CheckResult {
   [key: string]: string;
 }
 
-export interface ConvertData extends WithStruct, WithOutputFormat {}
+export interface ConvertData
+  extends WithStruct,
+    WithOutputFormat,
+    WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 

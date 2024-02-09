@@ -139,3 +139,46 @@ test.describe('Undo Redo', () => {
     await takeEditorScreenshot(page);
   });
 });
+
+test.describe('Undo-Redo tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  test('Deleting entities(Peptides, RNA, CHEM, Bonds) and then checking Undo and Redo actions', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Undo-Redo tests
+    Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
+    */
+    await openFileAndAddToCanvas('KET/all-entities.ket', page);
+    await page.getByTestId('erase').click();
+    const entitiesToDelete = [
+      'D-aIle',
+      'SertBu',
+      'Phe-ol',
+      'TyrabD',
+      '25R',
+      'c3A',
+      'msp',
+      'cpmA',
+      'SMPEG2',
+    ];
+
+    for (const entity of entitiesToDelete) {
+      await page.getByText(entity).locator('..').first().click();
+    }
+
+    for (let i = 0; i < 9; i++) {
+      await page.getByTestId('undo').click();
+    }
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < 9; i++) {
+      await page.getByTestId('redo').click();
+    }
+    await takeEditorScreenshot(page);
+  });
+});

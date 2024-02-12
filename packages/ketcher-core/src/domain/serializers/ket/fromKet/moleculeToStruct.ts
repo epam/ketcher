@@ -162,7 +162,9 @@ export function rglabelToStruct(source) {
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
-  return new Atom(params);
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
 function addRGroupAttachmentPointsToStruct(

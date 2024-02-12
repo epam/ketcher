@@ -144,6 +144,7 @@ function rglabelToKet(source) {
     (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
+  ifDef(result, 'selected', source.getInitiallySelected());
 
   return result;
 }

@@ -17,7 +17,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
-import { MONOMER_TYPES } from 'src/constants';
+import { EditorClassName, MONOMER_TYPES } from 'src/constants';
 import mockedPresets from './mockedPresets.json';
 
 jest.mock('../../../src/helpers/dom.ts', () => {
@@ -70,11 +70,13 @@ describe('RNA ContextMenu', () => {
   it('should render contextMenu correctly', () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder
-          libraryName={MONOMER_TYPES.RNA}
-          duplicatePreset={duplicatePreset}
-          editPreset={editPreset}
-        />,
+        <div className={EditorClassName}>
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
+        </div>,
         {
           library: {
             searchFilter: '',
@@ -95,11 +97,13 @@ describe('RNA ContextMenu', () => {
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder
-          libraryName={MONOMER_TYPES.RNA}
-          duplicatePreset={duplicatePreset}
-          editPreset={editPreset}
-        />,
+        <div className={EditorClassName}>
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
+        </div>,
         {
           library: {
             searchFilter: '',
@@ -121,7 +125,7 @@ describe('RNA ContextMenu', () => {
   it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <div>
+        <div className={EditorClassName}>
           <RnaBuilder
             libraryName={MONOMER_TYPES.RNA}
             duplicatePreset={duplicatePreset}

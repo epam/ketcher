@@ -18,6 +18,7 @@ import {
   waitForPageInit,
   waitForRender,
   moveMouseToTheMiddleOfTheScreen,
+  selectOptionInDropdown,
 } from '@utils';
 
 const topLeftCorner = {
@@ -39,10 +40,16 @@ async function scrollHorizontally(page: Page, scrollValue: number) {
   });
 }
 
-async function pasteFromClipboard(page: Page, fileFormats: string) {
+async function pasteFromClipboard(
+  page: Page,
+  fileFormats: string,
+  filename = '.ket',
+) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
+  await selectOptionInDropdown(filename, page);
+
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
   });
@@ -375,6 +382,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      '.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
@@ -560,6 +568,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      '.mol',
     );
     await waitForRender(page, async () => {
       await page.mouse.click(coordsToClick.x, coordsToClick.y);

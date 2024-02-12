@@ -22,26 +22,82 @@ import {
   ChemicalMimeType,
   KetSerializer,
   StructService,
-  SupportedFormat,
-  identifyStructFormat,
   CoreEditor,
   KetcherLogger,
   EditorHistory,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
-import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
-import { CancelButton, OpenFileWrapper } from './Open.styles';
-import { Loader } from '../save/Save.styles';
+import { OpenFileWrapper } from './Open.styles';
+import { Loader, StyledDropdown, stylesForExpanded } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
 import { AnyAction, Dispatch } from 'redux';
+import styled from '@emotion/styled';
+import { Option } from 'components/shared/dropDown/dropDown';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
+
+const OpenModal = styled(Modal)(
+  ({ modalWidth }) => `
+    .MuiPaper-root {
+      width: ${modalWidth};
+    }`,
+);
+
+const OpenFooter = styled.div({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+});
+
+const FooterSelectorContainer = styled.div({
+  height: '24px',
+  fontSize: '12px',
+});
+
+const FooterFormatSelector = styled(StyledDropdown)({
+  width: '180px',
+});
+
+const FooterSequenceSelector = styled(StyledDropdown)({
+  width: '140px',
+  margin: '0 8px',
+});
+
+const FooterButton = styled(ActionButton)({
+  margin: '0 8px',
+  width: '100px',
+});
+
+const KET = 'ket';
+const SEQ = 'seq';
+const RNA = 'rna';
+
+const options: Array<Option> = [
+  { id: 'ket', label: 'Ket' },
+  { id: 'mol', label: 'MDL Molfile V3000' },
+  { id: 'seq', label: 'Sequence' },
+];
+
+const sequenceOptions: Array<Option> = [
+  { id: 'rna', label: 'RNA' },
+  { id: 'dna', label: 'DNA' },
+  { id: 'peptide', label: 'Peptide' },
+];
+
+const inputFormats = {
+  ket: 'chemical/x-indigo-ket',
+  mol: 'chemical/x-mdl-molfile',
+  rna: 'chemical/x-rna-sequence',
+  dna: 'chemical/x-dna-sequence',
+  peptide: 'chemical/x-peptide-sequence',
+};
 
 export const MODAL_STATES = {
   openOptions: 'openOptions',
@@ -61,7 +117,11 @@ const addToCanvas = ({
   struct: string;
 }) => {
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
-  assert(deserialisedKet);
+
+  if (!deserialisedKet) {
+    throw new Error('Error during parsing file');
+  }
+
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
@@ -74,42 +134,66 @@ const addToCanvas = ({
 // TODO: replace after the implementation of the function for processing the structure from the file
 const onOk = async ({
   struct,
-  fragment,
+  formatSelection,
+  sequenceSelection,
   onCloseCallback,
   setIsLoading,
   dispatch,
 }: {
   struct: string;
-  fragment: boolean;
+  formatSelection: string;
+  sequenceSelection: string;
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
 }) => {
-  if (fragment) {
-    console.log('add fragment');
-  }
-  const isKet = identifyStructFormat(struct) === SupportedFormat.ket;
+  const isKet = formatSelection === KET;
+  const isSeq = formatSelection === SEQ;
   const ketSerializer = new KetSerializer();
   const editor = CoreEditor.provideEditorInstance();
+  let inputFormat;
+  let fileData = struct;
+
+  const showParsingError = (stringError) => {
+    const errorMessage = 'Convert error! ' + stringError;
+    dispatch(
+      openErrorModal({
+        errorMessage,
+        errorTitle: isSeq ? 'Unsupported symbols' : '',
+      }),
+    );
+  };
+
   if (isKet) {
-    addToCanvas({ struct, ketSerializer, editor });
-    onCloseCallback();
+    try {
+      addToCanvas({ struct, ketSerializer, editor });
+      onCloseCallback();
+    } catch (e) {
+      showParsingError('Error during file parsing.');
+    }
     return;
+  } else if (isSeq) {
+    inputFormat = inputFormats[sequenceSelection];
+    fileData = fileData.toUpperCase();
+  } else {
+    inputFormat = inputFormats[formatSelection];
   }
   const indigo = IndigoProvider.getIndigo() as StructService;
+
   try {
     setIsLoading(true);
+
     const ketStruct = await indigo.convert({
-      struct,
+      struct: fileData,
       output_format: ChemicalMimeType.KET,
+      input_format: inputFormat,
     });
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
     const stringError =
       typeof error === 'string' ? error : JSON.stringify(error);
-    const errorMessage = 'Convert error! ' + stringError;
-    dispatch(openErrorModal(errorMessage));
+    showParsingError(stringError);
     KetcherLogger.error(error);
   } finally {
     setIsLoading(false);
@@ -129,6 +213,20 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [currentState, setCurrentState] = useState<MODAL_STATES_VALUES>(
     MODAL_STATES.openOptions,
   );
+  const [formatSelection, setFormatSelection] = useState(KET);
+  const [sequenceSelection, setSequenceSelection] = useState(RNA);
+
+  useEffect(() => {
+    const splittedFilenameByDot = fileName?.split('.');
+    const fileExtension =
+      splittedFilenameByDot[splittedFilenameByDot.length - 1];
+
+    if (fileExtension) {
+      const option = options.find((el) => el.id === fileExtension);
+      const id = option?.id ? option.id : SEQ;
+      setFormatSelection(id);
+    }
+  }, [fileName]);
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
@@ -139,6 +237,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const onCloseCallback = useCallback(() => {
     setCurrentState(MODAL_STATES.openOptions);
     setStructStr('');
+    setFormatSelection(KET);
+    setSequenceSelection(RNA);
     onClose();
   }, [onClose]);
 
@@ -156,7 +256,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const copyHandler = () => {
     onOk({
       struct: structStr,
-      fragment: true,
+      formatSelection,
+      sequenceSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
@@ -164,50 +265,69 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const openHandler = () => {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+
+    history.update(modelChanges);
+    editor.renderersContainer.update(modelChanges);
+
     onOk({
       struct: structStr,
-      fragment: false,
+      formatSelection,
+      sequenceSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
     });
   };
 
-  const getButtons = () => {
-    if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
-      return [
-        <CancelButton
-          key="cancelButton"
-          clickHandler={onCloseCallback}
-          label="Cancel"
-          styleType="secondary"
-        />,
-        <ActionButton
+  const renderFooter = () => (
+    <OpenFooter>
+      <FooterSelectorContainer>
+        <FooterFormatSelector
+          options={options}
+          currentSelection={formatSelection}
+          selectionHandler={setFormatSelection}
+          customStylesForExpanded={stylesForExpanded}
+          key={formatSelection}
+        />
+        {formatSelection === SEQ ? (
+          <FooterSequenceSelector
+            options={sequenceOptions}
+            currentSelection={sequenceSelection}
+            selectionHandler={setSequenceSelection}
+            customStylesForExpanded={stylesForExpanded}
+            key={sequenceSelection}
+          />
+        ) : null}
+      </FooterSelectorContainer>
+      <div>
+        <FooterButton
           key="openButton"
           disabled={!structStr}
           clickHandler={openHandler}
-          label="Open as New Project"
+          label="Open as New"
           styleType="secondary"
-        />,
-        <ActionButton
+        />
+        <FooterButton
           key="copyButton"
           disabled={!structStr}
           clickHandler={copyHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
           data-testid="add-to-canvas-button"
-        />,
-      ];
-    } else {
-      return [];
-    }
-  };
+        />
+      </div>
+    </OpenFooter>
+  );
 
   return (
-    <Modal
+    <OpenModal
       isOpen={isModalOpen}
       title="Open Structure"
       onClose={onCloseCallback}
+      modalWidth={currentState === MODAL_STATES.textEditor ? '600px' : ''}
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>
@@ -229,12 +349,12 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      {getButtons().length === 0 ? (
-        <></>
+      {currentState === MODAL_STATES.textEditor && !isAnalyzingFile ? (
+        <Modal.Footer withborder="true">{renderFooter()}</Modal.Footer>
       ) : (
-        <Modal.Footer withborder="true">{getButtons()}</Modal.Footer>
+        <></>
       )}
-    </Modal>
+    </OpenModal>
   );
 };
 export { Open };

@@ -6,6 +6,8 @@ import { CONTEXT_MENU_ID } from './types';
 import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
+import { createPortal } from 'react-dom';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from '../../constants';
 
 export const RNAContextMenu = () => {
   const RNA_TAB_INDEX = 2;
@@ -72,7 +74,16 @@ export const RNAContextMenu = () => {
     return items;
   };
 
-  return (
-    <StyledMenu id={CONTEXT_MENU_ID.FOR_RNA}>{assembleMenuItems()}</StyledMenu>
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
+
+  return ketcherEditorRootElement
+    ? createPortal(
+        <StyledMenu id={CONTEXT_MENU_ID.FOR_RNA}>
+          {assembleMenuItems()}
+        </StyledMenu>,
+        ketcherEditorRootElement,
+      )
+    : null;
 };

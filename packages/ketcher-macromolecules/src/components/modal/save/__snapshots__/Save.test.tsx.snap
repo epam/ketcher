@@ -161,7 +161,7 @@ Object {
                 style="display: flex; flex-grow: 1; position: relative;"
               >
                 <textarea
-                  class="css-jgwrv8"
+                  class="css-evzoup"
                   data-testid="preview-area-text"
                   readonly=""
                 >

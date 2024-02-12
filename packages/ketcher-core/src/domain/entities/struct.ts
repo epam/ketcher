@@ -806,6 +806,10 @@ export class Struct {
       item.pos = item.pos.map((p) => p.scaled(scale));
       item.position = item.position.scaled(scale);
     });
+
+    this.simpleObjects.forEach((simpleObjects) => {
+      simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
+    });
   }
 
   rescale() {

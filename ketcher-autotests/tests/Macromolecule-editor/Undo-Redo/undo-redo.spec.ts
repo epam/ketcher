@@ -181,4 +181,83 @@ test.describe('Undo-Redo tests', () => {
     }
     await takeEditorScreenshot(page);
   });
+
+  test('Track 32 steps (Undo,Redo action)', async ({ page }) => {
+    /*
+    Test case: Undo-Redo tests
+    Description: Add 'Bal___beta-Alanine' monomer to canvas 35 times and then press Undo 32 times.
+    */
+
+    const addMonomers = async (x: number, y: number) => {
+      await page.getByTestId('Bal___beta-Alanine').click();
+      await page.mouse.click(x, y);
+    };
+
+    const numberOfRows = 6;
+    const numberOfColumns = 8;
+    const step = 100;
+    const coordinates = [];
+
+    for (let row = 0; row < numberOfRows; row++) {
+      for (let column = 0; column < numberOfColumns; column++) {
+        coordinates.push({ x: column * step, y: row * step });
+      }
+    }
+
+    for (const { x, y } of coordinates) {
+      await addMonomers(x, y);
+    }
+
+    const maxUndoHistorySize = 32;
+    for (let i = 0; i < maxUndoHistorySize; i++) {
+      await page.getByTestId('undo').click();
+    }
+    await takeEditorScreenshot(page);
+
+    const maxRedoHistorySize = 32;
+    for (let i = 0; i < maxRedoHistorySize; i++) {
+      await page.getByTestId('redo').click();
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Track 32 steps for CHEMs (Undo,Redo action)', async ({ page }) => {
+    /*
+    Test case: Undo-Redo tests
+    Description: Add 'SMPEG2___SM(PEG)2 linker from Pierce' CHEM to canvas 35 times and then press Undo 32 times.
+    */
+
+    const addMonomers = async (x: number, y: number) => {
+      await page.getByTestId('CHEM-TAB').click();
+      await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+      await page.mouse.click(x, y);
+    };
+
+    const numberOfRows = 6;
+    const numberOfColumns = 8;
+    const step = 100;
+    const coordinates = [];
+
+    for (let row = 0; row < numberOfRows; row++) {
+      for (let column = 0; column < numberOfColumns; column++) {
+        coordinates.push({ x: column * step, y: row * step });
+      }
+    }
+
+    for (const { x, y } of coordinates) {
+      await addMonomers(x, y);
+    }
+
+    const maxUndoHistorySize = 32;
+    for (let i = 0; i < maxUndoHistorySize; i++) {
+      await page.getByTestId('undo').click();
+    }
+    await takeEditorScreenshot(page);
+
+    const maxRedoHistorySize = 32;
+    for (let i = 0; i < maxRedoHistorySize; i++) {
+      await page.getByTestId('redo').click();
+    }
+    await takeEditorScreenshot(page);
+  });
 });

@@ -16,14 +16,13 @@
 
 import { BaseCallProps, BaseProps } from '../../../modal.types';
 import { FC, useEffect, useState } from 'react';
-import { Dialog } from '../../../../components';
+import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName } from 'ketcher-core';
-
 interface OpenProps {
   server: any;
   errorHandler: (err: string) => void;
@@ -88,6 +87,7 @@ const Open: FC<Props> = (props) => {
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (server) {
@@ -98,6 +98,7 @@ const Open: FC<Props> = (props) => {
   }, [server]);
 
   const onFileLoad = (files) => {
+    setIsLoading(true);
     const onLoad = (fileContent) => {
       if (fileContent.isPPTX) {
         setStructStr('');
@@ -107,8 +108,12 @@ const Open: FC<Props> = (props) => {
         setStructStr(fileContent);
         setCurrentState(MODAL_STATES.textEditor);
       }
+      setIsLoading(false);
     };
-    const onError = () => errorHandler('Error processing file');
+    const onError = () => {
+      setIsLoading(false);
+      errorHandler('Error processing file');
+    };
 
     setFileName(files[0].name);
     opener.chosenOpener(files[0]).then(onLoad, onError);
@@ -178,6 +183,11 @@ const Open: FC<Props> = (props) => {
         autoFocus
         structList={structList}
       />
+      {isLoading && (
+        <div className={classes.loadingContainer}>
+          <LoadingCircles />
+        </div>
+      )}
     </Dialog>
   );
 };

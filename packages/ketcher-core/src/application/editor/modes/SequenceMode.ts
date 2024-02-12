@@ -9,6 +9,14 @@ export class SequenceMode extends BaseMode {
   public initialize() {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
+    const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
+      editor.canvas.width.baseVal.value,
+      true,
+    );
+
+    command.merge(modelChanges);
+    editor.renderersContainer.update(modelChanges);
+
     editor.drawingEntitiesManager.applyMonomersSequenceLayout();
 
     return command;

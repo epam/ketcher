@@ -119,8 +119,8 @@ export class RenderersManager {
     recalculateBeginning = true,
   ) {
     polymerBond.renderer?.remove();
-    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints();
-    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints();
+    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
+    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
     this.polymerBonds.delete(polymerBond.id);
     if (recalculateEnumeration) {
       this.markForReEnumeration();

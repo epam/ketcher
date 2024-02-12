@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
@@ -59,41 +59,42 @@ export const CDXStructuresViewer = ({
     }
   }, [inputHandler, itemsMap, selectedIndex]);
 
-  const getImages = useCallback(() => {
-    const itemsList = {};
+  const getImage = (str, index) => {
     setLoading(true);
-    const promises = structList.map((str) => {
-      return parseStruct(str, server)
-        .then((struct) => {
-          return {
-            base64struct: str,
-            struct,
-          };
-        })
-        .catch((error) => {
-          return {
-            base64struct: str,
-            error: error.message || error,
-          };
-        });
-    });
-    Promise.allSettled(promises).then((values) => {
-      values.forEach((el, index) => {
-        if (el.status === 'fulfilled') {
-          itemsList[index] = el.value;
-        }
+    parseStruct(str, server)
+      .then((struct) => {
+        const object = {
+          base64struct: str,
+          struct,
+        };
+        setItemsMap((state) => ({ ...state, [index]: object }));
+      })
+      .catch((error) => {
+        const object = {
+          base64struct: str,
+          error: error.message || error,
+        };
+        setItemsMap((state) => ({ ...state, [index]: object }));
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      setItemsMap(itemsList);
-      setLoading(false);
-      setSelectedIndex(0);
-    });
-  }, [server, structList]);
+  };
 
   useEffect(() => {
-    getImages();
-  }, [getImages]);
+    if (structList[selectedIndex] && !itemsMap[selectedIndex]) {
+      getImage(structList[selectedIndex], selectedIndex);
+    }
+  }, [itemsMap, selectedIndex]);
 
   const renderStructure = (structure: item) => {
+    if (loading) {
+      return (
+        <div className={styles.centerWrapper}>
+          <LoadingCircles />
+        </div>
+      );
+    }
     if (structure?.error) {
       return <div>Error: {itemsMap[selectedIndex]?.error}</div>;
     }
@@ -116,20 +117,19 @@ export const CDXStructuresViewer = ({
         </div>
       );
     }
-    const menuList = Object.values(itemsMap) || [];
     return (
       <div className={styles.structuresWrapper}>
         <div className={styles.menuListWrapper}>
           <div className={styles.header}>Select structure</div>
           <MenuList>
-            {menuList.map((value, index) => (
+            {structList.map((value, index) => (
               <MenuItem
-                key={value.base64struct + index}
+                key={value + index}
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >
                 {`Structure ${index + 1}`}
-                {value.error && <Icon name="error" />}
+                {itemsMap[index]?.error && <Icon name="error" />}
               </MenuItem>
             ))}
           </MenuList>
@@ -146,13 +146,7 @@ export const CDXStructuresViewer = ({
       <div>
         File: <span className={styles.fileName}>{fileName}</span>
       </div>
-      {loading ? (
-        <div className={styles.centerWrapper}>
-          <LoadingCircles />
-        </div>
-      ) : (
-        renderStructures()
-      )}
+      {renderStructures()}
     </div>
   );
 };

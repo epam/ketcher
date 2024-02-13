@@ -734,6 +734,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },

@@ -31,6 +31,10 @@ interface ScrollBar {
   bar?: D3SvgElementSelection<SVGRectElement, void> | undefined;
 }
 
+// in percents
+const AUTO_SCROLL_OFFSET_X = 10;
+const AUTO_SCROLL_OFFSET_Y = 10;
+
 class ZoomTool implements BaseTool {
   private canvas: D3SvgElementSelection<SVGSVGElement, void>;
   private canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
@@ -214,6 +218,24 @@ class ZoomTool implements BaseTool {
       this.zoom?.translateBy(this.canvasWrapper, 0, -event.dy);
     }
   };
+
+  public scrollTo(position: Vec2) {
+    const canvasWrapperHeight =
+      this.canvasWrapper.node()?.height.baseVal.value || 0;
+
+    const canvasWrapperWidth =
+      this.canvasWrapper.node()?.width.baseVal.value || 0;
+
+    this.zoom?.translateTo(
+      this.canvasWrapper,
+      position.x +
+        canvasWrapperWidth / 2 -
+        (canvasWrapperWidth * AUTO_SCROLL_OFFSET_X) / 100,
+      position.y +
+        canvasWrapperHeight / 2 -
+        (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+    );
+  }
 
   mouseWheeled(event) {
     const isShiftKeydown = event.shiftKey;

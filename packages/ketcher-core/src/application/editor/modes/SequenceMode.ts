@@ -1,5 +1,6 @@
 import { CoreEditor, LayoutMode } from 'application/editor';
 import { BaseMode } from 'application/editor/modes/BaseMode';
+import ZoomTool from 'application/editor/tools/Zoom';
 
 export class SequenceMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -13,12 +14,21 @@ export class SequenceMode extends BaseMode {
       editor.canvas.width.baseVal.value,
       true,
     );
+    const zoom = ZoomTool.instance;
 
-    command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);
 
-    editor.drawingEntitiesManager.applyMonomersSequenceLayout();
+    const chainsCollection =
+      editor.drawingEntitiesManager.applyMonomersSequenceLayout();
+    const firstMonomerPosition =
+      chainsCollection.firstNode?.monomer.renderer?.scaledMonomerPosition;
 
-    return command;
+    if (firstMonomerPosition) {
+      zoom.scrollTo(firstMonomerPosition);
+    }
+
+    modelChanges.merge(command);
+
+    return modelChanges;
   }
 }

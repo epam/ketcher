@@ -1,15 +1,6 @@
-import { ConcreteMonomer } from 'domain/types';
-import {
-  Chem,
-  Peptide,
-  Phosphate,
-  RNABase,
-  Sugar,
-  Vec2,
-} from 'domain/entities';
+import { Chem, Peptide, Phosphate, Vec2 } from 'domain/entities';
 import { PeptideSequenceItemRenderer } from 'application/render/renderers/sequence/PeptideSequenceItemRenderer';
 import { ChemSequenceItemRenderer } from 'application/render/renderers/sequence/ChemSequenceItemRenderer';
-import { RnaBaseSequenceItemRenderer } from 'application/render/renderers/sequence/RnaBaseSequenceItemRenderer';
 import { PhosphateSequenceItemRenderer } from 'application/render/renderers/sequence/PhosphateSequenceItemRenderer';
 import { NucleotideSequenceItemRenderer } from 'application/render/renderers/sequence/NucleotideSequenceItemRenderer';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
@@ -21,8 +12,7 @@ export class SequenceNodeRendererFactory {
     node: SubChainNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
-    monomerNumberInSubChain: number,
-    // isLastMonomerInChain: boolean,
+    isLastMonomerInChain: boolean,
   ) {
     let RendererClass;
 
@@ -54,8 +44,7 @@ export class SequenceNodeRendererFactory {
       node,
       firstMonomerInChainPosition,
       monomerIndexInChain,
-      monomerNumberInSubChain,
-      // isLastMonomerInChain,
+      isLastMonomerInChain,
     );
   }
 }

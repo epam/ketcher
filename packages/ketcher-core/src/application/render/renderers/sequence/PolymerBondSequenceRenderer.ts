@@ -1,25 +1,26 @@
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { BaseMonomer } from 'domain/entities';
-import { BaseRenderer } from 'application/render';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { D3SvgElementSelection } from 'application/render/types';
 
-export class PolymerBondSequenceRenderer extends BaseRenderer {
+export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond);
   }
 
   private get areMonomersOnSameRow() {
     return (
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.y ===
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPosition.y
+      this.polymerBond.firstMonomer.renderer?.scaledMonomerPosition.y ===
+      this.polymerBond.secondMonomer?.renderer?.scaledMonomerPosition.y
     );
   }
 
   public show() {
     assert(this.polymerBond.firstMonomer.renderer);
     assert(this.polymerBond.secondMonomer?.renderer);
-    this.rootElement = this.canvas.insert('g', `:first-child`).data([this]);
+    this.rootElement = this.canvas
+      .insert('g', `:first-child`)
+      .data([this]) as never as D3SvgElementSelection<SVGGElement, void>;
 
     const firstMonomerY =
       this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.y;
@@ -65,9 +66,5 @@ export class PolymerBondSequenceRenderer extends BaseRenderer {
         .attr('y1', mainLineY2 + 5)
         .attr('y2', mainLineY2);
     }
-  }
-
-  remove() {
-    super.remove();
   }
 }

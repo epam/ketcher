@@ -10,9 +10,10 @@ export class PolymerBond extends DrawingEntity {
   public renderer?: PolymerBondRenderer = undefined;
   public endPosition: Vec2 = new Vec2();
 
-  constructor(public firstMonomer: BaseMonomer) {
+  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();
     this.firstMonomer = firstMonomer;
+    this.secondMonomer = secondMonomer;
   }
 
   public setFirstMonomer(monomer: BaseMonomer) {

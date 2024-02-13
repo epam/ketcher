@@ -42,6 +42,14 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   return r3ConnectedMonomer instanceof RNABase ? r3ConnectedMonomer : undefined;
 }
 
+export function getSugarFromRnaBase(monomer?: BaseMonomer) {
+  if (!monomer) return undefined;
+  const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
+  const r1ConnectedMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
+
+  return r1ConnectedMonomer instanceof Sugar ? r1ConnectedMonomer : undefined;
+}
+
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
   if (!monomer) return undefined;
   const nextMonomerInChain = getNextMonomerInChain(monomer);

@@ -438,7 +438,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawSelection() {
-    assert(this.rootElement);
+    if (!this.rootElement) {
+      return;
+    }
     if (this.monomer.selected) {
       this.appendSelection();
       this.raiseElement();

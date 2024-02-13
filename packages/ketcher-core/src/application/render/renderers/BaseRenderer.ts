@@ -88,4 +88,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
       this.hoverElement = undefined;
     }
   }
+
+  move() {}
 }

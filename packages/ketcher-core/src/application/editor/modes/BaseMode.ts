@@ -10,6 +10,7 @@ export abstract class BaseMode {
   ) {}
 
   private changeMode(editor: CoreEditor, modeName: LayoutMode) {
+    console.log(modeName);
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = modesMap[modeName];
     editor.setMode(new ModeConstructor());

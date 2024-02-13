@@ -336,8 +336,8 @@ export class RenderersManager {
     monomer.renderer?.redrawAttachmentPoints();
   }
 
-  public update(modelChanges: Command) {
-    modelChanges.execute(this);
+  public update(modelChanges?: Command) {
+    modelChanges?.execute(this);
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

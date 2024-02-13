@@ -468,7 +468,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     | typeof ChemSubChain
     | typeof PeptideSubChain;
 
-  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+  public isMonomerTypeDifferentForChaining(
+    monomerToChain: SubChainNode | BaseMonomer,
+  ) {
     return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
   }
 

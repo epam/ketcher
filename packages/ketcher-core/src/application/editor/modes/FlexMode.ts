@@ -11,6 +11,8 @@ export class FlexMode extends BaseMode {
 
     editor.drawingEntitiesManager.applyFlexLayoutMode();
 
+    editor.renderersContainer.update();
+
     return command;
   }
 }

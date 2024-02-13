@@ -37,15 +37,22 @@ const ButtonContainer = styled.div`
   }
 `;
 
-export const LayoutModeButton = (props) => {
+export const LayoutModeButton = () => {
   const [activeMode, setActiveMode] = useState('flex-layout-mode');
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
+
   const menuContext = {
     isActive: (mode) => activeMode === mode,
     activate: (mode) => {
+      if (mode === activeMode) {
+        return;
+      }
       setActiveMode(mode);
+      // event to change active mode state in editor
       editor.events.selectMode.dispatch(mode);
+      // event to change active mode state in useLayoutMode hook
+      editor.events.layoutModeChange.dispatch(mode);
     },
   };
   useEffect(() => {

@@ -1,15 +1,22 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import { BaseMonomer, RNABase, Sugar, Vec2 } from 'domain/entities';
-import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
-import { getRnaBaseFromSugar } from 'domain/helpers/monomers';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Nucleoside } from 'domain/entities/Nucleoside';
+import {
+  getRnaBaseFromSugar,
+  getSugarFromRnaBase,
+} from 'domain/helpers/monomers';
+import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class SequenceRenderer {
   public static show(chainsCollection: ChainsCollection) {
+    this.showNodes(chainsCollection);
+    this.showBonds(chainsCollection);
+  }
+
+  private static showNodes(chainsCollection: ChainsCollection) {
     const firstNode = chainsCollection.firstNode;
 
     if (!firstNode) {
@@ -22,32 +29,35 @@ export class SequenceRenderer {
     );
 
     let currentMonomerIndexInChain = 0;
-    let currentMonomerNumberInSubChain = 0;
 
     chainsCollection.chains.forEach((chain) => {
       currentMonomerIndexInChain = 0;
       chain.subChains.forEach((subChain) => {
-        currentMonomerNumberInSubChain = 0;
         subChain.nodes.forEach((node) => {
           const renderer = SequenceNodeRendererFactory.fromNode(
             node,
             currentChainStartPosition,
             currentMonomerIndexInChain,
-            currentMonomerNumberInSubChain,
+            currentMonomerIndexInChain + 1 ===
+              chain.subChains.reduce(
+                (prev, curr) => prev + curr.nodes.length,
+                0,
+              ),
           );
           renderer.show();
           node.monomer.renderer = renderer;
           currentMonomerIndexInChain++;
-          currentMonomerNumberInSubChain++;
         });
       });
 
       currentChainStartPosition = new Vec2(
         currentChainStartPosition.x,
-        currentChainStartPosition.y + 100 + 30 * Math.floor(chain.length / 30),
+        currentChainStartPosition.y + 50 + 30 * Math.floor(chain.length / 30),
       );
     });
+  }
 
+  private static showBonds(chainsCollection: ChainsCollection) {
     const handledMonomersToAttachmentPoints: Map<
       BaseMonomer,
       Set<AttachmentPointName>
@@ -60,9 +70,10 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
-            const anotherMonomer = polymerBond.getAnotherMonomer(node.monomer);
-
             if (!polymerBond.isSideChainConnection) {
+              polymerBond.setRenderer(
+                new BackBoneBondSequenceRenderer(polymerBond),
+              );
               return;
             }
 
@@ -75,6 +86,8 @@ export class SequenceRenderer {
 
             // Special case for sugar + base connections. Need to move somewhere
             // TODO if base R2 -> sugar R1 - handle as side connection
+            const anotherMonomer = polymerBond.getAnotherMonomer(node.monomer);
+
             if (
               (node.monomer instanceof Sugar &&
                 getRnaBaseFromSugar(node.monomer) === anotherMonomer) ||
@@ -84,7 +97,16 @@ export class SequenceRenderer {
               return;
             }
 
-            const bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
+            let bondRenderer;
+
+            if (anotherMonomer instanceof RNABase) {
+              const connectedSugar = getSugarFromRnaBase(anotherMonomer);
+              bondRenderer = new PolymerBondSequenceRenderer(
+                new PolymerBond(node.monomer, connectedSugar),
+              );
+            } else {
+              bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
+            }
             bondRenderer.show();
             polymerBond.setRenderer(bondRenderer);
             handledAttachmentPoints.add(attachmentPointName);

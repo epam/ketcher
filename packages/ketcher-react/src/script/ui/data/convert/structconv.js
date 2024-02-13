@@ -21,8 +21,6 @@ import {
   StereoLabel,
   getAtomType,
 } from 'ketcher-core';
-
-import { atom as atomSchema } from '../schema/struct-schema';
 import { capitalize } from 'lodash/fp';
 import {
   sdataSchema,

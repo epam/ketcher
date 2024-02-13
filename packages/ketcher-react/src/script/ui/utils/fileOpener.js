@@ -76,9 +76,11 @@ function throughFileReader(file) {
           cfb.FullPaths.forEach((path) => {
             if (path.endsWith('.bin')) {
               const ole = CFB.find(cfb, path);
-              const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
-              const base64String = arrayBufferToBase64(sdf.content);
-              structures.push(base64String);
+              const sdf = CFB.find(CFB.parse(ole?.content), 'CONTENTS');
+              const base64String = arrayBufferToBase64(sdf?.content);
+              if (base64String.startsWith('VmpDRDAxMDAEAw')) {
+                structures.push(base64String);
+              }
             }
           });
           content = { structures, isPPTX: true };

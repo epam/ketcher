@@ -18,12 +18,13 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  margin: 1em 2em;
+  padding: 1em 2em;
   gap: 1em;
   width: 60vw;
   height: 50vh;
   max-width: 60em;
   max-height: 30em;
+  border-bottom: 1px solid #e1e5ea;
 }
 
 .structuresWrapper {
@@ -35,17 +36,22 @@
 }
 
 .menuListWrapper {
-  background: @gray-background-color;
-  padding: 16px 8px;
+  background: @color-background-panel;
+  padding: 12px 8px;
   border-radius: 8px;
   flex: 1;
-  overflow-y: auto;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
 
   > ul {
+    overflow: auto;
     background: @color-background-primary;
+    height: inherit;
 
     > li {
       padding: 0.5em;
+      font-size: 12px !important;
 
       &:hover {
         background: @color-spec-button-primary-hover !important;
@@ -61,7 +67,6 @@
 
   > .header {
     color: @color-text-secondary;
-    font-size: 1rem;
     margin-bottom: 1em;
   }
 }
@@ -94,7 +99,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: solid @border-color;
+  border: 1px solid @border-color;
   border-radius: 8px;
   padding: 0.5em;
   width: 100%;

@@ -1,4 +1,4 @@
-import { Locator, test, Page } from '@playwright/test';
+import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickRedo,

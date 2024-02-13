@@ -58,7 +58,7 @@ export const atom = {
     charge: {
       title: 'Charge',
       type: 'string',
-      pattern: '^([+-]?)([0-9]{1,3})([+-]?)$',
+      pattern: '^([+-]?)(1[0-5]|0|[0-9])([+-]?)$',
       maxLength: 4,
       default: '',
       invalidMessage: 'Invalid charge value',

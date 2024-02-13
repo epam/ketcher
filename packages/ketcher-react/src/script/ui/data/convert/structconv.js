@@ -29,6 +29,7 @@ import {
   getSdataDefault,
   sdataCustomSchema,
 } from '../schema/sdata-schema';
+import { matchCharge } from '../utils';
 
 const DefaultStereoGroupNumber = 1;
 
@@ -183,13 +184,14 @@ export function toAtom(atom) {
       exactChangeFlag: 0,
     });
   }
-  const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
-  const pch = chargeRegexp.exec(restAtom.charge);
+  const pch = matchCharge(restAtom.charge);
   const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
 
   const conv = Object.assign({}, restAtom, {
     isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
-    charge: restAtom.charge ? Number(charge) : null,
+    // empty charge value by default treated as zero,
+    // no need to pass and display zero values(0, -0) explicitly
+    charge: restAtom.charge && charge !== 0 ? Number(charge) : null,
     alias: restAtom.alias || null,
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),

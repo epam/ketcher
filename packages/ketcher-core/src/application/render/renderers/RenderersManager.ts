@@ -18,7 +18,7 @@ import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
 import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
-  getRnaBaseMonomerFromSugar,
+  getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 
@@ -77,6 +77,15 @@ export class RenderersManager {
   public redrawDrawingEntity(drawingEntity: DrawingEntity) {
     drawingEntity.baseRenderer?.remove();
     drawingEntity.baseRenderer?.show(this.theme);
+  }
+
+  public deleteAllDrawingEntities() {
+    this.monomers.forEach((monomerRenderer) => {
+      monomerRenderer.remove();
+    });
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      polymerBondRenderer.remove();
+    });
   }
 
   public deleteMonomer(monomer: BaseMonomer) {
@@ -166,7 +175,7 @@ export class RenderersManager {
   ) {
     let currentEnumeration = _currentEnumeration;
     if (rnaComponentRenderer instanceof SugarRenderer) {
-      const rnaBaseMonomer = getRnaBaseMonomerFromSugar(
+      const rnaBaseMonomer = getRnaBaseFromSugar(
         rnaComponentRenderer.monomer as Sugar,
       );
       if (rnaBaseMonomer instanceof RNABase) {
@@ -263,7 +272,7 @@ export class RenderersManager {
         monomerRenderer.reDrawChainBeginning();
       }
       if (monomerRenderer instanceof SugarRenderer) {
-        const rnaBaseMonomer = getRnaBaseMonomerFromSugar(
+        const rnaBaseMonomer = getRnaBaseFromSugar(
           monomerRenderer.monomer as Sugar,
         );
         if (

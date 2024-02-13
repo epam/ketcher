@@ -1,8 +1,8 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
-export class SugarSequenceItemRenderer extends BaseSequenceItemRenderer {
+export class NucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
-    return this.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
+    return this.node.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
       this.monomer,
     ).monomerItem?.props.MonomerNaturalAnalogCode;
   }

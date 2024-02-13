@@ -12,6 +12,10 @@ import {
 } from 'application/formatters/types/ket';
 import { Bond } from 'domain/entities/bond';
 import { isNumber } from 'lodash';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -190,10 +194,18 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.renderer = renderer;
   }
 
-  public forEachBond(callback: (polymerBond: PolymerBond) => void) {
+  public forEachBond(
+    callback: (
+      polymerBond: PolymerBond,
+      attachmentPointName: AttachmentPointName,
+    ) => void,
+  ) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName]) {
-        callback(this.attachmentPointsToBonds[attachmentPointName]);
+        callback(
+          this.attachmentPointsToBonds[attachmentPointName],
+          attachmentPointName as AttachmentPointName,
+        );
       }
     }
   }
@@ -451,8 +463,13 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.firstFreeAttachmentPoint;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(_monomerToChain: BaseMonomer) {
-    return true;
+  abstract get SubChainConstructor():
+    | typeof RnaSubChain
+    | typeof ChemSubChain
+    | typeof PeptideSubChain;
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
   }
 
   public get isPartOfRna() {

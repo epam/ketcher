@@ -5,6 +5,9 @@ import { Sugar } from './Sugar';
 import { Peptide } from './Peptide';
 import { Chem } from './Chem';
 import { RNABase } from 'domain/entities/RNABase';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
@@ -83,8 +86,8 @@ export class Phosphate extends BaseMonomer {
     return undefined;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
-    return monomerToChain instanceof Peptide || monomerToChain instanceof Chem;
+  public get SubChainConstructor() {
+    return PhosphateSubChain;
   }
 
   get isPartOfRna() {

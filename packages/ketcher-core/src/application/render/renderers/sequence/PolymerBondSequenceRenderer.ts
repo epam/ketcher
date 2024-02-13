@@ -66,4 +66,8 @@ export class PolymerBondSequenceRenderer extends BaseRenderer {
         .attr('y2', mainLineY2);
     }
   }
+
+  remove() {
+    super.remove();
+  }
 }

@@ -52,7 +52,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       (this.polymerBond.secondMonomer &&
         !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer)) ||
       (this.polymerBond.secondMonomer &&
-        this.polymerBond.firstMonomer.isMonomerTypeDifferentForSnakeMode(
+        this.polymerBond.firstMonomer.isMonomerTypeDifferentForChaining(
           this.polymerBond.secondMonomer,
         ))
     ) {

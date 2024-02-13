@@ -1,16 +1,19 @@
 import { BaseRenderer } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
 import { BaseMonomer, Vec2 } from 'domain/entities';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
 
 export abstract class BaseSequenceItemRenderer extends BaseRenderer {
   constructor(
-    protected monomer: BaseMonomer,
-    private firstMonomerInChainPosition: Vec2,
+    protected node: SubChainNode,
+    private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private monomerNumberInSubChain: number,
     private isLastMonomerInChain: boolean,
   ) {
-    super(monomer);
+    super(node instanceof BaseMonomer ? node : node.monomer);
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -26,16 +29,14 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
   protected removeHover(): void {}
 
   public get scaledMonomerPosition() {
-    const indexInRow = (this.monomerIndexInChain - 1) % this.symbolsInRow;
-    const rowNumber = Math.floor(
-      (this.monomerIndexInChain - 1) / this.symbolsInRow,
-    );
+    const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
+    const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
 
     return new Vec2(
-      this.firstMonomerInChainPosition.x +
+      this.firstNodeInChainPosition.x +
         indexInRow * 18 +
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
-      this.firstMonomerInChainPosition.y + 50 * rowNumber,
+      this.firstNodeInChainPosition.y + 50 * rowIndex,
     );
   }
 
@@ -69,14 +70,14 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
       .attr('fill', '#333333');
 
     if (
-      this.monomerNumberInSubChain % this.nthSeparationInRow === 0 ||
+      (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
       this.isLastMonomerInChain
     ) {
       this.rootElement
         .append('text')
         .attr('x', '-2')
         .attr('y', '-24')
-        .text(this.monomerNumberInSubChain)
+        .text(this.monomerIndexInChain + 1)
         .attr('font-family', 'Courier New')
         .attr('font-size', '12px')
         .attr('font-weight', '700')

@@ -4,6 +4,7 @@ import { Phosphate } from './Phosphate';
 import { Peptide } from './Peptide';
 import { Chem } from './Chem';
 import { AttachmentPointName } from 'domain/types';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer: BaseMonomer) {
@@ -94,8 +95,8 @@ export class Sugar extends BaseMonomer {
     return undefined;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
-    return monomerToChain instanceof Peptide || monomerToChain instanceof Chem;
+  public get SubChainConstructor() {
+    return RnaSubChain;
   }
 
   public get isPartOfRna(): boolean {

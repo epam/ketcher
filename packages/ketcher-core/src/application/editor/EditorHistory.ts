@@ -45,7 +45,6 @@ export class EditorHistory {
       this.historyStack.shift();
     }
     this.historyPointer = this.historyStack.length;
-    console.log(this);
   }
 
   undo() {

@@ -49,6 +49,8 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -348,6 +350,10 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     this.allEntities.forEach(([, drawingEntity]) => {
+      if (drawingEntity.baseRenderer instanceof BaseSequenceRenderer) {
+        return;
+      }
+
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,

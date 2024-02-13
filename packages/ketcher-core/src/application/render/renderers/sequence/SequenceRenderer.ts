@@ -45,7 +45,7 @@ export class SequenceRenderer {
               ),
           );
           renderer.show();
-          node.monomer.renderer = renderer;
+          node.monomer.setRenderer(renderer);
           currentMonomerIndexInChain++;
         });
       });

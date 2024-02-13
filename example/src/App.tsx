@@ -1,7 +1,7 @@
 import 'ketcher-react/dist/index.css';
 
 import { useState } from 'react';
-import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { ButtonsConfig, Editor } from 'ketcher-react';
 import {
   Ketcher,
   RemoteStructServiceProvider,
@@ -50,8 +50,6 @@ if (enablePolymerEditor) {
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
   const togglePolymerEditor = (toggleValue: boolean) => {
@@ -73,10 +71,8 @@ const App = () => {
   ) : (
     <>
       <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
-        }}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        errorHandler={() => {}}
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
@@ -92,19 +88,6 @@ const App = () => {
         }}
         togglerComponent={togglerComponent}
       />
-      {hasError && (
-        <InfoModal
-          message={errorMessage}
-          close={() => {
-            setHasError(false);
-
-            // Focus on editor after modal is closed
-            const cliparea: HTMLElement | null =
-              document.querySelector('.cliparea');
-            cliparea?.focus();
-          }}
-        />
-      )}
     </>
   );
 };

@@ -20,7 +20,7 @@ import {
   RightToolbarContainer,
   TopToolbarContainer,
 } from '../views/toolbars';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material';
 import AppClipArea from '../views/AppClipArea';
@@ -36,6 +36,10 @@ import {
 import { useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
+import { GLOBAL_ERROR } from '../../../constants';
+import { InfoModal } from 'src/components/InfoModal';
+import { useWindowErrorSubscription } from 'src/hooks/useWindowErrorSubscription';
+import { ketcherProvider } from 'ketcher-core';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -57,8 +61,7 @@ type Props = AppCallProps;
 const App = (props: Props) => {
   const dispatch = useDispatch();
   const { checkServer } = props;
-
-  useSubscriptionOnEvents();
+  const ketcher = ketcherProvider.getKetcher();
 
   useEffect(() => {
     checkServer();
@@ -72,27 +75,49 @@ const App = (props: Props) => {
     };
   }, []);
 
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [enableLogging, setEnableLogging] = useState(ketcher?.logging.enabled);
+
+  const handleError = (message: string) => {
+    setHasError(true);
+    setErrorMessage(message);
+  };
+
+  const handleClose = () => {
+    setHasError(false);
+    setErrorMessage('');
+    const cliparea = document.querySelector('.cliparea') as HTMLElement;
+    cliparea?.focus();
+  };
+
+  useWindowErrorSubscription(handleError, enableLogging, setEnableLogging);
+  useSubscriptionOnEvents([{ type: GLOBAL_ERROR, handler: handleError }]);
+
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <div className={classes.app}>
-        <AppHiddenContainer />
-        <Editor className={classes.canvas} />
+      <>
+        <div className={classes.app}>
+          <AppHiddenContainer />
+          <Editor className={classes.canvas} />
 
-        <TopToolbarContainer
-          className={classes.top}
-          togglerComponent={props.togglerComponent}
-        />
-        <LeftToolbarContainer className={classes.left} />
-        <BottomToolbarContainer className={classes.bottom} />
-        <RightToolbarContainer className={classes.right} />
+          <TopToolbarContainer
+            className={classes.top}
+            togglerComponent={props.togglerComponent}
+          />
+          <LeftToolbarContainer className={classes.left} />
+          <BottomToolbarContainer className={classes.bottom} />
+          <RightToolbarContainer className={classes.right} />
 
-        <AppClipArea />
-        <AppModalContainer />
-        <AbbreviationLookupContainer />
-      </div>
+          <AppClipArea />
+          <AppModalContainer />
+          <AbbreviationLookupContainer />
+        </div>
+        {hasError && <InfoModal message={errorMessage} close={handleClose} />}
+      </>
     </ThemeProvider>
   );
 };

@@ -27,6 +27,7 @@ import {
   getPropertiesByImgFormat,
   b64toBlob,
   KetcherLogger,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -41,6 +42,7 @@ import { updateFormState } from '../../../../../state/modal/form';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import { GLOBAL_ERROR } from '../../../../../../../constants';
 
 const saveSchema = {
   title: 'Save',
@@ -149,7 +151,7 @@ class SaveDialog extends Component {
       bondThickness,
     } = this.props;
 
-    const errorHandler = this.context.errorHandler;
+    const ketcher = ketcherProvider.getKetcher();
     if (this.isImageFormat(type)) {
       const ketSerialize = new KetSerializer();
       const structStr = ketSerialize.serialize(struct);
@@ -175,7 +177,9 @@ class SaveDialog extends Component {
         })
         .catch((e) => {
           KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          errorHandler(e);
+          if (ketcher && ketcher.eventBus) {
+            ketcher.eventBus.emit(GLOBAL_ERROR, e);
+          }
           this.props.onResetForm(formState);
           return e;
         });
@@ -219,7 +223,9 @@ class SaveDialog extends Component {
             });
           },
           (e) => {
-            errorHandler(e.message);
+            if (ketcher && ketcher.eventBus) {
+              ketcher.eventBus.emit(GLOBAL_ERROR, e.message);
+            }
             this.props.onResetForm(formState);
             return e;
           },

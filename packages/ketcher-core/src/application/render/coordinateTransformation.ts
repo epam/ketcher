@@ -23,7 +23,7 @@ const pageToView = (
 ) => {
   const { top: offsetTop, left: offsetLeft } =
     renderClientArea.getBoundingClientRect();
-  return new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop);
+  return new Vec2(event?.clientX - offsetLeft, event?.clientY - offsetTop);
 };
 
 const pageToCanvas = (

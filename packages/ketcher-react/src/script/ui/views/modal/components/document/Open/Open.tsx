@@ -23,6 +23,8 @@ import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName } from 'ketcher-core';
+import { useDispatch } from 'react-redux';
+import { load } from 'src/script/ui/state/shared';
 
 interface OpenProps {
   server: any;
@@ -88,7 +90,7 @@ const Open: FC<Props> = (props) => {
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (server) {
       fileOpener(server).then((chosenOpener) => {
@@ -121,7 +123,12 @@ const Open: FC<Props> = (props) => {
 
   // @TODO after Recognize is refactored this will not be necessary
   // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
-  const { onOk } = rest;
+
+  const onOk = async (res) => {
+    await dispatch(
+      load(res.structStr, { badHeaderRecover: true, fragment: res.fragment }),
+    );
+  };
 
   const copyHandler = () => {
     const format = getFormatMimeTypeByFileName(fileName);

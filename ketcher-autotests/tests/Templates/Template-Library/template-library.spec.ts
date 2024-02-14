@@ -44,8 +44,10 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   if ((await phenylalanineLocator.count()) === 0) {
     await page.getByText('Aromatics').click();
   }
-  await phenylalanineLocator.first().click();
-  await page.mouse.click(x, y);
+  await waitForRender(page, async () => {
+    await phenylalanineLocator.first().click();
+    await page.mouse.click(x, y);
+  });
 }
 
 async function openStructureLibrary(page: Page) {

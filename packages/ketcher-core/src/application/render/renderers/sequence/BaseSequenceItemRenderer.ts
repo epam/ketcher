@@ -36,7 +36,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.firstNodeInChainPosition.x +
         indexInRow * 18 +
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
-      this.firstNodeInChainPosition.y + 35 * rowIndex,
+      this.firstNodeInChainPosition.y + 47 * rowIndex,
     );
   }
 
@@ -65,7 +65,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return rootElement
       .append('text')
       .attr('x', '-2')
-      .attr('y', '-18')
+      .attr('y', '-24')
       .text(this.monomerIndexInChain + 1)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
@@ -125,4 +125,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   abstract get symbolToDisplay(): string;
+
+  public setEnumeration() {}
+  public redrawEnumeration() {}
 }

@@ -39,12 +39,17 @@ export class EditorHistory {
     return this;
   }
 
-  update(command: Command) {
-    this.historyStack.splice(this.historyPointer, HISTORY_SIZE + 1, command);
-    if (this.historyStack.length > HISTORY_SIZE) {
-      this.historyStack.shift();
+  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+    const latestCommand = this.historyStack[this.historyStack.length - 1];
+    if (megreWithLatestHistoryCommand && latestCommand) {
+      latestCommand.merge(command);
+    } else {
+      this.historyStack.splice(this.historyPointer, HISTORY_SIZE + 1, command);
+      if (this.historyStack.length > HISTORY_SIZE) {
+        this.historyStack.shift();
+      }
+      this.historyPointer = this.historyStack.length;
     }
-    this.historyPointer = this.historyStack.length;
   }
 
   undo() {

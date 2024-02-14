@@ -33,6 +33,8 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(command);
 
+    editor.events.selectTool.dispatch('select-rectangle');
+
     return modelChanges;
   }
 }

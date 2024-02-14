@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
@@ -39,7 +39,7 @@ class SelectRectangle implements BaseTool {
 
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection) return;
+      if (!selection || editor.mode instanceof SequenceMode) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),

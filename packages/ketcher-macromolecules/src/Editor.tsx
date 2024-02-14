@@ -401,9 +401,6 @@ function MenuComponent() {
           testId="single-bond"
         />
       </Menu.Group>
-      <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
-      </Menu.Group>
       <Menu.Group>
         <Menu.Item
           itemId="zoom-in"

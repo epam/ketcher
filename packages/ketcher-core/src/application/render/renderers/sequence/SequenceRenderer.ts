@@ -52,7 +52,7 @@ export class SequenceRenderer {
 
       currentChainStartPosition = new Vec2(
         currentChainStartPosition.x,
-        currentChainStartPosition.y + 50 + 30 * Math.floor(chain.length / 30),
+        currentChainStartPosition.y + 75 + 47 * Math.floor(chain.length / 31),
       );
     });
   }

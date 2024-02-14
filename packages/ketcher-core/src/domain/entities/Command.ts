@@ -13,7 +13,10 @@ export class Command {
   }
 
   public invert(renderersManagers: RenderersManager) {
-    this.operations.forEach((operation) => operation.invert(renderersManagers));
+    this.operations
+      .slice()
+      .reverse()
+      .forEach((operation) => operation.invert(renderersManagers));
     renderersManagers.runPostRenderMethods();
   }
 

@@ -60,7 +60,7 @@ export const LayoutModeButton = () => {
   }, [layoutMode]);
   return (
     <MenuContext.Provider value={menuContext}>
-      <Menu.Submenu vertical={true}>
+      <Menu.Submenu vertical={true} needOpenByMenuItemClick={true}>
         <Menu.Item itemId="flex-layout-mode"></Menu.Item>
         <Menu.Item itemId="snake-layout-mode"></Menu.Item>
         <Menu.Item itemId="sequence-layout-mode"></Menu.Item>

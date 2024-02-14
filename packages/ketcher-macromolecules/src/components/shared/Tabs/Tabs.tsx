@@ -60,7 +60,7 @@ function a11yProps(index: number) {
 function CustomTabs(props): ReactElement {
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
-  const { tabs } = props;
+  const { tabs, disabled } = props;
   const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component;
   const componentProps = tabPanel?.props;
@@ -123,14 +123,16 @@ function CustomTabs(props): ReactElement {
     },
   }));
 
-  const TabPanelContent = styled.div(() => ({
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    width: '100%',
-    height: '100%',
-  }));
+  const TabPanelContent = styled.div<{ disabled: boolean }>`
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    pointer-events: ${disabled ? 'none' : null};
+    filter: ${disabled ? 'opacity(0.5)' : null};
+  `;
 
   return (
     <>
@@ -146,7 +148,7 @@ function CustomTabs(props): ReactElement {
       </StyledTabs>
       {tabPanel && (
         <TabPanel value={selectedTabIndex} index={selectedTabIndex}>
-          <TabPanelContent>
+          <TabPanelContent disabled={disabled}>
             <Component {...componentProps} />
           </TabPanelContent>
         </TabPanel>

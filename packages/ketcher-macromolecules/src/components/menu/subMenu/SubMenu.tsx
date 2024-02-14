@@ -24,14 +24,17 @@ import {
   StyledDropdownIcon,
   VisibleItem,
 } from './styles';
+import { EmptyFunction } from 'helpers';
 
 type SubMenuProps = {
   vertical?: boolean;
+  needOpenByMenuItemClick?: boolean;
 };
 
 const SubMenu = ({
   children,
   vertical = false,
+  needOpenByMenuItemClick = false,
 }: React.PropsWithChildren<SubMenuProps>) => {
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -63,7 +66,13 @@ const SubMenu = ({
   return (
     <RootContainer>
       <VisibleItem>
-        <MenuItem itemId={visibleItemId} title={visibleItemTitle} />
+        <MenuItem
+          itemId={visibleItemId}
+          title={visibleItemTitle}
+          onClick={
+            needOpenByMenuItemClick ? handleDropDownClick : EmptyFunction
+          }
+        />
         {open || (
           <StyledDropdownIcon
             className="dropdown"

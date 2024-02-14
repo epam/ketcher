@@ -5,7 +5,7 @@ export class NucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
     return (
       this.node.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
         this.node.monomer,
-      )?.monomerItem?.props.MonomerNaturalAnalogCode || ''
+      )?.monomerItem?.props.MonomerNaturalAnalogCode || '@'
     );
   }
 }

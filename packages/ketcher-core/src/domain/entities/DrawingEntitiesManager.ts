@@ -863,12 +863,12 @@ export class DrawingEntitiesManager {
 
   public getNucleotideSize(nucleotide: NucleotideOrNucleoside) {
     const width =
-      (nucleotide.sugar.renderer?.monomerSize.width || 0) +
-      (nucleotide.phosphate?.renderer?.monomerSize.width || 0) +
+      (nucleotide.sugar.renderer?.monomerSize?.width || 0) +
+      (nucleotide.phosphate?.renderer?.monomerSize?.width || 0) +
       (nucleotide.phosphate ? RNA_MONOMER_DISTANCE : 0);
     const height =
-      (nucleotide.sugar.renderer?.monomerSize.height || 0) +
-      (nucleotide.rnaBase.renderer?.monomerSize.height || 0) +
+      (nucleotide.sugar.renderer?.monomerSize?.height || 0) +
+      (nucleotide.rnaBase.renderer?.monomerSize?.height || 0) +
       RNA_MONOMER_DISTANCE;
     return { width, height };
   }
@@ -882,8 +882,8 @@ export class DrawingEntitiesManager {
     maxVerticalDistance: number,
   ) {
     const command = new Command();
-    const monomerWidth = monomer.renderer?.monomerSize.width ?? 0;
-    const monomerHeight = monomer.renderer?.monomerSize.height ?? 0;
+    const monomerWidth = monomer.renderer?.monomerSize?.width ?? 0;
+    const monomerHeight = monomer.renderer?.monomerSize?.height ?? 0;
     const heightMonomerWithBond =
       monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightMonomerWithBond);
@@ -1081,6 +1081,9 @@ export class DrawingEntitiesManager {
 
   public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
     const command = new Command();
+
+    const editor = CoreEditor.provideEditorInstance();
+    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
@@ -1353,7 +1356,7 @@ export class DrawingEntitiesManager {
             rearrangedMonomersSet.add(monomerWithSideChain.id);
             command.addOperation(operation);
             const height =
-              (monomerWithSideChain.renderer?.monomerSize.height ?? 0) +
+              (monomerWithSideChain.renderer?.monomerSize?.height ?? 0) +
               VERTICAL_DISTANCE_FROM_MONOMER;
             lastPosition = getFirstPosition(height, lastPosition);
           }
@@ -1463,12 +1466,12 @@ export class DrawingEntitiesManager {
   }
 
   public applyMonomersSequenceLayout() {
+    const editor = CoreEditor.provideEditorInstance();
+
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     chainsCollection.rearrange();
-
-    const editor = CoreEditor.provideEditorInstance();
 
     editor.renderersContainer.deleteAllDrawingEntities();
 

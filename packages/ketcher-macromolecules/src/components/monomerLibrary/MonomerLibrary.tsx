@@ -16,7 +16,7 @@
 import React, { ChangeEvent, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
@@ -38,6 +38,9 @@ import {
 const MonomerLibrary = React.memo(() => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
+  const layoutMode = useLayoutMode();
+  const isSequenceMode = layoutMode === 'sequence-layout-mode';
+
   useAppSelector(selectPresets, (presets) => {
     presetsRef.current = presets;
     return true;
@@ -92,7 +95,10 @@ const MonomerLibrary = React.memo(() => {
           </div>
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
+      <Tabs
+        disabled={isSequenceMode}
+        tabs={tabsContent(duplicatePreset, editPreset)}
+      />
     </MonomerLibraryContainer>
   );
 });

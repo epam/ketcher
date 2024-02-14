@@ -148,14 +148,21 @@ export class CoreEditor {
     }
   }
 
-  private onSelectMode(mode: LayoutMode) {
+  private onSelectMode(
+    data:
+      | LayoutMode
+      | { mode: LayoutMode; megreWithLatestHistoryCommand: boolean },
+  ) {
+    const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
     this.mode = new ModeConstructor(this.mode.modeName);
     const command = this.mode.initialize();
-    history.update(command);
-    //editor.renderersContainer.update(command);
+    history.update(
+      command,
+      typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+    );
   }
 
   public setMode(mode: BaseMode) {

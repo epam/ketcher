@@ -127,9 +127,14 @@ export class SelectLayoutModeOperation implements Operation {
   private onExecute;
   private onInvert;
 
-  constructor(onExecute: () => void, onInvert: () => void) {
-    this.onExecute = onExecute;
-    this.onInvert = onInvert;
+  constructor(
+    public _onExecute: () => void,
+    public _onInvert: () => void,
+    public mode,
+    public prevMode,
+  ) {
+    this.onExecute = _onExecute;
+    this.onInvert = _onInvert;
   }
 
   public execute(): void {

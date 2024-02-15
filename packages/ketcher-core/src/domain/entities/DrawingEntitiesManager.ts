@@ -1108,8 +1108,17 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private redrawBondsModelChange(polymerBond: PolymerBond) {
-    polymerBond.moveToLinkedMonomers();
+  private redrawBondsModelChange(
+    polymerBond: PolymerBond,
+    startPosition?: Vec2,
+    endPosition?: Vec2,
+  ) {
+    if (startPosition && endPosition) {
+      polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
+      polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
+    } else {
+      polymerBond.moveToLinkedMonomers();
+    }
 
     return polymerBond;
   }
@@ -1121,7 +1130,12 @@ export class DrawingEntitiesManager {
       command.merge(
         this.createDrawingEntityRedrawCommand(
           this.redrawBondsModelChange.bind(this, polymerBond),
-          this.redrawBondsModelChange.bind(this, polymerBond),
+          this.redrawBondsModelChange.bind(
+            this,
+            polymerBond,
+            polymerBond.startPosition,
+            polymerBond.endPosition,
+          ),
         ),
       );
     });

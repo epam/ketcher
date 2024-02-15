@@ -10,6 +10,9 @@ export class SequenceMode extends BaseMode {
   public initialize() {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
+
+    editor.drawingEntitiesManager.applyFlexLayoutMode();
+
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
       true,

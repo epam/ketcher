@@ -114,6 +114,7 @@ export const ZoomInput = ({
   return (
     <StyledInput
       ref={inputRef}
+      data-testid="zoom-value"
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
     />

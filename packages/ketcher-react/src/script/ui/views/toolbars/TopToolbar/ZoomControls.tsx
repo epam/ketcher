@@ -21,6 +21,8 @@ import { Button, Popover } from '@mui/material';
 import { zoomList } from 'src/script/ui/action/zoom';
 import { ZoomInput, updateInputString } from './ZoomInput';
 import { Icon } from 'components';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-macromolecules';
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -168,7 +170,10 @@ export const ZoomControls = ({
         open={isExpanded}
         onClose={onClose}
         anchorEl={containerRef.current}
-        container={containerRef.current}
+        container={
+          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+          document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
+        }
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

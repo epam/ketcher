@@ -1,6 +1,5 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Sugar } from 'domain/entities/Sugar';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 
 export class RNABase extends BaseMonomer {

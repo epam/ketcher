@@ -16,5 +16,5 @@ export class BaseSequenceRenderer extends BaseRenderer {
 
   protected removeHover(): void {}
 
-  show(_theme): void {}
+  show(_theme?): void {}
 }

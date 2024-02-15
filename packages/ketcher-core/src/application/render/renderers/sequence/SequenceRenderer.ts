@@ -78,16 +78,19 @@ export class SequenceRenderer {
             }
 
             const handledAttachmentPoints =
-              handledMonomersToAttachmentPoints.get(node.monomer);
+              handledMonomersToAttachmentPoints.get(
+                node.monomer,
+              ) as Set<AttachmentPointName>;
 
             if (handledAttachmentPoints.has(attachmentPointName)) {
               return;
             }
 
-            // Special case for sugar + base connections. Need to move somewhere
-            // TODO if base R2 -> sugar R1 - handle as side connection
-            const anotherMonomer = polymerBond.getAnotherMonomer(node.monomer);
+            const anotherMonomer = polymerBond.getAnotherMonomer(
+              node.monomer,
+            ) as BaseMonomer;
 
+            // Skip handling side chains for sugar(R3) + base(R1) connections.
             if (
               (node.monomer instanceof Sugar &&
                 getRnaBaseFromSugar(node.monomer) === anotherMonomer) ||
@@ -99,6 +102,8 @@ export class SequenceRenderer {
 
             let bondRenderer;
 
+            // If side connection comes from rna base then take connected sugar and draw side connection from it
+            // because for rna we display only one letter instead of three
             if (anotherMonomer instanceof RNABase) {
               const connectedSugar = getSugarFromRnaBase(anotherMonomer);
               bondRenderer = new PolymerBondSequenceRenderer(
@@ -115,10 +120,14 @@ export class SequenceRenderer {
               handledMonomersToAttachmentPoints.set(anotherMonomer, new Set());
             }
             const anotherMonomerHandledAttachmentPoints =
-              handledMonomersToAttachmentPoints.get(anotherMonomer);
+              handledMonomersToAttachmentPoints.get(
+                anotherMonomer,
+              ) as Set<AttachmentPointName>;
 
             anotherMonomerHandledAttachmentPoints.add(
-              anotherMonomer?.getAttachmentPointByBond(polymerBond),
+              anotherMonomer?.getAttachmentPointByBond(
+                polymerBond,
+              ) as AttachmentPointName,
             );
           });
         });

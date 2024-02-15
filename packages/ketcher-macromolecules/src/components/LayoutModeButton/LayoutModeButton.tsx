@@ -14,28 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'ketcher-react';
-import styled from '@emotion/styled';
-import { EditorQuerySelector } from '../../constants';
 import { useEffect, useState } from 'react';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor } from 'state/common';
-
-const ButtonContainer = styled.div`
-  display: flex;
-
-  & svg:first-of-type {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 24px;
-    height: 24px;
-    padding: 2px;
-    border-radius: 4px;
-  }
-`;
 
 export const LayoutModeButton = () => {
   const [activeMode, setActiveMode] = useState('flex-layout-mode');

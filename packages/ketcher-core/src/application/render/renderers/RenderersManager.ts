@@ -21,7 +21,6 @@ import {
   getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
-import { CoreEditor } from 'application/editor';
 
 export class RenderersManager {
   private theme;

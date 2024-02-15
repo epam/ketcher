@@ -1,8 +1,6 @@
 import { BaseMonomer } from './BaseMonomer';
 import { RNABase } from './RNABase';
 import { Phosphate } from './Phosphate';
-import { Peptide } from './Peptide';
-import { Chem } from './Chem';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 

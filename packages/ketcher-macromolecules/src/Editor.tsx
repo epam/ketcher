@@ -52,7 +52,7 @@ import {
   selectMonomers,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
-import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,

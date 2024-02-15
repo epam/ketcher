@@ -1,6 +1,4 @@
 import { BaseMonomer } from './BaseMonomer';
-import { Phosphate } from './Phosphate';
-import { Sugar } from './Sugar';
 import { AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';

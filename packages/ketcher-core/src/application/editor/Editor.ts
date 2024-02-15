@@ -151,7 +151,7 @@ export class CoreEditor {
   private onSelectMode(
     data:
       | LayoutMode
-      | { mode: LayoutMode; megreWithLatestHistoryCommand: boolean },
+      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
   ) {
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = modesMap[mode];

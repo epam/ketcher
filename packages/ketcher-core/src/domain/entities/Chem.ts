@@ -1,8 +1,5 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Peptide } from 'domain/entities/Peptide';
-import { Sugar } from './Sugar';
-import { Phosphate } from './Phosphate';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';

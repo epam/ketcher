@@ -14,9 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'ketcher-react';
+import {
+  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  IconButton,
+} from 'ketcher-react';
 import styled from '@emotion/styled';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from '../../constants';
 import { useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {

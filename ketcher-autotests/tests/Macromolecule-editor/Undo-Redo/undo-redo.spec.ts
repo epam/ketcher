@@ -7,7 +7,7 @@ import {
   openFileAndAddToCanvas,
   selectRectangleArea,
   selectSingleBondTool,
-  selectSnakeBondTool,
+  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -94,7 +94,7 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await clickUndo(page);
     await takeEditorScreenshot(page);
   });

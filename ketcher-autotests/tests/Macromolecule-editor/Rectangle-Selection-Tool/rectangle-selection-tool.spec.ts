@@ -12,6 +12,7 @@ import {
   selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
+  selectSnakeLayoutModeTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -397,7 +398,7 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 900;
     const y = 500;
     await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     await page.keyboard.press('Control+a');
     await page.getByText('Hhs').locator('..').first().hover();
     await dragMouseTo(x, y, page);

@@ -48,9 +48,25 @@ export async function selectSingleBondTool(page: Page) {
   await bondToolButton.click();
 }
 
-export async function selectSnakeBondTool(page: Page) {
-  const bondToolButton = page.getByTestId('snake-mode');
-  await bondToolButton.click();
+export async function openLayoutModeMenu(page: Page) {
+  const modeSelectorButton = await page.getByTestId('layout-mode');
+  await modeSelectorButton.click();
+}
+
+export async function selectSnakeLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const snakeModeButton = page.getByTestId('snake-layout-mode');
+
+  await snakeModeButton.waitFor({ state: 'visible' });
+  await snakeModeButton.click();
+}
+
+export async function selectFlexLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const flexModeButton = page.getByTestId('flex-layout-mode');
+
+  await flexModeButton.waitFor({ state: 'visible' });
+  await flexModeButton.click();
 }
 
 export async function selectEraseTool(page: Page) {

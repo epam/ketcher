@@ -5,10 +5,12 @@ import {
   clickRedo,
   clickUndo,
   selectSingleBondTool,
-  selectSnakeBondTool,
+  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
   addBondedMonomersToCanvas,
+  selectFlexLayoutModeTool,
+  waitForRender,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -70,7 +72,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Snake bond tool
     */
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
       MONOMER_NAME_TZA,
@@ -123,7 +125,7 @@ test.describe('Snake Bond Tool', () => {
       12,
     );
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
 
     await takeEditorScreenshot(page);
   });
@@ -137,28 +139,33 @@ test.describe('Snake Bond Tool', () => {
     */
     await createBondedMonomers(page);
     await takeEditorScreenshot(page);
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Button is not active after undo', async ({ page }) => {
-    const snakeModeButton = page.getByTestId('snake-mode');
+  test('Mode returns back/forth after undo/redo', async ({ page }) => {
+    const flexModeButton = page.getByTestId('flex-layout-mode');
+    const snakeModeButton = page.getByTestId('snake-layout-mode');
     await createBondedMonomers(page);
-    await expect(snakeModeButton).not.toHaveClass(/active/);
+    await expect(flexModeButton).toHaveClass(/active/);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await expect(snakeModeButton).toHaveClass(/active/);
 
     await clickUndo(page);
-    await expect(snakeModeButton).not.toHaveClass(/active/);
+    await waitForRender(page);
+    await expect(snakeModeButton).not.toBeVisible();
+    await expect(flexModeButton).toHaveClass(/active/);
 
     await clickRedo(page);
+    await waitForRender(page);
+    await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);
   });
 
   test('Create snake bond between RNA nucleotides', async ({ page }) => {
     await page.getByText('RNA').click();
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -244,7 +251,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate2, sugar3);
     await bondTwoMonomers(page, phosphate3, sugar4);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -307,16 +314,16 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
   test('Create snake bond for chain with nucleoside', async ({ page }) => {
     await page.getByText('RNA').click();
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -361,10 +368,10 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -468,7 +475,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, hcyPeptide1, balPeptide1, undefined, 'R1');
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -508,7 +515,7 @@ test.describe('Snake Bond Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

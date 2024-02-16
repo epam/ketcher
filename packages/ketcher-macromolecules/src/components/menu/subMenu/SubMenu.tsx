@@ -29,12 +29,14 @@ import { EmptyFunction } from 'helpers';
 type SubMenuProps = {
   vertical?: boolean;
   needOpenByMenuItemClick?: boolean;
+  testId?: string;
 };
 
 const SubMenu = ({
   children,
   vertical = false,
   needOpenByMenuItemClick = false,
+  testId,
 }: React.PropsWithChildren<SubMenuProps>) => {
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -59,16 +61,19 @@ const SubMenu = ({
     .filter((item) => item);
   const activeOption = options.filter((itemKey) => isActive(itemKey));
   const visibleItemId = activeOption.length ? activeOption[0] : options[0];
-  const visibleItemTitle = subComponents.find(
+  const visibleItem = subComponents.find(
     (option) => option.props.itemId === visibleItemId,
-  )?.props.title;
+  );
+  const visibleItemTestId = visibleItem?.props.testId;
+  const visibleItemTitle = visibleItem?.props.title;
 
   return (
-    <RootContainer>
+    <RootContainer data-testid={testId}>
       <VisibleItem>
         <MenuItem
           itemId={visibleItemId}
           title={visibleItemTitle}
+          testId={visibleItemTestId}
           onClick={
             needOpenByMenuItemClick ? handleDropDownClick : EmptyFunction
           }

@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
+import {
+  createSelector,
+  createSlice,
+  PayloadAction,
+  Slice,
+} from '@reduxjs/toolkit';
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
@@ -158,28 +163,30 @@ export const selectMonomersInCategory = (
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
-export const selectFilteredMonomers = (
-  state,
-): Array<MonomerItemType & { favorite: boolean }> => {
-  const { searchFilter, monomers } = state.library;
-  return monomers
-    .filter((item: MonomerItemType) => {
-      const { Name = '', MonomerName = '' } = item.props;
-      const monomerName = Name.toLowerCase();
-      const monomerNameFull = MonomerName.toLowerCase();
-      const normalizedSearchFilter = searchFilter.toLowerCase();
-      const cond =
-        monomerName.includes(normalizedSearchFilter) ||
-        monomerNameFull.includes(normalizedSearchFilter);
-      return cond;
-    })
-    .map((item: MonomerItemType) => {
-      return {
-        ...item,
-        favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
-      };
-    });
-};
+export const selectFilteredMonomers = createSelector(
+  (state) => state.library,
+  (state): Array<MonomerItemType & { favorite: boolean }> => {
+    const { searchFilter, monomers, favorites } = state;
+
+    return monomers
+      .filter((item: MonomerItemType) => {
+        const { Name = '', MonomerName = '' } = item.props;
+        const monomerName = Name.toLowerCase();
+        const monomerNameFull = MonomerName.toLowerCase();
+        const normalizedSearchFilter = searchFilter.toLowerCase();
+        const cond =
+          monomerName.includes(normalizedSearchFilter) ||
+          monomerNameFull.includes(normalizedSearchFilter);
+        return cond;
+      })
+      .map((item: MonomerItemType) => {
+        return {
+          ...item,
+          favorite: !!favorites[getMonomerUniqueKey(item)],
+        };
+      });
+  },
+);
 
 export const selectMonomers = (state: RootState) => {
   return state.library.monomers;

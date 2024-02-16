@@ -1,5 +1,6 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { CoreEditor, LayoutMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { LayoutMode } from 'application/editor/modes';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {

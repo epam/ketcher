@@ -16,6 +16,7 @@ import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -466,6 +467,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   abstract get SubChainConstructor():
     | typeof RnaSubChain
     | typeof ChemSubChain
+    | typeof PhosphateSubChain
     | typeof PeptideSubChain;
 
   public isMonomerTypeDifferentForChaining(

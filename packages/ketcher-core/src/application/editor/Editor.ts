@@ -26,7 +26,7 @@ import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
-import { initHotKeys, keyNorm } from '../../utilities/keynorm';
+import { initHotKeys, keyNorm } from 'utilities';
 import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';

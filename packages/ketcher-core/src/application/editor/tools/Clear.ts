@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { BaseTool } from 'application/editor/tools/Tool';
 
 class ClearTool implements BaseTool {

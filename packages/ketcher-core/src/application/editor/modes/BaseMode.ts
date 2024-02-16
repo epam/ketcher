@@ -1,7 +1,7 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
-import { CoreEditor } from '../Editor';
-import { LayoutMode, modesMap } from 'application/editor';
+import { CoreEditor } from '../internal';
+import { LayoutMode, modesMap } from 'application/editor/modes';
 
 export abstract class BaseMode {
   protected constructor(

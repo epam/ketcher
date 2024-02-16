@@ -10,7 +10,7 @@ import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -82,7 +82,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       firstMonomerAttachmentPoint === secondMonomerAttachmentPoint;
     const editor = CoreEditor.provideEditorInstance();
     return (
-      editor.mode instanceof SnakeMode &&
+      editor?.mode instanceof SnakeMode &&
       isAttachmentPointsEnabledForSnakeBond &&
       !isSameAttachmentPoints
     );

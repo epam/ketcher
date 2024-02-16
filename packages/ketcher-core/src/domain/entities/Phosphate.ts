@@ -4,6 +4,8 @@ import { Vec2 } from './vec2';
 import { Sugar } from './Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
@@ -80,6 +82,12 @@ export class Phosphate extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return ![PhosphateSubChain, RnaSubChain].includes(
+      monomerToChain.SubChainConstructor,
+    );
   }
 
   public get SubChainConstructor() {

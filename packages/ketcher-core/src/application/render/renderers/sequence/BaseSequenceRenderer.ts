@@ -1,4 +1,4 @@
-import { BaseRenderer } from 'application/render';
+import { BaseRenderer } from 'application/render/renderers/internal';
 import { D3SvgElementSelection } from 'application/render/types';
 
 export class BaseSequenceRenderer extends BaseRenderer {

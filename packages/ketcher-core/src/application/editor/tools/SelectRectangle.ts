@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory, SequenceMode } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';

@@ -7,7 +7,7 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { Coordinates, CoreEditor, EditorHistory } from './editor';
+import { Coordinates, CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 

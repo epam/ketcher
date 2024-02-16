@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseMonomerRenderer } from 'application/render/renderers';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';

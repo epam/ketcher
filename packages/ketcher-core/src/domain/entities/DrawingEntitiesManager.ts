@@ -37,7 +37,7 @@ import {
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { Coordinates, CoreEditor } from 'application/editor';
+import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
   getNextMonomerInChain,

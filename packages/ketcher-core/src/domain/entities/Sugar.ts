@@ -3,6 +3,8 @@ import { RNABase } from './RNABase';
 import { Phosphate } from './Phosphate';
 import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer: BaseMonomer) {
@@ -95,6 +97,12 @@ export class Sugar extends BaseMonomer {
 
   public get SubChainConstructor() {
     return RnaSubChain;
+  }
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return ![PhosphateSubChain, RnaSubChain].includes(
+      monomerToChain.SubChainConstructor,
+    );
   }
 
   public get isPartOfRna(): boolean {

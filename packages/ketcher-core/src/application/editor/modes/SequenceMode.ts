@@ -1,4 +1,5 @@
-import { CoreEditor, LayoutMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { LayoutMode } from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 

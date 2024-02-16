@@ -54,8 +54,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
-    const rect = this.monomerSymbolElement.getBoundingClientRect();
-    this.monomerSize = { width: rect.width, height: rect.height };
+    // Cross-browser width and height detection via getAttribute()
+    // as getBoundingClientRect() and getBBox() return 0 values in Firefox
+    // in this case (<path> inside <symbol>, <defs>)
+    this.monomerSize = {
+      width: +(
+        this.monomerSymbolElement?.getAttribute('data-actual-width') || 0
+      ),
+      height: +(
+        this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
+      ),
+    };
   }
 
   private isSnakeBondForAttachmentPoint(
@@ -110,6 +119,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.drawAttachmentPoints();
     } else {
       this.removeAttachmentPoints();
+    }
+  }
+
+  public updateAttachmentPoints() {
+    this.hoveredAttachmenPoint = null;
+    if (!this.rootElement) return;
+    if (this.attachmentPoints.length > 0) {
+      this.attachmentPoints.forEach((point) => {
+        point.updateAttachmentPointStyleForHover();
+      });
+    } else {
+      this.drawAttachmentPoints();
     }
   }
 

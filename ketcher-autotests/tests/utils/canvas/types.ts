@@ -71,6 +71,8 @@ export type BondAttributes = {
   customQuery?: string | null;
 };
 
+export type ArrowXy = { x: number; y: number };
+export type PlusXy = { x: number; y: number };
 export type AtomXy = AtomAttributes & { x: number; y: number };
 export type BondXy = BondAttributes & { x: number; y: number };
 

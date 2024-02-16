@@ -2,12 +2,10 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   AtomButton,
-  DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   RingButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   drawBenzeneRing,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
@@ -22,7 +20,7 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
+  waitForRender,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
@@ -63,7 +61,10 @@ test.describe('Save files', () => {
     );
 
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('rxn-1849-to-compare-expectedV2000.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [2, 7, 25];
 
@@ -71,7 +72,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/rxn-1849-to-compare-expectedV2000.rxn',
+          'tests/test-data/Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
         metaDataIndexes: METADATA_STRING_INDEX,
         fileFormat: 'v2000',
       });
@@ -187,8 +188,6 @@ test.describe('Save files', () => {
       'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
     );
-    // Very large structure. After we change delay to waitingForRender.
-    await delay(DELAY_IN_SECONDS.EIGHT);
     const expectedFile = await getMolfile(page);
     await saveToFile(
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
@@ -332,7 +331,7 @@ test.describe('Open/Save/Paste files', () => {
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
+    await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
@@ -411,5 +410,33 @@ test.describe('Open/Save/Paste files', () => {
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+  });
+
+  test('Save *.ket file with atom list and atom properties', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3387
+     * Description: All the atom properties (general and query specific) for atom list should be saved in ket format
+     */
+    await openFileAndAddToCanvas(
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes.ket',
+      page,
+    );
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

@@ -2,14 +2,12 @@ import { Page, expect, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboard,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
   nonEmptyString,
@@ -62,7 +60,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-bonds-expected.json',
+      'tests/test-data/JSON/smiles-all-bonds-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -80,7 +78,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-atoms-properties-expected.json',
+      'tests/test-data/JSON/smiles-all-atoms-properties-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -100,9 +98,8 @@ test.describe('SMILES files', () => {
     Description: <<In Daylight SMILES the structure will be saved without S-groups>>
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
-    await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
     await getPreviewForSmiles(page, 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();
   });
 
@@ -111,10 +108,10 @@ test.describe('SMILES files', () => {
     Test case: EPMLSOPKET-1914
     Description: In Daylight SMILES the structure will be saved without S-groups
     */
-    await openFileAndAddToCanvas('sgroups-diff-symyx.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sgroups-diff-symyx.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/sgroups-diff-symyx-expected.json',
+      'tests/test-data/JSON/sgroups-diff-symyx-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -140,7 +137,7 @@ test.describe('SMILES files', () => {
     );
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-heteroatoms-expected.json',
+      'tests/test-data/JSON/smiles-heteroatoms-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -183,10 +180,10 @@ test.describe('SMILES files', () => {
     structure is correctly generated from SmileString.
     All stereobonds are displayed as in a mol-file.
     */
-    await openFileAndAddToCanvas('V2000_abs.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-v2000-abs-expected.json',
+      'tests/test-data/JSON/smiles-v2000-abs-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -213,7 +210,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/different-features.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-different-features-expected.json',
+      'tests/test-data/JSON/smiles-different-features-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -224,7 +221,6 @@ test.describe('SMILES files', () => {
       // eslint-disable-next-line max-len
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
     );
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 
   test('SmileString from file that contains Cis/Trans configuration', async ({
@@ -238,7 +234,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-cis-trans-cycle-expected.json',
+      'tests/test-data/JSON/smiles-cis-trans-cycle-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -261,7 +257,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/alias-pseudoatom.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-alias-pseudoatom-expected.json',
+      'tests/test-data/JSON/smiles-alias-pseudoatom-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -281,7 +277,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-two-arrows-and-plus-expected.json',
+      'tests/test-data/JSON/smiles-two-arrows-and-plus-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -306,7 +302,7 @@ test.describe('SMILES files', () => {
     );
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
+      'tests/test-data/JSON/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');

@@ -332,7 +332,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1805
     Description: The Layout action is implemented for the whole canvas.
    */
-    await openFileAndAddToCanvas('several-structures.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/several-structures.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,

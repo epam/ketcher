@@ -4,7 +4,6 @@ import {
   ArrowTool,
   copyAndPaste,
   cutAndPaste,
-  delay,
   saveStructureWithReaction,
   screenshotBetweenUndoRedo,
   selectLeftPanelButton,
@@ -17,7 +16,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   INPUT_DELAY,
   getControlModifier,
   LeftPanelButton,
@@ -26,6 +24,7 @@ import {
   waitForPageInit,
   waitForRender,
   openDropdown,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -103,7 +102,6 @@ test.describe('Plus and Arrows tools ', () => {
         );
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-        await delay(DELAY_IN_SECONDS.ONE);
         await takeEditorScreenshot(page);
         await selectTopPanelButton(TopPanelButton.Undo, page);
       });
@@ -139,7 +137,6 @@ test.describe('Plus and Arrows tools ', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.ONE);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -223,7 +220,6 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
       await page.keyboard.press(`${modifier}+KeyX`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -233,7 +229,6 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
       await page.keyboard.press(`${modifier}+KeyC`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -287,8 +282,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
       await page.keyboard.press(`${modifier}+KeyX`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -297,8 +293,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
       await page.keyboard.press(`${modifier}+KeyC`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -357,8 +354,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
       await page.keyboard.press(`${modifier}+KeyX`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -369,7 +367,6 @@ test.describe('Plus and Arrows tools ', () => {
     }) => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
-      await delay(DELAY_IN_SECONDS.ONE);
       await page.keyboard.press(`${modifier}+KeyX`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -378,8 +375,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
       await page.keyboard.press(`${modifier}+KeyC`);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -422,8 +420,10 @@ test.describe('Plus and Arrows tools ', () => {
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Clean, page);
-    await delay(DELAY_IN_SECONDS.FIVE);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
   });
 
   test('Save plus sign and arrow', async ({ page }) => {
@@ -434,14 +434,12 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   });
@@ -460,7 +458,6 @@ test.describe('Plus and Arrows tools ', () => {
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
       await clickOnTheCanvas(page, offsetFromCenter, offsetFromCenter);
-      await delay(DELAY_IN_SECONDS.THREE);
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
@@ -486,7 +483,6 @@ test.describe('Plus and Arrows tools ', () => {
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
       await clickOnTheCanvas(page, offsetFromCenter, offsetFromCenter);
-      await delay(DELAY_IN_SECONDS.ONE);
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
@@ -510,13 +506,12 @@ test.describe('Plus and Arrows tools ', () => {
       );
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await delay(DELAY_IN_SECONDS.THREE);
       await saveStructureWithReaction(page);
     });
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'non-default-reaction-arrow-tool-saving.rxn',
+        'Other-Files/non-default-reaction-arrow-tool-saving.rxn',
         page,
       );
     });
@@ -536,13 +531,12 @@ test.describe('Plus and Arrows tools ', () => {
         await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
         await clickOnTheCanvas(page, xOffsetFromCenter, 15);
         await clickOnTheCanvas(page, xOffsetFromCenter, -15);
-        await delay(DELAY_IN_SECONDS.FIVE);
         await saveStructureWithReaction(page, name);
       });
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `default-reaction-arrow-tool-saving.${fileExtension}`,
+          `Other-Files/default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
         );
       });
@@ -562,13 +556,12 @@ test.describe('Plus and Arrows tools ', () => {
         );
         await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_OPEN_ANGLE);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-        await delay(DELAY_IN_SECONDS.THREE);
         await saveStructureWithReaction(page, name);
       });
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `non-default-reaction-arrow-tool-saving.${fileExtension}`,
+          `Other-Files/non-default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
         );
       });
@@ -590,9 +583,7 @@ test.describe('Plus and Arrows tools ', () => {
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await page.mouse.move(x - 35, y - 1);
       dragMouseTo(x - 25, y - 50, page);
-      await delay(DELAY_IN_SECONDS.TWO);
       await saveStructureWithReaction(page);
-      await delay(DELAY_IN_SECONDS.TWO);
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
@@ -630,7 +621,6 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
     await page.keyboard.press(`${modifier}+KeyC`);
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     await selectTopPanelButton(TopPanelButton.Clear, page);

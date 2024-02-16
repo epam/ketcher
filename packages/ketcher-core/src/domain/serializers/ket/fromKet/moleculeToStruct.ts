@@ -28,6 +28,7 @@ import {
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
+import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 export function toRlabel(values) {
   let res = 0;
@@ -55,6 +56,7 @@ export function moleculeToStruct(ketItem: any): Struct {
           struct,
           atomId,
           atom.attachmentPoints,
+          atom.selected,
         );
       }
     });
@@ -143,7 +145,10 @@ export function atomToStruct(source) {
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
   ifDef(params, 'implicitHCount', source.implicitHCount);
-  return new Atom(params);
+
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
 export function rglabelToStruct(source) {
@@ -157,29 +162,32 @@ export function rglabelToStruct(source) {
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
-  return new Atom(params);
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
 function addRGroupAttachmentPointsToStruct(
   struct: Struct,
   attachedAtomId: number,
   attachmentPoints: AttachmentPoints | null,
+  initiallySelected?: initiallySelectedType,
 ) {
   const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
   if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
     );
   } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
     );
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }
   rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
@@ -216,8 +224,11 @@ export function bondToStruct(source, atomOffset = 0) {
   // params.xxx = 0;
   ifDef(params, 'begin', source.atoms[0] + atomOffset);
   ifDef(params, 'end', source.atoms[1] + atomOffset);
+  ifDef(params, 'initiallySelected', source.selected);
 
-  return new Bond(params);
+  const newBond = new Bond(params);
+  newBond.setInitiallySelected(source.selected);
+  return newBond;
 }
 
 type KetAttachmentPoint = {

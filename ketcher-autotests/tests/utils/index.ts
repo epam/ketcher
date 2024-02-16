@@ -11,3 +11,4 @@ export * from './inputs';
 export * from './formats';
 export * from './macromolecules';
 export * from './query-features';
+export * from './moveMouseAway';

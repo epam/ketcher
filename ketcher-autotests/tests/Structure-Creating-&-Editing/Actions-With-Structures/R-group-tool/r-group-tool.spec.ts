@@ -46,7 +46,7 @@ test.describe('R-Group', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas(
-      'r-group-with-allkind-attachment-points.mol',
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
     await copyAndPaste(page);
@@ -63,7 +63,7 @@ test.describe('R-Group', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(
-      'r-group-with-allkind-attachment-points.mol',
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
     await cutAndPaste(page);
@@ -77,12 +77,12 @@ test.describe('R-Group', () => {
     Description: The file is saved as .mol V2000 file.
     */
     await openFileAndAddToCanvas(
-      'r-group-with-allkind-attachment-points.mol',
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'r-group-with-allkind-attachment-points-expectedV2000.mol',
+      'Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
       expectedFile,
     );
     const METADATA_STRING_INDEX = [1];
@@ -91,7 +91,7 @@ test.describe('R-Group', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/r-group-with-allkind-attachment-points-expectedV2000.mol',
+          'tests/test-data/Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
         fileFormat: 'v2000',
       });
 
@@ -104,12 +104,12 @@ test.describe('R-Group', () => {
     Description: The file is saved as .mol V3000 file.
     */
     await openFileAndAddToCanvas(
-      'r-group-with-allkind-attachment-points.mol',
+      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
-      'r-group-with-allkind-attachment-points-expectedV3000.mol',
+      'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
       expectedFile,
     );
     const METADATA_STRING_INDEX = [1];
@@ -118,7 +118,7 @@ test.describe('R-Group', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/r-group-with-allkind-attachment-points-expectedV3000.mol',
+          'tests/test-data/Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
         fileFormat: 'v3000',
       });
 
@@ -131,7 +131,7 @@ test.describe('R-Group', () => {
     Description: The file is opened as .smi file.
     */
     await openFileAndAddToCanvas(
-      'r-group-with-allkind-attachment-points.smi',
+      'SMILES/r-group-with-allkind-attachment-points.smi',
       page,
     );
   });

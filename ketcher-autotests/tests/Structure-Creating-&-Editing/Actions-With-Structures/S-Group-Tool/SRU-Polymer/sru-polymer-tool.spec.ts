@@ -124,7 +124,7 @@ test.describe('SRU Polymer tool', () => {
       Description: No connection label should be present at the right-top side of the brackets when the
       'Head-to-tail' connection type is opened.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
   });
 
   test('Connection of labels "Head-to-head"', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The 'hh' connection label should be present at the right-top side of the brackets when the
       'Head-to-head' connection type is selected.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -147,7 +147,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The 'eu' connection label should be present at the right-top side of the brackets when the
       'Either unknown' connection type is selected.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -162,7 +162,7 @@ test.describe('SRU Polymer tool', () => {
       'Either unknown' connection type is selected. And 'n' letter changes to 'A'
     */
     const polymerLabel = 'A';
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -178,7 +178,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
@@ -191,7 +191,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -206,7 +206,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to delete whole Chain with SRU polymer S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
@@ -219,7 +219,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add Template on structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectRingButton(RingButton.Benzene, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
@@ -236,7 +236,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to add R-Group Label and Undo/Redo on structure with SRU polymer S-group.
     */
     const rGroupName = 'R12';
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', 3);
     await page.getByRole('button', { name: rGroupName }).click();
@@ -252,7 +252,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1535
       Description: User is able to copy and paste structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -262,7 +262,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1535
       Description: User is able to cut and paste structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -274,12 +274,16 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
     const expectedFile = await getMolfile(page);
-    await saveToFile('sru-polymer-data-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/sru-polymer-data-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/sru-polymer-data-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/sru-polymer-data-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

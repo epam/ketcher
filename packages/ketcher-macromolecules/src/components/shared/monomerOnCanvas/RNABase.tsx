@@ -20,6 +20,8 @@ export const RNABaseAvatar = () => (
       <rect
         width="45"
         height="45"
+        data-actual-width="63.64"
+        data-actual-height="63.64"
         rx="2"
         transform-origin="center"
         transform="rotate(45)"

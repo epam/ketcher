@@ -13,8 +13,6 @@ import {
   pressButton,
   selectNestedTool,
   SelectTool,
-  delay,
-  DELAY_IN_SECONDS,
   selectLeftPanelButton,
   LeftPanelButton,
   fillFieldByPlaceholder,
@@ -358,7 +356,6 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
@@ -377,7 +374,6 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
@@ -396,7 +392,6 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
@@ -415,7 +410,6 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
@@ -433,7 +427,6 @@ test.describe('Selection tools', () => {
     Structure is visible on the canvas.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');

@@ -1,6 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
 import {
-  delay,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
@@ -8,7 +7,6 @@ import {
   RingButton,
   selectNestedTool,
   RgroupTool,
-  DELAY_IN_SECONDS,
   AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
@@ -124,7 +122,6 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await delay(DELAY_IN_SECONDS.THREE);
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -157,7 +154,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1589
       Description: Remove R-Group member from R-Group. File used for test - R-fragment-structure.mol
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R5']);
   });
@@ -168,7 +168,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1588
       Description: Change R-Group definition for multiple R-Group members. File used for test - R-fragment-structure.mol
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R7']);
   });
@@ -199,7 +202,6 @@ test.describe('Open Ketcher', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await delay(DELAY_IN_SECONDS.THREE);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
@@ -220,7 +222,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1591
       Description: R-Group definition is not deleted when root structure was deleted
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
   });
@@ -229,7 +234,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1590
   Description: Delete R-Group member
   */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
 
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await page.getByText('R8').click();

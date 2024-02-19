@@ -64,7 +64,7 @@ import {
   ModalContainer,
 } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
-import { EditorClassName } from './constants';
+import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
 import {
   StyledIconButton,

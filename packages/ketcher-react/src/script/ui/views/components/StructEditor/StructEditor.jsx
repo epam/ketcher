@@ -60,6 +60,9 @@ function setupEditor(editor, props, oldProps = {}) {
       }
     }
   });
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor, props) {
@@ -249,7 +252,6 @@ class StructEditor extends Component {
     });
 
     this.editorRef.current.addEventListener('wheel', this.handleWheel);
-    this.editor.render.observeCanvasResize();
   }
 
   componentWillUnmount() {

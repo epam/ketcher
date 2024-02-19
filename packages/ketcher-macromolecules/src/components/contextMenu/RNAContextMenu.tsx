@@ -7,7 +7,7 @@ import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
 import { createPortal } from 'react-dom';
-import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from '../../constants';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 
 export const RNAContextMenu = () => {
   const RNA_TAB_INDEX = 2;

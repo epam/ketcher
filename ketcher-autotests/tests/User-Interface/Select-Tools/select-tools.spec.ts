@@ -11,6 +11,7 @@ import {
   drawBenzeneRing,
   clickOnAtom,
   selectDropdownTool,
+  openFileAndAddToCanvas,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
@@ -49,5 +50,15 @@ test.describe('Select tools tests', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
+  });
+
+  test('Attachment points are highlited with CTRL+A', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4043
+      Description: Attachment points are highlited with CTRL+A
+      Note: At the moment the test is not working correctly until bug is fixed. Attachment points are not fully highlited.
+    */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await page.keyboard.press('Control+a');
   });
 });

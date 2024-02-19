@@ -8,8 +8,9 @@ import { Phosphate, Sugar, Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SnakeMode } from 'application/editor/modes/internal';
+import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { CoreEditor } from 'application/editor/internal';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -51,7 +52,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       (this.polymerBond.secondMonomer &&
         !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer)) ||
       (this.polymerBond.secondMonomer &&
-        this.polymerBond.firstMonomer.isMonomerTypeDifferentForSnakeMode(
+        this.polymerBond.firstMonomer.isMonomerTypeDifferentForChaining(
           this.polymerBond.secondMonomer,
         ))
     ) {
@@ -79,8 +80,9 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     const isSameAttachmentPoints =
       firstMonomerAttachmentPoint === secondMonomerAttachmentPoint;
+    const editor = CoreEditor.provideEditorInstance();
     return (
-      SnakeMode.isEnabled &&
+      editor?.mode instanceof SnakeMode &&
       isAttachmentPointsEnabledForSnakeBond &&
       !isSameAttachmentPoints
     );

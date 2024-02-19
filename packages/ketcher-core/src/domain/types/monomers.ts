@@ -1,4 +1,12 @@
-import { BaseMonomer, Struct } from 'domain/entities';
+import {
+  BaseMonomer,
+  Chem,
+  Peptide,
+  Phosphate,
+  RNABase,
+  Struct,
+  Sugar,
+} from 'domain/entities';
 import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 
@@ -30,15 +38,16 @@ export type MonomerItemType = {
   seqId?: number;
 };
 
-export type AttachmentPointName =
-  | 'R1'
-  | 'R2'
-  | 'R3'
-  | 'R4'
-  | 'R5'
-  | 'R6'
-  | 'R7'
-  | 'R8';
+export enum AttachmentPointName {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
 
 export const attachmentPointNames = [
   'R1',
@@ -65,3 +74,5 @@ export type AttachmentPointConstructorParams = {
   angle: number;
   isSnake: boolean;
 };
+
+export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;

@@ -1,1 +1,1 @@
-export * from './SnakeMode';
+export * from './BaseMode';

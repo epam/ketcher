@@ -26,9 +26,10 @@ import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
-import { SnakeMode } from './modes/internal';
-import { initHotKeys, keyNorm } from '../../utilities/keynorm';
-
+import { initHotKeys, keyNorm } from 'utilities';
+import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
+import { BaseMode } from 'application/editor/modes/internal';
+import assert from 'assert';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
@@ -52,6 +53,7 @@ export class CoreEditor {
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
+  public mode: BaseMode = new FlexMode();
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
 
@@ -147,19 +149,25 @@ export class CoreEditor {
     }
   }
 
-  // todo we need to create abstraction layer for modes in future similar to the tools layer
-  private onSelectMode(isSnakeMode: boolean) {
-    const command = SnakeMode.setSnakeMode(editor, isSnakeMode);
-    const modelChanges = this.drawingEntitiesManager.reArrangeChains(
-      this.canvas.width.baseVal.value,
-      isSnakeMode,
-    );
-
-    command.merge(modelChanges);
-
+  private onSelectMode(
+    data:
+      | LayoutMode
+      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+  ) {
+    const mode = typeof data === 'object' ? data.mode : data;
+    const ModeConstructor = modesMap[mode];
+    assert(ModeConstructor);
     const history = new EditorHistory(this);
-    history.update(command);
-    this.renderersContainer.update(command);
+    this.mode = new ModeConstructor(this.mode.modeName);
+    const command = this.mode.initialize();
+    history.update(
+      command,
+      typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+    );
+  }
+
+  public setMode(mode: BaseMode) {
+    this.mode = mode;
   }
 
   public onSelectHistory(name: HistoryOperationType) {

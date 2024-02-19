@@ -52,7 +52,7 @@ import {
   selectMonomers,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
-import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,
@@ -93,6 +93,7 @@ import {
   clearFavorites,
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
+import { LayoutModeButton } from 'components/LayoutModeButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -265,6 +266,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     <>
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
+          <LayoutModeButton />
           {togglerComponent}
           <FullscreenButton />
         </Layout.Top>
@@ -334,13 +336,10 @@ function MenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
   const activeMenuItems = [activeTool];
-  const isSnakeMode = useSnakeMode();
-  if (isSnakeMode) activeMenuItems.push('snake-mode');
+
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-    } else if (name === 'snake-mode') {
-      editor.events.selectMode.dispatch(!isSnakeMode);
     } else if (name === 'undo' || name === 'redo') {
       editor.events.selectHistory.dispatch(name);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
@@ -401,9 +400,6 @@ function MenuComponent() {
           title="Single Bond (1)"
           testId="single-bond"
         />
-      </Menu.Group>
-      <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item

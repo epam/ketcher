@@ -1,8 +1,10 @@
 import { BaseMonomer } from './BaseMonomer';
 import { RNABase } from './RNABase';
 import { Phosphate } from './Phosphate';
-import { Peptide } from './Peptide';
-import { Chem } from './Chem';
+import { AttachmentPointName } from 'domain/types';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer: BaseMonomer) {
@@ -47,53 +49,66 @@ export class Sugar extends BaseMonomer {
 
     // If other monomer is RNABase, attach it to R3 or open modal
     if (otherMonomer instanceof RNABase) {
-      if (this.isAttachmentPointExistAndFree('R3')) {
-        return 'R3';
+      if (this.isAttachmentPointExistAndFree(AttachmentPointName.R3)) {
+        return AttachmentPointName.R3;
       } else return;
     }
 
     // If we chose a specific AP on some Phosphate, we want to determine the correct AP on this Sugar
     if (potentialPointOnOther) {
       if (
-        potentialPointOnOther === 'R1' &&
-        this.isAttachmentPointExistAndFree('R2')
+        potentialPointOnOther === AttachmentPointName.R1 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
-        return 'R2';
+        return AttachmentPointName.R2;
       } else if (
-        potentialPointOnOther !== 'R1' &&
-        this.isAttachmentPointExistAndFree('R1')
+        potentialPointOnOther !== AttachmentPointName.R1 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
-        return 'R1';
+        return AttachmentPointName.R1;
       } else {
         return;
       }
     }
 
     if (
-      otherMonomer.isAttachmentPointExistAndFree('R1') &&
-      this.isAttachmentPointExistAndFree('R2')
+      otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     if (
-      otherMonomer.isAttachmentPointExistAndFree('R2') &&
-      this.isAttachmentPointExistAndFree('R1')
+      otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     if (
-      !otherMonomer.isAttachmentPointExistAndFree('R1') &&
-      this.isAttachmentPointExistAndFree('R1')
+      !otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return undefined;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
-    return monomerToChain instanceof Peptide || monomerToChain instanceof Chem;
+  public get SubChainConstructor() {
+    return RnaSubChain;
+  }
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return ![PhosphateSubChain, RnaSubChain].includes(
+      monomerToChain.SubChainConstructor,
+    );
+  }
+
+  public get isPartOfRna(): boolean {
+    return (
+      this.attachmentPointsToBonds.R3?.getAnotherMonomer(this) instanceof
+      RNABase
+    );
   }
 }

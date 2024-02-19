@@ -1,7 +1,8 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Peptide } from 'domain/entities/Peptide';
-import { Sugar } from './Sugar';
-import { Phosphate } from './Phosphate';
+import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class Chem extends BaseMonomer {
   public getValidSourcePoint(monomer?: BaseMonomer) {
@@ -12,9 +13,13 @@ export class Chem extends BaseMonomer {
     return Peptide.prototype.getValidTargetPoint.call(this, monomer);
   }
 
-  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
-    return (
-      monomerToChain instanceof Sugar || monomerToChain instanceof Phosphate
+  public get SubChainConstructor() {
+    return ChemSubChain;
+  }
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return ![PeptideSubChain, ChemSubChain].includes(
+      monomerToChain.SubChainConstructor,
     );
   }
 }

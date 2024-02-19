@@ -12,6 +12,11 @@ import {
 } from 'application/formatters/types/ket';
 import { Bond } from 'domain/entities/bond';
 import { isNumber } from 'lodash';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -19,9 +24,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > = {};
 
-  public chosenFirstAttachmentPointForBond: string | null;
-  public potentialSecondAttachmentPointForBond: string | null;
-  public chosenSecondAttachmentPointForBond: string | null;
+  public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
+  public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
+  public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
@@ -74,15 +79,21 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.attachmentPointsVisible = false;
   }
 
-  public setChosenFirstAttachmentPoint(attachmentPoint: string | null) {
+  public setChosenFirstAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.chosenFirstAttachmentPointForBond = attachmentPoint;
   }
 
-  public setChosenSecondAttachmentPoint(attachmentPoint: string | null) {
+  public setChosenSecondAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.chosenSecondAttachmentPointForBond = attachmentPoint;
   }
 
-  public setPotentialSecondAttachmentPoint(attachmentPoint: string | null) {
+  public setPotentialSecondAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.potentialSecondAttachmentPointForBond = attachmentPoint;
   }
 
@@ -109,7 +120,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public abstract getValidSourcePoint(
     monomer?: BaseMonomer,
-  ): string | undefined;
+  ): AttachmentPointName | undefined;
 
   public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 
@@ -154,7 +165,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get R1AttachmentPoint(): AttachmentPointName | undefined {
     if (this.attachmentPointsToBonds.R1 === null) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return undefined;
@@ -162,7 +173,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get R2AttachmentPoint(): AttachmentPointName | undefined {
     if (this.attachmentPointsToBonds.R2 === null) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     return undefined;
@@ -184,10 +195,18 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.renderer = renderer;
   }
 
-  public forEachBond(callback: (polymerBond: PolymerBond) => void) {
+  public forEachBond(
+    callback: (
+      polymerBond: PolymerBond,
+      attachmentPointName: AttachmentPointName,
+    ) => void,
+  ) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName]) {
-        callback(this.attachmentPointsToBonds[attachmentPointName]);
+        callback(
+          this.attachmentPointsToBonds[attachmentPointName],
+          attachmentPointName as AttachmentPointName,
+        );
       }
     }
   }
@@ -445,7 +464,19 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.firstFreeAttachmentPoint;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(_monomerToChain: BaseMonomer) {
-    return true;
+  abstract get SubChainConstructor():
+    | typeof RnaSubChain
+    | typeof ChemSubChain
+    | typeof PhosphateSubChain
+    | typeof PeptideSubChain;
+
+  public isMonomerTypeDifferentForChaining(
+    monomerToChain: SubChainNode | BaseMonomer,
+  ) {
+    return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
+  }
+
+  public get isPartOfRna() {
+    return false;
   }
 }

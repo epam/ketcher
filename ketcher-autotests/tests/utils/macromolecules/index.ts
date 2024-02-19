@@ -30,11 +30,16 @@ export async function hideMonomerPreview(page: Page) {
     .waitFor({ state: 'detached' });
 }
 
-export async function scrollWithMouseWheel(page: Page, zoomLevelDelta: number) {
+export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
   await page.keyboard.down('Control');
   await page.mouse.wheel(0, zoomLevelDelta);
   await page.keyboard.up('Control');
+}
+
+export async function scrollDown(page: Page, scrollDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.wheel(0, scrollDelta);
 }
 
 export async function chooseFileFormat(

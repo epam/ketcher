@@ -9,7 +9,7 @@ import {
   openFileAndAddToCanvas,
   selectRectangleArea,
   selectSingleBondTool,
-  selectSnakeBondTool,
+  selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   turnOnMacromoleculesEditor,
@@ -97,7 +97,7 @@ test.describe('Undo Redo', () => {
     Description: Add monomers and bonds, activate snake mode and do undo redo
     */
 
-    await selectSnakeBondTool(page);
+    await selectSnakeLayoutModeTool(page);
     await clickUndo(page);
     await takeEditorScreenshot(page);
   });
@@ -338,7 +338,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Pressing Undo/Redo toggle snake mode.
     */
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);

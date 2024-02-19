@@ -1,6 +1,8 @@
 import { BaseMonomer } from './BaseMonomer';
-import { Phosphate } from './Phosphate';
-import { Sugar } from './Sugar';
+import { AttachmentPointName } from 'domain/types';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class Peptide extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer) {
@@ -12,30 +14,33 @@ export class Peptide extends BaseMonomer {
     }
     if (secondMonomer?.potentialSecondAttachmentPointForBond) {
       if (
-        secondMonomer?.potentialSecondAttachmentPointForBond === 'R1' &&
-        this.isAttachmentPointExistAndFree('R2')
+        secondMonomer?.potentialSecondAttachmentPointForBond ===
+          AttachmentPointName.R1 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
-        return 'R2';
+        return AttachmentPointName.R2;
       }
       if (
-        secondMonomer?.potentialSecondAttachmentPointForBond === 'R2' &&
-        this.isAttachmentPointExistAndFree('R1')
+        secondMonomer?.potentialSecondAttachmentPointForBond ===
+          AttachmentPointName.R2 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
-        return 'R1';
+        return AttachmentPointName.R1;
       }
       return;
     }
     if (
-      (!secondMonomer || secondMonomer.isAttachmentPointExistAndFree('R1')) &&
-      this.isAttachmentPointExistAndFree('R2')
+      (!secondMonomer ||
+        secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1)) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
     if (
-      this.isAttachmentPointExistAndFree('R1') &&
-      secondMonomer?.isAttachmentPointExistAndFree('R2')
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
+      secondMonomer?.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return undefined;
@@ -50,38 +55,44 @@ export class Peptide extends BaseMonomer {
     }
     if (firstMonomer?.chosenFirstAttachmentPointForBond) {
       if (
-        firstMonomer?.chosenFirstAttachmentPointForBond === 'R1' &&
-        this.isAttachmentPointExistAndFree('R2')
+        firstMonomer?.chosenFirstAttachmentPointForBond ===
+          AttachmentPointName.R1 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
-        return 'R2';
+        return AttachmentPointName.R2;
       }
       if (
-        firstMonomer?.chosenFirstAttachmentPointForBond === 'R2' &&
-        this.isAttachmentPointExistAndFree('R1')
+        firstMonomer?.chosenFirstAttachmentPointForBond ===
+          AttachmentPointName.R2 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
-        return 'R1';
+        return AttachmentPointName.R1;
       }
       return;
     }
     if (
-      this.isAttachmentPointExistAndFree('R1') &&
-      firstMonomer.isAttachmentPointExistAndFree('R2')
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
+      firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
     if (
-      firstMonomer.isAttachmentPointExistAndFree('R1') &&
-      this.isAttachmentPointExistAndFree('R2')
+      firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     return undefined;
   }
 
-  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
-    return (
-      monomerToChain instanceof Sugar || monomerToChain instanceof Phosphate
+  public get SubChainConstructor() {
+    return PeptideSubChain;
+  }
+
+  public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
+    return ![PeptideSubChain, ChemSubChain].includes(
+      monomerToChain.SubChainConstructor,
     );
   }
 }

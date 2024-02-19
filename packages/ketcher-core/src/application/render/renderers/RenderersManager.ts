@@ -18,7 +18,7 @@ import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
 import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
-  getRnaBaseMonomerFromSugar,
+  getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 
@@ -79,6 +79,15 @@ export class RenderersManager {
     drawingEntity.baseRenderer?.show(this.theme);
   }
 
+  public deleteAllDrawingEntities() {
+    this.monomers.forEach((monomerRenderer) => {
+      monomerRenderer.remove();
+    });
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      polymerBondRenderer.remove();
+    });
+  }
+
   public deleteMonomer(monomer: BaseMonomer) {
     monomer.renderer?.remove();
     this.monomers.delete(monomer.id);
@@ -119,8 +128,8 @@ export class RenderersManager {
     recalculateBeginning = true,
   ) {
     polymerBond.renderer?.remove();
-    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints();
-    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints();
+    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
+    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
     this.polymerBonds.delete(polymerBond.id);
     if (recalculateEnumeration) {
       this.markForReEnumeration();
@@ -166,7 +175,7 @@ export class RenderersManager {
   ) {
     let currentEnumeration = _currentEnumeration;
     if (rnaComponentRenderer instanceof SugarRenderer) {
-      const rnaBaseMonomer = getRnaBaseMonomerFromSugar(
+      const rnaBaseMonomer = getRnaBaseFromSugar(
         rnaComponentRenderer.monomer as Sugar,
       );
       if (rnaBaseMonomer instanceof RNABase) {
@@ -237,7 +246,7 @@ export class RenderersManager {
       }
       if (
         monomerRenderer instanceof RNABaseRenderer &&
-        !monomerRenderer.monomer.isAttachmentPointUsed('R1')
+        !monomerRenderer.monomer.isAttachmentPointUsed(AttachmentPointName.R1)
       ) {
         monomerRenderer.setEnumeration(null);
         monomerRenderer.redrawEnumeration();
@@ -263,7 +272,7 @@ export class RenderersManager {
         monomerRenderer.reDrawChainBeginning();
       }
       if (monomerRenderer instanceof SugarRenderer) {
-        const rnaBaseMonomer = getRnaBaseMonomerFromSugar(
+        const rnaBaseMonomer = getRnaBaseFromSugar(
           monomerRenderer.monomer as Sugar,
         );
         if (
@@ -327,8 +336,8 @@ export class RenderersManager {
     monomer.renderer?.updateAttachmentPoints();
   }
 
-  public update(modelChanges: Command) {
-    modelChanges.execute(this);
+  public update(modelChanges?: Command) {
+    modelChanges?.execute(this);
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

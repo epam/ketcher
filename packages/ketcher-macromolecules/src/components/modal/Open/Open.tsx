@@ -25,6 +25,7 @@ import {
   CoreEditor,
   KetcherLogger,
   EditorHistory,
+  SequenceMode,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -127,8 +128,22 @@ const addToCanvas = ({
     editor.drawingEntitiesManager,
   );
   const editorHistory = new EditorHistory(editor);
-  editorHistory.update(modelChanges);
+  const isSequenceMode = editor.mode instanceof SequenceMode;
+
   editor.renderersContainer.update(modelChanges);
+  editorHistory.update(modelChanges);
+
+  if (isSequenceMode) {
+    modelChanges.setUndoOperationReverse();
+    editor.events.selectMode.dispatch({
+      mode: 'flex-layout-mode',
+      mergeWithLatestHistoryCommand: true,
+    });
+    editor.events.selectMode.dispatch({
+      mode: 'sequence-layout-mode',
+      mergeWithLatestHistoryCommand: true,
+    });
+  }
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file

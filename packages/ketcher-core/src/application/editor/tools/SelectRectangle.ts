@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from '../shared/coordinates';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -38,7 +40,7 @@ class SelectRectangle implements BaseTool {
 
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection) return;
+      if (!selection || editor.mode instanceof SequenceMode) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -100,6 +102,11 @@ class SelectRectangle implements BaseTool {
 
   mousedown(event) {
     const renderer = event.target.__data__;
+
+    if (renderer instanceof BaseSequenceRenderer) {
+      return;
+    }
+
     let modelChanges: Command;
     if (renderer instanceof BaseRenderer && !event.shiftKey) {
       this.moveStarted = true;

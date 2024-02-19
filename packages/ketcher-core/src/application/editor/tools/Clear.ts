@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { BaseTool } from 'application/editor/tools/Tool';
 
 class ClearTool implements BaseTool {
@@ -22,6 +23,10 @@ class ClearTool implements BaseTool {
   constructor(private editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
+
+    if (editor.mode instanceof SequenceMode) {
+      return;
+    }
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
     this.editor.renderersContainer.update(modelChanges);

@@ -18,6 +18,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
+  selectSnakeLayoutModeTool,
 } from '@utils';
 
 test.describe('Import-Saving-Files', () => {
@@ -327,7 +328,7 @@ test.describe('Import-Saving-Files', () => {
     Description: Sequence of Peptides displaying according to snake view mockup.
     */
     await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -342,7 +343,7 @@ test.describe('Import-Saving-Files', () => {
       'Molfiles-V3000/snake-mode-peptides.mol',
       page,
     );
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -357,7 +358,7 @@ test.describe('Import-Saving-Files', () => {
       'Molfiles-V3000/snake-mode-peptides.mol',
       page,
     );
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     const expectedFile = await getMolfile(page);
     await saveToFile(
       'Molfiles-V3000/snake-mode-peptides-expected.mol',

@@ -37,7 +37,7 @@ import {
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditor, EditorSelection } from 'application/editor';
+import { CoreEditor, EditorSelection } from 'application/editor/internal';
 import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';

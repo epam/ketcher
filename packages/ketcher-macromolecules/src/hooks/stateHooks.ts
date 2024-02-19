@@ -18,27 +18,28 @@ import { useCallback, useEffect, useState } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
 import { selectEditor } from 'state/common';
+import { LayoutMode } from 'ketcher-core';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export function useSnakeMode() {
+export function useLayoutMode() {
   const editor = useAppSelector(selectEditor);
-  const [snakeMode, setSnakeMode] = useState(false);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>('flex-layout-mode');
 
-  const onSnakeModeChange = useCallback(
-    (newSnakeMode: boolean) => {
-      setSnakeMode(newSnakeMode);
+  const onLayoutModeChange = useCallback(
+    (newLayoutMode: LayoutMode) => {
+      setLayoutMode(newLayoutMode);
     },
-    [setSnakeMode],
+    [setLayoutMode],
   );
   useEffect(() => {
-    editor?.events.snakeModeChange.add(onSnakeModeChange);
+    editor?.events.layoutModeChange.add(onLayoutModeChange);
 
     return () => {
-      editor?.events.snakeModeChange.remove(onSnakeModeChange);
+      editor?.events.layoutModeChange.remove(onLayoutModeChange);
     };
-  }, [onSnakeModeChange, editor?.events.snakeModeChange]);
+  }, [onLayoutModeChange, editor?.events.layoutModeChange]);
 
-  return snakeMode;
+  return layoutMode;
 }

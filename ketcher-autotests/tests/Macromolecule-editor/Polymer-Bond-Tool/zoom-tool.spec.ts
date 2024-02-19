@@ -11,7 +11,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 import {
-  scrollWithMouseWheel,
+  zoomWithMouseWheel,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
 
@@ -187,7 +187,7 @@ test.describe('Zoom Tool', () => {
   }) => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 800, y: 800 };
-    await scrollWithMouseWheel(page, ZOOM_STEP);
+    await zoomWithMouseWheel(page, ZOOM_STEP);
     await selectRectangleSelectionTool(page);
     await selectRectangleArea(
       page,
@@ -198,10 +198,10 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await scrollWithMouseWheel(page, -ZOOM_STEP);
+    await zoomWithMouseWheel(page, -ZOOM_STEP);
     await takeEditorScreenshot(page);
 
-    await scrollWithMouseWheel(page, -ZOOM_STEP);
+    await zoomWithMouseWheel(page, -ZOOM_STEP);
   });
 
   test('Scroll canvas by mouse wheel', async ({ page }) => {

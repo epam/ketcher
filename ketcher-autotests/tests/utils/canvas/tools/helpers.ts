@@ -61,6 +61,14 @@ export async function selectSnakeLayoutModeTool(page: Page) {
   await snakeModeButton.click();
 }
 
+export async function selectSequenceLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const sequenceModeButton = page.getByTestId('sequence-layout-mode');
+
+  await sequenceModeButton.waitFor({ state: 'visible' });
+  await sequenceModeButton.click();
+}
+
 export async function selectFlexLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
   const flexModeButton = page.getByTestId('flex-layout-mode');

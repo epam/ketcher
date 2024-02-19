@@ -1,6 +1,7 @@
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  clickInTheMiddleOfTheScreen,
   clickRedo,
   clickUndo,
   dragMouseTo,
@@ -376,5 +377,22 @@ test.describe('Undo-Redo tests', () => {
       await page.getByTestId('redo').click();
     }
     await takeEditorScreenshot(page);
+  });
+
+  test('Check that after undoing and redoing all steps, Undo and Redo buttons turn gray', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Undo-Redo tests
+    Description: Undo and Redo buttons turn gray.
+    The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
+    */
+    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('undo').click();
+    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await page.getByTestId('redo').click();
+    await takeLeftToolbarMacromoleculeScreenshot(page);
   });
 });

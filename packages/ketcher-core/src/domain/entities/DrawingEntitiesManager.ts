@@ -1167,32 +1167,9 @@ export class DrawingEntitiesManager {
       return isFirstMonomerWithR2R1connection || isSingleMonomerOrNucleoside;
     });
 
-    return firstMonomersInChains;
-  }
-
-  get firstMonomersInChains() {
-    const firstMonomersInChains = Array.from(this.monomers.values()).filter(
-      (monomer) => {
-        const polymerBond = monomer.getBondByAttachmentPoint(
-          AttachmentPointName.R2,
-        );
-        const nextMonomer =
-          polymerBond?.firstMonomer === monomer
-            ? polymerBond.secondMonomer
-            : polymerBond?.firstMonomer;
-        return (
-          !monomer.attachmentPointsToBonds.R1 &&
-          monomer.attachmentPointsToBonds.R2 &&
-          nextMonomer?.getAttachmentPointByBond(
-            monomer.attachmentPointsToBonds.R2,
-          ) === 'R1'
-        );
-      },
-    );
-
     firstMonomersInChains.sort((monomer1, monomer2) => {
       if (
-        monomer2.position.x + monomer2.position.y <
+        monomer2.position.x + monomer2.position.y >
         monomer1.position.x + monomer1.position.y
       ) {
         return -1;

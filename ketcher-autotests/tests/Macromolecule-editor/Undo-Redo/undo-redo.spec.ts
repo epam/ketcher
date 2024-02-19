@@ -288,12 +288,14 @@ test.describe('Undo-Redo tests', () => {
       await page.getByText(entity).locator('..').first().click();
     }
 
-    for (let i = 0; i < 6; i++) {
+    const numberOfPress = 6;
+
+    for (let i = 0; i < numberOfPress; i++) {
       await page.keyboard.press('Control+z');
     }
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < numberOfPress; i++) {
       await page.keyboard.press('Control+y');
     }
     await takeEditorScreenshot(page);

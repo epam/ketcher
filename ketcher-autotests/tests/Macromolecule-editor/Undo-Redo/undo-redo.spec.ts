@@ -174,12 +174,14 @@ test.describe('Undo-Redo tests', () => {
       await page.getByText(entity).locator('..').first().click();
     }
 
-    for (let i = 0; i < 9; i++) {
+    const numberOfPress = 9;
+
+    for (let i = 0; i < numberOfPress; i++) {
       await page.getByTestId('undo').click();
     }
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < numberOfPress; i++) {
       await page.getByTestId('redo').click();
     }
     await takeEditorScreenshot(page);

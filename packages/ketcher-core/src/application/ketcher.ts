@@ -321,6 +321,7 @@ export class Ketcher {
           this,
         );
 
+        struct.rescale();
         this.#editor.struct(struct);
         this.#editor.zoomAccordingContent(struct);
         this.#editor.centerStruct();
@@ -341,6 +342,7 @@ export class Ketcher {
           this,
         );
 
+        struct.rescale();
         this.#editor.structToAddFragment(struct);
       }
     }, this.eventBus);

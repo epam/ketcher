@@ -338,7 +338,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Pressing Undo/Redo toggle snake mode.
     */
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
-    await page.getByTestId('snake-mode').click();
+    await selectSnakeLayoutModeTool(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);

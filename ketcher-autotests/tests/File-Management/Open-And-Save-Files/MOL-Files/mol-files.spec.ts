@@ -7,6 +7,7 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -605,11 +606,6 @@ test.describe('Open and Save file', () => {
         path: 'Molfiles-V3000/rgroup-V3000.mol',
       },
       {
-        testName: 'Open/Save V3000 mol file contains more than 900 symbols',
-        path: 'Molfiles-V3000/more-900-atoms.mol',
-        isSlow: true,
-      },
-      {
         testName: 'Open/Save V3000 mol file contains Sgroup',
         path: 'Molfiles-V3000/multi-V3000.mol',
       },
@@ -649,13 +645,26 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
-        if (file.isSlow) {
-          test.setTimeout(120_000);
-        }
         await openFileAndAddToCanvas(file.path, page);
         await takeEditorScreenshot(page);
       });
     }
+  });
+
+  test.describe('Open file', () => {
+    /*
+     * Test case: EPMLSOPKET-1852
+     * Description: The structure is correctly rendered on the canvas
+     */
+    test('Open V3000 mol file contains more than 900 symbols', async ({
+      page,
+    }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        'Molfiles-V3000/more-900-atoms.mol',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    });
   });
 
   test.describe('Save file', () => {
@@ -675,13 +684,6 @@ test.describe('Open and Save file', () => {
         pathToOpen: 'Molfiles-V3000/rgroup-V3000.mol',
         pathToExpected: 'Molfiles-V3000/rgroup-V3000-expected.mol',
         format: 'v3000',
-      },
-      {
-        testName: 'Open/Save V3000 mol file contains more than 900 symbols',
-        pathToOpen: 'Molfiles-V3000/more-900-atoms.mol',
-        pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
-        format: 'v3000',
-        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -705,10 +707,6 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
-        if (file.isSlow) {
-          test.setTimeout(120_000);
-        }
-
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
         const expectedFile = await getMolfile(
@@ -729,6 +727,36 @@ test.describe('Open and Save file', () => {
         expect(molFile).toEqual(molFileExpected);
       });
     }
+  });
+
+  test('Save V3000 mol file contains more than 900 symbols', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1859(2)
+     * Description: v3000 mol file contains more than 900 symbolsis opened and saved correctly
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/more-900-atoms.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/more-900-atoms-expected.mol',
+      expectedFile,
+    );
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/more-900-atoms-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
   });
 
   test.skip('V3000 mol file contains different Bond properties', async ({

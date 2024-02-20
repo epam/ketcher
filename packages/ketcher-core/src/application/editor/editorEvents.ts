@@ -70,6 +70,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       editor.events.selectTool.dispatch('erase');
+      editor.events.selectTool.dispatch('select-rectangle');
     },
   },
   clear: {

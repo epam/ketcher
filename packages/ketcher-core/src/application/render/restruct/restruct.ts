@@ -156,7 +156,7 @@ class ReStruct {
         this.sgroupData.set(id, new ReDataSGroupData(item));
       } // [MK] sort of a hack, we use the SGroup id for the data field id
       if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
-        this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
+        this.molecule.functionalGroups.add(new FunctionalGroup(item));
       }
     });
   }

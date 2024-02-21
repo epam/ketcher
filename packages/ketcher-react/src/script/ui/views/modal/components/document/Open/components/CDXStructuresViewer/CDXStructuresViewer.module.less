@@ -18,17 +18,19 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  padding: 1em 2em;
+  padding: 1em;
   gap: 1em;
   max-width: 60em;
   max-height: 30em;
+  min-width: 400px;
+  min-height: 200px;
   border-bottom: 1px solid #e1e5ea;
 }
 
 .structuresWrapper {
   display: flex;
   flex-direction: row;
-  gap: 2em;
+  gap: 1em;
   height: 225px;
   justify-content: space-between;
 }
@@ -88,6 +90,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex: 1;
 }
 
 .imageWrapper {
@@ -113,6 +116,10 @@
 
 @media only screen {
   @container (min-width: 900px) {
+    .wrapper {
+      padding: 1.5em;
+    }
+
     .imageWrapper {
       width: 450px;
       height: 325px;
@@ -124,6 +131,7 @@
 
     .structuresWrapper {
       height: 325px;
+      gap: 1.5em;
     }
   }
 }

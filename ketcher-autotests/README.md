@@ -142,3 +142,11 @@ Run this command in the directory "ketcher-autotests"
 - `npm run report` show report
 - `npm run docker:update` update all snapshots
 - `npm run docker:update:test -- "test_title"` update only 1 snapshot with test_title
+
+### Known issues
+
+The "file name too long" error in Git is related to the maximum length of file names in the operating system. In most cases, this happens on Windows systems, where the maximum path length to a file is 260 characters.
+
+One way to work around this limitation in Git is to use the command git config --system core.longpaths true. This command allows Git to work with long file names on Windows that exceed the maximum path length.
+
+If you do not have administrator rights, you can try to modify the Git configuration for the current user using the command git config --global core.longpaths true. This command will modify the Git settings only for your user account, and administrator rights are not required to execute it.

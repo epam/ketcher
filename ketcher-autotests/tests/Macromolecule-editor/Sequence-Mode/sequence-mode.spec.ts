@@ -6,6 +6,8 @@ import {
   selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -28,6 +30,84 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Switch from flex view to sequence view to snake view and back to flex.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3648
+    Description: Switching between modes occurs with a visual change in monomers and their compounds depending on the mode.
+    */
+    const ZOOM_OUT_VALUE = 800;
+    const SCROLL_DOWN_VALUE = 600;
+    await openFileAndAddToCanvas('KET/monomers-chains.ket', page);
+    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await scrollDown(page, SCROLL_DOWN_VALUE);
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await scrollDown(page, SCROLL_DOWN_VALUE);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3648
+    Description: Nucleotides are connected through R2-R1 bonds, these bonds are not visually represented,
+    and nucleotides are depicted as symbols forming a word.
+    */
+    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3648
+    Description: All phosphates not part of nucleotides are displayed as "p" symbols, 
+    including last phosphate connected to last nucleoside.
+    */
+    await openFileAndAddToCanvas(
+      'KET/phosphates-not-part-of-nucleoside.ket',
+      page,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test sequence display for long DNA/RNA', async ({ page }) => {
+    /* 
+    Test case: #3648
+    Description: Sequence of letters is divided into groups of tens, and enumeration 
+    is displayed only for every ten nucleotides and the last nucleotide.
+    Sequence contains up to 30 nucleotides, it is aligned in one line.
+    Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
+    according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
+    */
+    await openFileAndAddToCanvas('Molfiles-V3000/dna-long.mol', page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test sequence display for long Peptides chains', async ({ page }) => {
+    /* 
+    Test case: #3648
+    Description: Sequence of letters is divided into groups of tens, and enumeration 
+    is displayed only for every ten nucleotides and the last nucleotide.
+    Sequence contains up to 30 nucleotides, it is aligned in one line.
+    Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
+    according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
+    */
+    await openFileAndAddToCanvas('KET/50-peptides-and-2-chems.ket', page);
+    await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

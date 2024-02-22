@@ -281,7 +281,8 @@ export class Struct {
       if (bondSet!.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aidMap!)));
     });
 
-    this.sgroups.forEach((sg) => {
+    const sgroupIdMap = {};
+    this.sgroups.forEach((sg, sgroupId) => {
       if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
       const oldSgroup = sg;
 
@@ -292,6 +293,8 @@ export class Struct {
 
       const id = cp.sgroups.add(sg);
       sg.id = id;
+
+      sgroupIdMap[sgroupId] = id;
 
       sg.atoms.forEach((aid) => {
         const atom = cp.atoms.get(aid);
@@ -306,7 +309,10 @@ export class Struct {
 
     this.functionalGroups.forEach((fg) => {
       if (fg.relatedSGroup.atoms.some((aid) => !atomSet!.has(aid))) return;
-      fg = FunctionalGroup.clone(fg);
+      const sgroup = cp.sgroups.get(sgroupIdMap[fg.relatedSGroupId]);
+      // It is possible that there is no sgroup in case of templates library rendering
+      // Sgroup is deleteing before render to show templates without brackets (see RenderStruct.prepareStruct method)
+      fg = sgroup ? new FunctionalGroup(sgroup) : FunctionalGroup.clone(fg);
       cp.functionalGroups.add(fg);
     });
 

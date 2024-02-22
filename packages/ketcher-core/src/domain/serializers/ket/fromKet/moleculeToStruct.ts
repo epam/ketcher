@@ -67,9 +67,11 @@ export function moleculeToStruct(ketItem: any): Struct {
   }
 
   if (ketItem.sgroups) {
-    ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup)),
-    );
+    ketItem.sgroups.forEach((sgroupData) => {
+      const sgroup = sgroupToStruct(sgroupData);
+      const id = struct.sgroups.add(sgroup);
+      sgroup.id = id;
+    });
   }
 
   struct.initHalfBonds();

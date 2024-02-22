@@ -74,7 +74,11 @@ export class RenderStruct {
         return;
       }
 
+      console.log('-----START-------');
+      console.log(struct.sgroups);
       const preparedStruct = this.prepareStruct(struct);
+      console.log(preparedStruct.sgroups);
+      console.log('-----END-------');
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();

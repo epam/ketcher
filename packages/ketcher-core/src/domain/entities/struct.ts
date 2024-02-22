@@ -814,11 +814,8 @@ export class Struct {
 
   rescale() {
     let avg = this.getAvgBondLength();
-    if (avg < 0 && !this.isReaction) {
-      // TODO [MK] this doesn't work well for reactions as the distances between
-      // the atoms in different components are generally larger than those between atoms of a single component
-      // (KETCHER-341)
-      avg = this.getAvgClosestAtomDistance();
+    if (avg <= 0) {
+      return;
     }
     if (avg < 1e-3) avg = 1;
 

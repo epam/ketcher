@@ -160,7 +160,7 @@ class TemplatePreview {
     }
   }
 
-  private hideConnectedPreview() {
+  public hideConnectedPreview() {
     if (this.connectedPreviewAction) {
       this.connectedPreviewAction.perform(this.restruct);
       this.connectedPreviewAction = null;

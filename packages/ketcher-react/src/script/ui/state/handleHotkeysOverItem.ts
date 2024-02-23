@@ -19,6 +19,7 @@ import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv';
 import SGroupTool from '../../editor/tool/sgroup';
 import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
+import TemplateTool from '../../editor/tool/template';
 
 type TNewAction = {
   tool?: string;
@@ -80,6 +81,11 @@ function handleEraser({
 }: HandleHotkeyOverItemProps) {
   const item = mapItemsToArrays(hoveredItem);
   const itemType = Object.keys(hoveredItem)[0];
+  const activeTool = editor.tool();
+
+  if (activeTool instanceof TemplateTool) {
+    activeTool.templatePreview?.hideConnectedPreview();
+  }
 
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
     isFunctionalGroupChange(
@@ -88,11 +94,9 @@ function handleEraser({
     ).then((res) => {
       res && eraseItem({ editor, item });
     });
-
-    return;
+  } else {
+    eraseItem({ editor, item });
   }
-
-  eraseItem({ editor, item });
 }
 
 function handleDialog({

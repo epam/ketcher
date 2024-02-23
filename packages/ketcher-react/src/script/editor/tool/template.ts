@@ -111,7 +111,7 @@ class TemplateTool implements Tool {
   private readonly mode: any;
   private readonly template: any;
   private readonly findItems: Array<string>;
-  private templatePreview: TemplatePreview | null;
+  public templatePreview: TemplatePreview | null;
   private dragCtx: any;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;

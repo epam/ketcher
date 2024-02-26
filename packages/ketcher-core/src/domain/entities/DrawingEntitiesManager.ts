@@ -42,12 +42,15 @@ import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  isValidNucleoside,
+  isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-
+import { Nucleoside } from './Nucleoside';
+import { Nucleotide } from './Nucleotide';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
@@ -74,6 +77,7 @@ type NucleotideOrNucleoside = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
+  public chainsCollection: ChainsCollection = new ChainsCollection();
   public micromoleculesHiddenEntities: Struct = new Struct();
   get selectedEntities() {
     return this.allEntities.filter(
@@ -147,8 +151,23 @@ export class DrawingEntitiesManager {
     }
   }
 
-  public selectDrawingEntity(drawingEntity: DrawingEntity) {
+  public selectDrawingEntities(drawingEntities: DrawingEntity[]) {
     const command = this.unselectAllDrawingEntities();
+    drawingEntities.forEach((drawingEntity: DrawingEntity) => {
+      drawingEntity.turnOnSelection();
+      const operation = new DrawingEntitySelectOperation(drawingEntity);
+      command.addOperation(operation);
+    });
+    return command;
+  }
+
+  public selectDrawingEntity(
+    drawingEntity: DrawingEntity,
+    singleSelection = true,
+  ) {
+    const command = singleSelection
+      ? this.unselectAllDrawingEntities()
+      : new Command();
 
     drawingEntity.turnOnSelection();
     command.merge(this.createDrawingEntitySelectionCommand(drawingEntity));
@@ -170,12 +189,17 @@ export class DrawingEntitiesManager {
 
     this.allEntities.forEach(([, drawingEntity]) => {
       if (drawingEntity.selected) {
-        drawingEntity.turnOffSelection();
-        const operation = new DrawingEntitySelectOperation(drawingEntity);
-        command.addOperation(operation);
+        command.merge(this.unselectDrawingEntity(drawingEntity));
       }
     });
 
+    return command;
+  }
+
+  public unselectDrawingEntity(drawingEntity: DrawingEntity) {
+    const command = new Command();
+    drawingEntity.turnOffSelection();
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     return command;
   }
 
@@ -184,6 +208,20 @@ export class DrawingEntitiesManager {
 
     this.allEntities.forEach(([, drawingEntity]) => {
       if (!drawingEntity.selected) {
+        drawingEntity.turnOnSelection();
+        const operation = new DrawingEntitySelectOperation(drawingEntity);
+        command.addOperation(operation);
+      }
+    });
+
+    return command;
+  }
+
+  public reRelectAllDrawingEntities() {
+    const command = new Command();
+
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (drawingEntity.selected) {
         drawingEntity.turnOnSelection();
         const operation = new DrawingEntitySelectOperation(drawingEntity);
         command.addOperation(operation);
@@ -346,10 +384,6 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     this.allEntities.forEach(([, drawingEntity]) => {
-      if (drawingEntity.baseRenderer instanceof BaseSequenceRenderer) {
-        return;
-      }
-
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,
@@ -363,6 +397,67 @@ export class DrawingEntitiesManager {
       }
     });
     return command;
+  }
+
+  public selectIfLocatedInSequenceEditingArea(
+    rectangleTopLeftPoint: Vec2,
+    rectangleBottomRightPoint: Vec2,
+  ) {
+    const command = new Command();
+
+    this.allEntities.forEach(([, drawingEntity]) => {
+      const isValueChanged = drawingEntity.selectIfLocatedInSequenceEditingArea(
+        rectangleTopLeftPoint,
+        rectangleBottomRightPoint,
+      );
+
+      if (isValueChanged) {
+        const selectionCommand =
+          this.createDrawingEntitySelectionCommand(drawingEntity);
+
+        command.merge(selectionCommand);
+      }
+    });
+    return command;
+  }
+
+  public selectIfLocatedInSequenceHotKeySelectionArea(event) {
+    const command = new Command();
+    const sequenceEditSelectStartedNodes = this.allEntities.filter(
+      ([, drawingEntity]) => {
+        if (
+          drawingEntity.baseRenderer &&
+          drawingEntity.baseRenderer instanceof BaseSequenceItemRenderer &&
+          drawingEntity.baseRenderer.isSequenceEditStart
+        ) {
+          return drawingEntity;
+        }
+        return null;
+      },
+    );
+    if (sequenceEditSelectStartedNodes.length > 0) {
+      console.log(
+        'sequenceEditSelectStartedNodes----',
+        sequenceEditSelectStartedNodes,
+      );
+      if (event.code === 'ArrowRight') {
+        // TODO: select letters according the chain order
+      }
+    }
+    return command;
+  }
+
+  public addCursorLineForLetters(cursorPoint: Vec2) {
+    return this.allEntities.forEach(([, drawingEntity]) => {
+      drawingEntity.removeCursorLine();
+      drawingEntity.addCursorLine(cursorPoint);
+    });
+  }
+
+  public removeCursorLineForLetters() {
+    return this.allEntities.some(([, drawingEntity]) =>
+      drawingEntity.removeCursorLine(),
+    );
   }
 
   public startPolymerBondCreationChangeModel(
@@ -1463,7 +1558,7 @@ export class DrawingEntitiesManager {
     editor.renderersContainer.deleteAllDrawingEntities();
 
     SequenceRenderer.show(chainsCollection);
-
+    editor?.renderersContainer.update(this.reRelectAllDrawingEntities());
     return chainsCollection;
   }
 
@@ -1471,8 +1566,19 @@ export class DrawingEntitiesManager {
     const editor = CoreEditor.provideEditorInstance();
 
     this.monomers.forEach((monomer) => {
+      const selected = monomer.selected;
+      if (selected) {
+        // to remove the selection before the corresponding render be removed
+        // because the renders are different with different editor modes
+        editor.renderersContainer.update(this.unselectDrawingEntity(monomer));
+      }
       editor.renderersContainer.deleteMonomer(monomer);
       editor.renderersContainer.addMonomer(monomer);
+      if (selected) {
+        editor.renderersContainer.update(
+          this.selectDrawingEntity(monomer, false),
+        );
+      }
     });
 
     this.polymerBonds.forEach((polymerBond) => {
@@ -1480,7 +1586,30 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
   }
+
+  public getRnaEntitiesForSequenceViewClick(drawingEntity: DrawingEntity) {
+    const drawingEntities: DrawingEntity[] = [];
+    if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
+      const sugar = drawingEntity;
+      if (isValidNucleoside(sugar)) {
+        const nucleoside = Nucleoside.fromSugar(sugar);
+        drawingEntities.push(nucleoside.rnaBase);
+        const r3Bond = sugar.attachmentPointsToBonds.R3;
+        if (r3Bond) drawingEntities.push(r3Bond);
+      } else if (isValidNucleotide(sugar)) {
+        const nucleotide = Nucleotide.fromSugar(sugar);
+        drawingEntities.push(nucleotide.rnaBase);
+        drawingEntities.push(nucleotide.phosphate);
+        const r2Bond = sugar.attachmentPointsToBonds.R2;
+        const r3Bond = sugar.attachmentPointsToBonds.R3;
+        if (r2Bond) drawingEntities.push(r2Bond);
+        if (r3Bond) drawingEntities.push(r3Bond);
+      }
+    }
+    return drawingEntities;
+  }
 }
+
 function getFirstPosition(height: number, lastPosition: Vec2) {
   return new Vec2(MONOMER_START_X_POSITION, lastPosition.y + height);
 }

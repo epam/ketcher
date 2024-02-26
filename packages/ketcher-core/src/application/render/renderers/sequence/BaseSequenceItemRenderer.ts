@@ -2,42 +2,57 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
+  private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
+  private indexInRow = 0;
+  private _rowIndex = 0;
+  private _isSequenceEditStart = false;
 
   constructor(
-    protected node: SubChainNode,
+    public node: SubChainNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
+    private subChain: BaseSubChain,
   ) {
     super(node.monomer);
+    this.indexInRow = this.monomerIndexInChain % this.symbolsInRow;
+    this._rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
   }
+
+  abstract get symbolToDisplay(): string;
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     return undefined;
   }
 
   protected appendHoverAreaElement(): void {}
-
-  drawSelection(): void {}
-
-  moveSelection(): void {}
-
   protected removeHover(): void {}
 
   public get scaledMonomerPosition() {
-    const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
-    const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
-
     return new Vec2(
       this.firstNodeInChainPosition.x +
-        indexInRow * 18 +
-        Math.floor(indexInRow / this.nthSeparationInRow) * 10,
-      this.firstNodeInChainPosition.y + 47 * rowIndex,
+        this.indexInRow * 18 +
+        Math.floor(this.indexInRow / this.nthSeparationInRow) * 10,
+      this.firstNodeInChainPosition.y + 47 * this._rowIndex,
     );
+  }
+
+  public get rowIndex() {
+    return this._rowIndex;
+  }
+
+  public get currentSubChain() {
+    return this.subChain;
+  }
+
+  public get isSequenceEditStart() {
+    return this._isSequenceEditStart;
   }
 
   private appendRootElement() {
@@ -124,7 +139,76 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  abstract get symbolToDisplay(): string;
+  drawSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+    if (this.node.monomer.selected) {
+      this.appendSelection();
+      this.raiseElement();
+    } else {
+      this.removeSelection();
+    }
+  }
+
+  appendCursorLine() {
+    this._isSequenceEditStart = true;
+    return this.rootElement
+      ?.insert('path', ':first-child')
+      .attr('stroke', '#333333')
+      .attr('stroke-width', 1)
+      .attr('class', 'cursor-line')
+      .attr('d', `M-2,-15 L-2,5`)
+      .attr('fill-opacity', 0)
+      .attr('pointer-events', 'none') as never as D3SvgElementSelection<
+      SVGGElement,
+      void
+    >;
+  }
+
+  removeCursorLine() {
+    this._isSequenceEditStart = false;
+    this.rootElement?.selectAll('path').remove();
+  }
+
+  moveSelection(): void {}
+
+  public appendSelection() {
+    if (this.selectionRectangle) {
+      this.selectionRectangle
+        .attr('x', this.scaledMonomerPosition.x - 4)
+        .attr('y', this.scaledMonomerPosition.y - 14)
+        .attr('width', 20)
+        .attr('height', 20);
+    } else {
+      this.selectionBorder = this.rootElement
+        ?.append('use')
+        .attr('href', this.monomerIndexInChain)
+        .attr('stroke', '#57FF8F')
+        .attr('pointer-events', 'none');
+
+      this.selectionRectangle = this.canvas
+        ?.insert('rect', ':first-child')
+        .attr('opacity', '0.7')
+        .attr('fill', '#57FF8F')
+        .attr('x', this.scaledMonomerPosition.x - 4)
+        .attr('y', this.scaledMonomerPosition.y - 14)
+        .attr('width', 20)
+        .attr('height', 20);
+    }
+  }
+
+  public removeSelection() {
+    this.selectionRectangle?.remove();
+    this.selectionBorder?.remove();
+    this.selectionRectangle = undefined;
+    this.selectionBorder = undefined;
+  }
+
+  private raiseElement() {
+    this.selectionRectangle?.raise();
+    this.rootElement?.raise();
+  }
 
   public setEnumeration() {}
   public redrawEnumeration() {}

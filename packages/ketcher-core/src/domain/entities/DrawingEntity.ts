@@ -1,7 +1,7 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import assert from 'assert';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 let id = 0;
 
 export abstract class DrawingEntity {
@@ -51,9 +51,14 @@ export abstract class DrawingEntity {
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
   ) {
-    assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const center = Coordinates.modelToCanvas(this.center);
+    let center = Coordinates.modelToCanvas(this.center);
+    if (
+      this.baseRenderer &&
+      this.baseRenderer instanceof BaseSequenceItemRenderer
+    ) {
+      center = this.baseRenderer.scaledMonomerPosition;
+    }
     if (
       rectangleBottomRightPoint.x > center.x &&
       rectangleBottomRightPoint.y > center.y &&
@@ -68,7 +73,75 @@ export abstract class DrawingEntity {
     return prevSelectedValue !== this.selected;
   }
 
+  public selectIfLocatedInSequenceEditingArea(
+    rectangleTopLeftPoint: Vec2,
+    rectangleBottomRightPoint: Vec2,
+  ) {
+    const prevSelectedValue = this.selected;
+    if (
+      this.baseRenderer &&
+      this.baseRenderer instanceof BaseSequenceItemRenderer
+    ) {
+      const center = this.baseRenderer.scaledMonomerPosition;
+      const halfVerticalDistance =
+        this.baseRenderer.rowIndex > 0 ? 47 / 2 : this.baseRenderer.height / 2;
+      const atSameLineWithBottomRightPoint =
+        rectangleBottomRightPoint.y > center.y - halfVerticalDistance &&
+        rectangleBottomRightPoint.y < center.y + halfVerticalDistance;
+      if (
+        atSameLineWithBottomRightPoint &&
+        rectangleBottomRightPoint.x > center.x &&
+        rectangleTopLeftPoint.x < center.x
+      ) {
+        this.turnOnSelection();
+      } else if (
+        rectangleBottomRightPoint.y > center.y - halfVerticalDistance &&
+        rectangleTopLeftPoint.y < center.y + halfVerticalDistance
+      ) {
+        this.turnOnSelection();
+      } else {
+        this.turnOffSelection();
+      }
+    }
+    return prevSelectedValue !== this.selected;
+  }
+
+  public addCursorLine(cursorPoint: Vec2) {
+    let center;
+    if (
+      this.baseRenderer &&
+      this.baseRenderer instanceof BaseSequenceItemRenderer
+    ) {
+      center = this.baseRenderer.scaledMonomerPosition;
+      const halfVerticalDistance =
+        this.baseRenderer.rowIndex > 0 ? 47 / 2 : this.baseRenderer.height / 2;
+      const atSameLine =
+        cursorPoint.y > center.y - halfVerticalDistance &&
+        cursorPoint.y < center.y + halfVerticalDistance;
+      const isClickedOnLetter =
+        cursorPoint.x > center.x - 9 &&
+        cursorPoint.x < center.x + 9 &&
+        atSameLine;
+      if (isClickedOnLetter) {
+        this.baseRenderer.appendCursorLine();
+      }
+    }
+  }
+
+  public removeCursorLine() {
+    if (
+      this.baseRenderer &&
+      this.baseRenderer instanceof BaseSequenceItemRenderer
+    ) {
+      this.baseRenderer?.removeCursorLine();
+    }
+  }
+
   public setBaseRenderer(renderer: BaseRenderer) {
     this.baseRenderer = renderer;
+  }
+
+  public get isPartOfRna() {
+    return false;
   }
 }

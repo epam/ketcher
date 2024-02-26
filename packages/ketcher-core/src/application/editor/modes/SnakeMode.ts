@@ -19,7 +19,7 @@ export class SnakeMode extends BaseMode {
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);
     command.setUndoOperationReverse();
-
+    editor.events.selectTool.dispatch('select-rectangle');
     return command;
   }
 }

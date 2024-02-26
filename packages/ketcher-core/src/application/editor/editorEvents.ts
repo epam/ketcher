@@ -14,6 +14,7 @@ export function resetEditorEvents() {
     cancelBondCreationViaModal: new Subscription(),
     selectMode: new Subscription(),
     layoutModeChange: new Subscription(),
+    sequenceMode: new Subscription(),
     selectHistory: new Subscription(),
     error: new Subscription(),
     openMonomerConnectionModal: new Subscription(),
@@ -102,6 +103,21 @@ export const hotkeysConfiguration = {
     handler: (editor: CoreEditor) => {
       const modelChanges =
         editor.drawingEntitiesManager.selectAllDrawingEntities();
+      editor.renderersContainer.update(modelChanges);
+    },
+  },
+  'sequence-edit-select': {
+    shortcut: [
+      'Shift+ArrowLeft',
+      'Shift+ArrowUP',
+      'Shift+ArrowRight',
+      'Shift+ArrowDown',
+    ],
+    handler: (editor: CoreEditor, event) => {
+      const modelChanges =
+        editor.drawingEntitiesManager.selectIfLocatedInSequenceHotKeySelectionArea(
+          event,
+        );
       editor.renderersContainer.update(modelChanges);
     },
   },

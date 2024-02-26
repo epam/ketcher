@@ -15,18 +15,22 @@
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from '../shared/coordinates';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { SequenceMode } from '../modes';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
   private moveStarted;
+  private sequenceEditSelectionStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
   private mousePositionBeforeMove = new Vec2(0, 0, 0);
   private canvasResizeObserver?: ResizeObserver;
@@ -40,7 +44,7 @@ class SelectRectangle implements BaseTool {
 
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection || editor.mode instanceof SequenceMode) return;
+      if (!selection) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -102,58 +106,117 @@ class SelectRectangle implements BaseTool {
 
   mousedown(event) {
     const renderer = event.target.__data__;
-
-    if (renderer instanceof BaseSequenceRenderer) {
-      return;
-    }
-
     let modelChanges: Command;
-    if (renderer instanceof BaseRenderer && !event.shiftKey) {
-      this.moveStarted = true;
-      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
-      if (renderer.drawingEntity.selected) {
-        return;
-      } else {
-        modelChanges = this.editor.drawingEntitiesManager.selectDrawingEntity(
-          renderer.drawingEntity,
-        );
-      }
-    } else if (renderer instanceof BaseRenderer && event.shiftKey) {
-      const drawingEntity = renderer.drawingEntity;
-      modelChanges =
-        this.editor.drawingEntitiesManager.addDrawingEntityToSelection(
-          drawingEntity,
-        );
+    this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+    this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
+
+    if (this.editor.sequenceEditMode) {
+      this.editor.drawingEntitiesManager.addCursorLineForLetters(
+        this.editor.lastCursorPositionOfCanvas,
+      );
+      this.sequenceEditSelectionStarted = true;
+      this.brushArea.remove();
     } else {
-      modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      this.createBrush();
+      if (
+        renderer instanceof BaseRenderer &&
+        !event.shiftKey &&
+        !event.ctrlKey
+      ) {
+        this.moveStarted = true;
+        if (renderer.drawingEntity.selected) {
+          return;
+        } else {
+          const drawingEntities = [renderer.drawingEntity].concat(
+            this.editor.drawingEntitiesManager.getRnaEntitiesForSequenceViewClick(
+              renderer.drawingEntity,
+            ),
+          );
+          modelChanges =
+            this.editor.drawingEntitiesManager.selectDrawingEntities(
+              drawingEntities,
+            );
+        }
+      } else if (renderer instanceof BaseRenderer && event.shiftKey) {
+        const drawingEntity = renderer.drawingEntity;
+        modelChanges =
+          this.editor.drawingEntitiesManager.addDrawingEntityToSelection(
+            drawingEntity,
+          );
+      } else if (
+        renderer instanceof BaseSequenceItemRenderer &&
+        event.ctrlKey
+      ) {
+        let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
+          .map((node) => {
+            if (node instanceof Nucleoside) {
+              return [node.sugar, node.rnaBase];
+            } else if (node instanceof Nucleotide) {
+              return [node.sugar, node.rnaBase, node.phosphate];
+            } else {
+              return node.monomer;
+            }
+          })
+          .flat();
+        drawingEntities = drawingEntities.concat(
+          renderer.currentSubChain.bonds,
+        );
+
+        modelChanges =
+          this.editor.drawingEntitiesManager.selectDrawingEntities(
+            drawingEntities,
+          );
+      } else {
+        modelChanges =
+          this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      }
+      this.editor.renderersContainer.update(modelChanges);
     }
-    this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
-    if (this.moveStarted) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x -
-                this.mousePositionAfterMove.x,
-              this.editor.lastCursorPositionOfCanvas.y -
-                this.mousePositionAfterMove.y,
-            ),
-          ),
-        );
-      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+    if (this.sequenceEditSelectionStarted) {
       requestAnimationFrame(() => {
+        // select all the letters in previous lines
+        const topLeftPoint = this.mousePositionAfterMove;
+        const bottomRightPoint = this.editor.lastCursorPositionOfCanvas;
+        const modelChanges =
+          this.editor.drawingEntitiesManager.selectIfLocatedInSequenceEditingArea(
+            topLeftPoint,
+            bottomRightPoint,
+          );
         this.editor.renderersContainer.update(modelChanges);
       });
+    }
+    if (this.moveStarted) {
+      if (this.editor.mode instanceof SequenceMode) {
+        return;
+      } else {
+        const modelChanges =
+          this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+            Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x -
+                  this.mousePositionAfterMove.x,
+                this.editor.lastCursorPositionOfCanvas.y -
+                  this.mousePositionAfterMove.y,
+              ),
+            ),
+          );
+        requestAnimationFrame(() => {
+          this.editor.renderersContainer.update(modelChanges);
+        });
+      }
+      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     }
   }
 
   mouseup(event) {
     const renderer = event.target.__data__;
+    if (this.sequenceEditSelectionStarted) {
+      this.sequenceEditSelectionStarted = false;
+      return;
+    }
     if (this.moveStarted && renderer.drawingEntity?.selected) {
       this.moveStarted = false;
 

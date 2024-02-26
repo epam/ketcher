@@ -22,6 +22,11 @@ import {
   SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
+  SequenceMode,
+  FlexMode,
+  LayoutMode,
+  modesMap,
+  EditorHistory,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -94,6 +99,8 @@ import {
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
+import SequenceModeSwitch from 'components/SequenceModeSwitch/SequenceModeSwitch';
+import assert from 'assert';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -151,6 +158,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
+  const [layoutMode, setLayoutMode] = useState(new FlexMode());
   const monomers = useAppSelector(selectMonomers);
 
   useEffect(() => {
@@ -194,6 +202,31 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       }
     };
 
+    const onChangeSequenceMode = (sequenceMode: boolean) => {
+      editor.sequenceEditMode = sequenceMode;
+      editor.renderersContainer.update(
+        editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
+    };
+
+    const onSelectMode = (
+      data:
+        | LayoutMode
+        | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+    ) => {
+      const mode = typeof data === 'object' ? data.mode : data;
+      const ModeConstructor = modesMap[mode];
+      assert(ModeConstructor);
+      const history = new EditorHistory(editor);
+      editor.mode = new ModeConstructor(editor.mode.modeName);
+      setLayoutMode(editor?.mode);
+      const command = editor.mode.initialize();
+      history.update(
+        command,
+        typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+      );
+    };
+
     if (editor) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
@@ -210,6 +243,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           ),
       );
       editor.events.selectTool.add(handler);
+      editor.events.selectMode.add((isSnakeMode) => onSelectMode(isSnakeMode));
+      editor.events.sequenceMode.add((sequenceMode: boolean) =>
+        onChangeSequenceMode(sequenceMode),
+      );
     }
 
     return () => {
@@ -266,6 +303,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     <>
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
+          {layoutMode instanceof SequenceMode ? <SequenceModeSwitch /> : <></>}
           <LayoutModeButton />
           {togglerComponent}
           <FullscreenButton />

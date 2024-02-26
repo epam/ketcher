@@ -31,10 +31,6 @@ export class SequenceMode extends BaseMode {
       zoom.scrollTo(firstMonomerPosition);
     }
 
-    const turnOffSelectionCommand =
-      editor?.drawingEntitiesManager.unselectAllDrawingEntities();
-    editor?.renderersContainer.update(turnOffSelectionCommand);
-
     modelChanges.merge(command);
 
     editor.events.selectTool.dispatch('select-rectangle');

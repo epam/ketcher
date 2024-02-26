@@ -27,9 +27,8 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { initHotKeys, keyNorm } from 'utilities';
-import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
+import { FlexMode } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import assert from 'assert';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
@@ -54,6 +53,7 @@ export class CoreEditor {
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   public mode: BaseMode = new FlexMode();
+  public sequenceEditMode = false;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
 
@@ -88,7 +88,7 @@ export class CoreEditor {
       event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
 
     if (keySettings[shortcutKey]?.handler && !isInput) {
-      keySettings[shortcutKey].handler(this);
+      keySettings[shortcutKey].handler(this, event);
       event.preventDefault();
     }
   }
@@ -106,7 +106,7 @@ export class CoreEditor {
     this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
       this.onCancelBondCreation(secondMonomer),
     );
-    this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
+
     this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
@@ -147,23 +147,6 @@ export class CoreEditor {
     if (this.tool instanceof PolymerBond) {
       this.tool.handleBondCreationCancellation(secondMonomer);
     }
-  }
-
-  private onSelectMode(
-    data:
-      | LayoutMode
-      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
-  ) {
-    const mode = typeof data === 'object' ? data.mode : data;
-    const ModeConstructor = modesMap[mode];
-    assert(ModeConstructor);
-    const history = new EditorHistory(this);
-    this.mode = new ModeConstructor(this.mode.modeName);
-    const command = this.mode.initialize();
-    history.update(
-      command,
-      typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
-    );
   }
 
   public setMode(mode: BaseMode) {

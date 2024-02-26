@@ -759,26 +759,23 @@ test.describe('Open and Save file', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.skip('V3000 mol file contains different Bond properties', async ({
+  test('V3000 mol file contains different Bond properties', async ({
     page,
   }) => {
     /**
      * Test case: EPMLSOPKET-1853
      * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
      * A file with V3000 format is resaved in V2000 format
-     *
-     * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
-     * https://github.com/epam/ketcher/issues/2378
      */
 
     await openFileAndAddToCanvas(
-      'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
+      'Molfiles-V3000/all-bond-properties-V3000.mol',
       page,
     );
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+      'Molfiles-V2000/all-bond-properties-V2000-expected.mol',
       expectedFile,
     );
 
@@ -787,7 +784,7 @@ test.describe('Open and Save file', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+          'tests/test-data/Molfiles-V2000/all-bond-properties-V2000-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

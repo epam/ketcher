@@ -367,12 +367,13 @@ test.describe('R-Group Fragment Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme('Save as *.cxsmi file', async ({ page }) => {
+  test('Save as *.cxsmi file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1604
     Description: User is able to save the structure with R-group label as .cxsmi file
     */
-    // function await getExtendedSmiles get JSON instead cxsmi file
+    test.fail();
+    // function await getExtendedSmiles but get JSON instead cxsmi file
     await openFileAndAddToCanvas(
       'Extended-SMILES/r1-several-structures.cxsmi',
       page,

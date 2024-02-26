@@ -819,13 +819,13 @@ test.describe('Templates - Functional Group Tools3', () => {
       page,
     );
     await page.getByText('Boc').click();
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await page.keyboard.press('Control+c');
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await clickOnAtom(page, 'C', anyAtom);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', anyAtom);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -842,14 +842,18 @@ test.describe('Templates - Functional Group Tools3', () => {
       'Molfiles-V2000/functional-group-and-benzene.mol',
       page,
     );
-    await page.getByText('Boc').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Boc').click();
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+x');
     });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await clickOnAtom(page, 'C', anyAtom);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', anyAtom);
+    });
     await takeEditorScreenshot(page);
   });
 

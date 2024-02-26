@@ -191,4 +191,18 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3648
+    Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvas('Molfiles-V3000/rna.mol', page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

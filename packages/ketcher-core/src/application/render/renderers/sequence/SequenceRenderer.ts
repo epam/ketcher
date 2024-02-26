@@ -9,11 +9,15 @@ import {
 } from 'domain/helpers/monomers';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class SequenceRenderer {
+  private static caretPosition: [number, number, number] = [-1, -1, -1];
+  private static chainsCollection: ChainsCollection;
   public static show(chainsCollection: ChainsCollection) {
-    this.showNodes(chainsCollection);
-    this.showBonds(chainsCollection);
+    SequenceRenderer.chainsCollection = chainsCollection;
+    this.showNodes(SequenceRenderer.chainsCollection);
+    this.showBonds(SequenceRenderer.chainsCollection);
   }
 
   private static showNodes(chainsCollection: ChainsCollection) {
@@ -30,10 +34,10 @@ export class SequenceRenderer {
 
     let currentMonomerIndexInChain = 0;
 
-    chainsCollection.chains.forEach((chain) => {
+    chainsCollection.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
-      chain.subChains.forEach((subChain) => {
-        subChain.nodes.forEach((node) => {
+      chain.subChains.forEach((subChain, subChainIndex) => {
+        subChain.nodes.forEach((node, nodeIndex) => {
           const renderer = SequenceNodeRendererFactory.fromNode(
             node,
             currentChainStartPosition,
@@ -43,6 +47,9 @@ export class SequenceRenderer {
                 (prev, curr) => prev + curr.nodes.length,
                 0,
               ),
+            chainIndex === SequenceRenderer.caretPosition[0] &&
+              subChainIndex === SequenceRenderer.caretPosition[1] &&
+              nodeIndex === SequenceRenderer.caretPosition[2],
           );
           renderer.show();
           node.monomer.setRenderer(renderer);
@@ -133,5 +140,48 @@ export class SequenceRenderer {
         });
       });
     });
+  }
+
+  public static setCaretPosition(caretPosition: [number, number, number]) {
+    const oldSubChainNode =
+      SequenceRenderer.chainsCollection.chains[caretPosition[0]]?.subChains[
+        caretPosition[1]
+      ]?.nodes[caretPosition[2]];
+    if (oldSubChainNode) {
+      oldSubChainNode.monomer.renderer.isEditting = false;
+      oldSubChainNode.monomer.renderer?.remove();
+      oldSubChainNode.monomer.renderer?.show();
+    }
+    SequenceRenderer.caretPosition = caretPosition;
+    const subChainNode =
+      SequenceRenderer.chainsCollection.chains[caretPosition[0]].subChains[
+        caretPosition[1]
+      ].nodes[caretPosition[2]];
+
+    subChainNode.monomer.renderer.isEditting = true;
+    subChainNode.monomer.renderer?.remove();
+    subChainNode.monomer.renderer?.show();
+  }
+
+  public static setCaretPositionBySequenceItemRenderer(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    let chainIndex = -1;
+    let subChainIndex = -1;
+    let subChainNodeIndex = -1;
+
+    this.chainsCollection.chains.forEach((chain, _chainIndex) => {
+      chain.subChains.forEach((subChain, _subChainIndex) => {
+        subChain.nodes.forEach((node, _nodeIndex) => {
+          if (node.monomer.renderer === sequenceItemRenderer) {
+            chainIndex = _chainIndex;
+            subChainIndex = _subChainIndex;
+            subChainNodeIndex = _nodeIndex;
+          }
+        });
+      });
+    });
+
+    this.caretPosition = [chainIndex, subChainIndex, subChainNodeIndex];
   }
 }

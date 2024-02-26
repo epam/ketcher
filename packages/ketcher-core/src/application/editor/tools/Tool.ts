@@ -40,6 +40,10 @@ interface ToolEventHandler {
   mouseLeaveDrawingEntity?(event: Event): void;
 
   mouseUpMonomer?(event: Event): void;
+
+  rightClickSequence?(event: Event): void;
+
+  editSequence?(): void;
 }
 
 export interface IRnaPreset {

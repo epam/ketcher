@@ -2,10 +2,21 @@ import { CoreEditor } from 'application/editor/internal';
 import { LayoutMode } from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class SequenceMode extends BaseMode {
+  public _isEditMode = false;
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
+  }
+
+  get isEditMode() {
+    return this._isEditMode;
+  }
+
+  set isEditMode(isEditMode) {
+    this._isEditMode = isEditMode;
   }
 
   public initialize() {
@@ -39,6 +50,14 @@ export class SequenceMode extends BaseMode {
 
     editor.events.selectTool.dispatch('select-rectangle');
 
+
+
     return modelChanges;
+  }
+
+  public turnOnEditMode(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    this.isEditMode = true;
+    SequenceRenderer.setCaretPositionBySequenceItemRenderer(sequenceItemRenderer);
+    this.initialize();
   }
 }

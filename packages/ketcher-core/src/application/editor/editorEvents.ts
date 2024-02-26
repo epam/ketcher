@@ -29,6 +29,8 @@ export function resetEditorEvents() {
     mouseOverDrawingEntity: new Subscription(),
     mouseLeaveDrawingEntity: new Subscription(),
     mouseUpMonomer: new Subscription(),
+    rightClickSequence: new Subscription(),
+    editSequence: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -45,6 +47,8 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverDrawingEntity',
   'mouseLeaveDrawingEntity',
   'mouseUpMonomer',
+  'rightClickSequence',
+  'editSequence',
 ];
 
 export const hotkeysConfiguration = {

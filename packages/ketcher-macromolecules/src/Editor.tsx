@@ -94,6 +94,9 @@ import {
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
+import { useContextMenu } from 'react-contexify';
+import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
+import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -152,6 +155,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const monomers = useAppSelector(selectMonomers);
+  const { show: showSequenceContextMenu } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_SEQUENCE });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
@@ -252,6 +256,17 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor, activeTool]);
 
   useEffect(() => {
+    editor?.events.rightClickSequence.add((event) => {
+      showSequenceContextMenu({
+        event,
+        props: {
+          sequenceItemRenderer: event.target.__data__,
+        },
+      });
+    });
+  }, [editor]);
+
+  useEffect(() => {
     editor?.zoomTool.observeCanvasResize();
     return () => {
       editor?.zoomTool.destroy();
@@ -309,6 +324,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <StyledPreview className="polymer-library-preview" />
+      <SequenceItemContextMenu />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

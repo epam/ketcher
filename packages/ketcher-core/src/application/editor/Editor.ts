@@ -27,9 +27,16 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { initHotKeys, keyNorm } from 'utilities';
-import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
+import {
+  FlexMode,
+  LayoutMode,
+  modesMap,
+  SequenceMode,
+} from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
@@ -67,6 +74,7 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.setupHotKeysEvents();
+    this.setupContextMenuEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -93,9 +101,19 @@ export class CoreEditor {
     }
   }
 
-  setupHotKeysEvents() {
+  private setupHotKeysEvents() {
     this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
     document.addEventListener('keydown', this.hotKeyEventHandler);
+  }
+
+  private setupContextMenuEvents() {
+    document.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
+        this.events.rightClickSequence.dispatch(event);
+      }
+      return false;
+    });
   }
 
   private subscribeEvents() {
@@ -114,6 +132,15 @@ export class CoreEditor {
         this.useToolIfNeeded(eventName, event),
       );
     });
+    this.events.editSequence.add((sequenceItemRenderer: BaseSequenceRenderer) => this.onEditSequence(sequenceItemRenderer));
+  }
+
+  private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.turnOnEditMode(sequenceItemRenderer);
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

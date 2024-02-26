@@ -160,3 +160,23 @@
     // TODO: style focus, active, etc
   }
 }
+
+:global {
+  .blinking {
+    & :local {
+      animation: blink 1s infinite;
+    }
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

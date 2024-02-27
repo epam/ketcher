@@ -19,11 +19,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     super(node.monomer);
   }
 
-  get isEditting(): boolean {
+  public get isEditting(): boolean {
     return this._isEditting;
   }
 
-  set isEditting(value: boolean) {
+  public set isEditting(value: boolean) {
     this._isEditting = value;
   }
 
@@ -77,7 +77,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', -2)
       .attr('rx', 2)
       .attr('cursor', 'text')
-      .attr('fill', '#FF7A001A');
+      .attr('fill', this.isEditting ? '#FF7A0033' : '#FF7A001A');
   }
 
   private appendSpacerElement() {
@@ -192,4 +192,5 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public setEnumeration() {}
   public redrawEnumeration() {}
+  public redrawAttachmentPoints() {}
 }

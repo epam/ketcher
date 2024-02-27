@@ -73,8 +73,8 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
-    this.setupHotKeysEvents();
     this.setupContextMenuEvents();
+    this.setupKeyboardEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -99,6 +99,13 @@ export class CoreEditor {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }
+  }
+
+  private setupKeyboardEvents() {
+    this.setupHotKeysEvents();
+    document.addEventListener('keyup', (event: KeyboardEvent) => {
+      this.mode.onKeyUp(event);
+    });
   }
 
   private setupHotKeysEvents() {
@@ -132,7 +139,9 @@ export class CoreEditor {
         this.useToolIfNeeded(eventName, event),
       );
     });
-    this.events.editSequence.add((sequenceItemRenderer: BaseSequenceRenderer) => this.onEditSequence(sequenceItemRenderer));
+    this.events.editSequence.add((sequenceItemRenderer: BaseSequenceRenderer) =>
+      this.onEditSequence(sequenceItemRenderer),
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

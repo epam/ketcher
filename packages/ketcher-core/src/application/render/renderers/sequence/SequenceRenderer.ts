@@ -11,8 +11,10 @@ import { BackBoneBondSequenceRenderer } from 'application/render/renderers/seque
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
+export type SequencePointer = [number, number, number];
+
 export class SequenceRenderer {
-  private static caretPosition: [number, number, number] = [-1, -1, -1];
+  private static caretPosition: SequencePointer = [-1, -1, -1];
   private static chainsCollection: ChainsCollection;
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
@@ -142,11 +144,11 @@ export class SequenceRenderer {
     });
   }
 
-  public static setCaretPosition(caretPosition: [number, number, number]) {
+  public static setCaretPosition(caretPosition: SequencePointer) {
     const oldSubChainNode =
-      SequenceRenderer.chainsCollection.chains[caretPosition[0]]?.subChains[
-        caretPosition[1]
-      ]?.nodes[caretPosition[2]];
+      SequenceRenderer.chainsCollection.chains[this.caretPosition[0]]
+        ?.subChains[this.caretPosition[1]]?.nodes[this.caretPosition[2]];
+
     if (oldSubChainNode) {
       oldSubChainNode.monomer.renderer.isEditting = false;
       oldSubChainNode.monomer.renderer?.remove();
@@ -183,5 +185,107 @@ export class SequenceRenderer {
     });
 
     this.caretPosition = [chainIndex, subChainIndex, subChainNodeIndex];
+  }
+
+  public static moveCaretForward() {
+    this.setCaretPosition(this.nextCaretPosition);
+  }
+
+  public static moveCaretBack() {
+    this.setCaretPosition(this.previousCaretPosition);
+    console.log(this.caretPosition);
+  }
+
+  public static get currentEdittingMonomer() {
+    return SequenceRenderer.getNodeByPointer(this.caretPosition);
+  }
+
+  public static get previousFromCurrentEdittingMonomer() {
+    return SequenceRenderer.getNodeByPointer(
+      SequenceRenderer.previousCaretPosition,
+    );
+  }
+
+  public static get nextFromCurrentEdittingMonomer() {
+    return SequenceRenderer.getNodeByPointer(
+      SequenceRenderer.nextCaretPosition,
+    );
+  }
+
+  private static getNodeByPointer(sequencePointer: SequencePointer) {
+    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
+      ?.subChains[sequencePointer[1]]?.nodes[sequencePointer[2]];
+  }
+
+  private static getSubChainByPointer(sequencePointer: SequencePointer) {
+    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
+      ?.subChains[sequencePointer[1]];
+  }
+
+  private static getChainByPointer(sequencePointer: SequencePointer) {
+    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]];
+  }
+
+  private static get nextCaretPosition() {
+    const currentChainIndex = SequenceRenderer.caretPosition[0];
+    const currentSubChainIndex = SequenceRenderer.caretPosition[1];
+    const currentNodeIndex = SequenceRenderer.caretPosition[2];
+    const nextNodePointer: SequencePointer = [
+      currentChainIndex,
+      currentSubChainIndex,
+      currentNodeIndex + 1,
+    ];
+    const nextSubChainPointer: SequencePointer = [
+      currentChainIndex,
+      currentSubChainIndex + 1,
+      0,
+    ];
+    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, 0];
+
+    return (
+      (this.getNodeByPointer(nextNodePointer) && nextNodePointer) ||
+      (this.getNodeByPointer(nextSubChainPointer) && nextSubChainPointer) ||
+      (this.getNodeByPointer(nextChainPointer) && nextChainPointer) ||
+      this.caretPosition
+    );
+  }
+
+  private static get previousCaretPosition() {
+    const currentChainIndex = SequenceRenderer.caretPosition[0];
+    const currentSubChainIndex = SequenceRenderer.caretPosition[1];
+    const currentNodeIndex = SequenceRenderer.caretPosition[2];
+    const previousNodePointer: SequencePointer = [
+      currentChainIndex,
+      currentSubChainIndex,
+      currentNodeIndex - 1,
+    ];
+    const previousSubChainPointer: SequencePointer = [
+      currentChainIndex,
+      currentSubChainIndex - 1,
+      this.getSubChainByPointer([
+        currentChainIndex,
+        currentSubChainIndex - 1,
+        -1,
+      ])?.nodes.length - 1,
+    ];
+    const previousChainPointer: SequencePointer = [
+      currentChainIndex - 1,
+      this.getChainByPointer([currentChainIndex - 1, -1, -1])?.subChains
+        .length - 1,
+      this.getSubChainByPointer([
+        currentChainIndex - 1,
+        this.getChainByPointer([currentChainIndex - 1, -1, -1])?.subChains
+          .length - 1,
+        -1,
+      ])?.nodes.length - 1,
+    ];
+
+    return (
+      (this.getNodeByPointer(previousNodePointer) && previousNodePointer) ||
+      (this.getNodeByPointer(previousSubChainPointer) &&
+        previousSubChainPointer) ||
+      (this.getNodeByPointer(previousChainPointer) && previousChainPointer) ||
+      this.caretPosition
+    );
   }
 }

@@ -22,4 +22,6 @@ export class SnakeMode extends BaseMode {
 
     return command;
   }
+
+  public onKeyUp(_event: KeyboardEvent) {}
 }

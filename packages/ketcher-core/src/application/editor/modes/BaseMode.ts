@@ -31,4 +31,6 @@ export abstract class BaseMode {
 
     return command;
   }
+
+  abstract onKeyUp(event: KeyboardEvent): void;
 }

@@ -9,7 +9,10 @@ import {
 } from 'domain/helpers/monomers';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import {
+  BaseSequenceItemRenderer,
+  SymbolEditingMode,
+} from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export type SequencePointer = [number, number, number];
 
@@ -145,22 +148,22 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: SequencePointer) {
-    const oldSubChainNode =
-      SequenceRenderer.chainsCollection.chains[this.caretPosition[0]]
-        ?.subChains[this.caretPosition[1]]?.nodes[this.caretPosition[2]];
+    const oldSubChainNode = SequenceRenderer.getNodeByPointer(
+      this.caretPosition,
+    );
 
     if (oldSubChainNode) {
-      oldSubChainNode.monomer.renderer.isEditting = false;
+      oldSubChainNode.monomer.renderer.symbolEditingMode = undefined;
       oldSubChainNode.monomer.renderer?.remove();
       oldSubChainNode.monomer.renderer?.show();
     }
     SequenceRenderer.caretPosition = caretPosition;
-    const subChainNode =
-      SequenceRenderer.chainsCollection.chains[caretPosition[0]].subChains[
-        caretPosition[1]
-      ].nodes[caretPosition[2]];
+    const subChainNode = SequenceRenderer.getNodeByPointer(caretPosition);
 
-    subChainNode.monomer.renderer.isEditting = true;
+    subChainNode.monomer.renderer.symbolEditingMode =
+      caretPosition[2] === -1
+        ? SymbolEditingMode.BEFORE
+        : SymbolEditingMode.AFTER;
     subChainNode.monomer.renderer?.remove();
     subChainNode.monomer.renderer?.show();
   }
@@ -193,7 +196,6 @@ export class SequenceRenderer {
 
   public static moveCaretBack() {
     this.setCaretPosition(this.previousCaretPosition);
-    console.log(this.caretPosition);
   }
 
   public static get currentEdittingMonomer() {
@@ -214,7 +216,9 @@ export class SequenceRenderer {
 
   private static getNodeByPointer(sequencePointer: SequencePointer) {
     return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
-      ?.subChains[sequencePointer[1]]?.nodes[sequencePointer[2]];
+      ?.subChains[sequencePointer[1]]?.nodes[
+      sequencePointer[2] === -1 ? 0 : sequencePointer[2]
+    ];
   }
 
   private static getSubChainByPointer(sequencePointer: SequencePointer) {
@@ -240,7 +244,7 @@ export class SequenceRenderer {
       currentSubChainIndex + 1,
       0,
     ];
-    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, 0];
+    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, -1];
 
     return (
       (this.getNodeByPointer(nextNodePointer) && nextNodePointer) ||
@@ -284,6 +288,11 @@ export class SequenceRenderer {
       (this.getNodeByPointer(previousNodePointer) && previousNodePointer) ||
       (this.getNodeByPointer(previousSubChainPointer) &&
         previousSubChainPointer) ||
+      (currentNodeIndex === 0 && [
+        currentChainIndex,
+        currentSubChainIndex,
+        -1,
+      ]) ||
       (this.getNodeByPointer(previousChainPointer) && previousChainPointer) ||
       this.caretPosition
     );

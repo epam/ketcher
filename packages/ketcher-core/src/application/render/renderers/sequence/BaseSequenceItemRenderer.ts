@@ -4,6 +4,11 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor, SequenceMode } from 'application/editor';
 
+export enum SymbolEditingMode {
+  BEFORE = 'BEFORE',
+  AFTER = 'AFTER',
+}
+
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
@@ -14,17 +19,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
-    private _isEditting: boolean,
+    private _symbolEditingMode?: SymbolEditingMode,
   ) {
     super(node.monomer);
   }
 
-  public get isEditting(): boolean {
-    return this._isEditting;
+  public get symbolEditingMode() {
+    return this._symbolEditingMode;
   }
 
-  public set isEditting(value: boolean) {
-    this._isEditting = value;
+  public set symbolEditingMode(
+    symbolEditingMode: SymbolEditingMode | undefined,
+  ) {
+    this._symbolEditingMode = symbolEditingMode;
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -69,15 +76,26 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendBackgroundElement() {
-    return this.rootElement
+    const backgroundElement = this.rootElement
       ?.append('rect')
       .attr('width', 16)
       .attr('height', 20)
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
-      .attr('cursor', 'text')
-      .attr('fill', this.isEditting ? '#FF7A0033' : '#FF7A001A');
+      .attr('cursor', 'text');
+
+    if (this.isSequenceEditModeTurnedOn) {
+      backgroundElement?.attr(
+        'fill',
+        this.symbolEditingMode === SymbolEditingMode.AFTER
+          ? '#FF7A0033'
+          : '#FF7A001A',
+      );
+    } else {
+      backgroundElement?.attr('fill', 'transparent');
+    }
+    return backgroundElement;
   }
 
   private appendSpacerElement() {
@@ -135,26 +153,37 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.counterElement = undefined;
   }
 
-  public appendCaretElement() {
+  public appendCaretElementAfterSymbol() {
     this.spacerElement
       ?.append('line')
-      .attr('x1', 4)
+      .attr('x1', 0)
       .attr('y1', -1)
-      .attr('x2', 4)
+      .attr('x2', 0)
       .attr('y2', 21)
+      .attr('stroke', '#333')
+      .attr('class', 'blinking');
+  }
+
+  public appendCaretElementBeforeSymbol() {
+    this.rootElement
+      ?.append('line')
+      .attr('x1', -2)
+      .attr('y1', -17)
+      .attr('x2', -2)
+      .attr('y2', 5)
       .attr('stroke', '#333')
       .attr('class', 'blinking');
   }
 
   show(): void {
     this.rootElement = this.appendRootElement();
-    if (this.isSequenceEditModeTurnedOn) {
-      this.appendBackgroundElement();
-      this.spacerElement = this.appendSpacerElement();
-    }
+    this.spacerElement = this.appendSpacerElement();
+    this.appendBackgroundElement();
 
-    if (this.isEditting) {
-      this.appendCaretElement();
+    if (this.symbolEditingMode === SymbolEditingMode.AFTER) {
+      this.appendCaretElementAfterSymbol();
+    } else if (this.symbolEditingMode === SymbolEditingMode.BEFORE) {
+      this.appendCaretElementBeforeSymbol();
     }
 
     this.textElement = this.rootElement

@@ -51,8 +51,6 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-18059
-    // Task need to be fix - Undo is not working when Select tool is"Off"'
-    // https://github.com/epam/ketcher/issues/3005 - fix in Ketcher 2.17
     const pointX = 350;
     const pointY = 350;
     await resetSelectToolOff(page);

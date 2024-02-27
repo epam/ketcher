@@ -2,31 +2,36 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
+  private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
 
   constructor(
-    protected node: SubChainNode,
+    public node: SubChainNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
+    private subChain: BaseSubChain,
   ) {
     super(node.monomer);
   }
+
+  abstract get symbolToDisplay(): string;
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     return undefined;
   }
 
   protected appendHoverAreaElement(): void {}
-
-  drawSelection(): void {}
-
-  moveSelection(): void {}
-
   protected removeHover(): void {}
+
+  public get currentSubChain() {
+    return this.subChain;
+  }
 
   public get scaledMonomerPosition() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
@@ -38,6 +43,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
       this.firstNodeInChainPosition.y + 47 * rowIndex,
     );
+  }
+
+  public get center() {
+    return this.scaledMonomerPosition.add(new Vec2(4.5, 0, 0));
   }
 
   private appendRootElement() {
@@ -124,7 +133,60 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  abstract get symbolToDisplay(): string;
+  drawSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+    if (this.node.monomer.selected) {
+      this.appendSelection();
+      this.raiseElement();
+    } else {
+      this.removeSelection();
+    }
+  }
+
+  public appendSelection() {
+    if (this.selectionRectangle) {
+      this.selectionRectangle
+        .attr('x', this.scaledMonomerPosition.x - 4)
+        .attr('y', this.scaledMonomerPosition.y - 14)
+        .attr('width', 20)
+        .attr('height', 20);
+    } else {
+      this.selectionBorder = this.rootElement
+        ?.append('use')
+        .attr('href', this.monomerIndexInChain)
+        .attr('stroke', '#57FF8F')
+        .attr('pointer-events', 'none');
+
+      this.selectionRectangle = this.canvas
+        ?.insert('rect', ':first-child')
+        .attr('opacity', '0.7')
+        .attr('fill', '#57FF8F')
+        .attr('x', this.scaledMonomerPosition.x - 4)
+        .attr('y', this.scaledMonomerPosition.y - 14)
+        .attr('width', 20)
+        .attr('height', 20);
+    }
+  }
+
+  public removeSelection() {
+    this.selectionRectangle?.remove();
+    this.selectionBorder?.remove();
+    this.selectionRectangle = undefined;
+    this.selectionBorder = undefined;
+  }
+
+  private raiseElement() {
+    this.selectionRectangle?.raise();
+    this.rootElement?.raise();
+  }
+
+  public remove() {
+    this.rootElement?.remove();
+    this.rootElement = undefined;
+    this.removeSelection();
+  }
 
   public setEnumeration() {}
   public redrawEnumeration() {}

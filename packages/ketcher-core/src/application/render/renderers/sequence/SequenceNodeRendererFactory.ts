@@ -6,6 +6,7 @@ import { NucleotideSequenceItemRenderer } from 'application/render/renderers/seq
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { Nucleoside } from 'domain/entities/Nucleoside';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -13,6 +14,7 @@ export class SequenceNodeRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
+    subChain: BaseSubChain,
   ) {
     let RendererClass;
 
@@ -45,6 +47,7 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
+      subChain,
     );
   }
 }

@@ -15,13 +15,16 @@
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { Coordinates } from '../shared/coordinates';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
+import { SequenceMode } from '../modes';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -37,10 +40,23 @@ class SelectRectangle implements BaseTool {
     this.history = new EditorHistory(this.editor);
     this.destroy();
     this.createBrush();
+  }
 
+  private createBrush() {
+    this.brushArea = select(this.editor.canvas)
+      .insert('g', ':first-child')
+      .attr('id', 'rectangle-selection-area');
+
+    const brushed = (mo) => {
+      if (mo.selection) {
+        this.brushArea.call(this.brush.clear);
+      }
+    };
+
+    this.brush = d3Brush();
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection || editor.mode instanceof SequenceMode) return;
+      if (!selection) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -56,20 +72,6 @@ class SelectRectangle implements BaseTool {
         this.editor.renderersContainer.update(modelChanges);
       });
     });
-  }
-
-  private createBrush() {
-    this.brushArea = select(this.editor.canvas)
-      .insert('g', ':first-child')
-      .attr('id', 'rectangle-selection-area');
-
-    const brushed = (mo) => {
-      if (mo.selection) {
-        this.brushArea.call(this.brush.clear);
-      }
-    };
-
-    this.brush = d3Brush();
     this.brush.on('end', brushed);
     this.brushArea.call(this.brush);
 
@@ -102,28 +104,51 @@ class SelectRectangle implements BaseTool {
 
   mousedown(event) {
     const renderer = event.target.__data__;
-
-    if (renderer instanceof BaseSequenceRenderer) {
-      return;
-    }
+    this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+    this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
 
     let modelChanges: Command;
-    if (renderer instanceof BaseRenderer && !event.shiftKey) {
+    if (renderer instanceof BaseRenderer && !event.shiftKey && !event.ctrlKey) {
       this.moveStarted = true;
-      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
+      const drawingEntities = [renderer.drawingEntity].concat(
+        this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
+          renderer.drawingEntity,
+          false,
+        ),
+      );
+      modelChanges =
+        this.editor.drawingEntitiesManager.selectDrawingEntities(
+          drawingEntities,
+        );
+    } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;
-      } else {
-        modelChanges = this.editor.drawingEntitiesManager.selectDrawingEntity(
-          renderer.drawingEntity,
-        );
       }
-    } else if (renderer instanceof BaseRenderer && event.shiftKey) {
-      const drawingEntity = renderer.drawingEntity;
+      const drawingEntities = [renderer.drawingEntity].concat(
+        this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
+          renderer.drawingEntity,
+        ),
+      );
       modelChanges =
-        this.editor.drawingEntitiesManager.addDrawingEntityToSelection(
-          drawingEntity,
+        this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+          drawingEntities,
+        );
+    } else if (renderer instanceof BaseSequenceItemRenderer && event.ctrlKey) {
+      let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
+        .map((node) => {
+          if (node instanceof Nucleoside) {
+            return [node.sugar, node.rnaBase];
+          } else if (node instanceof Nucleotide) {
+            return [node.sugar, node.rnaBase, node.phosphate];
+          } else {
+            return node.monomer;
+          }
+        })
+        .flat();
+      drawingEntities = drawingEntities.concat(renderer.currentSubChain.bonds);
+      modelChanges =
+        this.editor.drawingEntitiesManager.selectDrawingEntities(
+          drawingEntities,
         );
     } else {
       modelChanges =
@@ -133,6 +158,9 @@ class SelectRectangle implements BaseTool {
   }
 
   mousemove() {
+    if (this.editor.mode instanceof SequenceMode) {
+      return;
+    }
     if (this.moveStarted) {
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(

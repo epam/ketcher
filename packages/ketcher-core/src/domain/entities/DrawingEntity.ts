@@ -2,6 +2,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 let id = 0;
 
 export abstract class DrawingEntity {
@@ -53,7 +54,10 @@ export abstract class DrawingEntity {
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const center = Coordinates.modelToCanvas(this.center);
+    let center = Coordinates.modelToCanvas(this.center);
+    if (this.baseRenderer instanceof BaseSequenceRenderer) {
+      center = this.baseRenderer.center;
+    }
     if (
       rectangleBottomRightPoint.x > center.x &&
       rectangleBottomRightPoint.y > center.y &&
@@ -70,5 +74,9 @@ export abstract class DrawingEntity {
 
   public setBaseRenderer(renderer: BaseRenderer) {
     this.baseRenderer = renderer;
+  }
+
+  public get isPartOfRna() {
+    return false;
   }
 }

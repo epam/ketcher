@@ -97,6 +97,7 @@ import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
+import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -155,10 +156,11 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const monomers = useAppSelector(selectMonomers);
-  const { show: showSequenceContextMenu } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_SEQUENCE });
+  const { show: showSequenceContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SEQUENCE,
+  });
 
   useEffect(() => {
-    dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
@@ -170,6 +172,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       dispatch(clearFavorites());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(createEditor({ theme, canvas: canvasRef.current, monomers }));
+  }, [monomers]);
 
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
@@ -309,6 +315,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SugarAvatar />
               <PhosphateAvatar />
               <RNABaseAvatar />
+              <SequenceStartArrow />
             </defs>
             <g className="drawn-structures"></g>
           </svg>

@@ -6,6 +6,9 @@ import { NucleotideSequenceItemRenderer } from 'application/render/renderers/seq
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { Nucleoside } from 'domain/entities/Nucleoside';
+import { SymbolEditingMode } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -13,7 +16,7 @@ export class SequenceNodeRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
-    isEditting = false,
+    symbolEditingMode?: SymbolEditingMode,
   ) {
     let RendererClass;
 
@@ -23,6 +26,9 @@ export class SequenceNodeRendererFactory {
         break;
       case Nucleoside:
         RendererClass = NucleotideSequenceItemRenderer;
+        break;
+      case EmptySequenceNode:
+        RendererClass = EmptySequenceItemRenderer;
         break;
       default:
         switch (node.monomer.constructor) {
@@ -46,7 +52,7 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
-      isEditting,
+      symbolEditingMode,
     );
   }
 }

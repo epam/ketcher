@@ -1,5 +1,5 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { BaseMonomer, Sugar } from 'domain/entities';
+import { BaseMonomer, Sugar, Vec2 } from 'domain/entities';
 import {
   getNextMonomerInChain,
   getPhosphateFromSugar,
@@ -13,8 +13,10 @@ import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
-  constructor(firstMonomer: BaseMonomer) {
-    this.fillSubChains(firstMonomer);
+  constructor(firstMonomer?: BaseMonomer) {
+    if (firstMonomer) {
+      this.fillSubChains(firstMonomer);
+    }
   }
 
   public add(monomer: BaseMonomer) {

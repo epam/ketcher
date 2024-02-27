@@ -9,10 +9,13 @@ export enum SymbolEditingMode {
   AFTER = 'AFTER',
 }
 
+const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
+
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
+  public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   constructor(
     protected node: SubChainNode,
@@ -43,8 +46,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   drawSelection(): void {}
 
   moveSelection(): void {}
-
-  protected removeHover(): void {}
 
   public get scaledMonomerPosition() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
@@ -85,16 +86,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('rx', 2)
       .attr('cursor', 'text');
 
-    if (this.isSequenceEditModeTurnedOn) {
-      backgroundElement?.attr(
-        'fill',
-        this.symbolEditingMode === SymbolEditingMode.AFTER
-          ? '#FF7A0033'
-          : '#FF7A001A',
-      );
-    } else {
-      backgroundElement?.attr('fill', 'transparent');
-    }
+    backgroundElement?.attr(
+      'fill',
+      this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',
+    );
+
     return backgroundElement;
   }
 
@@ -142,6 +138,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
+  private get isBeginningOfChain() {
+    return this.monomerIndexInChain === 0;
+  }
+
   private removeCounterElement() {
     this.counterElement
       ?.data([])
@@ -156,9 +156,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public appendCaretElementAfterSymbol() {
     this.spacerElement
       ?.append('line')
-      .attr('x1', 0)
+      .attr('x1', 4)
       .attr('y1', -1)
-      .attr('x2', 0)
+      .attr('x2', 4)
       .attr('y2', 21)
       .attr('stroke', '#333')
       .attr('class', 'blinking');
@@ -175,15 +175,48 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('class', 'blinking');
   }
 
-  show(): void {
-    this.rootElement = this.appendRootElement();
-    this.spacerElement = this.appendSpacerElement();
-    this.appendBackgroundElement();
+  private drawHover() {
+    const editor = CoreEditor.provideEditorInstance();
 
-    if (this.symbolEditingMode === SymbolEditingMode.AFTER) {
-      this.appendCaretElementAfterSymbol();
-    } else if (this.symbolEditingMode === SymbolEditingMode.BEFORE) {
-      this.appendCaretElementBeforeSymbol();
+    this.backgroundElement.attr(
+      'fill',
+      editor?.mode?.isEditMode ? '#FF7A0033' : '#EFF2F5',
+    );
+  }
+
+  private removeHover() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.backgroundElement.attr(
+      'fill',
+      editor?.mode?.isEditMode ? '#FF7A001A' : 'transparent',
+    );
+  }
+
+  private appendChainStartArrow() {
+    this.rootElement
+      ?.append('use')
+      .attr('x', -17)
+      .attr('y', -27)
+      .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
+  }
+
+  show(): void {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.rootElement = this.appendRootElement();
+    if (this.isBeginningOfChain && editor?.mode?.isEditMode) {
+      this.appendChainStartArrow();
+    }
+    this.spacerElement = this.appendSpacerElement();
+    this.backgroundElement = this.appendBackgroundElement();
+
+    if (editor?.mode?.isEditMode) {
+      if (this.symbolEditingMode === SymbolEditingMode.AFTER) {
+        this.appendCaretElementAfterSymbol();
+      } else if (this.symbolEditingMode === SymbolEditingMode.BEFORE) {
+        this.appendCaretElementBeforeSymbol();
+      }
     }
 
     this.textElement = this.rootElement
@@ -199,21 +232,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
 
     this.rootElement.on('mouseover', () => {
-      if (!this.rootElement || this.counterElement) {
-        return;
-      }
-      this.counterElement = this.appendCounterElement(this.rootElement);
+      this.drawHover();
     });
 
     this.rootElement.on('mouseleave', () => {
-      if (
-        !this.rootElement ||
-        !this.counterElement ||
-        this.needDisplayCounter
-      ) {
-        return;
-      }
-      this.removeCounterElement();
+      this.removeHover();
     });
   }
 

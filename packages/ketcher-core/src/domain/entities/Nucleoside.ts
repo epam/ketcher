@@ -34,4 +34,16 @@ export class Nucleoside {
   public get monomer() {
     return this.sugar;
   }
+
+  public get monomers() {
+    return [this.sugar, this.rnaBase];
+  }
+
+  public get firstMonomerInNode() {
+    return this.sugar;
+  }
+
+  public get lastMonomerInNode() {
+    return this.sugar;
+  }
 }

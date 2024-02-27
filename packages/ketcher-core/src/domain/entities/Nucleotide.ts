@@ -47,4 +47,16 @@ export class Nucleotide {
   public get monomer() {
     return this.sugar;
   }
+
+  public get monomers() {
+    return [this.sugar, this.rnaBase, this.phosphate];
+  }
+
+  public get firstMonomerInNode() {
+    return this.sugar;
+  }
+
+  public get lastMonomerInNode() {
+    return this.phosphate;
+  }
 }

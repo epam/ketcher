@@ -37,9 +37,12 @@ import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { groupBy } from 'lodash';
+
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
+  monomersLibrary: MonomerItemType[];
 }
 
 function isMouseMainButtonPressed(event: MouseEvent) {
@@ -54,6 +57,7 @@ export class CoreEditor {
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
+  public _monomersLibrary: MonomerItemType[];
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
@@ -64,9 +68,14 @@ export class CoreEditor {
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
 
-  constructor({ theme, canvas }: ICoreEditorConstructorParams) {
+  constructor({
+    theme,
+    canvas,
+    monomersLibrary,
+  }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    this._monomersLibrary = monomersLibrary;
     resetEditorEvents();
     this.events = editorEvents;
     this.subscribeEvents();
@@ -86,6 +95,18 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  public get monomersLibrary() {
+    return groupBy(
+      this._monomersLibrary.map((libraryItem) => {
+        return {
+          ...libraryItem,
+          label: libraryItem.props.MonomerName,
+        };
+      }),
+      (libraryItem) => libraryItem.props.MonomerType,
+    );
   }
 
   private handleHotKeyEvents(event) {
@@ -310,6 +331,7 @@ export class CoreEditor {
         //   }
         // }
 
+        this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
         if (isToolUsed) {
           return true;
@@ -353,6 +375,13 @@ export class CoreEditor {
     }
 
     return false;
+  }
+
+  private useModeIfNeeded(
+    eventHandlerName: ToolEventHandlerName,
+    event: Event,
+  ) {
+    this.mode?.[eventHandlerName]?.(event);
   }
 
   public switchToMicromolecules() {

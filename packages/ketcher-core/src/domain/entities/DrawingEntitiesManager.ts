@@ -792,12 +792,15 @@ export class DrawingEntitiesManager {
     }
 
     let previousMonomer: BaseMonomer | undefined;
+    const monomers: BaseMonomer[] = [];
+
     monomersToAdd.forEach(([monomerItem, monomerPosition]) => {
       const monomerAddOperation = new MonomerAddOperation(
         this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
         this.deleteMonomerChangeModel.bind(this),
       );
       const monomer = monomerAddOperation.monomer;
+      monomers.push(monomer);
       command.addOperation(monomerAddOperation);
       if (previousMonomer) {
         // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
@@ -822,7 +825,7 @@ export class DrawingEntitiesManager {
       previousMonomer = monomer;
     });
 
-    return command;
+    return { command, monomers };
   }
 
   private findChainByMonomer(
@@ -1479,6 +1482,8 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
+
+    SequenceRenderer.removeEmptyNodes();
   }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {

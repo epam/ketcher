@@ -65,6 +65,7 @@ export default function SequenceModeSwitch() {
   function changeMode(event, checked: boolean): void {
     setSequenceEditMode(checked);
     editor.events.sequenceMode.dispatch(checked);
+    editor.drawingEntitiesManager.removeCursorLineForLetters();
     if (checked) {
       editor.canvas.style.cursor = 'auto';
     }

@@ -9,8 +9,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  private indexInRow = 0;
-  private _rowIndex = 0;
   private _isSequenceEditStart = false;
 
   constructor(
@@ -21,8 +19,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private subChain: BaseSubChain,
   ) {
     super(node.monomer);
-    this.indexInRow = this.monomerIndexInChain % this.symbolsInRow;
-    this._rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
   }
 
   abstract get symbolToDisplay(): string;
@@ -35,16 +31,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   protected removeHover(): void {}
 
   public get scaledMonomerPosition() {
+    const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
+    const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
     return new Vec2(
       this.firstNodeInChainPosition.x +
-        this.indexInRow * 18 +
-        Math.floor(this.indexInRow / this.nthSeparationInRow) * 10,
-      this.firstNodeInChainPosition.y + 47 * this._rowIndex,
+        indexInRow * 18 +
+        Math.floor(indexInRow / this.nthSeparationInRow) * 10,
+      this.firstNodeInChainPosition.y + 47 * rowIndex,
     );
-  }
-
-  public get rowIndex() {
-    return this._rowIndex;
   }
 
   public get currentSubChain() {

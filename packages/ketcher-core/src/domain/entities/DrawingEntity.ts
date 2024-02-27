@@ -83,20 +83,37 @@ export abstract class DrawingEntity {
       this.baseRenderer instanceof BaseSequenceItemRenderer
     ) {
       const center = this.baseRenderer.scaledMonomerPosition;
-      const halfVerticalDistance =
-        this.baseRenderer.rowIndex > 0 ? 47 / 2 : this.baseRenderer.height / 2;
+      const halfVerticalDistance = this.baseRenderer.height / 2;
+      const atSameLineWithTopLeftPoint =
+        rectangleTopLeftPoint.y >= center.y - halfVerticalDistance &&
+        rectangleTopLeftPoint.y <= center.y + halfVerticalDistance;
       const atSameLineWithBottomRightPoint =
-        rectangleBottomRightPoint.y > center.y - halfVerticalDistance &&
-        rectangleBottomRightPoint.y < center.y + halfVerticalDistance;
+        rectangleBottomRightPoint.y >= center.y - halfVerticalDistance &&
+        rectangleBottomRightPoint.y <= center.y + halfVerticalDistance;
       if (
         atSameLineWithBottomRightPoint &&
-        rectangleBottomRightPoint.x > center.x &&
-        rectangleTopLeftPoint.x < center.x
+        !atSameLineWithTopLeftPoint &&
+        rectangleBottomRightPoint.x >= center.x + 9
       ) {
         this.turnOnSelection();
       } else if (
-        rectangleBottomRightPoint.y > center.y - halfVerticalDistance &&
-        rectangleTopLeftPoint.y < center.y + halfVerticalDistance
+        atSameLineWithTopLeftPoint &&
+        !atSameLineWithBottomRightPoint &&
+        rectangleTopLeftPoint.x <= center.x + 9
+      ) {
+        this.turnOnSelection();
+      } else if (
+        atSameLineWithBottomRightPoint &&
+        atSameLineWithTopLeftPoint &&
+        rectangleBottomRightPoint.x >= center.x + 9 &&
+        rectangleTopLeftPoint.x <= center.x + 9
+      ) {
+        this.turnOnSelection();
+      } else if (
+        !atSameLineWithBottomRightPoint &&
+        !atSameLineWithTopLeftPoint &&
+        rectangleBottomRightPoint.y >= center.y - halfVerticalDistance &&
+        rectangleTopLeftPoint.y <= center.y + halfVerticalDistance
       ) {
         this.turnOnSelection();
       } else {
@@ -113,8 +130,7 @@ export abstract class DrawingEntity {
       this.baseRenderer instanceof BaseSequenceItemRenderer
     ) {
       center = this.baseRenderer.scaledMonomerPosition;
-      const halfVerticalDistance =
-        this.baseRenderer.rowIndex > 0 ? 47 / 2 : this.baseRenderer.height / 2;
+      const halfVerticalDistance = this.baseRenderer.height / 2;
       const atSameLine =
         cursorPoint.y > center.y - halfVerticalDistance &&
         cursorPoint.y < center.y + halfVerticalDistance;

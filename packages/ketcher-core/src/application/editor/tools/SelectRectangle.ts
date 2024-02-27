@@ -41,7 +41,20 @@ class SelectRectangle implements BaseTool {
     this.history = new EditorHistory(this.editor);
     this.destroy();
     this.createBrush();
+  }
 
+  private createBrush() {
+    this.brushArea = select(this.editor.canvas)
+      .insert('g', ':first-child')
+      .attr('id', 'rectangle-selection-area');
+
+    const brushed = (mo) => {
+      if (mo.selection) {
+        this.brushArea.call(this.brush.clear);
+      }
+    };
+
+    this.brush = d3Brush();
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
       if (!selection) return;
@@ -60,20 +73,6 @@ class SelectRectangle implements BaseTool {
         this.editor.renderersContainer.update(modelChanges);
       });
     });
-  }
-
-  private createBrush() {
-    this.brushArea = select(this.editor.canvas)
-      .insert('g', ':first-child')
-      .attr('id', 'rectangle-selection-area');
-
-    const brushed = (mo) => {
-      if (mo.selection) {
-        this.brushArea.call(this.brush.clear);
-      }
-    };
-
-    this.brush = d3Brush();
     this.brush.on('end', brushed);
     this.brushArea.call(this.brush);
 
@@ -116,8 +115,13 @@ class SelectRectangle implements BaseTool {
       );
       this.sequenceEditSelectionStarted = true;
       this.brushArea.remove();
+      this.brush = null;
+      modelChanges =
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
     } else {
-      this.createBrush();
+      if (!this.brush) {
+        this.createBrush();
+      }
       if (
         renderer instanceof BaseRenderer &&
         !event.shiftKey &&
@@ -170,16 +174,25 @@ class SelectRectangle implements BaseTool {
         modelChanges =
           this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
       }
-      this.editor.renderersContainer.update(modelChanges);
     }
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
     if (this.sequenceEditSelectionStarted) {
       requestAnimationFrame(() => {
         // select all the letters in previous lines
-        const topLeftPoint = this.mousePositionAfterMove;
-        const bottomRightPoint = this.editor.lastCursorPositionOfCanvas;
+        let topLeftPoint = this.mousePositionAfterMove;
+        let bottomRightPoint = this.editor.lastCursorPositionOfCanvas;
+        if (
+          (bottomRightPoint.x < topLeftPoint.x &&
+            bottomRightPoint.y === topLeftPoint.y) ||
+          bottomRightPoint.y < topLeftPoint.y
+        ) {
+          const temp = topLeftPoint;
+          topLeftPoint = bottomRightPoint;
+          bottomRightPoint = temp;
+        }
         const modelChanges =
           this.editor.drawingEntitiesManager.selectIfLocatedInSequenceEditingArea(
             topLeftPoint,

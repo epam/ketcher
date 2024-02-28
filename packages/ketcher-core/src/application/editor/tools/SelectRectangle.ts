@@ -28,6 +28,7 @@ import { SequenceMode } from '../modes';
 
 class SelectRectangle implements BaseTool {
   private brush;
+  private shiftBrush;
   private brushArea;
   private moveStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
@@ -47,14 +48,17 @@ class SelectRectangle implements BaseTool {
       .insert('g', ':first-child')
       .attr('id', 'rectangle-selection-area');
 
+    this.brush = d3Brush();
+    this.shiftBrush = d3Brush();
+
     const brushed = (mo) => {
       if (mo.selection) {
-        this.brushArea.call(this.brush.clear);
+        this.brushArea.call(this.brush?.clear);
+        this.brushArea.call(this.shiftBrush?.clear);
       }
     };
 
-    this.brush = d3Brush();
-    this.brush.on('brush', (brushEvent) => {
+    const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
       if (!selection) return;
       requestAnimationFrame(() => {
@@ -68,11 +72,15 @@ class SelectRectangle implements BaseTool {
           this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(
             topLeftPoint,
             bottomRightPoint,
+            brushEvent.sourceEvent.shiftKey,
           );
         this.editor.renderersContainer.update(modelChanges);
       });
-    });
-    this.brush.on('end', brushed);
+    };
+
+    this.brush.on('brush', onBrush).on('end', brushed);
+    this.shiftBrush.on('brush', onBrush).on('end', brushed);
+
     this.brushArea.call(this.brush);
 
     this.brushArea
@@ -91,8 +99,35 @@ class SelectRectangle implements BaseTool {
         [canvas.width.baseVal.value, canvas.height.baseVal.value],
       ]);
 
+      this.shiftBrush
+        .extent([
+          [0, 0],
+          [canvas.width.baseVal.value, canvas.height.baseVal.value],
+        ])
+        .keyModifiers(false)
+        .filter((e) => {
+          e.preventDefault();
+          if (e.shiftKey) {
+            e.stopPropagation();
+            return true;
+          }
+          return false;
+        });
+
       this.brushArea.call(this.brush);
     };
+
+    select(window).on('keydown', (event) => {
+      if (event.keyCode === 16) {
+        this.brushArea.call(this.shiftBrush);
+      }
+    });
+
+    select(window).on('keyup', (event) => {
+      if (event.keyCode === 16) {
+        this.brushArea.call(this.brush);
+      }
+    });
 
     const canvasElement = this.editor.canvas;
 
@@ -239,9 +274,10 @@ class SelectRectangle implements BaseTool {
   }
 
   destroy() {
-    if (this.brush) {
+    if (this.brush || this.shiftBrush) {
       this.brushArea.remove();
       this.brush = null;
+      this.shiftBrush = null;
       this.brushArea = null;
     }
 

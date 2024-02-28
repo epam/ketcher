@@ -111,12 +111,12 @@ export class SequenceRenderer {
               bondRenderer = new PolymerBondSequenceRenderer(
                 new PolymerBond(node.monomer, connectedSugar),
               );
-              subChain.bonds.push(polymerBond);
             } else {
               bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
             }
             bondRenderer.show();
             polymerBond.setRenderer(bondRenderer);
+            subChain.bonds.push(polymerBond);
             handledAttachmentPoints.add(attachmentPointName);
 
             if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {

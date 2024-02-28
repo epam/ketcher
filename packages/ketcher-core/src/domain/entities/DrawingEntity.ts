@@ -51,6 +51,7 @@ export abstract class DrawingEntity {
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    shiftKey = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
@@ -65,7 +66,7 @@ export abstract class DrawingEntity {
       rectangleTopLeftPoint.y < center.y
     ) {
       this.turnOnSelection();
-    } else {
+    } else if (!shiftKey) {
       this.turnOffSelection();
     }
 

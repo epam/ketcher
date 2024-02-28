@@ -360,6 +360,7 @@ export class DrawingEntitiesManager {
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    shiftKey = false,
   ) {
     const command = new Command();
 
@@ -367,6 +368,7 @@ export class DrawingEntitiesManager {
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,
+        shiftKey,
       );
 
       if (isValueChanged) {
@@ -1499,6 +1501,9 @@ export class DrawingEntitiesManager {
     drawingEntity: DrawingEntity,
     selectBonds = true,
   ) {
+    if (drawingEntity instanceof PolymerBond) {
+      return [];
+    }
     const drawingEntities: DrawingEntity[] = [];
     if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
       const sugar = drawingEntity;

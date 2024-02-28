@@ -76,7 +76,6 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
-    await clickCanvas(page);
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, xAxis, yAxis);

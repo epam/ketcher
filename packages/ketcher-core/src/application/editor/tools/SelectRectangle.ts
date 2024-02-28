@@ -110,12 +110,21 @@ class SelectRectangle implements BaseTool {
     let modelChanges: Command;
     if (renderer instanceof BaseRenderer && !event.shiftKey && !event.ctrlKey) {
       this.moveStarted = true;
-      const drawingEntities = [renderer.drawingEntity].concat(
-        this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
-          renderer.drawingEntity,
-          false,
-        ),
-      );
+      if (
+        renderer.drawingEntity.selected &&
+        !(this.editor.mode instanceof SequenceMode)
+      ) {
+        return;
+      }
+      let drawingEntities = [renderer.drawingEntity];
+      if (this.editor.mode instanceof SequenceMode) {
+        drawingEntities = [renderer.drawingEntity].concat(
+          this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
+            renderer.drawingEntity,
+            false,
+          ),
+        );
+      }
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
@@ -124,11 +133,14 @@ class SelectRectangle implements BaseTool {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      const drawingEntities = [renderer.drawingEntity].concat(
-        this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
-          renderer.drawingEntity,
-        ),
-      );
+      let drawingEntities = [renderer.drawingEntity];
+      if (this.editor.mode instanceof SequenceMode) {
+        drawingEntities = [renderer.drawingEntity].concat(
+          this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
+            renderer.drawingEntity,
+          ),
+        );
+      }
       modelChanges =
         this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
           drawingEntities,

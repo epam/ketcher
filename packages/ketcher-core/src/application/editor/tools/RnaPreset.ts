@@ -17,14 +17,15 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
 
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import Coordinates from 'application/editor/shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
+export const RNA_MONOMER_DISTANCE = 45;
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
@@ -78,7 +79,7 @@ class RnaPresetTool implements Tool {
             new Vec2(
               this.editor.lastCursorPositionOfCanvas.x +
                 this.sugarPreviewRenderer?.width +
-                45,
+                RNA_MONOMER_DISTANCE,
               this.editor.lastCursorPositionOfCanvas.y,
             ),
           )
@@ -90,7 +91,7 @@ class RnaPresetTool implements Tool {
               this.editor.lastCursorPositionOfCanvas.x,
               this.editor.lastCursorPositionOfCanvas.y +
                 this.sugarPreviewRenderer.height +
-                45,
+                RNA_MONOMER_DISTANCE,
             ),
           )
         : undefined,

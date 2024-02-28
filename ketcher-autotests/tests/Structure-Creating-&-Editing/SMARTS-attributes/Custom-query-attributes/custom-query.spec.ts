@@ -1,22 +1,13 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTypeName,
-  clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { checkSmartsValue, setCustomQuery } from '../utils';
-
-async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-}
+import { checkSmartsValue, setCustomQueryForAtom } from '../utils';
+import { drawStructure } from '@utils/canvas/drawStructures';
 
 async function setAndCheckCustomQuery(
   page: Page,
@@ -44,7 +35,7 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = '#6;x9';
     await setAndCheckCustomQuery(
       page,
-      setCustomQuery,
+      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[#6;x9])-[#6]',
     );
@@ -56,7 +47,7 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = 'x5;D0;h9;r3';
     await setAndCheckCustomQuery(
       page,
-      setCustomQuery,
+      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[x5;D0;h9;r3])-[#6]',
     );
@@ -68,7 +59,7 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = '!C;R3';
     await setAndCheckCustomQuery(
       page,
-      setCustomQuery,
+      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[!C;R3])-[#6]',
     );
@@ -78,7 +69,7 @@ test.describe('Checking custom query in SMARTS format', () => {
     const customQuery = 'x2&D3,D2';
     await setAndCheckCustomQuery(
       page,
-      setCustomQuery,
+      setCustomQueryForAtom,
       customQuery,
       '[#6](-[#6])(-[x2&D3,D2])-[#6]',
     );
@@ -87,16 +78,15 @@ test.describe('Checking custom query in SMARTS format', () => {
   test('Setting custom query - logical OR for aliphatic atoms', async ({
     page,
   }) => {
-    test.fail();
     /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1337 is fixed
+     * https://github.com/epam/Indigo/issues/1337
      */
-    const customQuery = 'F,Cl,Br,I';
+    const customQuery = 'F,Cl,Br,I;A';
     await setAndCheckCustomQuery(
       page,
-      setCustomQuery,
+      setCustomQueryForAtom,
       customQuery,
-      '[#6](-[#6])(-[#9,#17,#35,#53;A])-[#6]',
+      '[#6](-[#6])(-[F,Cl,Br,I;A])-[#6]',
     );
   });
 });

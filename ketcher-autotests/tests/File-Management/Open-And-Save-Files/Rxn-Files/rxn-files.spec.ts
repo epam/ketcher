@@ -107,32 +107,29 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await expect(saveButtonThree).not.toHaveAttribute('disabled', 'disabled');
   });
 
-  // EPMLSOPKET-1903 - TO DO
-  // TO DO: while saving file showed ERROR: array: invalid index -2 (size=0)
-  // Need to create new bug looks like it connected to #2389 issue
-  test.fixme(
-    'Open and Save file - Reaction from file that contains Sgroup',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1903
-       * Description: Reaction from file that contains Sgroup
-       */
-      await openFileAndAddToCanvas(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
-        page,
-      );
-      const expectedFile = await getRxn(page);
-      await saveToFile(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
-        expectedFile,
-      );
-      await openFileAndAddToCanvas(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Open and Save file - Reaction from file that contains Sgroup', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1903
+     * Description: Reaction from file that contains Sgroup
+     */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
+      page,
+    );
+    const expectedFile = await getRxn(page);
+    await saveToFile(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+      expectedFile,
+    );
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Open and Save file - File without arrow or(and) plus-symbol', async ({
     page,
@@ -277,7 +274,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(1)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
     await takeEditorScreenshot(page);
   });
 
@@ -288,9 +285,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(2)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('sec-butyl-abr-expectedV2000.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/sec-butyl-abr-expectedV2000.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2, 7, 23, 54];
@@ -298,7 +295,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/sec-butyl-abr-expectedV2000.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
       });
 
@@ -312,7 +310,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1904(1)
      * Description: Reaction with heteroatoms is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Heteroatoms.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/heteroatoms.rxn', page);
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -324,9 +322,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1904(2)
      * Description: Reaction with heteroatoms is opened and saved correctly
      */
-    await openFileAndAddToCanvas('Heteroatoms.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/heteroatoms.rxn', page);
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('heteroatoms-expectedV2000.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/heteroatoms-expectedV2000.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2, 7, 30, 39, 62];
@@ -334,7 +332,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/heteroatoms-expectedV2000.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/heteroatoms-expectedV2000.rxn',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
       });
 
@@ -348,7 +347,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(1)
      * Description: Reaction can be opened correctly from rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -360,9 +359,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(2)
      * Description: Reaction can be saved correctly to rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
     const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('r-group-V3000-expectedV3000.rxn', expectedFile);
+    await saveToFile('Rxn-V3000/r-group-V3000-expectedV3000.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2];
@@ -370,7 +369,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/r-group-V3000-expectedV3000.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v3000',
       });

@@ -20,7 +20,9 @@ import { getNodeWithInvertedYCoord } from '../helpers';
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
     ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
-  struct.simpleObjects.add(new SimpleObject(getNodeWithInvertedYCoord(object)));
+  const simpleObject = new SimpleObject(getNodeWithInvertedYCoord(object));
+  simpleObject.setInitiallySelected(ketItem.selected);
+  struct.simpleObjects.add(simpleObject);
   return struct;
 }
 

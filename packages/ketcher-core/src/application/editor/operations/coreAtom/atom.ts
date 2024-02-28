@@ -24,7 +24,7 @@ import { Atom } from 'domain/entities/CoreAtom';
 export class AtomAddOperation implements Operation {
   public atom: Atom;
   constructor(
-    public addAtomChangeModel: (atom?: Atom) => BaseMonomer,
+    public addAtomChangeModel: (atom?: Atom) => Atom,
     public deleteAtomChangeModel: () => void,
   ) {
     this.atom = this.addAtomChangeModel();
@@ -37,9 +37,8 @@ export class AtomAddOperation implements Operation {
 
   public invert(renderersManager: RenderersManager) {
     if (this.atom) {
-      this.deleteAtomChangeModel(this.atom);
-      renderersManager.deleteAtom(this.atom);
+      this.deleteAtomChangeModel();
+      // renderersManager.deleteAtom(this.atom);
     }
   }
 }
-

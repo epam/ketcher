@@ -339,7 +339,7 @@ export class SGroup {
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
-    if (!sgroup?.pp) return null;
+    if (!sgroup?.pp || !sgroup.bracketBox) return null;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
   }
 
@@ -440,9 +440,9 @@ export class SGroup {
   static getCrossBonds(
     mol: any,
     parentAtomSet: Pile<number>,
-  ): { [key: number]: Array<Bond> } {
-    const crossBonds: { [key: number]: Array<Bond> } = {};
-    mol.bonds.forEach((bond, bid) => {
+  ): { [key: number]: Array<number> } {
+    const crossBonds: { [key: number]: Array<number> } = {};
+    mol.bonds.forEach((bond, bid: number) => {
       if (parentAtomSet.has(bond.begin) && !parentAtomSet.has(bond.end)) {
         if (!crossBonds[bond.begin]) {
           crossBonds[bond.begin] = [];
@@ -464,7 +464,7 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom?: { [key: number]: Array<Bond> },
+    crossBondsPerAtom?: { [key: number]: Array<number> },
     remol?: ReStruct,
     render?,
   ): void {

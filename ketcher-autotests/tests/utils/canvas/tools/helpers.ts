@@ -44,38 +44,62 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Single Bond"]`);
+  const bondToolButton = page.getByTestId('single-bond');
   await bondToolButton.click();
 }
 
-export async function selectSnakeBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Snake mode"]`);
-  await bondToolButton.click();
+export async function openLayoutModeMenu(page: Page) {
+  const modeSelectorButton = await page.getByTestId('layout-mode');
+  await modeSelectorButton.click();
+}
+
+export async function selectSnakeLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const snakeModeButton = page.getByTestId('snake-layout-mode');
+
+  await snakeModeButton.waitFor({ state: 'visible' });
+  await snakeModeButton.click();
+}
+
+export async function selectSequenceLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const sequenceModeButton = page.getByTestId('sequence-layout-mode');
+
+  await sequenceModeButton.waitFor({ state: 'visible' });
+  await sequenceModeButton.click();
+}
+
+export async function selectFlexLayoutModeTool(page: Page) {
+  await openLayoutModeMenu(page);
+  const flexModeButton = page.getByTestId('flex-layout-mode');
+
+  await flexModeButton.waitFor({ state: 'visible' });
+  await flexModeButton.click();
 }
 
 export async function selectEraseTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Erase"]`);
+  const bondToolButton = page.getByTestId('erase');
   await bondToolButton.click();
 }
 
 export async function selectClearCanvasTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Clear Canvas"]`);
+  const bondToolButton = page.getByTestId('clear-canvas');
   await bondToolButton.click();
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
+  const bondToolButton = page.getByTestId('select-rectangle');
   await bondToolButton.click();
 }
 
 // undo/redo heplers currently used for macromolecules editor because buttons are in different panel
 export async function clickUndo(page: Page) {
-  const undoButton = page.getByTestId('undo-button');
+  const undoButton = page.getByTestId('undo');
   await undoButton.click();
 }
 
 export async function clickRedo(page: Page) {
-  const redoButton = page.getByTestId('redo-button');
+  const redoButton = page.getByTestId('redo');
   await redoButton.click();
 }
 

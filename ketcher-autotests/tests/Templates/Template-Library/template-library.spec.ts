@@ -3,6 +3,7 @@ import {
   clickInTheMiddleOfTheScreen,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
+  getEditorScreenshot,
   pressButton,
   selectFunctionalGroups,
   selectTopPanelButton,
@@ -43,8 +44,10 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   if ((await phenylalanineLocator.count()) === 0) {
     await page.getByText('Aromatics').click();
   }
-  await phenylalanineLocator.first().click();
-  await page.mouse.click(x, y);
+  await waitForRender(page, async () => {
+    await phenylalanineLocator.first().click();
+    await page.mouse.click(x, y);
+  });
 }
 
 async function openStructureLibrary(page: Page) {
@@ -148,6 +151,25 @@ test.describe('Templates - Template Library', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
+  test('Edit templates - name with just spaces', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will contain just spaces
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await page.getByTestId('name-input').fill('   ');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.getByText('β-D-Sugars').click();
+  });
+});
+
+test.describe('Templates - Template Library', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await getEditorScreenshot(page);
+  });
+
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
@@ -158,15 +180,6 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-  });
-
-  test('Edit templates - name with just spaces', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify if structure name won't change if field will contain just spaces
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('name-input').fill('   ');
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
-    await page.getByText('β-D-Sugars').click();
   });
 
   test('Text field 128 characters limit test ', async ({ page }) => {

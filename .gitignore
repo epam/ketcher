@@ -33,7 +33,16 @@ yarn-debug.log*
 yarn-error.log*
 
 .vscode
+.history
 /.idea
 
 .pnp.*
 .yarn/*
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -340,7 +340,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
       /**
        *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
        */
-      const fileName = `saving-and-rendering-${bondToolKey}-bond.mol`;
+      const fileName = `Molfiles-V2000/saving-and-rendering-${bondToolKey}-bond.mol`;
       test(`Save to file`, async () => {
         await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);

@@ -20,11 +20,24 @@ import assert from 'assert';
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public monomer) {
     super(type);
+    this.data.absolute = false;
+    this.data.attached = false;
   }
 
   public override getContractedPosition(struct: Struct) {
     assert(this.pp);
     const sgroupContractedPosition = super.getContractedPosition(struct);
     return { position: this.pp, atomId: sgroupContractedPosition.atomId };
+  }
+
+  public static clone(monomerMicromolecule: MonomerMicromolecule) {
+    const monomerMicromoleculeClone = new MonomerMicromolecule(
+      monomerMicromolecule.type,
+      monomerMicromolecule.monomer,
+    );
+    monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
+    monomerMicromoleculeClone.atoms = monomerMicromolecule.atoms;
+
+    return monomerMicromoleculeClone;
   }
 }

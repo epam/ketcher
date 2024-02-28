@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseMonomerRenderer } from 'application/render/renderers';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -24,7 +24,8 @@ import { Peptide } from 'domain/entities/Peptide';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import Coordinates from 'application/editor/shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
+import { AttachmentPointName } from 'domain/types';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -101,6 +102,7 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
       );
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -112,6 +114,7 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
       );
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -142,6 +145,7 @@ class PolymerBond implements BaseTool {
         );
     }
 
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -174,6 +178,7 @@ class PolymerBond implements BaseTool {
         );
     }
 
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -188,6 +193,7 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
         );
+      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }
@@ -203,12 +209,13 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
         );
+      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }
 
   public mouseUpAttachmentPoint(event) {
-    const renderer = event.toElement.__data__;
+    const renderer = event.target.__data__;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
@@ -250,9 +257,12 @@ class PolymerBond implements BaseTool {
         return;
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
+        false,
+        false,
       );
       this.bondRenderer = undefined;
       event.stopPropagation();
@@ -300,7 +310,7 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpMonomer(event) {
-    const renderer = event.toElement.__data__;
+    const renderer = event.target.__data__;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
@@ -341,6 +351,8 @@ class PolymerBond implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
+        false,
+        false,
       );
       this.bondRenderer = undefined;
       this.history.update(modelChanges);
@@ -368,7 +380,7 @@ class PolymerBond implements BaseTool {
         firstSelectedAttachmentPoint,
         secondSelectedAttachmentPoint,
       );
-
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
     if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
       this.editor.events.error.dispatch(
@@ -376,6 +388,11 @@ class PolymerBond implements BaseTool {
       );
     }
     this.isBondConnectionModalOpen = false;
+    this.editor.renderersContainer.deletePolymerBond(
+      this.bondRenderer.polymerBond,
+      false,
+      false,
+    );
     this.bondRenderer = undefined;
   };
 
@@ -468,18 +485,18 @@ class PolymerBond implements BaseTool {
 
       // there is no possibility to connect R1-R2
       const BothR1AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed('R1') &&
-        secondMonomer.isAttachmentPointUsed('R1');
+        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1) &&
+        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1);
 
       const BothR2AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed('R2') &&
-        secondMonomer.isAttachmentPointUsed('R2');
+        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2);
 
       const R1AndR2AttachmentPointUsed =
-        (firstMonomer.isAttachmentPointUsed('R2') &&
-          firstMonomer.isAttachmentPointUsed('R1')) ||
-        (secondMonomer.isAttachmentPointUsed('R2') &&
-          secondMonomer.isAttachmentPointUsed('R1'));
+        (firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+          firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1)) ||
+        (secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+          secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1));
 
       if (
         hasPlentyAttachmentPoints &&

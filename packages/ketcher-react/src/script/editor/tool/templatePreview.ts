@@ -23,7 +23,6 @@ import {
   Action,
   fromTemplateOnCanvas,
   fromMultipleMove,
-  getHoverToFuse,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { MODES } from 'src/constants';
@@ -99,6 +98,7 @@ class TemplatePreview {
   movePreview(event: PointerEvent) {
     this.position = this.editor.render.page2obj(event);
 
+    const struct = this.editor.struct();
     const previewTarget = this.getPreviewTarget();
     const isMouseAwayFromAtomsAndBonds = !previewTarget;
     const isPreviewTargetChanged =
@@ -109,13 +109,13 @@ class TemplatePreview {
 
     const shouldShowPreview =
       previewTarget &&
+      !struct.isTargetFromMacromolecule(previewTarget) &&
       !this.connectedPreviewAction &&
       !this.connectedPreviewTimeout;
 
     if (shouldHidePreview) {
       this.hideConnectedPreview();
     }
-
     if (shouldShowPreview) {
       this.lastPreviewId = getUniqueCiId(previewTarget);
       this.connectedPreviewTimeout = setTimeout(() => {
@@ -129,32 +129,16 @@ class TemplatePreview {
         this.previousPosition = this.position;
         this.editor.render.update(false, null);
       } else {
-        this.moveFloatingPreview(previewTarget, event);
+        this.moveFloatingPreview();
       }
     }
   }
 
-  private moveFloatingPreview(
-    previewTarget: ClosestItemType | null,
-    event: PointerEvent,
-  ) {
+  private moveFloatingPreview() {
     const dist = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
     fromMultipleMove(this.restruct, this.floatingPreview, dist);
     this.editor.render.update(false, null);
-    this.hoverFusedItems(previewTarget, event);
-  }
-
-  private hoverFusedItems(
-    closestItem: ClosestItemType | null,
-    event: PointerEvent,
-  ) {
-    if (this.mode === 'fg') {
-      this.editor.hover(closestItem, null, event);
-    } else {
-      const mergeItems = getItemsToFuse(this.editor, this.floatingPreview);
-      this.editor.hover(getHoverToFuse(mergeItems));
-    }
   }
 
   private showFloatingPreview(position: Vec2) {
@@ -176,7 +160,7 @@ class TemplatePreview {
     }
   }
 
-  private hideConnectedPreview() {
+  public hideConnectedPreview() {
     if (this.connectedPreviewAction) {
       this.connectedPreviewAction.perform(this.restruct);
       this.connectedPreviewAction = null;

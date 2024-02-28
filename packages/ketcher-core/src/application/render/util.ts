@@ -169,7 +169,7 @@ function drawCIPLabel({
   const { options, paper } = restruct.render;
   const path = paper.set();
 
-  const cipLabelPosition = position.scaled(options.scale);
+  const cipLabelPosition = position.scaled(options.microModeScale);
   const cipValuePath = getCIPValuePath({
     paper,
     cipLabelPosition,

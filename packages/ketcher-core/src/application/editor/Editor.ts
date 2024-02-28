@@ -14,19 +14,22 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import ZoomTool from './tools/Zoom';
-import Coordinates from './shared/coordinates';
+import { Coordinates } from './shared/coordinates';
 import {
   editorEvents,
+  hotkeysConfiguration,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
-import { PolymerBondRenderer } from 'application/render/renderers';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
-
+import { initHotKeys, keyNorm } from 'utilities';
+import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
+import { BaseMode } from 'application/editor/modes/internal';
+import assert from 'assert';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
@@ -50,7 +53,9 @@ export class CoreEditor {
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
+  public mode: BaseMode = new FlexMode();
   private micromoleculesEditor: Editor;
+  private hotKeyEventHandler: (event: unknown) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -61,6 +66,7 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
+    this.setupHotKeysEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -72,6 +78,24 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  private handleHotKeyEvents(event) {
+    const keySettings = hotkeysConfiguration;
+    const hotKeys = initHotKeys(keySettings);
+    const shortcutKey = keyNorm.lookup(hotKeys, event);
+    const isInput =
+      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
+
+    if (keySettings[shortcutKey]?.handler && !isInput) {
+      keySettings[shortcutKey].handler(this);
+      event.preventDefault();
+    }
+  }
+
+  setupHotKeysEvents() {
+    this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
+    document.addEventListener('keydown', this.hotKeyEventHandler);
   }
 
   private subscribeEvents() {
@@ -97,10 +121,14 @@ export class CoreEditor {
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
-    this.selectTool('preset', preset);
+    if (preset) {
+      this.selectTool('preset', preset);
+    } else {
+      this.tool = undefined;
+    }
   }
 
-  private onSelectTool(tool: string) {
+  public onSelectTool(tool: string) {
     this.selectTool(tool);
   }
 
@@ -121,19 +149,28 @@ export class CoreEditor {
     }
   }
 
-  // todo we need to create abstraction layer for modes in future similar to the tools layer
-  private onSelectMode(isSnakeMode: boolean) {
-    PolymerBondRenderer.setSnakeMode(isSnakeMode);
-    const modelChanges = this.drawingEntitiesManager.reArrangeChains(
-      this.canvas.width.baseVal.value,
-      isSnakeMode,
-    );
+  private onSelectMode(
+    data:
+      | LayoutMode
+      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+  ) {
+    const mode = typeof data === 'object' ? data.mode : data;
+    const ModeConstructor = modesMap[mode];
+    assert(ModeConstructor);
     const history = new EditorHistory(this);
-    history.update(modelChanges);
-    this.renderersContainer.update(modelChanges);
+    this.mode = new ModeConstructor(this.mode.modeName);
+    const command = this.mode.initialize();
+    history.update(
+      command,
+      typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
+    );
   }
 
-  private onSelectHistory(name: HistoryOperationType) {
+  public setMode(mode: BaseMode) {
+    this.mode = mode;
+  }
+
+  public onSelectHistory(name: HistoryOperationType) {
     const history = new EditorHistory(this);
     if (name === 'undo') {
       history.undo();
@@ -157,6 +194,7 @@ export class CoreEditor {
     for (const eventName in this.events) {
       this.events[eventName].handlers = [];
     }
+    document.removeEventListener('keydown', this.hotKeyEventHandler);
   }
 
   get trackedDomEvents() {
@@ -249,7 +287,7 @@ export class CoreEditor {
   private updateLastCursorPosition(event) {
     const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
     if (events.includes(event.type)) {
-      const clientAreaBoundingBox = this.canvas.getBoundingClientRect();
+      const clientAreaBoundingBox = this.canvasOffset;
 
       this.lastCursorPosition = new Vec2({
         x: event.pageX - clientAreaBoundingBox.x,

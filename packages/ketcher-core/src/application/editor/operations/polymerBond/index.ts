@@ -122,3 +122,26 @@ export class PolymerBondFinishCreationOperation implements Operation {
     renderersManager.deletePolymerBond(this.polymerBond);
   }
 }
+
+export class SelectLayoutModeOperation implements Operation {
+  private onExecute;
+  private onInvert;
+
+  constructor(
+    public _onExecute: () => void,
+    public _onInvert: () => void,
+    public mode,
+    public prevMode,
+  ) {
+    this.onExecute = _onExecute;
+    this.onInvert = _onInvert;
+  }
+
+  public execute(): void {
+    this.onExecute();
+  }
+
+  public invert(): void {
+    this.onInvert();
+  }
+}

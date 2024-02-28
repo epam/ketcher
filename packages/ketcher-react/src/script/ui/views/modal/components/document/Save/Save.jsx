@@ -182,10 +182,35 @@ class SaveDialog extends Component {
     } else {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
-      const service = factory.create(type, { ...options, ignoreChiralFlag });
-
-      return service
-        .getStructureFromStructAsync(struct)
+      // temporary check if query properties are used
+      const queryPropertiesAreUsed =
+        type === 'mol' &&
+        Array.from(struct.atoms).find(
+          ([_, atom]) =>
+            atom.queryProperties.aromaticity ||
+            atom.queryProperties.connectivity ||
+            atom.queryProperties.ringMembership ||
+            atom.queryProperties.ringSize ||
+            atom.queryProperties.customQuery ||
+            atom.implicitHCount,
+        );
+      const service = factory.create(
+        type,
+        { ...options, ignoreChiralFlag },
+        queryPropertiesAreUsed,
+      );
+      const getStructFromStringByType = () => {
+        if (type === 'ket') {
+          const selection = this.props.editor.selection();
+          return service.getStructureFromStructAsync(
+            struct,
+            undefined,
+            selection,
+          );
+        }
+        return service.getStructureFromStructAsync(struct);
+      };
+      return getStructFromStringByType()
         .then(
           (structStr) => {
             this.setState({
@@ -491,6 +516,7 @@ const mapStateToProps = (state) => ({
   checkState: state.options.check,
   bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
+  editor: state.editor,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -20,7 +20,6 @@ import {
   Pile,
   SGroup,
   Vec2,
-  Bond,
   Struct,
 } from 'domain/entities';
 import { SgContexts } from 'application/editor/shared/constants';
@@ -40,7 +39,7 @@ interface SGroupdrawBracketsOptions {
   set: any;
   render: Render;
   sgroup: SGroup;
-  crossBonds: { [key: number]: Array<Bond> };
+  crossBonds: { [key: number]: Array<number> };
   atomSet: Pile;
   bracketBox: Box2Abs;
   direction: Vec2;
@@ -412,7 +411,7 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
   const paper = render.paper;
   const set = paper.set();
 
-  const ps = sgroup?.pp?.scaled(options.scale);
+  const ps = sgroup?.pp?.scaled(options.microModeScale);
   const name = showValue(paper, ps, sgroup, options);
 
   if (sgroup.data.context !== SgContexts.Bond) {
@@ -460,8 +459,8 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
 
 function getBracketParameters(
   atomSet: Pile,
-  crossBondsPerAtom: Array<Array<Bond>>,
-  crossBondsValues: Array<Bond>,
+  crossBondsPerAtom: Array<Array<number>>,
+  crossBondsValues: Array<number>,
   attachmentPoints: number[],
   bracketBox: Box2Abs,
   direction: Vec2,
@@ -490,7 +489,7 @@ function getBracketParameters(
     );
   } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 1) {
     getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
-      crossBondsValues,
+      crossBondsValues as [number, number],
       mol,
       attachmentPoints,
       render,
@@ -514,7 +513,7 @@ function getBracketParameters(
 }
 
 function getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
-  crossBondsValues: Bond[],
+  crossBondsValues: [number, number],
   mol: Struct,
   attachmentPoints: number[],
   render: Render,
@@ -528,10 +527,12 @@ function getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
   // if bonds direction is clockwise, then negated
   const needNegated =
     Vec2.crossProduct(bondDirections[0], bondDirections[1]) > 0;
-  crossBondsValues = crossBondsValues.sort((id1, id2) => {
-    notTemplateShapeFirstAtom = Math.abs(Number(id1) - Number(id2)) === 1;
-    return notTemplateShapeFirstAtom && !needNegated ? -1 : 0;
-  });
+  notTemplateShapeFirstAtom =
+    Math.abs(Number(crossBondsValues[0]) - Number(crossBondsValues[1])) === 1;
+  if (notTemplateShapeFirstAtom && !needNegated) {
+    crossBondsValues.reverse();
+  }
+
   for (let i = 0; i < crossBondsValues.length; ++i) {
     const bond = mol.bonds.get(Number(crossBondsValues[i]));
     let bondDirection = bond?.getDir(mol) || new Vec2();
@@ -577,7 +578,7 @@ function getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
 
 function getBracketParamersWithCrossBondsEquals2(
   mol: Struct,
-  crossBondsValues: Bond[],
+  crossBondsValues: number[],
   id: number,
   render: Render,
   attachmentPoints: number[],

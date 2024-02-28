@@ -78,6 +78,7 @@ export enum TopPanelButton {
   Help = 'Help',
   About = 'About',
   Fullscreen = 'Fullscreen',
+  toggleExplicitHydrogens = 'Add/Remove explicit hydrogens',
 }
 
 export enum LeftPanelButton {

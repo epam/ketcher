@@ -161,7 +161,7 @@ class Editor implements KetcherEditor {
       clientArea,
       Object.assign(
         {
-          scale: SCALE,
+          microModeScale: SCALE,
         },
         options,
       ),
@@ -267,14 +267,16 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  renderAndRecoordinateStruct(struct: Struct) {
+  renderAndRecoordinateStruct(struct: Struct, needToCenterStruct = true) {
     const action = fromNewCanvas(this.render.ctab, struct);
     this.update(action);
-    this.centerStruct();
+    if (needToCenterStruct) {
+      this.centerStruct();
+    }
     return this.render.ctab.molecule;
   }
 
-  struct(value?: Struct): Struct {
+  struct(value?: Struct, needToCenterStruct = true): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
@@ -282,7 +284,10 @@ class Editor implements KetcherEditor {
     this.selection(null);
     const struct = value || new Struct();
 
-    const molecule = this.renderAndRecoordinateStruct(struct);
+    const molecule = this.renderAndRecoordinateStruct(
+      struct,
+      needToCenterStruct,
+    );
 
     this.hoverIcon.create();
     return molecule;
@@ -312,7 +317,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(
       this.render.clientArea,
-      Object.assign({ scale: SCALE }, value),
+      Object.assign({ microModeScale: SCALE }, value),
     );
     this.struct(struct);
     this.render.setZoom(zoom);
@@ -363,11 +368,11 @@ class Editor implements KetcherEditor {
     const parsedStructSizeInPixels = {
       width:
         parsedStructSize.x *
-        this.render.options.scale *
+        this.render.options.microModeScale *
         this.render.options.zoom,
       height:
         parsedStructSize.y *
-        this.render.options.scale *
+        this.render.options.microModeScale *
         this.render.options.zoom,
     };
     const clientAreaBoundingBox =
@@ -408,6 +413,7 @@ class Editor implements KetcherEditor {
       return this._selection; // eslint-disable-line
     }
 
+    const struct = this.struct();
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
@@ -415,7 +421,12 @@ class Editor implements KetcherEditor {
       selectAll = true;
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
-        res[key] = Array.from(ReStruct[key].keys());
+        let restructItemsIds: number[] = Array.from(ReStruct[key].keys());
+        restructItemsIds = restructItemsIds.filter(
+          (restructItemId) =>
+            !struct.isTargetFromMacromolecule({ map: key, id: restructItemId }),
+        );
+        res[key] = restructItemsIds;
         return res;
       }, {});
     }
@@ -463,7 +474,11 @@ class Editor implements KetcherEditor {
     return this._selection; // eslint-disable-line
   }
 
-  hover(ci: any, newTool?: any, event?: PointerEvent) {
+  hover(
+    ci: { id: number; map: string } | null,
+    newTool?: any,
+    event?: PointerEvent,
+  ) {
     const tool = newTool || this._tool; // eslint-disable-line
 
     if (
@@ -523,17 +538,18 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
-    }
-
     this.historyPtr--;
     const stack = this.historyStack[this.historyPtr];
     const action = stack.perform(this.render.ctab);
 
     this.historyStack[this.historyPtr] = action;
-    this.event.change.dispatch(action);
+
+    if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
+    } else {
+      this.event.change.dispatch(action);
+    }
+
     this.render.update();
   }
 
@@ -547,15 +563,17 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null);
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
-    }
 
     const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
     this.historyStack[this.historyPtr] = action;
     this.historyPtr++;
-    this.event.change.dispatch(action);
+
+    if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
+    } else {
+      this.event.change.dispatch(action);
+    }
+
     this.render.update();
   }
 

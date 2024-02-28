@@ -20,6 +20,7 @@ type KetNode = {
   fragment?: Struct;
   center: Vec2;
   data?: any;
+  selected?: boolean;
 };
 
 export function prepareStructForKet(struct: Struct) {
@@ -57,6 +58,7 @@ export function prepareStructForKet(struct: Struct) {
         pos: item.pos,
         height: item.height,
       },
+      selected: item.getInitiallySelected(),
     });
   });
 
@@ -65,6 +67,7 @@ export function prepareStructForKet(struct: Struct) {
       type: 'plus',
       center: item.pp,
       data: {},
+      selected: item.getInitiallySelected(),
     });
   });
 
@@ -76,6 +79,7 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
+      selected: item.getInitiallySelected(),
     });
   });
 
@@ -88,6 +92,7 @@ export function prepareStructForKet(struct: Struct) {
         position: item.position,
         pos: item.pos,
       },
+      selected: item.getInitiallySelected(),
     });
   });
 

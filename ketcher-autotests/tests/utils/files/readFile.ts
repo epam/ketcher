@@ -32,6 +32,26 @@ export async function openFile(filename: string, page: Page) {
   await fileChooser.setFiles(`tests/test-data/${filename}`);
 }
 
+export async function selectOptionInDropdown(filename: string, page: Page) {
+  const extention = filename.split('.')[1];
+  const options = {
+    mol: 'MDL Molfile V3000',
+  };
+  const optionText = (options as any)[extention];
+  const selector = page.getByTestId('dropdown-select');
+  const selectorExists = await selector.isVisible();
+
+  if (selectorExists && extention && extention !== 'ket' && optionText) {
+    const selectorText = (await selector.innerText()).replace(
+      /(\r\n|\n|\r)/gm,
+      '',
+    );
+    await selector.getByText(selectorText).click();
+    const option = page.getByRole('option');
+    await option.getByText(optionText).click();
+  }
+}
+
 /**
  * Open file and put in center of canvas
  * Should be used to prevent extra delay() calls in test cases
@@ -44,8 +64,36 @@ export async function openFileAndAddToCanvas(
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
+
+  await selectOptionInDropdown(filename, page);
+
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
+  });
+
+  if (
+    typeof xOffsetFromCenter === 'number' &&
+    typeof yOffsetFromCenter === 'number'
+  ) {
+    await clickOnTheCanvas(page, xOffsetFromCenter, yOffsetFromCenter);
+  } else {
+    await clickInTheMiddleOfTheScreen(page);
+  }
+}
+
+export async function openFileAndAddToCanvasAsNewProject(
+  filename: string,
+  page: Page,
+  xOffsetFromCenter?: number,
+  yOffsetFromCenter?: number,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(filename, page);
+
+  await selectOptionInDropdown(filename, page);
+
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Open as New Project');
   });
 
   if (
@@ -205,6 +253,7 @@ export async function openFromFileViaClipboard(filename: string, page: Page) {
   const fileContent = await readFileContents(filename);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
+  await selectOptionInDropdown(filename, page);
   await waitForLoad(page, () => {
     pressButton(page, 'Add to Canvas');
   });

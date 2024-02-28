@@ -56,7 +56,7 @@ export function loadStruct(struct) {
   };
 }
 
-function parseStruct(
+export function parseStruct(
   struct: string | Struct,
   server,
   options?,
@@ -76,8 +76,12 @@ function parseStruct(
       struct = `base64::${struct.replace(/\s/g, '')}`;
     }
     const factory = new FormatterFactory(server);
-
-    const service = factory.create(format, formatterOptions);
+    const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
+    const service = factory.create(
+      format,
+      formatterOptions,
+      queryPropertiesAreUsed,
+    );
     return service.getStructureFromStringAsync(struct);
   } else {
     return Promise.resolve(struct);
@@ -95,6 +99,34 @@ export function removeStructAction(): {
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
+export const getSelectionFromStruct = (struct) => {
+  const selection = {};
+  [
+    'atoms',
+    'bonds',
+    'enhancedFlags',
+    'rxnPluses',
+    'rxnArrows',
+    'texts',
+    'rgroupAttachmentPoints',
+    'simpleObjects',
+  ].forEach((selectionEntity) => {
+    if (struct && struct[selectionEntity]) {
+      const selected: number[] = [];
+      struct[selectionEntity].forEach((value, key) => {
+        if (
+          typeof value.getInitiallySelected === 'function' &&
+          value.getInitiallySelected()
+        ) {
+          selected.push(key);
+        }
+      });
+      selection[selectionEntity] = selected;
+    }
+  });
+  return selection;
+};
+
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
@@ -102,7 +134,7 @@ export function load(struct: Struct, options?) {
     const server = state.server;
     const errorHandler = editor.errorHandler;
     options = options || {};
-    let { isPaste, ...otherOptions } = options;
+    let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
       ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
@@ -170,14 +202,20 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct);
+        editor.struct(parsedStruct, method === 'layout');
       }
 
       editor.zoomAccordingContent(parsedStruct);
-      if (!isPaste) {
+
+      const isIndigoFunctionCalled = !!method;
+      if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
-
+      if (!fragment) {
+        // do not update selection if fragment is added
+        editor.selection(getSelectionFromStruct(editor.struct()));
+      }
+      editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (e: any) {

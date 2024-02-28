@@ -42,6 +42,9 @@ export interface WithFormat {
 export interface WithOutputFormat {
   output_format: ChemicalMimeType;
 }
+export interface WithInputFormat {
+  input_format?: ChemicalMimeType;
+}
 
 export interface WithSelection {
   selected?: Array<number>;
@@ -68,7 +71,10 @@ export interface CheckResult {
   [key: string]: string;
 }
 
-export interface ConvertData extends WithStruct, WithOutputFormat {}
+export interface ConvertData
+  extends WithStruct,
+    WithOutputFormat,
+    WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -94,6 +100,12 @@ export interface DearomatizeResult extends WithStruct, WithFormat {}
 export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
+
+export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
+  mode?: 'auto' | 'fold' | 'unfold';
+}
+
+export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
 
 export type CalculateProps =
   | 'molecular-weight'
@@ -181,4 +193,8 @@ export interface StructService {
     data: string,
     options?: GenerateImageOptions,
   ) => Promise<string>;
+  toggleExplicitHydrogens: (
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ) => Promise<ExplicitHydrogensResult>;
 }

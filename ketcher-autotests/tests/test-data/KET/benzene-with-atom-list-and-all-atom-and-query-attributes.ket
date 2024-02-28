@@ -1,0 +1,128 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.884849152128567,
+                    -6.400074417174608,
+                    0
+                ]
+            },
+            {
+                "type": "atom-list",
+                "elements": [
+                    "K",
+                    "Ca",
+                    "Sc"
+                ],
+                "alias": "KCS",
+                "location": [
+                    12.615150847871433,
+                    -6.399589229177203,
+                    0
+                ],
+                "charge": 10,
+                "explicitValence": 3,
+                "isotope": 50,
+                "radical": 3,
+                "ringBondCount": 2,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 7,
+                    "connectivity": 8,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.751637509491239,
+                    -5.899966888850187,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.615150847871433,
+                    -7.400532067822148,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.884849152128567,
+                    -7.405020056798137,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.753820855479558,
+                    -7.9000331111498125,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    }
+}

@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer1"
+                "$ref": "monomer10"
             },
             {
-                "$ref": "monomer3"
+                "$ref": "monomer11"
             },
             {
-                "$ref": "monomer6"
+                "$ref": "monomer12"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer1",
+                    "monomerId": "monomer10",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer3",
+                    "monomerId": "monomer11",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer1",
+                    "monomerId": "monomer10",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer6",
+                    "monomerId": "monomer12",
                     "attachmentPointId": "R1"
                 }
             }
@@ -47,12 +47,12 @@
             }
         ]
     },
-    "monomer1": {
+    "monomer10": {
         "type": "monomer",
-        "id": "1",
+        "id": "10",
         "position": {
-            "x": 7.9750000000000005,
-            "y": 5.9
+            "x": 1.1050000000000004,
+            "y": -1.0191666666666643
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -102,25 +102,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     1.5903092126145781,
                     0.20573302003705518,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     -1.8232336838376932,
                     0.07071340035455183,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -170,32 +164,36 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "A___Alanine",
         "alias": "A",
         "attachmentPoints": [
             {
-                "attachmentAtom": 6,
+                "attachmentAtom": 0,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        6
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 5,
+                "attachmentAtom": 3,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        5
+                    ]
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
-    "monomer3": {
+    "monomer11": {
         "type": "monomer",
-        "id": "3",
+        "id": "11",
         "position": {
-            "x": 13.325000000000001,
-            "y": 5.825000000000005
+            "x": 2.461666666666667,
+            "y": -1.0041666666666689
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -228,14 +226,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     2.2002,
                     0.9389,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -255,14 +250,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     -2.7104,
                     -0.6075,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -311,32 +303,36 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "Bal___beta-Alanine",
         "alias": "Bal",
         "attachmentPoints": [
             {
-                "attachmentAtom": 6,
+                "attachmentAtom": 5,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        6
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 3,
+                "attachmentAtom": 1,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        3
+                    ]
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
-    "monomer6": {
+    "monomer12": {
         "type": "monomer",
-        "id": "6",
+        "id": "12",
         "position": {
-            "x": 8.075000000000003,
-            "y": 10.05
+            "x": 1.1383333333333365,
+            "y": -2.135833333333331
         },
         "alias": "Az",
         "templateId": "Az___Azide"
@@ -411,14 +407,11 @@
                 "charge": -1
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     0.936585994078185,
                     1.4048789911172774,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -481,14 +474,15 @@
             }
         ],
         "classHELM": "CHEM",
-        "naturalAnalogShort": ".",
         "id": "Az___Azide",
         "alias": "Az",
         "attachmentPoints": [
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 1,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        8
+                    ]
                 },
                 "type": "left"
             }

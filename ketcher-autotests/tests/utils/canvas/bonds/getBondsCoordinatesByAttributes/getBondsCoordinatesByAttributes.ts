@@ -29,7 +29,7 @@ export async function getBondsCoordinatesByAttributes(
     return {
       // eslint-disable-next-line no-unsafe-optional-chaining
       bonds: [...window.ketcher?.editor?.struct()?.bonds?.values()],
-      scale: window.ketcher?.editor?.options()?.scale,
+      scale: window.ketcher?.editor?.options()?.microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });

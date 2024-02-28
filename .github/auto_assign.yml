@@ -4,19 +4,11 @@ useReviewGroups: true
 addAssignees: author
 reviewGroups:
   core:
-    - nitvex
+    - ilya-asiyuk-epam
     - rrodionov91
-    - SashaGraves
   developers:
-    - nanoblit
     - StarlaStarla
     - chgayane
-    - OlgaMazurina
-    - ivan-arkhipov-epam 
   QA:
     - Zhirnoff
-    - MartaWilliams
-    - y-holik
-    - AnastasiyaPiatrovaKlu
-    - ViktoriaTkacheva
-    - urszula-gawlowska
+    - AlexeyGirin

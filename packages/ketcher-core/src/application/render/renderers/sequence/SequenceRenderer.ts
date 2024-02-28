@@ -54,7 +54,8 @@ export class SequenceRenderer {
               ),
             chainIndex === SequenceRenderer.caretPosition[0] &&
               subChainIndex === SequenceRenderer.caretPosition[1] &&
-              nodeIndex === SequenceRenderer.caretPosition[2],
+              nodeIndex === SequenceRenderer.caretPosition[2] &&
+              SymbolEditingMode.AFTER,
           );
           renderer.show();
           node.monomer.setRenderer(renderer);
@@ -296,5 +297,9 @@ export class SequenceRenderer {
       (this.getNodeByPointer(previousChainPointer) && previousChainPointer) ||
       this.caretPosition
     );
+  }
+
+  public static get isCarretBeforeChain() {
+    return this.caretPosition[2] === -1;
   }
 }

@@ -68,7 +68,7 @@ export class SequenceMode extends BaseMode {
     const hotKeys = initHotKeys(this.keyboardEventHandlers);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
 
-    this.keyboardEventHandlers[shortcutKey]?.handler();
+    this.keyboardEventHandlers[shortcutKey]?.handler(event);
   }
 
   private get keyboardEventHandlers() {
@@ -82,22 +82,35 @@ export class SequenceMode extends BaseMode {
             SequenceRenderer.previousFromCurrentEdittingMonomer;
           const currentNode = SequenceRenderer.currentEdittingMonomer;
           const nextNode = SequenceRenderer.nextFromCurrentEdittingMonomer;
-          const modelChanges = editor.drawingEntitiesManager.deleteMonomer(
-            currentNode.monomer,
-          );
+          const modelChanges = new Command();
 
-          modelChanges.merge(
-            editor.drawingEntitiesManager.createPolymerBond(
-              previousNode.monomer,
-              nextNode.monomer,
-              AttachmentPointName.R2,
-              AttachmentPointName.R1,
-            ),
-          );
+          if (SequenceRenderer.isCarretBeforeChain) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.createPolymerBond(
+                previousNode.monomer,
+                currentNode.monomer,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          } else {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(currentNode.monomer),
+            );
+            modelChanges.merge(
+              editor.drawingEntitiesManager.createPolymerBond(
+                previousNode.monomer,
+                nextNode.monomer,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          }
+
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
+          SequenceRenderer.setCaretPositionBySequenceItemRenderer(previousNode?.monomer.renderer)
           this.initialize(false);
-          SequenceRenderer.moveCaretBack();
         },
       },
       'move-caret-forward': {
@@ -110,6 +123,24 @@ export class SequenceMode extends BaseMode {
         shortcut: ['ArrowLeft'],
         handler: () => {
           SequenceRenderer.moveCaretBack();
+        },
+      },
+      'add-sequence-item': {
+        shortcut: ['A', 'T', 'G', 'C', 'U', 'a', 't', 'g', 'c', 'u'],
+        handler: (event) => {
+          console.log(event)
+          // const editor = CoreEditor.provideEditorInstance();
+          // const history = new EditorHistory(editor);
+          // const previousNode =
+          //   SequenceRenderer.previousFromCurrentEdittingMonomer;
+          // const currentNode = SequenceRenderer.currentEdittingMonomer;
+          // const nextNode = SequenceRenderer.nextFromCurrentEdittingMonomer;
+          // const modelChanges = new Command();
+          //
+          // editor.drawingEntitiesManager.addRnaPreset()
+          //
+          // this.initialize(false);
+          // SequenceRenderer.moveCaretForward();
         },
       },
     };

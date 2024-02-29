@@ -17,6 +17,7 @@ import {
   saveToFile,
   waitForSpinnerFinishedWork,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -377,5 +378,106 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('User can auromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 1
+    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/3529 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-query-features-with-out-custom-query.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+  });
+
+  test('User can DEauromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 2
+    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Press Dearomatize button
+    5. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/3529 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1757 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-query-features-with-out-custom-query.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+  });
+
+  test('User can Auromatize molecules with custom query parameters.', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 3
+    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-custom-query-features.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+  });
+
+  test('User can Deuromatize molecules with custom query parameters.', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
+    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Press Dearomatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-custom-query-features.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 });

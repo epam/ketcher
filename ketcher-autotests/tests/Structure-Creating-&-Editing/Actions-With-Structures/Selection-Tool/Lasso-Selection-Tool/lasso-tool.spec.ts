@@ -65,13 +65,13 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.move(atomPoint.x, atomPoint.y);
     await page.mouse.click(atomPoint.x, atomPoint.y);
     await takeEditorScreenshot(page);
-    await clickCanvas(page);
+    await page.mouse.click(x, y);
 
     const bondPoint = await getBondByIndex(page, {}, 0);
     await page.mouse.move(bondPoint.x, bondPoint.y);
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await takeEditorScreenshot(page);
-    await clickCanvas(page);
+    await page.mouse.click(x, y);
 
     await page.keyboard.down('Shift');
     await page.mouse.click(atomPoint.x, atomPoint.y);

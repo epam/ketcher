@@ -58,6 +58,8 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
      */
+    const x = 200;
+    const y = 200;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
@@ -76,6 +78,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
+    await page.mouse.click(x, y);
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, xAxis, yAxis);

@@ -4,8 +4,12 @@ import {
   waitForPageInit,
   openFileAndAddToCanvas,
   selectEraseTool,
+  selectSnakeLayoutModeTool,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  zoomWithMouseWheel,
+} from '@utils/macromolecules';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,6 +77,77 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
     await selectEraseTool(page);
     await page.getByText('Tml').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Monomers are correctly recalculated and renumbered in both linear and branch chains', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: Remove a monomer and observe how the remaining monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-peptide-chains-connected-through-chems.ket',
+      page,
+    );
+    await selectEraseTool(page);
+    await page.getByText('Tml').locator('..').first().click();
+    await page.getByText('His1Me').locator('..').first().click();
+    await page.getByText('D-Hyp').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Remove first monomer from an RNA linear chain and ensure proper renumbering of the preceding monomers', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: Remove first a monomer and observe how the remaining monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    await openFileAndAddToCanvas('Molfiles-V3000/modified-rna.mol', page);
+    await selectSnakeLayoutModeTool(page);
+    await selectEraseTool(page);
+    await page.getByText('25R').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Remove the last monomer from an RNA linear chain and ensure proper renumbering of the preceding monomers', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: Remove a monomer and observe how the remaining monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    const ZOOM_OUT_VALUE = 400;
+    await openFileAndAddToCanvas('Molfiles-V3000/modified-rna.mol', page);
+    await selectSnakeLayoutModeTool(page);
+    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
+    await selectEraseTool(page);
+    await page.getByText('3A6').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Remove a monomer from middle of an RNA linear chain and verify the correct renumbering of the remaining monomers', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: Remove a monomer from middle and observe how the remaining monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    const ZOOM_OUT_VALUE = 400;
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/rna-modified-sugars.mol',
+      page,
+    );
+    await selectSnakeLayoutModeTool(page);
+    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
+    await selectEraseTool(page);
+    await page.getByText('5A6').locator('..').first().click();
     await takeEditorScreenshot(page);
   });
 });

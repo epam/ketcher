@@ -140,7 +140,6 @@ test.describe('PPTX files', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile('PPTX/ARROWS.pptx', page);
       });
-
       await waitForSpinnerFinishedWork(page, async () => {
         await page.getByText(`Structure ${count}`, { exact: true }).click();
       });
@@ -148,8 +147,6 @@ test.describe('PPTX files', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await pressButton(page, 'Open as New Project');
       });
-      //  Some times - waitForSpinnerFinishedWork doesn't wait till Spinner finished work, so I need that delay as workaround
-      //  await new Promise(resolve => setTimeout(resolve, 1000));
       await takeEditorScreenshot(page);
     }
   });

@@ -61,13 +61,15 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer) {
-    this.isEditMode = true;
-    this.initialize(false);
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         sequenceItemRenderer,
       );
+      SequenceRenderer.moveCaretForward();
     }
+
+    this.isEditMode = true;
+    this.initialize(false);
   }
 
   public onKeyUp(event: KeyboardEvent) {
@@ -106,16 +108,7 @@ export class SequenceMode extends BaseMode {
           const nextNode = SequenceRenderer.nextFromCurrentEdittingMonomer;
           const modelChanges = new Command();
 
-          if (SequenceRenderer.isCarretBeforeChain) {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                previousNode?.lastMonomerInNode,
-                currentNode?.firstMonomerInNode,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
-            );
-          } else {
+          if (previousNode) {
             currentNode?.monomers.forEach((monomer) => {
               modelChanges.merge(
                 editor.drawingEntitiesManager.deleteMonomer(monomer),
@@ -125,6 +118,15 @@ export class SequenceMode extends BaseMode {
               editor.drawingEntitiesManager.createPolymerBond(
                 previousNode?.lastMonomerInNode,
                 nextNode?.firstMonomerInNode,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          } else {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.createPolymerBond(
+                previousNode?.lastMonomerInNode,
+                currentNode?.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),
@@ -189,41 +191,30 @@ export class SequenceMode extends BaseMode {
             (monomer) => monomer instanceof Phosphate,
           );
 
-          if (!SequenceRenderer.isCarretBeforeChain && nextNode) {
+          if (!(currentNode instanceof EmptySequenceNode)) {
             modelChanges.merge(
-              editor.drawingEntitiesManager.deletePolymerBond(
-                currentNode?.lastMonomerInNode.attachmentPointsToBonds.R2,
+              editor.drawingEntitiesManager.createPolymerBond(
+                phosphate,
+                currentNode?.firstMonomerInNode,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
               ),
             );
-          }
 
-          if (!(currentNode instanceof EmptySequenceNode)) {
-            if (SequenceRenderer.isCarretBeforeChain) {
+            if (previousNode) {
               modelChanges.merge(
-                editor.drawingEntitiesManager.createPolymerBond(
-                  phosphate,
-                  currentNode?.firstMonomerInNode,
-                  AttachmentPointName.R2,
-                  AttachmentPointName.R1,
-                ),
-              );
-            } else {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.createPolymerBond(
-                  currentNode.lastMonomerInNode,
-                  sugar,
-                  AttachmentPointName.R2,
-                  AttachmentPointName.R1,
+                editor.drawingEntitiesManager.deletePolymerBond(
+                  previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2,
                 ),
               );
             }
           }
 
-          if (!SequenceRenderer.isCarretBeforeChain && nextNode) {
+          if (previousNode) {
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
-                phosphate,
-                nextNode.firstMonomerInNode,
+                previousNode.lastMonomerInNode,
+                sugar,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),

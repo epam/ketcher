@@ -4,11 +4,6 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor, SequenceMode } from 'application/editor';
 
-export enum SymbolEditingMode {
-  BEFORE = 'BEFORE',
-  AFTER = 'AFTER',
-}
-
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
@@ -22,19 +17,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
-    private _symbolEditingMode?: SymbolEditingMode,
+    private _isEditingSymbol: boolean,
   ) {
     super(node.monomer);
   }
 
-  public get symbolEditingMode() {
-    return this._symbolEditingMode;
+  public get isEditingSymbol() {
+    return this._isEditingSymbol;
   }
 
-  public set symbolEditingMode(
-    symbolEditingMode: SymbolEditingMode | undefined,
-  ) {
-    this._symbolEditingMode = symbolEditingMode;
+  public set isEditingSymbol(isEditingSymbol: boolean) {
+    this._isEditingSymbol = isEditingSymbol;
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -153,24 +146,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.counterElement = undefined;
   }
 
-  public appendCaretElementAfterSymbol() {
+  public appendCaretElement() {
     this.spacerElement
       ?.append('line')
-      .attr('x1', 4)
+      .attr('x1', -16)
       .attr('y1', -1)
-      .attr('x2', 4)
+      .attr('x2', -16)
       .attr('y2', 21)
-      .attr('stroke', '#333')
-      .attr('class', 'blinking');
-  }
-
-  public appendCaretElementBeforeSymbol() {
-    this.rootElement
-      ?.append('line')
-      .attr('x1', -2)
-      .attr('y1', -17)
-      .attr('x2', -2)
-      .attr('y2', 5)
       .attr('stroke', '#333')
       .attr('class', 'blinking');
   }
@@ -212,10 +194,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.backgroundElement = this.appendBackgroundElement();
 
     if (editor?.mode?.isEditMode) {
-      if (this.symbolEditingMode === SymbolEditingMode.AFTER) {
-        this.appendCaretElementAfterSymbol();
-      } else if (this.symbolEditingMode === SymbolEditingMode.BEFORE) {
-        this.appendCaretElementBeforeSymbol();
+      if (this.isEditingSymbol) {
+        this.appendCaretElement();
       }
     }
 

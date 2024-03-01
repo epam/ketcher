@@ -9,10 +9,7 @@ import {
 } from 'domain/helpers/monomers';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import {
-  BaseSequenceItemRenderer,
-  SymbolEditingMode,
-} from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -74,9 +71,7 @@ export class SequenceRenderer {
               ),
             chainIndex === SequenceRenderer.caretPosition[0] &&
               subChainIndex === SequenceRenderer.caretPosition[1] &&
-              nodeIndex === SequenceRenderer.caretPosition[2]
-              ? SymbolEditingMode.AFTER
-              : undefined,
+              nodeIndex === SequenceRenderer.caretPosition[2],
           );
           renderer.show();
           node.monomer?.setRenderer(renderer);
@@ -184,7 +179,7 @@ export class SequenceRenderer {
     );
 
     if (oldSubChainNode) {
-      oldSubChainNode.monomer.renderer.symbolEditingMode = undefined;
+      oldSubChainNode.monomer.renderer.isEditingSymbol = false;
       oldSubChainNode.monomer.renderer?.remove();
       oldSubChainNode.monomer.renderer?.show();
     }
@@ -195,10 +190,7 @@ export class SequenceRenderer {
       return;
     }
 
-    subChainNode.monomer.renderer.symbolEditingMode =
-      caretPosition[2] === -1
-        ? SymbolEditingMode.BEFORE
-        : SymbolEditingMode.AFTER;
+    subChainNode.monomer.renderer.isEditingSymbol = true;
     subChainNode.monomer.renderer?.remove();
     subChainNode.monomer.renderer?.show();
   }
@@ -304,9 +296,7 @@ export class SequenceRenderer {
 
   private static getNodeByPointer(sequencePointer: SequencePointer) {
     return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
-      ?.subChains[sequencePointer[1]]?.nodes[
-      sequencePointer[2] === -1 ? 0 : sequencePointer[2]
-    ];
+      ?.subChains[sequencePointer[1]]?.nodes[sequencePointer[2]];
   }
 
   private static getSubChainByPointer(sequencePointer: SequencePointer) {
@@ -332,7 +322,7 @@ export class SequenceRenderer {
       currentSubChainIndex + 1,
       0,
     ];
-    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, -1];
+    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, 0];
 
     return (
       (this.getNodeByPointer(nextNodePointer) && nextNodePointer) ||
@@ -376,11 +366,6 @@ export class SequenceRenderer {
       (this.getNodeByPointer(previousNodePointer) && previousNodePointer) ||
       (this.getNodeByPointer(previousSubChainPointer) &&
         previousSubChainPointer) ||
-      (currentNodeIndex === 0 && [
-        currentChainIndex,
-        currentSubChainIndex,
-        -1,
-      ]) ||
       (this.getNodeByPointer(previousChainPointer) && previousChainPointer) ||
       this.caretPosition
     );

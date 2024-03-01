@@ -16,7 +16,7 @@ export class SequenceNodeRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
-    symbolEditingMode?: SymbolEditingMode,
+    isEditingSymbol: boolean,
   ) {
     let RendererClass;
 
@@ -52,7 +52,7 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
-      symbolEditingMode,
+      isEditingSymbol,
     );
   }
 }

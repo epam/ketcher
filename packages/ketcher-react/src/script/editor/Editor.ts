@@ -269,10 +269,6 @@ class Editor implements KetcherEditor {
 
   renderAndRecoordinateStruct(struct: Struct, needToCenterStruct = true) {
     const action = fromNewCanvas(this.render.ctab, struct);
-    setTimeout(() => {
-      this.selection('all');
-      this.selection(null);
-    });
     this.update(action);
     if (needToCenterStruct) {
       this.centerStruct();
@@ -301,6 +297,10 @@ class Editor implements KetcherEditor {
   structToAddFragment(value: Struct): Struct {
     const superStruct = value.mergeInto(this.render.ctab.molecule);
 
+    setTimeout(() => {
+      this.selection('all');
+      this.selection(null);
+    }, 0);
     return this.renderAndRecoordinateStruct(superStruct);
   }
 

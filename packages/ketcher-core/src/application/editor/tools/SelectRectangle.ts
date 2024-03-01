@@ -25,6 +25,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { SequenceMode } from '../modes';
+import { isMacOs } from 'react-device-detect';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -141,9 +142,10 @@ class SelectRectangle implements BaseTool {
     const renderer = event.target.__data__;
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
+    const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
 
     let modelChanges: Command;
-    if (renderer instanceof BaseRenderer && !event.shiftKey && !event.ctrlKey) {
+    if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
       this.moveStarted = true;
       if (
         renderer.drawingEntity.selected &&
@@ -180,7 +182,7 @@ class SelectRectangle implements BaseTool {
         this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
           drawingEntities,
         );
-    } else if (renderer instanceof BaseSequenceItemRenderer && event.ctrlKey) {
+    } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
         .map((node) => {
           if (node instanceof Nucleoside) {

@@ -148,9 +148,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public appendSelection() {
     if (this.selectionRectangle) {
       this.selectionRectangle
-        .attr('x', this.scaledMonomerPosition.x - 4)
-        .attr('y', this.scaledMonomerPosition.y - 14)
-        .attr('width', 20)
+        .attr('x', this.scaledMonomerPosition.x - 3)
+        .attr('y', this.scaledMonomerPosition.y - 16)
+        .attr('width', 18)
         .attr('height', 20);
     } else {
       this.selectionBorder = this.rootElement
@@ -163,9 +163,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         ?.insert('rect', ':first-child')
         .attr('opacity', '0.7')
         .attr('fill', '#57FF8F')
-        .attr('x', this.scaledMonomerPosition.x - 4)
-        .attr('y', this.scaledMonomerPosition.y - 14)
-        .attr('width', 20)
+        .attr('x', this.scaledMonomerPosition.x - 3)
+        .attr('y', this.scaledMonomerPosition.y - 16)
+        .attr('width', 18)
         .attr('height', 20);
     }
   }

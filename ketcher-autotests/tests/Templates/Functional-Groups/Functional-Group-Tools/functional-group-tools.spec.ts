@@ -813,7 +813,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Can attach copied Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
-    test.fail();
     const anyAtom = 4;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-and-benzene.mol',

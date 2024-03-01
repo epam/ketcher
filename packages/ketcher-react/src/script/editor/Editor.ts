@@ -538,17 +538,18 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
-    }
-
     this.historyPtr--;
     const stack = this.historyStack[this.historyPtr];
     const action = stack.perform(this.render.ctab);
 
     this.historyStack[this.historyPtr] = action;
-    this.event.change.dispatch(action);
+
+    if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
+    } else {
+      this.event.change.dispatch(action);
+    }
+
     this.render.update();
   }
 
@@ -562,15 +563,17 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null);
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
-    }
 
     const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
     this.historyStack[this.historyPtr] = action;
     this.historyPtr++;
-    this.event.change.dispatch(action);
+
+    if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
+    } else {
+      this.event.change.dispatch(action);
+    }
+
     this.render.update();
   }
 

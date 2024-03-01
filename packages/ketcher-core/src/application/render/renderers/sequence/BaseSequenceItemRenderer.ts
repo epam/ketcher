@@ -2,8 +2,11 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { editorEvents } from 'application/editor/editorEvents';
+import assert from 'assert';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
 
@@ -14,6 +17,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private isLastMonomerInChain: boolean,
   ) {
     super(node.monomer);
+    this.editorEvents = editorEvents;
   }
 
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
@@ -101,6 +105,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('font-weight', '700')
       .attr('fill', '#333333');
 
+    this.appendEvents();
     if (this.needDisplayCounter) {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
@@ -128,4 +133,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public setEnumeration() {}
   public redrawEnumeration() {}
+  private appendEvents() {
+    assert(this.textElement);
+
+    this.textElement.on('mouseover', (event) => {
+      this.editorEvents.mouseOverSequenceItem.dispatch(event);
+    });
+    this.textElement.on('mouseleave', (event) => {
+      this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
+    });
+  }
 }

@@ -80,7 +80,6 @@ import {
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
-import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
@@ -94,6 +93,7 @@ import {
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
+import { Preview } from 'components/shared/Preview';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -218,38 +218,62 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     };
   }, [editor]);
 
-  const handleOpenPreview = useCallback((e) => {
-    const monomer = e.target.__data__.monomer.monomerItem;
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const isNucleotide = Boolean(e.target.__data__?.node?.phosphate);
+      const monomer =
+        e.target.__data__?.monomer?.monomerItem ||
+        e.target.__data__.node.monomer.monomerItem;
 
-    const cardCoordinates = e.target.getBoundingClientRect();
-    const top = calculatePreviewPosition(monomer, cardCoordinates);
-    const previewStyle = {
-      top,
-      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-    };
-    debouncedShowPreview({ monomer, style: previewStyle });
-  }, []);
+      const nucleotide = isNucleotide
+        ? [
+            e.target.__data__?.node.sugar.monomerItem,
+            e.target.__data__?.node.rnaBase.monomerItem,
+            e.target.__data__?.node.phosphate.monomerItem,
+          ]
+        : null;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      if (isNucleotide) {
+        debouncedShowPreview({ nucleotide, style: previewStyle });
+      } else {
+        debouncedShowPreview({ monomer, style: previewStyle });
+      }
+    },
+    [debouncedShowPreview],
+  );
 
   const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  }, []);
+  }, [debouncedShowPreview, dispatch]);
 
   useEffect(() => {
-    editor?.events.mouseOverMonomer.add((e) => {
-      handleOpenPreview(e);
-    });
-    editor?.events.mouseLeaveMonomer.add(() => {
-      handleClosePreview();
-    });
-    editor?.events.mouseOnMoveMonomer.add((e) => {
+    editor?.events.mouseOverMonomer.add(handleOpenPreview);
+    editor?.events.mouseLeaveMonomer.add(handleClosePreview);
+    editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
+
+    const onMoveHandler = (e) => {
       handleClosePreview();
       const isLeftClick = e.buttons === 1;
       if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);
       }
-    });
-  }, [editor, activeTool]);
+    };
+    editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
+    return () => {
+      editor?.events.mouseOverMonomer.remove(handleOpenPreview);
+      editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
+      editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
+      editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
+      editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
+    };
+  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();
@@ -308,7 +332,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <StyledPreview className="polymer-library-preview" />
+      <Preview />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

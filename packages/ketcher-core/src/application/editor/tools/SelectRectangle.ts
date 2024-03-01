@@ -79,8 +79,10 @@ class SelectRectangle implements BaseTool {
       });
     };
 
-    this.brush.on('brush', onBrush).on('end', brushed);
-    this.shiftBrush.on('brush', onBrush).on('end', brushed);
+    this.brush.on('brush', onBrush);
+    this.brush.on('end', brushed);
+    this.shiftBrush.on('brush', onBrush);
+    this.shiftBrush.on('end', brushed);
 
     this.brushArea.call(this.brush);
 

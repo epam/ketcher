@@ -27,8 +27,13 @@ import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
+import { IconName } from 'ketcher-react/dist/components/Icon/types';
 
-const icons = ['sugar', 'base', 'phosphate'];
+const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
+  'sugar',
+  'base',
+  'phosphate',
+];
 
 const NucleotidePreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);

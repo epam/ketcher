@@ -42,6 +42,7 @@ const StructRender = ({
   options,
   className,
   update,
+  needRescale,
 }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -50,9 +51,16 @@ const StructRender = ({
     if (container) {
       container.innerHTML = '';
       const normalizedStruct = normalizeStruct(struct);
-      RenderStruct.render(container, normalizedStruct, options);
+      RenderStruct.render(
+        container,
+        normalizedStruct,
+        options,
+        struct,
+        update,
+        needRescale,
+      );
     }
-  }, [struct, options, update]);
+  }, [struct, options, update, needRescale]);
 
   return <Container ref={renderRef} className={className}></Container>;
 };

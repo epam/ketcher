@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer16"
+                "$ref": "monomer5"
             },
             {
-                "$ref": "monomer18"
+                "$ref": "monomer6"
             },
             {
-                "$ref": "monomer20"
+                "$ref": "monomer7"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer16",
+                    "monomerId": "monomer5",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer18",
+                    "monomerId": "monomer6",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer18",
+                    "monomerId": "monomer6",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer20",
+                    "monomerId": "monomer7",
                     "attachmentPointId": "R1"
                 }
             }
@@ -47,12 +47,12 @@
             }
         ]
     },
-    "monomer16": {
+    "monomer5": {
         "type": "monomer",
-        "id": "16",
+        "id": "5",
         "position": {
-            "x": 1.3666666666666667,
-            "y": -1.7266666666666668
+            "x": 15.736666666666666,
+            "y": -9.940000000000001
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -161,6 +161,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Bal___beta-Alanine",
         "fullName": "beta-Alanine",
@@ -187,12 +188,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer18": {
+    "monomer6": {
         "type": "monomer",
-        "id": "18",
+        "id": "6",
         "position": {
-            "x": 2.2933333333333334,
-            "y": -1.7333333333333334
+            "x": 16.863333333333337,
+            "y": -9.946666666666669
         },
         "alias": "Edc",
         "templateId": "Edc___S-ethylthiocysteine"
@@ -363,6 +364,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Edc___S-ethylthiocysteine",
         "fullName": "S-ethylthiocysteine",
@@ -389,12 +391,12 @@
         ],
         "naturalAnalogShort": "C"
     },
-    "monomer20": {
+    "monomer7": {
         "type": "monomer",
-        "id": "20",
+        "id": "7",
         "position": {
-            "x": 3.2933333333333343,
-            "y": -1.7466666666666661
+            "x": 18.088333333333324,
+            "y": -9.96
         },
         "alias": "meD",
         "templateId": "meD___N-Methyl-Aspartic acid"
@@ -565,6 +567,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meD___N-Methyl-Aspartic acid",
         "fullName": "N-Methyl-Aspartic acid",

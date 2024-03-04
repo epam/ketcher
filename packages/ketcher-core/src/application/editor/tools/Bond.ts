@@ -184,6 +184,10 @@ class PolymerBond implements BaseTool {
 
   public mouseLeaveMonomer(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
+    let redrawAttachmentPoints = true;
+    if (event.relatedTarget !== this.editor.canvas) {
+      redrawAttachmentPoints = false;
+    }
     if (
       renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
       !this.isBondConnectionModalOpen
@@ -192,6 +196,7 @@ class PolymerBond implements BaseTool {
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
+          redrawAttachmentPoints,
         );
       this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);

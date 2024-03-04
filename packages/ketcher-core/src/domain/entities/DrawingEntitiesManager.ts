@@ -686,13 +686,17 @@ export class DrawingEntitiesManager {
   public cancelIntentionToFinishBondCreation(
     monomer: BaseMonomer,
     polymerBond?: PolymerBond,
+    redrawAttachmentPoints = true,
   ) {
     const command = new Command();
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();
     monomer.setPotentialSecondAttachmentPoint(null);
     monomer.removePotentialBonds();
-    const operation = new MonomerHoverOperation(monomer, true);
+    const operation = new MonomerHoverOperation(
+      monomer,
+      redrawAttachmentPoints,
+    );
     command.addOperation(operation);
 
     // If the initial AP has been chosen automatically, it needs to be removed

@@ -48,12 +48,12 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 
-const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
-const VERTICAL_DISTANCE_FROM_MONOMER = 60;
-const DISTANCE_FROM_RIGHT = 70;
-const DISTANCE_BETWEEN_MONOMERS = 30;
-const MONOMER_START_X_POSITION = 70;
-const MONOMER_START_Y_POSITION = 70;
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
+const VERTICAL_DISTANCE_FROM_MONOMER = 30;
+const DISTANCE_FROM_RIGHT = 55;
+const DISTANCE_BETWEEN_MONOMERS = 15;
+const MONOMER_START_X_POSITION = 50;
+const MONOMER_START_Y_POSITION = 50;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;

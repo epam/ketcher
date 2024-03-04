@@ -13,6 +13,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -366,6 +367,7 @@ test.describe('Rectangle Selection Tool', () => {
     const y = 100;
     await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
     await page.keyboard.press('Control+a');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await page.mouse.click(x, y);
     await takeEditorScreenshot(page);
@@ -395,7 +397,7 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomers moved to new position in Snake mode view.
     */
-    const x = 900;
+    const x = 850;
     const y = 500;
     await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);

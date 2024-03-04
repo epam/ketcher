@@ -41,8 +41,8 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: Switching between modes occurs with a visual change in monomers and their compounds depending on the mode.
     */
-    const ZOOM_OUT_VALUE = 800;
-    const SCROLL_DOWN_VALUE = 600;
+    const ZOOM_OUT_VALUE = 400;
+    const SCROLL_DOWN_VALUE = 300;
     await openFileAndAddToCanvas('KET/monomers-chains.ket', page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await selectSequenceLayoutModeTool(page);

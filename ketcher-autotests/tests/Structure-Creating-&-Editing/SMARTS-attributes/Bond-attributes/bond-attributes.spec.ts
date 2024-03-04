@@ -81,7 +81,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       page,
       setBondType,
       'Single Up-option',
-      '[#6@](-[#6])(-[#6])/[#6]',
+      '[#6](-[#6])(-[#6])/[#6]',
     );
   });
 
@@ -90,15 +90,11 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       page,
       setBondType,
       'Single Down-option',
-      '[#6@@](-[#6])(-[#6])\\[#6]',
+      '[#6](-[#6])(-[#6])\\[#6]',
     );
   });
 
   test('Setting bond type - single up/down', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -117,10 +113,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -240,10 +232,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   // Custom query for bond
 
   test('Setting custom query - any OR double', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setCustomQueryForBond,

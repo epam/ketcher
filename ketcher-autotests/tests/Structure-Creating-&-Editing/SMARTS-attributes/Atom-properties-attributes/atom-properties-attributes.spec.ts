@@ -116,10 +116,6 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   });
 
   test('Setting valence', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
-     */
     await setAndCheckAtomProperties(
       page,
       setValence,

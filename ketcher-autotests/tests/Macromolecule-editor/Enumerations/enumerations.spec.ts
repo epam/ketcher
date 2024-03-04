@@ -5,11 +5,10 @@ import {
   openFileAndAddToCanvas,
   selectEraseTool,
   selectSnakeLayoutModeTool,
+  clickUndo,
+  selectRectangleSelectionTool,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -64,6 +63,43 @@ test.describe('Enumerations', () => {
     Description: each chain (RNA and peptide) is counted separately when they are connected
     */
     await openFileAndAddToCanvas('KET/rna-and-peptides.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('The system walk along sugar-phosphate core from R2 to R1 until it meets sugar with base', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: The system walk along sugar-phosphate core from R2 to R1 
+    until it meets the sugar with the base (attached to R3 AP via R3-R1 bond). Such base counted.
+    */
+    await openFileAndAddToCanvas('KET/sugar-phosphate-core.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Deleting base recalculate chain', async ({ page }) => {
+    /* 
+    Test case: #3222
+    Description: Chain recalculated after deleting base.
+    */
+    await openFileAndAddToCanvas('KET/sugar-phosphate-baA.ket', page);
+    await selectRectangleSelectionTool(page);
+    await selectEraseTool(page);
+    await page.getByText('baA').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Undoing base recalculate chain', async ({ page }) => {
+    /* 
+    Test case: #3222
+    Description: Chain recalculated after undoing base.
+    */
+    await openFileAndAddToCanvas('KET/sugar-phosphate-baA.ket', page);
+    await selectRectangleSelectionTool(page);
+    await selectEraseTool(page);
+    await page.getByText('baA').locator('..').first().click();
+    await clickUndo(page);
     await takeEditorScreenshot(page);
   });
 
@@ -122,10 +158,8 @@ test.describe('Enumerations', () => {
     Description: Remove a monomer and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    const ZOOM_OUT_VALUE = 400;
     await openFileAndAddToCanvas('Molfiles-V3000/modified-rna.mol', page);
     await selectSnakeLayoutModeTool(page);
-    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await selectEraseTool(page);
     await page.getByText('3A6').locator('..').first().click();
     await takeEditorScreenshot(page);
@@ -139,15 +173,56 @@ test.describe('Enumerations', () => {
     Description: Remove a monomer from middle and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    const ZOOM_OUT_VALUE = 400;
     await openFileAndAddToCanvas(
       'Molfiles-V3000/rna-modified-sugars.mol',
       page,
     );
     await selectSnakeLayoutModeTool(page);
-    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await selectEraseTool(page);
     await page.getByText('5A6').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('After Undo monomers are correctly recalculated and renumbered in both linear and branch chains', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: After Undo monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-peptide-chains-connected-through-chems.ket',
+      page,
+    );
+    await selectEraseTool(page);
+    await page.getByText('Tml').locator('..').first().click();
+    await page.getByText('His1Me').locator('..').first().click();
+    await page.getByText('D-Hyp').locator('..').first().click();
+    const pressCount = 3;
+    for (let i = 0; i < pressCount; i++) {
+      await clickUndo(page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Remove a monomer from a chain that overlaps with another chain and ensure proper renumbering in both chains', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3222
+    Description: After deleted proper renumbering in both chains and after Undo monomers are correctly 
+    recalculated and renumbered in both linear and branch chains
+    */
+    await openFileAndAddToCanvas('KET/intersected-monomers-chains.ket', page);
+    await selectEraseTool(page);
+    await page.getByText('Hcy').locator('..').first().click();
+    await page.getByText('meC').locator('..').first().click();
+    await takeEditorScreenshot(page);
+    const pressCount = 2;
+    for (let i = 0; i < pressCount; i++) {
+      await clickUndo(page);
+    }
     await takeEditorScreenshot(page);
   });
 });

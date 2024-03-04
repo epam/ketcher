@@ -120,9 +120,9 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       100,
       100,
-      50,
-      50,
-      12,
+      25,
+      25,
+      18,
     );
 
     await selectSnakeLayoutModeTool(page);
@@ -235,13 +235,53 @@ test.describe('Snake Bond Tool', () => {
       3,
       3,
     );
-    const { sugar: sugar4 } = await addRnaPresetOnCanvas(
+    const { sugar: sugar4, phosphate: phosphate4 } = await addRnaPresetOnCanvas(
       page,
       'T_T_R_P',
       100,
       100,
       4,
       4,
+    );
+    const { sugar: sugar5, phosphate: phosphate5 } = await addRnaPresetOnCanvas(
+      page,
+      'T_T_R_P',
+      200,
+      200,
+      5,
+      5,
+    );
+    const { sugar: sugar6, phosphate: phosphate6 } = await addRnaPresetOnCanvas(
+      page,
+      'T_T_R_P',
+      300,
+      200,
+      6,
+      6,
+    );
+    const { sugar: sugar7, phosphate: phosphate7 } = await addRnaPresetOnCanvas(
+      page,
+      'T_T_R_P',
+      400,
+      200,
+      7,
+      7,
+    );
+    const { sugar: sugar8, phosphate: phosphate8 } = await addRnaPresetOnCanvas(
+      page,
+      'T_T_R_P',
+      500,
+      200,
+      8,
+      8,
+    );
+    const { sugar: sugar9 } = await addRnaPresetOnCanvas(
+      page,
+      'T_T_R_P',
+      600,
+      200,
+      9,
+      9,
     );
 
     await selectSingleBondTool(page);
@@ -250,6 +290,11 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate1, sugar2);
     await bondTwoMonomers(page, phosphate2, sugar3);
     await bondTwoMonomers(page, phosphate3, sugar4);
+    await bondTwoMonomers(page, phosphate4, sugar5);
+    await bondTwoMonomers(page, phosphate5, sugar6);
+    await bondTwoMonomers(page, phosphate6, sugar7);
+    await bondTwoMonomers(page, phosphate7, sugar8);
+    await bondTwoMonomers(page, phosphate8, sugar9);
 
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);

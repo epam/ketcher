@@ -34,7 +34,7 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
   }
 
   protected get enumerationElementPosition() {
-    return { x: 23, y: 10 };
+    return { x: 11, y: 5 };
   }
 
   protected get beginningElementPosition() {

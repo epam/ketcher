@@ -40,6 +40,6 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   protected get beginningElementPosition() {
-    return { x: -11, y: 15 };
+    return { x: -5, y: 7 };
   }
 }

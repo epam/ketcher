@@ -2,162 +2,162 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer114"
+                "$ref": "monomer407"
             },
             {
-                "$ref": "monomer116"
+                "$ref": "monomer408"
             },
             {
-                "$ref": "monomer118"
+                "$ref": "monomer409"
             },
             {
-                "$ref": "monomer120"
+                "$ref": "monomer410"
             },
             {
-                "$ref": "monomer122"
+                "$ref": "monomer411"
             },
             {
-                "$ref": "monomer124"
+                "$ref": "monomer412"
             },
             {
-                "$ref": "monomer127"
+                "$ref": "monomer413"
             },
             {
-                "$ref": "monomer129"
+                "$ref": "monomer414"
             },
             {
-                "$ref": "monomer131"
+                "$ref": "monomer415"
             },
             {
-                "$ref": "monomer133"
+                "$ref": "monomer416"
             },
             {
-                "$ref": "monomer135"
+                "$ref": "monomer417"
             },
             {
-                "$ref": "monomer137"
+                "$ref": "monomer418"
             },
             {
-                "$ref": "monomer139"
+                "$ref": "monomer419"
             },
             {
-                "$ref": "monomer141"
+                "$ref": "monomer420"
             },
             {
-                "$ref": "monomer143"
+                "$ref": "monomer421"
             },
             {
-                "$ref": "monomer145"
+                "$ref": "monomer422"
             },
             {
-                "$ref": "monomer147"
+                "$ref": "monomer423"
             },
             {
-                "$ref": "monomer149"
+                "$ref": "monomer424"
             },
             {
-                "$ref": "monomer151"
+                "$ref": "monomer425"
             },
             {
-                "$ref": "monomer153"
+                "$ref": "monomer426"
             },
             {
-                "$ref": "monomer155"
+                "$ref": "monomer427"
             },
             {
-                "$ref": "monomer157"
+                "$ref": "monomer428"
             },
             {
-                "$ref": "monomer159"
+                "$ref": "monomer429"
             },
             {
-                "$ref": "monomer161"
+                "$ref": "monomer430"
             },
             {
-                "$ref": "monomer163"
+                "$ref": "monomer431"
             },
             {
-                "$ref": "monomer165"
+                "$ref": "monomer432"
             },
             {
-                "$ref": "monomer167"
+                "$ref": "monomer433"
             },
             {
-                "$ref": "monomer169"
+                "$ref": "monomer434"
             },
             {
-                "$ref": "monomer172"
+                "$ref": "monomer435"
             },
             {
-                "$ref": "monomer176"
+                "$ref": "monomer436"
             },
             {
-                "$ref": "monomer177"
+                "$ref": "monomer437"
             },
             {
-                "$ref": "monomer179"
+                "$ref": "monomer438"
             },
             {
-                "$ref": "monomer184"
+                "$ref": "monomer439"
             },
             {
-                "$ref": "monomer185"
+                "$ref": "monomer440"
             },
             {
-                "$ref": "monomer187"
+                "$ref": "monomer441"
             },
             {
-                "$ref": "monomer190"
+                "$ref": "monomer442"
             },
             {
-                "$ref": "monomer192"
+                "$ref": "monomer443"
             },
             {
-                "$ref": "monomer194"
+                "$ref": "monomer444"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer176",
+                    "monomerId": "monomer436",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer177",
+                    "monomerId": "monomer437",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer177",
+                    "monomerId": "monomer437",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer179",
+                    "monomerId": "monomer438",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer184",
+                    "monomerId": "monomer439",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer185",
+                    "monomerId": "monomer440",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer185",
+                    "monomerId": "monomer440",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer187",
+                    "monomerId": "monomer441",
                     "attachmentPointId": "R1"
                 }
             }
@@ -273,12 +273,12 @@
             }
         ]
     },
-    "monomer114": {
+    "monomer407": {
         "type": "monomer",
-        "id": "114",
+        "id": "407",
         "position": {
-            "x": 0.4866666666666667,
-            "y": -0.29333333333333333
+            "x": 12.38,
+            "y": -5.298333333333333
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -416,12 +416,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer116": {
+    "monomer408": {
         "type": "monomer",
-        "id": "116",
+        "id": "408",
         "position": {
-            "x": 1.32,
-            "y": -0.26666666666666666
+            "x": 14.038333333333332,
+            "y": -5.346666666666667
         },
         "alias": "dA",
         "templateId": "dA___D-Alanine"
@@ -559,12 +559,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer118": {
+    "monomer409": {
         "type": "monomer",
-        "id": "118",
+        "id": "409",
         "position": {
-            "x": 2.186666666666667,
-            "y": -0.29333333333333333
+            "x": 15.780000000000001,
+            "y": -5.373333333333332
         },
         "alias": "meC",
         "templateId": "meC___N-Methyl-Cysteine"
@@ -756,12 +756,12 @@
         ],
         "naturalAnalogShort": "C"
     },
-    "monomer120": {
+    "monomer410": {
         "type": "monomer",
-        "id": "120",
+        "id": "410",
         "position": {
-            "x": 3.02,
-            "y": -0.32666666666666666
+            "x": 17.43833333333332,
+            "y": -5.406666666666664
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -968,12 +968,12 @@
         ],
         "naturalAnalogShort": "D"
     },
-    "monomer122": {
+    "monomer411": {
         "type": "monomer",
-        "id": "122",
+        "id": "411",
         "position": {
-            "x": 3.8333333333333335,
-            "y": -0.33333333333333337
+            "x": 18.97666666666665,
+            "y": -5.438333333333329
         },
         "alias": "Ggu",
         "templateId": "Ggu___gamma-glutamic acid"
@@ -1178,12 +1178,12 @@
         ],
         "naturalAnalogShort": "E"
     },
-    "monomer124": {
+    "monomer412": {
         "type": "monomer",
-        "id": "124",
+        "id": "412",
         "position": {
-            "x": 4.586666666666667,
-            "y": -0.35333333333333333
+            "x": 20.605000000000008,
+            "y": -5.458333333333337
         },
         "alias": "Phe3Cl",
         "templateId": "Phe3Cl___3-Chloro-L-phenylalanine"
@@ -1433,12 +1433,12 @@
         ],
         "naturalAnalogShort": "F"
     },
-    "monomer127": {
+    "monomer413": {
         "type": "monomer",
-        "id": "127",
+        "id": "413",
         "position": {
-            "x": 5.306666666666667,
-            "y": -0.3666666666666667
+            "x": 22.324999999999992,
+            "y": -5.521666666666664
         },
         "alias": "Phe-ol",
         "templateId": "Phe-ol___(2S)-2-amino-3-phenylpropan-1-ol"
@@ -1649,12 +1649,12 @@
         ],
         "naturalAnalogShort": "F"
     },
-    "monomer129": {
+    "monomer414": {
         "type": "monomer",
-        "id": "129",
+        "id": "414",
         "position": {
-            "x": 0.5133333333333334,
-            "y": -0.9533333333333334
+            "x": 12.406666666666665,
+            "y": -6.983333333333336
         },
         "alias": "DAGlyC",
         "templateId": "DAGlyC___2-cyanoacetic acid"
@@ -1764,12 +1764,12 @@
         ],
         "naturalAnalogShort": "G"
     },
-    "monomer131": {
+    "monomer415": {
         "type": "monomer",
-        "id": "131",
+        "id": "415",
         "position": {
-            "x": 1.32,
-            "y": -0.9133333333333334
+            "x": 14.13833333333333,
+            "y": -6.918333333333332
         },
         "alias": "His1Me",
         "templateId": "His1Me___(2S)-2-amino-3-(1-methyl-1H-imidazol-4-yl)propanoic acid"
@@ -2004,12 +2004,12 @@
         ],
         "naturalAnalogShort": "H"
     },
-    "monomer133": {
+    "monomer416": {
         "type": "monomer",
-        "id": "133",
+        "id": "416",
         "position": {
-            "x": 2.12,
-            "y": -0.9333333333333333
+            "x": 15.81333333333334,
+            "y": -6.938333333333333
         },
         "alias": "D-aIle",
         "templateId": "D-aIle___D-allo-Isoleucine"
@@ -2194,12 +2194,12 @@
         ],
         "naturalAnalogShort": "I"
     },
-    "monomer135": {
+    "monomer417": {
         "type": "monomer",
-        "id": "135",
+        "id": "417",
         "position": {
-            "x": 2.9466666666666668,
-            "y": -0.9466666666666668
+            "x": 17.439999999999998,
+            "y": -6.826666666666665
         },
         "alias": "Pyl",
         "templateId": "Pyl___Pyl"
@@ -2524,12 +2524,12 @@
         ],
         "naturalAnalogShort": "K"
     },
-    "monomer137": {
+    "monomer418": {
         "type": "monomer",
-        "id": "137",
+        "id": "418",
         "position": {
-            "x": 3.826666666666667,
-            "y": -0.9
+            "x": 18.91999999999999,
+            "y": -7.004999999999996
         },
         "alias": "D-Nle",
         "templateId": "D-Nle___D-Norleucine"
@@ -2712,12 +2712,12 @@
         ],
         "naturalAnalogShort": "L"
     },
-    "monomer139": {
+    "monomer419": {
         "type": "monomer",
-        "id": "139",
+        "id": "419",
         "position": {
-            "x": 4.526666666666667,
-            "y": -0.9533333333333334
+            "x": 20.644999999999982,
+            "y": -7.008333333333336
         },
         "alias": "Met_O",
         "templateId": "Met_O___(2S)-2-amino-4-methanesulfinylbutanoic acid"
@@ -2915,12 +2915,12 @@
         ],
         "naturalAnalogShort": "M"
     },
-    "monomer141": {
+    "monomer420": {
         "type": "monomer",
-        "id": "141",
+        "id": "420",
         "position": {
-            "x": 5.3133333333333335,
-            "y": -1.0266666666666668
+            "x": 22.306666666666658,
+            "y": -7.00666666666666
         },
         "alias": "dN",
         "templateId": "dN___D-Asparagine"
@@ -3127,12 +3127,12 @@
         ],
         "naturalAnalogShort": "N"
     },
-    "monomer143": {
+    "monomer421": {
         "type": "monomer",
-        "id": "143",
+        "id": "421",
         "position": {
-            "x": 0.52,
-            "y": -1.6466666666666667
+            "x": 12.438333333333333,
+            "y": -8.476666666666665
         },
         "alias": "D-Hyp",
         "templateId": "D-Hyp___D-4-Hydroxyproline"
@@ -3324,12 +3324,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer145": {
+    "monomer422": {
         "type": "monomer",
-        "id": "145",
+        "id": "422",
         "position": {
-            "x": 1.3866666666666667,
-            "y": -1.6266666666666667
+            "x": 14.179999999999994,
+            "y": -8.606666666666658
         },
         "alias": "dQ",
         "templateId": "dQ___D-Glutamine"
@@ -3551,12 +3551,12 @@
         ],
         "naturalAnalogShort": "Q"
     },
-    "monomer147": {
+    "monomer423": {
         "type": "monomer",
-        "id": "147",
+        "id": "423",
         "position": {
-            "x": 2.146666666666667,
-            "y": -1.62
+            "x": 15.765000000000006,
+            "y": -8.675
         },
         "alias": "Arg-al",
         "templateId": "Arg-al___N''-[(4S)-4-amino-5-oxopentyl]guanidine"
@@ -3760,12 +3760,12 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer149": {
+    "monomer424": {
         "type": "monomer",
-        "id": "149",
+        "id": "424",
         "position": {
-            "x": 2.98,
-            "y": -1.5933333333333335
+            "x": 17.47333333333333,
+            "y": -8.59833333333333
         },
         "alias": "SertBu",
         "templateId": "SertBu___O-tert-Butyl-L-serine"
@@ -3978,12 +3978,12 @@
         ],
         "naturalAnalogShort": "S"
     },
-    "monomer151": {
+    "monomer425": {
         "type": "monomer",
-        "id": "151",
+        "id": "425",
         "position": {
-            "x": 3.8133333333333335,
-            "y": -1.62
+            "x": 18.981666666666655,
+            "y": -8.674999999999995
         },
         "alias": "D-aThr",
         "templateId": "D-aThr___D-allo-Threonine"
@@ -4153,12 +4153,12 @@
         ],
         "naturalAnalogShort": "T"
     },
-    "monomer153": {
+    "monomer426": {
         "type": "monomer",
-        "id": "153",
+        "id": "426",
         "position": {
-            "x": 4.506666666666667,
-            "y": -1.6466666666666667
+            "x": 20.62499999999999,
+            "y": -8.676666666666668
         },
         "alias": "V",
         "templateId": "V___Valine"
@@ -4326,12 +4326,12 @@
         ],
         "naturalAnalogShort": "V"
     },
-    "monomer155": {
+    "monomer427": {
         "type": "monomer",
-        "id": "155",
+        "id": "427",
         "position": {
-            "x": 5.326666666666667,
-            "y": -1.6533333333333335
+            "x": 22.419999999999984,
+            "y": -8.733333333333329
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"
@@ -4642,12 +4642,12 @@
         ],
         "naturalAnalogShort": "W"
     },
-    "monomer157": {
+    "monomer428": {
         "type": "monomer",
-        "id": "157",
+        "id": "428",
         "position": {
-            "x": 0.5333333333333333,
-            "y": -2.3666666666666667
+            "x": 12.351666666666661,
+            "y": -10.046666666666665
         },
         "alias": "Bux",
         "templateId": "Bux___4-amino-3-hydroxybutanoic acid"
@@ -4815,12 +4815,12 @@
         ],
         "naturalAnalogShort": "X"
     },
-    "monomer159": {
+    "monomer429": {
         "type": "monomer",
-        "id": "159",
+        "id": "429",
         "position": {
-            "x": 1.4066666666666667,
-            "y": -2.3333333333333335
+            "x": 14.175,
+            "y": -10.163333333333334
         },
         "alias": "TyrabD",
         "templateId": "TyrabD___2-amino-3-(4-methoxyphenyl)prop-2-enoic acid"
@@ -5083,12 +5083,12 @@
         ],
         "naturalAnalogShort": "Y"
     },
-    "monomer161": {
+    "monomer430": {
         "type": "monomer",
-        "id": "161",
+        "id": "430",
         "position": {
-            "x": 2.166666666666667,
-            "y": -2.3266666666666667
+            "x": 15.735000000000005,
+            "y": -10.156666666666668
         },
         "alias": "25R",
         "templateId": "25R___2,5-Ribose"
@@ -5323,12 +5323,12 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer163": {
+    "monomer431": {
         "type": "monomer",
-        "id": "163",
+        "id": "431",
         "position": {
-            "x": 2.9200000000000004,
-            "y": -2.226666666666667
+            "x": 17.538333333333323,
+            "y": -10.056666666666668
         },
         "alias": "nac2r",
         "templateId": "nac2r___2-O-(2-Acetamide)ribose"
@@ -5623,12 +5623,12 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer165": {
+    "monomer432": {
         "type": "monomer",
-        "id": "165",
+        "id": "432",
         "position": {
-            "x": 3.726666666666667,
-            "y": -2.2866666666666666
+            "x": 19.19499999999999,
+            "y": -10.116666666666667
         },
         "alias": "daA",
         "templateId": "daA___N,N-dimethyl-Adenine"
@@ -5859,12 +5859,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer167": {
+    "monomer433": {
         "type": "monomer",
-        "id": "167",
+        "id": "433",
         "position": {
-            "x": 4.553333333333334,
-            "y": -2.2933333333333334
+            "x": 20.84666666666664,
+            "y": -10.123333333333335
         },
         "alias": "c3A",
         "templateId": "c3A___3-Deazaadenine"
@@ -6065,12 +6065,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer169": {
+    "monomer434": {
         "type": "monomer",
-        "id": "169",
+        "id": "434",
         "position": {
-            "x": 5.286666666666667,
-            "y": -2.3666666666666667
+            "x": 22.454999999999963,
+            "y": -10.246666666666668
         },
         "alias": "Test-6-Ph",
         "templateId": "Test-6-Ph___Test-6-AP-Phosphate"
@@ -6332,12 +6332,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer172": {
+    "monomer435": {
         "type": "monomer",
-        "id": "172",
+        "id": "435",
         "position": {
-            "x": 5.293333333333334,
-            "y": -2.8800000000000003
+            "x": 22.386666666666645,
+            "y": -11.535000000000007
         },
         "alias": "msp",
         "templateId": "msp___Methylthiophosphonate"
@@ -6441,12 +6441,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer176": {
+    "monomer436": {
         "type": "monomer",
-        "id": "176",
+        "id": "436",
         "position": {
-            "x": 0.5133333333333334,
-            "y": -3.7533333333333334
+            "x": 12.481666666666667,
+            "y": -13.208333333333343
         },
         "alias": "U",
         "templateId": "U___Uracil"
@@ -6610,12 +6610,12 @@
         ],
         "naturalAnalogShort": "U"
     },
-    "monomer177": {
+    "monomer437": {
         "type": "monomer",
-        "id": "177",
+        "id": "437",
         "position": {
-            "x": 0.5133333333333334,
-            "y": -3.0733333333333337
+            "x": 12.481666666666667,
+            "y": -11.853333333333339
         },
         "alias": "R",
         "templateId": "R___Ribose"
@@ -6850,12 +6850,12 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer179": {
+    "monomer438": {
         "type": "monomer",
-        "id": "179",
+        "id": "438",
         "position": {
-            "x": 1.1933333333333334,
-            "y": -3.0733333333333337
+            "x": 14.036666666666674,
+            "y": -11.90333333333334
         },
         "alias": "P",
         "templateId": "P___Phosphate"
@@ -6961,12 +6961,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer184": {
+    "monomer439": {
         "type": "monomer",
-        "id": "184",
+        "id": "439",
         "position": {
-            "x": 2.226666666666667,
-            "y": -3.9733333333333336
+            "x": 15.770000000000014,
+            "y": -13.553333333333342
         },
         "alias": "G",
         "templateId": "G___Guanine"
@@ -7182,32 +7182,32 @@
         ],
         "naturalAnalogShort": "G"
     },
-    "monomer185": {
+    "monomer440": {
         "type": "monomer",
-        "id": "185",
+        "id": "440",
         "position": {
-            "x": 2.226666666666667,
-            "y": -3.2933333333333334
+            "x": 15.770000000000014,
+            "y": -12.04833333333334
         },
         "alias": "R",
         "templateId": "R___Ribose"
     },
-    "monomer187": {
+    "monomer441": {
         "type": "monomer",
-        "id": "187",
+        "id": "441",
         "position": {
-            "x": 2.9066666666666667,
-            "y": -3.2933333333333334
+            "x": 17.32499999999999,
+            "y": -12.04833333333334
         },
         "alias": "P",
         "templateId": "P___Phosphate"
     },
-    "monomer190": {
+    "monomer442": {
         "type": "monomer",
-        "id": "190",
+        "id": "442",
         "position": {
-            "x": 3.6333333333333337,
-            "y": -3.52
+            "x": 19.551666666666666,
+            "y": -12.82500000000001
         },
         "alias": "A6OH",
         "templateId": "A6OH___6-amino-hexanol"
@@ -7387,12 +7387,12 @@
             }
         ]
     },
-    "monomer192": {
+    "monomer443": {
         "type": "monomer",
-        "id": "192",
+        "id": "443",
         "position": {
-            "x": 4.466666666666667,
-            "y": -3.54
+            "x": 20.91,
+            "y": -12.87000000000001
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"
@@ -7788,12 +7788,12 @@
             }
         ]
     },
-    "monomer194": {
+    "monomer444": {
         "type": "monomer",
-        "id": "194",
+        "id": "444",
         "position": {
-            "x": 5.300000000000001,
-            "y": -3.546666666666667
+            "x": 22.343333333333327,
+            "y": -12.876666666666678
         },
         "alias": "SMPEG2",
         "templateId": "SMPEG2___SM(PEG)2 linker from Pierce"

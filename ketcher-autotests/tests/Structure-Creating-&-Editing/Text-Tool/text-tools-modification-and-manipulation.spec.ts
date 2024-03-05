@@ -154,11 +154,11 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('+++123');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page.getByText(text1).dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill(`${text1}123`);
+    await page.getByText('Ketcher is').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
-    await page.getByText(text1).dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill(`${text1}123`);
+    await page.getByText('Ketcher is').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Apply');
   });
 

@@ -5,12 +5,14 @@ import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { initHotKeys, keyNorm } from 'utilities';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { Phosphate, Sugar, Vec2 } from 'domain/entities';
+import { BaseMonomer, Phosphate, Sugar, Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseRenderer } from 'application/render';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { Nucleoside } from 'domain/entities/Nucleoside';
+import { Nucleotide } from 'domain/entities/Nucleotide';
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
@@ -80,9 +82,10 @@ export class SequenceMode extends BaseMode {
   }
 
   public click(event: MouseEvent) {
-    const isClickedOnEmptyPlace = !(
-      event?.target.__data__ instanceof BaseRenderer
-    );
+    const eventData = event?.target.__data__;
+    const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
+    const isClickedOnSequenceItem =
+      eventData instanceof BaseSequenceItemRenderer;
     const editor = CoreEditor.provideEditorInstance();
 
     if (isClickedOnEmptyPlace) {
@@ -90,8 +93,13 @@ export class SequenceMode extends BaseMode {
         this.turnOnEditMode();
       }
 
-      SequenceRenderer.startNewSequence();
+      if (!SequenceRenderer.hasNewChain) {
+        SequenceRenderer.startNewSequence();
+      }
+
       SequenceRenderer.moveCaretToNewChain();
+    } else if (isClickedOnSequenceItem) {
+      SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
     }
   }
 
@@ -104,40 +112,68 @@ export class SequenceMode extends BaseMode {
           const history = new EditorHistory(editor);
           const previousNode =
             SequenceRenderer.previousFromCurrentEdittingMonomer;
+          const previousNodeInSameChain =
+            SequenceRenderer.previousNodeInSameChain;
+          const bondBeforePreviousNode =
+            previousNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
+          const monomerBeforePreviousNode =
+            bondBeforePreviousNode?.getAnotherMonomer(bondBeforePreviousNode);
           const currentNode = SequenceRenderer.currentEdittingNode;
-          const nextNode = SequenceRenderer.nextFromCurrentEdittingMonomer;
           const modelChanges = new Command();
 
-          if (previousNode) {
-            currentNode?.monomers.forEach((monomer) => {
+          if (previousNodeInSameChain) {
+            previousNode?.monomers.forEach((monomer) => {
               modelChanges.merge(
                 editor.drawingEntitiesManager.deleteMonomer(monomer),
               );
             });
+
+            const nodeBeforePreviousNode =
+              SequenceRenderer.getPreviousNodeInSameChain(previousNode);
+
+            if (nodeBeforePreviousNode) {
+              if (previousNode instanceof Nucleoside) {
+                // delete phosphate from last nucleotide
+                modelChanges.merge(
+                  editor.drawingEntitiesManager.deleteMonomer(
+                    nodeBeforePreviousNode?.lastMonomerInNode,
+                  ),
+                );
+              }
+              if (!(currentNode instanceof EmptySequenceNode)) {
+                modelChanges.merge(
+                  editor.drawingEntitiesManager.createPolymerBond(
+                    previousNode instanceof Nucleoside
+                      ? nodeBeforePreviousNode.firstMonomerInNode
+                      : monomerBeforePreviousNode,
+                    currentNode?.firstMonomerInNode,
+                    AttachmentPointName.R2,
+                    AttachmentPointName.R1,
+                  ),
+                );
+                SequenceRenderer.moveCaretBack();
+              }
+            }
+          } else if (SequenceRenderer.previousChain) {
+            const previousChainLastNonEmptyNode =
+              SequenceRenderer.getLastNonEmptyNode(
+                SequenceRenderer.previousChain,
+              );
+
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
-                previousNode?.lastMonomerInNode,
-                nextNode?.firstMonomerInNode,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
-            );
-          } else {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                previousNode?.lastMonomerInNode,
+                previousChainLastNonEmptyNode?.lastMonomerInNode,
                 currentNode?.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),
             );
+            SequenceRenderer.moveCaretBack();
+            SequenceRenderer.moveCaretBack();
           }
 
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
-          SequenceRenderer.setCaretPositionBySequenceItemRenderer(
-            previousNode?.monomer.renderer,
-          );
           this.initialize(false);
         },
       },
@@ -160,41 +196,26 @@ export class SequenceMode extends BaseMode {
           const history = new EditorHistory(editor);
           const currentNode = SequenceRenderer.currentEdittingNode;
           const previousNode = SequenceRenderer.previousNodeInSameChain;
-          const nextNode = SequenceRenderer.nextNodeInSameChain;
           const modelChanges = new Command();
 
-          const rnaBaseLibraryItem = editor.monomersLibrary.RNA.find(
-            (libraryItem) =>
-              libraryItem.props.MonomerName === event.key.toUpperCase(),
-          );
-          const sugarLibraryItem = editor.monomersLibrary.RNA.find(
-            (libraryItem) => libraryItem.props.MonomerName === 'R',
-          );
-          const phosphateLibraryItem = editor.monomersLibrary.RNA.find(
-            (libraryItem) => libraryItem.props.MonomerName === 'P',
-          );
-
-          const { command, monomers } =
-            editor.drawingEntitiesManager.addRnaPreset({
-              sugar: sugarLibraryItem,
-              sugarPosition: new Vec2(0, 0),
-              rnaBase: rnaBaseLibraryItem,
-              rnaBasePosition: new Vec2(0, 0),
-              phosphate: phosphateLibraryItem,
-              phosphatePosition: new Vec2(0, 0),
-            });
-
-          modelChanges.merge(command);
-
-          const sugar = monomers.find((monomer) => monomer instanceof Sugar);
-          const phosphate = monomers.find(
-            (monomer) => monomer instanceof Phosphate,
-          );
+          const rightBottomPosition =
+            currentNode?.firstMonomerInNode?.position || new Vec2(9999, 9999);
+          const nodeToAdd =
+            currentNode instanceof Nucleotide ||
+            currentNode instanceof Nucleoside
+              ? Nucleotide.createOnCanvas(
+                  event.key.toUpperCase(),
+                  rightBottomPosition,
+                )
+              : Nucleoside.createOnCanvas(
+                  event.key.toUpperCase(),
+                  rightBottomPosition,
+                );
 
           if (!(currentNode instanceof EmptySequenceNode)) {
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
-                phosphate,
+                nodeToAdd.lastMonomerInNode,
                 currentNode?.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
@@ -210,11 +231,42 @@ export class SequenceMode extends BaseMode {
             }
           }
 
-          if (previousNode) {
+          if (previousNode instanceof Nucleoside) {
+            const phosphateLibraryItem = editor.monomersLibrary.RNA.find(
+              (libraryItem) => libraryItem.props.MonomerName === 'P',
+            ) as MonomerItemType;
+
+            const additionalPhosphateAddCommand =
+              editor.drawingEntitiesManager.addMonomer(
+                phosphateLibraryItem,
+                rightBottomPosition,
+              );
+            const additionalPhosphate = additionalPhosphateAddCommand
+              .operations[0].monomer as BaseMonomer;
+            modelChanges.merge(additionalPhosphateAddCommand);
+
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
                 previousNode.lastMonomerInNode,
-                sugar,
+                additionalPhosphate,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+
+            modelChanges.merge(
+              editor.drawingEntitiesManager.createPolymerBond(
+                additionalPhosphate,
+                nodeToAdd.firstMonomerInNode,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          } else if (previousNode) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.createPolymerBond(
+                previousNode.lastMonomerInNode,
+                nodeToAdd.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),
@@ -224,7 +276,9 @@ export class SequenceMode extends BaseMode {
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
           this.initialize(false);
-          SequenceRenderer.moveCaretForward();
+          if (!(currentNode instanceof EmptySequenceNode)) {
+            SequenceRenderer.moveCaretForward();
+          }
         },
       },
     };

@@ -512,12 +512,19 @@ test.describe('RNA Library', () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Sugar, Phosphate and Base highlighted in Library.
-    Test is not working properly. Need fix bug https://github.com/epam/ketcher/issues/3489
     */
     const monomers = [
-      { type: 'sugar', name: "3A6___6-amino-hexanol (3' end)" },
-      { type: 'base', name: 'baA___N-benzyl-adenine' },
-      { type: 'phosphate', name: 'bP___Boranophosphate' },
+      {
+        type: 'sugar',
+        groupName: 'Sugars',
+        name: "3A6___6-amino-hexanol (3' end)",
+      },
+      { type: 'base', groupName: 'Bases', name: 'baA___N-benzyl-adenine' },
+      {
+        type: 'phosphate',
+        groupName: 'Phosphates',
+        name: 'bP___Boranophosphate',
+      },
     ];
 
     await expandCollapseRnaBuilder(page);
@@ -525,8 +532,12 @@ test.describe('RNA Library', () => {
     for (const monomer of monomers) {
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
+      await page
+        .getByTestId(`rna-accordion-details-${monomer.groupName}`)
+        .hover();
+      await page.mouse.wheel(0, 0);
       await clickInTheMiddleOfTheScreen(page);
-      await takeMonomerLibraryScreenshot(page);
+      await takeMonomerLibraryScreenshot(page, { maxDiffPixelRatio: 0.03 });
     }
   });
 

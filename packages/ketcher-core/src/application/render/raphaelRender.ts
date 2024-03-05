@@ -191,11 +191,19 @@ export class Render {
     this.scrollbar.update();
   }
 
-  setMolecule(struct: Struct) {
+  setMolecule(struct: Struct, forceUpdateWithTimeout = false) {
     this.paper.clear();
     this.ctab = new ReStruct(struct, this);
     this.options.offset = new Vec2();
-    this.update(false);
+    // need to use force update with timeout to have ability select bonds in case of usage:
+    // addFragment, setMolecule or "Paste from clipboard" with "Open as New Project" button
+    if (forceUpdateWithTimeout) {
+      setTimeout(() => {
+        this.update(true);
+      }, 0);
+    } else {
+      this.update(false);
+    }
   }
 
   update(force = false, viewSz: Vec2 | null = null) {

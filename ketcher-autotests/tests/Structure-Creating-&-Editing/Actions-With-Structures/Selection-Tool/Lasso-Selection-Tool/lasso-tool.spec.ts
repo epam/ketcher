@@ -78,7 +78,8 @@ test.describe('Lasso Selection tool', () => {
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
     await selectObjects(page, xAxis, yAxis);
   });
 
@@ -310,7 +311,8 @@ test.describe('Lasso Selection tool', () => {
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     await page.mouse.click(xAxis, yAxis);
     await page.getByTestId('select-rectangle').click();
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
     await page.mouse.move(xAxis - xDelta, yAxis - yDelta);
     await page.mouse.down();
     await page.mouse.move(xShift, -yShift);

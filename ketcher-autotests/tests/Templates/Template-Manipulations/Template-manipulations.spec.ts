@@ -238,18 +238,17 @@ test.describe('Template Manupulations', () => {
     /*
     Test case: 1736
     Description:
-    With Selection Tool (Lasso or Rectangle) click any atom of the template structure and type any correct atom symbol.
+    With Selection Tool (Rectangle) click any atom of the template structure and type any correct atom symbol.
     */
     await selectAtom(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await page.getByTestId('canvas').getByText('S').first().click();
+    await page.getByText('S').first().click();
     await page.getByLabel('Primary attachment point').check();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    await page.getByTestId('canvas').getByText('S').first().click();
-    await page.getByTestId('canvas').getByText('S').first().click({
+    await page.getByTestId('select-rectangle').click();
+    await page.getByText('S').first().click({
       button: 'right',
     });
     await page.getByText('Edit...').click();

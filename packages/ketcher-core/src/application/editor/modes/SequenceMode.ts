@@ -74,11 +74,33 @@ export class SequenceMode extends BaseMode {
     this.initialize(false);
   }
 
+  public turnOffEditMode() {
+    if (!this.isEditMode) return;
+
+    this.isEditMode = false;
+    this.initialize(false);
+  }
+
   public onKeyUp(event: KeyboardEvent) {
+    if (!this.isEditMode) {
+      return;
+    }
     const hotKeys = initHotKeys(this.keyboardEventHandlers);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
 
     this.keyboardEventHandlers[shortcutKey]?.handler(event);
+  }
+
+  public startNewSequence() {
+    if (!this.isEditMode) {
+      this.turnOnEditMode();
+    }
+
+    if (!SequenceRenderer.hasNewChain) {
+      SequenceRenderer.startNewSequence();
+    }
+
+    SequenceRenderer.moveCaretToNewChain();
   }
 
   public click(event: MouseEvent) {
@@ -86,19 +108,10 @@ export class SequenceMode extends BaseMode {
     const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
-    const editor = CoreEditor.provideEditorInstance();
 
     if (isClickedOnEmptyPlace) {
-      if (!this.isEditMode) {
-        this.turnOnEditMode();
-      }
-
-      if (!SequenceRenderer.hasNewChain) {
-        SequenceRenderer.startNewSequence();
-      }
-
-      SequenceRenderer.moveCaretToNewChain();
-    } else if (isClickedOnSequenceItem) {
+      this.turnOffEditMode();
+    } else if (this.isEditMode && isClickedOnSequenceItem) {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
     }
   }
@@ -106,7 +119,7 @@ export class SequenceMode extends BaseMode {
   private get keyboardEventHandlers() {
     return {
       delete: {
-        shortcut: ['Backspace', 'Escape'],
+        shortcut: ['Backspace', 'Delete'],
         handler: () => {
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
@@ -175,6 +188,18 @@ export class SequenceMode extends BaseMode {
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
           this.initialize(false);
+        },
+      },
+      'turn-off-edit-mode': {
+        shortcut: ['Escape'],
+        handler: () => {
+          this.turnOffEditMode();
+        },
+      },
+      'start-new-sequence': {
+        shortcut: ['Enter'],
+        handler: () => {
+          this.startNewSequence();
         },
       },
       'move-caret-forward': {

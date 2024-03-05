@@ -270,6 +270,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         },
       });
     });
+    editor?.events.rightClickCanvas.add((event) => {
+      showSequenceContextMenu({
+        event,
+        props: {},
+      });
+    });
   }, [editor]);
 
   useEffect(() => {

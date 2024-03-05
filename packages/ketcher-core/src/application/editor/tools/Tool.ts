@@ -44,6 +44,8 @@ interface ToolEventHandler {
   rightClickSequence?(event: Event): void;
 
   editSequence?(): void;
+
+  startNewSequence?(): void;
 }
 
 export interface IRnaPreset {

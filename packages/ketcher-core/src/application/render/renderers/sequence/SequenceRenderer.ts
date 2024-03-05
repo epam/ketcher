@@ -16,6 +16,7 @@ import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { CoreEditor } from 'application/editor';
 
 export type SequencePointer = [number, number, number];
 
@@ -51,13 +52,17 @@ export class SequenceRenderer {
       : new Vec2(41.5, 41.5);
 
     let currentMonomerIndexInChain = 0;
+    const editor = CoreEditor.provideEditorInstance();
+    const isEditMode = editor.mode.isEditMode;
 
-    chainsCollection.chains.forEach((chain) => {
-      const emptySequenceNode = new EmptySequenceNode();
-      const emptySubChain = new EmptySubChain();
-      emptySubChain.add(emptySequenceNode);
-      chain.subChains.push(emptySubChain);
-    });
+    if (isEditMode) {
+      chainsCollection.chains.forEach((chain) => {
+        const emptySequenceNode = new EmptySequenceNode();
+        const emptySubChain = new EmptySubChain();
+        emptySubChain.add(emptySequenceNode);
+        chain.subChains.push(emptySubChain);
+      });
+    }
 
     chainsCollection.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
@@ -67,7 +72,7 @@ export class SequenceRenderer {
             node,
             currentChainStartPosition,
             currentMonomerIndexInChain,
-            currentMonomerIndexInChain + 1 ===
+            currentMonomerIndexInChain + 1 + (isEditMode ? 1 : 0) ===
               chain.subChains.reduce(
                 (prev, curr) => prev + curr.nodes.length,
                 0,
@@ -252,6 +257,9 @@ export class SequenceRenderer {
 
   public static get newChainCaretPosition(): SequencePointer | undefined {
     const lastNodeCaretPosition = SequenceRenderer.lastNodeCaretPosition;
+    if (!lastNodeCaretPosition) {
+      return undefined;
+    }
     const lastChain =
       SequenceRenderer.chainsCollection.chains[lastNodeCaretPosition[0]];
     return lastChain.isEmpty
@@ -263,7 +271,11 @@ export class SequenceRenderer {
       : undefined;
   }
 
-  public static get lastNodeCaretPosition(): SequencePointer {
+  public static get lastNodeCaretPosition(): SequencePointer | undefined {
+    if (SequenceRenderer.chainsCollection.chains.length === 0) {
+      return undefined;
+    }
+
     const lastChainCaretPosition =
       SequenceRenderer.chainsCollection.chains.length - 1;
     const lastSubChainCaretPosition =

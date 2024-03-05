@@ -137,9 +137,16 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     document.addEventListener('contextmenu', (event) => {
       event.preventDefault();
+      if (!(this.mode instanceof SequenceMode) && !this.mode.isEditMode) {
+        return false
+      }
+
       if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch(event);
+      } else {
+        this.events.rightClickCanvas.dispatch(event);
       }
+
       return false;
     });
   }
@@ -163,6 +170,10 @@ export class CoreEditor {
     this.events.editSequence.add((sequenceItemRenderer: BaseSequenceRenderer) =>
       this.onEditSequence(sequenceItemRenderer),
     );
+
+    this.events.startNewSequence.add((sequenceItemRenderer: BaseSequenceRenderer) =>
+      this.onStartNewSequence(sequenceItemRenderer),
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -171,6 +182,14 @@ export class CoreEditor {
     }
 
     this.mode.turnOnEditMode(sequenceItemRenderer);
+  }
+
+  private onStartNewSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.startNewSequence(sequenceItemRenderer);
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

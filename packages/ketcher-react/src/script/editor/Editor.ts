@@ -297,6 +297,10 @@ class Editor implements KetcherEditor {
   structToAddFragment(value: Struct): Struct {
     const superStruct = value.mergeInto(this.render.ctab.molecule);
 
+    setTimeout(() => {
+      this.selection('all');
+      this.selection(null);
+    }, 0);
     return this.renderAndRecoordinateStruct(superStruct);
   }
 

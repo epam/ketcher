@@ -296,7 +296,6 @@ class Editor implements KetcherEditor {
   // this is used by API addFragment method
   structToAddFragment(value: Struct): Struct {
     const superStruct = value.mergeInto(this.render.ctab.molecule);
-
     setTimeout(() => {
       this.selection('all');
       this.selection(null);

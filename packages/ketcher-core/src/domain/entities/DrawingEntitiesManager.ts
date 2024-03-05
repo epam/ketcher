@@ -50,6 +50,8 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
+import { BaseRenderer } from 'application/render';
+import { SequenceMode } from 'application/editor';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -360,14 +362,18 @@ export class DrawingEntitiesManager {
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    previousSelectedEntities: [number, DrawingEntity][],
     shiftKey = false,
   ) {
     const command = new Command();
-
     this.allEntities.forEach(([, drawingEntity]) => {
+      const isPreviousSelected = previousSelectedEntities.find(
+        ([, entity]) => entity === drawingEntity,
+      );
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,
+        !!isPreviousSelected,
         shiftKey,
       );
 
@@ -1495,6 +1501,20 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
+  }
+
+  public getDrawingEntities(renderer: BaseRenderer, selectBonds = true) {
+    const editor = CoreEditor.provideEditorInstance();
+    let drawingEntities: DrawingEntity[] = [renderer.drawingEntity];
+    if (editor.mode instanceof SequenceMode) {
+      drawingEntities = drawingEntities.concat(
+        this.getExtraEntitiesForSequenceViewClick(
+          renderer.drawingEntity,
+          selectBonds,
+        ),
+      );
+    }
+    return drawingEntities;
   }
 
   public getExtraEntitiesForSequenceViewClick(

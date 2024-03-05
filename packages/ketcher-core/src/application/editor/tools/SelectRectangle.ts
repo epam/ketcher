@@ -29,13 +29,13 @@ import { isMacOs } from 'react-device-detect';
 
 class SelectRectangle implements BaseTool {
   private brush;
-  private shiftBrush;
   private brushArea;
   private moveStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
   private mousePositionBeforeMove = new Vec2(0, 0, 0);
   private canvasResizeObserver?: ResizeObserver;
   private history: EditorHistory;
+  private previousSelectedEntities: [number, DrawingEntity][] = [];
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -50,12 +50,14 @@ class SelectRectangle implements BaseTool {
       .attr('id', 'rectangle-selection-area');
 
     this.brush = d3Brush();
-    this.shiftBrush = d3Brush();
 
     const brushed = (mo) => {
+      this.previousSelectedEntities =
+        this.editor.drawingEntitiesManager.allEntities.filter(
+          ([, drawingEntity]) => drawingEntity.selected,
+        );
       if (mo.selection) {
         this.brushArea.call(this.brush?.clear);
-        this.brushArea.call(this.shiftBrush?.clear);
       }
     };
 
@@ -73,6 +75,7 @@ class SelectRectangle implements BaseTool {
           this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(
             topLeftPoint,
             bottomRightPoint,
+            this.previousSelectedEntities,
             brushEvent.sourceEvent.shiftKey,
           );
         this.editor.renderersContainer.update(modelChanges);
@@ -81,8 +84,6 @@ class SelectRectangle implements BaseTool {
 
     this.brush.on('brush', onBrush);
     this.brush.on('end', brushed);
-    this.shiftBrush.on('brush', onBrush);
-    this.shiftBrush.on('end', brushed);
 
     this.brushArea.call(this.brush);
 
@@ -97,12 +98,7 @@ class SelectRectangle implements BaseTool {
         return;
       }
 
-      this.brush.extent([
-        [0, 0],
-        [canvas.width.baseVal.value, canvas.height.baseVal.value],
-      ]);
-
-      this.shiftBrush
+      this.brush
         .extent([
           [0, 0],
           [canvas.width.baseVal.value, canvas.height.baseVal.value],
@@ -112,25 +108,12 @@ class SelectRectangle implements BaseTool {
           e.preventDefault();
           if (e.shiftKey) {
             e.stopPropagation();
-            return true;
           }
-          return false;
+          return true;
         });
 
       this.brushArea.call(this.brush);
     };
-
-    select(window).on('keydown', (event) => {
-      if (event.keyCode === 16) {
-        this.brushArea.call(this.shiftBrush);
-      }
-    });
-
-    select(window).on('keyup', (event) => {
-      if (event.keyCode === 16) {
-        this.brushArea.call(this.brush);
-      }
-    });
 
     const canvasElement = this.editor.canvas;
 
@@ -155,15 +138,8 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
-      let drawingEntities = [renderer.drawingEntity];
-      if (this.editor.mode instanceof SequenceMode) {
-        drawingEntities = [renderer.drawingEntity].concat(
-          this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
-            renderer.drawingEntity,
-            false,
-          ),
-        );
-      }
+      const drawingEntities =
+        this.editor.drawingEntitiesManager.getDrawingEntities(renderer, false);
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
@@ -172,14 +148,8 @@ class SelectRectangle implements BaseTool {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      let drawingEntities = [renderer.drawingEntity];
-      if (this.editor.mode instanceof SequenceMode) {
-        drawingEntities = [renderer.drawingEntity].concat(
-          this.editor.drawingEntitiesManager.getExtraEntitiesForSequenceViewClick(
-            renderer.drawingEntity,
-          ),
-        );
-      }
+      const drawingEntities =
+        this.editor.drawingEntitiesManager.getDrawingEntities(renderer);
       modelChanges =
         this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
           drawingEntities,
@@ -278,10 +248,9 @@ class SelectRectangle implements BaseTool {
   }
 
   destroy() {
-    if (this.brush || this.shiftBrush) {
+    if (this.brush) {
       this.brushArea.remove();
       this.brush = null;
-      this.shiftBrush = null;
       this.brushArea = null;
     }
 

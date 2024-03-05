@@ -51,6 +51,7 @@ export abstract class DrawingEntity {
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    isPreviousSelected = false,
     shiftKey = false,
   ) {
     assert(this.baseRenderer);
@@ -59,15 +60,23 @@ export abstract class DrawingEntity {
     if (this.baseRenderer instanceof BaseSequenceRenderer) {
       center = this.baseRenderer.center;
     }
-    if (
+    const locatedInRectangle =
       rectangleBottomRightPoint.x > center.x &&
       rectangleBottomRightPoint.y > center.y &&
       rectangleTopLeftPoint.x < center.x &&
-      rectangleTopLeftPoint.y < center.y
-    ) {
-      this.turnOnSelection();
-    } else if (!shiftKey) {
-      this.turnOffSelection();
+      rectangleTopLeftPoint.y < center.y;
+    if (isPreviousSelected && shiftKey) {
+      if (locatedInRectangle) {
+        this.turnOffSelection();
+      } else {
+        this.turnOnSelection();
+      }
+    } else {
+      if (locatedInRectangle) {
+        this.turnOnSelection();
+      } else {
+        this.turnOffSelection();
+      }
     }
 
     return prevSelectedValue !== this.selected;

@@ -32,11 +32,12 @@ export class SequenceMode extends BaseMode {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
+    editor.drawingEntitiesManager.clearCanvas();
 
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
       true,
+      false,
     );
     const zoom = ZoomTool.instance;
 
@@ -57,7 +58,7 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(command);
 
-    editor.events.selectTool.dispatch('select-rectangle');
+    //editor.events.selectTool.dispatch('select-rectangle');
 
     return modelChanges;
   }

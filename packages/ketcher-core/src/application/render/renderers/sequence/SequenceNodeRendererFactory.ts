@@ -9,6 +9,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { SymbolEditingMode } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
+import { BaseMonomerRenderer } from 'application/render';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -17,6 +18,7 @@ export class SequenceNodeRendererFactory {
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
     isEditingSymbol: boolean,
+    renderer: BaseMonomerRenderer,
   ) {
     let RendererClass;
 
@@ -53,6 +55,8 @@ export class SequenceNodeRendererFactory {
       monomerIndexInChain,
       isLastMonomerInChain,
       isEditingSymbol,
+      renderer?.monomerSize,
+      renderer?.scaledMonomerPosition
     );
   }
 }

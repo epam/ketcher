@@ -80,6 +80,7 @@ export class SequenceRenderer {
             chainIndex === SequenceRenderer.caretPosition[0] &&
               subChainIndex === SequenceRenderer.caretPosition[1] &&
               nodeIndex === SequenceRenderer.caretPosition[2],
+            node.monomer.renderer
           );
           renderer.show();
           node.monomer?.setRenderer(renderer);

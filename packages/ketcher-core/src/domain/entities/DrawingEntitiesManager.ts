@@ -1078,11 +1078,8 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
-  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
+  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean, needRedrawBonds = true) {
     const command = new Command();
-
-    const editor = CoreEditor.provideEditorInstance();
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
@@ -1103,7 +1100,10 @@ export class DrawingEntitiesManager {
       );
       command.merge(result.command);
     }
-    command.merge(this.redrawBonds());
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
+
     return command;
   }
 
@@ -1456,18 +1456,28 @@ export class DrawingEntitiesManager {
   }
 
   public applyMonomersSequenceLayout() {
-    const editor = CoreEditor.provideEditorInstance();
-
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     chainsCollection.rearrange();
 
-    editor.renderersContainer.deleteAllDrawingEntities();
-
     SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
+  }
+
+  public clearCanvas() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.monomers.forEach((monomer) => {
+      editor.renderersContainer.deleteMonomer(monomer);
+    });
+
+    this.polymerBonds.forEach((polymerBond) => {
+      editor.renderersContainer.deletePolymerBond(polymerBond);
+    });
+
+    SequenceRenderer.removeEmptyNodes();
   }
 
   public applyFlexLayoutMode() {

@@ -18,6 +18,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
     private _isEditingSymbol: boolean,
+    public monomerSize: {width: number, height: number},
+    public scaledMonomerPosition: Vec2,
   ) {
     super(node.monomer);
   }
@@ -40,7 +42,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   moveSelection(): void {}
 
-  public get scaledMonomerPosition() {
+  public get _scaledMonomerPosition() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
     const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
 
@@ -65,7 +67,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
-        `translate(${this.scaledMonomerPosition.x}, ${this.scaledMonomerPosition.y})`,
+        `translate(${this._scaledMonomerPosition.x}, ${this._scaledMonomerPosition.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 

@@ -50,8 +50,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { BaseRenderer } from 'application/render';
-import { SequenceMode } from 'application/editor';
+import { SequenceMode } from 'application/editor/modes/SequenceMode';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -1503,15 +1502,12 @@ export class DrawingEntitiesManager {
     });
   }
 
-  public getDrawingEntities(renderer: BaseRenderer, selectBonds = true) {
+  public getDrawingEntities(drawingEntity: DrawingEntity, selectBonds = true) {
     const editor = CoreEditor.provideEditorInstance();
-    let drawingEntities: DrawingEntity[] = [renderer.drawingEntity];
+    let drawingEntities: DrawingEntity[] = [drawingEntity];
     if (editor.mode instanceof SequenceMode) {
       drawingEntities = drawingEntities.concat(
-        this.getExtraEntitiesForSequenceViewClick(
-          renderer.drawingEntity,
-          selectBonds,
-        ),
+        this.getExtraEntitiesForSequenceViewClick(drawingEntity, selectBonds),
       );
     }
     return drawingEntities;

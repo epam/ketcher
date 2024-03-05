@@ -65,13 +65,7 @@ export abstract class DrawingEntity {
       rectangleBottomRightPoint.y > center.y &&
       rectangleTopLeftPoint.x < center.x &&
       rectangleTopLeftPoint.y < center.y;
-    if (isPreviousSelected && shiftKey) {
-      if (locatedInRectangle) {
-        this.turnOffSelection();
-      } else {
-        this.turnOnSelection();
-      }
-    } else {
+    if ((shiftKey && !isPreviousSelected) || !shiftKey) {
       if (locatedInRectangle) {
         this.turnOnSelection();
       } else {

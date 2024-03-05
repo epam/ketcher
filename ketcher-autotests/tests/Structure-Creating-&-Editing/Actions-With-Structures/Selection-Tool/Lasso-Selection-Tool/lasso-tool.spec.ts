@@ -58,29 +58,28 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
      */
-    const x = 200;
-    const y = 200;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
     await page.mouse.click(atomPoint.x, atomPoint.y);
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickCanvas(page);
 
     const bondPoint = await getBondByIndex(page, {}, 0);
     await page.mouse.move(bondPoint.x, bondPoint.y);
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickCanvas(page);
 
     await page.keyboard.down('Shift');
     await page.mouse.click(atomPoint.x, atomPoint.y);
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickCanvas(page);
 
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
     await selectObjects(page, xAxis, yAxis);
   });
 
@@ -312,7 +311,8 @@ test.describe('Lasso Selection tool', () => {
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     await page.mouse.click(xAxis, yAxis);
     await page.getByTestId('select-rectangle').click();
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    // 'Shift+Tab' used for switch from Rectangle selection to Lasso
+    await page.keyboard.press('Shift+Tab');
     await page.mouse.move(xAxis - xDelta, yAxis - yDelta);
     await page.mouse.down();
     await page.mouse.move(xShift, -yShift);

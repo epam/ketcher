@@ -140,7 +140,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('+++');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page.getByTestId('canvas').click({ position: { x, y } });
+    await page.mouse.click(x, y);
     await page.getByRole('dialog').getByRole('textbox').click();
     const text1 =
       'Ketcher is a tool to draw molecular structures and chemical reactions';
@@ -148,17 +148,21 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
 
     await page.getByText('+++').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill('+++123');
+    await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
     await page.getByText('+++').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill('+++123');
+    await waitForRender(page, async () => {
+      await page.getByRole('dialog').getByRole('textbox').fill('Test');
+    });
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await page.getByText('Ketcher is').dblclick();
     await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
     await page.getByText('Ketcher is').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill('123');
+    await waitForRender(page, async () => {
+      await page.getByRole('dialog').getByRole('textbox').fill('Super');
+    });
     await pressButton(page, 'Apply');
   });
 

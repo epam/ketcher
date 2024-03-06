@@ -7,8 +7,7 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { initHotKeys, keyNorm } from 'utilities';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer, Phosphate, Sugar, Vec2 } from 'domain/entities';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
@@ -100,14 +99,16 @@ export class SequenceMode extends BaseMode {
   }
 
   public click(event: MouseEvent) {
-    const eventData = event?.target.__data__;
+    const eventData = event.target?.__data__;
     const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
 
     if (isClickedOnEmptyPlace) {
       this.turnOffEditMode();
-    } else if (this.isEditMode && isClickedOnSequenceItem) {
+    }
+
+    if (this.isEditMode && isClickedOnSequenceItem) {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
     }
   }
@@ -126,7 +127,9 @@ export class SequenceMode extends BaseMode {
           const bondBeforePreviousNode =
             previousNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
           const monomerBeforePreviousNode =
-            bondBeforePreviousNode?.getAnotherMonomer(bondBeforePreviousNode);
+            bondBeforePreviousNode?.getAnotherMonomer(
+              previousNode?.firstMonomerInNode,
+            );
           const currentNode = SequenceRenderer.currentEdittingNode;
           const modelChanges = new Command();
 
@@ -145,11 +148,12 @@ export class SequenceMode extends BaseMode {
                 // delete phosphate from last nucleotide
                 modelChanges.merge(
                   editor.drawingEntitiesManager.deleteMonomer(
-                    nodeBeforePreviousNode?.lastMonomerInNode,
+                    nodeBeforePreviousNode.lastMonomerInNode,
                   ),
                 );
               }
               if (!(currentNode instanceof EmptySequenceNode)) {
+                console.log(monomerBeforePreviousNode);
                 modelChanges.merge(
                   editor.drawingEntitiesManager.createPolymerBond(
                     previousNode instanceof Nucleoside

@@ -14,10 +14,10 @@ import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, SequenceMode } from 'application/editor';
 import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
+import assert from 'assert';
 
 export type SequencePointer = [number, number, number];
 
@@ -54,7 +54,8 @@ export class SequenceRenderer {
 
     let currentMonomerIndexInChain = 0;
     const editor = CoreEditor.provideEditorInstance();
-    const isEditMode = editor.mode.isEditMode;
+    const isEditMode =
+      editor.mode instanceof SequenceMode && editor.mode.isEditMode;
 
     if (isEditMode) {
       chainsCollection.chains.forEach((chain) => {
@@ -206,9 +207,10 @@ export class SequenceRenderer {
     );
 
     if (oldSubChainNode) {
-      oldSubChainNode.monomer.renderer.isEditingSymbol = false;
-      oldSubChainNode.monomer.renderer?.remove();
-      oldSubChainNode.monomer.renderer?.show();
+      assert(oldSubChainNode.renderer instanceof BaseSequenceItemRenderer);
+      oldSubChainNode.renderer.isEditingSymbol = false;
+      oldSubChainNode.renderer?.remove();
+      oldSubChainNode.renderer?.show();
     }
     SequenceRenderer.caretPosition = caretPosition;
     const subChainNode = SequenceRenderer.getNodeByPointer(caretPosition);
@@ -217,9 +219,10 @@ export class SequenceRenderer {
       return;
     }
 
-    subChainNode.monomer.renderer.isEditingSymbol = true;
-    subChainNode.monomer.renderer?.remove();
-    subChainNode.monomer.renderer?.show();
+    assert(subChainNode.renderer instanceof BaseSequenceItemRenderer);
+    subChainNode.renderer.isEditingSymbol = true;
+    subChainNode.renderer?.remove();
+    subChainNode.renderer?.show();
   }
 
   public static setCaretPositionBySequenceItemRenderer(
@@ -303,10 +306,6 @@ export class SequenceRenderer {
       lastSubChainCaretPosition,
       lastNodeCaretPosition,
     ];
-  }
-
-  public static get restoreCarretPositionCommand() {
-    return new RestoreCarretPositionCommand(this.caretPosition, this);
   }
 
   public static get currentEdittingNode() {
@@ -462,6 +461,7 @@ export class SequenceRenderer {
       this.lastChainStartPosition,
       0,
       false,
+      emptySubChain,
       true,
     );
     renderer.show();

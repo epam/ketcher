@@ -353,7 +353,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected abstract appendBody(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
-    theme,
+    theme?,
   );
 
   protected appendHoverAreaElement() {
@@ -443,7 +443,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.beginning);
   }
 
-  public show(theme) {
+  public show(theme?) {
     this.rootElement =
       this.rootElement ||
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);

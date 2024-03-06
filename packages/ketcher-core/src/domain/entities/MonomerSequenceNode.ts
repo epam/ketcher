@@ -18,4 +18,8 @@ export class MonomerSequenceNode {
   public get monomers() {
     return [this.monomer];
   }
+
+  public get renderer() {
+    return this.monomer.renderer;
+  }
 }

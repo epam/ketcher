@@ -9,8 +9,10 @@ import {
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { CoreEditor, EditorHistory } from 'application/editor';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleoside {
   constructor(public sugar: Sugar, public rnaBase: RNABase) {}
@@ -29,15 +31,17 @@ export class Nucleoside {
     return new Nucleoside(sugar, getRnaBaseFromSugar(sugar) as RNABase);
   }
 
-  static createOnCanvas(sugarName: string, position: Vec2) {
+  static createOnCanvas(rnaBaseName: string, position: Vec2) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
-    const rnaBaseLibraryItem = editor.monomersLibrary.RNA.find(
-      (libraryItem) => libraryItem.props.MonomerName === sugarName,
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
+    const sugarLibraryItem = getRnaPartLibraryItem(
+      editor,
+      RNA_NON_MODIFIED_PART.SUGAR,
     );
-    const sugarLibraryItem = editor.monomersLibrary.RNA.find(
-      (libraryItem) => libraryItem.props.MonomerName === 'R',
-    );
+
+    assert(sugarLibraryItem);
+    assert(rnaBaseLibraryItem);
 
     const modelChanges = new Command();
 
@@ -48,12 +52,13 @@ export class Nucleoside {
       editor.drawingEntitiesManager.addMonomer(rnaBaseLibraryItem, position),
     );
 
-    const sugar = modelChanges.operations[0].monomer;
+    const sugar = modelChanges.operations[0].monomer as Sugar;
+    const rnaBase = modelChanges.operations[1].monomer as RNABase;
 
     modelChanges.merge(
       editor.drawingEntitiesManager.createPolymerBond(
         sugar,
-        modelChanges.operations[1].monomer,
+        rnaBase,
         AttachmentPointName.R3,
         AttachmentPointName.R1,
       ),
@@ -87,5 +92,9 @@ export class Nucleoside {
 
   public get lastMonomerInNode() {
     return this.sugar;
+  }
+
+  public get renderer() {
+    return this.monomer.renderer;
   }
 }

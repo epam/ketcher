@@ -7,10 +7,10 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { SymbolEditingMode } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
 import { BaseMonomerRenderer } from 'application/render';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -20,7 +20,7 @@ export class SequenceNodeRendererFactory {
     isLastMonomerInChain: boolean,
     subChain: BaseSubChain,
     isEditingSymbol: boolean,
-    renderer: BaseMonomerRenderer,
+    renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
   ) {
     let RendererClass;
 

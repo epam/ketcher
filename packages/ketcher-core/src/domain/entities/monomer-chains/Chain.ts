@@ -1,5 +1,5 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { BaseMonomer, Sugar, Vec2 } from 'domain/entities';
+import { BaseMonomer, Sugar } from 'domain/entities';
 import {
   getNextMonomerInChain,
   getPhosphateFromSugar,

@@ -10,8 +10,9 @@ import {
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor, EditorHistory } from 'application/editor';
-import { MonomerItemType } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleotide {
   constructor(
@@ -41,18 +42,22 @@ export class Nucleotide {
     );
   }
 
-  static createOnCanvas(sugarName: string, position: Vec2) {
+  static createOnCanvas(rnaBaseName: string, position: Vec2) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
-    const rnaBaseLibraryItem = editor.monomersLibrary.RNA.find(
-      (libraryItem) => libraryItem.props.MonomerName === sugarName,
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
+    const phosphateLibraryItem = getRnaPartLibraryItem(
+      editor,
+      RNA_NON_MODIFIED_PART.PHOSPHATE,
     );
-    const sugarLibraryItem = editor.monomersLibrary.RNA.find(
-      (libraryItem) => libraryItem.props.MonomerName === 'R',
+    const sugarLibraryItem = getRnaPartLibraryItem(
+      editor,
+      RNA_NON_MODIFIED_PART.SUGAR,
     );
-    const phosphateLibraryItem = editor.monomersLibrary.RNA.find(
-      (libraryItem) => libraryItem.props.MonomerName === 'P',
-    ) as MonomerItemType;
+
+    assert(sugarLibraryItem);
+    assert(rnaBaseLibraryItem);
+    assert(phosphateLibraryItem);
 
     const { command: modelChanges, monomers } =
       editor.drawingEntitiesManager.addRnaPreset({
@@ -64,7 +69,7 @@ export class Nucleotide {
         phosphatePosition: position,
       });
 
-    const sugar = monomers.find((monomer) => monomer instanceof Sugar);
+    const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
     editor.renderersContainer.update(modelChanges);
     history.update(modelChanges);
@@ -94,5 +99,9 @@ export class Nucleotide {
 
   public get lastMonomerInNode() {
     return this.phosphate;
+  }
+
+  public get renderer() {
+    return this.monomer.renderer;
   }
 }

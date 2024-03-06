@@ -1,20 +1,39 @@
+import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { Vec2 } from 'domain/entities/vec2';
+import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+
 export class EmptySequenceNode {
+  public renderer?: BaseSequenceItemRenderer = undefined;
+  public monomer = new EmptyMonomer();
   constructor() {}
 
   public get SubChainConstructor() {
-    return undefined;
+    return EmptySubChain;
   }
 
   public get firstMonomerInNode() {
-    return undefined;
+    return this.monomer;
   }
 
   public get lastMonomerInNode() {
-    return undefined;
+    return this.monomer;
   }
 
-  public get monomer() {
-    return this;
+  public get hovered() {
+    return false;
+  }
+
+  public get selected() {
+    return false;
+  }
+
+  public get position() {
+    return new Vec2(0, 0);
+  }
+
+  public get monomerItem() {
+    return { props: { MonomerNaturalAnalogCode: null } };
   }
 
   public get monomers() {

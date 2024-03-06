@@ -50,7 +50,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.subChain;
   }
 
-  public get _scaledMonomerPosition() {
+  public get scaledMonomerPositionForSequence() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
     const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
 
@@ -63,7 +63,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public get center() {
-    return this._scaledMonomerPosition.add(new Vec2(4.5, 0, 0));
+    return this.scaledMonomerPositionForSequence.add(new Vec2(4.5, 0, 0));
   }
 
   private get isSequenceEditModeTurnedOn() {
@@ -79,7 +79,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
-        `translate(${this._scaledMonomerPosition.x}, ${this._scaledMonomerPosition.y})`,
+        `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
@@ -150,17 +150,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.monomerIndexInChain === 0;
   }
 
-  private removeCounterElement() {
-    this.counterElement
-      ?.data([])
-      .exit()
-      .transition()
-      .duration(100)
-      .style('opacity', 0)
-      .remove();
-    this.counterElement = undefined;
-  }
-
   public appendCaretElement() {
     this.spacerElement
       ?.append('line')
@@ -173,20 +162,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private drawHover() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    this.backgroundElement.attr(
+    this.backgroundElement?.attr(
       'fill',
-      editor?.mode?.isEditMode ? '#FF7A0033' : '#EFF2F5',
+      this.isSequenceEditModeTurnedOn ? '#FF7A0033' : '#EFF2F5',
     );
   }
 
-  private removeHover() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    this.backgroundElement.attr(
+  protected removeHover() {
+    this.backgroundElement?.attr(
       'fill',
-      editor?.mode?.isEditMode ? '#FF7A001A' : 'transparent',
+      this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',
     );
   }
 
@@ -199,16 +184,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   show(): void {
-    const editor = CoreEditor.provideEditorInstance();
-
     this.rootElement = this.appendRootElement();
-    if (this.isBeginningOfChain && editor?.mode?.isEditMode) {
+    if (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) {
       this.appendChainStartArrow();
     }
     this.spacerElement = this.appendSpacerElement();
     this.backgroundElement = this.appendBackgroundElement();
 
-    if (editor?.mode?.isEditMode) {
+    if (this.isSequenceEditModeTurnedOn) {
       if (this.isEditingSymbol) {
         this.appendCaretElement();
       }
@@ -238,8 +221,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   drawSelection(): void {
-    const editor = CoreEditor.provideEditorInstance();
-    if (!this.rootElement || editor.mode.isEditMode) {
+    if (!this.rootElement || this.isSequenceEditModeTurnedOn) {
       return;
     }
     if (this.node.monomer.selected) {
@@ -254,8 +236,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public appendSelection() {
     if (this.selectionRectangle) {
       this.selectionRectangle
-        .attr('x', this._scaledMonomerPosition.x - 4)
-        .attr('y', this._scaledMonomerPosition.y - 16)
+        .attr('x', this.scaledMonomerPositionForSequence.x - 4)
+        .attr('y', this.scaledMonomerPositionForSequence.y - 16)
         .attr('width', 20)
         .attr('height', 20);
     } else {
@@ -269,8 +251,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         ?.insert('rect', ':first-child')
         .attr('opacity', '0.7')
         .attr('fill', '#57FF8F')
-        .attr('x', this._scaledMonomerPosition.x - 4)
-        .attr('y', this._scaledMonomerPosition.y - 16)
+        .attr('x', this.scaledMonomerPositionForSequence.x - 4)
+        .attr('y', this.scaledMonomerPositionForSequence.y - 16)
         .attr('width', 20)
         .attr('height', 20);
     }

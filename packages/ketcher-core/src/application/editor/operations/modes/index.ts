@@ -18,22 +18,25 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, SequenceMode } from 'application/editor';
 import {
   SequencePointer,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
+import assert from 'assert';
 
 export class ReinitializeSequenceModeCommand implements Operation {
   constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
+    assert(editor.mode instanceof SequenceMode);
     editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
+    assert(editor.mode instanceof SequenceMode);
     editor.mode.initialize(false);
   }
 }

@@ -43,6 +43,8 @@ interface ToolEventHandler {
 
   rightClickSequence?(event: Event): void;
 
+  rightClickCanvas?(event: Event): void;
+
   editSequence?(): void;
 
   startNewSequence?(): void;

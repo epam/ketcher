@@ -36,7 +36,6 @@ import {
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { groupBy } from 'lodash';
 
 interface ICoreEditorConstructorParams {
@@ -57,7 +56,7 @@ export class CoreEditor {
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  public _monomersLibrary: MonomerItemType[];
+  public _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
@@ -136,7 +135,7 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     document.addEventListener('contextmenu', (event) => {
       event.preventDefault();
-      if (!(this.mode instanceof SequenceMode) && !this.mode.isEditMode) {
+      if (!(this.mode instanceof SequenceMode) || this.mode.isEditMode) {
         return false;
       }
 
@@ -166,14 +165,12 @@ export class CoreEditor {
         this.useToolIfNeeded(eventName, event),
       );
     });
-    this.events.editSequence.add((sequenceItemRenderer: BaseSequenceRenderer) =>
-      this.onEditSequence(sequenceItemRenderer),
+    this.events.editSequence.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEditSequence(sequenceItemRenderer),
     );
 
-    this.events.startNewSequence.add(
-      (sequenceItemRenderer: BaseSequenceRenderer) =>
-        this.onStartNewSequence(sequenceItemRenderer),
-    );
+    this.events.startNewSequence.add(() => this.onStartNewSequence());
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -184,12 +181,12 @@ export class CoreEditor {
     this.mode.turnOnEditMode(sequenceItemRenderer);
   }
 
-  private onStartNewSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
+  private onStartNewSequence() {
     if (!(this.mode instanceof SequenceMode)) {
       return;
     }
 
-    this.mode.startNewSequence(sequenceItemRenderer);
+    this.mode.startNewSequence();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

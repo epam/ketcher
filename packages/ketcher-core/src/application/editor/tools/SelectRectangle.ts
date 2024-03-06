@@ -52,10 +52,7 @@ class SelectRectangle implements BaseTool {
     this.brush = d3Brush();
 
     const brushed = (mo) => {
-      this.previousSelectedEntities =
-        this.editor.drawingEntitiesManager.allEntities.filter(
-          ([, drawingEntity]) => drawingEntity.selected,
-        );
+      this.setSelectedEntities();
       if (mo.selection) {
         this.brushArea.call(this.brush?.clear);
       }
@@ -181,6 +178,7 @@ class SelectRectangle implements BaseTool {
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
     }
     this.editor.renderersContainer.update(modelChanges);
+    this.setSelectedEntities();
   }
 
   mousemove() {
@@ -250,6 +248,13 @@ class SelectRectangle implements BaseTool {
         renderer.drawingEntity,
       );
     this.editor.renderersContainer.update(modelChanges);
+  }
+
+  setSelectedEntities() {
+    this.previousSelectedEntities =
+      this.editor.drawingEntitiesManager.allEntities.filter(
+        ([, drawingEntity]) => drawingEntity.selected,
+      );
   }
 
   destroy() {

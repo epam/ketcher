@@ -55,15 +55,18 @@ const NucleotidePreview = ({ className }: IPreviewProps) => {
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
         <NucleotideName>{preview.nucleotide[1].struct.name}</NucleotideName>
-        {preview.nucleotide.map((monomer, index) => (
-          <NucleotideMonomerRow key={index}>
-            <MonomerIcon name={icons[index]} />
-            <NucleotideMonomerLabel>{monomer.label}</NucleotideMonomerLabel>
-            <NucleotideMonomerName>
-              ({monomer.struct.name})
-            </NucleotideMonomerName>
-          </NucleotideMonomerRow>
-        ))}
+        {preview.nucleotide.map(
+          (monomer, index) =>
+            monomer && (
+              <NucleotideMonomerRow key={index}>
+                <MonomerIcon name={icons[index]} />
+                <NucleotideMonomerLabel>{monomer.label}</NucleotideMonomerLabel>
+                <NucleotideMonomerName>
+                  ({monomer.struct.name})
+                </NucleotideMonomerName>
+              </NucleotideMonomerRow>
+            ),
+        )}
       </ContainerDynamic>
     )
   );

@@ -44,3 +44,5 @@ export * from './Sugar';
 export * from './RNABase';
 export * from './Phosphate';
 export * from './Axis';
+export * from './Nucleoside';
+export * from './Nucleotide';

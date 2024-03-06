@@ -22,6 +22,8 @@ import {
   SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
+  Nucleotide,
+  Nucleoside,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -220,26 +222,33 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
   const handleOpenPreview = useCallback(
     (e) => {
-      const isNucleotide = Boolean(e.target.__data__?.node?.phosphate);
+      const sequenceNode = e.target.__data__?.node;
+      const isNucleotideOrNucleoside =
+        sequenceNode instanceof Nucleotide ||
+        sequenceNode instanceof Nucleoside;
       const monomer =
         e.target.__data__?.monomer?.monomerItem ||
-        e.target.__data__.node.monomer.monomerItem;
+        sequenceNode.monomer.monomerItem;
 
-      const nucleotide = isNucleotide
+      const nucleotide = isNucleotideOrNucleoside
         ? [
-            e.target.__data__?.node.sugar.monomerItem,
-            e.target.__data__?.node.rnaBase.monomerItem,
-            e.target.__data__?.node.phosphate.monomerItem,
+            sequenceNode.sugar.monomerItem,
+            sequenceNode.rnaBase.monomerItem,
+            sequenceNode.phosphate?.monomerItem,
           ]
         : null;
 
       const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const top = calculatePreviewPosition(
+        monomer,
+        cardCoordinates,
+        isNucleotideOrNucleoside,
+      );
       const previewStyle = {
         top,
         left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
       };
-      if (isNucleotide) {
+      if (isNucleotideOrNucleoside) {
         debouncedShowPreview({ nucleotide, style: previewStyle });
       } else {
         debouncedShowPreview({ monomer, style: previewStyle });

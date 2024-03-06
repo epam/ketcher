@@ -30,11 +30,14 @@ export const NucleotideContainer = styled.div`
 export const NucleotideMonomerRow = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
 `;
 
 export const NucleotideMonomerLabel = styled.div`
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  line-height: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 600;
   padding-right: 2px;
 `;
@@ -51,12 +54,17 @@ export const NucleotideName = styled.p`
   font-weight: 700;
   word-break: break-all;
   text-align: center;
+  margin-top: 0;
   margin-bottom: 16px;
 `;
 
 export const MonomerIcon = styled(Icon)`
   color: ${(props) => props.theme.ketcher.color.icon.grey};
   padding-right: ${(props) =>
-    props.name === 'sugar' ? '5px' : props.name === 'phosphate' ? '1px' : 0};
+    props.name === 'sugar' ? '4px' : props.name === 'phosphate' ? '1px' : 0};
+  padding-left: ${(props) =>
+    props.name === 'base' ? '2px' : props.name === 'phosphate' ? '1px' : 0};
   stroke: ${(props) => props.theme.ketcher.color.icon.grey};
+  height: ${(props) => (props.name === 'sugar' ? '12px' : '14px')};
+  width: ${(props) => (props.name === 'sugar' ? '12px' : '14px')};
 `;

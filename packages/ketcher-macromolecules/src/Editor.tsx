@@ -230,13 +230,16 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         e.target.__data__?.monomer?.monomerItem ||
         sequenceNode.monomer.monomerItem;
 
-      const nucleotide = isNucleotideOrNucleoside
-        ? [
-            sequenceNode.sugar.monomerItem,
-            sequenceNode.rnaBase.monomerItem,
-            sequenceNode.phosphate?.monomerItem,
-          ]
-        : null;
+      const nucleotideParts =
+        sequenceNode instanceof Nucleotide
+          ? [
+              sequenceNode.sugar.monomerItem,
+              sequenceNode.rnaBase.monomerItem,
+              sequenceNode.phosphate?.monomerItem,
+            ]
+          : sequenceNode instanceof Nucleoside
+          ? [sequenceNode.sugar.monomerItem, sequenceNode.rnaBase.monomerItem]
+          : null;
 
       const cardCoordinates = e.target.getBoundingClientRect();
       const top = calculatePreviewPosition(
@@ -249,7 +252,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
       };
       if (isNucleotideOrNucleoside) {
-        debouncedShowPreview({ nucleotide, style: previewStyle });
+        debouncedShowPreview({
+          nucleotide: nucleotideParts,
+          style: previewStyle,
+        });
       } else {
         debouncedShowPreview({ monomer, style: previewStyle });
       }
@@ -266,6 +272,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     editor?.events.mouseOverMonomer.add(handleOpenPreview);
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
     editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
+    editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -280,7 +287,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
-      editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
+      editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 

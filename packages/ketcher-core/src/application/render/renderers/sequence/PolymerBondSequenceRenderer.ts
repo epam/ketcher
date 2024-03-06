@@ -15,8 +15,8 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
 
   private get areMonomersOnSameRow() {
     return (
-      this.polymerBond.firstMonomer.renderer?.scaledMonomerPosition.y ===
-      this.polymerBond.secondMonomer?.renderer?.scaledMonomerPosition.y
+      this.polymerBond.firstMonomer.renderer?._scaledMonomerPosition.y ===
+      this.polymerBond.secondMonomer?.renderer?._scaledMonomerPosition.y
     );
   }
 
@@ -24,13 +24,13 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     assert(this.polymerBond.firstMonomer.renderer);
     assert(this.polymerBond.secondMonomer?.renderer);
     const firstMonomerY =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.y;
+      this.polymerBond.firstMonomer.renderer._scaledMonomerPosition.y;
     const firstMonomerX =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.x;
+      this.polymerBond.firstMonomer.renderer._scaledMonomerPosition.x;
     const secondMonomerY =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPosition.y;
+      this.polymerBond.secondMonomer.renderer._scaledMonomerPosition.y;
     const secondMonomerX =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPosition.x;
+      this.polymerBond.secondMonomer.renderer._scaledMonomerPosition.x;
 
     return {
       startPosition: new Vec2(firstMonomerX, firstMonomerY),

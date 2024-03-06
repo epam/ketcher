@@ -68,14 +68,9 @@ export class CoreEditor {
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
 
-  constructor({
-    theme,
-    canvas,
-    monomersLibrary,
-  }: ICoreEditorConstructorParams) {
+  constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
-    this._monomersLibrary = monomersLibrary;
     resetEditorEvents();
     this.events = editorEvents;
     this.subscribeEvents();
@@ -95,6 +90,10 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  public setMonomersLibrary(monomersLibrary: MonomerItemType[]) {
+    this._monomersLibrary = monomersLibrary;
   }
 
   public get monomersLibrary() {
@@ -138,7 +137,7 @@ export class CoreEditor {
     document.addEventListener('contextmenu', (event) => {
       event.preventDefault();
       if (!(this.mode instanceof SequenceMode) && !this.mode.isEditMode) {
-        return false
+        return false;
       }
 
       if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
@@ -171,8 +170,9 @@ export class CoreEditor {
       this.onEditSequence(sequenceItemRenderer),
     );
 
-    this.events.startNewSequence.add((sequenceItemRenderer: BaseSequenceRenderer) =>
-      this.onStartNewSequence(sequenceItemRenderer),
+    this.events.startNewSequence.add(
+      (sequenceItemRenderer: BaseSequenceRenderer) =>
+        this.onStartNewSequence(sequenceItemRenderer),
     );
   }
 

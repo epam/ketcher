@@ -17,6 +17,7 @@ import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor';
+import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
 
 export type SequencePointer = [number, number, number];
 
@@ -109,7 +110,9 @@ export class SequenceRenderer {
   ) {
     return new Vec2(
       currentChainStartPosition.x,
-      currentChainStartPosition.y + 75 + 47 * Math.floor(lastChain.length / 30),
+      currentChainStartPosition.y +
+        75 +
+        47 * Math.floor((lastChain.length - 1) / 30),
     );
   }
 
@@ -242,11 +245,17 @@ export class SequenceRenderer {
   }
 
   public static moveCaretForward() {
-    this.setCaretPosition(this.nextCaretPosition || this.caretPosition);
+    return new RestoreSequenceCaretPositionCommand(
+      this.caretPosition,
+      this.nextCaretPosition || this.caretPosition,
+    );
   }
 
   public static moveCaretBack() {
-    this.setCaretPosition(this.previousCaretPosition || this.caretPosition);
+    return new RestoreSequenceCaretPositionCommand(
+      this.caretPosition,
+      this.previousCaretPosition || this.caretPosition,
+    );
   }
 
   public static get hasNewChain() {
@@ -294,6 +303,10 @@ export class SequenceRenderer {
       lastSubChainCaretPosition,
       lastNodeCaretPosition,
     ];
+  }
+
+  public static get restoreCarretPositionCommand() {
+    return new RestoreCarretPositionCommand(this.caretPosition, this);
   }
 
   public static get currentEdittingNode() {

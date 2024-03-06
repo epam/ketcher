@@ -13,6 +13,7 @@ import { BaseRenderer } from 'application/render';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
+import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
@@ -180,9 +181,9 @@ export class SequenceMode extends BaseMode {
             SequenceRenderer.moveCaretBack();
           }
 
+          modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
           history.update(modelChanges);
-          this.initialize(false);
         },
       },
       'turn-off-edit-mode': {
@@ -217,6 +218,10 @@ export class SequenceMode extends BaseMode {
           const currentNode = SequenceRenderer.currentEdittingNode;
           const previousNode = SequenceRenderer.previousNodeInSameChain;
           const modelChanges = new Command();
+          const isEmptyChain =
+            SequenceRenderer.chainsCollection.chains[
+              SequenceRenderer.caretPosition[0]
+            ].isEmpty;
 
           const rightBottomPosition =
             currentNode?.firstMonomerInNode?.position || new Vec2(9999, 9999);
@@ -233,6 +238,14 @@ export class SequenceMode extends BaseMode {
                 );
 
           if (!(currentNode instanceof EmptySequenceNode)) {
+            if (previousNode) {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deletePolymerBond(
+                  previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2,
+                ),
+              );
+            }
+
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
                 nodeToAdd.lastMonomerInNode,
@@ -241,14 +254,6 @@ export class SequenceMode extends BaseMode {
                 AttachmentPointName.R1,
               ),
             );
-
-            if (previousNode) {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.deletePolymerBond(
-                  previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2,
-                ),
-              );
-            }
           }
 
           if (previousNode instanceof Nucleoside) {
@@ -293,12 +298,12 @@ export class SequenceMode extends BaseMode {
             );
           }
 
+          modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
-          history.update(modelChanges);
-          this.initialize(false);
-          if (!(currentNode instanceof EmptySequenceNode)) {
-            SequenceRenderer.moveCaretForward();
+          if (!(currentNode instanceof EmptySequenceNode) || isEmptyChain) {
+            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           }
+          history.update(modelChanges, true);
         },
       },
     };

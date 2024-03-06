@@ -161,6 +161,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   });
 
   useEffect(() => {
+    dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
@@ -174,8 +175,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(createEditor({ theme, canvas: canvasRef.current, monomers }));
-  }, [monomers]);
+    if (editor && monomers) {
+      editor.setMonomersLibrary(monomers);
+    }
+  }, [editor, monomers]);
 
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);

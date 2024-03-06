@@ -4,6 +4,7 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor, SequenceMode } from 'application/editor';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -62,7 +63,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public get center() {
-    return this.scaledMonomerPosition.add(new Vec2(4.5, 0, 0));
+    return this._scaledMonomerPosition.add(new Vec2(4.5, 0, 0));
   }
 
   private get isSequenceEditModeTurnedOn() {
@@ -139,8 +140,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get needDisplayCounter() {
     return (
-      (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
-      this.isLastMonomerInChain
+      ((this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
+        this.isLastMonomerInChain) &&
+      !(this.node instanceof EmptySequenceNode)
     );
   }
 
@@ -225,7 +227,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
 
     this.rootElement.on('mouseover', () => {
-      this.drawHover();
+      if (!this.node.monomer.selected) {
+        this.drawHover();
+      }
     });
 
     this.rootElement.on('mouseleave', () => {
@@ -234,11 +238,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   drawSelection(): void {
-    if (!this.rootElement) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (!this.rootElement || editor.mode.isEditMode) {
       return;
     }
     if (this.node.monomer.selected) {
       this.appendSelection();
+      this.removeHover();
       this.raiseElement();
     } else {
       this.removeSelection();
@@ -248,9 +254,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public appendSelection() {
     if (this.selectionRectangle) {
       this.selectionRectangle
-        .attr('x', this.scaledMonomerPosition.x - 3)
-        .attr('y', this.scaledMonomerPosition.y - 16)
-        .attr('width', 18)
+        .attr('x', this._scaledMonomerPosition.x - 4)
+        .attr('y', this._scaledMonomerPosition.y - 16)
+        .attr('width', 20)
         .attr('height', 20);
     } else {
       this.selectionBorder = this.rootElement
@@ -263,9 +269,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         ?.insert('rect', ':first-child')
         .attr('opacity', '0.7')
         .attr('fill', '#57FF8F')
-        .attr('x', this.scaledMonomerPosition.x - 3)
-        .attr('y', this.scaledMonomerPosition.y - 16)
-        .attr('width', 18)
+        .attr('x', this._scaledMonomerPosition.x - 4)
+        .attr('y', this._scaledMonomerPosition.y - 16)
+        .attr('width', 20)
         .attr('height', 20);
     }
   }

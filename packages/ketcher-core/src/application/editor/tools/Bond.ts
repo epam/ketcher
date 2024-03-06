@@ -26,6 +26,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 import { AttachmentPointName } from 'domain/types';
+import { AttachmentPoint } from 'domain/AttachmentPoint';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -185,7 +186,10 @@ class PolymerBond implements BaseTool {
   public mouseLeaveMonomer(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
     let redrawAttachmentPoints = true;
-    if (event.relatedTarget !== this.editor.canvas) {
+    if (
+      event.relatedTarget.id === AttachmentPoint.hoverId ||
+      event.relatedTarget.parentElement.id === AttachmentPoint.hoverId
+    ) {
       redrawAttachmentPoints = false;
     }
     if (

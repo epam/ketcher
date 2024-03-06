@@ -32,6 +32,8 @@ export class AttachmentPoint {
     strokePotentially: '#167782',
   };
 
+  static hoverId = 'attachmentPoint-hoverable-element';
+
   private rootElement: D3SvgElementSelection<SVGGElement, void>;
   private attachmentPoint: D3SvgElementSelection<SVGGElement, void> | null;
   private monomer: BaseMonomer;
@@ -169,7 +171,9 @@ export class AttachmentPoint {
       .x(({ x }) => x)
       .y(({ y }) => y);
 
-    const hoverableAreaElement = this.element.append('g');
+    const hoverableAreaElement = this.element
+      .append('g')
+      .attr('id', 'attachmentPoint-hoverable-element');
 
     hoverableAreaElement
       .append('path')

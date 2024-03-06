@@ -2,6 +2,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor, SequenceMode } from 'application/editor';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
@@ -9,20 +10,25 @@ const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
+  private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
 
   constructor(
-    protected node: SubChainNode,
+    public node: SubChainNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
+    private subChain: BaseSubChain,
     private _isEditingSymbol: boolean,
-    public monomerSize: {width: number, height: number},
+    public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
   ) {
     super(node.monomer);
   }
+
+  abstract get symbolToDisplay(): string;
 
   public get isEditingSymbol() {
     return this._isEditingSymbol;
@@ -37,10 +43,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected appendHoverAreaElement(): void {}
-
-  drawSelection(): void {}
-
   moveSelection(): void {}
+
+  public get currentSubChain() {
+    return this.subChain;
+  }
 
   public get _scaledMonomerPosition() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
@@ -52,6 +59,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
       this.firstNodeInChainPosition.y + 47 * rowIndex,
     );
+  }
+
+  public get center() {
+    return this.scaledMonomerPosition.add(new Vec2(4.5, 0, 0));
   }
 
   private get isSequenceEditModeTurnedOn() {
@@ -222,7 +233,60 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  abstract get symbolToDisplay(): string;
+  drawSelection(): void {
+    if (!this.rootElement) {
+      return;
+    }
+    if (this.node.monomer.selected) {
+      this.appendSelection();
+      this.raiseElement();
+    } else {
+      this.removeSelection();
+    }
+  }
+
+  public appendSelection() {
+    if (this.selectionRectangle) {
+      this.selectionRectangle
+        .attr('x', this.scaledMonomerPosition.x - 3)
+        .attr('y', this.scaledMonomerPosition.y - 16)
+        .attr('width', 18)
+        .attr('height', 20);
+    } else {
+      this.selectionBorder = this.rootElement
+        ?.append('use')
+        .attr('href', this.monomerIndexInChain)
+        .attr('stroke', '#57FF8F')
+        .attr('pointer-events', 'none');
+
+      this.selectionRectangle = this.canvas
+        ?.insert('rect', ':first-child')
+        .attr('opacity', '0.7')
+        .attr('fill', '#57FF8F')
+        .attr('x', this.scaledMonomerPosition.x - 3)
+        .attr('y', this.scaledMonomerPosition.y - 16)
+        .attr('width', 18)
+        .attr('height', 20);
+    }
+  }
+
+  public removeSelection() {
+    this.selectionRectangle?.remove();
+    this.selectionBorder?.remove();
+    this.selectionRectangle = undefined;
+    this.selectionBorder = undefined;
+  }
+
+  private raiseElement() {
+    this.selectionRectangle?.raise();
+    this.rootElement?.raise();
+  }
+
+  public remove() {
+    this.rootElement?.remove();
+    this.rootElement = undefined;
+    this.removeSelection();
+  }
 
   public setEnumeration() {}
   public redrawEnumeration() {}

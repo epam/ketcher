@@ -407,16 +407,12 @@ test.describe('Bond Properties', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.skip(`Change 'Reacting Center' field value - 2/2 open and edit`, async ({
+  test(`Change 'Reacting Center' field value - 2/2 open and edit`, async ({
     page,
   }) => {
     /*
         Test case: EPMLSOPKET-1463(2)
         Description: Open and edit
-
-        Now it doesn`t work because if we try to save bond with 'Not center' option, 
-        we can`t  open the file
-        https://github.com/epam/ketcher/issues/2378
     */
 
     await openFileAndAddToCanvas(

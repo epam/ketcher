@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import {
+  moveMouseAway,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
@@ -18,6 +19,7 @@ test.describe('Ket Deserialize', () => {
     Description: Ket Deserialize
     */
     await openFileAndAddToCanvas('KET/monomers-with-bonds.ket', page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 });

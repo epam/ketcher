@@ -175,9 +175,9 @@ export async function moveOnBond(
 export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
   await page.getByTestId('hand').click();
   // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
-  await page
-    .getByTestId(dropdownElementId)
-    .click({ delay: 200, clickCount: 2 });
+  const button = page.getByTestId(dropdownElementId);
+  await button.isVisible();
+  await button.click({ delay: 200, clickCount: 2 });
 }
 
 export async function selectDropdownTool(

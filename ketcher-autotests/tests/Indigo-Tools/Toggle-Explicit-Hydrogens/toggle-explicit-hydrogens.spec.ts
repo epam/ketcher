@@ -7,6 +7,8 @@ import {
   waitForSpinnerFinishedWork,
   waitForPageInit,
   drawBenzeneRing,
+  selectRing,
+  RingButton,
 } from '@utils';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
@@ -40,6 +42,27 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Adding hydrogens not moves molecules to center of canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4128 https://github.com/epam/ketcher/issues/4128
+    Description: Adding hydrogens not moves molecules to center of canvas.
+    */
+    const x = 200;
+    const y = 200;
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(x, y);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
     await takeEditorScreenshot(page);
   });
 });

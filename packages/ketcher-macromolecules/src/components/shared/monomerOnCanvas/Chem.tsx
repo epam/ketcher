@@ -19,22 +19,26 @@ export const ChemAvatar = () => (
     <symbol id="chem" viewBox="0 0 59 59" width="59" height="59">
       <rect
         className="monomer-body"
-        width="59"
-        height="59"
-        data-actual-width="59"
-        data-actual-height="59"
-        rx="1.5"
+        width="29.5"
+        height="29.5"
+        data-actual-width="29.5"
+        data-actual-height="29.5"
+        x="0.5"
+        y="0.5"
+        rx="0.75"
         fill="#F5F6F7"
       />
     </symbol>
     <symbol id="chem-selection" viewBox="0 0 59 59" width="59" height="59">
       <rect
-        width="59"
-        height="59"
-        rx="1.5"
+        width="29.5"
+        height="29.5"
+        x="0.5"
+        y="0.5"
+        rx="0.75"
         stroke="#0097A8"
         fill="none"
-        strokeWidth="3"
+        strokeWidth="1.5"
       />
     </symbol>
   </>

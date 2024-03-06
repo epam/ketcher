@@ -6,6 +6,7 @@ import { NucleotideSequenceItemRenderer } from 'application/render/renderers/seq
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { Nucleoside } from 'domain/entities/Nucleoside';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { SymbolEditingMode } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
@@ -17,6 +18,7 @@ export class SequenceNodeRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
+    subChain: BaseSubChain,
     isEditingSymbol: boolean,
     renderer: BaseMonomerRenderer,
   ) {
@@ -54,9 +56,10 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
+      subChain,
       isEditingSymbol,
       renderer?.monomerSize,
-      renderer?.scaledMonomerPosition
+      renderer?.scaledMonomerPosition,
     );
   }
 }

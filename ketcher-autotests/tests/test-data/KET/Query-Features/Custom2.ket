@@ -1,0 +1,287 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": -119.13849128513762,
+                            "y": -33.4036574949431,
+                            "z": 0
+                        },
+                        {
+                            "x": -116.11413988543404,
+                            "y": -33.4036574949431,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"foj9o\",\"text\":\"Custom Queries\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -124.90038777688058,
+                        "y": -28.08326949685584,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -124.90038777688058,
+                            "y": -28.08326949685584,
+                            "z": 0
+                        },
+                        {
+                            "x": -124.90038777688058,
+                            "y": -28.437436171469795,
+                            "z": 0
+                        },
+                        {
+                            "x": -122.54822503426583,
+                            "y": -28.437436171469795,
+                            "z": 0
+                        },
+                        {
+                            "x": -122.54822503426583,
+                            "y": -28.08326949685584,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -119.09069066617737,
+                    -27.53699964440979,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __6"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -117.36022461036787,
+                    -27.53651441032474,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __2"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -118.22381997323558,
+                    -27.03684461124452,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __1"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -117.36022461036787,
+                    -28.537552327782855,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __3"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -119.09069066617737,
+                    -28.542040743069563,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __5"
+                }
+            },
+            {
+                "label": "A",
+                "location": [
+                    -118.22163641985284,
+                    -29.037100818341806,
+                    0
+                ],
+                "queryProperties": {
+                    "customQuery": "Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query 1000 chars Custom Query __4"
+                }
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -120.36828373744036,
+                    -33.85696124379784,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -119.36703216616822,
+                    -33.85696124379784,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -119.8676077637556,
+                    -32.992020412755025,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -115.99328373744036,
+                    -33.91946124379784,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -114.99203216616822,
+                    -33.91946124379784,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -115.4926077637556,
+                    -33.054520412755025,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    0
+                ]
+            }
+        ]
+    }
+}

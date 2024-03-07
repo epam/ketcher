@@ -35,4 +35,6 @@ export abstract class BaseMode {
   }
 
   abstract onKeyUp(event: KeyboardEvent): void;
+
+  public destroy() {}
 }

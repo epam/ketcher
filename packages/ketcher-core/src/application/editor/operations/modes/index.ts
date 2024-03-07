@@ -32,13 +32,13 @@ export class ReinitializeSequenceModeCommand implements Operation {
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
     assert(editor.mode instanceof SequenceMode);
-    editor.mode.initialize(false, false);
+    editor.mode.initialize(false);
   }
 
   public invert(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
     assert(editor.mode instanceof SequenceMode);
-    editor.mode.initialize(false, false);
+    editor.mode.initialize(false);
   }
 }
 

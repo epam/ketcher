@@ -12,7 +12,12 @@ export class FlexMode extends BaseMode {
 
     editor.drawingEntitiesManager.applyFlexLayoutMode();
 
-    editor.renderersContainer.update();
+    const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
+      editor.canvas.width.baseVal.value,
+      true,
+    );
+
+    editor.renderersContainer.update(modelChanges);
 
     return command;
   }

@@ -32,7 +32,7 @@ export class SequenceMode extends BaseMode {
     this._isEditMode = isEditMode;
   }
 
-  public initialize(needScroll = true, needRerenderAfterLayout = true) {
+  public initialize(needScroll = true) {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
@@ -41,7 +41,7 @@ export class SequenceMode extends BaseMode {
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
       true,
-      needRerenderAfterLayout,
+      false,
     );
     const zoom = ZoomTool.instance;
 
@@ -70,14 +70,14 @@ export class SequenceMode extends BaseMode {
     }
 
     this.isEditMode = true;
-    this.initialize(false, false);
+    this.initialize(false);
   }
 
   public turnOffEditMode() {
     if (!this.isEditMode) return;
 
     this.isEditMode = false;
-    this.initialize(false, false);
+    this.initialize(false);
   }
 
   public onKeyUp(event: KeyboardEvent) {

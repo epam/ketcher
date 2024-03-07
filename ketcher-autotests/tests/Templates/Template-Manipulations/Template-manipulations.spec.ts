@@ -251,6 +251,7 @@ test.describe('Template Manupulations', () => {
     await page.getByText('S').first().click({
       button: 'right',
     });
+    await takeEditorScreenshot(page);
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');

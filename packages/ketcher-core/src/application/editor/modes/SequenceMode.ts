@@ -5,7 +5,7 @@ import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { initHotKeys, keyNorm } from 'utilities';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render';
@@ -14,6 +14,9 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
 import assert from 'assert';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
@@ -29,7 +32,7 @@ export class SequenceMode extends BaseMode {
     this._isEditMode = isEditMode;
   }
 
-  public initialize(needScroll = true) {
+  public initialize(needScroll = true, needRerenderAfterLayout = true) {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
@@ -38,7 +41,7 @@ export class SequenceMode extends BaseMode {
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
       true,
-      false,
+      needRerenderAfterLayout,
     );
     const zoom = ZoomTool.instance;
 
@@ -67,14 +70,14 @@ export class SequenceMode extends BaseMode {
     }
 
     this.isEditMode = true;
-    this.initialize(false);
+    this.initialize(false, false);
   }
 
   public turnOffEditMode() {
     if (!this.isEditMode) return;
 
     this.isEditMode = false;
-    this.initialize(false);
+    this.initialize(false, false);
   }
 
   public onKeyUp(event: KeyboardEvent) {
@@ -125,16 +128,11 @@ export class SequenceMode extends BaseMode {
             SequenceRenderer.previousFromCurrentEdittingMonomer;
           const previousNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
-          const bondBeforePreviousNode =
-            previousNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
-          const monomerBeforePreviousNode =
-            bondBeforePreviousNode?.getAnotherMonomer(
-              previousNode?.firstMonomerInNode as BaseMonomer,
-            );
           const currentNode = SequenceRenderer.currentEdittingNode;
           const modelChanges = new Command();
 
           if (previousNodeInSameChain) {
+            // delete all monomers and it's bonds from previous node
             previousNode?.monomers.forEach((monomer) => {
               modelChanges.merge(
                 editor.drawingEntitiesManager.deleteMonomer(monomer),
@@ -159,7 +157,7 @@ export class SequenceMode extends BaseMode {
                   editor.drawingEntitiesManager.createPolymerBond(
                     previousNode instanceof Nucleoside
                       ? nodeBeforePreviousNode.firstMonomerInNode
-                      : (monomerBeforePreviousNode as BaseMonomer),
+                      : nodeBeforePreviousNode.lastMonomerInNode,
                     currentNode?.firstMonomerInNode as BaseMonomer,
                     AttachmentPointName.R2,
                     AttachmentPointName.R1,
@@ -174,6 +172,7 @@ export class SequenceMode extends BaseMode {
                 SequenceRenderer.previousChain,
               );
 
+            // create bond between previous and current chain
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
                 previousChainLastNonEmptyNode?.lastMonomerInNode,
@@ -218,34 +217,39 @@ export class SequenceMode extends BaseMode {
       'add-sequence-item': {
         shortcut: ['A', 'T', 'G', 'C', 'U', 'a', 't', 'g', 'c', 'u'],
         handler: (event) => {
+          const rnaBaseName = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
           const currentNode = SequenceRenderer.currentEdittingNode;
-          const previousNode = SequenceRenderer.previousNodeInSameChain;
+          const previousNode =
+            SequenceRenderer.previousFromCurrentEdittingMonomer;
+          const nodeBeforePreviousNode = previousNode
+            ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+            : undefined;
+          const previousNodeInSameChain =
+            SequenceRenderer.previousNodeInSameChain;
           const modelChanges = new Command();
           const isEmptyChain =
             SequenceRenderer.chainsCollection.chains[
               SequenceRenderer.caretPosition[0]
             ].isEmpty;
 
-          const rightBottomPosition =
-            currentNode?.firstMonomerInNode?.position || new Vec2(9999, 9999);
+          const newNodePosition = this.getNewSequenceItemPosition(
+            previousNode,
+            nodeBeforePreviousNode,
+          );
+
           const nodeToAdd =
             currentNode instanceof Nucleotide ||
             currentNode instanceof Nucleoside
-              ? Nucleotide.createOnCanvas(
-                  event.key.toUpperCase(),
-                  rightBottomPosition,
-                )
-              : Nucleoside.createOnCanvas(
-                  event.key.toUpperCase(),
-                  rightBottomPosition,
-                );
+              ? Nucleotide.createOnCanvas(rnaBaseName, newNodePosition)
+              : Nucleoside.createOnCanvas(rnaBaseName, newNodePosition);
 
           if (!(currentNode instanceof EmptySequenceNode)) {
-            if (previousNode) {
+            if (previousNodeInSameChain) {
               const r2Bond =
-                previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2;
+                previousNodeInSameChain?.lastMonomerInNode
+                  .attachmentPointsToBonds.R2;
               assert(r2Bond);
               modelChanges.merge(
                 editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
@@ -262,15 +266,18 @@ export class SequenceMode extends BaseMode {
             );
           }
 
-          if (previousNode instanceof Nucleoside) {
-            const phosphateLibraryItem = editor.monomersLibrary.RNA.find(
-              (libraryItem) => libraryItem.props.MonomerName === 'P',
-            ) as MonomerItemType;
+          if (previousNodeInSameChain instanceof Nucleoside) {
+            const phosphateLibraryItem = getRnaPartLibraryItem(
+              editor,
+              RNA_NON_MODIFIED_PART.PHOSPHATE,
+            );
+
+            assert(phosphateLibraryItem);
 
             const additionalPhosphateAddCommand =
               editor.drawingEntitiesManager.addMonomer(
                 phosphateLibraryItem,
-                rightBottomPosition,
+                newNodePosition,
               );
             const additionalPhosphate = additionalPhosphateAddCommand
               .operations[0].monomer as BaseMonomer;
@@ -278,7 +285,7 @@ export class SequenceMode extends BaseMode {
 
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
-                previousNode.lastMonomerInNode,
+                previousNodeInSameChain.lastMonomerInNode,
                 additionalPhosphate,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
@@ -293,10 +300,10 @@ export class SequenceMode extends BaseMode {
                 AttachmentPointName.R1,
               ),
             );
-          } else if (previousNode) {
+          } else if (previousNodeInSameChain) {
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
-                previousNode.lastMonomerInNode,
+                previousNodeInSameChain.lastMonomerInNode,
                 nodeToAdd.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
@@ -313,5 +320,25 @@ export class SequenceMode extends BaseMode {
         },
       },
     };
+  }
+
+  private getNewSequenceItemPosition(
+    previousNode?: SubChainNode,
+    nodeBeforePreviousNode?: SubChainNode,
+  ) {
+    if (!previousNode || !nodeBeforePreviousNode) {
+      return new Vec2(0, 0);
+    }
+
+    const offsetFromPrevious = new Vec2(1, 1);
+
+    const nodeForPositionCalculation =
+      previousNode instanceof EmptySequenceNode
+        ? nodeBeforePreviousNode
+        : previousNode;
+
+    return nodeForPositionCalculation.lastMonomerInNode.position.add(
+      offsetFromPrevious,
+    );
   }
 }

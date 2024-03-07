@@ -488,11 +488,20 @@ export class SequenceRenderer {
       });
     });
 
-    return subChainNodeIndex - 1 >= 0
+    subChainIndex =
+      subChainNodeIndex - 1 >= 0 ? subChainIndex : subChainIndex - 1;
+
+    subChainNodeIndex =
+      subChainNodeIndex - 1 >= 0
+        ? subChainNodeIndex - 1
+        : this.chainsCollection.chains[chainIndex].subChains[subChainIndex]
+            ?.length - 1;
+
+    return subChainNodeIndex >= 0 && subChainIndex >= 0
       ? SequenceRenderer.getNodeByPointer([
           chainIndex,
           subChainIndex,
-          subChainNodeIndex - 1,
+          subChainNodeIndex,
         ])
       : undefined;
   }

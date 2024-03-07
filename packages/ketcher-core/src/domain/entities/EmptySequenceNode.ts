@@ -1,6 +1,5 @@
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { Vec2 } from 'domain/entities/vec2';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
 export class EmptySequenceNode {
@@ -26,10 +25,6 @@ export class EmptySequenceNode {
 
   public get selected() {
     return false;
-  }
-
-  public get position() {
-    return new Vec2(0, 0);
   }
 
   public get monomerItem() {

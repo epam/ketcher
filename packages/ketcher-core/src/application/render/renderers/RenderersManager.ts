@@ -203,7 +203,7 @@ export class RenderersManager {
       return;
     }
 
-    assert(nextMonomer.renderer);
+    assert(nextMonomer.renderer instanceof BaseMonomerRenderer);
 
     this.recalculateRnaChainEnumeration(
       nextMonomer.renderer,

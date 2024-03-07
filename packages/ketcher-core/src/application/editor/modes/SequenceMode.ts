@@ -13,6 +13,7 @@ import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
+import assert from 'assert';
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
@@ -128,7 +129,7 @@ export class SequenceMode extends BaseMode {
             previousNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
           const monomerBeforePreviousNode =
             bondBeforePreviousNode?.getAnotherMonomer(
-              previousNode?.firstMonomerInNode,
+              previousNode?.firstMonomerInNode as BaseMonomer,
             );
           const currentNode = SequenceRenderer.currentEdittingNode;
           const modelChanges = new Command();
@@ -140,8 +141,9 @@ export class SequenceMode extends BaseMode {
               );
             });
 
-            const nodeBeforePreviousNode =
-              SequenceRenderer.getPreviousNodeInSameChain(previousNode);
+            const nodeBeforePreviousNode = previousNode
+              ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+              : undefined;
 
             if (nodeBeforePreviousNode) {
               if (previousNode instanceof Nucleoside) {
@@ -153,13 +155,12 @@ export class SequenceMode extends BaseMode {
                 );
               }
               if (!(currentNode instanceof EmptySequenceNode)) {
-                console.log(monomerBeforePreviousNode);
                 modelChanges.merge(
                   editor.drawingEntitiesManager.createPolymerBond(
                     previousNode instanceof Nucleoside
                       ? nodeBeforePreviousNode.firstMonomerInNode
-                      : monomerBeforePreviousNode,
-                    currentNode?.firstMonomerInNode,
+                      : (monomerBeforePreviousNode as BaseMonomer),
+                    currentNode?.firstMonomerInNode as BaseMonomer,
                     AttachmentPointName.R2,
                     AttachmentPointName.R1,
                   ),
@@ -176,7 +177,7 @@ export class SequenceMode extends BaseMode {
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
                 previousChainLastNonEmptyNode?.lastMonomerInNode,
-                currentNode?.firstMonomerInNode,
+                currentNode?.firstMonomerInNode as BaseMonomer,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),
@@ -243,17 +244,18 @@ export class SequenceMode extends BaseMode {
 
           if (!(currentNode instanceof EmptySequenceNode)) {
             if (previousNode) {
+              const r2Bond =
+                previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2;
+              assert(r2Bond);
               modelChanges.merge(
-                editor.drawingEntitiesManager.deletePolymerBond(
-                  previousNode?.lastMonomerInNode.attachmentPointsToBonds.R2,
-                ),
+                editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
               );
             }
 
             modelChanges.merge(
               editor.drawingEntitiesManager.createPolymerBond(
                 nodeToAdd.lastMonomerInNode,
-                currentNode?.firstMonomerInNode,
+                currentNode?.firstMonomerInNode as BaseMonomer,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),

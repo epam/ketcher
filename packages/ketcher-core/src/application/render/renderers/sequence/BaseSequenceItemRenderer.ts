@@ -279,4 +279,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public setEnumeration() {}
   public redrawEnumeration() {}
   public redrawAttachmentPoints() {}
+  public redrawAttachmentPointsCoordinates() {}
+  public get enumeration() {
+    return null;
+  }
+
+  public hoverAttachmenPoint() {}
+  public updateAttachmentPoints() {}
 }

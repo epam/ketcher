@@ -6,16 +6,21 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
+import { BaseSequenceItemRenderer } from 'ketcher-core/dist/application/render/renderers/sequence/BaseSequenceItemRenderer';
 
-export const SequenceItemContextMenu = (props) => {
+export const SequenceItemContextMenu = () => {
   const editor = useAppSelector(selectEditor);
 
   const menuItems = [
     {
       name: 'edit_sequence',
       title: 'Edit sequence',
-      hidden: ({ props }) => {
-        return !props.sequenceItemRenderer;
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer;
       },
     },
     { name: 'start_new_sequence', title: 'Start new sequence' },

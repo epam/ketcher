@@ -41,7 +41,6 @@ import { groupBy } from 'lodash';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
-  monomersLibrary: MonomerItemType[];
 }
 
 function isMouseMainButtonPressed(event: MouseEvent) {

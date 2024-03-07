@@ -61,7 +61,6 @@ export const editorSlice: Slice = createSlice({
       state.editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        monomersLibrary: action.payload.monomers,
       });
     },
     destroyEditor: (state) => {

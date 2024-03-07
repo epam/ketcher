@@ -18,7 +18,8 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor, SequenceMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import {
   SequencePointer,
   SequenceRenderer,

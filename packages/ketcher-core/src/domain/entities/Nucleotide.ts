@@ -9,7 +9,7 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';

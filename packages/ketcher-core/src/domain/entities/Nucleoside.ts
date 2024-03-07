@@ -8,7 +8,7 @@ import {
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';

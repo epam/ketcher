@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
 
 export function getRnaPartLibraryItem(editor: CoreEditor, rnaBaseName: string) {
   return editor.monomersLibrary.RNA.find(

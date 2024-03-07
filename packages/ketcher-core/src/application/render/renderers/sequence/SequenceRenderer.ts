@@ -15,7 +15,8 @@ import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { CoreEditor, SequenceMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
 import assert from 'assert';
 

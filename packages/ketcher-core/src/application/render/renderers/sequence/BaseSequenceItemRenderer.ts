@@ -3,7 +3,8 @@ import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { CoreEditor, SequenceMode } from 'application/editor';
+import { CoreEditor } from 'application/editor/internal';
+import { SequenceMode } from 'application/editor/modes';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';

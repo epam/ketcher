@@ -112,7 +112,9 @@ export class SequenceMode extends BaseMode {
     }
 
     if (this.isEditMode && isClickedOnSequenceItem) {
-      SequenceRenderer.setCaretPositionBySequenceItemRenderer(eventData);
+      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
+        eventData as BaseSequenceItemRenderer,
+      );
     }
   }
 

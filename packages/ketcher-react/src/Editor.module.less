@@ -163,6 +163,7 @@
 
 :global {
   .blinking {
+    /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
     & :local {
       animation: blink 1s infinite;
     }
@@ -173,9 +174,11 @@
   0% {
     opacity: 1;
   }
+
   30% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }

@@ -380,12 +380,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test('User can auromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+  test('User can aromatize molecules with query parameters (not custom query, but only ordinary).', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 1
-    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
     2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
     3. Press Aromatize button
@@ -402,12 +402,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can DEauromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+  test('User can DEaromatize molecules with query parameters (not custom query, but only ordinary).', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 2
-    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
     2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
     3. Press Aromatize button
@@ -429,12 +429,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can Auromatize molecules with custom query parameters.', async ({
+  test('User can aromatize molecules with custom query parameters.', async ({
     page,
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 3
-    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
     2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
     3. Press Aromatize button
@@ -458,7 +458,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
-    Description: User can auromatize molecules with query parameters (not custom query, but only ordinary).
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
     2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
     3. Press Aromatize button

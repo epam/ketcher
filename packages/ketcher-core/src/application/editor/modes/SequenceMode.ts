@@ -62,15 +62,14 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer) {
+    this.isEditMode = true;
+    this.initialize(false);
     if (sequenceItemRenderer) {
-      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
-        sequenceItemRenderer,
+      SequenceRenderer.setCaretPositionByMonomer(
+        sequenceItemRenderer.node.monomer,
       );
       SequenceRenderer.moveCaretForward();
     }
-
-    this.isEditMode = true;
-    this.initialize(false);
   }
 
   public turnOffEditMode() {
@@ -163,7 +162,6 @@ export class SequenceMode extends BaseMode {
                     AttachmentPointName.R1,
                   ),
                 );
-                SequenceRenderer.moveCaretBack();
               }
             }
           } else if (SequenceRenderer.previousChain) {
@@ -181,12 +179,11 @@ export class SequenceMode extends BaseMode {
                 AttachmentPointName.R1,
               ),
             );
-            SequenceRenderer.moveCaretBack();
-            SequenceRenderer.moveCaretBack();
           }
 
           modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
+          modelChanges.addOperation(SequenceRenderer.moveCaretBack());
           history.update(modelChanges);
         },
       },
@@ -229,10 +226,6 @@ export class SequenceMode extends BaseMode {
           const previousNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
           const modelChanges = new Command();
-          const isEmptyChain =
-            SequenceRenderer.chainsCollection.chains[
-              SequenceRenderer.caretPosition[0]
-            ].isEmpty;
 
           const newNodePosition = this.getNewSequenceItemPosition(
             previousNode,
@@ -313,9 +306,7 @@ export class SequenceMode extends BaseMode {
 
           modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
-          if (!(currentNode instanceof EmptySequenceNode) || isEmptyChain) {
-            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
-          }
+          modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           history.update(modelChanges, true);
         },
       },

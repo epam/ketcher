@@ -19,11 +19,12 @@ import { CoreEditor } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
 import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
 import assert from 'assert';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
-export type SequencePointer = [number, number, number];
+export type SequencePointer = number;
 
 export class SequenceRenderer {
-  public static caretPosition: SequencePointer = [-1, -1, -1];
+  public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static lastChainStartPosition: Vec2;
@@ -54,6 +55,7 @@ export class SequenceRenderer {
       : new Vec2(41.5, 41.5);
 
     let currentMonomerIndexInChain = 0;
+    let currentMonomerIndexOverall = 0;
     const editor = CoreEditor.provideEditorInstance();
     const isEditMode =
       editor.mode instanceof SequenceMode && editor.mode.isEditMode;
@@ -67,10 +69,10 @@ export class SequenceRenderer {
       });
     }
 
-    chainsCollection.chains.forEach((chain, chainIndex) => {
+    chainsCollection.chains.forEach((chain) => {
       currentMonomerIndexInChain = 0;
-      chain.subChains.forEach((subChain, subChainIndex) => {
-        subChain.nodes.forEach((node, nodeIndex) => {
+      chain.subChains.forEach((subChain) => {
+        subChain.nodes.forEach((node) => {
           const renderer = SequenceNodeRendererFactory.fromNode(
             node,
             currentChainStartPosition,
@@ -81,14 +83,13 @@ export class SequenceRenderer {
                 0,
               ),
             subChain,
-            chainIndex === SequenceRenderer.caretPosition[0] &&
-              subChainIndex === SequenceRenderer.caretPosition[1] &&
-              nodeIndex === SequenceRenderer.caretPosition[2],
+            currentMonomerIndexOverall === SequenceRenderer.caretPosition,
             node.monomer.renderer,
           );
           renderer.show();
           node.monomer?.setRenderer(renderer);
           currentMonomerIndexInChain++;
+          currentMonomerIndexOverall++;
 
           if (node instanceof EmptySequenceNode) {
             SequenceRenderer.emptySequenceItemRenderers.push(renderer);
@@ -203,9 +204,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: SequencePointer) {
-    const oldSubChainNode = SequenceRenderer.getNodeByPointer(
-      this.caretPosition,
-    );
+    const oldSubChainNode = SequenceRenderer.currentEdittingNode;
 
     if (oldSubChainNode) {
       assert(oldSubChainNode.renderer instanceof BaseSequenceItemRenderer);
@@ -214,7 +213,7 @@ export class SequenceRenderer {
       oldSubChainNode.renderer?.show();
     }
     SequenceRenderer.caretPosition = caretPosition;
-    const subChainNode = SequenceRenderer.getNodeByPointer(caretPosition);
+    const subChainNode = SequenceRenderer.currentEdittingNode;
 
     if (!subChainNode) {
       return;
@@ -226,26 +225,61 @@ export class SequenceRenderer {
     subChainNode.renderer?.show();
   }
 
-  public static setCaretPositionBySequenceItemRenderer(
-    sequenceItemRenderer: BaseSequenceItemRenderer,
+  public static forEachNode(
+    forEachCallback: (params: {
+      chainIndex: number;
+      subChainIndex: number;
+      nodeIndex: number;
+      nodeIndexOverall: number;
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      chain: Chain;
+    }) => void,
   ) {
-    let chainIndex = -1;
-    let subChainIndex = -1;
-    let subChainNodeIndex = -1;
+    let nodeIndexOverall = 0;
 
-    this.chainsCollection.chains.forEach((chain, _chainIndex) => {
-      chain.subChains.forEach((subChain, _subChainIndex) => {
-        subChain.nodes.forEach((node, _nodeIndex) => {
-          if (node.monomer.renderer === sequenceItemRenderer) {
-            chainIndex = _chainIndex;
-            subChainIndex = _subChainIndex;
-            subChainNodeIndex = _nodeIndex;
-          }
+    this.chainsCollection.chains.forEach((chain, chainIndex) => {
+      chain.subChains.forEach((subChain, subChainIndex) => {
+        subChain.nodes.forEach((node, nodeIndex) => {
+          forEachCallback({
+            chainIndex,
+            subChainIndex,
+            nodeIndex,
+            nodeIndexOverall,
+            node,
+            subChain,
+            chain,
+          });
+          nodeIndexOverall++;
         });
       });
     });
+  }
 
-    this.setCaretPosition([chainIndex, subChainIndex, subChainNodeIndex]);
+  public static setCaretPositionBySequenceItemRenderer(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    let newCaretPosition = -1;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node.monomer.renderer === sequenceItemRenderer) {
+        newCaretPosition = nodeIndexOverall;
+      }
+    });
+
+    this.setCaretPosition(newCaretPosition);
+  }
+
+  public static setCaretPositionByMonomer(monomer: BaseMonomer) {
+    let newCaretPosition = -1;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node.monomer === monomer) {
+        newCaretPosition = nodeIndexOverall;
+      }
+    });
+
+    this.setCaretPosition(newCaretPosition);
   }
 
   public static moveCaretForward() {
@@ -263,29 +297,37 @@ export class SequenceRenderer {
   }
 
   public static get hasNewChain() {
-    return Boolean(SequenceRenderer.newChainCaretPosition);
+    return SequenceRenderer.newChainCaretPosition !== undefined;
   }
 
   public static moveCaretToNewChain() {
     this.setCaretPosition(
-      SequenceRenderer.newChainCaretPosition || [-1, -1, -1],
+      SequenceRenderer.newChainCaretPosition === undefined
+        ? -1
+        : SequenceRenderer.newChainCaretPosition,
     );
+  }
+
+  private static get currentChainIndex() {
+    let currentChainIndex = -1;
+
+    SequenceRenderer.forEachNode(({ nodeIndexOverall, chainIndex }) => {
+      if (nodeIndexOverall === this.caretPosition) {
+        currentChainIndex = chainIndex;
+      }
+    });
+
+    return currentChainIndex;
   }
 
   public static get newChainCaretPosition(): SequencePointer | undefined {
     const lastNodeCaretPosition = SequenceRenderer.lastNodeCaretPosition;
-    if (!lastNodeCaretPosition) {
+    if (lastNodeCaretPosition === undefined) {
       return undefined;
     }
-    const lastChain =
-      SequenceRenderer.chainsCollection.chains[lastNodeCaretPosition[0]];
-    return lastChain.isEmpty
-      ? [
-          lastNodeCaretPosition[0],
-          lastNodeCaretPosition[1],
-          lastNodeCaretPosition[2],
-        ]
-      : undefined;
+    const lastChain = SequenceRenderer.getChainByPointer(lastNodeCaretPosition);
+
+    return lastChain.isEmpty ? lastNodeCaretPosition : undefined;
   }
 
   public static get lastNodeCaretPosition(): SequencePointer | undefined {
@@ -293,20 +335,38 @@ export class SequenceRenderer {
       return undefined;
     }
 
-    const lastChainCaretPosition =
-      SequenceRenderer.chainsCollection.chains.length - 1;
-    const lastSubChainCaretPosition =
-      SequenceRenderer.chainsCollection.chains[lastChainCaretPosition].subChains
-        .length - 1;
-    const lastNodeCaretPosition =
-      SequenceRenderer.chainsCollection.chains[lastChainCaretPosition]
-        .subChains[lastSubChainCaretPosition].nodes.length - 1;
+    let lastNodeIndex = -1;
 
-    return [
-      lastChainCaretPosition,
-      lastSubChainCaretPosition,
-      lastNodeCaretPosition,
-    ];
+    SequenceRenderer.forEachNode(() => {
+      lastNodeIndex++;
+    });
+
+    return lastNodeIndex === -1 ? undefined : lastNodeIndex;
+  }
+
+  private static getNodeByPointer(sequencePointer?: SequencePointer) {
+    if (sequencePointer === undefined) return;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (nodeIndexOverall === sequencePointer) {
+        nodeToReturn = node;
+      }
+    });
+
+    return nodeToReturn;
+  }
+
+  private static getChainByPointer(sequencePointer: SequencePointer) {
+    let chainToReturn;
+
+    SequenceRenderer.forEachNode(({ chain, nodeIndexOverall }) => {
+      if (nodeIndexOverall === sequencePointer) {
+        chainToReturn = chain;
+      }
+    });
+
+    return chainToReturn;
   }
 
   public static get currentEdittingNode() {
@@ -319,8 +379,16 @@ export class SequenceRenderer {
     );
   }
 
+  public static get currentChain() {
+    return SequenceRenderer.chainsCollection.chains[
+      SequenceRenderer.currentChainIndex
+    ];
+  }
+
   public static get previousChain() {
-    return SequenceRenderer.chainsCollection.chains[this.caretPosition[0] - 1];
+    return SequenceRenderer.chainsCollection.chains[
+      SequenceRenderer.currentChainIndex - 1
+    ];
   }
 
   public static getLastNonEmptyNode(chain: Chain) {
@@ -336,10 +404,7 @@ export class SequenceRenderer {
   }
 
   public static get nextNodeInSameChain() {
-    if (
-      SequenceRenderer.nextCaretPosition?.[0] !==
-      SequenceRenderer.caretPosition[0]
-    ) {
+    if (SequenceRenderer.nextCaretPosition !== SequenceRenderer.caretPosition) {
       return;
     }
 
@@ -349,99 +414,25 @@ export class SequenceRenderer {
   }
 
   public static get previousNodeInSameChain() {
-    if (
-      SequenceRenderer.previousCaretPosition?.[0] !==
-      SequenceRenderer.caretPosition[0]
-    ) {
-      return;
-    }
-
-    return SequenceRenderer.getNodeByPointer(
-      SequenceRenderer.previousCaretPosition,
+    return SequenceRenderer.getPreviousNodeInSameChain(
+      SequenceRenderer.currentEdittingNode,
     );
-  }
-
-  private static getNodeByPointer(sequencePointer?: SequencePointer) {
-    if (!sequencePointer) return;
-
-    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
-      ?.subChains[sequencePointer[1]]?.nodes[sequencePointer[2]];
-  }
-
-  private static getSubChainByPointer(sequencePointer: SequencePointer) {
-    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]]
-      ?.subChains[sequencePointer[1]];
-  }
-
-  private static getChainByPointer(sequencePointer: SequencePointer) {
-    return SequenceRenderer.chainsCollection.chains[sequencePointer[0]];
   }
 
   private static get nextCaretPosition(): SequencePointer | undefined {
-    const currentChainIndex = SequenceRenderer.caretPosition[0];
-    const currentSubChainIndex = SequenceRenderer.caretPosition[1];
-    const currentNodeIndex = SequenceRenderer.caretPosition[2];
-    const nextNodePointer: SequencePointer = [
-      currentChainIndex,
-      currentSubChainIndex,
-      currentNodeIndex + 1,
-    ];
-    const nextSubChainPointer: SequencePointer = [
-      currentChainIndex,
-      currentSubChainIndex + 1,
-      0,
-    ];
-    const nextChainPointer: SequencePointer = [currentChainIndex + 1, 0, 0];
-
-    return (
-      (this.getNodeByPointer(nextNodePointer) && nextNodePointer) ||
-      (this.getNodeByPointer(nextSubChainPointer) && nextSubChainPointer) ||
-      (this.getNodeByPointer(nextChainPointer) && nextChainPointer) ||
-      undefined
+    const nodeOnNextPosition = SequenceRenderer.getNodeByPointer(
+      this.caretPosition + 1,
     );
+
+    return nodeOnNextPosition ? this.caretPosition + 1 : undefined;
   }
 
   private static get previousCaretPosition() {
-    const currentChainIndex = SequenceRenderer.caretPosition[0];
-    const currentSubChainIndex = SequenceRenderer.caretPosition[1];
-    const currentNodeIndex = SequenceRenderer.caretPosition[2];
-    const previousNodePointer: SequencePointer = [
-      currentChainIndex,
-      currentSubChainIndex,
-      currentNodeIndex - 1,
-    ];
-    const previousSubChainPointer: SequencePointer = [
-      currentChainIndex,
-      currentSubChainIndex - 1,
-      this.getSubChainByPointer([
-        currentChainIndex,
-        currentSubChainIndex - 1,
-        -1,
-      ])?.nodes.length - 1,
-    ];
-    const previousChainPointer: SequencePointer = [
-      currentChainIndex - 1,
-      this.getChainByPointer([currentChainIndex - 1, -1, -1])?.subChains
-        .length - 1,
-      this.getSubChainByPointer([
-        currentChainIndex - 1,
-        this.getChainByPointer([currentChainIndex - 1, -1, -1])?.subChains
-          .length - 1,
-        -1,
-      ])?.nodes.length - 1,
-    ];
-
-    return (
-      (this.getNodeByPointer(previousNodePointer) && previousNodePointer) ||
-      (this.getNodeByPointer(previousSubChainPointer) &&
-        previousSubChainPointer) ||
-      (this.getNodeByPointer(previousChainPointer) && previousChainPointer) ||
-      undefined
+    const nodeOnPreviousPosition = SequenceRenderer.getNodeByPointer(
+      this.caretPosition - 1,
     );
-  }
 
-  public static get isCarretBeforeChain() {
-    return this.caretPosition[2] === -1;
+    return nodeOnPreviousPosition ? this.caretPosition - 1 : undefined;
   }
 
   public static get lastChain() {
@@ -472,37 +463,18 @@ export class SequenceRenderer {
   }
 
   public static getPreviousNodeInSameChain(nodeToCompare: SubChainNode) {
-    let chainIndex = -1;
-    let subChainIndex = -1;
-    let subChainNodeIndex = -1;
+    let previousNode;
+    let previousNodeChainIndex = -1;
+    let nodeToReturn;
 
-    this.chainsCollection.chains.forEach((chain, _chainIndex) => {
-      chain.subChains.forEach((subChain, _subChainIndex) => {
-        subChain.nodes.forEach((node, _nodeIndex) => {
-          if (node === nodeToCompare) {
-            chainIndex = _chainIndex;
-            subChainIndex = _subChainIndex;
-            subChainNodeIndex = _nodeIndex;
-          }
-        });
-      });
+    SequenceRenderer.forEachNode(({ node, chainIndex }) => {
+      if (nodeToCompare === node && chainIndex === previousNodeChainIndex) {
+        nodeToReturn = previousNode;
+      }
+      previousNodeChainIndex = chainIndex;
+      previousNode = node;
     });
 
-    subChainIndex =
-      subChainNodeIndex - 1 >= 0 ? subChainIndex : subChainIndex - 1;
-
-    subChainNodeIndex =
-      subChainNodeIndex - 1 >= 0
-        ? subChainNodeIndex - 1
-        : this.chainsCollection.chains[chainIndex].subChains[subChainIndex]
-            ?.length - 1;
-
-    return subChainNodeIndex >= 0 && subChainIndex >= 0
-      ? SequenceRenderer.getNodeByPointer([
-          chainIndex,
-          subChainIndex,
-          subChainNodeIndex,
-        ])
-      : undefined;
+    return nodeToReturn;
   }
 }

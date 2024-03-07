@@ -1,11 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
   waitForRender,
   takeLeftToolbarMacromoleculeScreenshot,
+  selectSnakeLayoutModeTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -36,6 +37,35 @@ test.describe('Zoom Tool', () => {
     */
     await page.getByTestId('zoom-in-button').hover();
     await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
+
+  test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: Zoom in, Zoom out, Reset buttons tooltips are located in the left toolbar.
+    */
+    const icons = [
+      {
+        testId: 'zoom-in-button',
+        title: 'Zoom In (Ctrl+=)',
+      },
+      {
+        testId: 'zoom-out-button',
+        title: 'Zoom Out (Ctrl+-)',
+      },
+      {
+        testId: 'reset-zoom-button',
+        title: 'Reset Zoom (Ctrl+0)',
+      },
+    ];
+    for (const icon of icons) {
+      const iconButton = page.getByTestId(icon.testId);
+      await expect(iconButton).toHaveAttribute('title', icon.title);
+      await iconButton.hover();
+      expect(icon.title).toBeTruthy();
+    }
   });
 
   test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into center of current view', async ({
@@ -128,6 +158,27 @@ test.describe('Zoom Tool', () => {
         await page.keyboard.press('Control+-');
       });
     }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check after zoom in on created long snake chain of peptides you can use scroll with Shift', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: After zoom in on created long snake chain of peptides you can use scroll with Shift
+    */
+    const wheelDelta = 200;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    for (let i = 0; i < 10; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+=');
+      });
+    }
+    await page.keyboard.down('Shift');
+    await page.mouse.wheel(0, wheelDelta);
+    await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
   });
 });

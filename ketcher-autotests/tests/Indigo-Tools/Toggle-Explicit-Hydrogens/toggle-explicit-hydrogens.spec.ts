@@ -10,7 +10,6 @@ import {
   selectRing,
   RingButton,
   openFileAndAddToCanvasAsNewProject,
-  moveMouseAway,
 } from '@utils';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {

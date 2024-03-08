@@ -151,6 +151,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
     await page.getByText('+++').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').click;
     await waitForRender(page, async () => {
       await page.getByRole('dialog').getByRole('textbox').fill('Test');
     });
@@ -160,6 +161,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
     await page.getByText('Ketcher is').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').click;
     await waitForRender(page, async () => {
       await page.getByRole('dialog').getByRole('textbox').fill('Super');
     });

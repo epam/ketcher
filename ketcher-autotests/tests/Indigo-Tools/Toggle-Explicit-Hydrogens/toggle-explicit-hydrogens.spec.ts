@@ -397,7 +397,7 @@ test.describe('6. Fold/unfold hydrogens for', () => {
     await waitForPageInit(page);
   });
 
-  const fileNames = ['Custom Query.ket'];
+  const fileNames = ['Custom Query1.ket'];
 
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {

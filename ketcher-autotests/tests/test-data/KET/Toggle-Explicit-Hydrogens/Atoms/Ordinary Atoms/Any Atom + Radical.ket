@@ -1,0 +1,69 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    14.842482880462379,
+                    -9.475000000000001,
+                    0
+                ],
+                "radical": 2
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.842482880462379,
+            "y": 8.475000000000001,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    18.523161313092817,
+                    -9.563419343453592,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    22.40751711953762,
+                    -9.51158065654641,
+                    0
+                ],
+                "radical": 3
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.40751711953762,
+            "y": 8.51158065654641,
+            "z": 0
+        }
+    }
+}

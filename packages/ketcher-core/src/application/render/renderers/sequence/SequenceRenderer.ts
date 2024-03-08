@@ -43,6 +43,7 @@ export class SequenceRenderer {
                 (prev, curr) => prev + curr.nodes.length,
                 0,
               ),
+            subChain,
           );
           renderer.show();
           node.monomer.setRenderer(renderer);
@@ -74,6 +75,7 @@ export class SequenceRenderer {
               polymerBond.setRenderer(
                 new BackBoneBondSequenceRenderer(polymerBond),
               );
+              subChain.bonds.push(polymerBond);
               return;
             }
 
@@ -114,6 +116,7 @@ export class SequenceRenderer {
             }
             bondRenderer.show();
             polymerBond.setRenderer(bondRenderer);
+            subChain.bonds.push(polymerBond);
             handledAttachmentPoints.add(attachmentPointName);
 
             if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {

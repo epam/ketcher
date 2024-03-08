@@ -26,6 +26,7 @@ import {
   fromDescriptorsAlign,
   fromMultipleMove,
   fromNewCanvas,
+  provideEditorSettings,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -49,7 +50,7 @@ import {
 } from './tool/Tool';
 import { getSelectionMap, getStructCenter } from './utils/structLayout';
 
-const SCALE = 40;
+const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
 
 const structObjects = [

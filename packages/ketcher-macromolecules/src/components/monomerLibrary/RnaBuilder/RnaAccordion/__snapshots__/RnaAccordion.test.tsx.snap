@@ -149,6 +149,7 @@ exports[`Test Rna Accordion component should render 1`] = `
     </div>
     <div
       class="css-4wpvad"
+      data-testid="rna-accordion-details-Sugars"
     >
       <div
         class="css-9bccu"
@@ -219,6 +220,7 @@ exports[`Test Rna Accordion component should render 1`] = `
     </div>
     <div
       class="css-4wpvad"
+      data-testid="rna-accordion-details-Bases"
     >
       <div
         class="css-9bccu"
@@ -287,6 +289,7 @@ exports[`Test Rna Accordion component should render 1`] = `
     </div>
     <div
       class="css-4wpvad"
+      data-testid="rna-accordion-details-Phosphates"
     >
       <div
         class="css-9bccu"

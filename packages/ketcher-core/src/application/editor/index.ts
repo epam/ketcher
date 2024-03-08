@@ -32,3 +32,4 @@ export * from './Editor';
 export * from './EditorHistory';
 export * from './modes';
 export * from './editorEvents';
+export * from './editorSettings';

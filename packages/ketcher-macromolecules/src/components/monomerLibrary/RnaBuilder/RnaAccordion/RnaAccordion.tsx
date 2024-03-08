@@ -223,6 +223,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
           <StyledAccordion
             key={groupData.groupName}
             data-testid="styled-accordion"
+            dataTestIdDetails={`rna-accordion-details-${groupData.groupName}`}
             summary={summary}
             details={details}
             expanded={expanded}

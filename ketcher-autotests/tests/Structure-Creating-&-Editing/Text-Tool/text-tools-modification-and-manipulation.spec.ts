@@ -134,36 +134,42 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
     // Verify if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('&&&');
+    await page.keyboard.type('&&&');
     await pressButton(page, 'Cancel');
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('+++');
+    await page.keyboard.type('+++');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await page.mouse.click(x, y);
     await page.getByRole('dialog').getByRole('textbox').click();
     const text1 =
       'Ketcher is a tool to draw molecular structures and chemical reactions';
-    await page.getByRole('dialog').getByRole('textbox').fill(text1);
+    await page.keyboard.type(text1);
     await pressButton(page, 'Apply');
 
     await page.getByText('+++').dblclick();
-    await page.getByRole('dialog').getByRole('textbox').fill('123');
+    await page.keyboard.type('123');
     await pressButton(page, 'Cancel');
     await page.getByText('+++').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').click;
     await waitForRender(page, async () => {
-      await page.getByRole('dialog').getByRole('textbox').fill('Test');
+      await page.keyboard.type('Test');
     });
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
     await takeEditorScreenshot(page);
     await page.getByText('Ketcher is').dblclick();
     await page.getByRole('dialog').getByRole('textbox').fill('123');
     await pressButton(page, 'Cancel');
     await page.getByText('Ketcher is').dblclick();
+    await page.getByRole('dialog').getByRole('textbox').click;
     await waitForRender(page, async () => {
-      await page.getByRole('dialog').getByRole('textbox').fill('Super');
+      await page.keyboard.type('Super');
     });
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
   });
 
   test(' Delete several created text objects', async ({ page }) => {

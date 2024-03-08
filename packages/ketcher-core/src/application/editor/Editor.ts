@@ -242,6 +242,10 @@ export class CoreEditor {
     this.mode = mode;
   }
 
+  public get isSequenceEditMode() {
+    return this.mode instanceof SequenceMode && this.mode.isEditMode;
+  }
+
   public onSelectHistory(name: HistoryOperationType) {
     const history = new EditorHistory(this);
     if (name === 'undo') {

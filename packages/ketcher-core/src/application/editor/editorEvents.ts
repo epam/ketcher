@@ -2,7 +2,6 @@ import { Subscription } from 'subscription';
 import { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
-import { SequenceMode } from 'application/editor/modes';
 
 export let editorEvents;
 
@@ -79,7 +78,7 @@ export const hotkeysConfiguration = {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
-      if (editor.mode instanceof SequenceMode && editor.mode.isEditMode) return;
+      if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch('erase');
     },
   },

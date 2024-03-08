@@ -20,6 +20,7 @@ import { SequenceMode } from 'application/editor/modes';
 import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import { BaseMonomerRenderer } from 'application/render';
 
 export type SequencePointer = number;
 
@@ -48,9 +49,9 @@ export class SequenceRenderer {
     const firstNode = chainsCollection.firstNode;
 
     let currentChainStartPosition = firstNode
-      ? new Vec2(
-          firstNode.monomer.renderer?.scaledMonomerPosition.x,
-          firstNode.monomer.renderer?.scaledMonomerPosition.y,
+      ? BaseMonomerRenderer.getScaledMonomerPosition(
+          firstNode.monomer.position,
+          firstNode.monomer.renderer?.monomerSize,
         )
       : new Vec2(41.5, 41.5);
 
@@ -103,6 +104,10 @@ export class SequenceRenderer {
         chain,
       );
     });
+
+    if (this.caretPosition > currentMonomerIndexOverall) {
+      this.setCaretPosition(currentMonomerIndexOverall);
+    }
 
     this.lastChainStartPosition = currentChainStartPosition;
   }
@@ -292,7 +297,9 @@ export class SequenceRenderer {
   public static moveCaretBack() {
     return new RestoreSequenceCaretPositionCommand(
       this.caretPosition,
-      this.previousCaretPosition || this.caretPosition,
+      this.previousCaretPosition === undefined
+        ? this.caretPosition
+        : this.previousCaretPosition,
     );
   }
 
@@ -397,7 +404,13 @@ export class SequenceRenderer {
     return subChainBeforeLast.nodes[subChainBeforeLast.nodes.length - 1];
   }
 
-  public static get nextFromCurrentEdittingMonomer() {
+  public static getLastNode(chain: Chain) {
+    const lastSubChain = chain.subChains[chain.subChains.length - 1];
+
+    return lastSubChain.nodes[lastSubChain.nodes.length - 1];
+  }
+
+  public static get nextNodeFromCurrent() {
     return SequenceRenderer.getNodeByPointer(
       SequenceRenderer.nextCaretPosition,
     );

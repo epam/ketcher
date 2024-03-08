@@ -22,5 +22,5 @@ export class FlexMode extends BaseMode {
     return command;
   }
 
-  public onKeyUp(_event: KeyboardEvent) {}
+  public onKeyDown(_event: KeyboardEvent) {}
 }

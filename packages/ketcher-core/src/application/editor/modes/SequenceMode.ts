@@ -79,7 +79,7 @@ export class SequenceMode extends BaseMode {
     this.initialize(false);
   }
 
-  public onKeyUp(event: KeyboardEvent) {
+  public onKeyDown(event: KeyboardEvent) {
     if (!this.isEditMode) {
       return;
     }
@@ -87,6 +87,8 @@ export class SequenceMode extends BaseMode {
     const shortcutKey = keyNorm.lookup(hotKeys, event);
 
     this.keyboardEventHandlers[shortcutKey]?.handler(event);
+
+    return true;
   }
 
   public startNewSequence() {
@@ -116,6 +118,48 @@ export class SequenceMode extends BaseMode {
         eventData as BaseSequenceItemRenderer,
       );
     }
+  }
+
+  private bondNodesThroughNewPhosphate(
+    position: Vec2,
+    previousNode: SubChainNode,
+    nextNode: SubChainNode,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const phosphateLibraryItem = getRnaPartLibraryItem(
+      editor,
+      RNA_NON_MODIFIED_PART.PHOSPHATE,
+    );
+
+    assert(phosphateLibraryItem);
+
+    const modelChanges = editor.drawingEntitiesManager.addMonomer(
+      phosphateLibraryItem,
+      position,
+    );
+
+    const additionalPhosphate = modelChanges.operations[0]
+      .monomer as BaseMonomer;
+
+    modelChanges.merge(
+      editor.drawingEntitiesManager.createPolymerBond(
+        previousNode.lastMonomerInNode,
+        additionalPhosphate,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      ),
+    );
+
+    modelChanges.merge(
+      editor.drawingEntitiesManager.createPolymerBond(
+        additionalPhosphate,
+        nextNode.firstMonomerInNode,
+        AttachmentPointName.R2,
+        AttachmentPointName.R1,
+      ),
+    );
+
+    return modelChanges;
   }
 
   private get keyboardEventHandlers() {
@@ -166,21 +210,43 @@ export class SequenceMode extends BaseMode {
                 );
               }
             }
-          } else if (SequenceRenderer.previousChain) {
+          } else if (
+            SequenceRenderer.previousChain &&
+            !(currentNode instanceof EmptySequenceNode)
+          ) {
             const previousChainLastNonEmptyNode =
               SequenceRenderer.getLastNonEmptyNode(
                 SequenceRenderer.previousChain,
               );
 
-            // create bond between previous and current chain
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                previousChainLastNonEmptyNode?.lastMonomerInNode,
-                currentNode?.firstMonomerInNode as BaseMonomer,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
-            );
+            if (previousChainLastNonEmptyNode instanceof Nucleoside) {
+              const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
+                SequenceRenderer.previousChain,
+              );
+              const newNodePosition = this.getNewSequenceItemPosition(
+                previousChainLastEmptyNode,
+                previousChainLastNonEmptyNode,
+              );
+
+              // create bond between previous and current chain through new phosphate
+              modelChanges.merge(
+                this.bondNodesThroughNewPhosphate(
+                  newNodePosition,
+                  previousChainLastNonEmptyNode,
+                  currentNode,
+                ),
+              );
+            } else {
+              // create bond between previous and current chain
+              modelChanges.merge(
+                editor.drawingEntitiesManager.createPolymerBond(
+                  previousChainLastNonEmptyNode?.lastMonomerInNode,
+                  currentNode?.firstMonomerInNode as BaseMonomer,
+                  AttachmentPointName.R2,
+                  AttachmentPointName.R1,
+                ),
+              );
+            }
           }
 
           modelChanges.addOperation(new ReinitializeSequenceModeCommand());
@@ -262,37 +328,11 @@ export class SequenceMode extends BaseMode {
           }
 
           if (previousNodeInSameChain instanceof Nucleoside) {
-            const phosphateLibraryItem = getRnaPartLibraryItem(
-              editor,
-              RNA_NON_MODIFIED_PART.PHOSPHATE,
-            );
-
-            assert(phosphateLibraryItem);
-
-            const additionalPhosphateAddCommand =
-              editor.drawingEntitiesManager.addMonomer(
-                phosphateLibraryItem,
+            modelChanges.merge(
+              this.bondNodesThroughNewPhosphate(
                 newNodePosition,
-              );
-            const additionalPhosphate = additionalPhosphateAddCommand
-              .operations[0].monomer as BaseMonomer;
-            modelChanges.merge(additionalPhosphateAddCommand);
-
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                previousNodeInSameChain.lastMonomerInNode,
-                additionalPhosphate,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
-            );
-
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                additionalPhosphate,
-                nodeToAdd.firstMonomerInNode,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
+                previousNodeInSameChain,
+                nodeToAdd,
               ),
             );
           } else if (previousNodeInSameChain) {

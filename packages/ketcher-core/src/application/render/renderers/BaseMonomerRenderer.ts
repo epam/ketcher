@@ -311,16 +311,25 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoverElement.remove();
   }
 
-  public get scaledMonomerPosition() {
+  public static getScaledMonomerPosition(
+    positionInAngstoms: Vec2,
+    monomerSize: { width: number; height: number } = { width: 0, height: 0 },
+  ) {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const monomerPositionInPixels = Coordinates.modelToCanvas(
-      this.monomer.position,
-    );
+    const monomerPositionInPixels =
+      Coordinates.modelToCanvas(positionInAngstoms);
 
     return new Vec2(
-      monomerPositionInPixels.x - this.monomerSize.width / 2,
-      monomerPositionInPixels.y - this.monomerSize.height / 2,
+      monomerPositionInPixels.x - monomerSize.width / 2,
+      monomerPositionInPixels.y - monomerSize.height / 2,
+    );
+  }
+
+  public get scaledMonomerPosition() {
+    return BaseMonomerRenderer.getScaledMonomerPosition(
+      this.monomer.position,
+      this.monomerSize,
     );
   }
 

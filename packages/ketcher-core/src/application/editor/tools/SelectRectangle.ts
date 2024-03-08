@@ -123,6 +123,12 @@ class SelectRectangle implements BaseTool {
   }
 
   mousedown(event) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (editor.mode instanceof SequenceMode && editor.mode.isEditMode) {
+      return;
+    }
+
     const renderer = event.target.__data__;
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;

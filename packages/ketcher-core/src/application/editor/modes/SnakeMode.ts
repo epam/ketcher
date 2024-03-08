@@ -10,11 +10,11 @@ export class SnakeMode extends BaseMode {
   public initialize() {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
       true,
     );
+    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);

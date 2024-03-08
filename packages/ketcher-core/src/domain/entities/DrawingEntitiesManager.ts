@@ -1505,8 +1505,13 @@ export class DrawingEntitiesManager {
     SequenceRenderer.removeEmptyNodes();
   }
 
-  public applyFlexLayoutMode() {
+  public applyFlexLayoutMode(needRedrawBonds = false) {
     const editor = CoreEditor.provideEditorInstance();
+    const command = new Command();
+
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -1519,6 +1524,8 @@ export class DrawingEntitiesManager {
     });
 
     SequenceRenderer.removeEmptyNodes();
+
+    return command;
   }
 
   public getDrawingEntities(drawingEntity: DrawingEntity, selectBonds = true) {

@@ -453,7 +453,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can Deuromatize molecules with custom query parameters.', async ({
+  test('User can Dearomatize molecules with custom query parameters.', async ({
     page,
   }) => {
     /*

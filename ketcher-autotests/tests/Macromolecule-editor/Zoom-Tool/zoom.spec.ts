@@ -181,4 +181,51 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
   });
+
+  test('Check when you zoom in on created structure as much as possible, its elements still remain clear and accurate view', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: When you zoom in on created structure as much as possible, 
+    its elements still remain clear and accurate view.
+    */
+    await openFileAndAddToCanvas(
+      'KET/peptides-connected-through-chem.ket',
+      page,
+    );
+    for (let i = 0; i < 30; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+=');
+      });
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that is possible to zoom in and out on empty canvas and it wont cause any errors', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: Zoom in and out on empty canvas wont cause any errors.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    for (let i = 0; i < 30; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+=');
+      });
+    }
+    for (let i = 0; i < 30; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+-');
+      });
+    }
+  });
 });

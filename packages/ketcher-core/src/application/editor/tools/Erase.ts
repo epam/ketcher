@@ -52,6 +52,27 @@ class EraserTool implements BaseTool {
     }
   }
 
+  // TODO move hover logic somewhere to apply it for all or several tools from one place.
+  //  Currently it is duplicated from select-rectangle tool
+  mouseOverDrawingEntity(event) {
+    const renderer = event.target.__data__;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  mouseLeaveDrawingEntity(event) {
+    const renderer: BaseRenderer = event.target.__data__;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
   destroy() {}
 }
 

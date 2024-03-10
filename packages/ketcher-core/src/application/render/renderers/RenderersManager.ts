@@ -199,11 +199,12 @@ export class RenderersManager {
       nextMonomer,
     );
 
-    if (!isR2R1Connection) {
+    if (
+      !isR2R1Connection ||
+      !(nextMonomer.renderer instanceof BaseMonomerRenderer)
+    ) {
       return;
     }
-
-    assert(nextMonomer.renderer);
 
     this.recalculateRnaChainEnumeration(
       nextMonomer.renderer,

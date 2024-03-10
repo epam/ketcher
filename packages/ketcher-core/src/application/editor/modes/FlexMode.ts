@@ -10,10 +10,13 @@ export class FlexMode extends BaseMode {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
+    const modelChanges =
+      editor.drawingEntitiesManager.applyFlexLayoutMode(true);
 
-    editor.renderersContainer.update();
+    editor.renderersContainer.update(modelChanges);
 
     return command;
   }
+
+  public onKeyDown(_event: KeyboardEvent) {}
 }

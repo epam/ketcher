@@ -18,6 +18,9 @@ import {
 } from 'domain/types';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
+const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
+  {};
+
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
@@ -278,22 +281,35 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+    const fontSize = 6;
     const textElement = rootElement
       .append('text')
       .text(this.monomer.label)
       .attr('fill', this.textColor)
-      .attr('font-size', '6px')
-      .attr('line-height', '6px')
+      .attr('font-size', `${fontSize}px`)
+      .attr('line-height', `${fontSize}px`)
       .attr('font-weight', '700')
       .style('cursor', 'pointer')
       .style('user-select', 'none')
       .attr('pointer-events', 'none');
 
-    const textBBox = (textElement.node() as SVGTextElement).getBBox();
-
+    // cache label position to reuse it form other monomers with same label
+    // need to improve performance for large amount of monomers
+    // getBBox triggers reflow
+    if (!labelPositions[this.monomer.label]) {
+      const textBBox = (textElement.node() as SVGTextElement).getBBox();
+      labelPositions[this.monomer.label] = {
+        x: this.width / 2 - textBBox.width / 2,
+        y: this.height / 2,
+      };
+    }
     textElement
-      .attr('x', this.width / 2 - textBBox.width / 2)
-      .attr('y', this.height / 2);
+      .attr('x', labelPositions[this.monomer.label]?.x || 0)
+      .attr('y', labelPositions[this.monomer.label]?.y || 0);
+
+    if (this.scale && this.scale !== 1) {
+      labelPositions[this.monomer.label] = undefined;
+    }
   }
 
   public appendHover(
@@ -311,16 +327,25 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoverElement.remove();
   }
 
-  public get scaledMonomerPosition() {
+  public static getScaledMonomerPosition(
+    positionInAngstoms: Vec2,
+    monomerSize: { width: number; height: number } = { width: 0, height: 0 },
+  ) {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const monomerPositionInPixels = Coordinates.modelToCanvas(
-      this.monomer.position,
-    );
+    const monomerPositionInPixels =
+      Coordinates.modelToCanvas(positionInAngstoms);
 
     return new Vec2(
-      monomerPositionInPixels.x - this.monomerSize.width / 2,
-      monomerPositionInPixels.y - this.monomerSize.height / 2,
+      monomerPositionInPixels.x - monomerSize.width / 2,
+      monomerPositionInPixels.y - monomerSize.height / 2,
+    );
+  }
+
+  public get scaledMonomerPosition() {
+    return BaseMonomerRenderer.getScaledMonomerPosition(
+      this.monomer.position,
+      this.monomerSize,
     );
   }
 
@@ -353,7 +378,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected abstract appendBody(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
-    theme,
+    theme?,
   );
 
   protected appendHoverAreaElement() {
@@ -443,7 +468,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.beginning);
   }
 
-  public show(theme) {
+  public show(theme?) {
     this.rootElement =
       this.rootElement ||
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
@@ -494,6 +519,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
-    this.editorEvents.mouseLeaveMonomer.dispatch();
+    if (this.monomer.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
   }
 }

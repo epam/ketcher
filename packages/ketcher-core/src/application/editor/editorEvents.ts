@@ -33,6 +33,8 @@ export function resetEditorEvents() {
     rightClickCanvas: new Subscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
+    mouseOverSequenceItem: new Subscription(),
+    mouseLeaveSequenceItem: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -53,6 +55,8 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'rightClickCanvas',
   'editSequence',
   'startNewSequence',
+  'mouseOverSequenceItem',
+  'mouseLeaveSequenceItem',
 ];
 
 export const hotkeysConfiguration = {

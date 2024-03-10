@@ -48,6 +48,10 @@ interface ToolEventHandler {
   editSequence?(): void;
 
   startNewSequence?(): void;
+
+  mouseOverSequenceItem?(event: Event): void;
+
+  mouseLeaveSequenceItem?(event: Event): void;
 }
 
 export interface IRnaPreset {

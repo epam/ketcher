@@ -8,7 +8,7 @@ import { initHotKeys, keyNorm } from 'utilities';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer, Vec2 } from 'domain/entities';
-import { BaseRenderer } from 'application/render';
+import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';

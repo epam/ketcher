@@ -73,6 +73,7 @@ export const editorSlice: Slice = createSlice({
         | {
             monomer: undefined | MonomerItemType;
             style: string;
+            nucleotide?: MonomerItemType[];
           }
         | undefined
       >,

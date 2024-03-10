@@ -6,10 +6,13 @@ import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { editorEvents } from 'application/editor/editorEvents';
+import assert from 'assert';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
 export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
+  private editorEvents: typeof editorEvents;
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
@@ -28,6 +31,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     public scaledMonomerPosition: Vec2,
   ) {
     super(node.monomer);
+    this.editorEvents = editorEvents;
   }
 
   abstract get symbolToDisplay(): string;
@@ -206,6 +210,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('font-weight', '700')
       .attr('fill', '#333333');
 
+    this.appendEvents();
     if (this.needDisplayCounter) {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
@@ -287,4 +292,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public hoverAttachmenPoint() {}
   public updateAttachmentPoints() {}
+  private appendEvents() {
+    assert(this.textElement);
+
+    this.textElement.on('mouseover', (event) => {
+      this.editorEvents.mouseOverSequenceItem.dispatch(event);
+    });
+    this.textElement.on('mouseleave', (event) => {
+      this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
+    });
+  }
 }

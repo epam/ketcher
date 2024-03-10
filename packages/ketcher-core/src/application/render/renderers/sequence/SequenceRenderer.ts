@@ -267,7 +267,7 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
-      if (node.monomer.renderer === sequenceItemRenderer) {
+      if (node.renderer === sequenceItemRenderer) {
         newCaretPosition = nodeIndexOverall;
       }
     });

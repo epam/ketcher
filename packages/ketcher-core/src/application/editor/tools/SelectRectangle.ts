@@ -68,6 +68,7 @@ class SelectRectangle implements BaseTool {
         const bottomRightPoint = Coordinates.viewToCanvas(
           new Vec2(selection[1][0], selection[1][1]),
         );
+
         const modelChanges =
           this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(
             topLeftPoint,
@@ -75,6 +76,7 @@ class SelectRectangle implements BaseTool {
             this.previousSelectedEntities,
             brushEvent.sourceEvent.shiftKey,
           );
+
         this.editor.renderersContainer.update(modelChanges);
       });
     };
@@ -121,6 +123,12 @@ class SelectRectangle implements BaseTool {
   }
 
   mousedown(event) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (editor.mode instanceof SequenceMode && editor.mode.isEditMode) {
+      return;
+    }
+
     const renderer = event.target.__data__;
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;

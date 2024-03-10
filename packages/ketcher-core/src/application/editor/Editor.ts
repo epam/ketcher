@@ -27,9 +27,17 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { initHotKeys, keyNorm } from 'utilities';
-import { FlexMode, LayoutMode, modesMap } from 'application/editor/modes/';
+import {
+  FlexMode,
+  LayoutMode,
+  modesMap,
+  SequenceMode,
+} from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { groupBy } from 'lodash';
+
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
@@ -47,6 +55,7 @@ export class CoreEditor {
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
+  public _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
@@ -66,7 +75,8 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
-    this.setupHotKeysEvents();
+    this.setupContextMenuEvents();
+    this.setupKeyboardEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -78,6 +88,22 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  public setMonomersLibrary(monomersLibrary: MonomerItemType[]) {
+    this._monomersLibrary = monomersLibrary;
+  }
+
+  public get monomersLibrary() {
+    return groupBy(
+      this._monomersLibrary.map((libraryItem) => {
+        return {
+          ...libraryItem,
+          label: libraryItem.props.MonomerName,
+        };
+      }),
+      (libraryItem) => libraryItem.props.MonomerType,
+    );
   }
 
   private handleHotKeyEvents(event) {
@@ -93,9 +119,33 @@ export class CoreEditor {
     }
   }
 
-  setupHotKeysEvents() {
+  private setupKeyboardEvents() {
+    this.setupHotKeysEvents();
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      this.mode.onKeyDown(event);
+    });
+  }
+
+  private setupHotKeysEvents() {
     this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
     document.addEventListener('keydown', this.hotKeyEventHandler);
+  }
+
+  private setupContextMenuEvents() {
+    document.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      if (!(this.mode instanceof SequenceMode) || this.mode.isEditMode) {
+        return false;
+      }
+
+      if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
+        this.events.rightClickSequence.dispatch(event);
+      } else {
+        this.events.rightClickCanvas.dispatch(event);
+      }
+
+      return false;
+    });
   }
 
   private subscribeEvents() {
@@ -114,6 +164,28 @@ export class CoreEditor {
         this.useToolIfNeeded(eventName, event),
       );
     });
+    this.events.editSequence.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEditSequence(sequenceItemRenderer),
+    );
+
+    this.events.startNewSequence.add(() => this.onStartNewSequence());
+  }
+
+  private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.turnOnEditMode(sequenceItemRenderer);
+  }
+
+  private onStartNewSequence() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.startNewSequence();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -168,6 +240,10 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  public get isSequenceEditMode() {
+    return this.mode instanceof SequenceMode && this.mode.isEditMode;
   }
 
   public onSelectHistory(name: HistoryOperationType) {
@@ -274,6 +350,7 @@ export class CoreEditor {
         //   }
         // }
 
+        this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
         if (isToolUsed) {
           return true;
@@ -317,6 +394,13 @@ export class CoreEditor {
     }
 
     return false;
+  }
+
+  private useModeIfNeeded(
+    eventHandlerName: ToolEventHandlerName,
+    event: Event,
+  ) {
+    this.mode?.[eventHandlerName]?.(event);
   }
 
   public switchToMicromolecules() {

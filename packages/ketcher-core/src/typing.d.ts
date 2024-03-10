@@ -14,4 +14,8 @@ declare global {
   export interface Element {
     __data__?: BaseRenderer;
   }
+
+  export interface EventTarget {
+    __data__?: BaseRenderer;
+  }
 }

@@ -136,10 +136,6 @@ const addToCanvas = ({
   if (isSequenceMode) {
     modelChanges.setUndoOperationReverse();
     editor.events.selectMode.dispatch({
-      mode: 'flex-layout-mode',
-      mergeWithLatestHistoryCommand: true,
-    });
-    editor.events.selectMode.dispatch({
       mode: 'sequence-layout-mode',
       mergeWithLatestHistoryCommand: true,
     });

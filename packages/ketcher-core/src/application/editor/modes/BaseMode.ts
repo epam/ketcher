@@ -33,4 +33,8 @@ export abstract class BaseMode {
 
     return command;
   }
+
+  abstract onKeyDown(event: KeyboardEvent): void;
+
+  public destroy() {}
 }

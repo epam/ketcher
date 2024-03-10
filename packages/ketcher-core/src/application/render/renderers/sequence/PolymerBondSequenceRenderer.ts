@@ -3,6 +3,7 @@ import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
@@ -14,23 +15,42 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   }
 
   private get areMonomersOnSameRow() {
+    assert(
+      this.polymerBond.firstMonomer.renderer instanceof
+        BaseSequenceItemRenderer,
+    );
+    assert(
+      this.polymerBond.secondMonomer?.renderer instanceof
+        BaseSequenceItemRenderer,
+    );
+
     return (
-      this.polymerBond.firstMonomer.renderer?.scaledMonomerPosition.y ===
-      this.polymerBond.secondMonomer?.renderer?.scaledMonomerPosition.y
+      this.polymerBond.firstMonomer.renderer?.scaledMonomerPositionForSequence
+        .y ===
+      this.polymerBond.secondMonomer?.renderer?.scaledMonomerPositionForSequence
+        .y
     );
   }
 
   public get scaledPosition() {
-    assert(this.polymerBond.firstMonomer.renderer);
-    assert(this.polymerBond.secondMonomer?.renderer);
+    assert(
+      this.polymerBond.firstMonomer.renderer instanceof
+        BaseSequenceItemRenderer,
+    );
+    assert(
+      this.polymerBond.secondMonomer?.renderer instanceof
+        BaseSequenceItemRenderer,
+    );
     const firstMonomerY =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.y;
+      this.polymerBond.firstMonomer.renderer.scaledMonomerPositionForSequence.y;
     const firstMonomerX =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPosition.x;
+      this.polymerBond.firstMonomer.renderer.scaledMonomerPositionForSequence.x;
     const secondMonomerY =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPosition.y;
+      this.polymerBond.secondMonomer.renderer.scaledMonomerPositionForSequence
+        .y;
     const secondMonomerX =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPosition.x;
+      this.polymerBond.secondMonomer.renderer.scaledMonomerPositionForSequence
+        .x;
 
     return {
       startPosition: new Vec2(firstMonomerX, firstMonomerY),

@@ -52,9 +52,7 @@ test.describe('Hot key Del', () => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/3918
      * Description: Part of structure deleted and canvas can be cleared. No console errors.
-     * Test working not in proper way because we have unfixed bug.
      */
-    test.fail();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(

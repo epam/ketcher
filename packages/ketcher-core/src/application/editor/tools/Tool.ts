@@ -41,6 +41,14 @@ interface ToolEventHandler {
 
   mouseUpMonomer?(event: Event): void;
 
+  rightClickSequence?(event: Event): void;
+
+  rightClickCanvas?(event: Event): void;
+
+  editSequence?(): void;
+
+  startNewSequence?(): void;
+
   mouseOverSequenceItem?(event: Event): void;
 
   mouseLeaveSequenceItem?(event: Event): void;

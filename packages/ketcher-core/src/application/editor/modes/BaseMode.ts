@@ -29,6 +29,12 @@ export abstract class BaseMode {
       ),
     );
 
+    editor.events.selectTool.dispatch('select-rectangle');
+
     return command;
   }
+
+  abstract onKeyDown(event: KeyboardEvent): void;
+
+  public destroy() {}
 }

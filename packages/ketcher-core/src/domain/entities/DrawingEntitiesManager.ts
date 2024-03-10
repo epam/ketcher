@@ -42,18 +42,22 @@ import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  isValidNucleoside,
+  isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
-import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { Nucleoside } from './Nucleoside';
+import { Nucleotide } from './Nucleotide';
+import { SequenceMode } from 'application/editor/modes/SequenceMode';
 
-const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
-const VERTICAL_DISTANCE_FROM_MONOMER = 60;
-const DISTANCE_FROM_RIGHT = 70;
-const DISTANCE_BETWEEN_MONOMERS = 30;
-const MONOMER_START_X_POSITION = 70;
-const MONOMER_START_Y_POSITION = 70;
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
+const VERTICAL_DISTANCE_FROM_MONOMER = 30;
+const DISTANCE_FROM_RIGHT = 55;
+const DISTANCE_BETWEEN_MONOMERS = 15;
+const MONOMER_START_X_POSITION = 50;
+const MONOMER_START_Y_POSITION = 50;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -156,6 +160,16 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public selectDrawingEntities(drawingEntities: DrawingEntity[]) {
+    const command = this.unselectAllDrawingEntities();
+    drawingEntities.forEach((drawingEntity: DrawingEntity) => {
+      drawingEntity.turnOnSelection();
+      const operation = new DrawingEntitySelectOperation(drawingEntity);
+      command.addOperation(operation);
+    });
+    return command;
+  }
+
   public createDrawingEntitySelectionCommand(drawingEntity: DrawingEntity) {
     const command = new Command();
 
@@ -170,12 +184,17 @@ export class DrawingEntitiesManager {
 
     this.allEntities.forEach(([, drawingEntity]) => {
       if (drawingEntity.selected) {
-        drawingEntity.turnOffSelection();
-        const operation = new DrawingEntitySelectOperation(drawingEntity);
-        command.addOperation(operation);
+        command.merge(this.unselectDrawingEntity(drawingEntity));
       }
     });
 
+    return command;
+  }
+
+  public unselectDrawingEntity(drawingEntity: DrawingEntity) {
+    const command = new Command();
+    drawingEntity.turnOffSelection();
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
     return command;
   }
 
@@ -193,16 +212,16 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public addDrawingEntityToSelection(drawingEntity: DrawingEntity) {
+  public addDrawingEntitiesToSelection(drawingEntities: DrawingEntity[]) {
     const command = new Command();
-
-    if (drawingEntity.selected) {
-      drawingEntity.turnOffSelection();
-    } else {
-      drawingEntity.turnOnSelection();
-    }
-    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
-
+    drawingEntities.forEach((drawingEntity: DrawingEntity) => {
+      if (drawingEntity.selected) {
+        drawingEntity.turnOffSelection();
+      } else {
+        drawingEntity.turnOnSelection();
+      }
+      command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    });
     return command;
   }
 
@@ -342,17 +361,19 @@ export class DrawingEntitiesManager {
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    previousSelectedEntities: [number, DrawingEntity][],
+    shiftKey = false,
   ) {
     const command = new Command();
-
     this.allEntities.forEach(([, drawingEntity]) => {
-      if (drawingEntity.baseRenderer instanceof BaseSequenceRenderer) {
-        return;
-      }
-
+      const isPreviousSelected = previousSelectedEntities.find(
+        ([, entity]) => entity === drawingEntity,
+      );
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,
+        !!isPreviousSelected,
+        shiftKey,
       );
 
       if (isValueChanged) {
@@ -792,12 +813,15 @@ export class DrawingEntitiesManager {
     }
 
     let previousMonomer: BaseMonomer | undefined;
+    const monomers: BaseMonomer[] = [];
+
     monomersToAdd.forEach(([monomerItem, monomerPosition]) => {
       const monomerAddOperation = new MonomerAddOperation(
         this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
         this.deleteMonomerChangeModel.bind(this),
       );
       const monomer = monomerAddOperation.monomer;
+      monomers.push(monomer);
       command.addOperation(monomerAddOperation);
       if (previousMonomer) {
         // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
@@ -822,7 +846,7 @@ export class DrawingEntitiesManager {
       previousMonomer = monomer;
     });
 
-    return command;
+    return { command, monomers };
   }
 
   private findChainByMonomer(
@@ -1075,11 +1099,12 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
-  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
+  public reArrangeChains(
+    canvasWidth: number,
+    isSnakeMode: boolean,
+    needRedrawBonds = true,
+  ) {
     const command = new Command();
-
-    const editor = CoreEditor.provideEditorInstance();
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
@@ -1100,7 +1125,10 @@ export class DrawingEntitiesManager {
       );
       command.merge(result.command);
     }
-    command.merge(this.redrawBonds());
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
+
     return command;
   }
 
@@ -1453,22 +1481,37 @@ export class DrawingEntitiesManager {
   }
 
   public applyMonomersSequenceLayout() {
-    const editor = CoreEditor.provideEditorInstance();
-
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     chainsCollection.rearrange();
-
-    editor.renderersContainer.deleteAllDrawingEntities();
 
     SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
   }
 
-  public applyFlexLayoutMode() {
+  public clearCanvas() {
     const editor = CoreEditor.provideEditorInstance();
+
+    this.monomers.forEach((monomer) => {
+      editor.renderersContainer.deleteMonomer(monomer);
+    });
+
+    this.polymerBonds.forEach((polymerBond) => {
+      editor.renderersContainer.deletePolymerBond(polymerBond);
+    });
+
+    SequenceRenderer.removeEmptyNodes();
+  }
+
+  public applyFlexLayoutMode(needRedrawBonds = false) {
+    const editor = CoreEditor.provideEditorInstance();
+    const command = new Command();
+
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -1479,6 +1522,59 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
+
+    SequenceRenderer.removeEmptyNodes();
+
+    return command;
+  }
+
+  public getDrawingEntities(drawingEntity: DrawingEntity, selectBonds = true) {
+    const editor = CoreEditor.provideEditorInstance();
+    let drawingEntities: DrawingEntity[] = [drawingEntity];
+    if (editor.mode instanceof SequenceMode) {
+      drawingEntities = drawingEntities.concat(
+        this.getExtraEntitiesForSequenceViewClick(drawingEntity, selectBonds),
+      );
+    }
+    return drawingEntities;
+  }
+
+  public getExtraEntitiesForSequenceViewClick(
+    drawingEntity: DrawingEntity,
+    selectBonds = true,
+  ) {
+    if (drawingEntity instanceof PolymerBond) {
+      return [];
+    }
+    const drawingEntities: DrawingEntity[] = [];
+    if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
+      const sugar = drawingEntity;
+      if (isValidNucleoside(sugar)) {
+        const nucleoside = Nucleoside.fromSugar(sugar);
+        drawingEntities.push(nucleoside.rnaBase);
+        const r3Bond = sugar.attachmentPointsToBonds.R3;
+        if (r3Bond) drawingEntities.push(r3Bond);
+      } else if (isValidNucleotide(sugar)) {
+        const nucleotide = Nucleotide.fromSugar(sugar);
+        drawingEntities.push(nucleotide.rnaBase);
+        drawingEntities.push(nucleotide.phosphate);
+        const r2Bond = sugar.attachmentPointsToBonds.R2;
+        const r3Bond = sugar.attachmentPointsToBonds.R3;
+        if (r2Bond) drawingEntities.push(r2Bond);
+        if (r3Bond) drawingEntities.push(r3Bond);
+      }
+    }
+    if (!selectBonds) {
+      return drawingEntities;
+    } else {
+      const monomer = drawingEntity as BaseMonomer;
+      monomer.forEachBond((polymerBond) => {
+        if (polymerBond.getAnotherMonomer(monomer)?.selected) {
+          drawingEntities.push(polymerBond);
+        }
+      });
+      return drawingEntities;
+    }
   }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {

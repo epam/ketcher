@@ -9,12 +9,15 @@ import {
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
-  constructor(firstMonomer: BaseMonomer) {
-    this.fillSubChains(firstMonomer);
+  constructor(firstMonomer?: BaseMonomer) {
+    if (firstMonomer) {
+      this.fillSubChains(firstMonomer);
+    }
   }
 
   public add(monomer: BaseMonomer) {
@@ -71,5 +74,13 @@ export class Chain {
     });
 
     return length;
+  }
+
+  public get isEmpty() {
+    return (
+      this.subChains.length === 1 &&
+      this.subChains[0].nodes.length === 1 &&
+      this.subChains[0].nodes[0] instanceof EmptySequenceNode
+    );
   }
 }

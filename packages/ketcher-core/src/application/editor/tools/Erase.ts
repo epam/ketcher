@@ -17,13 +17,17 @@ import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
+import { SequenceMode } from '../modes';
 
 class EraserTool implements BaseTool {
   private history: EditorHistory;
   constructor(private editor: CoreEditor) {
     this.editor = editor;
     this.history = new EditorHistory(editor);
-    if (this.editor.drawingEntitiesManager.selectedEntities.length) {
+    if (
+      this.editor.drawingEntitiesManager.selectedEntities.length &&
+      !(this.editor.mode instanceof SequenceMode)
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
       this.history.update(modelChanges);
@@ -46,6 +50,27 @@ class EraserTool implements BaseTool {
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }
+  }
+
+  // TODO move hover logic somewhere to apply it for all or several tools from one place.
+  //  Currently it is duplicated from select-rectangle tool
+  mouseOverDrawingEntity(event) {
+    const renderer = event.target.__data__;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.intendToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  mouseLeaveDrawingEntity(event) {
+    const renderer: BaseRenderer = event.target.__data__;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelIntentionToSelectDrawingEntity(
+        renderer.drawingEntity,
+      );
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   destroy() {}

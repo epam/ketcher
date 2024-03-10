@@ -238,7 +238,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await page.mouse.move(point.x - 100, point.y - 100);
+      await page.mouse.click(point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -305,7 +305,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await page.mouse.move(point.x - 100, point.y - 100);
+      await page.mouse.click(point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);

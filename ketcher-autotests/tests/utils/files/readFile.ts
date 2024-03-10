@@ -84,8 +84,6 @@ export async function openFileAndAddToCanvas(
 export async function openFileAndAddToCanvasAsNewProject(
   filename: string,
   page: Page,
-  xOffsetFromCenter?: number,
-  yOffsetFromCenter?: number,
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
@@ -95,15 +93,6 @@ export async function openFileAndAddToCanvasAsNewProject(
   await waitForLoad(page, async () => {
     await pressButton(page, 'Open as New Project');
   });
-
-  if (
-    typeof xOffsetFromCenter === 'number' &&
-    typeof yOffsetFromCenter === 'number'
-  ) {
-    await clickOnTheCanvas(page, xOffsetFromCenter, yOffsetFromCenter);
-  } else {
-    await clickInTheMiddleOfTheScreen(page);
-  }
 }
 
 export async function filteredFile(

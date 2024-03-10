@@ -2,40 +2,40 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer446"
+                "$ref": "monomer635"
             },
             {
-                "$ref": "monomer448"
+                "$ref": "monomer636"
             },
             {
-                "$ref": "monomer450"
+                "$ref": "monomer637"
             },
             {
-                "$ref": "monomer454"
+                "$ref": "monomer638"
             },
             {
-                "$ref": "monomer457"
+                "$ref": "monomer639"
             },
             {
-                "$ref": "monomer459"
+                "$ref": "monomer640"
             },
             {
-                "$ref": "monomer461"
+                "$ref": "monomer641"
             },
             {
-                "$ref": "monomer463"
+                "$ref": "monomer642"
             },
             {
-                "$ref": "monomer465"
+                "$ref": "monomer643"
             },
             {
-                "$ref": "monomer467"
+                "$ref": "monomer644"
             },
             {
-                "$ref": "monomer469"
+                "$ref": "monomer645"
             },
             {
-                "$ref": "monomer476"
+                "$ref": "monomer646"
             }
         ],
         "connections": [],
@@ -78,12 +78,12 @@
             }
         ]
     },
-    "monomer446": {
+    "monomer635": {
         "type": "monomer",
-        "id": "446",
+        "id": "635",
         "position": {
-            "x": 0.52,
-            "y": -0.7733333333333334
+            "x": 12.41999999999998,
+            "y": -8.208333333333318
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -219,12 +219,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer448": {
+    "monomer636": {
         "type": "monomer",
-        "id": "448",
+        "id": "636",
         "position": {
-            "x": 1.4333333333333333,
-            "y": -0.76
+            "x": 14.28333333333333,
+            "y": -8.24499999999999
         },
         "alias": "Edc",
         "templateId": "Edc___S-ethylthiocysteine"
@@ -422,12 +422,12 @@
         ],
         "naturalAnalogShort": "C"
     },
-    "monomer450": {
+    "monomer637": {
         "type": "monomer",
-        "id": "450",
+        "id": "637",
         "position": {
-            "x": 2.2466666666666666,
-            "y": -0.7733333333333334
+            "x": 16.34666666666668,
+            "y": -8.258333333333328
         },
         "alias": "dD",
         "templateId": "dD___D-Aspartic acid"
@@ -634,12 +634,12 @@
         ],
         "naturalAnalogShort": "D"
     },
-    "monomer454": {
+    "monomer638": {
         "type": "monomer",
-        "id": "454",
+        "id": "638",
         "position": {
-            "x": 4,
-            "y": -0.7333333333333334
+            "x": 19.499999999999968,
+            "y": -8.268333333333322
         },
         "alias": "meF",
         "templateId": "meF___N-Methyl-Phenylalanine"
@@ -889,12 +889,12 @@
         ],
         "naturalAnalogShort": "F"
     },
-    "monomer457": {
+    "monomer639": {
         "type": "monomer",
-        "id": "457",
+        "id": "639",
         "position": {
-            "x": 4.906666666666667,
-            "y": -0.7400000000000001
+            "x": 21.081666666666642,
+            "y": -8.249999999999998
         },
         "alias": "Sar",
         "templateId": "Sar___sarcosine (N-methylglycine)"
@@ -1030,12 +1030,12 @@
         ],
         "naturalAnalogShort": "G"
     },
-    "monomer459": {
+    "monomer640": {
         "type": "monomer",
-        "id": "459",
+        "id": "640",
         "position": {
-            "x": 0.4733333333333334,
-            "y": -1.6466666666666667
+            "x": 12.423333333333332,
+            "y": -10.281666666666666
         },
         "alias": "meI",
         "templateId": "meI___N-Methyl-Isoleucine"
@@ -1235,12 +1235,12 @@
         ],
         "naturalAnalogShort": "I"
     },
-    "monomer461": {
+    "monomer641": {
         "type": "monomer",
-        "id": "461",
+        "id": "641",
         "position": {
-            "x": 1.4733333333333334,
-            "y": -1.62
+            "x": 14.348333333333334,
+            "y": -10.330000000000002
         },
         "alias": "meK",
         "templateId": "meK___N-Methyl-Lysine"
@@ -1477,12 +1477,12 @@
         ],
         "naturalAnalogShort": "K"
     },
-    "monomer463": {
+    "monomer642": {
         "type": "monomer",
-        "id": "463",
+        "id": "642",
         "position": {
-            "x": 2.3600000000000003,
-            "y": -1.6266666666666667
+            "x": 16.235000000000014,
+            "y": -10.386666666666668
         },
         "alias": "Nle",
         "templateId": "Nle___norleucine"
@@ -1665,12 +1665,12 @@
         ],
         "naturalAnalogShort": "L"
     },
-    "monomer465": {
+    "monomer643": {
         "type": "monomer",
-        "id": "465",
+        "id": "643",
         "position": {
-            "x": 3.1333333333333337,
-            "y": -1.5866666666666667
+            "x": 18.058333333333323,
+            "y": -10.346666666666668
         },
         "alias": "meM",
         "templateId": "meM___N-Methyl-Methionine"
@@ -1868,12 +1868,12 @@
         ],
         "naturalAnalogShort": "M"
     },
-    "monomer467": {
+    "monomer644": {
         "type": "monomer",
-        "id": "467",
+        "id": "644",
         "position": {
-            "x": 4.013333333333334,
-            "y": -1.5933333333333335
+            "x": 19.613333333333337,
+            "y": -10.328333333333335
         },
         "alias": "Mhp",
         "templateId": "Mhp___4-methyl-3-hydroxyproline"
@@ -2078,12 +2078,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer469": {
+    "monomer645": {
         "type": "monomer",
-        "id": "469",
+        "id": "645",
         "position": {
-            "x": 4.926666666666667,
-            "y": -1.6066666666666667
+            "x": 21.15166666666665,
+            "y": -10.291666666666668
         },
         "alias": "Pen",
         "templateId": "Pen___penicillamine (3-mercaptovaline)"
@@ -2290,12 +2290,12 @@
         ],
         "naturalAnalogShort": "V"
     },
-    "monomer476": {
+    "monomer646": {
         "type": "monomer",
-        "id": "476",
+        "id": "646",
         "position": {
-            "x": 3.0733333333333337,
-            "y": -0.7466666666666667
+            "x": 18.073333333333316,
+            "y": -8.25666666666666
         },
         "alias": "dW",
         "templateId": "dW___D-Tryptophan"

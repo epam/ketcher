@@ -59,7 +59,14 @@ test.describe('Actions with CHEM', () => {
     https://github.com/epam/ketcher/issues/3582
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
-    await openFileAndAddToCanvas('KET/chems-not-connected.ket', page);
+    const xOffsetFromCenter = -200;
+    const yOffsetFromCenter = 0;
+    await openFileAndAddToCanvas(
+      'KET/chems-not-connected.ket',
+      page,
+      xOffsetFromCenter,
+      yOffsetFromCenter,
+    );
     await selectSingleBondTool(page);
     await page.getByText('Test-6-Ch').locator('..').hover();
     await page.mouse.down();

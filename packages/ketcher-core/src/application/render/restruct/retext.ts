@@ -238,6 +238,11 @@ class ReText extends ReObject {
       null,
     );
 
+    // Sort to apply font size styles first and then override it by subscript/superscript styles
+    ranges.sort((_, nextRange) => {
+      return nextRange.style.includes(TextCommand.FontSize) ? 1 : -1;
+    });
+
     return ranges.reduce(
       (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
         const fontsz = customFontSize || options.fontsz;

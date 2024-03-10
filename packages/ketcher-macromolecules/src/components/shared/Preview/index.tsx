@@ -25,5 +25,5 @@ export const Preview = () => {
     return <NucleotidePreview />;
   }
 
-  return <MonomerPreview />;
+  return <MonomerPreview className="polymer-library-preview" />;
 };

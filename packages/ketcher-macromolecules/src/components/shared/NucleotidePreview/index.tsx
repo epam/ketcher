@@ -54,7 +54,7 @@ const NucleotidePreview = ({ className }: IPreviewProps) => {
         data-testid="polymer-library-preview"
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
-        <NucleotideName>{preview.nucleotide[1].struct.name}</NucleotideName>
+        <NucleotideName>{preview.nucleotide[1].props.Name}</NucleotideName>
         {preview.nucleotide.map(
           (monomer, index) =>
             monomer && (
@@ -62,7 +62,7 @@ const NucleotidePreview = ({ className }: IPreviewProps) => {
                 <MonomerIcon name={icons[index]} />
                 <NucleotideMonomerLabel>{monomer.label}</NucleotideMonomerLabel>
                 <NucleotideMonomerName>
-                  ({monomer.struct.name})
+                  ({monomer.props.Name})
                 </NucleotideMonomerName>
               </NucleotideMonomerRow>
             ),

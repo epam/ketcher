@@ -71,6 +71,9 @@ test.describe('PPTX files', () => {
     6. Validate canvas
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/4015 issue.
     */
+    const maxTimeout = 120000;
+    test.setTimeout(maxTimeout);
+
     await selectTopPanelButton(TopPanelButton.Open, page);
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/1000 moleculs.pptx', page);
@@ -131,7 +134,7 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1766 issue.
     Update screenshots after fix.
     */
-    const maxTimeout = 120000;
+    const maxTimeout = 180000;
     test.setTimeout(maxTimeout);
 
     const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];

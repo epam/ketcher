@@ -97,6 +97,7 @@ export type DropDownProps = {
   className?: string;
   customStylesForExpanded?: CSSProperties;
   label?: string;
+  testId?: string;
 };
 
 export const DropDown = ({
@@ -105,6 +106,7 @@ export const DropDown = ({
   selectionHandler,
   className,
   label,
+  testId,
   customStylesForExpanded = {},
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false);
@@ -141,7 +143,7 @@ export const DropDown = ({
         renderValue={renderLabelById}
         IconComponent={ChevronIcon}
         fullWidth
-        data-testid="dropdown-select"
+        data-testid={testId || 'dropdown-select'}
         MenuProps={{
           PaperProps: {
             style: { ...stylesForExpanded, ...customStylesForExpanded },

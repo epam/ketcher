@@ -1,5 +1,5 @@
 import { DOMSubscription } from 'subscription';
-import { Struct, Vec2 } from 'domain/entities';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
@@ -63,6 +63,7 @@ export class CoreEditor {
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   public mode: BaseMode = new FlexMode();
+  public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
 
@@ -170,6 +171,9 @@ export class CoreEditor {
     );
 
     this.events.startNewSequence.add(() => this.onStartNewSequence());
+    this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
+      this.onChangeSequenceTypeEnterMode(mode),
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -186,6 +190,10 @@ export class CoreEditor {
     }
 
     this.mode.startNewSequence();
+  }
+
+  private onChangeSequenceTypeEnterMode(mode: SequenceType) {
+    this.sequenceTypeEnterMode = mode;
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

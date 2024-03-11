@@ -172,11 +172,14 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
           props.set('ringBondCount', sGroup.readKeyValuePairs(propertyData));
         }
       } else if (type === 'SUB') {
-        if (!props.get('substitutionCount')) {
-          props.set(
-            'substitutionCount',
-            sGroup.readKeyValuePairs(propertyData),
-          );
+        if (!props.get('substitutionCount'))
+          props.set('substitutionCount', new Pool());
+        const rglabels = props.get('substitutionCount');
+        const a2rs = sGroup.readKeyMultiValuePairs(propertyData);
+        for (let a2ri = 0; a2ri < a2rs.length; a2ri++) {
+          const a2r = a2rs[a2ri];
+          console.log(a2r[1]);
+          rglabels.set(a2r[0], a2r[1]);
         }
       } else if (type === 'UNS') {
         if (!props.get('unsaturatedAtom')) {

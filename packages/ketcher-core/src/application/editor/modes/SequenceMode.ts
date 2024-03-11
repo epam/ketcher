@@ -75,6 +75,8 @@ export class SequenceMode extends BaseMode {
   }
 
   public turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer) {
+    const editor = CoreEditor.provideEditorInstance();
+
     this.isEditMode = true;
     this.initialize(false);
     if (sequenceItemRenderer) {
@@ -83,13 +85,16 @@ export class SequenceMode extends BaseMode {
       );
       SequenceRenderer.moveCaretForward();
     }
+    editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
   public turnOffEditMode() {
     if (!this.isEditMode) return;
+    const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
     this.initialize(false);
+    editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
   public onKeyDown(event: KeyboardEvent) {

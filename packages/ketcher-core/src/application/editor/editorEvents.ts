@@ -36,6 +36,7 @@ export function resetEditorEvents() {
     mouseOverSequenceItem: new Subscription(),
     mouseLeaveSequenceItem: new Subscription(),
     changeSequenceTypeEnterMode: new Subscription(),
+    toggleSequenceEditMode: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -59,6 +60,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverSequenceItem',
   'mouseLeaveSequenceItem',
   'changeSequenceTypeEnterMode',
+  'toggleSequenceEditMode',
 ];
 
 export const hotkeysConfiguration = {

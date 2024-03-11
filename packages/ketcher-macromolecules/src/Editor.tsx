@@ -337,8 +337,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     <>
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
-          <LayoutModeButton />
           <SequenceTypeDropdown />
+          <LayoutModeButton />
           {togglerComponent}
           <FullscreenButton />
         </Layout.Top>

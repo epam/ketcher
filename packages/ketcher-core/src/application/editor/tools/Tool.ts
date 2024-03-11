@@ -54,6 +54,8 @@ interface ToolEventHandler {
   mouseLeaveSequenceItem?(event: Event): void;
 
   changeSequenceTypeEnterMode?(event: Event): void;
+
+  toggleSequenceEditMode?(event: Event): void;
 }
 
 export interface IRnaPreset {

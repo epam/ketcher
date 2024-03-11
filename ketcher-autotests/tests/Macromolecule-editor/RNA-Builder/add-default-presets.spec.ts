@@ -11,7 +11,7 @@ test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
     await toggleRnaBuilderAccordion(page);
   });
 

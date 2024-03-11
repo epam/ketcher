@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { SequenceType } from 'ketcher-core';
@@ -36,6 +36,7 @@ export const SequenceTypeDropdown = () => {
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     SequenceType.RNA,
   );
+  const [isSequenceEditMode, setIsSequenceEditMode] = useState(false);
   const editor = useAppSelector(selectEditor);
 
   const dropdownOptions = [
@@ -44,12 +45,24 @@ export const SequenceTypeDropdown = () => {
     { id: SequenceType.PEPTIDE, label: 'Peptide' },
   ];
 
+  const onToggleSequenceEditMode = (_isSequenceEditMode) => {
+    setIsSequenceEditMode(_isSequenceEditMode);
+  };
+
+  useEffect(() => {
+    editor?.events.toggleSequenceEditMode.add(onToggleSequenceEditMode);
+
+    return () => {
+      editor?.events.toggleSequenceEditMode.remove(onToggleSequenceEditMode);
+    };
+  }, [editor]);
+
   const onSelectSequenceType = (sequenceType: string) => {
     setActiveSequenceType(sequenceType as SequenceType);
     editor.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 
-  return (
+  return isSequenceEditMode ? (
     <>
       <SequenceTypeSelectorTitle>Edit mode</SequenceTypeSelectorTitle>
       <SequenceTypeSelector
@@ -59,5 +72,5 @@ export const SequenceTypeDropdown = () => {
         testId="sequence-type-dropdown"
       />
     </>
-  );
+  ) : null;
 };

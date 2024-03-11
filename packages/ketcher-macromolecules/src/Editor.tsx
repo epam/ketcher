@@ -22,6 +22,8 @@ import {
   SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
+  Nucleotide,
+  Nucleoside,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -80,7 +82,6 @@ import {
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
-import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
@@ -94,6 +95,11 @@ import {
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
+import { useContextMenu } from 'react-contexify';
+import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
+import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
+import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
+import { Preview } from 'components/shared/Preview';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -152,6 +158,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const monomers = useAppSelector(selectMonomers);
+  const { show: showSequenceContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SEQUENCE,
+  });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
@@ -166,6 +175,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       dispatch(clearFavorites());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (editor && monomers) {
+      editor.setMonomersLibrary(monomers);
+    }
+  }, [editor, monomers]);
 
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
@@ -218,38 +233,93 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     };
   }, [editor]);
 
-  const handleOpenPreview = useCallback((e) => {
-    const monomer = e.target.__data__.monomer.monomerItem;
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const sequenceNode = e.target.__data__?.node;
+      const isNucleotideOrNucleoside =
+        sequenceNode instanceof Nucleotide ||
+        sequenceNode instanceof Nucleoside;
+      const monomer =
+        e.target.__data__?.monomer?.monomerItem ||
+        sequenceNode.monomer.monomerItem;
 
-    const cardCoordinates = e.target.getBoundingClientRect();
-    const top = calculatePreviewPosition(monomer, cardCoordinates);
-    const previewStyle = {
-      top,
-      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-    };
-    debouncedShowPreview({ monomer, style: previewStyle });
-  }, []);
+      const nucleotideParts =
+        sequenceNode instanceof Nucleotide
+          ? [
+              sequenceNode.sugar.monomerItem,
+              sequenceNode.rnaBase.monomerItem,
+              sequenceNode.phosphate?.monomerItem,
+            ]
+          : sequenceNode instanceof Nucleoside
+          ? [sequenceNode.sugar.monomerItem, sequenceNode.rnaBase.monomerItem]
+          : null;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(
+        monomer,
+        cardCoordinates,
+        isNucleotideOrNucleoside,
+      );
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      if (isNucleotideOrNucleoside) {
+        debouncedShowPreview({
+          nucleotide: nucleotideParts,
+          style: previewStyle,
+        });
+      } else {
+        debouncedShowPreview({ monomer, style: previewStyle });
+      }
+    },
+    [debouncedShowPreview],
+  );
 
   const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  }, []);
+  }, [debouncedShowPreview, dispatch]);
 
   useEffect(() => {
-    editor?.events.mouseOverMonomer.add((e) => {
-      handleOpenPreview(e);
-    });
-    editor?.events.mouseLeaveMonomer.add(() => {
-      handleClosePreview();
-    });
-    editor?.events.mouseOnMoveMonomer.add((e) => {
+    editor?.events.mouseOverMonomer.add(handleOpenPreview);
+    editor?.events.mouseLeaveMonomer.add(handleClosePreview);
+    editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
+    editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
+
+    const onMoveHandler = (e) => {
       handleClosePreview();
       const isLeftClick = e.buttons === 1;
       if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);
       }
+    };
+    editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
+    return () => {
+      editor?.events.mouseOverMonomer.remove(handleOpenPreview);
+      editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
+      editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
+      editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
+      editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
+    };
+  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+
+  useEffect(() => {
+    editor?.events.rightClickSequence.add((event) => {
+      showSequenceContextMenu({
+        event,
+        props: {
+          sequenceItemRenderer: event.target.__data__,
+        },
+      });
     });
-  }, [editor, activeTool]);
+    editor?.events.rightClickCanvas.add((event) => {
+      showSequenceContextMenu({
+        event,
+        props: {},
+      });
+    });
+  }, [editor]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();
@@ -294,6 +364,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SugarAvatar />
               <PhosphateAvatar />
               <RNABaseAvatar />
+              <SequenceStartArrow />
             </defs>
             <g className="drawn-structures"></g>
           </svg>
@@ -308,7 +379,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <StyledPreview className="polymer-library-preview" />
+      <Preview />
+      <SequenceItemContextMenu />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

@@ -813,12 +813,15 @@ export class DrawingEntitiesManager {
     }
 
     let previousMonomer: BaseMonomer | undefined;
+    const monomers: BaseMonomer[] = [];
+
     monomersToAdd.forEach(([monomerItem, monomerPosition]) => {
       const monomerAddOperation = new MonomerAddOperation(
         this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
         this.deleteMonomerChangeModel.bind(this),
       );
       const monomer = monomerAddOperation.monomer;
+      monomers.push(monomer);
       command.addOperation(monomerAddOperation);
       if (previousMonomer) {
         // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
@@ -843,7 +846,7 @@ export class DrawingEntitiesManager {
       previousMonomer = monomer;
     });
 
-    return command;
+    return { command, monomers };
   }
 
   private findChainByMonomer(
@@ -1096,11 +1099,12 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
-  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
+  public reArrangeChains(
+    canvasWidth: number,
+    isSnakeMode: boolean,
+    needRedrawBonds = true,
+  ) {
     const command = new Command();
-
-    const editor = CoreEditor.provideEditorInstance();
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
@@ -1121,7 +1125,10 @@ export class DrawingEntitiesManager {
       );
       command.merge(result.command);
     }
-    command.merge(this.redrawBonds());
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
+
     return command;
   }
 
@@ -1474,22 +1481,37 @@ export class DrawingEntitiesManager {
   }
 
   public applyMonomersSequenceLayout() {
-    const editor = CoreEditor.provideEditorInstance();
-
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     chainsCollection.rearrange();
-
-    editor.renderersContainer.deleteAllDrawingEntities();
 
     SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
   }
 
-  public applyFlexLayoutMode() {
+  public clearCanvas() {
     const editor = CoreEditor.provideEditorInstance();
+
+    this.monomers.forEach((monomer) => {
+      editor.renderersContainer.deleteMonomer(monomer);
+    });
+
+    this.polymerBonds.forEach((polymerBond) => {
+      editor.renderersContainer.deletePolymerBond(polymerBond);
+    });
+
+    SequenceRenderer.removeEmptyNodes();
+  }
+
+  public applyFlexLayoutMode(needRedrawBonds = false) {
+    const editor = CoreEditor.provideEditorInstance();
+    const command = new Command();
+
+    if (needRedrawBonds) {
+      command.merge(this.redrawBonds());
+    }
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -1500,6 +1522,10 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
+
+    SequenceRenderer.removeEmptyNodes();
+
+    return command;
   }
 
   public getDrawingEntities(drawingEntity: DrawingEntity, selectBonds = true) {

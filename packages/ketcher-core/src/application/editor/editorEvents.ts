@@ -29,6 +29,12 @@ export function resetEditorEvents() {
     mouseOverDrawingEntity: new Subscription(),
     mouseLeaveDrawingEntity: new Subscription(),
     mouseUpMonomer: new Subscription(),
+    rightClickSequence: new Subscription(),
+    rightClickCanvas: new Subscription(),
+    editSequence: new Subscription(),
+    startNewSequence: new Subscription(),
+    mouseOverSequenceItem: new Subscription(),
+    mouseLeaveSequenceItem: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -45,6 +51,12 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverDrawingEntity',
   'mouseLeaveDrawingEntity',
   'mouseUpMonomer',
+  'rightClickSequence',
+  'rightClickCanvas',
+  'editSequence',
+  'startNewSequence',
+  'mouseOverSequenceItem',
+  'mouseLeaveSequenceItem',
 ];
 
 export const hotkeysConfiguration = {
@@ -69,6 +81,8 @@ export const hotkeysConfiguration = {
   erase: {
     shortcut: ['Delete', 'Backspace'],
     handler: (editor: CoreEditor) => {
+      // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
+      if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch('erase');
     },
   },

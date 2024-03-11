@@ -81,6 +81,7 @@ export interface IKetMonomerTemplate {
     nodes;
   };
   classHELM?: string;
+  name?: string;
 }
 
 export interface IKetNodeRef {

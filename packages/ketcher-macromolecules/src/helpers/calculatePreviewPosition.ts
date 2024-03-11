@@ -20,6 +20,7 @@ import { MonomerItemType } from 'ketcher-core';
 export const calculatePreviewPosition = (
   monomer: MonomerItemType | undefined,
   target?: DOMRect,
+  isNucleosideOrNucleotide = false,
 ): string => {
   if (monomer && target) {
     const editorRect = document
@@ -30,9 +31,13 @@ export const calculatePreviewPosition = (
       return '';
     }
 
+    const height = isNucleosideOrNucleotide
+      ? preview.heightForNucleotide
+      : preview.height;
+
     const top =
       target.top > preview.height + preview.gap + preview.topPadding
-        ? target.top - preview.gap - preview.height
+        ? target.top - preview.gap - height
         : target.bottom + preview.gap;
 
     const newStyle = `${top}px`;

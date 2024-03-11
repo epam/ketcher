@@ -30,6 +30,7 @@ export const preview = {
   height: 230,
   gap: 5,
   topPadding: 16,
+  heightForNucleotide: 105,
 } as const;
 
 export enum MonomerGroups {

@@ -65,37 +65,38 @@ class RnaPresetTool implements Tool {
       return;
     }
 
-    const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
-      sugar: this.sugar,
-      sugarPosition: Coordinates.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPositionOfCanvas.x,
-          this.editor.lastCursorPositionOfCanvas.y,
+    const { command: modelChanges } =
+      this.editor.drawingEntitiesManager.addRnaPreset({
+        sugar: this.sugar,
+        sugarPosition: Coordinates.canvasToModel(
+          new Vec2(
+            this.editor.lastCursorPositionOfCanvas.x,
+            this.editor.lastCursorPositionOfCanvas.y,
+          ),
         ),
-      ),
-      phosphate: this.phosphate,
-      phosphatePosition: this.phosphatePreviewRenderer
-        ? Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x +
-                this.sugarPreviewRenderer?.width +
-                RNA_MONOMER_DISTANCE,
-              this.editor.lastCursorPositionOfCanvas.y,
-            ),
-          )
-        : undefined,
-      rnaBase: this.rnaBase,
-      rnaBasePosition: this.rnaBasePreviewRenderer
-        ? Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x,
-              this.editor.lastCursorPositionOfCanvas.y +
-                this.sugarPreviewRenderer.height +
-                RNA_MONOMER_DISTANCE,
-            ),
-          )
-        : undefined,
-    });
+        phosphate: this.phosphate,
+        phosphatePosition: this.phosphatePreviewRenderer
+          ? Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x +
+                  this.sugarPreviewRenderer?.width +
+                  RNA_MONOMER_DISTANCE,
+                this.editor.lastCursorPositionOfCanvas.y,
+              ),
+            )
+          : undefined,
+        rnaBase: this.rnaBase,
+        rnaBasePosition: this.rnaBasePreviewRenderer
+          ? Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x,
+                this.editor.lastCursorPositionOfCanvas.y +
+                  this.sugarPreviewRenderer.height +
+                  RNA_MONOMER_DISTANCE,
+              ),
+            )
+          : undefined,
+      });
 
     this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);

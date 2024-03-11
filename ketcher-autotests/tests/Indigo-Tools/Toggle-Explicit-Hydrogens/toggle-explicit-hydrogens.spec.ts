@@ -588,3 +588,511 @@ test.describe('9. Fold/unfold hydrogens for', () => {
     });
   }
 });
+
+test.describe('10. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 44-50, 53-56
+  Description: User can expand hydrogens for molecules connected by different custom query bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: ${fileName}
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1579 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1793 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1795 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1621 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3977 issue.
+  Screenshots have to be corrected after fix.
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All Custom Query Bonds connected with R-group labels.ket',
+    'All Custom Query Bonds in one R-group.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1793
+    'All Custom Query Bonds in R-group each.ket',
+    'All Custom Query Bonds with Connection points.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1795, https://github.com/epam/Indigo/issues/1621
+    'All Custom Query Bonds with S-Group - Data - Absolute.ket',
+    'All Custom Query Bonds with S-Group - Data - Attached.ket',
+    'All Custom Query Bonds with S-Group - Data - Relative.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3977
+    'All Custom Query Bonds with S-Group - SRU Polymer - Either Unknown.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All Custom Query Bonds with S-Group - SRU Polymer - Head-to-head.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All Custom Query Bonds with S-Group - SRU Polymer - Head-to-tail.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All Custom Query Bonds with S-Group - Superatom.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+    });
+  }
+});
+
+test.describe('11. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Case 51
+  Description: User can expand hydrogens for molecules connected by different custom query bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: All Custom Query Bonds with S-Group - Multiple group.ket
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1626 issue.
+  Screenshots have to be corrected after fix.
+  Commented code have to be uncommented
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All Custom Query Bonds with S-Group - Multiple group.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1626
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      test.setTimeout(120000);
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      /*
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      */
+    });
+  }
+});
+
+test.describe('12. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 52
+  Description: User can expand hydrogens for molecules connected by different custom query bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: All Custom Query Bonds with S-Group - Query component.ket
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1625 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1794 issue.
+  Screenshots have to be corrected after fix.
+  Commented code have to be uncommented
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All Custom Query Bonds with S-Group - Query component.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      /*
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      */
+    });
+  }
+});
+
+test.describe('13. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 57-62, 65-74, 77-80
+  Description: User can expand hydrogens for molecules connected by different ordinary bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: ${fileName}
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1579 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1793 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1795 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1621 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3977 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1626 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1611 issue.
+  Screenshots have to be corrected after fix.
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All types of bond - Either topology - Unmarked - R-Group fragmens - Attachment points.ket',
+    'All types of bond - Either topology - Unmarked - R-Group fragmens.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1793
+    'All types of bond - Either topology - Unmarked - R-Group labels.ket',
+    'All types of bond - Either topology - Unmarked - S-Group - Data - Bond - Absolute.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3977
+    'All types of bond - Either topology - Unmarked - S-Group - Data - Bond - Attached.ket',
+    'All types of bond - Either topology - Unmarked - S-Group - Data - Bond - Relative.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3977
+    'All types of bond - Either topology - Unmarked - S-Group - SRU polymer - Either unknown.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All types of bond - Either topology - Unmarked - S-Group - SRU polymer - Head-to-head.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All types of bond - Either topology - Unmarked - S-Group - SRU polymer - Head-to-tail.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All types of bond - Either topology - Unmarked - S-Group - Superatom.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All types of bond - Ring topology - Unmarked - R-Group fragmens - Attachment points.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - R-Group fragmens.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1793
+    'All types of bond - Ring topology - Unmarked - R-Group labels.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1793, https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - S-Group - Data - Bond - Absolute.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3977, https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - S-Group - Data - Bond - Attached.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - S-Group - Data - Bond - Relative.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3977
+    'All types of bond - Ring topology - Unmarked - S-Group - SRU polymer - Either unknown.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976, https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - S-Group - SRU polymer - Head-to-head.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976, https://github.com/epam/Indigo/issues/1611
+    'All types of bond - Ring topology - Unmarked - S-Group - SRU polymer - Head-to-tail.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976
+    'All types of bond - Ring topology - Unmarked - S-Group - Superatom.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976, https://github.com/epam/Indigo/issues/1611
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      // await takeEditorScreenshot(page);
+    });
+  }
+});
+
+test.describe('14. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 63, 75
+  Description: User can expand hydrogens for molecules connected by different bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: All types of bond - [Either|Ring] topology - Unmarked - S-Group - Multipal group.ket
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1626 issue.
+  Screenshots have to be corrected after fix.
+  Commented code have to be uncommented
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All types of bond - Either topology - Unmarked - S-Group - Multipal group.ket',
+    // ^-- https://github.com/epam/ketcher/issues/3976, https://github.com/epam/Indigo/issues/1626
+    'All types of bond - Ring topology - Unmarked - S-Group - Multipal group.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1626
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      /*
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      */
+    });
+  }
+});
+
+test.describe('15. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 64, 76
+  Description: User can expand hydrogens for molecules connected by different bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: All types of bond - [Either|Ring] topology - Unmarked - S-Group - Query component.ket
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1625 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1794 issue.
+  Screenshots have to be corrected after fix.
+  Commented code have to be uncommented
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'All types of bond - Either topology - Unmarked - S-Group - Query component.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625
+    'All types of bond - Ring topology - Unmarked - S-Group - Query component.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1794, https://github.com/epam/Indigo/issues/1625
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      /*
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      */
+    });
+  }
+});
+
+test.describe('16. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 81-86, 89-98, 100-104
+  Description: User can expand hydrogens for molecules connected by different bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: ${fileName}
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1579 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1793 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1795 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1621 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3977 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/ketcher/issues/3976 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1626 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1611 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1535 issue.
+  Screenshots have to be corrected after fix.
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'Bonds with QFA on the canvas - Either topology - Unmarked - R-Group fragmens - At.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - R-Group fragmens.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - R-Group labels.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Data - Bond - Absolute.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Data - Bond - Attached.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Data - Bond - Relative.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - SRU polymer - Either unknown.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - SRU polymer - Head-to-head.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - SRU polymer - Head-to-tail.ket',
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Superatom.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - R-Group fragmens - Attachment points.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - R-Group fragmens.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - R-Group labels.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Data - Bond - Absolute.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Data - Bond - Attached.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Data - Bond - Relative.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - SRU polymer - Either unknown.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - SRU polymer - Head-to-head.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - SRU polymer - Head-to-tail.ket',
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Superatom.ket',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+    });
+  }
+});
+
+test.describe('17. Fold/unfold hydrogens for', () => {
+  /* 
+  Test case: https://github.com/epam/ketcher/issues/4018 - Cases 87,88, 99,100
+  Description: User can expand hydrogens for molecules connected by different bonds wrapped into different types on groups
+  1. Clear canvas
+  2. Open from file: All types of bond - [Either|Ring] topology - Unmarked - S-Group - Query component.ket
+  3. Press Add/Remove explicit hydrogens button
+  4. Validate canvas
+  5. Press Add/Remove explicit hydrogens button
+  6. Validate canvas
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1625 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1794 issue.
+  IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1626 issue.
+  Screenshots have to be corrected after fix.
+  */
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  const fileNames = [
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Multipal group.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1626, https://github.com/epam/Indigo/issues/1794
+    'Bonds with QFA on the canvas - Either topology - Unmarked - S-Group - Query component.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1625, https://github.com/epam/Indigo/issues/1794
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Multipal group.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1626, https://github.com/epam/Indigo/issues/1794
+    'Bonds with QFA on the canvas - Ring topology - Unmarked - S-Group - Query component.ket',
+    // ^-- https://github.com/epam/Indigo/issues/1625, https://github.com/epam/Indigo/issues/1794
+  ];
+
+  for (const fileName of fileNames) {
+    test(`by ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(
+        `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
+        page,
+      );
+      await page.mouse.click(20, 20);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      /*
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+      */
+    });
+  }
+});

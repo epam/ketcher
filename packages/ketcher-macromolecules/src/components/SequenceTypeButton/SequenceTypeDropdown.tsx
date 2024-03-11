@@ -56,6 +56,7 @@ export const SequenceTypeDropdown = () => {
         options={dropdownOptions}
         currentSelection={activeSequenceType}
         selectionHandler={onSelectSequenceType}
+        testId="sequence-type-dropdown"
       />
     </>
   );

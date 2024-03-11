@@ -1,0 +1,180 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    12.78013678906466,
+                    -8.90056295357492,
+                    0
+                ],
+                "explicitValence": 0
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    13.709959595926904,
+                    -8.923086247500448,
+                    0
+                ],
+                "explicitValence": 1
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    14.893300928029559,
+                    -8.891205926211946,
+                    0
+                ],
+                "explicitValence": 2
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    15.911947164194054,
+                    -8.8710854637941,
+                    0
+                ],
+                "explicitValence": 3
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    16.915551923540143,
+                    -8.859188943631407,
+                    0
+                ],
+                "explicitValence": 4
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    17.86207691358045,
+                    -8.830180256414552,
+                    0
+                ],
+                "explicitValence": 5
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    19.104432043932604,
+                    -8.85110166266829,
+                    0
+                ],
+                "explicitValence": 6
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    20.11645622551374,
+                    -8.841744635305314,
+                    0
+                ],
+                "explicitValence": 7
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    21.31556213566653,
+                    -8.825570073379081,
+                    0
+                ],
+                "explicitValence": 8
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    26.21451612903226,
+                    -8.713037837859122,
+                    0
+                ],
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ]
+    }
+}

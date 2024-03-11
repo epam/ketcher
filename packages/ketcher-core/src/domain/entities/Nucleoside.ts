@@ -15,6 +15,7 @@ import {
   getRnaPartLibraryItem,
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleoside {
   constructor(public sugar: Sugar, public rnaBase: RNABase) {}
@@ -94,5 +95,9 @@ export class Nucleoside {
 
   public get renderer() {
     return this.monomer.renderer;
+  }
+
+  public get modified() {
+    return this.sugar.label !== RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
   }
 }

@@ -103,4 +103,8 @@ export class Nucleotide {
   public get renderer() {
     return this.monomer.renderer;
   }
+
+  public get modified() {
+    return this.sugar.label !== RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
+  }
 }

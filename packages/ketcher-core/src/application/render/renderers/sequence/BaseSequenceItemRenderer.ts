@@ -98,6 +98,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('rx', 2)
       .attr('cursor', 'text');
 
+    if (this.node.modified) {
+      backgroundElement?.attr('stroke', '#585858').attr('stroke-width', '1px');
+    }
+
     backgroundElement?.attr(
       'fill',
       this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',

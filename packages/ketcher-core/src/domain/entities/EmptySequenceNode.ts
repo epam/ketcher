@@ -38,4 +38,8 @@ export class EmptySequenceNode {
   public setRenderer(renderer) {
     this.renderer = renderer;
   }
+
+  public get modified() {
+    return false;
+  }
 }

@@ -22,4 +22,8 @@ export class MonomerSequenceNode {
   public get renderer() {
     return this.monomer.renderer;
   }
+
+  public get modified() {
+    return false;
+  }
 }

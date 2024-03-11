@@ -8,11 +8,13 @@ import {
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/internal';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  getRnaPartLibraryItem,
+  getSugarBySequenceType,
+} from 'domain/helpers/rna';
 
 export class Nucleoside {
   constructor(public sugar: Sugar, public rnaBase: RNABase) {}
@@ -33,12 +35,11 @@ export class Nucleoside {
 
   static createOnCanvas(rnaBaseName: string, position: Vec2) {
     const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
-    const sugarLibraryItem = getRnaPartLibraryItem(
-      editor,
-      RNA_NON_MODIFIED_PART.SUGAR,
-    );
+    const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
+    assert(sugarName);
+
+    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);
@@ -64,10 +65,7 @@ export class Nucleoside {
       ),
     );
 
-    editor.renderersContainer.update(modelChanges);
-    history.update(modelChanges);
-
-    return Nucleoside.fromSugar(sugar, false);
+    return { modelChanges, node: Nucleoside.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {

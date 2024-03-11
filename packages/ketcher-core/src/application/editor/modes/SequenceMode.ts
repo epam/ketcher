@@ -7,16 +7,29 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { initHotKeys, keyNorm } from 'utilities';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { BaseMonomer, SequenceType, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
 import assert from 'assert';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  getPeptideLibraryItem,
+  getRnaPartLibraryItem,
+} from 'domain/helpers/rna';
+import {
+  peptideNaturalAnalogues,
+  RNA_DNA_NON_MODIFIED_PART,
+  rnaDnaNaturalAnalogues,
+} from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
+import { uniq } from 'lodash';
+
+const naturalAnalogues = uniq([
+  ...rnaDnaNaturalAnalogues,
+  ...peptideNaturalAnalogues,
+]);
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
@@ -128,7 +141,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
-      RNA_NON_MODIFIED_PART.PHOSPHATE,
+      RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
     );
 
     assert(phosphateLibraryItem);
@@ -158,6 +171,126 @@ export class SequenceMode extends BaseMode {
         AttachmentPointName.R1,
       ),
     );
+
+    return modelChanges;
+  }
+
+  private handlePeptideNodeAddition(
+    enteredSymbol: string,
+    currentNode: SubChainNode,
+    previousNodeInSameChain: SubChainNode,
+    newNodePosition: Vec2,
+  ) {
+    if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
+      return undefined;
+    }
+
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const newPeptideLibraryItem = getPeptideLibraryItem(editor, enteredSymbol);
+
+    assert(newPeptideLibraryItem);
+
+    const peptideAddCommand = editor.drawingEntitiesManager.addMonomer(
+      newPeptideLibraryItem,
+      newNodePosition,
+    );
+
+    const newPeptide = peptideAddCommand.operations[0].monomer as BaseMonomer;
+
+    modelChanges.merge(peptideAddCommand);
+
+    if (!(currentNode instanceof EmptySequenceNode)) {
+      if (previousNodeInSameChain) {
+        const r2Bond =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2Bond);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+        );
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          newPeptide,
+          currentNode?.firstMonomerInNode as BaseMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+
+    if (previousNodeInSameChain) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          previousNodeInSameChain.lastMonomerInNode,
+          newPeptide,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+
+    return modelChanges;
+  }
+
+  private handleRnaDnaNodeAddition(
+    enteredSymbol: string,
+    currentNode: SubChainNode,
+    previousNodeInSameChain: SubChainNode,
+    newNodePosition: Vec2,
+  ) {
+    if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
+      return undefined;
+    }
+
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+      currentNode instanceof Nucleotide || currentNode instanceof Nucleoside
+        ? Nucleotide.createOnCanvas(enteredSymbol, newNodePosition)
+        : Nucleoside.createOnCanvas(enteredSymbol, newNodePosition);
+
+    modelChanges.merge(addedNodeModelChanges);
+
+    if (!(currentNode instanceof EmptySequenceNode)) {
+      if (previousNodeInSameChain) {
+        const r2Bond =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2Bond);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+        );
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          nodeToAdd.lastMonomerInNode,
+          currentNode?.firstMonomerInNode as BaseMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+
+    if (previousNodeInSameChain instanceof Nucleoside) {
+      modelChanges.merge(
+        this.bondNodesThroughNewPhosphate(
+          newNodePosition,
+          previousNodeInSameChain,
+          nodeToAdd,
+        ),
+      );
+    } else if (previousNodeInSameChain) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          previousNodeInSameChain.lastMonomerInNode,
+          nodeToAdd.firstMonomerInNode,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
 
     return modelChanges;
   }
@@ -280,9 +413,14 @@ export class SequenceMode extends BaseMode {
         },
       },
       'add-sequence-item': {
-        shortcut: ['A', 'T', 'G', 'C', 'U', 'a', 't', 'g', 'c', 'u'],
+        shortcut: [
+          ...naturalAnalogues,
+          ...naturalAnalogues.map((naturalAnalogue) =>
+            naturalAnalogue.toLowerCase(),
+          ),
+        ],
         handler: (event) => {
-          const rnaBaseName = event.code.replace('Key', '');
+          const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
           const currentNode = SequenceRenderer.currentEdittingNode;
@@ -293,63 +431,39 @@ export class SequenceMode extends BaseMode {
             : undefined;
           const previousNodeInSameChain =
             SequenceRenderer.previousNodeInSameChain;
-          const modelChanges = new Command();
 
           const newNodePosition = this.getNewSequenceItemPosition(
             previousNode,
             nodeBeforePreviousNode,
           );
 
-          const nodeToAdd =
-            currentNode instanceof Nucleotide ||
-            currentNode instanceof Nucleoside
-              ? Nucleotide.createOnCanvas(rnaBaseName, newNodePosition)
-              : Nucleoside.createOnCanvas(rnaBaseName, newNodePosition);
+          let modelChanges;
 
-          if (!(currentNode instanceof EmptySequenceNode)) {
-            if (previousNodeInSameChain) {
-              const r2Bond =
-                previousNodeInSameChain?.lastMonomerInNode
-                  .attachmentPointsToBonds.R2;
-              assert(r2Bond);
-              modelChanges.merge(
-                editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
-              );
-            }
-
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                nodeToAdd.lastMonomerInNode,
-                currentNode?.firstMonomerInNode as BaseMonomer,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
+          if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
+            modelChanges = this.handlePeptideNodeAddition(
+              enteredSymbol,
+              currentNode,
+              previousNodeInSameChain,
+              newNodePosition,
+            );
+          } else {
+            modelChanges = this.handleRnaDnaNodeAddition(
+              enteredSymbol,
+              currentNode,
+              previousNodeInSameChain,
+              newNodePosition,
             );
           }
 
-          if (previousNodeInSameChain instanceof Nucleoside) {
-            modelChanges.merge(
-              this.bondNodesThroughNewPhosphate(
-                newNodePosition,
-                previousNodeInSameChain,
-                nodeToAdd,
-              ),
-            );
-          } else if (previousNodeInSameChain) {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.createPolymerBond(
-                previousNodeInSameChain.lastMonomerInNode,
-                nodeToAdd.firstMonomerInNode,
-                AttachmentPointName.R2,
-                AttachmentPointName.R1,
-              ),
-            );
+          // Case when user type symbol that does not exist in current sequence type mode
+          if (!modelChanges) {
+            return;
           }
 
           modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
           modelChanges.addOperation(SequenceRenderer.moveCaretForward());
-          history.update(modelChanges, true);
+          history.update(modelChanges);
         },
       },
     };

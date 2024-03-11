@@ -296,19 +296,22 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // cache label position to reuse it form other monomers with same label
     // need to improve performance for large amount of monomers
     // getBBox triggers reflow
-    if (!labelPositions[this.monomer.label]) {
+    const monomerUniqueKey =
+      this.monomer.label + this.monomer.monomerItem.props.MonomerType;
+
+    if (!labelPositions[monomerUniqueKey]) {
       const textBBox = (textElement.node() as SVGTextElement).getBBox();
-      labelPositions[this.monomer.label] = {
+      labelPositions[monomerUniqueKey] = {
         x: this.width / 2 - textBBox.width / 2,
         y: this.height / 2,
       };
     }
     textElement
-      .attr('x', labelPositions[this.monomer.label]?.x || 0)
-      .attr('y', labelPositions[this.monomer.label]?.y || 0);
+      .attr('x', labelPositions[monomerUniqueKey]?.x || 0)
+      .attr('y', labelPositions[monomerUniqueKey]?.y || 0);
 
     if (this.scale && this.scale !== 1) {
-      labelPositions[this.monomer.label] = undefined;
+      labelPositions[monomerUniqueKey] = undefined;
     }
   }
 

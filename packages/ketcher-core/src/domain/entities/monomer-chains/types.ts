@@ -8,3 +8,9 @@ export type SubChainNode =
   | Nucleoside
   | Nucleotide
   | EmptySequenceNode;
+
+export enum SequenceType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  PEPTIDE = 'PEPTIDE',
+}

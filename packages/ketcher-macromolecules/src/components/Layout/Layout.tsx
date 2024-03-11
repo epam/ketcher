@@ -72,6 +72,7 @@ const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end',
+  alignItems: 'center',
   backgroundColor: '#FFFFFF',
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   borderRadius: '4px',

@@ -22,6 +22,7 @@ import {
   SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
+  Nucleotide,
   Nucleoside,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';

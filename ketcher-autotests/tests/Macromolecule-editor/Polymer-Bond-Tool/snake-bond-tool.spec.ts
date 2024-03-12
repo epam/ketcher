@@ -164,7 +164,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond between RNA nucleotides', async ({ page }) => {
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
     await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
@@ -201,7 +201,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Check snake mode arrange for RNA chain', async ({ page }) => {
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -324,7 +324,7 @@ test.describe('Snake Bond Tool', () => {
       50,
       4,
     );
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -367,7 +367,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with nucleoside', async ({ page }) => {
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
     await selectSnakeLayoutModeTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
@@ -421,7 +421,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with side chains', async ({ page }) => {
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
       'C_C_R_P',
@@ -535,7 +535,7 @@ test.describe('Snake Bond Tool', () => {
       300,
       0,
     );
-    await page.getByText('RNA').click();
+    await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('summary-Sugars').click();
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,

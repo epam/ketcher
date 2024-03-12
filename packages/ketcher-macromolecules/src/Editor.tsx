@@ -100,6 +100,7 @@ import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
+import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -336,6 +337,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     <>
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
+          <SequenceTypeDropdown />
           <LayoutModeButton />
           {togglerComponent}
           <FullscreenButton />

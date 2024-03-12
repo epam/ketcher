@@ -9,10 +9,13 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { CoreEditor } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { RNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  getRnaPartLibraryItem,
+  getSugarBySequenceType,
+} from 'domain/helpers/rna';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleotide {
   constructor(
@@ -44,16 +47,15 @@ export class Nucleotide {
 
   static createOnCanvas(rnaBaseName: string, position: Vec2) {
     const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
-      RNA_NON_MODIFIED_PART.PHOSPHATE,
+      RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
     );
-    const sugarLibraryItem = getRnaPartLibraryItem(
-      editor,
-      RNA_NON_MODIFIED_PART.SUGAR,
-    );
+    const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
+    assert(sugarName);
+
+    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);
@@ -71,10 +73,7 @@ export class Nucleotide {
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
 
-    editor.renderersContainer.update(modelChanges);
-    history.update(modelChanges);
-
-    return Nucleotide.fromSugar(sugar, false);
+    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
@@ -103,5 +102,9 @@ export class Nucleotide {
 
   public get renderer() {
     return this.monomer.renderer;
+  }
+
+  public get modified() {
+    return this.sugar.label !== RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
   }
 }

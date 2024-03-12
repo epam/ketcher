@@ -21,6 +21,7 @@ import { RestoreSequenceCaretPositionCommand } from 'application/editor/operatio
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseMonomerRenderer } from 'application/render';
+import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
 
@@ -29,6 +30,7 @@ export class SequenceRenderer {
   public static chainsCollection: ChainsCollection;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static lastChainStartPosition: Vec2;
+
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
@@ -287,6 +289,22 @@ export class SequenceRenderer {
     this.setCaretPosition(newCaretPosition);
   }
 
+  public static getMonomersByCaretPositionRange(
+    startCaretPosition: SequencePointer,
+    endCaretPosition,
+  ) {
+    const monomers: BaseMonomer[] = [];
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (
+        startCaretPosition <= nodeIndexOverall &&
+        nodeIndexOverall < (endCaretPosition || this.caretPosition)
+      ) {
+        monomers.push(node.monomer);
+      }
+    });
+    return monomers;
+  }
+
   public static moveCaretForward() {
     return new RestoreSequenceCaretPositionCommand(
       this.caretPosition,
@@ -351,7 +369,7 @@ export class SequenceRenderer {
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
 
-  private static getNodeByPointer(sequencePointer?: SequencePointer) {
+  public static getNodeByPointer(sequencePointer?: SequencePointer) {
     if (sequencePointer === undefined) return;
     let nodeToReturn;
 
@@ -489,5 +507,32 @@ export class SequenceRenderer {
     });
 
     return nodeToReturn;
+  }
+
+  public static shiftArrowSelectionInEditMode(event) {
+    const editor = CoreEditor.provideEditorInstance();
+    const getSelectedDrawingEntities = (selectedNode: SubChainNode) => {
+      const drawingEntities = editor.drawingEntitiesManager.getDrawingEntities(
+        selectedNode.monomer,
+      );
+      const modelChanges =
+        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+          drawingEntities,
+        );
+      return modelChanges;
+    };
+
+    const modelChanges = new Command();
+    const arrowKey = event.code;
+    if (arrowKey === 'ArrowRight') {
+      const modelChanges = getSelectedDrawingEntities(this.currentEdittingNode);
+      modelChanges.addOperation(this.moveCaretForward());
+    } else if (arrowKey === 'ArrowLeft') {
+      const modelChanges = getSelectedDrawingEntities(
+        this.previousNodeInSameChain,
+      );
+      modelChanges.addOperation(this.moveCaretBack());
+    }
+    editor.renderersContainer.update(modelChanges);
   }
 }

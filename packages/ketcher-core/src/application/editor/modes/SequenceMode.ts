@@ -12,7 +12,10 @@ import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
-import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
+import {
+  ReinitializeSequenceModeCommand,
+  RestoreSequenceCaretPositionCommand,
+} from 'application/editor/operations/modes';
 import assert from 'assert';
 import {
   getPeptideLibraryItem,
@@ -33,6 +36,9 @@ const naturalAnalogues = uniq([
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
+  private selectionStarted = false;
+  private selectionStartCaretPosition = -1;
+
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
   }
@@ -135,6 +141,59 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );
+      const editor = CoreEditor.provideEditorInstance();
+      const modelChanges =
+        editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      editor.renderersContainer.update(modelChanges);
+    }
+    this.selectionStartCaretPosition = -1;
+  }
+
+  public mousedown(event: MouseEvent) {
+    const eventData = event.target?.__data__;
+    const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
+    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
+      this.selectionStarted = true;
+      this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
+    }
+  }
+
+  public mousemove(event: MouseEvent) {
+    const eventData = event.target?.__data__;
+    const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
+
+    if (this.isEditMode && isEventOnSequenceItem && this.selectionStarted) {
+      const modelChanges = new Command();
+      const editor = CoreEditor.provideEditorInstance();
+      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
+        eventData as BaseSequenceItemRenderer,
+      );
+
+      let startCaretPosition = this.selectionStartCaretPosition;
+      let endCaretPosition = SequenceRenderer.caretPosition;
+      if (this.selectionStartCaretPosition > SequenceRenderer.caretPosition) {
+        startCaretPosition = SequenceRenderer.caretPosition;
+        endCaretPosition = this.selectionStartCaretPosition;
+      }
+      const monomers = SequenceRenderer.getMonomersByCaretPositionRange(
+        startCaretPosition,
+        endCaretPosition,
+      );
+      modelChanges.merge(
+        editor.drawingEntitiesManager.selectDrawingEntities(monomers),
+      );
+      const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
+        this.selectionStartCaretPosition,
+        SequenceRenderer.caretPosition,
+      );
+      modelChanges.addOperation(moveCaretOperation);
+      editor.renderersContainer.update(modelChanges);
+    }
+  }
+
+  mouseup() {
+    if (this.selectionStarted) {
+      this.selectionStarted = false;
     }
   }
 
@@ -307,47 +366,43 @@ export class SequenceMode extends BaseMode {
         handler: () => {
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
-          const previousNode =
-            SequenceRenderer.previousFromCurrentEdittingMonomer;
-          const previousNodeInSameChain =
-            SequenceRenderer.previousNodeInSameChain;
-          const currentNode = SequenceRenderer.currentEdittingNode;
           const modelChanges = new Command();
+          const previousCaretPosition = SequenceRenderer.caretPosition;
+          let currentNode = SequenceRenderer.currentEdittingNode;
+          // for drag left and Shift+ArrowLeft
+          if (
+            editor.drawingEntitiesManager.selectedEntities.length > 0 &&
+            SequenceRenderer.caretPosition < this.selectionStartCaretPosition
+          ) {
+            currentNode = SequenceRenderer.getNodeByPointer(
+              this.selectionStartCaretPosition,
+            );
+            this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
+          }
+          const firstNodeToBeDeleted = SequenceRenderer.getNodeByPointer(
+            this.selectionStartCaretPosition,
+          );
+          modelChanges.merge(this.deleteDrawingEntities(firstNodeToBeDeleted));
 
-          if (previousNodeInSameChain) {
-            // delete all monomers and it's bonds from previous node
-            previousNode?.monomers.forEach((monomer) => {
+          const nodeBeforeFirstNodeToBeDeletedInSameChain =
+            SequenceRenderer.getPreviousNodeInSameChain(firstNodeToBeDeleted);
+          if (nodeBeforeFirstNodeToBeDeletedInSameChain) {
+            if (!(currentNode instanceof EmptySequenceNode)) {
               modelChanges.merge(
-                editor.drawingEntitiesManager.deleteMonomer(monomer),
+                editor.drawingEntitiesManager.createPolymerBond(
+                  nodeBeforeFirstNodeToBeDeletedInSameChain instanceof
+                    Nucleotide
+                    ? nodeBeforeFirstNodeToBeDeletedInSameChain.firstMonomerInNode
+                    : nodeBeforeFirstNodeToBeDeletedInSameChain.lastMonomerInNode,
+                  currentNode?.firstMonomerInNode as BaseMonomer,
+                  AttachmentPointName.R2,
+                  AttachmentPointName.R1,
+                ),
               );
-            });
-
-            const nodeBeforePreviousNode = previousNode
-              ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
-              : undefined;
-
-            if (nodeBeforePreviousNode) {
-              if (previousNode instanceof Nucleoside) {
-                // delete phosphate from last nucleotide
-                modelChanges.merge(
-                  editor.drawingEntitiesManager.deleteMonomer(
-                    nodeBeforePreviousNode.lastMonomerInNode,
-                  ),
-                );
-              }
-              if (!(currentNode instanceof EmptySequenceNode)) {
-                modelChanges.merge(
-                  editor.drawingEntitiesManager.createPolymerBond(
-                    previousNode instanceof Nucleoside
-                      ? nodeBeforePreviousNode.firstMonomerInNode
-                      : nodeBeforePreviousNode.lastMonomerInNode,
-                    currentNode?.firstMonomerInNode as BaseMonomer,
-                    AttachmentPointName.R2,
-                    AttachmentPointName.R1,
-                  ),
-                );
-              }
             }
+            SequenceRenderer.setCaretPositionByMonomer(
+              firstNodeToBeDeleted.monomer,
+            );
           } else if (
             SequenceRenderer.previousChain &&
             !(currentNode instanceof EmptySequenceNode)
@@ -356,11 +411,10 @@ export class SequenceMode extends BaseMode {
               SequenceRenderer.getLastNonEmptyNode(
                 SequenceRenderer.previousChain,
               );
-
+            const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
+              SequenceRenderer.previousChain,
+            );
             if (previousChainLastNonEmptyNode instanceof Nucleoside) {
-              const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
-                SequenceRenderer.previousChain,
-              );
               const newNodePosition = this.getNewSequenceItemPosition(
                 previousChainLastEmptyNode,
                 previousChainLastNonEmptyNode,
@@ -385,12 +439,19 @@ export class SequenceMode extends BaseMode {
                 ),
               );
             }
+            SequenceRenderer.setCaretPositionByMonomer(
+              previousChainLastEmptyNode.monomer,
+            );
           }
-
+          const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
+            previousCaretPosition,
+            SequenceRenderer.caretPosition,
+          );
           modelChanges.addOperation(new ReinitializeSequenceModeCommand());
           editor.renderersContainer.update(modelChanges);
-          modelChanges.addOperation(SequenceRenderer.moveCaretBack());
+          modelChanges.addOperation(moveCaretOperation);
           history.update(modelChanges);
+          this.selectionStartCaretPosition = -1;
         },
       },
       'turn-off-edit-mode': {
@@ -471,7 +532,41 @@ export class SequenceMode extends BaseMode {
           history.update(modelChanges);
         },
       },
+      'sequence-edit-select': {
+        shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
+        handler: (event) => {
+          this.selectionStartCaretPosition =
+            this.selectionStartCaretPosition !== -1
+              ? this.selectionStartCaretPosition
+              : SequenceRenderer.caretPosition;
+          SequenceRenderer.shiftArrowSelectionInEditMode(event);
+        },
+      },
     };
+  }
+
+  private deleteDrawingEntities(firstNodeToBeDeleted: SubChainNode) {
+    const editor = CoreEditor.provideEditorInstance();
+    const modelChanges = new Command();
+    if (editor.drawingEntitiesManager.selectedEntities.length > 0) {
+      editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
+        if (entity instanceof BaseMonomer) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(entity as BaseMonomer),
+          );
+        }
+      });
+    } else {
+      const drawingEntities = editor.drawingEntitiesManager.getDrawingEntities(
+        firstNodeToBeDeleted.monomer,
+      );
+      drawingEntities.forEach((entity) => {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteMonomer(entity as BaseMonomer),
+        );
+      });
+    }
+    return modelChanges;
   }
 
   private getNewSequenceItemPosition(

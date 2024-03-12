@@ -26,6 +26,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { SequenceMode } from '../modes';
 import { isMacOs } from 'react-device-detect';
+import { EraserTool } from './Erase';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -274,10 +275,12 @@ class SelectRectangle implements BaseTool {
 
     this.canvasResizeObserver?.disconnect();
 
-    const modelChanges =
-      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    if (!(this.editor.selectedTool instanceof EraserTool)) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
 
-    this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.update(modelChanges);
+    }
   }
 }
 

@@ -204,6 +204,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       if (this.isEditingSymbol) {
         this.appendCaretElement();
       }
+      this.drawSelection();
     }
 
     this.textElement = this.rootElement
@@ -231,7 +232,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   drawSelection(): void {
-    if (!this.rootElement || this.isSequenceEditModeTurnedOn) {
+    if (!this.rootElement) {
       return;
     }
     if (this.node.monomer.selected) {

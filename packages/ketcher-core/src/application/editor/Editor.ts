@@ -61,7 +61,11 @@ export class CoreEditor {
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
-  private tool?: Tool | BaseTool;
+  private tool?: Tool | BaseTool | undefined;
+  public get selectedTool(): Tool | BaseTool | undefined {
+    return this.tool;
+  }
+
   public mode: BaseMode = new FlexMode();
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;

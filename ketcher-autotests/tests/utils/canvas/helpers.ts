@@ -290,6 +290,12 @@ export async function screenshotBetweenUndoRedo(page: Page) {
   await selectTopPanelButton(TopPanelButton.Redo, page);
 }
 
+export async function screenshotBetweenUndoRedoInMacro(page: Page) {
+  await page.getByTestId('undo').click();
+  await takeEditorScreenshot(page);
+  await page.getByTestId('redo').click();
+}
+
 export async function resetAllSettingsToDefault(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await pressButton(page, 'Reset');

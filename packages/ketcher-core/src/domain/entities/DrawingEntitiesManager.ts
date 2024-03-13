@@ -36,7 +36,10 @@ import {
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  MONOMER_CONST,
+  monomerFactory,
+} from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
@@ -1613,6 +1616,21 @@ export class DrawingEntitiesManager {
       });
       return drawingEntities;
     }
+  }
+
+  public validateIfApplicableForFasta() {
+    const monomerTypes = new Set();
+    let isValid = true;
+
+    this.monomers.forEach((monomer) => {
+      const monomerType = monomer.monomerItem.props.MonomerType;
+      monomerTypes.add(monomerType);
+      if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
   }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {

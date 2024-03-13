@@ -9,6 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   pressButton,
   selectTopPanelButton,
   takeEditorScreenshot,
@@ -89,7 +90,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const scrollValue = -400;
     const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
-    await openFileAndAddToCanvas('KET/five-monomers.ket', page);
+    await openFileAndAddToCanvasMacro('KET/five-monomers.ket', page);
     await turnOnMicromoleculesEditor(page);
     await scrollHorizontally(page, scrollValue);
     for (const label of moleculeLabels) {
@@ -107,7 +108,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Macromolecule structures in micromode are represented as S-Groups with bonds
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
@@ -154,7 +155,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V2000/glutamine.mol', page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -166,12 +167,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
-    await openFileAndAddToCanvas(
-      'KET/stereo-and-structure.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
+    await openFileAndAddToCanvasMacro('KET/stereo-and-structure.ket', page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -186,7 +182,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const x = 400;
     const y = 400;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
@@ -205,7 +201,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
@@ -226,7 +222,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const y1 = 400;
     const x2 = 500;
     const y2 = 500;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
@@ -247,7 +243,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const numberOfPressZoomIn = 5;
     const numberOfPressZoomOut = 8;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
@@ -278,7 +274,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
@@ -306,7 +302,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
     */
     const numberOfPressZoomIn = 5;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );

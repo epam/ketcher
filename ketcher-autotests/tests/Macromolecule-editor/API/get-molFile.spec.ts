@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   readFileContents,
   waitForPageInit,
   turnOnMacromoleculesEditor,
@@ -15,7 +15,7 @@ test.describe('getMolfile', () => {
   });
 
   test('with two monomers bonded', async ({ page }) => {
-    await openFileAndAddToCanvas('KET/alanine-monomers-bonded.ket', page);
+    await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
     const mol = await getMolfile(page);
     await saveToFile(
       'Molfiles-V3000/alanine-monomers-bonded-expected.mol',

@@ -1,7 +1,7 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectSingleBondTool,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
@@ -19,7 +19,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
@@ -29,7 +29,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Canvas is cleared.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
     await takeEditorScreenshot(page);
   });
@@ -41,7 +41,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Clear canvas action Undo and then Redo.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
     await page.keyboard.press('Control+z');
     await takeEditorScreenshot(page);
@@ -54,7 +54,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: Clear canvas action Undo and then Redo.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
     await page.keyboard.press('Control+z');
     await takeEditorScreenshot(page);
@@ -84,7 +84,7 @@ test.describe('Hotkeys', () => {
     Description: Monomers are Zoomed In on canvas
     */
     const numberOfPressZoomIn = 5;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
@@ -100,7 +100,7 @@ test.describe('Hotkeys', () => {
     Description: Monomers are Zoomed Out on canvas
     */
     const numberOfPressZoomOut = 5;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
@@ -116,7 +116,7 @@ test.describe('Hotkeys', () => {
     Description: Monomers Zoome In are reset
     */
     const numberOfPressZoomIn = 5;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
@@ -133,7 +133,7 @@ test.describe('Hotkeys', () => {
     Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
     Description: All Monomers are selected.
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );

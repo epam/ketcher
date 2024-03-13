@@ -36,6 +36,7 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
   const extention = filename.split('.')[1];
   const options = {
     mol: 'MDL Molfile V3000',
+    fasta: 'FASTA',
   };
   const optionText = (options as any)[extention];
   const selector = page.getByTestId('dropdown-select');
@@ -49,6 +50,35 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
     await selector.getByText(selectorText).click();
     const option = page.getByRole('option');
     await option.getByText(optionText).click();
+    // to stabilize the test
+    await page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox')
+      .allInnerTexts();
+  }
+}
+
+type TypeDropdownOptions = 'RNA' | 'DNA' | 'Peptide';
+export async function selectOptionInTypeDropdown(
+  typeDropdownOption: TypeDropdownOptions,
+  page: Page,
+) {
+  const selector = page.getByTestId('dropdown-select-type');
+  const selectorExists = await selector.isVisible();
+
+  if (selectorExists) {
+    const selectorText = (await selector.innerText()).replace(
+      /(\r\n|\n|\r)/gm,
+      '',
+    );
+    await selector.getByText(selectorText).click();
+    const option = page.getByRole('option');
+    await option.getByText(typeDropdownOption).click();
+    // to stabilize the test
+    await page
+      .getByTestId('dropdown-select-type')
+      .getByRole('combobox')
+      .allInnerTexts();
   }
 }
 
@@ -65,12 +95,14 @@ export async function openFileAndAddToCanvas(
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
 
+  // to stabilize the test
   await selectOptionInDropdown(filename, page);
 
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
   });
 
+  // Needed for Micro mode
   if (
     typeof xOffsetFromCenter === 'number' &&
     typeof yOffsetFromCenter === 'number'
@@ -79,6 +111,25 @@ export async function openFileAndAddToCanvas(
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }
+}
+
+export async function openFileAndAddToCanvasMacro(
+  filename: string,
+  page: Page,
+  typeDropdownOption?: TypeDropdownOptions,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(filename, page);
+
+  // to stabilize the test
+  await selectOptionInDropdown(filename, page);
+
+  if (typeDropdownOption)
+    await selectOptionInTypeDropdown(typeDropdownOption, page);
+
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProject(

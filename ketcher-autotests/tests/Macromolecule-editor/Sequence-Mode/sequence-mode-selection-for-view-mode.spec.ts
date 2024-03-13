@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
@@ -17,7 +17,7 @@ test.describe('Sequence Mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvas('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);

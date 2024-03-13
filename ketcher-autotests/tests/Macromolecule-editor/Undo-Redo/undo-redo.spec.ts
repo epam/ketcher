@@ -6,7 +6,7 @@ import {
   clickUndo,
   dragMouseTo,
   hideMonomerPreview,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectRectangleArea,
   selectSingleBondTool,
   selectSnakeLayoutModeTool,
@@ -118,11 +118,11 @@ test.describe('Undo Redo', () => {
   });
 
   test('Undo redo for imported structure', async ({ page }) => {
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/peptide-enumeration-one-two-three.ket',
       page,
     );
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/peptide-enumeration-one-two-three.ket',
       page,
     );
@@ -156,7 +156,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
-    await openFileAndAddToCanvas('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
       'D-aIle',
@@ -273,7 +273,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
-    await openFileAndAddToCanvas('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
       'SertBu',
@@ -301,14 +301,14 @@ test.describe('Undo-Redo tests', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Press Undo/Redo after opening  a .ket file with monomers', async ({
+  test('Press Undo/Redo after opening a .ket file with monomers', async ({
     page,
   }) => {
     /* 
     Test case: Undo-Redo tests
     Description: Undo/Redo after opening  a .ket file is working.
     */
-    await openFileAndAddToCanvas('KET/all-entities.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
     await page.getByTestId('redo').click();
@@ -322,7 +322,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Undo/Redo after opening  a .mol file is working.
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/monomers-connected-with-bonds.mol',
       page,
     );
@@ -337,7 +337,10 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Pressing Undo/Redo toggle snake mode.
     */
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
     await selectSnakeLayoutModeTool(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
@@ -368,7 +371,10 @@ test.describe('Undo-Redo tests', () => {
       'Mhp',
       'Pen',
     ];
-    await openFileAndAddToCanvas('KET/ten-peptides-not-connected.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/ten-peptides-not-connected.ket',
+      page,
+    );
     await connectMonomersWithBonds(page, monomerNames);
     const maxUndoHistorySize = 5;
     for (let i = 0; i < maxUndoHistorySize; i++) {

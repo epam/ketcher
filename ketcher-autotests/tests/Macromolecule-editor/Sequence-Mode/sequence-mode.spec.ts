@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   zoomWithMouseWheel,
   scrollDown,
@@ -26,7 +26,7 @@ test.describe('Sequence Mode', () => {
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
-    await openFileAndAddToCanvas('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
@@ -43,7 +43,7 @@ test.describe('Sequence Mode', () => {
     */
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 300;
-    await openFileAndAddToCanvas('KET/monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -63,7 +63,10 @@ test.describe('Sequence Mode', () => {
     Description: Nucleotides are connected through R2-R1 bonds, these bonds are not visually represented,
     and nucleotides are depicted as symbols forming a word.
     */
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -76,7 +79,7 @@ test.describe('Sequence Mode', () => {
     Description: All phosphates not part of nucleotides are displayed as "p" symbols, 
     including last phosphate connected to last nucleoside.
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/phosphates-not-part-of-nucleoside.ket',
       page,
     );
@@ -93,7 +96,7 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/dna-long.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -107,7 +110,7 @@ test.describe('Sequence Mode', () => {
     Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
-    await openFileAndAddToCanvas('KET/50-peptides-and-2-chems.ket', page);
+    await openFileAndAddToCanvasMacro('KET/50-peptides-and-2-chems.ket', page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -121,7 +124,7 @@ test.describe('Sequence Mode', () => {
     */
     const ZOOM_OUT_VALUE = 800;
     const SCROLL_DOWN_VALUE = 150;
-    await openFileAndAddToCanvas('KET/natural-analog-peptides.ket', page);
+    await openFileAndAddToCanvasMacro('KET/natural-analog-peptides.ket', page);
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
@@ -135,7 +138,10 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: Sugar, Base or CHEM appears as @ symbol
     */
-    await openFileAndAddToCanvas('KET/sugar-base-chem-not-connected.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/sugar-base-chem-not-connected.ket',
+      page,
+    );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -148,7 +154,7 @@ test.describe('Sequence Mode', () => {
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvas('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -161,7 +167,7 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
     await clickUndo(page);
     await takeEditorScreenshot(page);
@@ -174,7 +180,7 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
     await page.keyboard.press('Control+z');
     await takeEditorScreenshot(page);
@@ -187,7 +193,7 @@ test.describe('Sequence Mode', () => {
     Test case: #3648
     Description: Length of each row is limited to 30 nucleotides after switch to sequence mode.
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/dna-long.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -200,7 +206,7 @@ test.describe('Sequence Mode', () => {
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
     */
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvas('Molfiles-V3000/rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);

@@ -63,6 +63,7 @@ export enum SupportedFormat {
   CDX = 'cdx',
   CDXML = 'cdxml',
   SDF = 'sdf',
+  FASTA = 'fasta',
 }
 
 export interface WithStruct {

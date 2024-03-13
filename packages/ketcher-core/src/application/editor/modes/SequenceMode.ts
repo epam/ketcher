@@ -182,9 +182,7 @@ export class SequenceMode extends BaseMode {
       const drawingEntities = monomers.reduce(
         (drawingEntities: DrawingEntity[], monomer: BaseMonomer) => {
           return drawingEntities.concat(
-            editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
-              monomer,
-            ),
+            editor.drawingEntitiesManager.getAllSelectedEntities(monomer),
           );
         },
         [],
@@ -586,7 +584,7 @@ export class SequenceMode extends BaseMode {
       });
     } else {
       const drawingEntities =
-        editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
+        editor.drawingEntitiesManager.getAllSelectedEntities(
           nodeToBeDeleted.monomer,
         );
       drawingEntities.forEach((entity) => {

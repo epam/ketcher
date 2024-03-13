@@ -513,7 +513,7 @@ export class SequenceRenderer {
     const editor = CoreEditor.provideEditorInstance();
     const selectDrawingEntities = (selectedNode: SubChainNode) => {
       const drawingEntities =
-        editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
+        editor.drawingEntitiesManager.getAllSelectedEntities(
           selectedNode.monomer,
         );
       const modelChanges =

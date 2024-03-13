@@ -1528,15 +1528,15 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public getAllEntitiesForSequenceSelection(
+  public getAllSelectedEntities(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    if (!(editor.mode instanceof SequenceMode)) {
-      return [];
-    }
-    if (drawingEntity instanceof PolymerBond) {
+    if (
+      !(editor.mode instanceof SequenceMode) ||
+      drawingEntity instanceof PolymerBond
+    ) {
       return [drawingEntity];
     }
     const drawingEntities: DrawingEntity[] = [drawingEntity];

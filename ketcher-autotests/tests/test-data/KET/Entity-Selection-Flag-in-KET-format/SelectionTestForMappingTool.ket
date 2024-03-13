@@ -1,0 +1,107 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": 18.586935280803747,
+                            "y": -8.825500260920574,
+                            "z": 0
+                        },
+                        {
+                            "x": 20.175802748124077,
+                            "y": -8.825500260920574,
+                            "z": 0
+                        }
+                    ]
+                },
+                "selected": true
+            },
+            {
+                "type": "plus",
+                "location": [
+                    16.87721023051123,
+                    -8.810433254004709,
+                    0
+                ],
+                "prop": {},
+                "selected": true
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "mapping": 1,
+                "location": [
+                    15.264481313094553,
+                    -8.82036648550738,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.264481313094553,
+            "y": 7.82036648550738,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "O",
+                "mapping": 2,
+                "location": [
+                    17.91460649753396,
+                    -8.810433254004709,
+                    0
+                ],
+                "radical": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 17.91460649753396,
+            "y": 7.810433254004709,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "O",
+                "mapping": 3,
+                "location": [
+                    21.014188227765352,
+                    -8.800500260920574,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.014188227765352,
+            "y": 7.800500260920574,
+            "z": 0
+        }
+    }
+}

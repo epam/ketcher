@@ -11,6 +11,9 @@ import {
   addBondedMonomersToCanvas,
   selectFlexLayoutModeTool,
   waitForRender,
+  openFileAndAddToCanvas,
+  dragMouseTo,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -563,4 +566,160 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Check if monomers are located close to each other Snake bond become a straight line', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Monomers are located close to each other Snake bond become a straight line.
+    */
+    const x = 550;
+    const y = 350;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvas(`KET/two-peptides-connected.ket`, page);
+    await takeEditorScreenshot(page);
+    await page.getByText('meE').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check if even very long chain fit into canvas (algorithm calculate the length of rows)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Very long chain fit into canvas (algorithm calculate the length of rows).
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/long-peptide-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that switch to Flex mode on a snake chain change it into a chain with straight lines', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Check that switch to Flex mode on a snake chain change it into a chain with 
+    straight lines press it again change it into curved lines.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/long-peptide-chain.ket`,
+      page,
+    );
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check move any peptide from middle of chain above main snake chain', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide moved from middle of chain above and under main snake chain.
+    The test is not functioning as expected. The monomer is separating from the bonds, 
+    and it's unclear why. Manual verification on the bench shows it working. 
+    Further investigation is needed.
+    But in Flex mode it is work as expected(Look at next test for flex sequence)
+    */
+    const x = 450;
+    const y = 150;
+    const x2 = 100;
+    const y2 = 100;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.getByText('DHis1B').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check move any peptide from middle of chain above main flex chain', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide moved from middle of chain above and under main snake chain.
+    */
+    const x = 450;
+    const y = 150;
+    const x2 = 100;
+    const y2 = 100;
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.getByText('DHis1B').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Bonds connecting through R3, R4, ... Rn attachment points remain straight lines', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Bonds connecting through R3, R4, ... Rn attachment points remain straight lines.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/two-peptides-in-chain-connected-through-r3-r4.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testCases = [
+    {
+      filename: 'KET/rna-chain-connected-to-peptide-chain.ket',
+      description:
+        'Bonds connecting RNA monomers to monomers of different types (peptide monomers) remain straight.',
+    },
+    {
+      filename: 'KET/rna-chain-connected-to-chem.ket',
+      description:
+        'Bonds connecting RNA monomers to monomers of different types (CHEM monomers) remain straight.',
+    },
+  ];
+
+  for (const testCase of testCases) {
+    test(testCase.description, async ({ page }) => {
+      await openFileAndAddToCanvasAsNewProject(testCase.filename, page);
+      await takeEditorScreenshot(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+    });
+  }
 });

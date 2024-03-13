@@ -28,6 +28,7 @@ import {
 } from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { uniq } from 'lodash';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -141,18 +142,18 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );
-      const editor = CoreEditor.provideEditorInstance();
-      const modelChanges =
-        editor.drawingEntitiesManager.unselectAllDrawingEntities();
-      editor.renderersContainer.update(modelChanges);
+      this.unselectedAllEntities();
     }
-    this.selectionStartCaretPosition = -1;
   }
 
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
     if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
+      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
+        eventData as BaseSequenceItemRenderer,
+      );
+      this.unselectedAllEntities();
       this.selectionStarted = true;
       this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
     }
@@ -161,7 +162,6 @@ export class SequenceMode extends BaseMode {
   public mousemove(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
-
     if (this.isEditMode && isEventOnSequenceItem && this.selectionStarted) {
       const modelChanges = new Command();
       const editor = CoreEditor.provideEditorInstance();
@@ -179,8 +179,19 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
+      const drawingEntities = monomers.reduce(
+        (drawingEntities: DrawingEntity[], monomer: BaseMonomer) => {
+          return drawingEntities.concat(
+            editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
+              monomer,
+            ),
+          );
+        },
+        [],
+      );
+
       modelChanges.merge(
-        editor.drawingEntitiesManager.selectDrawingEntities(monomers),
+        editor.drawingEntitiesManager.selectDrawingEntities(drawingEntities),
       );
       const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
         this.selectionStartCaretPosition,
@@ -368,32 +379,18 @@ export class SequenceMode extends BaseMode {
           const history = new EditorHistory(editor);
           const modelChanges = new Command();
           const previousCaretPosition = SequenceRenderer.caretPosition;
-          let currentNode = SequenceRenderer.currentEdittingNode;
-          // for drag left and Shift+ArrowLeft
-          if (
-            editor.drawingEntitiesManager.selectedEntities.length > 0 &&
-            SequenceRenderer.caretPosition < this.selectionStartCaretPosition
-          ) {
-            currentNode = SequenceRenderer.getNodeByPointer(
-              this.selectionStartCaretPosition,
-            );
-            this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
-          }
-          const firstNodeToBeDeleted = SequenceRenderer.getNodeByPointer(
-            this.selectionStartCaretPosition,
-          );
-          modelChanges.merge(this.deleteDrawingEntities(firstNodeToBeDeleted));
+          const { selectionStartNode, currentNode } = this.getNodes();
+          modelChanges.merge(this.deleteDrawingEntities(selectionStartNode));
 
-          const nodeBeforeFirstNodeToBeDeletedInSameChain =
-            SequenceRenderer.getPreviousNodeInSameChain(firstNodeToBeDeleted);
-          if (nodeBeforeFirstNodeToBeDeletedInSameChain) {
+          const nodeBeforeSelectionStartNodeInSameChain =
+            SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
+          if (nodeBeforeSelectionStartNodeInSameChain) {
             if (!(currentNode instanceof EmptySequenceNode)) {
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  nodeBeforeFirstNodeToBeDeletedInSameChain instanceof
-                    Nucleotide
-                    ? nodeBeforeFirstNodeToBeDeletedInSameChain.firstMonomerInNode
-                    : nodeBeforeFirstNodeToBeDeletedInSameChain.lastMonomerInNode,
+                  nodeBeforeSelectionStartNodeInSameChain instanceof Nucleotide
+                    ? nodeBeforeSelectionStartNodeInSameChain.firstMonomerInNode
+                    : nodeBeforeSelectionStartNodeInSameChain.lastMonomerInNode,
                   currentNode?.firstMonomerInNode as BaseMonomer,
                   AttachmentPointName.R2,
                   AttachmentPointName.R1,
@@ -401,43 +398,42 @@ export class SequenceMode extends BaseMode {
               );
             }
             SequenceRenderer.setCaretPositionByMonomer(
-              firstNodeToBeDeleted.monomer,
+              selectionStartNode.monomer,
             );
-          } else if (
-            SequenceRenderer.previousChain &&
-            !(currentNode instanceof EmptySequenceNode)
-          ) {
-            const previousChainLastNonEmptyNode =
-              SequenceRenderer.getLastNonEmptyNode(
-                SequenceRenderer.previousChain,
-              );
+          } else if (SequenceRenderer.previousChain) {
             const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
               SequenceRenderer.previousChain,
             );
-            if (previousChainLastNonEmptyNode instanceof Nucleoside) {
-              const newNodePosition = this.getNewSequenceItemPosition(
-                previousChainLastEmptyNode,
-                previousChainLastNonEmptyNode,
-              );
-
-              // create bond between previous and current chain through new phosphate
-              modelChanges.merge(
-                this.bondNodesThroughNewPhosphate(
-                  newNodePosition,
+            if (!(currentNode instanceof EmptySequenceNode)) {
+              const previousChainLastNonEmptyNode =
+                SequenceRenderer.getLastNonEmptyNode(
+                  SequenceRenderer.previousChain,
+                );
+              if (previousChainLastNonEmptyNode instanceof Nucleoside) {
+                const newNodePosition = this.getNewSequenceItemPosition(
+                  previousChainLastEmptyNode,
                   previousChainLastNonEmptyNode,
-                  currentNode,
-                ),
-              );
-            } else {
-              // create bond between previous and current chain
-              modelChanges.merge(
-                editor.drawingEntitiesManager.createPolymerBond(
-                  previousChainLastNonEmptyNode?.lastMonomerInNode,
-                  currentNode?.firstMonomerInNode as BaseMonomer,
-                  AttachmentPointName.R2,
-                  AttachmentPointName.R1,
-                ),
-              );
+                );
+
+                // create bond between previous and current chain through new phosphate
+                modelChanges.merge(
+                  this.bondNodesThroughNewPhosphate(
+                    newNodePosition,
+                    previousChainLastNonEmptyNode,
+                    currentNode,
+                  ),
+                );
+              } else {
+                // create bond between previous and current chain
+                modelChanges.merge(
+                  editor.drawingEntitiesManager.createPolymerBond(
+                    previousChainLastNonEmptyNode?.lastMonomerInNode,
+                    currentNode?.firstMonomerInNode as BaseMonomer,
+                    AttachmentPointName.R2,
+                    AttachmentPointName.R1,
+                  ),
+                );
+              }
             }
             SequenceRenderer.setCaretPositionByMonomer(
               previousChainLastEmptyNode.monomer,
@@ -545,24 +541,57 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  private deleteDrawingEntities(firstNodeToBeDeleted: SubChainNode) {
+  private getNodes() {
+    const editor = CoreEditor.provideEditorInstance();
+    let currentNode = SequenceRenderer.currentEdittingNode;
+    let selectionStartNode = SequenceRenderer.getNodeByPointer(
+      this.selectionStartCaretPosition,
+    );
+    if (editor.drawingEntitiesManager.selectedEntities.length > 0) {
+      // for drag left and Shift+ArrowLeft
+      if (SequenceRenderer.caretPosition < this.selectionStartCaretPosition) {
+        currentNode = SequenceRenderer.getNodeByPointer(
+          this.selectionStartCaretPosition,
+        );
+        selectionStartNode = SequenceRenderer.getNodeByPointer(
+          SequenceRenderer.caretPosition,
+        );
+      }
+    } else {
+      // for deletion without selection
+      const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+      if (selectionStartNode instanceof EmptySequenceNode) {
+        selectionStartNode = previousNodeInSameChain;
+      } else {
+        if (previousNodeInSameChain) {
+          selectionStartNode = previousNodeInSameChain;
+        } else {
+          selectionStartNode = SequenceRenderer.getLastNonEmptyNode(
+            SequenceRenderer.previousChain,
+          );
+        }
+      }
+    }
+    return { selectionStartNode, currentNode };
+  }
+
+  private deleteDrawingEntities(nodeToBeDeleted: SubChainNode) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     if (editor.drawingEntitiesManager.selectedEntities.length > 0) {
       editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
-        if (entity instanceof BaseMonomer) {
-          modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(entity as BaseMonomer),
-          );
-        }
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteDrawingEntity(entity, false),
+        );
       });
     } else {
-      const drawingEntities = editor.drawingEntitiesManager.getDrawingEntities(
-        firstNodeToBeDeleted.monomer,
-      );
+      const drawingEntities =
+        editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
+          nodeToBeDeleted.monomer,
+        );
       drawingEntities.forEach((entity) => {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deleteMonomer(entity as BaseMonomer),
+          editor.drawingEntitiesManager.deleteDrawingEntity(entity, false),
         );
       });
     }
@@ -587,5 +616,13 @@ export class SequenceMode extends BaseMode {
     return nodeForPositionCalculation.lastMonomerInNode.position.add(
       offsetFromPrevious,
     );
+  }
+
+  private unselectedAllEntities() {
+    const editor = CoreEditor.provideEditorInstance();
+    const modelChanges =
+      editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    modelChanges.merge(SequenceRenderer.unselectedEmptySequenceNodes());
+    editor.renderersContainer.update(modelChanges);
   }
 }

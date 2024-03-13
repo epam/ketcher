@@ -511,10 +511,11 @@ export class SequenceRenderer {
 
   public static shiftArrowSelectionInEditMode(event) {
     const editor = CoreEditor.provideEditorInstance();
-    const getSelectedDrawingEntities = (selectedNode: SubChainNode) => {
-      const drawingEntities = editor.drawingEntitiesManager.getDrawingEntities(
-        selectedNode.monomer,
-      );
+    const selectDrawingEntities = (selectedNode: SubChainNode) => {
+      const drawingEntities =
+        editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
+          selectedNode.monomer,
+        );
       const modelChanges =
         editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
           drawingEntities,
@@ -525,14 +526,33 @@ export class SequenceRenderer {
     const modelChanges = new Command();
     const arrowKey = event.code;
     if (arrowKey === 'ArrowRight') {
-      const modelChanges = getSelectedDrawingEntities(this.currentEdittingNode);
+      const modelChanges = selectDrawingEntities(this.currentEdittingNode);
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
-      const modelChanges = getSelectedDrawingEntities(
-        this.previousNodeInSameChain,
-      );
+      let modelChanges;
+      if (this.previousNodeInSameChain) {
+        modelChanges = selectDrawingEntities(this.previousNodeInSameChain);
+      } else if (SequenceRenderer.previousChain) {
+        const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
+          SequenceRenderer.previousChain,
+        );
+        modelChanges = selectDrawingEntities(previousChainLastEmptyNode);
+      }
       modelChanges.addOperation(this.moveCaretBack());
     }
     editor.renderersContainer.update(modelChanges);
+  }
+
+  public static unselectedEmptySequenceNodes() {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (node instanceof EmptySequenceNode) {
+        command.merge(
+          editor.drawingEntitiesManager.unselectDrawingEntity(node.monomer),
+        );
+      }
+    });
+    return command;
   }
 }

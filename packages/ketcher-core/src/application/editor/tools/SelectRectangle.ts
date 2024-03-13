@@ -145,7 +145,7 @@ class SelectRectangle implements BaseTool {
         return;
       }
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getDrawingEntities(
+        this.editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
           renderer.drawingEntity,
           false,
         );
@@ -158,7 +158,7 @@ class SelectRectangle implements BaseTool {
         return;
       }
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getDrawingEntities(
+        this.editor.drawingEntitiesManager.getAllEntitiesForSequenceSelection(
           renderer.drawingEntity,
         );
       modelChanges =

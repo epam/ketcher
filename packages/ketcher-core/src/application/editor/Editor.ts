@@ -242,6 +242,7 @@ export class CoreEditor {
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
+    this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
     const command = this.mode.initialize();
     history.update(

@@ -632,4 +632,8 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(SequenceRenderer.unselectEmptySequenceNodes());
     editor.renderersContainer.update(modelChanges);
   }
+
+  public destroy() {
+    this.turnOffEditMode();
+  }
 }

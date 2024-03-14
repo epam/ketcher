@@ -933,8 +933,11 @@ export class DrawingEntitiesManager {
       );
 
     return {
-      lastPosition: nextPositionAndVerticalDistance?.lastPosition,
-      maxVerticalDistance: nextPositionAndVerticalDistance?.maxVerticalDistance,
+      lastPosition:
+        nextPositionAndVerticalDistance?.lastPosition || lastPosition,
+      maxVerticalDistance:
+        nextPositionAndVerticalDistance?.maxVerticalDistance ||
+        maxVerticalDistance,
       nextMonomer: getNextMonomerInChain(monomer),
       command,
     };
@@ -1020,9 +1023,11 @@ export class DrawingEntitiesManager {
 
     return {
       command,
-      lastPosition: nextMonomerPositionAndVerticalDistance?.lastPosition,
+      lastPosition:
+        nextMonomerPositionAndVerticalDistance?.lastPosition || lastPosition,
       maxVerticalDistance:
-        nextMonomerPositionAndVerticalDistance?.maxVerticalDistance,
+        nextMonomerPositionAndVerticalDistance?.maxVerticalDistance ||
+        maxVerticalDistance,
       nextMonomer,
     };
   }

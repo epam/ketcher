@@ -14,6 +14,8 @@ import {
   openFileAndAddToCanvas,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
+  selectEraseTool,
+  selectPartOfMolecules,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -643,9 +645,8 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Peptide moved from middle of chain above and under main snake chain.
     The test is not functioning as expected. The monomer is separating from the bonds, 
-    and it's unclear why. Manual verification on the bench shows it working. 
-    Further investigation is needed.
-    But in Flex mode it is work as expected(Look at next test for flex sequence)
+    and it's unclear why. Manual verification on the bench shows it is functioning correctly. 
+    Further investigation is needed. However, in Flex mode, it works as expected.(Look at next test for flex sequence)
     */
     const x = 450;
     const y = 150;
@@ -722,4 +723,153 @@ test.describe('Snake Bond Tool', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Check deleting any peptide from middle of chain in snake mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide deleted from middle of chain in snake mode.
+    */
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectEraseTool(page);
+    await page.getByText('DHis1B').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check deleting any peptide from corner of chain in snake mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Peptide deleted from corner of chain in snake mode.
+    */
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectEraseTool(page);
+    await page.getByText('meR').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select sequence in snake mode and move to new position', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Sequence moved to the new position without any distortion.
+    */
+    const x = 450;
+    const y = 550;
+    const x2 = 100;
+    const y2 = 100;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await page.getByText('DHis1B').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select part of sequence in flex mode and move to new position', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Part of sequence moved to the new position without any distortion.
+    */
+    const x = 450;
+    const y = 650;
+    const x2 = 100;
+    const y2 = 100;
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectPartOfMolecules(page);
+    await page.getByText('DHis1B').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can select part of sequence in snake mode and move to new position', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Part of sequence moved to the new position without any distortion.
+    The test is not functioning as expected. The monomer is separating from the bonds, 
+    and it's unclear why. Manual verification on the bench shows it is functioning correctly. 
+    Further investigation is needed. However, in Flex mode, it works as expected.
+    */
+    const x = 450;
+    const y = 650;
+    const x2 = 100;
+    const y2 = 100;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectPartOfMolecules(page);
+    await page.getByText('DHis1B').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Snake mode works on the chain of the CHEM connected through R2-R1', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode works on the chain of the CHEM connected through R2-R1.
+    */
+    const x = 450;
+    const y = 650;
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/chems-connected-through-r2-r1.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Snake mode works on the chain of the CHEM connected through R2-R1 and igore others connections', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode works on the chain of the CHEM connected through R2-R1 
+    and igore others connections.
+    */
+    const x = 450;
+    const y = 650;
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/chems-connected-through-r2-r1-and-r1-r2.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
 });

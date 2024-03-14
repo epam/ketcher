@@ -1229,36 +1229,41 @@ export class DrawingEntitiesManager {
         maxVerticalDistance: _maxVerticalDistance,
       },
     ];
-    let lastRearrangeResult;
+    let lastRearrangeResult = {
+      lastPosition: _lastPosition,
+      maxVerticalDistance: _maxVerticalDistance,
+    };
     while (stack.length > 0) {
       const stackItem = stack.pop();
       assert(stackItem);
       const { lastPosition, maxVerticalDistance, monomer } = stackItem;
-      let rearrangeResult;
+      let rearrangeMethod;
+      let entityToRearrange;
 
       if (monomer instanceof Sugar || monomer instanceof Phosphate) {
         const nucleotideOrNucleoside =
           getNucleotideOrNucleoSideFromFirstMonomer(monomer);
         if (nucleotideOrNucleoside) {
-          rearrangeResult = this.reArrangeRnaChain(
-            nucleotideOrNucleoside,
-            lastPosition,
-            canvasWidth,
-            rearrangedMonomersSet,
-            monomersWithSideChain,
-            maxVerticalDistance,
-          );
+          rearrangeMethod = this.reArrangeRnaChain;
+          entityToRearrange = nucleotideOrNucleoside;
+        } else {
+          rearrangeMethod = this.reArrangeChain;
+          entityToRearrange = monomer;
         }
       } else {
-        rearrangeResult = this.reArrangeChain(
-          monomer,
-          lastPosition,
-          canvasWidth,
-          rearrangedMonomersSet,
-          monomersWithSideChain,
-          maxVerticalDistance,
-        );
+        rearrangeMethod = this.reArrangeChain;
+        entityToRearrange = monomer;
       }
+
+      const rearrangeResult = rearrangeMethod.call(
+        this,
+        entityToRearrange,
+        lastPosition,
+        canvasWidth,
+        rearrangedMonomersSet,
+        monomersWithSideChain,
+        maxVerticalDistance,
+      );
 
       command.merge(rearrangeResult.command);
 

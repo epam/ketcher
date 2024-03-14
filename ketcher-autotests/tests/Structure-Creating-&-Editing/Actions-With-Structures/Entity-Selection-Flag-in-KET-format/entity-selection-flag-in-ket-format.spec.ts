@@ -1,6 +1,4 @@
 /* eslint-disable no-inline-comments */
-/* eslint-disable prettier/prettier */
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   waitForPageInit,

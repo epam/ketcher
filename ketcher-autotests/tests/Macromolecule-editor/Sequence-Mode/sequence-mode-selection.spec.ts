@@ -8,7 +8,8 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  dragMouseTo,
+  moveMouseAway,
+  clickUndo,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -73,6 +74,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     const number = 5;
     await page.getByText('G').nth(number).hover();
     await page.mouse.up();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     const blankAreaAxis = { x: 200, y: 200 };
@@ -94,13 +96,21 @@ test.describe('Sequence mode selection for edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select letters with Shift + ArrowLeft', async ({ page }) => {
+  test('Select letters with Shift + ArrowLeft then delete and undo', async ({
+    page,
+  }) => {
     const arrowCount = 10;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
       await page.keyboard.press('ArrowLeft');
     }
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
+
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
+
+    await clickUndo(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');

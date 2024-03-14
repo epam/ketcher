@@ -185,7 +185,7 @@ const onOk = async ({
     return;
   } else if (isSeq) {
     inputFormat = inputFormats[sequenceSelection];
-    fileData = fileData.toUpperCase();
+    fileData = fileData.replace(/\s/g, '').toUpperCase();
   } else {
     inputFormat = inputFormats[formatSelection];
   }

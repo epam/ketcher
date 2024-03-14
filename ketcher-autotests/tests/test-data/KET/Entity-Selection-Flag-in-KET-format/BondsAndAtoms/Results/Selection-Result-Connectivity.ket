@@ -1,0 +1,262 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    -2.565093652548434,
+                    -8.38543500470842,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 0
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": -2.565093652548434,
+            "y": 7.385435004708419,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ru",
+                "location": [
+                    31.16138214284384,
+                    -8.229695902765922,
+                    0
+                ],
+                "explicitValence": 8,
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 9
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 31.16138214284384,
+            "y": 7.229695902765923,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    14.938707127066467,
+                    -8.164532214873422,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 5
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.938707127066467,
+            "y": 7.164532214873421,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Mg",
+                "location": [
+                    26.593325571794352,
+                    -8.139565000406026,
+                    0
+                ],
+                "explicitValence": 7,
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 8
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 26.593325571794352,
+            "y": 7.139565000406027,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Cr",
+                "location": [
+                    22.53018041186938,
+                    -8.17398958635603,
+                    0
+                ],
+                "explicitValence": 6,
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 7
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.53018041186938,
+            "y": 7.17398958635603,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Sb",
+                "location": [
+                    18.504733595744412,
+                    -8.148171146893528,
+                    0
+                ],
+                "explicitValence": 5,
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 6
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 18.504733595744412,
+            "y": 7.148171146893529,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    11.40632034614446,
+                    -8.163746560943526,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 4
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.40632034614446,
+            "y": 7.163746560943527,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    7.951384645106977,
+                    -8.180140414456027,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 3
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 7.951384645106977,
+            "y": 7.180140414456026,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    4.4685718738194975,
+                    -8.305140414456027,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 2
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 4.4685718738194975,
+            "y": 7.305140414456026,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    1.1394546122445153,
+                    -8.322352707431026,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "connectivity": 1
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 1.1394546122445153,
+            "y": 7.322352707431027,
+            "z": 0
+        }
+    }
+}

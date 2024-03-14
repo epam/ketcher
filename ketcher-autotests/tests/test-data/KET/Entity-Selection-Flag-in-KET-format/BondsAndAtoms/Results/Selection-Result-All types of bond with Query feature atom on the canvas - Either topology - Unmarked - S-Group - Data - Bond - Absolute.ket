@@ -1,0 +1,926 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    25.26757419545163,
+                    -7.842473420173886,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.26757419545163,
+            "y": 6.842473420173886,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.615824507277052,
+                    -7.864135039901016,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.615824540151491,
+                    -7.864135039901016,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value9",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.615824540151491,
+            "y": 6.864135039901016,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.315825424726379,
+                    -4.739134937168402,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.315825457600816,
+                    -4.739134937168402,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 4,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value7",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.315825457600816,
+            "y": 3.7391349371684024,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.565825597317158,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.565825630191597,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 5,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value8",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.565825630191597,
+            "y": 3.664134171763341,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.890825844949868,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.890825877824302,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 3,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value5",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 5.890825877824302,
+            "y": 3.664134171763341,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.440825264463507,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.440825297337943,
+                    -4.664134171763341,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value6",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.440825297337943,
+            "y": 3.664134171763341,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.015825849059176,
+                    -1.5891342614093222,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.015825881933612,
+                    -1.5891342614093222,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 10,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value1",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.015825881933612,
+            "y": 0.5891342614093222,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.565825268572803,
+                    -1.5891342614093222,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.565825301447239,
+                    -1.5891342614093222,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value2",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 11.565825301447239,
+            "y": 0.5891342614093222,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.465826955536498,
+                    -1.6391344537879124,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.46582698841093,
+                    -1.6391344537879124,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 7,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value3",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.46582698841093,
+            "y": 0.6391344537879124,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.665827889423042,
+                    -1.5641341652200271,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.66582792229748,
+                    -1.5641341652200271,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 6,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value4",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.66582792229748,
+            "y": 0.5641341652200271,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    13.415816206991215,
+                    -13.419850783455118,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.415827683957824,
+                    -13.419843154060331,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    12.915827634646169,
+                    -12.553815293558905,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    12.915823819948779,
+                    -14.28586338516697,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 6,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value13",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 14.415827683957824,
+            "y": 11.553815293558905,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.515814914520746,
+                    -13.469850022159356,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.51582639148735,
+                    -13.469842392764576,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.015826342175707,
+                    -12.60381453226315,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    20.015826342175707,
+                    -14.335866438568608,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value14",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.51582639148735,
+            "y": 11.60381453226315,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    6.36581292346853,
+                    -13.44485231015593,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.365824400435141,
+                    -13.444837051366363,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.865826258472181,
+                    -12.578813005562331,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    5.865826258472181,
+                    -14.310864911867789,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 4,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value12",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 7.365824400435141,
+            "y": 11.578813005562331,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    16.415830068685246,
+                    -7.894834228241444,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.415830065628883,
+                    -7.894834228241444,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 8,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    1,
+                    0
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value10",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.415830068685246,
+            "y": 6.894834228241444,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.353326894699222,
+                    -7.850000301737777,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.353326896264676,
+                    -7.850000301737777,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 3,
+                "selected": true
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1
+                ],
+                "context": "Bond",
+                "fieldName": "Field name",
+                "fieldData": "Field name Value11",
+                "bonds": [
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.353326896264676,
+            "y": 6.850000301737777,
+            "z": 0
+        }
+    }
+}

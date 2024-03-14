@@ -25,6 +25,11 @@ import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
 
+export type NodesSelection = {
+  node: SubChainNode;
+  nodeIndexOverall: number;
+}[][];
+
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
@@ -428,9 +433,15 @@ export class SequenceRenderer {
     return lastSubChain.nodes[lastSubChain.nodes.length - 1];
   }
 
-  public static get nextNodeFromCurrent() {
+  public static get nextNode() {
     return SequenceRenderer.getNodeByPointer(
       SequenceRenderer.nextCaretPosition,
+    );
+  }
+
+  public static get previousNode() {
+    return SequenceRenderer.getNodeByPointer(
+      SequenceRenderer.previousCaretPosition,
     );
   }
 
@@ -458,7 +469,7 @@ export class SequenceRenderer {
     return nodeOnNextPosition ? this.caretPosition + 1 : undefined;
   }
 
-  private static get previousCaretPosition() {
+  public static get previousCaretPosition() {
     const nodeOnPreviousPosition = SequenceRenderer.getNodeByPointer(
       this.caretPosition - 1,
     );
@@ -509,6 +520,53 @@ export class SequenceRenderer {
     return nodeToReturn;
   }
 
+  public static getNextNodeInSameChain(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let previousNodeChainIndex = -1;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node, chainIndex }) => {
+      if (
+        nodeToCompare === previousNode &&
+        chainIndex === previousNodeChainIndex
+      ) {
+        nodeToReturn = node;
+      }
+      previousNodeChainIndex = chainIndex;
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
+  public static getPreviousNode(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (nodeToCompare === node) {
+        nodeToReturn = previousNode;
+      }
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
+  public static getNextNode(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (previousNode === nodeToCompare) {
+        nodeToReturn = node;
+      }
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
   public static shiftArrowSelectionInEditMode(event) {
     const editor = CoreEditor.provideEditorInstance();
     const selectDrawingEntities = (selectedNode: SubChainNode) => {
@@ -543,7 +601,7 @@ export class SequenceRenderer {
     editor.renderersContainer.update(modelChanges);
   }
 
-  public static unselectedEmptySequenceNodes() {
+  public static unselectEmptySequenceNodes() {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
     SequenceRenderer.forEachNode(({ node }) => {
@@ -554,5 +612,23 @@ export class SequenceRenderer {
       }
     });
     return command;
+  }
+
+  public static get selections() {
+    const selections: NodesSelection = [];
+    let lastSelectionRangeIndex = -1;
+    let previousNode;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node.monomer.selected) {
+        if (!previousNode?.monomer.selected) {
+          lastSelectionRangeIndex = selections.push([]) - 1;
+        }
+        selections[lastSelectionRangeIndex].push({ node, nodeIndexOverall });
+      }
+      previousNode = node;
+    });
+
+    return selections;
   }
 }

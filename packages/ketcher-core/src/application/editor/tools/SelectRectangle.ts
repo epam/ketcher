@@ -61,7 +61,8 @@ class SelectRectangle implements BaseTool {
 
     const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection) return;
+      const editor = CoreEditor.provideEditorInstance();
+      if (!selection || editor.isSequenceEditMode) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),

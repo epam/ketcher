@@ -525,6 +525,7 @@ export class SequenceMode extends BaseMode {
       'start-new-sequence': {
         shortcut: ['Enter'],
         handler: () => {
+          this.unselectAllEntities();
           this.startNewSequence();
         },
       },
@@ -548,6 +549,23 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
+          const selections = SequenceRenderer.selections;
+
+          if (selections.length > 1) {
+            return;
+          }
+
+          if (selections.length === 1) {
+            const deletionModelChanges = this.deleteSelectedDrawingEntities();
+
+            deletionModelChanges.merge(this.handleNodesDeletion(selections));
+            this.finishNodesDeletion(
+              deletionModelChanges,
+              SequenceRenderer.caretPosition,
+              selections[0][0].nodeIndexOverall,
+            );
+          }
+
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);

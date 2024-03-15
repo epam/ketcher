@@ -141,7 +141,7 @@ export class Ketcher {
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
-        'The structure cannot be saved as *.MOL due to reaction arrrows.',
+        'The structure cannot be saved as *.MOL due to reaction arrows.',
       );
     }
 
@@ -186,6 +186,15 @@ export class Ketcher {
   getKet(): Promise<string> {
     return getStructure(
       SupportedFormat.ket,
+      this.#formatterFactory,
+      this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
+  getFasta(): Promise<string> {
+    return getStructure(
+      SupportedFormat.fasta,
       this.#formatterFactory,
       this.#editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,

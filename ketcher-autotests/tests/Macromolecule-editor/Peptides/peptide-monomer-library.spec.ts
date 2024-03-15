@@ -4,7 +4,7 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectEraseTool,
   selectRectangleSelectionTool,
   selectSingleBondTool,
@@ -239,7 +239,10 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures https://github.com/epam/ketcher/issues/3703
     Description: Selected 'Nal' monomer appear above the others when you click on it.
     */
-    await openFileAndAddToCanvas('KET/stuck-peptides-not-connected.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/stuck-peptides-not-connected.ket',
+      page,
+    );
     await page.getByText('Nal').locator('..').first().click();
     await selectSingleBondTool(page);
     await takeEditorScreenshot(page);
@@ -255,7 +258,7 @@ test.describe('Peptide library testing', () => {
     */
     const x = 200;
     const y = 200;
-    await openFileAndAddToCanvas('KET/stuck-peptides-connected.ket', page);
+    await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
     await page.getByText('Nal').locator('..').first().click();
     await selectSingleBondTool(page);
     await takeEditorScreenshot(page);

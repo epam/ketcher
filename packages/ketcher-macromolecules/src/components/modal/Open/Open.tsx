@@ -79,14 +79,16 @@ const FooterButton = styled(ActionButton)({
 const KET = 'ket';
 const SEQ = 'seq';
 const RNA = 'rna';
+const FASTA = 'fasta';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence' },
+  { id: 'fasta', label: 'FASTA' },
 ];
 
-const sequenceOptions: Array<Option> = [
+const additionalOptions: Array<Option> = [
   { id: 'rna', label: 'RNA' },
   { id: 'dna', label: 'DNA' },
   { id: 'peptide', label: 'Peptide' },
@@ -95,9 +97,16 @@ const sequenceOptions: Array<Option> = [
 const inputFormats = {
   ket: 'chemical/x-indigo-ket',
   mol: 'chemical/x-mdl-molfile',
-  rna: 'chemical/x-rna-sequence',
-  dna: 'chemical/x-dna-sequence',
-  peptide: 'chemical/x-peptide-sequence',
+  seq: {
+    rna: 'chemical/x-rna-sequence',
+    dna: 'chemical/x-dna-sequence',
+    peptide: 'chemical/x-peptide-sequence',
+  },
+  fasta: {
+    rna: 'chemical/x-rna-fasta',
+    dna: 'chemical/x-dna-fasta',
+    peptide: 'chemical/x-peptide-fasta',
+  },
 };
 
 export const MODAL_STATES = {
@@ -146,20 +155,21 @@ const addToCanvas = ({
 const onOk = async ({
   struct,
   formatSelection,
-  sequenceSelection,
+  additionalSelection,
   onCloseCallback,
   setIsLoading,
   dispatch,
 }: {
   struct: string;
   formatSelection: string;
-  sequenceSelection: string;
+  additionalSelection: string;
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
 }) => {
   const isKet = formatSelection === KET;
   const isSeq = formatSelection === SEQ;
+  const isFasta = formatSelection === FASTA;
   const ketSerializer = new KetSerializer();
   const editor = CoreEditor.provideEditorInstance();
   let inputFormat;
@@ -170,7 +180,7 @@ const onOk = async ({
     dispatch(
       openErrorModal({
         errorMessage,
-        errorTitle: isSeq ? 'Unsupported symbols' : '',
+        errorTitle: isSeq || isFasta ? 'Unsupported symbols' : '',
       }),
     );
   };
@@ -183,8 +193,8 @@ const onOk = async ({
       showParsingError('Error during file parsing.');
     }
     return;
-  } else if (isSeq) {
-    inputFormat = inputFormats[sequenceSelection];
+  } else if (isSeq || isFasta) {
+    inputFormat = inputFormats[formatSelection][additionalSelection];
     fileData = fileData.toUpperCase();
   } else {
     inputFormat = inputFormats[formatSelection];
@@ -225,7 +235,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     MODAL_STATES.openOptions,
   );
   const [formatSelection, setFormatSelection] = useState(KET);
-  const [sequenceSelection, setSequenceSelection] = useState(RNA);
+  const [additionalSelection, setAdditionalSelection] = useState(RNA);
 
   useEffect(() => {
     const splittedFilenameByDot = fileName?.split('.');
@@ -249,7 +259,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     setCurrentState(MODAL_STATES.openOptions);
     setStructStr('');
     setFormatSelection(KET);
-    setSequenceSelection(RNA);
+    setAdditionalSelection(RNA);
     onClose();
   }, [onClose]);
 
@@ -268,7 +278,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     onOk({
       struct: structStr,
       formatSelection,
-      sequenceSelection,
+      additionalSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
@@ -286,7 +296,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     onOk({
       struct: structStr,
       formatSelection,
-      sequenceSelection,
+      additionalSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
@@ -303,13 +313,14 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           customStylesForExpanded={stylesForExpanded}
           key={formatSelection}
         />
-        {formatSelection === SEQ ? (
+        {formatSelection === SEQ || formatSelection === FASTA ? (
           <FooterSequenceSelector
-            options={sequenceOptions}
-            currentSelection={sequenceSelection}
-            selectionHandler={setSequenceSelection}
+            options={additionalOptions}
+            currentSelection={additionalSelection}
+            selectionHandler={setAdditionalSelection}
             customStylesForExpanded={stylesForExpanded}
-            key={sequenceSelection}
+            key={additionalSelection}
+            testId="dropdown-select-type"
           />
         ) : null}
       </FooterSelectorContainer>

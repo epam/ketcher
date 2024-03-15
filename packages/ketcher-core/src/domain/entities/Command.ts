@@ -13,6 +13,10 @@ export class Command {
     this.operations = [...this.operations, ...command.operations];
   }
 
+  public mergeToFront(command: Command) {
+    this.operations = [...command.operations, ...this.operations];
+  }
+
   public setUndoOperationReverse() {
     // this method marks command that operations should be invoked in opposite sequence during invert()
     this.undoOperationReverse = true;

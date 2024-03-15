@@ -39,10 +39,18 @@ export class EditorHistory {
     return this;
   }
 
-  update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+  update(
+    command: Command,
+    megreWithLatestHistoryCommand?: boolean,
+    mergeToFront?: boolean,
+  ) {
     const latestCommand = this.historyStack[this.historyStack.length - 1];
     if (megreWithLatestHistoryCommand && latestCommand) {
-      latestCommand.merge(command);
+      if (mergeToFront) {
+        latestCommand.mergeToFront(command);
+      } else {
+        latestCommand.merge(command);
+      }
     } else {
       this.historyStack.splice(this.historyPointer, HISTORY_SIZE + 1, command);
       if (this.historyStack.length > HISTORY_SIZE) {

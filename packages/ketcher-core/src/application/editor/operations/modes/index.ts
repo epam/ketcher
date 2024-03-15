@@ -18,7 +18,7 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { CoreEditor } from 'application/editor/internal';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
 import {
   SequencePointer,
@@ -27,12 +27,19 @@ import {
 import assert from 'assert';
 
 export class ReinitializeSequenceModeCommand implements Operation {
-  constructor() {}
+  private mergeWithLatestHistory = false;
+  constructor(mergeWithLatestHistory = false) {
+    this.mergeWithLatestHistory = mergeWithLatestHistory;
+  }
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
     assert(editor.mode instanceof SequenceMode);
-    editor.mode.initialize(false);
+    const command = editor.mode.initialize(false, true);
+    if (this.mergeWithLatestHistory) {
+      const history = new EditorHistory(editor);
+      history.update(command, this.mergeWithLatestHistory, true);
+    }
   }
 
   public invert(_renderersManager: RenderersManager) {

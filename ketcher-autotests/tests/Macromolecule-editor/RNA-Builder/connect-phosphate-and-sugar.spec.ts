@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import {
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectSingleBondTool,
   takePageScreenshot,
 } from '@utils';
@@ -15,7 +15,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
   });
 
   test('Open file and connect phosphate and sugar', async ({ page }) => {
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/connection-of-phosphate-and-sugar.ket',
       page,
     );

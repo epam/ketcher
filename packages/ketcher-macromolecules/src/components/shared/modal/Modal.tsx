@@ -8,7 +8,7 @@ import {
 import React, { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Icon } from 'ketcher-react';
+import { Icon, KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
 import { EmptyFunction } from 'helpers/emptyFunction';
 import styles from './Modal.module.less';
@@ -147,6 +147,9 @@ export const Modal = ({
       PaperProps={paperProps}
       open={isOpen}
       onClose={onClose}
+      container={document.querySelector(
+        KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+      )}
       disableEscapeKeyDown={!showCloseButton}
       className={className}
       sx={{ padding: '24px' }}

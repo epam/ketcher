@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   pressButton,
   selectSingleBondTool,
   takeEditorScreenshot,
@@ -46,7 +46,7 @@ test.describe('Actions with CHEM', () => {
     Test case: Actions with structures
     Description: CHEM name fits in its icon when placed on canvas.
     */
-    await openFileAndAddToCanvas('KET/all-chems.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-chems.ket', page);
     await selectSingleBondTool(page);
     await takeEditorScreenshot(page);
   });
@@ -59,14 +59,7 @@ test.describe('Actions with CHEM', () => {
     https://github.com/epam/ketcher/issues/3582
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
-    const xOffsetFromCenter = -200;
-    const yOffsetFromCenter = 0;
-    await openFileAndAddToCanvas(
-      'KET/chems-not-connected.ket',
-      page,
-      xOffsetFromCenter,
-      yOffsetFromCenter,
-    );
+    await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectSingleBondTool(page);
     await page.getByText('Test-6-Ch').locator('..').hover();
     await page.mouse.down();

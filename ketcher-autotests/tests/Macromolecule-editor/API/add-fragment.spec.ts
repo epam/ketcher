@@ -7,7 +7,7 @@ import {
   waitForSpinnerFinishedWork,
   addFragment,
   selectRectangleArea,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   dragMouseTo,
 } from '@utils';
 
@@ -33,7 +33,7 @@ test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await openFileAndAddToCanvas(fileName, page);
+    await openFileAndAddToCanvasMacro(fileName, page);
     await shiftStructure(page);
   });
 

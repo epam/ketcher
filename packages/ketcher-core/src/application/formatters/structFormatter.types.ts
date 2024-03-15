@@ -49,6 +49,7 @@ export enum SupportedFormat {
   binaryCdx = 'binaryCdx',
   sdf = 'sdf',
   sdfV3000 = 'sdfV3000',
+  fasta = 'fasta',
   unknown = 'unknown',
 }
 

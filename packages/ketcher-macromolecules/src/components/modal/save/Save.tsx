@@ -47,7 +47,13 @@ import { openErrorModal } from 'state/modal';
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
+  { id: 'fasta', label: 'FASTA' },
 ];
+
+const formatDetector = {
+  mol: ChemicalMimeType.Mol,
+  fasta: ChemicalMimeType.FASTA,
+};
 
 const StyledModal = styled(Modal)({
   '& div.MuiPaper-root': {
@@ -89,14 +95,27 @@ export const Save = ({
 
     try {
       setIsLoading(true);
+      if (fileFormat === 'fasta') {
+        const isValid =
+          editor.drawingEntitiesManager.validateIfApplicableForFasta();
+        if (!isValid) {
+          throw new Error(
+            'Error during sequence type recognition(RNA, DNA or Peptide)',
+          );
+        }
+      }
       const result = await indigo.convert({
         struct: serializedKet,
-        output_format: ChemicalMimeType.Mol,
+        output_format: formatDetector[fileFormat],
       });
       setStruct(result.struct);
     } catch (error) {
-      const stringError =
-        typeof error === 'string' ? error : JSON.stringify(error);
+      let stringError;
+      if (error instanceof Error) {
+        stringError = error.message;
+      } else {
+        stringError = typeof error === 'string' ? error : JSON.stringify(error);
+      }
       const errorMessage = 'Convert error! ' + stringError;
       dispatch(openErrorModal(errorMessage));
       KetcherLogger.error(errorMessage);

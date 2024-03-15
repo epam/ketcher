@@ -36,7 +36,10 @@ import {
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  MONOMER_CONST,
+  monomerFactory,
+} from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
@@ -921,16 +924,26 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
     rearrangedMonomersSet.add(monomer.id);
 
-    return this.reArrangeNextMonomer(
-      monomer,
-      monomerWidth,
-      lastPosition,
-      canvasWidth,
-      rearrangedMonomersSet,
-      monomersWithSideChain,
-      maxVerticalDistance,
+    const nextPositionAndVerticalDistance =
+      this.getNextMonomerPositionForSnakeLayout(
+        monomer,
+        monomerWidth,
+        lastPosition,
+        canvasWidth,
+        rearrangedMonomersSet,
+        monomersWithSideChain,
+        maxVerticalDistance,
+      );
+
+    return {
+      lastPosition:
+        nextPositionAndVerticalDistance?.lastPosition || lastPosition,
+      maxVerticalDistance:
+        nextPositionAndVerticalDistance?.maxVerticalDistance ||
+        maxVerticalDistance,
+      nextMonomer: getNextMonomerInChain(monomer),
       command,
-    );
+    };
   }
 
   private reArrangeRnaChain(
@@ -988,31 +1001,41 @@ export class DrawingEntitiesManager {
       );
       rearrangedMonomersSet.add(nucleotide.phosphate?.id);
     }
-    const nextMonomer =
+    const lastMonomerInNucleotide =
       nucleotide.baseMonomer === nucleotide.sugar && nucleotide.phosphate
         ? nucleotide.phosphate
         : nucleotide.sugar;
-    const nextMonomerResult = this.reArrangeNextMonomer(
-      nextMonomer,
-      width,
-      lastPosition,
-      canvasWidth,
-      rearrangedMonomersSet,
-      monomersWithSideChain,
-      maxVerticalDistance,
-      command,
-    );
-    ({ lastPosition, maxVerticalDistance } = nextMonomerResult);
+
+    const nextMonomerPositionAndVerticalDistance =
+      this.getNextMonomerPositionForSnakeLayout(
+        lastMonomerInNucleotide,
+        width,
+        lastPosition,
+        canvasWidth,
+        rearrangedMonomersSet,
+        monomersWithSideChain,
+        maxVerticalDistance,
+      );
 
     this.setRnaBaseSideChainMonomers(
       nucleotide.rnaBase,
       rearrangedMonomersSet,
       monomersWithSideChain,
     );
-    return { command, lastPosition, maxVerticalDistance };
+    const nextMonomer = getNextMonomerInChain(lastMonomerInNucleotide);
+
+    return {
+      command,
+      lastPosition:
+        nextMonomerPositionAndVerticalDistance?.lastPosition || lastPosition,
+      maxVerticalDistance:
+        nextMonomerPositionAndVerticalDistance?.maxVerticalDistance ||
+        maxVerticalDistance,
+      nextMonomer,
+    };
   }
 
-  private reArrangeNextMonomer(
+  private getNextMonomerPositionForSnakeLayout(
     monomer: BaseMonomer,
     width: number,
     lastPosition: Vec2,
@@ -1020,8 +1043,8 @@ export class DrawingEntitiesManager {
     rearrangedMonomersSet: Set<number>,
     monomersWithSideChain: Array<BaseMonomer>,
     maxVerticalDistance: number,
-    command: Command,
   ) {
+    let nextPositionAndDistance;
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       const nextMonomer = polymerBond?.getAnotherMonomer(monomer);
@@ -1034,28 +1057,17 @@ export class DrawingEntitiesManager {
         (attachmentPointName === 'R1' &&
           nextMonomer.getAttachmentPointByBond(polymerBond) === 'R2')
       ) {
-        ({ lastPosition, maxVerticalDistance } =
-          this.getNextPositionAndDistance(
-            lastPosition,
-            width,
-            maxVerticalDistance,
-            canvasWidth,
-          ));
-        const rearrangeResult = this.reArrangeChainInRecursive(
-          nextMonomer,
+        nextPositionAndDistance = this.getNextPositionAndDistance(
           lastPosition,
-          canvasWidth,
-          rearrangedMonomersSet,
-          monomersWithSideChain,
+          width,
           maxVerticalDistance,
+          canvasWidth,
         );
-        ({ lastPosition, maxVerticalDistance } = rearrangeResult);
-        command.merge(rearrangeResult.command);
       } else {
         monomersWithSideChain.push(nextMonomer);
       }
     }
-    return { command, lastPosition, maxVerticalDistance };
+    return nextPositionAndDistance;
   }
 
   private setRnaBaseSideChainMonomers(
@@ -1210,47 +1222,76 @@ export class DrawingEntitiesManager {
   }
 
   public reArrangeChainInRecursive(
-    monomer: BaseMonomer,
-    lastPosition: Vec2,
+    _monomer: BaseMonomer,
+    _lastPosition: Vec2,
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
     monomersWithSideChain: Array<BaseMonomer>,
-    maxVerticalDistance: number,
+    _maxVerticalDistance: number,
   ) {
     const command = new Command();
-    if (monomer instanceof Sugar || monomer instanceof Phosphate) {
-      const nucleotideOrNucleoside =
-        getNucleotideOrNucleoSideFromFirstMonomer(monomer);
-      if (nucleotideOrNucleoside) {
-        const rearrangeRnaResult = this.reArrangeRnaChain(
-          nucleotideOrNucleoside,
-          lastPosition,
-          canvasWidth,
-          rearrangedMonomersSet,
-          monomersWithSideChain,
-          maxVerticalDistance,
-        );
-        command.merge(rearrangeRnaResult.command);
-        return {
-          command,
-          lastPosition: rearrangeRnaResult.lastPosition,
-          maxVerticalDistance: rearrangeRnaResult.maxVerticalDistance,
-        };
+    const stack = [
+      {
+        monomer: _monomer,
+        lastPosition: _lastPosition,
+        maxVerticalDistance: _maxVerticalDistance,
+      },
+    ];
+    let lastRearrangeResult = {
+      lastPosition: _lastPosition,
+      maxVerticalDistance: _maxVerticalDistance,
+    };
+    while (stack.length > 0) {
+      const stackItem = stack.pop();
+      assert(stackItem);
+      const { lastPosition, maxVerticalDistance, monomer } = stackItem;
+      let rearrangeMethod;
+      let entityToRearrange;
+
+      if (monomer instanceof Sugar || monomer instanceof Phosphate) {
+        const nucleotideOrNucleoside =
+          getNucleotideOrNucleoSideFromFirstMonomer(monomer);
+        if (nucleotideOrNucleoside) {
+          rearrangeMethod = this.reArrangeRnaChain;
+          entityToRearrange = nucleotideOrNucleoside;
+        } else {
+          rearrangeMethod = this.reArrangeChain;
+          entityToRearrange = monomer;
+        }
+      } else {
+        rearrangeMethod = this.reArrangeChain;
+        entityToRearrange = monomer;
+      }
+
+      const rearrangeResult = rearrangeMethod.call(
+        this,
+        entityToRearrange,
+        lastPosition,
+        canvasWidth,
+        rearrangedMonomersSet,
+        monomersWithSideChain,
+        maxVerticalDistance,
+      );
+
+      command.merge(rearrangeResult.command);
+
+      if (rearrangeResult?.lastPosition) {
+        lastRearrangeResult = rearrangeResult;
+      }
+
+      if (rearrangeResult?.nextMonomer) {
+        stack.push({
+          monomer: rearrangeResult.nextMonomer,
+          lastPosition: rearrangeResult.lastPosition,
+          maxVerticalDistance: rearrangeResult.maxVerticalDistance,
+        });
       }
     }
-    const rearrangeResult = this.reArrangeChain(
-      monomer,
-      lastPosition,
-      canvasWidth,
-      rearrangedMonomersSet,
-      monomersWithSideChain,
-      maxVerticalDistance,
-    );
-    command.merge(rearrangeResult.command);
+
     return {
       command,
-      lastPosition: rearrangeResult.lastPosition,
-      maxVerticalDistance: rearrangeResult.maxVerticalDistance,
+      lastPosition: lastRearrangeResult.lastPosition,
+      maxVerticalDistance: lastRearrangeResult.maxVerticalDistance,
     };
   }
 
@@ -1575,6 +1616,21 @@ export class DrawingEntitiesManager {
       });
       return drawingEntities;
     }
+  }
+
+  public validateIfApplicableForFasta() {
+    const monomerTypes = new Set();
+    let isValid = true;
+
+    this.monomers.forEach((monomer) => {
+      const monomerType = monomer.monomerItem.props.MonomerType;
+      monomerTypes.add(monomerType);
+      if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
   }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {

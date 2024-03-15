@@ -31,6 +31,7 @@ import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
 import {
   MonomerLibraryContainer,
   MonomerLibraryHeader,
+  MonomerLibraryInput,
   MonomerLibrarySearch,
   MonomerLibraryTitle,
 } from './styles';
@@ -86,11 +87,11 @@ const MonomerLibrary = React.memo(() => {
             <span>
               <Icon name="search" />
             </span>
-            <input
+            <MonomerLibraryInput
+              type="search"
               data-testid="monomer-library-input"
-              onInput={filterResults}
+              onChange={filterResults}
               placeholder="Search by name..."
-              type="text"
             />
           </div>
         </MonomerLibrarySearch>

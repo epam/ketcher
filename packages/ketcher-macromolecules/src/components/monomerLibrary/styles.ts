@@ -14,8 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
+import { Input } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
+
+export const MonomerLibraryInput = styled(Input)({
+  outline: 0,
+  ':hover': {
+    outline: 'none',
+  },
+});
 
 export const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: MONOMER_LIBRARY_WIDTH,

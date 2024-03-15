@@ -128,6 +128,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.SDF;
       break;
     }
+    case ChemicalMimeType.FASTA: {
+      format = SupportedFormat.FASTA;
+      break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');

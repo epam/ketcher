@@ -55,7 +55,7 @@ export class SequenceMode extends BaseMode {
     this._isEditMode = isEditMode;
   }
 
-  public initialize(needScroll = true, needRearrangeChainsCommandOnly = false) {
+  public initialize(needScroll = true) {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
 
@@ -78,9 +78,7 @@ export class SequenceMode extends BaseMode {
     if (firstMonomerPosition && needScroll) {
       zoom.scrollTo(firstMonomerPosition);
     }
-    if (needRearrangeChainsCommandOnly) {
-      return modelChanges;
-    }
+
     modelChanges.merge(command);
 
     return modelChanges;
@@ -386,10 +384,10 @@ export class SequenceMode extends BaseMode {
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
     );
-    modelChanges.addOperation(new ReinitializeSequenceModeCommand(true));
+    modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+    editor.renderersContainer.update(modelChanges);
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
-    editor.renderersContainer.update(modelChanges);
     this.selectionStartCaretPosition = -1;
   }
 

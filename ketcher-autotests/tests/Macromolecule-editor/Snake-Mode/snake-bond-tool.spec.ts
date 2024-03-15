@@ -11,11 +11,12 @@ import {
   addBondedMonomersToCanvas,
   selectFlexLayoutModeTool,
   waitForRender,
-  openFileAndAddToCanvas,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
   selectEraseTool,
   selectPartOfMolecules,
+  openFileAndAddToCanvasMacro,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -579,7 +580,7 @@ test.describe('Snake Bond Tool', () => {
     const x = 550;
     const y = 350;
     await selectSnakeLayoutModeTool(page);
-    await openFileAndAddToCanvas(`KET/two-peptides-connected.ket`, page);
+    await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
     await takeEditorScreenshot(page);
     await page.getByText('meE').locator('..').first().hover();
     await dragMouseTo(x, y, page);
@@ -870,6 +871,115 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Snake mode is working for side connection', async ({ page }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Snake mode is not applied on structure and it starts from 5FAM monomer because it 
+    has no R1 attachment point and there are no similar options for the chain beginning.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4026 need to be fixed.
+    Then update expected screenshot.
+    */
+    await openFileAndAddToCanvasMacro(
+      `KET/sequence-with-side-connection.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for large chains', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 2000 or more rna items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(`KET/sequence-rna-2000.ket`, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(`KET/sequence-rna-4000.ket`, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(`KET/sequence-peptides-4000.ket`, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Open chain with 8000 peptides items. Turn on snake mode. Snake mode is applied on structure 
+    and maximum call stack size exceeded error not appears during snake layout.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await openFileAndAddToCanvasMacro(`KET/sequence-peptides-8000.ket`, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

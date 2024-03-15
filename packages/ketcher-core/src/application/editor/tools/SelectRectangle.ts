@@ -26,6 +26,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { SequenceMode } from '../modes';
 import { isMacOs } from 'react-device-detect';
+import { EraserTool } from './Erase';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -60,7 +61,8 @@ class SelectRectangle implements BaseTool {
 
     const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
-      if (!selection) return;
+      const editor = CoreEditor.provideEditorInstance();
+      if (!selection || editor.isSequenceEditMode) return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -144,7 +146,7 @@ class SelectRectangle implements BaseTool {
         return;
       }
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getDrawingEntities(
+        this.editor.drawingEntitiesManager.getAllSelectedEntities(
           renderer.drawingEntity,
           false,
         );
@@ -157,7 +159,7 @@ class SelectRectangle implements BaseTool {
         return;
       }
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getDrawingEntities(
+        this.editor.drawingEntitiesManager.getAllSelectedEntities(
           renderer.drawingEntity,
         );
       modelChanges =
@@ -274,10 +276,12 @@ class SelectRectangle implements BaseTool {
 
     this.canvasResizeObserver?.disconnect();
 
-    const modelChanges =
-      this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+    if (!(this.editor.selectedTool instanceof EraserTool)) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
 
-    this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.update(modelChanges);
+    }
   }
 }
 

@@ -21,14 +21,21 @@ import { RestoreSequenceCaretPositionCommand } from 'application/editor/operatio
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseMonomerRenderer } from 'application/render';
+import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
+
+export type NodesSelection = {
+  node: SubChainNode;
+  nodeIndexOverall: number;
+}[][];
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static lastChainStartPosition: Vec2;
+
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
@@ -287,6 +294,22 @@ export class SequenceRenderer {
     this.setCaretPosition(newCaretPosition);
   }
 
+  public static getMonomersByCaretPositionRange(
+    startCaretPosition: SequencePointer,
+    endCaretPosition,
+  ) {
+    const monomers: BaseMonomer[] = [];
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (
+        startCaretPosition <= nodeIndexOverall &&
+        nodeIndexOverall < (endCaretPosition || this.caretPosition)
+      ) {
+        monomers.push(node.monomer);
+      }
+    });
+    return monomers;
+  }
+
   public static moveCaretForward() {
     return new RestoreSequenceCaretPositionCommand(
       this.caretPosition,
@@ -351,7 +374,7 @@ export class SequenceRenderer {
     return lastNodeIndex === -1 ? undefined : lastNodeIndex;
   }
 
-  private static getNodeByPointer(sequencePointer?: SequencePointer) {
+  public static getNodeByPointer(sequencePointer?: SequencePointer) {
     if (sequencePointer === undefined) return;
     let nodeToReturn;
 
@@ -410,9 +433,15 @@ export class SequenceRenderer {
     return lastSubChain.nodes[lastSubChain.nodes.length - 1];
   }
 
-  public static get nextNodeFromCurrent() {
+  public static get nextNode() {
     return SequenceRenderer.getNodeByPointer(
       SequenceRenderer.nextCaretPosition,
+    );
+  }
+
+  public static get previousNode() {
+    return SequenceRenderer.getNodeByPointer(
+      SequenceRenderer.previousCaretPosition,
     );
   }
 
@@ -440,7 +469,7 @@ export class SequenceRenderer {
     return nodeOnNextPosition ? this.caretPosition + 1 : undefined;
   }
 
-  private static get previousCaretPosition() {
+  public static get previousCaretPosition() {
     const nodeOnPreviousPosition = SequenceRenderer.getNodeByPointer(
       this.caretPosition - 1,
     );
@@ -489,5 +518,117 @@ export class SequenceRenderer {
     });
 
     return nodeToReturn;
+  }
+
+  public static getNextNodeInSameChain(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let previousNodeChainIndex = -1;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node, chainIndex }) => {
+      if (
+        nodeToCompare === previousNode &&
+        chainIndex === previousNodeChainIndex
+      ) {
+        nodeToReturn = node;
+      }
+      previousNodeChainIndex = chainIndex;
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
+  public static getPreviousNode(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (nodeToCompare === node) {
+        nodeToReturn = previousNode;
+      }
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
+  public static getNextNode(nodeToCompare: SubChainNode) {
+    let previousNode;
+    let nodeToReturn;
+
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (previousNode === nodeToCompare) {
+        nodeToReturn = node;
+      }
+      previousNode = node;
+    });
+
+    return nodeToReturn;
+  }
+
+  public static shiftArrowSelectionInEditMode(event) {
+    const editor = CoreEditor.provideEditorInstance();
+    const selectDrawingEntities = (selectedNode: SubChainNode) => {
+      const drawingEntities =
+        editor.drawingEntitiesManager.getAllSelectedEntities(
+          selectedNode.monomer,
+        );
+      const modelChanges =
+        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+          drawingEntities,
+        );
+      return modelChanges;
+    };
+
+    const modelChanges = new Command();
+    const arrowKey = event.code;
+    if (arrowKey === 'ArrowRight') {
+      const modelChanges = selectDrawingEntities(this.currentEdittingNode);
+      modelChanges.addOperation(this.moveCaretForward());
+    } else if (arrowKey === 'ArrowLeft') {
+      let modelChanges;
+      if (this.previousNodeInSameChain) {
+        modelChanges = selectDrawingEntities(this.previousNodeInSameChain);
+      } else if (SequenceRenderer.previousChain) {
+        const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
+          SequenceRenderer.previousChain,
+        );
+        modelChanges = selectDrawingEntities(previousChainLastEmptyNode);
+      }
+      modelChanges.addOperation(this.moveCaretBack());
+    }
+    editor.renderersContainer.update(modelChanges);
+  }
+
+  public static unselectEmptySequenceNodes() {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (node instanceof EmptySequenceNode) {
+        command.merge(
+          editor.drawingEntitiesManager.unselectDrawingEntity(node.monomer),
+        );
+      }
+    });
+    return command;
+  }
+
+  public static get selections() {
+    const selections: NodesSelection = [];
+    let lastSelectionRangeIndex = -1;
+    let previousNode;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node.monomer.selected) {
+        if (!previousNode?.monomer.selected) {
+          lastSelectionRangeIndex = selections.push([]) - 1;
+        }
+        selections[lastSelectionRangeIndex].push({ node, nodeIndexOverall });
+      }
+      previousNode = node;
+    });
+
+    return selections;
   }
 }

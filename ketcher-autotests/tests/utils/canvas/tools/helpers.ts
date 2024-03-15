@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { selectOption } from '@utils';
+import { selectOption, SequenceType } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
@@ -67,6 +67,24 @@ export async function selectSequenceLayoutModeTool(page: Page) {
 
   await sequenceModeButton.waitFor({ state: 'visible' });
   await sequenceModeButton.click();
+}
+
+export async function startNewSequence(page: Page) {
+  const newSequenceCellCoordinates = { x: 50, y: 50 };
+  await page.mouse.click(200, 200, { button: 'right' });
+  await page.getByTestId('start_new_sequence').click();
+  await page.mouse.click(
+    newSequenceCellCoordinates.x,
+    newSequenceCellCoordinates.y,
+  );
+}
+
+export async function switchSequenceEnteringType(
+  page: Page,
+  sequenceEnteringType: SequenceType,
+) {
+  await page.getByTestId('sequence-type-dropdown').click();
+  await page.getByRole('option').getByText(sequenceEnteringType).click();
 }
 
 export async function selectFlexLayoutModeTool(page: Page) {
@@ -150,4 +168,8 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
     await selectOption(page, format);
   }
   await page.getByRole('button', { name: 'Save', exact: true }).click();
+}
+
+export async function typeAllEnglishAlphabet(page: Page) {
+  await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }

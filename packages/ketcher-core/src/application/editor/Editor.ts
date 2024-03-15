@@ -61,7 +61,11 @@ export class CoreEditor {
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
-  private tool?: Tool | BaseTool;
+  private tool?: Tool | BaseTool | undefined;
+  public get selectedTool(): Tool | BaseTool | undefined {
+    return this.tool;
+  }
+
   public mode: BaseMode = new FlexMode();
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
@@ -238,6 +242,7 @@ export class CoreEditor {
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
+    this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
     const command = this.mode.initialize();
     history.update(

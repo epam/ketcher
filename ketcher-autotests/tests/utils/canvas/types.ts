@@ -80,3 +80,9 @@ export enum ELEMENT_TITLE {
   HYDROGEN = 'Hydrogen (H)',
   BENZENE = 'Benzene (T)',
 }
+
+export enum SequenceType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  PEPTIDE = 'PEPTIDE',
+}

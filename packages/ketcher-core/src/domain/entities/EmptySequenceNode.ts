@@ -37,6 +37,7 @@ export class EmptySequenceNode {
 
   public setRenderer(renderer) {
     this.renderer = renderer;
+    this.monomer.setRenderer(renderer);
   }
 
   public get modified() {

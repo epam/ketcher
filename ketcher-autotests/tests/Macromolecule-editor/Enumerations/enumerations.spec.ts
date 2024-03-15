@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectEraseTool,
   selectSnakeLayoutModeTool,
   clickUndo,
@@ -23,7 +23,10 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: The system start enumeration from the monomer, which has occupied R2 attachment point
     */
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -34,7 +37,7 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: The system start enumeration as separate chain when connected through CHEM
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-through-chem.ket',
       page,
     );
@@ -48,7 +51,7 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: CHEM are considered separately, and CHEM itself is not enumerated
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-peptide-chains-connected-through-chems.ket',
       page,
     );
@@ -62,7 +65,7 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: each chain (RNA and peptide) is counted separately when they are connected
     */
-    await openFileAndAddToCanvas('KET/rna-and-peptides.ket', page);
+    await openFileAndAddToCanvasMacro('KET/rna-and-peptides.ket', page);
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +77,7 @@ test.describe('Enumerations', () => {
     Description: The system walk along sugar-phosphate core from R2 to R1 
     until it meets the sugar with the base (attached to R3 AP via R3-R1 bond). Such base counted.
     */
-    await openFileAndAddToCanvas('KET/sugar-phosphate-core.ket', page);
+    await openFileAndAddToCanvasMacro('KET/sugar-phosphate-core.ket', page);
     await takeEditorScreenshot(page);
   });
 
@@ -83,7 +86,7 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: Chain recalculated after deleting base.
     */
-    await openFileAndAddToCanvas('KET/sugar-phosphate-baA.ket', page);
+    await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
     await selectRectangleSelectionTool(page);
     await selectEraseTool(page);
     await page.getByText('baA').locator('..').first().click();
@@ -95,7 +98,7 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: Chain recalculated after undoing base.
     */
-    await openFileAndAddToCanvas('KET/sugar-phosphate-baA.ket', page);
+    await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
     await selectRectangleSelectionTool(page);
     await selectEraseTool(page);
     await page.getByText('baA').locator('..').first().click();
@@ -110,7 +113,10 @@ test.describe('Enumerations', () => {
     Test case: #3222
     Description: Monomers are correctly recalculated and renumbered in linear chain
     */
-    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
     await selectEraseTool(page);
     await page.getByText('Tml').locator('..').first().click();
     await takeEditorScreenshot(page);
@@ -124,7 +130,7 @@ test.describe('Enumerations', () => {
     Description: Remove a monomer and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-peptide-chains-connected-through-chems.ket',
       page,
     );
@@ -143,7 +149,7 @@ test.describe('Enumerations', () => {
     Description: Remove first a monomer and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/modified-rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/modified-rna.mol', page);
     await selectSnakeLayoutModeTool(page);
     await selectEraseTool(page);
     await page.getByText('25R').locator('..').first().click();
@@ -158,7 +164,7 @@ test.describe('Enumerations', () => {
     Description: Remove a monomer and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas('Molfiles-V3000/modified-rna.mol', page);
+    await openFileAndAddToCanvasMacro('Molfiles-V3000/modified-rna.mol', page);
     await selectSnakeLayoutModeTool(page);
     await selectEraseTool(page);
     await page.getByText('3A6').locator('..').first().click();
@@ -173,7 +179,7 @@ test.describe('Enumerations', () => {
     Description: Remove a monomer from middle and observe how the remaining monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/rna-modified-sugars.mol',
       page,
     );
@@ -191,7 +197,7 @@ test.describe('Enumerations', () => {
     Description: After Undo monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/three-peptide-chains-connected-through-chems.ket',
       page,
     );
@@ -214,7 +220,10 @@ test.describe('Enumerations', () => {
     Description: After deleted proper renumbering in both chains and after Undo monomers are correctly 
     recalculated and renumbered in both linear and branch chains
     */
-    await openFileAndAddToCanvas('KET/intersected-monomers-chains.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/intersected-monomers-chains.ket',
+      page,
+    );
     await selectEraseTool(page);
     await page.getByText('Hcy').locator('..').first().click();
     await page.getByText('meC').locator('..').first().click();

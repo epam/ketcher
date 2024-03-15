@@ -19,7 +19,7 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'ket';
+export type SupportedFormats = 'mol' | 'ket' | 'fasta';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
@@ -39,6 +39,13 @@ const formatProperties: FormatProperties = {
     ['.mol'],
     true,
     { 'molfile-saving-mode': '3000' },
+  ),
+  fasta: new SupportedFormatProperties(
+    'FASTA',
+    ChemicalMimeType.Fasta,
+    ['.fasta'],
+    true,
+    {},
   ),
 };
 

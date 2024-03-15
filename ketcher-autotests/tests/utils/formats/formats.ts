@@ -5,6 +5,10 @@ export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
 }
 
+export async function getFasta(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getFasta());
+}
+
 export async function getCml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCml());
 }

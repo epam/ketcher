@@ -5,7 +5,7 @@ import {
   addPeptideOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -28,7 +28,7 @@ async function moveMonomersToNewPosition(
   x: number,
   y: number,
 ) {
-  await openFileAndAddToCanvas(filePath, page);
+  await openFileAndAddToCanvasMacro(filePath, page);
   await selectRectangleSelectionTool(page);
   await page.keyboard.press('Control+a');
   await page.getByText(monomerName).locator('..').first().click();
@@ -365,7 +365,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
     await page.keyboard.press('Control+a');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -399,7 +399,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 850;
     const y = 500;
-    await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
+    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);
     await page.keyboard.press('Control+a');
     await page.getByText('Hhs').locator('..').first().hover();
@@ -416,7 +416,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 900;
     const y = 500;
-    await openFileAndAddToCanvas('KET/two-rows-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro('KET/two-rows-of-monomers.ket', page);
     await page.getByText('Hhs').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -429,7 +429,7 @@ test.describe('Rectangle Selection Tool', () => {
     Test case: Selection tool
     Description: Monomers are deleted from canvas and then appears after pressing Undo.
     */
-    await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
+    await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('erase').click();
     await takeEditorScreenshot(page);

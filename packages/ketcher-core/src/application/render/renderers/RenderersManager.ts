@@ -141,32 +141,39 @@ export class RenderersManager {
 
   private recalculatePeptideChainEnumeration(
     peptideRenderer: PeptideRenderer,
-    currentEnumeration = 1,
+    _currentEnumeration = 1,
   ) {
-    peptideRenderer.setEnumeration(currentEnumeration);
-    peptideRenderer.redrawEnumeration();
+    let currentEnumeration = _currentEnumeration;
+    const stack = [{ monomerRenderer: peptideRenderer }];
 
-    const nextMonomer = getNextMonomerInChain(peptideRenderer.monomer);
+    while (stack.length > 0) {
+      const stackItem = stack.pop();
+      assert(stackItem);
+      const { monomerRenderer } = stackItem;
 
-    if (!(nextMonomer instanceof Peptide)) {
-      return;
+      monomerRenderer.setEnumeration(currentEnumeration);
+      monomerRenderer.redrawEnumeration();
+
+      const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
+
+      if (!(nextMonomer instanceof Peptide)) {
+        return;
+      }
+
+      const isR2R1Connection = checkIsR2R1Connection(
+        monomerRenderer.monomer,
+        nextMonomer,
+      );
+
+      if (!isR2R1Connection) {
+        return;
+      }
+
+      assert(nextMonomer.renderer);
+
+      stack.push({ monomerRenderer: nextMonomer.renderer as PeptideRenderer });
+      currentEnumeration++;
     }
-
-    const isR2R1Connection = checkIsR2R1Connection(
-      peptideRenderer.monomer,
-      nextMonomer,
-    );
-
-    if (!isR2R1Connection) {
-      return;
-    }
-
-    assert(nextMonomer.renderer);
-
-    this.recalculatePeptideChainEnumeration(
-      nextMonomer.renderer as PeptideRenderer,
-      currentEnumeration + 1,
-    );
   }
 
   private recalculateRnaChainEnumeration(
@@ -174,42 +181,49 @@ export class RenderersManager {
     _currentEnumeration = 1,
   ) {
     let currentEnumeration = _currentEnumeration;
-    if (rnaComponentRenderer instanceof SugarRenderer) {
-      const rnaBaseMonomer = getRnaBaseFromSugar(
-        rnaComponentRenderer.monomer as Sugar,
-      );
-      if (rnaBaseMonomer instanceof RNABase) {
-        rnaBaseMonomer.renderer?.setEnumeration(currentEnumeration);
-        rnaBaseMonomer.renderer?.redrawEnumeration();
-        currentEnumeration++;
+    const stack = [{ monomerRenderer: rnaComponentRenderer }];
+
+    while (stack.length > 0) {
+      const stackItem = stack.pop();
+      assert(stackItem);
+      const { monomerRenderer } = stackItem;
+
+      if (monomerRenderer instanceof SugarRenderer) {
+        const rnaBaseMonomer = getRnaBaseFromSugar(
+          monomerRenderer.monomer as Sugar,
+        );
+        if (rnaBaseMonomer instanceof RNABase) {
+          rnaBaseMonomer.renderer?.setEnumeration(currentEnumeration);
+          rnaBaseMonomer.renderer?.redrawEnumeration();
+          currentEnumeration++;
+        }
       }
+
+      const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
+
+      if (
+        !(nextMonomer instanceof Sugar) &&
+        !(nextMonomer instanceof Phosphate)
+      ) {
+        return;
+      }
+
+      const isR2R1Connection = checkIsR2R1Connection(
+        monomerRenderer.monomer,
+        nextMonomer,
+      );
+
+      if (
+        !isR2R1Connection ||
+        !(nextMonomer.renderer instanceof BaseMonomerRenderer)
+      ) {
+        return;
+      }
+
+      stack.push({
+        monomerRenderer: nextMonomer.renderer,
+      });
     }
-
-    const nextMonomer = getNextMonomerInChain(rnaComponentRenderer.monomer);
-
-    if (
-      !(nextMonomer instanceof Sugar) &&
-      !(nextMonomer instanceof Phosphate)
-    ) {
-      return;
-    }
-
-    const isR2R1Connection = checkIsR2R1Connection(
-      rnaComponentRenderer.monomer,
-      nextMonomer,
-    );
-
-    if (
-      !isR2R1Connection ||
-      !(nextMonomer.renderer instanceof BaseMonomerRenderer)
-    ) {
-      return;
-    }
-
-    this.recalculateRnaChainEnumeration(
-      nextMonomer.renderer,
-      currentEnumeration,
-    );
   }
 
   private recalculatePeptideEnumeration(peptideRenderer: PeptideRenderer) {

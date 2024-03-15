@@ -11,7 +11,7 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
-  openFileAndAddToCanvas,
+  openFileAndAddToCanvasMacro,
   pressButton,
   receiveFileComparisonData,
   saveToFile,
@@ -649,7 +649,7 @@ test.describe('RNA Library', () => {
     test(`Open file from .ket and Delete ${monomer.text} monomer`, async ({
       page,
     }) => {
-      await openFileAndAddToCanvas(
+      await openFileAndAddToCanvasMacro(
         'KET/monomers-connected-with-bonds.ket',
         page,
       );
@@ -806,7 +806,10 @@ test.describe('RNA Library', () => {
     Test case: Clear Canvas tool
     Description: Canvas is cleared
     */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/monomers-connected-with-bonds.ket',
+      page,
+    );
     await page.getByTestId('clear-canvas').click();
     await takeEditorScreenshot(page);
   });
@@ -816,7 +819,10 @@ test.describe('RNA Library', () => {
     Test case: Open&save files
     Description: File saved with three Monomers as .ket file
     */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
+    await openFileAndAddToCanvasMacro(
+      'KET/monomers-connected-with-bonds.ket',
+      page,
+    );
     const expectedFile = await getKet(page);
     await saveToFile(
       'KET/monomers-connected-with-bonds-expected.ket',
@@ -840,12 +846,9 @@ test.describe('RNA Library', () => {
     Description: Ketcher switch to Micromolecule mode
     Test is not working properly because we have bug.
     */
-    const offsetFromCenter = -300;
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasMacro(
       'KET/monomers-connected-with-bonds.ket',
       page,
-      offsetFromCenter,
-      offsetFromCenter,
     );
     await turnOnMicromoleculesEditor(page);
     await takePageScreenshot(page);

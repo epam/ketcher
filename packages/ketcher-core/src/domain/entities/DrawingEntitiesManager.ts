@@ -1632,6 +1632,18 @@ export class DrawingEntitiesManager {
 
     return isValid;
   }
+
+  public moveMonomer(monomer: BaseMonomer, position: Vec2) {
+    const oldMonomerPosition = monomer.position;
+    const command = new Command();
+    const operation = new MonomerMoveOperation(
+      this.rearrangeChainModelChange.bind(this, monomer, position),
+      this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
+    );
+    command.addOperation(operation);
+
+    return command;
+  }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {
   return new Vec2(MONOMER_START_X_POSITION, lastPosition.y + height);

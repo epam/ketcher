@@ -403,6 +403,17 @@ export class SequenceMode extends BaseMode {
       const nodeBeforeSelection =
         SequenceRenderer.getPreviousNode(selectionStartNode);
       const nodeAfterSelection = SequenceRenderer.getNextNode(selectionEndNode);
+      const nodeInSameChainBeforeSelection =
+        SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
+
+      if (!nodeInSameChainBeforeSelection && nodeAfterSelection) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.moveMonomer(
+            nodeAfterSelection.monomer,
+            selectionStartNode.monomer.position,
+          ),
+        );
+      }
 
       if (
         !nodeBeforeSelection ||

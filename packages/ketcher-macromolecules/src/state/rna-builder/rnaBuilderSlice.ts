@@ -106,7 +106,9 @@ export const rnaBuilderSlice = createSlice({
         const presetIndexInList = state.presets.findIndex(
           (presetInList) => presetInList.name === preset.presetInList?.name,
         );
-        state.presets.splice(presetIndexInList, 1, newPreset);
+        presetIndexInList === -1
+          ? state.presets.push(newPreset)
+          : state.presets.splice(presetIndexInList, 1, newPreset);
       } else {
         state.presets.push(newPreset);
       }

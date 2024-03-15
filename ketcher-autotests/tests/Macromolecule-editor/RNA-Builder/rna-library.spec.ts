@@ -413,6 +413,7 @@ test.describe('RNA Library', () => {
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
+    await page.getByTestId('save-btn').click();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await expandCollapseRnaBuilder(page);

@@ -982,4 +982,21 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Activate Snake mode and open external rna-modified file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: File opened in snake mode.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4122 need to be fixed.
+    Then update expected screenshot.
+    */
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      `Molfiles-V3000/rna-mod-phosphate-example.mol`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

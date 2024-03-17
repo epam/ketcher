@@ -1,5 +1,5 @@
-/* eslint-disable no-magic-numbers */
 /* eslint-disable prettier/prettier */
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   selectTopPanelButton,

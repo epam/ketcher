@@ -31,6 +31,24 @@ import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
+import { debounce } from 'lodash';
+
+let isMovePreviewCalculationInProgress = false;
+
+const debouncedSetAndHoverMergeItems = debounce(function (
+  editor,
+  pasteItems,
+  pasteToolInstance,
+  needResetTool = false,
+) {
+  const mergeItems = getItemsToFuse(editor, pasteItems);
+  editor.hover(
+    getHoverToFuse(mergeItems),
+    needResetTool ? pasteToolInstance : undefined,
+  );
+  pasteToolInstance.setMergeItems(mergeItems);
+},
+50);
 
 class PasteTool implements Tool {
   private readonly editor: Editor;
@@ -65,8 +83,11 @@ class PasteTool implements Tool {
 
     this.editor.update(this.action, true);
 
-    this.mergeItems = getItemsToFuse(this.editor, pasteItems);
-    this.editor.hover(getHoverToFuse(this.mergeItems), this);
+    debouncedSetAndHoverMergeItems(this.editor, pasteItems, this, true);
+  }
+
+  public setMergeItems(mergeItems) {
+    this.mergeItems = mergeItems;
   }
 
   private get restruct() {
@@ -111,6 +132,12 @@ class PasteTool implements Tool {
   }
 
   mousemove(event) {
+    this.mergeItems = null;
+    this.editor.hover(null);
+    if (isMovePreviewCalculationInProgress) {
+      return;
+    }
+    isMovePreviewCalculationInProgress = true;
     if (this.action) {
       this.action?.perform(this.restruct);
     }
@@ -147,8 +174,12 @@ class PasteTool implements Tool {
         // eslint-disable-next-line no-prototype-builtins
         this.dragCtx.hasOwnProperty('angle') &&
         this.dragCtx.angle === degrees
-      )
+      ) {
+        requestAnimationFrame(() => {
+          isMovePreviewCalculationInProgress = false;
+        });
         return;
+      }
 
       if (this.dragCtx.action) {
         this.dragCtx.action.perform(this.restruct);
@@ -187,9 +218,12 @@ class PasteTool implements Tool {
         this.editor.struct(),
       );
 
-      this.mergeItems = getItemsToFuse(this.editor, visiblePasteItems);
-      this.editor.hover(getHoverToFuse(this.mergeItems));
+      debouncedSetAndHoverMergeItems(this.editor, visiblePasteItems, this);
     }
+
+    requestAnimationFrame(() => {
+      isMovePreviewCalculationInProgress = false;
+    });
   }
 
   mouseup() {

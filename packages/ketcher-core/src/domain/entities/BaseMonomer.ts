@@ -480,4 +480,8 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get isPartOfRna() {
     return false;
   }
+
+  public get isModification() {
+    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+  }
 }

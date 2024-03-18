@@ -24,6 +24,6 @@ export class MonomerSequenceNode {
   }
 
   public get modified() {
-    return false;
+    return this.monomer.isModification;
   }
 }

@@ -44,6 +44,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this._isEditingSymbol = isEditingSymbol;
   }
 
+  protected abstract drawModification(): void;
+
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     return undefined;
   }
@@ -97,10 +99,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', -2)
       .attr('rx', 2)
       .attr('cursor', 'text');
-
-    if (this.node.modified) {
-      backgroundElement?.attr('stroke', '#585858').attr('stroke-width', '1px');
-    }
 
     backgroundElement?.attr(
       'fill',
@@ -229,6 +227,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.rootElement.on('mouseleave', () => {
       this.removeHover();
     });
+
+    if (this.node.modified) {
+      this.drawModification();
+    }
   }
 
   drawSelection(): void {

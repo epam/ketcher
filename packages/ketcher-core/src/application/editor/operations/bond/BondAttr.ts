@@ -35,6 +35,7 @@ export class BondAttr extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
+    console.error('here');
     if (this.data) {
       const { attribute, bid, value } = this.data;
       const bond = restruct.molecule.bonds.get(bid)!;
@@ -49,7 +50,7 @@ export class BondAttr extends BaseOperation {
 
       bond[attribute] = value;
 
-      BaseOperation.invalidateBond(restruct, bid);
+      // BaseOperation.invalidateBond(restruct, bid);
       if (attribute === 'type') {
         BaseOperation.invalidateLoop(restruct, bid);
       }

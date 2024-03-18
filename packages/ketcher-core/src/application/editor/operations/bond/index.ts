@@ -47,8 +47,8 @@ class BondAdd extends BaseOperation {
       throw new Error('Distinct atoms expected');
     }
 
-    BaseOperation.invalidateAtom(restruct, begin, 1);
-    BaseOperation.invalidateAtom(restruct, end, 1);
+    // BaseOperation.invalidateAtom(restruct, begin, 1);
+    // BaseOperation.invalidateAtom(restruct, end, 1);
 
     const pp: {
       type: number;

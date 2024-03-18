@@ -28,14 +28,15 @@ type Data = {
   begin: any;
   end: any;
   bid: any;
+  needInvalidateAtoms?: boolean;
 };
 
 class BondAdd extends BaseOperation {
   data: Data;
 
-  constructor(begin?: any, end?: any, bond?: any) {
+  constructor(begin?: any, end?: any, bond?: any, needInvalidateAtoms = true) {
     super(OperationType.BOND_ADD, OperationPriority.BOND_ADD);
-    this.data = { bond, begin, end, bid: null };
+    this.data = { bond, begin, end, bid: null, needInvalidateAtoms };
   }
 
   execute(restruct: ReStruct) {
@@ -47,8 +48,10 @@ class BondAdd extends BaseOperation {
       throw new Error('Distinct atoms expected');
     }
 
-    // BaseOperation.invalidateAtom(restruct, begin, 1);
-    // BaseOperation.invalidateAtom(restruct, end, 1);
+    if (this.data.needInvalidateAtoms) {
+      BaseOperation.invalidateAtom(restruct, begin, 1);
+      BaseOperation.invalidateAtom(restruct, end, 1);
+    }
 
     const pp: {
       type: number;

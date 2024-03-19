@@ -38,3 +38,14 @@ async function waitForCustomEvent(
     { eventName, timeout },
   );
 }
+
+export const waitForItemsToMergeInitialization = async (
+  page: Page,
+  callback = emptyFunction,
+  timeout = 200,
+) => {
+  await Promise.all([
+    waitForCustomEvent(page, 'itemsToMergeInitializationComplete', timeout),
+    callback(),
+  ]);
+};

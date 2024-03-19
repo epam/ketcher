@@ -11,6 +11,7 @@ import {
   waitForRender,
 } from '..';
 import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
+import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 
 type BoundingBox = {
   width: number;
@@ -21,18 +22,33 @@ type BoundingBox = {
 
 const HALF_DIVIDER = 2;
 
+export async function clickAfterItemsToMergeInitialization(
+  page: Page,
+  x: number,
+  y: number,
+  button: 'left' | 'right' = 'left',
+) {
+  await page.mouse.move(x, y);
+  await waitForItemsToMergeInitialization(page);
+  await page.mouse.down({
+    button,
+  });
+  await page.mouse.up({
+    button,
+  });
+}
+
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
 ) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
   await waitForRender(page, async () => {
-    await page.mouse.click(
+    await clickAfterItemsToMergeInitialization(
+      page,
       body.x + body?.width / HALF_DIVIDER,
       body.y + body?.height / HALF_DIVIDER,
-      {
-        button,
-      },
+      button,
     );
   });
 }

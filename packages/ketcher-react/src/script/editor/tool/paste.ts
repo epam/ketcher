@@ -21,6 +21,7 @@ import {
   fromTemplateOnAtom,
   getHoverToFuse,
   getItemsToFuse,
+  notifyItemsToMergeInitializationComplete,
   SGroup,
   Struct,
   Vec2,
@@ -47,6 +48,7 @@ const debouncedSetAndHoverMergeItems = debounce(function (
     needResetTool ? pasteToolInstance : undefined,
   );
   pasteToolInstance.setMergeItems(mergeItems);
+  notifyItemsToMergeInitializationComplete();
 },
 50);
 

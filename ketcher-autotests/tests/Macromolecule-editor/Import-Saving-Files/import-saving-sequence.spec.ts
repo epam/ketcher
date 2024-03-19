@@ -61,7 +61,7 @@ test.describe('Import-Saving .seq Files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SEQUENCE/sequence-rna-a-expected.seq',
+          'tests/test-data/Sequence/sequence-rna-a-expected.seq',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -81,7 +81,7 @@ test.describe('Import-Saving .seq Files', () => {
     const { fileExpected: sequenceFileExpected, file: sequenceFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/SEQUENCE/sequence-empty.seq',
+        expectedFileName: 'tests/test-data/Sequence/sequence-empty.seq',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -139,7 +139,7 @@ test.describe('Import-Saving .seq Files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SEQUENCE/sequence-snake-mode-rna-expected.seq',
+          'tests/test-data/Sequence/sequence-snake-mode-rna-expected.seq',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -159,7 +159,7 @@ test.describe('Import-Saving .seq Files', () => {
 
     const textArea = page.getByTestId('preview-area-text');
     const file = await readFileContents(
-      'tests/test-data/SEQUENCE/sequence-rna-a.seq',
+      'tests/test-data/Sequence/sequence-rna-a.seq',
     );
     const expectedData = file;
     const valueInTextarea = await textArea.inputValue();

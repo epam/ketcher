@@ -22,15 +22,21 @@ type Data = {
   bid: any;
   attribute: any;
   value: any;
+  needInvalidateBond?: boolean;
 };
 
 export class BondAttr extends BaseOperation {
   data: Data | null;
   data2: Data | null;
 
-  constructor(bondId?: any, attribute?: any, value?: any) {
+  constructor(
+    bondId?: any,
+    attribute?: any,
+    value?: any,
+    needInvalidateBond = true,
+  ) {
     super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
-    this.data = { bid: bondId, attribute, value };
+    this.data = { bid: bondId, attribute, value, needInvalidateBond };
     this.data2 = null;
   }
 
@@ -49,7 +55,9 @@ export class BondAttr extends BaseOperation {
 
       bond[attribute] = value;
 
-      BaseOperation.invalidateBond(restruct, bid);
+      if (this.data.needInvalidateBond) {
+        BaseOperation.invalidateBond(restruct, bid);
+      }
       if (attribute === 'type') {
         BaseOperation.invalidateLoop(restruct, bid);
       }

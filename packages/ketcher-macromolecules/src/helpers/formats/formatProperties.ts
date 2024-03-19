@@ -19,7 +19,7 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'ket' | 'fasta';
+export type SupportedFormats = 'mol' | 'ket' | 'fasta' | 'sequence';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
@@ -44,7 +44,14 @@ const formatProperties: FormatProperties = {
     'FASTA',
     ChemicalMimeType.Fasta,
     ['.fasta'],
-    true,
+    false,
+    {},
+  ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.Sequence,
+    ['.seq'],
+    false,
     {},
   ),
 };

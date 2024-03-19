@@ -50,6 +50,7 @@ export enum SupportedFormat {
   sdf = 'sdf',
   sdfV3000 = 'sdfV3000',
   fasta = 'fasta',
+  sequence = 'sequence',
   unknown = 'unknown',
 }
 

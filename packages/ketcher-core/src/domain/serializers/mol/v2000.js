@@ -176,6 +176,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
           props.set('substitutionCount', new Pool());
         const subLabels = props.get('substitutionCount');
         const arrs = sGroup.readKeyMultiValuePairs(propertyData);
+
         for (let arri = 0; arri < arrs.length; arri++) {
           const a2r = arrs[arri];
           subLabels.set(a2r[0], a2r[1]);

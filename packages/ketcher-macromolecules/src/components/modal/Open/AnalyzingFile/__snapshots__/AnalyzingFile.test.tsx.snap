@@ -9,7 +9,7 @@ Object {
         class="css-1ro7qq4"
       >
         <div
-          class="css-rmxyg7"
+          class="loading-spinner css-rmxyg7"
         >
           <span />
           <span />
@@ -23,7 +23,7 @@ Object {
       class="css-1ro7qq4"
     >
       <div
-        class="css-rmxyg7"
+        class="loading-spinner css-rmxyg7"
       >
         <span />
         <span />

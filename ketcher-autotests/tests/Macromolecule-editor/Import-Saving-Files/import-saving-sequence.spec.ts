@@ -29,7 +29,7 @@ test.describe('Import-Saving .seq Files', () => {
   for (const fileType of sequenceFileTypes) {
     test(`Import .seq ${fileType} file`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(
-        `SEQUENCE/sequence-${fileType.toLowerCase()}.seq`,
+        `Sequence/sequence-${fileType.toLowerCase()}.seq`,
         page,
         fileType,
       );
@@ -53,7 +53,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
     const expectedFile = await getSequence(page);
-    await saveToFile('SEQUENCE/sequence-rna-a-expected.seq', expectedFile);
+    await saveToFile('Sequence/sequence-rna-a-expected.seq', expectedFile);
 
     const METADATA_STRING_INDEX = [1];
 
@@ -74,7 +74,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     const expectedFile = await getSequence(page);
-    await saveToFile('SEQUENCE/sequence-empty.seq', expectedFile);
+    await saveToFile('Sequence/sequence-empty.seq', expectedFile);
 
     const METADATA_STRING_INDEX = [1];
 
@@ -92,7 +92,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('SEQUENCE/sequence-empty.seq', page);
+    await openFile('Sequence/sequence-empty.seq', page);
     await page.getByText('Add to Canvas').isDisabled();
   });
 
@@ -101,7 +101,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
 
-    const filename = 'SEQUENCE/sequence-corrupted.seq';
+    const filename = 'Sequence/sequence-corrupted.seq';
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
@@ -112,7 +112,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(
-      'SEQUENCE/sequence-snake-mode-rna.seq',
+      'Sequence/sequence-snake-mode-rna.seq',
       page,
     );
     await selectSnakeLayoutModeTool(page);
@@ -123,13 +123,13 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro(
-      'SEQUENCE/sequence-snake-mode-rna.seq',
+      'Sequence/sequence-snake-mode-rna.seq',
       page,
     );
     await selectSnakeLayoutModeTool(page);
     const expectedFile = await getSequence(page);
     await saveToFile(
-      'SEQUENCE/sequence-snake-mode-rna-expected.seq',
+      'Sequence/sequence-snake-mode-rna-expected.seq',
       expectedFile,
     );
 

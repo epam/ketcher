@@ -9,6 +9,7 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   clickUndo,
+  startNewSequence,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -201,7 +202,7 @@ test.describe('Sequence Mode', () => {
   test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right in snake mode.
     */
@@ -209,6 +210,21 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open modified RNA in sequence mode', async ({ page }) => {
+    /*
+    Test case: #3734
+    Description: Displaying modified nucleotide chains in sequence representation
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      'KET/modified-nucleotide-chain.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await startNewSequence(page);
     await takeEditorScreenshot(page);
   });
 });

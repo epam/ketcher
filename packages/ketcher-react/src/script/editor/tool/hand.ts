@@ -38,6 +38,9 @@ class HandTool implements Tool {
   mousedown(event) {
     const { clientX, clientY } = event;
     this.begPos = new Vec2(clientX, clientY);
+    this.editor.event.cursor.dispatch({
+      status: 'mousedown',
+    });
   }
 
   mousemove(event) {
@@ -74,6 +77,9 @@ class HandTool implements Tool {
     this.begPos = null;
     this.endPos = null;
     rnd.update(false);
+    this.editor.event.cursor.dispatch({
+      status: 'mouseup',
+    });
   }
 
   mouseover() {

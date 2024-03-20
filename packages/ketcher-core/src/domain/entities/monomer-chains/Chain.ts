@@ -1,8 +1,7 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { BaseMonomer, Sugar } from 'domain/entities';
+import { BaseMonomer, Peptide, Phosphate, Sugar } from 'domain/entities';
 import {
   getNextMonomerInChain,
-  getPhosphateFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -10,6 +9,7 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
@@ -29,14 +29,23 @@ export class Chain {
       this.subChains.push(new monomer.SubChainConstructor());
     }
 
-    if (!(monomer instanceof Sugar)) {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer));
-    } else if (isValidNucleoside(monomer)) {
+    const nextMonomer = getNextMonomerInChain(monomer);
+
+    if (monomer instanceof Sugar && isValidNucleoside(monomer)) {
       this.lastSubChain.add(Nucleoside.fromSugar(monomer));
-    } else if (isValidNucleotide(monomer)) {
+    } else if (monomer instanceof Sugar && isValidNucleotide(monomer)) {
       this.lastSubChain.add(Nucleotide.fromSugar(monomer));
-    } else {
+    } else if (monomer instanceof Peptide) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
+    } else if (
+      monomer instanceof Phosphate &&
+      (this.lastNode instanceof Nucleoside ||
+        (nextMonomer instanceof Sugar &&
+          (isValidNucleotide(nextMonomer) || isValidNucleotide(nextMonomer))))
+    ) {
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+    } else {
+      this.lastSubChain.add(new LinkerSequenceNode(monomer));
     }
   }
 
@@ -44,11 +53,7 @@ export class Chain {
     if (!monomer) return;
 
     this.add(monomer);
-    if (this.lastNode instanceof Nucleotide) {
-      this.fillSubChains(getNextMonomerInChain(getPhosphateFromSugar(monomer)));
-    } else {
-      this.fillSubChains(getNextMonomerInChain(monomer));
-    }
+    this.fillSubChains(getNextMonomerInChain(this.lastNode?.lastMonomerInNode));
   }
 
   public get lastSubChain() {

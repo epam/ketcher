@@ -168,13 +168,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('class', 'blinking');
   }
 
-  private drawHover() {
-    this.backgroundElement?.attr(
-      'fill',
-      this.isSequenceEditModeTurnedOn ? '#FF7A0033' : '#EFF2F5',
-    );
-  }
-
   protected removeHover() {
     this.backgroundElement?.attr(
       'fill',
@@ -218,16 +211,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
 
-    this.rootElement.on('mouseover', () => {
-      if (!this.node.monomer.selected) {
-        this.drawHover();
-      }
-    });
-
-    this.rootElement.on('mouseleave', () => {
-      this.removeHover();
-    });
-
     if (this.node.modified) {
       this.drawModification();
     }
@@ -243,6 +226,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.raiseElement();
     } else {
       this.removeSelection();
+      if (this.node.modified) {
+        this.drawModification();
+      }
     }
   }
 

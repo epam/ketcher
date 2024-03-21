@@ -9,11 +9,12 @@ enum IndigoShowHydrogenLabelsMode {
 }
 
 export function getLabelRenderModeForIndigo() {
+  // Terminal does not supported by indigo so TERMINAL_HETERO used
+  // Off removing all labels in indigo so HETERO used
   const renderModeMapping = {
-    [ShowHydrogenLabels.Off]: IndigoShowHydrogenLabelsMode.OFF,
+    [ShowHydrogenLabels.Off]: IndigoShowHydrogenLabelsMode.HETERO,
     [ShowHydrogenLabels.Hetero]: IndigoShowHydrogenLabelsMode.HETERO,
-    // Terminal does not supported by indigo
-    [ShowHydrogenLabels.Terminal]: IndigoShowHydrogenLabelsMode.OFF,
+    [ShowHydrogenLabels.Terminal]: IndigoShowHydrogenLabelsMode.TERMINAL_HETERO,
     [ShowHydrogenLabels.TerminalAndHetero]:
       IndigoShowHydrogenLabelsMode.TERMINAL_HETERO,
     [ShowHydrogenLabels.On]: IndigoShowHydrogenLabelsMode.ALL,

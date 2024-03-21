@@ -2,6 +2,11 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import ZoomTool from 'application/editor/tools/Zoom';
+import { select } from 'd3';
+import {
+  canvasSelector,
+  drawnStructuresSelector,
+} from 'application/editor/constants';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -27,8 +32,9 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
-    this.canvasWrapper = ZoomTool.instance.canvasWrapper;
-    this.canvas = ZoomTool.instance.canvas;
+    this.canvasWrapper =
+      ZoomTool.instance?.canvasWrapper || select(drawnStructuresSelector);
+    this.canvas = ZoomTool.instance?.canvas || select(canvasSelector);
   }
 
   protected get editorSettings() {

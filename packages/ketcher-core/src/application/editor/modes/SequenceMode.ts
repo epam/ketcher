@@ -514,6 +514,13 @@ export class SequenceMode extends BaseMode {
             previousCaretPosition,
             nodesToDelete[0][0].nodeIndexOverall,
           );
+
+          if (
+            SequenceRenderer.caretPosition === 0 &&
+            SequenceRenderer.chainsCollection.chains.length === 0
+          ) {
+            this.startNewSequence();
+          }
         },
       },
       'turn-off-edit-mode': {

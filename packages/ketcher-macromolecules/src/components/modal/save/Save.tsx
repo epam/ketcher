@@ -47,12 +47,14 @@ import { openErrorModal } from 'state/modal';
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
+  { id: 'sequence', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
 ];
 
 const formatDetector = {
   mol: ChemicalMimeType.Mol,
   fasta: ChemicalMimeType.FASTA,
+  sequence: ChemicalMimeType.SEQUENCE,
 };
 
 const StyledModal = styled(Modal)({
@@ -95,7 +97,7 @@ export const Save = ({
 
     try {
       setIsLoading(true);
-      if (fileFormat === 'fasta') {
+      if (fileFormat === 'fasta' || fileFormat === 'sequence') {
         const isValid =
           editor.drawingEntitiesManager.validateIfApplicableForFasta();
         if (!isValid) {

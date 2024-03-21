@@ -30,6 +30,7 @@ export enum ChemicalMimeType {
   UNKNOWN = 'chemical/x-unknown',
   SDF = 'chemical/x-sdf',
   FASTA = 'fasta',
+  SEQUENCE = 'chemical/x-sequence',
 }
 
 export interface WithStruct {

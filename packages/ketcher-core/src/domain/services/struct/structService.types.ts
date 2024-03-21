@@ -29,7 +29,7 @@ export enum ChemicalMimeType {
   KET = 'chemical/x-indigo-ket',
   UNKNOWN = 'chemical/x-unknown',
   SDF = 'chemical/x-sdf',
-  FASTA = 'fasta',
+  FASTA = 'chemical/x-fasta',
   SEQUENCE = 'chemical/x-sequence',
 }
 

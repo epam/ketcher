@@ -19,6 +19,7 @@ export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
   Helm = 'chemical/x-helm',
   Fasta = 'fasta',
+  Sequence = 'sequence',
 }
 
 interface SupportedFormatPropertiesOptions {

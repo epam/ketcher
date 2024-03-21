@@ -64,7 +64,7 @@ const LoadContainer = styled.div`
   }
 `;
 export const LoadingCircles = () => (
-  <LoadContainer>
+  <LoadContainer className="loading-spinner">
     <span />
     <span />
     <span />

@@ -6,7 +6,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-rmxyg7"
+        class="loading-spinner css-rmxyg7"
       >
         <span />
         <span />
@@ -16,7 +16,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-rmxyg7"
+      class="loading-spinner css-rmxyg7"
     >
       <span />
       <span />

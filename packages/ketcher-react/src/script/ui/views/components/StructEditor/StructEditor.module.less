@@ -68,6 +68,14 @@
   height: 100%;
   position: relative;
 
+  &.enableCursor {
+    cursor: url('../../../../../assets/icons/files/hand.svg'), auto;
+  }
+
+  &.enableCursor:active {
+    cursor: url('../../../../../assets/icons/files/compressed-hand.svg'), auto;
+  }
+
   .scrollbar();
 
   &::-webkit-scrollbar {

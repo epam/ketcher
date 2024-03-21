@@ -76,7 +76,6 @@ class StructEditor extends Component {
       enableCursor: false,
       clientX: 0,
       clientY: 0,
-      mouseDown: false,
     };
     this.editorRef = createRef();
     this.logRef = createRef();
@@ -139,8 +138,7 @@ class StructEditor extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor ||
-      this.state.mouseDown !== nextState.mouseDown
+      nextState.enableCursor !== this.state.enableCursor
     );
   }
 
@@ -239,18 +237,6 @@ class StructEditor extends Component {
           });
           break;
         }
-        case 'mousedown': {
-          this.setState({
-            mouseDown: true,
-          });
-          break;
-        }
-        case 'mouseup': {
-          this.setState({
-            mouseDown: false,
-          });
-          break;
-        }
         default:
           break;
       }
@@ -307,20 +293,11 @@ class StructEditor extends Component {
 
     const { clientX = 0, clientY = 0 } = this.state;
 
-    const cursor = this.state.enableCursor
-      ? this.state.mouseDown
-        ? 'grabbing'
-        : 'grab'
-      : 'auto';
-
     return (
       <Tag
         className={clsx(classes.canvas, className)}
         {...props}
         data-testid="ketcher-canvas"
-        style={{
-          cursor,
-        }}
       >
         <ContextMenuTrigger>
           <div

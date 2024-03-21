@@ -999,4 +999,20 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Check snake layout to monomers connected through R1 to R2 and R3 to R2', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Both snake bonds are connected to the default position of attachment point used for this bond
+    */
+    await openFileAndAddToCanvasMacro(
+      `KET/three-peptides-connected-r1-r2-r3-r2.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

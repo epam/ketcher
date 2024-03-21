@@ -289,15 +289,30 @@ export class KetSerializer implements Serializer<Struct> {
     return fileContentForMicromolecules;
   }
 
-  deserializeToDrawingEntities(fileContent: string) {
+  deserializeToDrawingEntities(fileContent: string, nodeStartPosition?: Vec2) {
     const { error: hasValidationErrors, parsedFileContent } =
       this.parseAndValidateMacromolecules(fileContent);
     if (hasValidationErrors || !parsedFileContent) return;
     const command = new Command();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const monomerIdsMap = {};
-    parsedFileContent.root.nodes.forEach((node) => {
-      const nodeDefinition = parsedFileContent[node.$ref];
+    let offset;
+    parsedFileContent.root.nodes.forEach((node, index) => {
+      const nodeDefinition = parsedFileContent[node.$ref] as IKetMonomerNode;
+      nodeDefinition.position = switchIntoChemistryCoordSystem(
+        new Vec2(nodeDefinition.position),
+      );
+      if (index === 0 && nodeStartPosition) {
+        offset = Vec2.diff(
+          nodeStartPosition,
+          new Vec2(nodeDefinition.position),
+        );
+        nodeDefinition.position = nodeStartPosition;
+      } else {
+        nodeDefinition.position = offset
+          ? new Vec2(nodeDefinition.position).add(offset)
+          : new Vec2(nodeDefinition.position);
+      }
 
       switch (nodeDefinition?.type) {
         case 'monomer': {

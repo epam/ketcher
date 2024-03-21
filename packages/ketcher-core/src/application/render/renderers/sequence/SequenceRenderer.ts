@@ -33,8 +33,8 @@ export type NodesSelection = {
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
+  public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
-  private static lastChainStartPosition: Vec2;
 
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
@@ -119,7 +119,7 @@ export class SequenceRenderer {
     this.lastChainStartPosition = currentChainStartPosition;
   }
 
-  private static getNextChainPosition(
+  public static getNextChainPosition(
     currentChainStartPosition: Vec2,
     lastChain: Chain,
   ) {
@@ -630,5 +630,19 @@ export class SequenceRenderer {
     });
 
     return selections;
+  }
+
+  public static getSequenceStructureCenterY() {
+    let ymin = 1e50;
+    let ymax = -ymin;
+    SequenceRenderer.forEachNode(({ node }) => {
+      assert(node.monomer.renderer instanceof BaseSequenceItemRenderer);
+      const nodePosition =
+        node.monomer.renderer?.scaledMonomerPositionForSequence ||
+        new Vec2(1e50, 1e50);
+      ymin = Math.min(ymin, nodePosition.y);
+      ymax = Math.max(ymax, nodePosition.y);
+    });
+    return (ymin + ymax) / 2;
   }
 }

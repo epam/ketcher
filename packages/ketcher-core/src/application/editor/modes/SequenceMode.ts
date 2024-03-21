@@ -7,10 +7,15 @@ import {
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { initHotKeys, keyNorm } from 'utilities';
+import {
+  getStructStringFromClipboardData,
+  initHotKeys,
+  isClipboardAPIAvailable,
+  keyNorm,
+} from 'utilities';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer, SequenceType, Vec2 } from 'domain/entities';
+import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
@@ -32,6 +37,11 @@ import {
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { KetSerializeStructStr } from 'application/utils';
+import { KetSerializer } from 'domain/serializers';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { MONOMER_CONST } from '../operations';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -108,9 +118,6 @@ export class SequenceMode extends BaseMode {
   }
 
   public onKeyDown(event: KeyboardEvent) {
-    if (!this.isEditMode) {
-      return;
-    }
     const hotKeys = initHotKeys(this.keyboardEventHandlers);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
 
@@ -478,6 +485,9 @@ export class SequenceMode extends BaseMode {
       delete: {
         shortcut: ['Backspace', 'Delete'],
         handler: () => {
+          if (!this.isEditMode) {
+            return;
+          }
           const editor = CoreEditor.provideEditorInstance();
           const previousNode = SequenceRenderer.previousNode;
           const previousCaretPosition = SequenceRenderer.caretPosition;
@@ -532,12 +542,18 @@ export class SequenceMode extends BaseMode {
       'move-caret-forward': {
         shortcut: ['ArrowRight'],
         handler: () => {
+          if (!this.isEditMode) {
+            return;
+          }
           SequenceRenderer.moveCaretForward();
         },
       },
       'move-caret-back': {
         shortcut: ['ArrowLeft'],
         handler: () => {
+          if (!this.isEditMode) {
+            return;
+          }
           SequenceRenderer.moveCaretBack();
         },
       },
@@ -549,6 +565,9 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
+          if (!this.isEditMode) {
+            return;
+          }
           const selections = SequenceRenderer.selections;
 
           if (selections.length > 1) {
@@ -569,37 +588,10 @@ export class SequenceMode extends BaseMode {
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
-          const currentNode = SequenceRenderer.currentEdittingNode;
-          const previousNode =
-            SequenceRenderer.previousFromCurrentEdittingMonomer;
-          const nodeBeforePreviousNode = previousNode
-            ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
-            : undefined;
-          const previousNodeInSameChain =
-            SequenceRenderer.previousNodeInSameChain;
-
-          const newNodePosition = this.getNewSequenceItemPosition(
-            previousNode,
-            nodeBeforePreviousNode,
+          const modelChanges = this.insertNewSequenceItem(
+            editor,
+            enteredSymbol,
           );
-
-          let modelChanges;
-
-          if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-            modelChanges = this.handlePeptideNodeAddition(
-              enteredSymbol,
-              currentNode,
-              previousNodeInSameChain,
-              newNodePosition,
-            );
-          } else {
-            modelChanges = this.handleRnaDnaNodeAddition(
-              enteredSymbol,
-              currentNode,
-              previousNodeInSameChain,
-              newNodePosition,
-            );
-          }
 
           // Case when user type symbol that does not exist in current sequence type mode
           if (!modelChanges) {
@@ -615,6 +607,9 @@ export class SequenceMode extends BaseMode {
       'sequence-edit-select': {
         shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
         handler: (event) => {
+          if (!this.isEditMode) {
+            return;
+          }
           this.selectionStartCaretPosition =
             this.selectionStartCaretPosition !== -1
               ? this.selectionStartCaretPosition
@@ -622,7 +617,259 @@ export class SequenceMode extends BaseMode {
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
         },
       },
+      copy: {
+        shortcut: ['Mod+c'],
+        handler: () => this.copyToClipboard(),
+      },
+      paste: {
+        shortcut: ['Mod+v'],
+        handler: () => this.pasteFromClipboard(),
+      },
     };
+  }
+
+  private async getValidatePastedDrawingEntities() {
+    if (isClipboardAPIAvailable()) {
+      let newNodePosition;
+      // need to update the new pasted monomers' position, cause the pasted sequences is disorderd
+      // should be done during paste, cause when we copy from system files, we cant controll the monomers' position during copy
+      if (this.isEditMode) {
+        const previousNode =
+          SequenceRenderer.previousFromCurrentEdittingMonomer;
+        const nodeBeforePreviousNode = previousNode
+          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+          : undefined;
+        newNodePosition = this.getNewSequenceItemPosition(
+          previousNode,
+          nodeBeforePreviousNode,
+        );
+      } else {
+        newNodePosition =
+          SequenceRenderer.chainsCollection.chains.length > 0 &&
+          !this.isEditMode
+            ? SequenceRenderer.getNextChainPosition(
+                SequenceRenderer.lastChainStartPosition,
+                SequenceRenderer.lastChain,
+              )
+            : undefined;
+      }
+      const editor = CoreEditor.provideEditorInstance();
+      const clipboardData = await navigator.clipboard.read();
+      const structStr = await getStructStringFromClipboardData(clipboardData);
+      const drawingEntitiesManager = KetSerializeStructStr(
+        structStr,
+        newNodePosition,
+      );
+      if (drawingEntitiesManager) {
+        for (const [, monomer] of drawingEntitiesManager.monomers) {
+          if (
+            (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE &&
+              monomer.monomerItem.props.MonomerType !==
+                MONOMER_CONST.PEPTIDE) ||
+            (editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
+              (monomer.monomerItem.props.MonomerType !== MONOMER_CONST.RNA ||
+                monomer.monomerItem.props.MonomerType !== MONOMER_CONST.DNA))
+          ) {
+            throw Error(
+              `All the contents should be in ${editor.sequenceTypeEnterMode} mode`,
+            );
+          }
+        }
+      } else {
+        throw Error('parsing error');
+      }
+      return drawingEntitiesManager;
+    }
+    throw Error(
+      "Your version of browser doesn't support pasting clipboard content via navigator API. Please use the lasted version instead.",
+    );
+  }
+
+  private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
+    const nodeBeforePreviousNode = previousNode
+      ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+      : undefined;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+
+    const newNodePosition = this.getNewSequenceItemPosition(
+      previousNode,
+      nodeBeforePreviousNode,
+    );
+
+    let modelChanges;
+
+    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
+      modelChanges = this.handlePeptideNodeAddition(
+        enteredSymbol,
+        currentNode,
+        previousNodeInSameChain,
+        newNodePosition,
+      );
+    } else {
+      modelChanges = this.handleRnaDnaNodeAddition(
+        enteredSymbol,
+        currentNode,
+        previousNodeInSameChain,
+        newNodePosition,
+      );
+    }
+    return modelChanges;
+  }
+
+  private insertNewSequenceFragment(chainsCollection: ChainsCollection) {
+    const editor = CoreEditor.provideEditorInstance();
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const modelChanges = new Command();
+    if (!(currentNode instanceof EmptySequenceNode)) {
+      if (previousNodeInSameChain) {
+        const r2Bond =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2Bond);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+        );
+      }
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          chainsCollection.chains[0].firstSubChain.lastNode.lastMonomerInNode,
+          currentNode?.firstMonomerInNode as BaseMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
+      if (previousNodeInSameChain) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousNodeInSameChain.lastMonomerInNode as BaseMonomer,
+            chainsCollection.firstNode.firstMonomerInNode,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
+    } else {
+      if (previousNodeInSameChain instanceof Nucleoside) {
+        const previousNode =
+          SequenceRenderer.previousFromCurrentEdittingMonomer;
+        const nodeBeforePreviousNode = previousNode
+          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+          : undefined;
+        const previousNodeInSameChain =
+          SequenceRenderer.previousNodeInSameChain;
+
+        const newNodePosition = this.getNewSequenceItemPosition(
+          previousNode,
+          nodeBeforePreviousNode,
+        );
+        modelChanges.merge(
+          this.bondNodesThroughNewPhosphate(
+            newNodePosition,
+            previousNodeInSameChain,
+            chainsCollection.firstNode,
+          ),
+        );
+      } else if (previousNodeInSameChain) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousNodeInSameChain.lastMonomerInNode,
+            chainsCollection.firstNode.firstMonomerInNode,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
+    }
+    return modelChanges;
+  }
+
+  private copyToClipboard() {
+    const nodeSelections = SequenceRenderer.selections;
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+    nodeSelections.forEach((selectionRange) => {
+      selectionRange.forEach((node) => {
+        drawingEntitiesManager.addMonomerChangeModel(
+          node.node.monomer.monomerItem,
+          node.node.monomer.position,
+          node.node.monomer,
+        );
+        node.node.monomer.forEachBond((bond) => {
+          const firstAttachmentPoint =
+            bond.firstMonomer.getAttachmentPointByBond(bond);
+          const secondAttachmentPoint =
+            bond.secondMonomer?.getAttachmentPointByBond(bond);
+          if (
+            bond.firstMonomer.selected &&
+            bond.secondMonomer?.selected &&
+            firstAttachmentPoint &&
+            secondAttachmentPoint
+          ) {
+            drawingEntitiesManager.finishPolymerBondCreationModelChange(
+              bond.firstMonomer,
+              bond.secondMonomer,
+              firstAttachmentPoint,
+              secondAttachmentPoint,
+              bond,
+            );
+          }
+        });
+      });
+    });
+    const ketSerializer = new KetSerializer();
+    const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
+      new Struct(),
+      drawingEntitiesManager,
+    );
+    if (isClipboardAPIAvailable()) {
+      const clipboardItemString = JSON.stringify(serializedMacromolecules);
+      navigator.clipboard.writeText(clipboardItemString);
+    }
+  }
+
+  private async pasteFromClipboard() {
+    if (isClipboardAPIAvailable()) {
+      const editor = CoreEditor.provideEditorInstance();
+      const drawingEntitiesManager =
+        await this.getValidatePastedDrawingEntities();
+      const modelChanges = drawingEntitiesManager.mergeInto(
+        editor.drawingEntitiesManager,
+      );
+      if (this.isEditMode) {
+        const chainsCollection = ChainsCollection.fromMonomers([
+          ...drawingEntitiesManager.monomers.values(),
+        ]);
+        chainsCollection.rearrange();
+        if (chainsCollection.chains.length > 1) {
+          // TODO: could several fragments be pasted? or just several fragments (which are not connected through R2-R1 bonds) should be prohibited to be pasted?
+          throw new Error(
+            'Paste of several fragments should be prohibited in text-editing mode.',
+          );
+        } else {
+          modelChanges.merge(this.insertNewSequenceFragment(chainsCollection));
+        }
+      }
+      new EditorHistory(editor).update(modelChanges);
+      editor.renderersContainer.update(modelChanges);
+      editor.events.selectMode.dispatch({
+        mode: 'sequence-layout-mode',
+        mergeWithLatestHistoryCommand: true,
+      });
+      if (!this.isEditMode) {
+        const needCenterStructure =
+          editor.drawingEntitiesManager.allEntities.length === 0;
+        const zoom = ZoomTool.instance;
+        if (needCenterStructure) {
+          const structCenterY = SequenceRenderer.getSequenceStructureCenterY();
+          zoom.scrollToVerticalCenter(structCenterY);
+        } else {
+          zoom.scrollToVerticalBottom();
+        }
+      }
+    }
   }
 
   private deleteSelectedDrawingEntities() {

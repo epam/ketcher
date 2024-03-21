@@ -37,6 +37,7 @@ import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { groupBy } from 'lodash';
+import { debounce } from 'lodash/fp';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -126,9 +127,10 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.setupHotKeysEvents();
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      this.mode.onKeyDown(event);
-    });
+    document.addEventListener(
+      'keydown',
+      debounce(100, (event: KeyboardEvent) => this.mode.onKeyDown(event)),
+    );
   }
 
   private setupHotKeysEvents() {

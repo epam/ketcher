@@ -36,8 +36,8 @@ const AUTO_SCROLL_OFFSET_X = 10;
 const AUTO_SCROLL_OFFSET_Y = 10;
 
 class ZoomTool implements BaseTool {
-  private canvas: D3SvgElementSelection<SVGSVGElement, void>;
-  private canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+  public canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private zoomTransform: ZoomTransform;

@@ -30,6 +30,7 @@ export class FunctionalGroup {
     assert(sgroup != null);
 
     this.#sgroup = sgroup;
+    sgroup.setFunctionalGroup(this);
   }
 
   get name(): string {
@@ -175,19 +176,14 @@ export class FunctionalGroup {
     if (sgroupsFromReStruct) {
       sgroups.forEach((sg) => {
         if (
-          FunctionalGroup.isContractedFunctionalGroup(
-            sg.item.id,
-            functionalGroups,
-          )
+          FunctionalGroup.isContractedFunctionalGroup(sg.item, functionalGroups)
         ) {
           contractedFunctionalGroups.push(sg.item.id);
         }
       });
     } else {
       sgroups.forEach((sg) => {
-        if (
-          FunctionalGroup.isContractedFunctionalGroup(sg.id, functionalGroups)
-        ) {
+        if (FunctionalGroup.isContractedFunctionalGroup(sg, functionalGroups)) {
           contractedFunctionalGroups.push(sg.id);
         }
       });
@@ -200,12 +196,11 @@ export class FunctionalGroup {
     sGroups: Map<number, ReSGroup> | Pool<SGroup>,
     functionalGroups: Pool<FunctionalGroup>,
   ) {
-    return [...sGroups.values()].some((sGroup) => {
-      const sGroupId = 'item' in sGroup ? sGroup?.item?.id : sGroup.id;
-      const atomsInSGroup =
-        'item' in sGroup ? sGroup?.item?.atoms : sGroup.atoms;
+    return [...sGroups.values()].some((_sGroup) => {
+      const sGroup = 'item' in _sGroup ? _sGroup?.item : _sGroup;
+      const atomsInSGroup = sGroup?.atoms;
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
-        sGroupId,
+        sGroup,
         functionalGroups,
       );
       return (
@@ -229,15 +224,23 @@ export class FunctionalGroup {
     );
   }
 
-  static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {
+  static isContractedFunctionalGroup(sgroup, functionalGroups): boolean {
     let isFunctionalGroup = false;
     let expanded = false;
-    functionalGroups.forEach((fg) => {
-      if (fg.relatedSGroupId === sgroupId) {
+
+    if (sgroup instanceof SGroup) {
+      if (sgroup.functionalGroup) {
         isFunctionalGroup = true;
-        expanded = fg.isExpanded;
+        expanded = sgroup.functionalGroup.isExpanded;
       }
-    });
+    } else {
+      functionalGroups.forEach((fg) => {
+        if (fg.relatedSGroupId === sgroup) {
+          isFunctionalGroup = true;
+          expanded = fg.isExpanded;
+        }
+      });
+    }
     return !expanded && isFunctionalGroup;
   }
 }

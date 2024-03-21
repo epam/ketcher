@@ -114,11 +114,14 @@ export function fromPaste(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
       bond,
+      false,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
     pasteItems.bonds.push(operation.data.bid);
-    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
+    new BondAttr(operation.data.bid, 'isPreview', isPreview, false).perform(
+      restruct,
+    );
   });
 
   pasteItems.atoms.forEach((aid) => {

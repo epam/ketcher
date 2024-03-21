@@ -303,6 +303,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.textElement.on('mouseover', (event) => {
       this.editorEvents.mouseOverSequenceItem.dispatch(event);
     });
+    this.textElement.on('mousemove', (event) => {
+      this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
+    });
     this.textElement.on('mouseleave', (event) => {
       this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
     });

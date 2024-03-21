@@ -615,6 +615,15 @@ export class SequenceMode extends BaseMode {
       'sequence-edit-select': {
         shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
         handler: (event) => {
+          const arrowKey = event.key;
+
+          if (
+            SequenceRenderer.caretPosition === 0 &&
+            arrowKey === 'ArrowLeft'
+          ) {
+            return;
+          }
+
           this.selectionStartCaretPosition =
             this.selectionStartCaretPosition !== -1
               ? this.selectionStartCaretPosition

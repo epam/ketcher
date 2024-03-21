@@ -33,8 +33,8 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper =
-      ZoomTool.instance?.canvasWrapper || select(drawnStructuresSelector);
-    this.canvas = ZoomTool.instance?.canvas || select(canvasSelector);
+      ZoomTool.instance?.canvasWrapper || select(canvasSelector);
+    this.canvas = ZoomTool.instance?.canvas || select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {

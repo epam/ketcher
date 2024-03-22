@@ -1480,7 +1480,7 @@ export class DrawingEntitiesManager {
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
 
-    return command;
+    return { command, monomerToNewMonomer };
   }
 
   public centerMacroStructure() {

@@ -133,9 +133,10 @@ const addToCanvas = ({
   }
 
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
-  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
+  const { command: modelChanges } =
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
   const editorHistory = new EditorHistory(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
 

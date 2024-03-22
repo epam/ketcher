@@ -97,9 +97,10 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
+  const { command: modelChanges } =
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
 
   new EditorHistory(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
@@ -118,7 +119,11 @@ export function KetSerializeStructStr(
     );
     return deserialisedKet?.drawingEntitiesManager;
   } else {
-    throw new Error('Pasted formats should only be sequence or KET');
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.error.dispatch(
+      'Pasted formats should only be sequence or KET.',
+    );
+    return null;
   }
 }
 

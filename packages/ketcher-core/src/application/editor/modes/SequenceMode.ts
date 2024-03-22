@@ -220,6 +220,7 @@ export class SequenceMode extends BaseMode {
     position: Vec2,
     previousNode: SubChainNode,
     nextNode: SubChainNode,
+    nextNodeFirstMonomer?: BaseMonomer,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const phosphateLibraryItem = getRnaPartLibraryItem(
@@ -249,7 +250,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       editor.drawingEntitiesManager.createPolymerBond(
         additionalPhosphate,
-        nextNode.firstMonomerInNode,
+        nextNode.firstMonomerInNode || nextNodeFirstMonomer,
         AttachmentPointName.R2,
         AttachmentPointName.R1,
       ),
@@ -265,6 +266,7 @@ export class SequenceMode extends BaseMode {
     newNodePosition: Vec2,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
+      this.unsupportedSymbolsError(enteredSymbol);
       return undefined;
     }
 
@@ -324,6 +326,7 @@ export class SequenceMode extends BaseMode {
     newNodePosition: Vec2,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
+      this.unsupportedSymbolsError(enteredSymbol);
       return undefined;
     }
 
@@ -376,6 +379,14 @@ export class SequenceMode extends BaseMode {
     }
 
     return modelChanges;
+  }
+
+  private unsupportedSymbolsError(enteredSymbol: string) {
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.openErrorModal.dispatch({
+      errorTitle: 'Unsupported symbols',
+      errorMessage: `Ketcher doesn't support symbols ${enteredSymbol} in Sequence mode. /nPaste operation failed.`,
+    });
   }
 
   private finishNodesDeletion(
@@ -628,165 +639,6 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  private async getValidatePastedDrawingEntities() {
-    if (isClipboardAPIAvailable()) {
-      let newNodePosition;
-      // need to update the new pasted monomers' position, cause the pasted sequences is disorderd
-      // should be done during paste, cause when we copy from system files, we cant controll the monomers' position during copy
-      if (this.isEditMode) {
-        const previousNode =
-          SequenceRenderer.previousFromCurrentEdittingMonomer;
-        const nodeBeforePreviousNode = previousNode
-          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
-          : undefined;
-        newNodePosition = this.getNewSequenceItemPosition(
-          previousNode,
-          nodeBeforePreviousNode,
-        );
-      } else {
-        newNodePosition =
-          SequenceRenderer.chainsCollection.chains.length > 0 &&
-          !this.isEditMode
-            ? SequenceRenderer.getNextChainPosition(
-                SequenceRenderer.lastChainStartPosition,
-                SequenceRenderer.lastChain,
-              )
-            : undefined;
-      }
-      const editor = CoreEditor.provideEditorInstance();
-      const clipboardData = await navigator.clipboard.read();
-      const structStr = await getStructStringFromClipboardData(clipboardData);
-      const drawingEntitiesManager = KetSerializeStructStr(
-        structStr,
-        newNodePosition,
-      );
-      if (drawingEntitiesManager) {
-        for (const [, monomer] of drawingEntitiesManager.monomers) {
-          if (
-            (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE &&
-              monomer.monomerItem.props.MonomerType !==
-                MONOMER_CONST.PEPTIDE) ||
-            (editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
-              (monomer.monomerItem.props.MonomerType !== MONOMER_CONST.RNA ||
-                monomer.monomerItem.props.MonomerType !== MONOMER_CONST.DNA))
-          ) {
-            throw Error(
-              `All the contents should be in ${editor.sequenceTypeEnterMode} mode`,
-            );
-          }
-        }
-      } else {
-        throw Error('parsing error');
-      }
-      return drawingEntitiesManager;
-    }
-    throw Error(
-      "Your version of browser doesn't support pasting clipboard content via navigator API. Please use the lasted version instead.",
-    );
-  }
-
-  private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
-    const currentNode = SequenceRenderer.currentEdittingNode;
-    const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
-    const nodeBeforePreviousNode = previousNode
-      ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
-      : undefined;
-    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
-
-    const newNodePosition = this.getNewSequenceItemPosition(
-      previousNode,
-      nodeBeforePreviousNode,
-    );
-
-    let modelChanges;
-
-    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      modelChanges = this.handlePeptideNodeAddition(
-        enteredSymbol,
-        currentNode,
-        previousNodeInSameChain,
-        newNodePosition,
-      );
-    } else {
-      modelChanges = this.handleRnaDnaNodeAddition(
-        enteredSymbol,
-        currentNode,
-        previousNodeInSameChain,
-        newNodePosition,
-      );
-    }
-    return modelChanges;
-  }
-
-  private insertNewSequenceFragment(chainsCollection: ChainsCollection) {
-    const editor = CoreEditor.provideEditorInstance();
-    const currentNode = SequenceRenderer.currentEdittingNode;
-    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
-    const modelChanges = new Command();
-    if (!(currentNode instanceof EmptySequenceNode)) {
-      if (previousNodeInSameChain) {
-        const r2Bond =
-          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
-        assert(r2Bond);
-        modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
-        );
-      }
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          chainsCollection.chains[0].firstSubChain.lastNode.lastMonomerInNode,
-          currentNode?.firstMonomerInNode as BaseMonomer,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
-        ),
-      );
-    }
-    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      if (previousNodeInSameChain) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.createPolymerBond(
-            previousNodeInSameChain.lastMonomerInNode as BaseMonomer,
-            chainsCollection.firstNode.firstMonomerInNode,
-            AttachmentPointName.R2,
-            AttachmentPointName.R1,
-          ),
-        );
-      }
-    } else {
-      if (previousNodeInSameChain instanceof Nucleoside) {
-        const previousNode =
-          SequenceRenderer.previousFromCurrentEdittingMonomer;
-        const nodeBeforePreviousNode = previousNode
-          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
-          : undefined;
-        const previousNodeInSameChain =
-          SequenceRenderer.previousNodeInSameChain;
-
-        const newNodePosition = this.getNewSequenceItemPosition(
-          previousNode,
-          nodeBeforePreviousNode,
-        );
-        modelChanges.merge(
-          this.bondNodesThroughNewPhosphate(
-            newNodePosition,
-            previousNodeInSameChain,
-            chainsCollection.firstNode,
-          ),
-        );
-      } else if (previousNodeInSameChain) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.createPolymerBond(
-            previousNodeInSameChain.lastMonomerInNode,
-            chainsCollection.firstNode.firstMonomerInNode,
-            AttachmentPointName.R2,
-            AttachmentPointName.R1,
-          ),
-        );
-      }
-    }
-    return modelChanges;
-  }
-
   private copyToClipboard() {
     const nodeSelections = SequenceRenderer.selections;
     const drawingEntitiesManager = new DrawingEntitiesManager();
@@ -835,29 +687,31 @@ export class SequenceMode extends BaseMode {
       const editor = CoreEditor.provideEditorInstance();
       const drawingEntitiesManager =
         await this.getValidatePastedDrawingEntities();
-      const modelChanges = drawingEntitiesManager.mergeInto(
-        editor.drawingEntitiesManager,
-      );
+      assert(drawingEntitiesManager);
+      const { command: modelChanges, monomerToNewMonomer } =
+        drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
       if (this.isEditMode) {
         const chainsCollection = ChainsCollection.fromMonomers([
           ...drawingEntitiesManager.monomers.values(),
         ]);
-        chainsCollection.rearrange();
         if (chainsCollection.chains.length > 1) {
-          // TODO: could several fragments be pasted? or just several fragments (which are not connected through R2-R1 bonds) should be prohibited to be pasted?
-          throw new Error(
+          editor.events.error.dispatch(
             'Paste of several fragments should be prohibited in text-editing mode.',
           );
+          return;
         } else {
-          modelChanges.merge(this.insertNewSequenceFragment(chainsCollection));
+          // need to use the created monomer to init polymerbond, otherwise the bond and monomer will not match in rearrange process
+          modelChanges.merge(
+            this.insertNewSequenceFragment(
+              chainsCollection,
+              monomerToNewMonomer,
+            ),
+          );
         }
       }
+      modelChanges.addOperation(new ReinitializeSequenceModeCommand());
       new EditorHistory(editor).update(modelChanges);
       editor.renderersContainer.update(modelChanges);
-      editor.events.selectMode.dispatch({
-        mode: 'sequence-layout-mode',
-        mergeWithLatestHistoryCommand: true,
-      });
       if (!this.isEditMode) {
         const needCenterStructure =
           editor.drawingEntitiesManager.allEntities.length === 0;
@@ -870,6 +724,173 @@ export class SequenceMode extends BaseMode {
         }
       }
     }
+  }
+
+  private async getValidatePastedDrawingEntities() {
+    const editor = CoreEditor.provideEditorInstance();
+    if (isClipboardAPIAvailable()) {
+      let newNodePosition;
+      // need to update the new pasted monomers' position, cause the pasted sequences is disorderd
+      // should be done during paste, cause when we copy from system files, we cant controll the monomers' position during copy
+      if (this.isEditMode) {
+        const previousNode =
+          SequenceRenderer.previousFromCurrentEdittingMonomer;
+        const nodeBeforePreviousNode = previousNode
+          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+          : undefined;
+        newNodePosition = this.getNewSequenceItemPosition(
+          previousNode,
+          nodeBeforePreviousNode,
+        );
+      } else {
+        newNodePosition =
+          SequenceRenderer.chainsCollection.chains.length > 0 &&
+          !this.isEditMode
+            ? SequenceRenderer.getNextChainPosition(
+                SequenceRenderer.lastChainStartPosition,
+                SequenceRenderer.lastChain,
+              )
+            : undefined;
+      }
+
+      const clipboardData = await navigator.clipboard.read();
+      const structStr = await getStructStringFromClipboardData(clipboardData);
+      const drawingEntitiesManager = KetSerializeStructStr(
+        structStr,
+        newNodePosition,
+      );
+      assert(drawingEntitiesManager);
+      for (const [, monomer] of drawingEntitiesManager.monomers) {
+        if (
+          (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE &&
+            monomer.monomerItem.props.MonomerType !== MONOMER_CONST.PEPTIDE) ||
+          (editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
+            monomer.monomerItem.props.MonomerType !== MONOMER_CONST.RNA &&
+            monomer.monomerItem.props.MonomerType !== MONOMER_CONST.DNA)
+        ) {
+          editor.events.error.dispatch(
+            `All the contents to be pasted should be in ${editor.sequenceTypeEnterMode} mode`,
+          );
+          throw new Error();
+        }
+      }
+      return drawingEntitiesManager;
+    }
+    return null;
+  }
+
+  private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
+    const nodeBeforePreviousNode = previousNode
+      ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+      : undefined;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+
+    const newNodePosition = this.getNewSequenceItemPosition(
+      previousNode,
+      nodeBeforePreviousNode,
+    );
+
+    let modelChanges;
+
+    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
+      modelChanges = this.handlePeptideNodeAddition(
+        enteredSymbol,
+        currentNode,
+        previousNodeInSameChain,
+        newNodePosition,
+      );
+    } else {
+      modelChanges = this.handleRnaDnaNodeAddition(
+        enteredSymbol,
+        currentNode,
+        previousNodeInSameChain,
+        newNodePosition,
+      );
+    }
+    return modelChanges;
+  }
+
+  private insertNewSequenceFragment(
+    chainsCollection: ChainsCollection,
+    monomerToNewMonomer: Map<BaseMonomer, BaseMonomer>,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const modelChanges = new Command();
+    if (!(currentNode instanceof EmptySequenceNode)) {
+      if (previousNodeInSameChain) {
+        const r2Bond =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2Bond);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+        );
+      }
+      const lastNewMonomer = monomerToNewMonomer.get(
+        chainsCollection.chains[0].firstSubChain.lastNode.lastMonomerInNode,
+      );
+      assert(lastNewMonomer);
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          lastNewMonomer,
+          currentNode?.firstMonomerInNode as BaseMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+    const firstNewMonomer = monomerToNewMonomer.get(
+      chainsCollection.firstNode.firstMonomerInNode,
+    );
+    assert(firstNewMonomer);
+    if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
+      if (previousNodeInSameChain) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousNodeInSameChain.lastMonomerInNode as BaseMonomer,
+            firstNewMonomer,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
+    } else {
+      if (previousNodeInSameChain instanceof Nucleoside) {
+        const previousNode =
+          SequenceRenderer.previousFromCurrentEdittingMonomer;
+        const nodeBeforePreviousNode = previousNode
+          ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+          : undefined;
+        const previousNodeInSameChain =
+          SequenceRenderer.previousNodeInSameChain;
+
+        const newNodePosition = this.getNewSequenceItemPosition(
+          previousNode,
+          nodeBeforePreviousNode,
+        );
+        modelChanges.merge(
+          this.bondNodesThroughNewPhosphate(
+            newNodePosition,
+            previousNodeInSameChain,
+            chainsCollection.firstNode,
+            firstNewMonomer,
+          ),
+        );
+      } else if (previousNodeInSameChain) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousNodeInSameChain.lastMonomerInNode,
+            firstNewMonomer,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      }
+    }
+    return modelChanges;
   }
 
   private deleteSelectedDrawingEntities() {

@@ -16,6 +16,7 @@ export function resetEditorEvents() {
     layoutModeChange: new Subscription(),
     selectHistory: new Subscription(),
     error: new Subscription(),
+    openErrorModal: new Subscription(),
     openMonomerConnectionModal: new Subscription(),
     mouseOverPolymerBond: new Subscription(),
     mouseLeavePolymerBond: new Subscription(),

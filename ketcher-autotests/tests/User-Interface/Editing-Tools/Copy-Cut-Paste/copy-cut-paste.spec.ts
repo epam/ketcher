@@ -25,6 +25,7 @@ import {
   waitForRender,
   resetCurrentTool,
   pressButton,
+  clickAfterItemsToMergeInitialization,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -367,7 +368,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
   });
 
-  test('Copy and paste and  Edit the pasted Structure', async ({ page }) => {
+  test('Copy and paste and Edit the pasted Structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1719
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -378,7 +379,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickAfterItemsToMergeInitialization(page, x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -831,7 +832,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickAfterItemsToMergeInitialization(page, x, y);
   });
 
   test('Cut and Paste Aromatic structure and edit', async ({ page }) => {

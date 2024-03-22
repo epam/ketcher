@@ -9,6 +9,10 @@ export async function getFasta(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getFasta());
 }
 
+export async function getSequence(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getSequence());
+}
+
 export async function getCml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCml());
 }

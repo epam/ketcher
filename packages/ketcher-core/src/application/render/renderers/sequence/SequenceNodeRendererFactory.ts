@@ -11,6 +11,7 @@ import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
 import { BaseMonomerRenderer } from 'application/render';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -33,6 +34,9 @@ export class SequenceNodeRendererFactory {
         break;
       case EmptySequenceNode:
         RendererClass = EmptySequenceItemRenderer;
+        break;
+      case LinkerSequenceNode:
+        RendererClass = ChemSequenceItemRenderer;
         break;
       default:
         switch (node.monomer.constructor) {

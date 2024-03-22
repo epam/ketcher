@@ -105,6 +105,10 @@ export class Nucleotide {
   }
 
   public get modified() {
-    return this.sugar.label !== RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
+    return (
+      this.rnaBase.isModification ||
+      this.sugar.isModification ||
+      this.phosphate.isModification
+    );
   }
 }

@@ -44,6 +44,7 @@ import {
   StructServiceOptions,
 } from 'domain/services';
 import { KetcherLogger } from 'utilities';
+import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -348,6 +349,7 @@ export class RemoteStructService implements StructService {
       {
         'render-output-format': outputFormat,
         'render-bond-line-width': bondThickness,
+        'render-label-mode': getLabelRenderModeForIndigo(),
       },
       (response) => response.then((resp) => resp.text()),
     );

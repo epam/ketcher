@@ -1015,4 +1015,20 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Check snake layout to peptides chains connected through R1-R1, R2-R2 and R2 to R1', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: Bonds connected through R1-R1 and R2-R2 connections should remain straight line. Connected through R2-R1 snake layout.
+    */
+    await openFileAndAddToCanvasMacro(
+      `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

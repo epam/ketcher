@@ -25,3 +25,14 @@ body {
   height: 100%;
   width: 100%;
 }
+
+.MuiPaper-root {
+  align-self: center;
+  width: 57rem;
+  height: 40rem;
+  z-index: 1002;
+  max-height: calc(100vh - 4.28571rem);
+  max-width: calc(100vw - 4.28571rem);
+  min-height: 19rem;
+  min-width: 19rem;
+}

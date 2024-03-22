@@ -2,12 +2,16 @@ import 'ketcher-react/dist/index.css';
 
 import { useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { Dialog } from '@mui/material';
 import {
   Ketcher,
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
 import { ModeControl } from './ModeControl';
+import classes from '../../packages/ketcher-react/src/script/ui/dialog/template/template-lib.module.less';
+import { omit } from 'lodash/fp';
+import DialogContent from '@mui/material/DialogContent';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -66,12 +70,24 @@ const App = () => {
     />
   ) : undefined;
 
+  const [maxWidth, setMaxWidth] = useState('600px');
+
   return showPolymerEditor ? (
     <>
       <PolymerEditor togglerComponent={togglerComponent} />
     </>
   ) : (
-    <>
+    <Dialog open={true} fullScreen={false} maxWidth="xl">
+      <button
+        onClick={() => {
+          setMaxWidth(maxWidth === '600px' ? '1400px' : '600px');
+          document
+            .querySelector('.MuiPaper-root')
+            .setAttribute('style', `min-width: ${maxWidth}; min-height: 600px`);
+        }}
+      >
+        Heelllooo
+      </button>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -89,6 +105,7 @@ const App = () => {
             },
             '*',
           );
+          ketcher.editor.setOptions(JSON.stringify({ bondThickness: 4 }));
         }}
         togglerComponent={togglerComponent}
       />
@@ -105,7 +122,7 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </Dialog>
   );
 };
 

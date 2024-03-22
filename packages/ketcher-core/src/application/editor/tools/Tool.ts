@@ -51,6 +51,8 @@ interface ToolEventHandler {
 
   mouseOverSequenceItem?(event: Event): void;
 
+  mouseOnMoveSequenceItem?(event: Event): void;
+
   mouseLeaveSequenceItem?(event: Event): void;
 
   changeSequenceTypeEnterMode?(event: Event): void;

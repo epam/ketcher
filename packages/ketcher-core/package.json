@@ -37,6 +37,7 @@
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
     "test:unit": "jest",
+    "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\"",
     "typedoc": "typedoc"

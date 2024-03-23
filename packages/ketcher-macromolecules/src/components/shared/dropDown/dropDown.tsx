@@ -123,7 +123,11 @@ export const DropDown = ({
     selectionHandler(event.target.value);
   };
 
-  const handleExpand = () => {
+  const handleExpand = (event) => {
+    if (event.type === 'keydown') {
+      return;
+    }
+
     setExpanded(true);
   };
 

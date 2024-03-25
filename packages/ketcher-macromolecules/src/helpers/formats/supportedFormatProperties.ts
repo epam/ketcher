@@ -18,8 +18,8 @@ export enum ChemicalMimeType {
   Ket = 'chemical/x-ket',
   Mol = 'chemical/x-mdl-molfile',
   Helm = 'chemical/x-helm',
-  Fasta = 'fasta',
-  Sequence = 'sequence',
+  Fasta = 'chemical/x-fasta',
+  Sequence = 'chemical/x-sequence',
 }
 
 interface SupportedFormatPropertiesOptions {

@@ -1,0 +1,1741 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    8.297952268946727,
+                    -4.369360549562334,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    8.322869873156694,
+                    -5.369245222019514,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.18876997089438,
+                    -5.869188035085294,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.054671022306449,
+                    -5.369245222019514,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.054671022306449,
+                    -4.369360549562334,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.18876997089438,
+                    -3.869418213333743,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.066817092895509,
+            "y": 2.874324989318847,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    13.722177486195704,
+                    -4.419354067929407,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    13.647186254970713,
+                    -5.419239217223778,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.51308826005716,
+                    -5.9191815534523675,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.378986450446089,
+                    -5.419239217223778,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.378986450446089,
+                    -4.419354067929407,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.58807758393339,
+                    -3.9194117317008166,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.39606170654297,
+            "y": 2.924364757537841,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    19.24645840473421,
+                    -4.369360549562334,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    19.17146908085798,
+                    -5.369245222019514,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.037369178595668,
+                    -5.869188035085294,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.903269276333354,
+                    -5.369245222019514,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.978260507558343,
+                    -4.369360549562334,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.1123585024719,
+                    -3.869418213333743,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.000525283813477,
+            "y": 2.874324989318847,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    24.24581214879035,
+                    -4.294370272011723,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    24.24581214879035,
+                    -5.294255421306094,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.111712246528032,
+                    -5.7941977575346835,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.97761234426572,
+                    -5.294255421306094,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.97761234426572,
+                    -4.294370272011723,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.111712246528032,
+                    -3.7944279357831325,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.983990478515626,
+            "y": 2.795139503479003,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    29.170186105714055,
+                    -4.294370272011723,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    29.170186105714055,
+                    -5.294255421306094,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.036088110800502,
+                    -5.7941977575346835,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.901986301189428,
+                    -5.294255421306094,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.901986301189428,
+                    -4.294370272011723,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.036088110800502,
+                    -3.7944279357831325,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 30.908991622924805,
+            "y": 2.795139503479003,
+            "z": 0
+        }
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    8.335368729585653,
+                    -8.681303892908394,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    8.335368729585653,
+                    -9.681190472714336,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.20126882732334,
+                    -10.181132332105737,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.067169878735408,
+                    -9.681190472714336,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.067169878735408,
+                    -8.681303892908394,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.20126882732334,
+                    -8.181362033516995,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.079327392578126,
+            "y": 7.1902629852294915,
+            "z": 0
+        }
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    13.65968320405091,
+                    -8.731298364949849,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    13.65968320405091,
+                    -9.73118303740703,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.525585209137358,
+                    -10.23112585047281,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.391485306875047,
+                    -9.73118303740703,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.416481112384204,
+                    -8.731298364949849,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.550581014646514,
+                    -8.23135555188407,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.433590698242188,
+            "y": 7.240302276611327,
+            "z": 0
+        }
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    19.208963742796094,
+                    -8.681303892908394,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    19.208963742796094,
+                    -9.681190472714336,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.049868035024627,
+                    -10.181132332105737,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.94076584562023,
+                    -9.681190472714336,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.94076584562023,
+                    -8.681303892908394,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.049868035024627,
+                    -8.181362033516995,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 20.96299629211426,
+            "y": 7.1902629852294915,
+            "z": 0
+        }
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    24.23331329236139,
+                    -8.606313615357783,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    24.23331329236139,
+                    -9.606199241489346,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.12421110295699,
+                    -10.106141100880746,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.965113487836764,
+                    -9.606199241489346,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.965113487836764,
+                    -8.606313615357783,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.099213390099074,
+                    -8.106371755966384,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.971491622924805,
+            "y": 7.107639503479003,
+            "z": 0
+        }
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    29.182683054794257,
+                    -8.606313615357783,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    29.182683054794257,
+                    -9.606199241489346,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.048585059880704,
+                    -10.106141100880746,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.91448325026963,
+                    -9.606199241489346,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.91448325026963,
+                    -8.606313615357783,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.048585059880704,
+                    -8.106371755966384,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 30.92149238586426,
+            "y": 7.107639503479003,
+            "z": 0
+        }
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    8.4353557663198,
+                    -12.955750666967582,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    8.4353557663198,
+                    -13.955635339424761,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.301255864057486,
+                    -14.455578152490542,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.167155961795174,
+                    -13.955635339424761,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    10.167155961795174,
+                    -12.955750666967582,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    9.301255864057486,
+                    -12.455807853901803,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 10.179406929016114,
+            "y": 11.468670082092284,
+            "z": 0
+        }
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    13.75967214813382,
+                    -13.005744185334654,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    13.75967214813382,
+                    -14.005628857791836,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.625572245871506,
+                    -14.505571670857616,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.491470436260432,
+                    -14.005628857791836,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    15.491470436260432,
+                    -13.005744185334654,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    14.625572245871506,
+                    -12.505801372268875,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.508650588989259,
+            "y": 11.518710327148437,
+            "z": 0
+        }
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    19.33394849238816,
+                    -12.955750666967582,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    19.308950779530242,
+                    -13.955635339424761,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.149853164410015,
+                    -14.455578152490542,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    21.065748687863532,
+                    -13.955635339424761,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    21.065748687863532,
+                    -12.955750666967582,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "A",
+                "location": [
+                    20.149853164410015,
+                    -12.455807853901803,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.088095474243165,
+            "y": 11.468670082092284,
+            "z": 0
+        }
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    24.333298421746775,
+                    -12.88076038941697,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    24.333298421746775,
+                    -13.88064601554853,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.199200426833222,
+                    -14.38058787493993,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    26.06510243191967,
+                    -13.88064601554853,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    26.06510243191967,
+                    -12.88076038941697,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    25.199200426833222,
+                    -12.380818530025572,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1,
+                "selected": true
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 26.071492004394532,
+            "y": 11.382640075683593,
+            "z": 0
+        }
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    29.207680767652175,
+                    -12.88076038941697,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    29.207680767652175,
+                    -13.88064601554853,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.07358277273862,
+                    -14.38058787493993,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.939480963127547,
+                    -13.88064601554853,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.939480963127547,
+                    -12.88076038941697,
+                    0
+                ]
+            },
+            {
+                "label": "A",
+                "location": [
+                    30.07358277273862,
+                    -12.380818530025572,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    5,
+                    0
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    2,
+                    3
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    3,
+                    4
+                ],
+                "topology": 1
+            },
+            {
+                "type": 9,
+                "atoms": [
+                    4,
+                    5
+                ],
+                "topology": 1
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 30.970969009399415,
+            "y": 11.39361114501953,
+            "z": 0
+        }
+    }
+}

@@ -42,8 +42,8 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { SupportedFormat, identifyStructFormat } from 'application/formatters';
-import { IndigoProvider } from 'ketcher-react';
-import { ChemicalMimeType, StructService } from 'domain/services';
+import { ChemicalMimeType } from 'domain/services';
+import { ketcherProvider } from 'application/utils';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -716,54 +716,7 @@ export class SequenceMode extends BaseMode {
         }
       }
     });
-    // const nodeSelections = SequenceRenderer.selections;
-    // nodeSelections.forEach((selectionRange) => {
-    //   selectionRange.forEach((selectedNode) => {
-    //     drawingEntitiesManager.addMonomerChangeModel(
-    //       selectedNode.node.monomer.monomerItem,
-    //       selectedNode.node.monomer.position,
-    //       selectedNode.node.monomer,
-    //     );
-    //     if (
-    //       selectedNode.node instanceof Nucleotide ||
-    //       selectedNode.node instanceof Nucleoside
-    //     ) {
-    //       drawingEntitiesManager.addMonomerChangeModel(
-    //         selectedNode.node.rnaBase.monomerItem,
-    //         selectedNode.node.rnaBase.position,
-    //         selectedNode.node.rnaBase,
-    //       );
-    //     }
-    //     if (selectedNode.node instanceof Nucleotide) {
-    //       drawingEntitiesManager.addMonomerChangeModel(
-    //         selectedNode.node.phosphate.monomerItem,
-    //         selectedNode.node.phosphate.position,
-    //         selectedNode.node.phosphate,
-    //       );
-    //     }
 
-    //     selectedNode.node.monomer.forEachBond((bond) => {
-    //       const firstAttachmentPoint =
-    //         bond.firstMonomer.getAttachmentPointByBond(bond);
-    //       const secondAttachmentPoint =
-    //         bond.secondMonomer?.getAttachmentPointByBond(bond);
-    //       if (
-    //         bond.firstMonomer.selected &&
-    //         bond.secondMonomer?.selected &&
-    //         firstAttachmentPoint &&
-    //         secondAttachmentPoint
-    //       ) {
-    //         drawingEntitiesManager.finishPolymerBondCreationModelChange(
-    //           bond.firstMonomer,
-    //           bond.secondMonomer,
-    //           firstAttachmentPoint,
-    //           secondAttachmentPoint,
-    //           bond,
-    //         );
-    //       }
-    //     });
-    //   });
-    // });
     const ketSerializer = new KetSerializer();
     const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
       new Struct(),
@@ -870,12 +823,10 @@ export class SequenceMode extends BaseMode {
     if (this.isEditMode && !this.deleteSelection()) {
       return undefined;
     }
-
-    const indigo = IndigoProvider.getIndigo() as StructService;
-    const ketStruct = await indigo.convert({
-      struct: trimedStr.toUpperCase(),
-      output_format: ChemicalMimeType.KET,
-      input_format: ChemicalMimeType[editor.sequenceTypeEnterMode],
+    const indigo = ketcherProvider.getKetcher().indigo;
+    const ketStruct = await indigo.convert(trimedStr.toUpperCase(), {
+      outputFormat: ChemicalMimeType.KET,
+      inputFormat: ChemicalMimeType[editor.sequenceTypeEnterMode],
     });
     return await this.pasteKetFormatFragment(ketStruct.struct, editor);
   }

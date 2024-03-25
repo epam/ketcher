@@ -299,6 +299,14 @@ export class KetSerializer implements Serializer<Struct> {
     let offset;
     parsedFileContent.root.nodes.forEach((node, index) => {
       const nodeDefinition = parsedFileContent[node.$ref] as IKetMonomerNode;
+      if (
+        !nodeDefinition &&
+        (nodeDefinition === '__proto__' ||
+          nodeDefinition === 'constructor' ||
+          nodeDefinition === 'prototype')
+      ) {
+        return;
+      }
       nodeDefinition.position = switchIntoChemistryCoordSystem(
         new Vec2(nodeDefinition.position),
       );

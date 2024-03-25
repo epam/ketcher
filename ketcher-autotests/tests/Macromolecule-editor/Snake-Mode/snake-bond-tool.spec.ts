@@ -587,6 +587,29 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('When monomers are too close under each other snake bond shape has straight connection', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Snake Mode
+    Description: When monomers are too close under each other snake bond shape has straight 
+    connection and they are not supposed to twist.
+    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/3607 need to be fixed.
+    Then update expected screenshot.
+    */
+    const x = 500;
+    const y = 300;
+    const x1 = 100;
+    const y1 = 100;
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
+    await takeEditorScreenshot(page);
+    await page.getByText('meE').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(x1, y1);
+    await takeEditorScreenshot(page);
+  });
+
   test('Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern', async ({
     page,
   }) => {

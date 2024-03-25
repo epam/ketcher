@@ -238,8 +238,6 @@ class ZoomTool implements BaseTool {
   }
 
   public scrollToVerticalCenter(structCenterY: number) {
-    // const centerY = editor.canvasOffset.height / 2;
-    // const zoomedY = this.zoomTransform.invertY(centerY);
     const centerPointOfModel =
       this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();
     const offsetY = centerPointOfModel.y - structCenterY;

@@ -95,7 +95,7 @@ export class SequenceRenderer {
             node.monomer.renderer,
           );
           renderer.show();
-          node.monomer?.setRenderer(renderer);
+          node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
           currentMonomerIndexInChain++;
           currentMonomerIndexOverall++;
 

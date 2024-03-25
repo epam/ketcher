@@ -372,11 +372,15 @@ export class DrawingEntitiesManager {
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
-      const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
+      let isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
         rectangleBottomRightPoint,
         !!isPreviousSelected,
         shiftKey,
+      );
+      isValueChanged = this.checkBondSelectionForSequenceMode(
+        drawingEntity,
+        isValueChanged,
       );
 
       if (isValueChanged) {
@@ -387,6 +391,29 @@ export class DrawingEntitiesManager {
       }
     });
     return command;
+  }
+
+  private checkBondSelectionForSequenceMode(
+    drawingEntity: DrawingEntity,
+    isValueChanged: boolean,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (
+      editor.mode instanceof SequenceMode &&
+      drawingEntity instanceof PolymerBond
+    ) {
+      const prevSelectedValue = drawingEntity.selected;
+      if (
+        drawingEntity.firstMonomer.selected &&
+        drawingEntity.secondMonomer?.selected
+      ) {
+        drawingEntity.turnOnSelection();
+      } else {
+        drawingEntity.turnOffSelection();
+      }
+      isValueChanged = prevSelectedValue !== drawingEntity.selected;
+    }
+    return isValueChanged;
   }
 
   public startPolymerBondCreationChangeModel(
@@ -1588,7 +1615,9 @@ export class DrawingEntitiesManager {
         drawingEntities.push(nucleoside.rnaBase);
         if (needToSelectConnectedBonds && nucleoside.rnaBase.hasBonds) {
           nucleoside.rnaBase.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
+            if (polymerBond.getAnotherMonomer(nucleoside.rnaBase)?.selected) {
+              drawingEntities.push(polymerBond);
+            }
           });
         }
       } else if (isValidNucleotide(sugar)) {
@@ -1597,12 +1626,16 @@ export class DrawingEntitiesManager {
         drawingEntities.push(nucleotide.phosphate);
         if (needToSelectConnectedBonds && nucleotide.rnaBase.hasBonds) {
           nucleotide.rnaBase.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
+            if (polymerBond.getAnotherMonomer(nucleotide.rnaBase)?.selected) {
+              drawingEntities.push(polymerBond);
+            }
           });
         }
         if (needToSelectConnectedBonds && nucleotide.phosphate.hasBonds) {
           nucleotide.phosphate.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
+            if (polymerBond.getAnotherMonomer(nucleotide.phosphate)?.selected) {
+              drawingEntities.push(polymerBond);
+            }
           });
         }
       }
@@ -1610,7 +1643,10 @@ export class DrawingEntitiesManager {
     const monomer = drawingEntity as BaseMonomer;
     if (needToSelectConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((polymerBond) => {
-        if (!drawingEntities.includes(polymerBond)) {
+        if (
+          !drawingEntities.includes(polymerBond) &&
+          polymerBond.getAnotherMonomer(monomer)?.selected
+        ) {
           drawingEntities.push(polymerBond);
         }
       });

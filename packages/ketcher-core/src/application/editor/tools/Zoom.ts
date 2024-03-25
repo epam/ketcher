@@ -245,6 +245,7 @@ class ZoomTool implements BaseTool {
   }
 
   public scrollToVerticalBottom() {
+    this.drawScrollBars();
     if (this.scrollBars.vertical.offsetEnd < 0) {
       this.zoom?.translateBy(
         this.canvasWrapper,

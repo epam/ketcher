@@ -106,27 +106,6 @@ export async function parseAndAddMacromoleculesOnCanvas(
   editor.renderersContainer.update(modelChanges);
 }
 
-export function KetSerializeStructStr(
-  struct: string,
-  nodeStartPosition?: Vec2,
-) {
-  const ketSerializer = new KetSerializer();
-  const format = identifyStructFormat(struct);
-  if (format === SupportedFormat.ket) {
-    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(
-      struct,
-      nodeStartPosition,
-    );
-    return deserialisedKet?.drawingEntitiesManager;
-  } else {
-    const editor = CoreEditor.provideEditorInstance();
-    editor.events.error.dispatch(
-      'Pasted formats should only be sequence or KET.',
-    );
-    return null;
-  }
-}
-
 export function getCurrentCenterPointOfCanvas() {
   const editor = CoreEditor.provideEditorInstance();
   const originalCenterPointOfCanvas = new Vec2(

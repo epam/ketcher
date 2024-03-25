@@ -178,7 +178,10 @@ class SelectRectangle implements BaseTool {
           }
         })
         .flat();
-      drawingEntities = drawingEntities.concat(renderer.currentSubChain.bonds);
+      const bondsInsideCurretnChain = renderer.currentSubChain.bonds.filter(
+        (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
+      );
+      drawingEntities = drawingEntities.concat(bondsInsideCurretnChain);
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,

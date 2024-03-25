@@ -25,17 +25,18 @@ import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
 
-export type NodesSelection = {
+export type NodeSelection = {
   node: SubChainNode;
   nodeIndexOverall: number;
-}[][];
+};
+
+export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static lastChainStartPosition: Vec2;
-
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
@@ -624,7 +625,10 @@ export class SequenceRenderer {
         if (!previousNode?.monomer.selected) {
           lastSelectionRangeIndex = selections.push([]) - 1;
         }
-        selections[lastSelectionRangeIndex].push({ node, nodeIndexOverall });
+        selections[lastSelectionRangeIndex].push({
+          node,
+          nodeIndexOverall,
+        });
       }
       previousNode = node;
     });

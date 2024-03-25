@@ -49,6 +49,12 @@ interface ToolEventHandler {
 
   startNewSequence?(): void;
 
+  turnOnSequenceEditInRNABuilderMode?(): void;
+
+  turnOffSequenceEditInRNABuilderMode?(): void;
+
+  modifySequenceInRnaBuilder?(): void;
+
   mouseOverSequenceItem?(event: Event): void;
 
   mouseOnMoveSequenceItem?(event: Event): void;
@@ -58,6 +64,8 @@ interface ToolEventHandler {
   changeSequenceTypeEnterMode?(event: Event): void;
 
   toggleSequenceEditMode?(event: Event): void;
+
+  toggleSequenceEditInRNABuilderMode?(event: Event): void;
 }
 
 export interface IRnaPreset {
@@ -67,6 +75,13 @@ export interface IRnaPreset {
   phosphate?: MonomerItemType;
   presetInList?: IRnaPreset;
 }
+
+export type LabeledNucleotideWithPositionInSequence = {
+  baseLabel: string;
+  sugarLabel: string;
+  phosphateLabel: string;
+  nodeIndexOverall: number;
+};
 
 export interface Tool extends ToolEventHandler {
   cancel?(): void;

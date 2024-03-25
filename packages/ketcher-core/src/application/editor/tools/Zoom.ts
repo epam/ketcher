@@ -21,7 +21,6 @@ import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
-import { getCurrentCenterPointOfCanvas } from 'src';
 
 interface ScrollBar {
   name: string;
@@ -239,7 +238,10 @@ class ZoomTool implements BaseTool {
   }
 
   public scrollToVerticalCenter(structCenterY: number) {
-    const centerPointOfModel = getCurrentCenterPointOfCanvas();
+    // const centerY = editor.canvasOffset.height / 2;
+    // const zoomedY = this.zoomTransform.invertY(centerY);
+    const centerPointOfModel =
+      this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();
     const offsetY = centerPointOfModel.y - structCenterY;
     this.zoom?.translateBy(this.canvasWrapper, 0, offsetY);
   }

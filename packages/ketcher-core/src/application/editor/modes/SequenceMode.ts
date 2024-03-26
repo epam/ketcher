@@ -201,15 +201,20 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
+      monomers.forEach((monomer) => monomer.turnOnSelection());
       const drawingEntities = monomers.reduce(
         (drawingEntities: DrawingEntity[], monomer: BaseMonomer) => {
           return drawingEntities.concat(
-            editor.drawingEntitiesManager.getAllSelectedEntities(monomer),
+            editor.drawingEntitiesManager.getAllSelectedEntities(
+              monomer,
+              true,
+              drawingEntities,
+            ),
           );
         },
         [],
       );
-
+      this.unselectAllEntities();
       modelChanges.merge(
         editor.drawingEntitiesManager.selectDrawingEntities(drawingEntities),
       );
@@ -734,27 +739,39 @@ export class SequenceMode extends BaseMode {
       const needCenterStructure =
         editor.drawingEntitiesManager.allEntities.length === 0;
 
-      let modelChanges;
+      let pasteRes;
       const clipboardData = await navigator.clipboard.read();
       const pastedStr = await getStructStringFromClipboardData(clipboardData);
 
       const format = identifyStructFormat(pastedStr);
       if (format === SupportedFormat.ket) {
-        modelChanges = await this.pasteKetFormatFragment(pastedStr, editor);
+        pasteRes = await this.pasteKetFormatFragment(pastedStr, editor);
         // TODO: check if the str is just simple sequence string rather than other format
       } else if (format === SupportedFormat.smiles) {
-        modelChanges = await this.pasteSequence(pastedStr, editor);
+        pasteRes = await this.pasteSequence(pastedStr, editor);
       } else {
         editor.events.error.dispatch(
           'Pasted formats should only be sequence or KET.',
         );
       }
+      const modelChanges = pasteRes?.modelChanges;
       if (!modelChanges) {
         return;
       }
       modelChanges.addOperation(new ReinitializeSequenceModeCommand());
-      new EditorHistory(editor).update(modelChanges);
       editor.renderersContainer.update(modelChanges);
+      if (this.isEditMode && pasteRes?.newFragmentLength) {
+        const newCaretPosition =
+          SequenceRenderer.caretPosition + pasteRes.newFragmentLength;
+        const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
+          SequenceRenderer.caretPosition,
+          isNumber(newCaretPosition)
+            ? newCaretPosition
+            : SequenceRenderer.caretPosition,
+        );
+        modelChanges.addOperation(moveCaretOperation);
+      }
+      new EditorHistory(editor).update(modelChanges);
       this.scrollForViewMode(needCenterStructure);
     }
   }
@@ -791,36 +808,37 @@ export class SequenceMode extends BaseMode {
     }
     const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
     assert(drawingEntitiesManager);
-    const { command: modelChanges, monomerToNewMonomer } =
-      drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
     if (this.isEditMode) {
-      const chainsCollection = ChainsCollection.fromMonomers([
-        ...drawingEntitiesManager.monomers.values(),
-      ]);
+      if (!this.deleteSelection()) {
+        return undefined;
+      }
       if (chainsCollection.chains.length > 1) {
         editor.events.error.dispatch(
           'Paste of several fragments is prohibited in text-editing mode.',
         );
         return undefined;
-      } else {
-        if (!this.deleteSelection()) {
-          return undefined;
-        }
-        // need to use the created monomer to init polymerbond, otherwise the bond and monomer will not match in rearrange process
-        modelChanges.merge(
-          this.insertNewSequenceFragment(chainsCollection, monomerToNewMonomer),
-        );
       }
     }
-    return modelChanges;
+    const { command: modelChanges, monomerToNewMonomer } =
+      drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
+    if (this.isEditMode) {
+      // need to use the created monomer to init polymerbond, otherwise the bond and monomer will not match in rearrange process
+      modelChanges.merge(
+        this.insertNewSequenceFragment(chainsCollection, monomerToNewMonomer),
+      );
+    }
+    return {
+      modelChanges,
+      newFragmentLength: chainsCollection.chains[0].firstSubChain.length,
+    };
   }
 
   private async pasteSequence(pastedStr: string, editor: CoreEditor) {
     const trimedStr = pastedStr.trim();
     if (!this.checkSymbolsNotInNaturalAnalogues(trimedStr, editor)) {
-      return undefined;
-    }
-    if (this.isEditMode && !this.deleteSelection()) {
       return undefined;
     }
     const indigo = ketcherProvider.getKetcher().indigo;

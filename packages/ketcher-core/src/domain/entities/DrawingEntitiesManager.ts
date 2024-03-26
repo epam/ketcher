@@ -399,7 +399,8 @@ export class DrawingEntitiesManager {
     const editor = CoreEditor.provideEditorInstance();
     if (
       editor.mode instanceof SequenceMode &&
-      drawingEntity instanceof PolymerBond
+      drawingEntity instanceof PolymerBond &&
+      !isValueChanged
     ) {
       const prevSelectedValue = drawingEntity.selected;
       if (
@@ -1607,6 +1608,7 @@ export class DrawingEntitiesManager {
   public getAllSelectedEntities(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
+    selectedDrawingEntities?: DrawingEntity[],
   ) {
     const editor = CoreEditor.provideEditorInstance();
     if (
@@ -1652,6 +1654,7 @@ export class DrawingEntitiesManager {
     if (needToSelectConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((polymerBond) => {
         if (
+          !selectedDrawingEntities?.includes(polymerBond) &&
           !drawingEntities.includes(polymerBond) &&
           polymerBond.getAnotherMonomer(monomer)?.selected
         ) {

@@ -107,16 +107,22 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
-  public onKeyDown(event: KeyboardEvent) {
+  public async onKeyDown(event: KeyboardEvent) {
     if (!this.isEditMode) {
       return;
     }
-    const hotKeys = initHotKeys(this.keyboardEventHandlers);
-    const shortcutKey = keyNorm.lookup(hotKeys, event);
 
-    this.keyboardEventHandlers[shortcutKey]?.handler(event);
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        const hotKeys = initHotKeys(this.keyboardEventHandlers);
+        const shortcutKey = keyNorm.lookup(hotKeys, event);
+        const editor = CoreEditor.provideEditorInstance();
 
-    return true;
+        this.keyboardEventHandlers[shortcutKey]?.handler(event);
+        editor.events.mouseLeaveSequenceItem.dispatch();
+        resolve();
+      }, 0);
+    });
   }
 
   public startNewSequence() {
@@ -514,6 +520,13 @@ export class SequenceMode extends BaseMode {
             previousCaretPosition,
             nodesToDelete[0][0].nodeIndexOverall,
           );
+
+          if (
+            SequenceRenderer.caretPosition === 0 &&
+            SequenceRenderer.chainsCollection.chains.length === 0
+          ) {
+            this.startNewSequence();
+          }
         },
       },
       'turn-off-edit-mode': {
@@ -615,6 +628,15 @@ export class SequenceMode extends BaseMode {
       'sequence-edit-select': {
         shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
         handler: (event) => {
+          const arrowKey = event.key;
+
+          if (
+            SequenceRenderer.caretPosition === 0 &&
+            arrowKey === 'ArrowLeft'
+          ) {
+            return;
+          }
+
           this.selectionStartCaretPosition =
             this.selectionStartCaretPosition !== -1
               ? this.selectionStartCaretPosition

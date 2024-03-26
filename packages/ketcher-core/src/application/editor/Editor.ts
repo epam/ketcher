@@ -126,8 +126,8 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.setupHotKeysEvents();
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      this.mode.onKeyDown(event);
+    document.addEventListener('keydown', async (event: KeyboardEvent) => {
+      await this.mode.onKeyDown(event);
     });
   }
 

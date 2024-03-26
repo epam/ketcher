@@ -63,6 +63,7 @@ import {
   RecognizeResult,
   StructService,
   StructServiceOptions,
+  getLabelRenderModeForIndigo,
 } from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -130,6 +131,10 @@ function convertMimeTypeToOutputFormat(
     }
     case ChemicalMimeType.FASTA: {
       format = SupportedFormat.FASTA;
+      break;
+    }
+    case ChemicalMimeType.SEQUENCE: {
+      format = SupportedFormat.SEQUENCE;
       break;
     }
     case ChemicalMimeType.UNKNOWN:
@@ -698,6 +703,7 @@ class IndigoService implements StructService {
   ): Promise<string> {
     const { outputFormat, backgroundColor, bondThickness, ...restOptions } =
       options;
+
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
@@ -713,8 +719,8 @@ class IndigoService implements StructService {
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...restOptions,
+        'render-label-mode': getLabelRenderModeForIndigo(),
       };
-
       const commandData: GenerateImageCommandData = {
         struct: inputData,
         outputFormat: outputFormat || 'png',

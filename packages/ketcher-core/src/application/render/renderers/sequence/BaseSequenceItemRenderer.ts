@@ -44,6 +44,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this._isEditingSymbol = isEditingSymbol;
   }
 
+  protected abstract drawModification(): void;
+
   protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     return undefined;
   }
@@ -97,10 +99,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', -2)
       .attr('rx', 2)
       .attr('cursor', 'text');
-
-    if (this.node.modified) {
-      backgroundElement?.attr('stroke', '#585858').attr('stroke-width', '1px');
-    }
 
     backgroundElement?.attr(
       'fill',
@@ -170,13 +168,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('class', 'blinking');
   }
 
-  private drawHover() {
-    this.backgroundElement?.attr(
-      'fill',
-      this.isSequenceEditModeTurnedOn ? '#FF7A0033' : '#EFF2F5',
-    );
-  }
-
   protected removeHover() {
     this.backgroundElement?.attr(
       'fill',
@@ -220,15 +211,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
 
-    this.rootElement.on('mouseover', () => {
-      if (!this.node.monomer.selected) {
-        this.drawHover();
-      }
-    });
-
-    this.rootElement.on('mouseleave', () => {
-      this.removeHover();
-    });
+    if (this.node.modified) {
+      this.drawModification();
+    }
   }
 
   drawSelection(): void {
@@ -241,6 +226,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.raiseElement();
     } else {
       this.removeSelection();
+      if (this.node.modified) {
+        this.drawModification();
+      }
     }
   }
 
@@ -302,6 +290,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
     this.textElement.on('mouseover', (event) => {
       this.editorEvents.mouseOverSequenceItem.dispatch(event);
+    });
+    this.textElement.on('mousemove', (event) => {
+      this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
     });
     this.textElement.on('mouseleave', (event) => {
       this.editorEvents.mouseLeaveSequenceItem.dispatch(event);

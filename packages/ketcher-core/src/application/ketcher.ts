@@ -194,6 +194,15 @@ export class Ketcher {
     );
   }
 
+  getSequence(): Promise<string> {
+    return getStructure(
+      SupportedFormat.sequence,
+      this.#formatterFactory,
+      this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
   getSmarts(): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('SMARTS format is not available in macro mode');

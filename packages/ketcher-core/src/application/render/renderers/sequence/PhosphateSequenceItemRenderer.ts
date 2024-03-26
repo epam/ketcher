@@ -4,4 +4,6 @@ export class PhosphateSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return 'p';
   }
+
+  protected drawModification() {}
 }

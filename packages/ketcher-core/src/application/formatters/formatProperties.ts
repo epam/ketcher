@@ -132,6 +132,13 @@ const formatProperties: FormatPropertiesMap = {
     ['.fasta'],
     true,
   ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
+  ),
   unknown: new SupportedFormatProperties(
     'Unknown',
     ChemicalMimeType.UNKNOWN,

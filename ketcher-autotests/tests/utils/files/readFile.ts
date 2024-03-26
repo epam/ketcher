@@ -142,7 +142,14 @@ export async function openFileAndAddToCanvasAsNewProject(
   await selectOptionInDropdown(filename, page);
 
   await waitForLoad(page, async () => {
-    await pressButton(page, 'Open as New Project');
+    const openAsNewProjectButton = await page.$(
+      'button[data-id="Open as New Project"]',
+    );
+    if (openAsNewProjectButton) {
+      await pressButton(page, 'Open as New Project');
+    } else {
+      await pressButton(page, 'Open as New');
+    }
   });
 }
 

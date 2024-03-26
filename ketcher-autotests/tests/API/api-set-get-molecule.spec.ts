@@ -66,6 +66,26 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
   });
 
+  test('Structure import if dearomotize-on-load is true for Mol V2000 file', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4320
+    Description: Aromatic Benzene ring loads as non aromatic Benzene ring
+    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4320
+    After fix we need update screenshot.
+    */
+    const MolV2000File = await readFileContents(
+      'tests/test-data/Molfiles-V2000/aromatized-benzene-ring.mol',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await enableDearomatizeOnLoad(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+  });
+
   test('Add a molecule with custom atom properties using ketcher.setMolecule() method', async ({
     page,
   }) => {

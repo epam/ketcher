@@ -371,17 +371,24 @@ export class DrawingEntitiesManager {
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
-      let isValueChanged = drawingEntity.selectIfLocatedInRectangle(
-        rectangleTopLeftPoint,
-        rectangleBottomRightPoint,
-        !!isPreviousSelected,
-        shiftKey,
-      );
-      isValueChanged = this.checkBondSelectionForSequenceMode(
-        drawingEntity,
-        isValueChanged,
-      );
-
+      let isValueChanged;
+      const editor = CoreEditor.provideEditorInstance();
+      if (
+        editor.mode instanceof SequenceMode &&
+        drawingEntity instanceof PolymerBond
+      ) {
+        isValueChanged = this.checkBondSelectionForSequenceMode(
+          drawingEntity,
+          isValueChanged,
+        );
+      } else {
+        isValueChanged = drawingEntity.selectIfLocatedInRectangle(
+          rectangleTopLeftPoint,
+          rectangleBottomRightPoint,
+          !!isPreviousSelected,
+          shiftKey,
+        );
+      }
       if (isValueChanged) {
         const selectionCommand =
           this.createDrawingEntitySelectionCommand(drawingEntity);
@@ -393,26 +400,16 @@ export class DrawingEntitiesManager {
   }
 
   private checkBondSelectionForSequenceMode(
-    drawingEntity: DrawingEntity,
+    bond: PolymerBond,
     isValueChanged: boolean,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
-    if (
-      editor.mode instanceof SequenceMode &&
-      drawingEntity instanceof PolymerBond &&
-      !isValueChanged
-    ) {
-      const prevSelectedValue = drawingEntity.selected;
-      if (
-        drawingEntity.firstMonomer.selected &&
-        drawingEntity.secondMonomer?.selected
-      ) {
-        drawingEntity.turnOnSelection();
-      } else {
-        drawingEntity.turnOffSelection();
-      }
-      isValueChanged = prevSelectedValue !== drawingEntity.selected;
+    const prevSelectedValue = bond.selected;
+    if (bond.firstMonomer.selected && bond.secondMonomer?.selected) {
+      bond.turnOnSelection();
+    } else {
+      bond.turnOffSelection();
     }
+    isValueChanged = prevSelectedValue !== bond.selected;
     return isValueChanged;
   }
 

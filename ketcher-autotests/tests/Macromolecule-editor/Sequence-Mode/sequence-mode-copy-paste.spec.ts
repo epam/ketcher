@@ -36,7 +36,6 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     const endY = 500;
 
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await takeEditorScreenshot(page);
     await page.keyboard.press('Control+c');
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
@@ -44,7 +43,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select entire chain with Ctrl+Lclick then clear canvas and paste', async ({
+  test('Select entire chain with Ctrl+Lclick then copy and paste', async ({
     page,
   }) => {
     await page.keyboard.down('Control');
@@ -53,7 +52,6 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+Backspace');
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
   });

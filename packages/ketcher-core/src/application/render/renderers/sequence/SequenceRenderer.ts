@@ -148,11 +148,13 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
+            if (!subChain.bonds.includes(polymerBond)) {
+              subChain.bonds.push(polymerBond);
+            }
             if (!polymerBond.isSideChainConnection) {
               polymerBond.setRenderer(
                 new BackBoneBondSequenceRenderer(polymerBond),
               );
-              subChain.bonds.push(polymerBond);
               return;
             }
 
@@ -193,7 +195,6 @@ export class SequenceRenderer {
             }
             bondRenderer.show();
             polymerBond.setRenderer(bondRenderer);
-            subChain.bonds.push(polymerBond);
             handledAttachmentPoints.add(attachmentPointName);
 
             if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
@@ -571,7 +572,7 @@ export class SequenceRenderer {
     const editor = CoreEditor.provideEditorInstance();
     const selectDrawingEntities = (selectedNode: SubChainNode) => {
       const drawingEntities =
-        editor.drawingEntitiesManager.getAllSelectedEntities(
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleMonomer(
           selectedNode.monomer,
         );
       const modelChanges =

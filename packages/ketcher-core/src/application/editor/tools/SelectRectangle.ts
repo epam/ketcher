@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'domain/entities';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -146,9 +146,8 @@ class SelectRectangle implements BaseTool {
         return;
       }
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleMonomer(
           renderer.drawingEntity,
-          false,
         );
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
@@ -158,30 +157,41 @@ class SelectRectangle implements BaseTool {
       if (renderer.drawingEntity.selected) {
         return;
       }
+      const selectedMonomers: BaseMonomer[] = [];
+      this.editor.drawingEntitiesManager.selectedEntities.forEach(
+        ([, entity]) => {
+          if (entity instanceof BaseMonomer) {
+            selectedMonomers.push(entity);
+          }
+        },
+      );
+      const monomers = [
+        ...selectedMonomers,
+        renderer.drawingEntity as BaseMonomer,
+      ];
       const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
-          renderer.drawingEntity,
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForMonomers(
+          monomers,
         );
       modelChanges =
-        this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+        this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
         );
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside) {
-            return [node.sugar, node.rnaBase];
-          } else if (node instanceof Nucleotide) {
-            return [node.sugar, node.rnaBase, node.phosphate];
+          if (node instanceof Nucleoside || node instanceof Nucleotide) {
+            return node.monomers;
           } else {
             return node.monomer;
           }
         })
         .flat();
-      const bondsInsideCurretnChain = renderer.currentSubChain.bonds.filter(
+      drawingEntities.forEach((entity) => entity.turnOnSelection());
+      const bondsInsideCurrentChain = renderer.currentSubChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
-      drawingEntities = drawingEntities.concat(bondsInsideCurretnChain);
+      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,

@@ -36,7 +36,6 @@ import {
 } from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { KetSerializer } from 'domain/serializers';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -201,19 +200,10 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
-      monomers.forEach((monomer) => monomer.turnOnSelection());
-      const drawingEntities = monomers.reduce(
-        (drawingEntities: DrawingEntity[], monomer: BaseMonomer) => {
-          return drawingEntities.concat(
-            editor.drawingEntitiesManager.getAllSelectedEntities(
-              monomer,
-              true,
-              drawingEntities,
-            ),
-          );
-        },
-        [],
-      );
+      const drawingEntities =
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForMonomers(
+          monomers,
+        );
       this.unselectAllEntities();
       modelChanges.merge(
         editor.drawingEntitiesManager.selectDrawingEntities(drawingEntities),

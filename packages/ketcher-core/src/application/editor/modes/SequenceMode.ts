@@ -7,23 +7,15 @@ import {
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import {
-  getStructStringFromClipboardData,
-  initHotKeys,
-  isClipboardAPIAvailable,
-  keyNorm,
-  legacyCopy,
-  legacyPaste,
-} from 'utilities';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
+import { BaseMonomer, SequenceType, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import {
-  ReinitializeSequenceModeCommand,
+  ReinitializeModeCommand,
   RestoreSequenceCaretPositionCommand,
 } from 'application/editor/operations/modes';
 import assert from 'assert';
@@ -38,13 +30,8 @@ import {
 } from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
-import { KetSerializer } from 'domain/serializers';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { SupportedFormat, identifyStructFormat } from 'application/formatters';
-import { ChemicalMimeType } from 'domain/services';
-import { ketcherProvider } from 'application/utils';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -118,25 +105,6 @@ export class SequenceMode extends BaseMode {
     this.isEditMode = false;
     this.initialize(false);
     editor.events.toggleSequenceEditMode.dispatch(false);
-  }
-
-  public async onKeyDown(event: KeyboardEvent) {
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        const isInput =
-          event.target instanceof HTMLElement &&
-          (event.target?.nodeName === 'INPUT' ||
-            event.target?.nodeName === 'TEXTAREA');
-        const editor = CoreEditor.provideEditorInstance();
-        if (!isInput) {
-          const hotKeys = initHotKeys(this.keyboardEventHandlers);
-          const shortcutKey = keyNorm.lookup(hotKeys, event);
-          this.keyboardEventHandlers[shortcutKey]?.handler(event);
-        }
-        editor.events.mouseLeaveSequenceItem.dispatch();
-        resolve();
-      }, 0);
-    });
   }
 
   public startNewSequence() {
@@ -404,16 +372,6 @@ export class SequenceMode extends BaseMode {
     }
   }
 
-  private unsupportedSymbolsError(symbols: string | string[]) {
-    const editor = CoreEditor.provideEditorInstance();
-    editor.events.openErrorModal.dispatch({
-      errorTitle: 'Unsupported symbols',
-      errorMessage: `Ketcher doesn't support ${Array.from(symbols).map(
-        (symbol) => `"${symbol}"`,
-      )} symbol(s) in Sequence mode. Paste operation failed.`,
-    });
-  }
-
   private finishNodesDeletion(
     modelChanges: Command,
     previousCaretPosition: number,
@@ -427,7 +385,7 @@ export class SequenceMode extends BaseMode {
         ? newCaretPosition
         : SequenceRenderer.caretPosition,
     );
-    modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+    modelChanges.addOperation(new ReinitializeModeCommand());
     editor.renderersContainer.update(modelChanges);
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
@@ -516,7 +474,7 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private get keyboardEventHandlers() {
+  get keyboardEventHandlers() {
     return {
       delete: {
         shortcut: ['Backspace', 'Delete'],
@@ -627,7 +585,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
 
-          modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+          modelChanges.addOperation(new ReinitializeModeCommand());
           editor.renderersContainer.update(modelChanges);
           modelChanges.addOperation(SequenceRenderer.moveCaretForward());
           history.update(modelChanges);
@@ -683,150 +641,40 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
-  private copyToClipboard(event) {
+  checkPasteConditions(drawingEntitiesManager: DrawingEntitiesManager) {
     const editor = CoreEditor.provideEditorInstance();
-    const drawingEntitiesManager = new DrawingEntitiesManager();
-    editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
-      if (entity instanceof BaseMonomer) {
-        drawingEntitiesManager.addMonomerChangeModel(
-          entity.monomerItem,
-          entity.position,
-          entity,
-        );
-      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
-        const firstAttachmentPoint =
-          entity.firstMonomer.getAttachmentPointByBond(entity);
-        const secondAttachmentPoint =
-          entity.secondMonomer?.getAttachmentPointByBond(entity);
-        if (firstAttachmentPoint && secondAttachmentPoint) {
-          drawingEntitiesManager.finishPolymerBondCreationModelChange(
-            entity.firstMonomer,
-            entity.secondMonomer,
-            firstAttachmentPoint,
-            secondAttachmentPoint,
-            entity,
-          );
-        }
-      }
-    });
-
-    const ketSerializer = new KetSerializer();
-    const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
-      new Struct(),
-      drawingEntitiesManager,
-    );
-    const clipboardItemString = JSON.stringify(serializedMacromolecules);
-    if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(clipboardItemString);
-    } else {
-      legacyCopy(event.clipboardData, clipboardItemString);
-    }
-  }
-
-  private async pasteFromClipboard(event) {
-    let clipboardData;
-    if (isClipboardAPIAvailable()) {
-      clipboardData = await navigator.clipboard.read();
-    } else {
-      clipboardData = legacyPaste(
-        event.clipboardData,
-        Object.values(ChemicalMimeType),
-      );
-    }
-    const editor = CoreEditor.provideEditorInstance();
-    const needCenterStructure =
-      editor.drawingEntitiesManager.allEntities.length === 0;
-
-    let modelChanges;
-    const pastedStr = await getStructStringFromClipboardData(clipboardData);
-    const format = identifyStructFormat(pastedStr);
-    if (format === SupportedFormat.ket) {
-      modelChanges = await this.pasteKetFormatFragment(pastedStr, editor);
-      // TODO: check if the str is just simple sequence string rather than other format
-    } else if (format === SupportedFormat.smiles) {
-      modelChanges = await this.pasteSequence(pastedStr, editor);
-    } else {
-      editor.events.error.dispatch(
-        'Pasted formats should only be sequence or KET.',
-      );
-    }
-    if (!modelChanges) {
-      return;
-    }
-    modelChanges.addOperation(new ReinitializeSequenceModeCommand());
-    editor.renderersContainer.update(modelChanges);
-    new EditorHistory(editor).update(modelChanges);
-    this.scrollForViewMode(needCenterStructure);
-  }
-
-  private checkSymbolsNotInNaturalAnalogues(str: string, editor: CoreEditor) {
-    const symbolsNotInNaturalAnalogues: string[] = [];
-    Array.from(str).forEach((symbol) => {
-      if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-        if (!peptideNaturalAnalogues.includes(symbol.toUpperCase())) {
-          symbolsNotInNaturalAnalogues.push(symbol);
-        }
-      } else {
-        if (!rnaDnaNaturalAnalogues.includes(symbol.toUpperCase())) {
-          symbolsNotInNaturalAnalogues.push(symbol);
-        }
-      }
-    });
-    if (symbolsNotInNaturalAnalogues.length > 0) {
-      this.unsupportedSymbolsError(symbolsNotInNaturalAnalogues);
-      return false;
-    }
-    return true;
-  }
-
-  private async pasteKetFormatFragment(pastedStr: string, editor: CoreEditor) {
-    const newNodePosition = this.getNewNodePosition();
-    const ketSerializer = new KetSerializer();
-    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(
-      pastedStr,
-      newNodePosition,
-    );
-    if (!deserialisedKet) {
-      throw new Error('Error during parsing file');
-    }
-    const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
-    assert(drawingEntitiesManager);
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
     if (this.isEditMode) {
-      if (!this.deleteSelection()) {
-        return undefined;
-      }
       if (chainsCollection.chains.length > 1) {
         editor.events.error.dispatch(
           'Paste of several fragments is prohibited in text-editing mode.',
         );
-        return undefined;
+        return false;
+      }
+      if (!this.deleteSelection()) {
+        return false;
       }
     }
-    const { command: modelChanges, monomerToNewMonomer } =
-      drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
-    if (this.isEditMode) {
-      // need to use the created monomer to init polymerbond, otherwise the bond and monomer will not match in rearrange process
-      modelChanges.merge(
-        this.insertNewSequenceFragment(chainsCollection, monomerToNewMonomer),
-      );
-    }
-    return modelChanges;
+    return true;
   }
 
-  private async pasteSequence(pastedStr: string, editor: CoreEditor) {
-    const trimedStr = pastedStr.trim();
-    if (!this.checkSymbolsNotInNaturalAnalogues(trimedStr, editor)) {
-      return undefined;
+  getExtraOperations(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    monomerToNewMonomer: Map<BaseMonomer, BaseMonomer>,
+  ) {
+    if (this.isEditMode) {
+      const chainsCollection = ChainsCollection.fromMonomers([
+        ...drawingEntitiesManager.monomers.values(),
+      ]);
+      // need to use the created monomer to init polymerbond, otherwise the bond and monomer will not match in rearrange process
+      return this.insertNewSequenceFragment(
+        chainsCollection,
+        monomerToNewMonomer,
+      );
     }
-    const indigo = ketcherProvider.getKetcher().indigo;
-    const ketStruct = await indigo.convert(trimedStr.toUpperCase(), {
-      outputFormat: ChemicalMimeType.KET,
-      inputFormat: ChemicalMimeType[editor.sequenceTypeEnterMode],
-    });
-    return await this.pasteKetFormatFragment(ketStruct.struct, editor);
+    return null;
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
@@ -884,19 +732,7 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private scrollForViewMode(needCenterStructure = false) {
-    if (!this.isEditMode) {
-      const zoom = ZoomTool.instance;
-      if (needCenterStructure) {
-        const structCenterY = SequenceRenderer.getSequenceStructureCenterY();
-        zoom.scrollToVerticalCenter(structCenterY);
-      } else {
-        zoom.scrollToVerticalBottom();
-      }
-    }
-  }
-
-  private getNewNodePosition() {
+  getNewNodePosition() {
     if (this.isEditMode) {
       const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
       const nodeBeforePreviousNode = previousNode
@@ -943,6 +779,18 @@ export class SequenceMode extends BaseMode {
       );
     } else {
       return new Vec2(0, 0);
+    }
+  }
+
+  scrollForView(needCenterStructure = false) {
+    if (!this.isEditMode) {
+      const zoom = ZoomTool.instance;
+      if (needCenterStructure) {
+        const structCenterY = SequenceRenderer.getSequenceStructureCenterY();
+        zoom.scrollToVerticalCenter(structCenterY);
+      } else {
+        zoom.scrollToVerticalBottom();
+      }
     }
   }
 

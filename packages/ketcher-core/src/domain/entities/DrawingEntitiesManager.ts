@@ -52,7 +52,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode } from 'application/editor/modes/SequenceMode';
+import { SequenceMode } from 'application/editor';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -81,6 +81,10 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
+  private _lastPosition: Vec2 = new Vec2(0, 0, 0);
+  public get lastPosition(): Vec2 {
+    return this._lastPosition;
+  }
 
   get selectedEntitiesArr() {
     const selectedEntities: DrawingEntity[] = [];
@@ -1171,6 +1175,7 @@ export class DrawingEntitiesManager {
         lastPosition,
       );
       command.merge(result.command);
+      this._lastPosition = result.lastPosition;
     }
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());

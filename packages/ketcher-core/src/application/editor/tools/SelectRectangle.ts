@@ -145,10 +145,13 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
-      ({ command: modelChanges } =
+      modelChanges =
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           renderer.drawingEntity,
-        ));
+        );
+      modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;

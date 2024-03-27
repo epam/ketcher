@@ -1,6 +1,7 @@
 import { BaseMode } from 'application/editor/modes/BaseMode';
-import { CoreEditor } from 'application/editor/internal';
 import { LayoutMode } from 'application/editor/modes';
+import ZoomTool from '../tools/Zoom';
+import { CoreEditor } from '../Editor';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -23,5 +24,26 @@ export class SnakeMode extends BaseMode {
     return command;
   }
 
-  public onKeyDown(_event: KeyboardEvent) {}
+  get keyboardEventHandlers() {
+    return {
+      copy: {
+        shortcut: ['Mod+c'],
+        handler: (event) => this.copyToClipboard(event),
+      },
+      paste: {
+        shortcut: ['Mod+v'],
+        handler: (event) => this.pasteFromClipboard(event),
+      },
+    };
+  }
+
+  getNewNodePosition() {
+    const editor = CoreEditor.provideEditorInstance();
+    return editor.drawingEntitiesManager.lastPosition;
+  }
+
+  scrollForView() {
+    const zoom = ZoomTool.instance;
+    zoom.scrollToVerticalBottom();
+  }
 }

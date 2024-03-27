@@ -21,8 +21,9 @@ import {
   KetcherLogger,
   notifyRequestCompleted,
   isControlKey,
+  isClipboardAPIAvailable,
+  notifyCopyCut,
 } from 'ketcher-core';
-import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
 const ieCb = window.clipboardData;
 

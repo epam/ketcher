@@ -237,6 +237,24 @@ class ZoomTool implements BaseTool {
     );
   }
 
+  public scrollToVerticalCenter(structCenterY: number) {
+    const centerPointOfModel =
+      this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();
+    const offsetY = centerPointOfModel.y - structCenterY;
+    this.zoom?.translateBy(this.canvasWrapper, 0, offsetY);
+  }
+
+  public scrollToVerticalBottom() {
+    this.drawScrollBars();
+    if (this.scrollBars.vertical.offsetEnd < 0) {
+      this.zoom?.translateBy(
+        this.canvasWrapper,
+        0,
+        this.scrollBars.vertical.offsetEnd,
+      );
+    }
+  }
+
   mouseWheeled(event) {
     const isShiftKeydown = event.shiftKey;
     const boxNode = this.canvasWrapper.node();

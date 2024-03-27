@@ -1,6 +1,7 @@
-import { CoreEditor } from 'application/editor/internal';
 import { LayoutMode } from 'application/editor/modes/types';
 import { BaseMode } from 'application/editor/modes/internal';
+import { CoreEditor } from '../Editor';
+import { Coordinates } from '../internal';
 export class FlexMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
     super('flex-layout-mode', previousMode);
@@ -18,5 +19,21 @@ export class FlexMode extends BaseMode {
     return command;
   }
 
-  public onKeyDown(_event: KeyboardEvent) {}
+  get keyboardEventHandlers() {
+    return {
+      copy: {
+        shortcut: ['Mod+c'],
+        handler: (event) => this.copyToClipboard(event),
+      },
+      paste: {
+        shortcut: ['Mod+v'],
+        handler: (event) => this.pasteFromClipboard(event),
+      },
+    };
+  }
+
+  getNewNodePosition() {
+    const editor = CoreEditor.provideEditorInstance();
+    return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
+  }
 }

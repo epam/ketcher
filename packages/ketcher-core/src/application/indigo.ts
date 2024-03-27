@@ -52,6 +52,7 @@ const defaultCalcProps: Array<CalculateProps> = [
 
 type ConvertOptions = {
   outputFormat?: ChemicalMimeType;
+  inputFormat?: ChemicalMimeType;
 };
 type AutomapOptions = {
   mode?: AutomapMode;
@@ -103,10 +104,12 @@ export class Indigo {
     options?: ConvertOptions,
   ): Promise<ConvertResult> {
     const outputFormat = options?.outputFormat || ChemicalMimeType.KET;
+    const inputFormat = options?.inputFormat;
 
     return this.#structService.convert({
       struct: convertStructToString(struct, this.#ketSerializer),
       output_format: outputFormat,
+      input_format: inputFormat,
     });
   }
 

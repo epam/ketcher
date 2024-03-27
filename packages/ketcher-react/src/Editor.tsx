@@ -57,8 +57,8 @@ function Editor(props: EditorProps) {
       ...props,
       element: rootElRef.current,
       appRoot,
-    }).then((ketcher: Ketcher) => {
-      if (typeof onInit === 'function') {
+    }).then((ketcher: Ketcher | undefined) => {
+      if (typeof onInit === 'function' && ketcher) {
         onInit(ketcher);
         window.dispatchEvent(ketcherInitEvent);
       }

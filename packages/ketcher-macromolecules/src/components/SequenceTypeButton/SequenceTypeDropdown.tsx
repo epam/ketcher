@@ -36,7 +36,7 @@ export const SequenceTypeDropdown = () => {
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
     SequenceType.RNA,
   );
-  const [isSequenceEditMode, setIsSequenceEditMode] = useState(false);
+  const [isSequenceMode, setIsSequenceMode] = useState(false);
   const editor = useAppSelector(selectEditor);
 
   const dropdownOptions = [
@@ -45,15 +45,16 @@ export const SequenceTypeDropdown = () => {
     { id: SequenceType.PEPTIDE, label: 'Peptide' },
   ];
 
-  const onToggleSequenceEditMode = (_isSequenceEditMode) => {
-    setIsSequenceEditMode(_isSequenceEditMode);
+  const onToggleSequenceMode = (data) => {
+    const mode = typeof data === 'object' ? data.mode : data;
+    setIsSequenceMode(mode === 'sequence-layout-mode');
   };
 
   useEffect(() => {
-    editor?.events.toggleSequenceEditMode.add(onToggleSequenceEditMode);
+    editor?.events.selectMode.add(onToggleSequenceMode);
 
     return () => {
-      editor?.events.toggleSequenceEditMode.remove(onToggleSequenceEditMode);
+      editor?.events.selectMode.remove(onToggleSequenceMode);
     };
   }, [editor]);
 
@@ -62,9 +63,9 @@ export const SequenceTypeDropdown = () => {
     editor.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 
-  return isSequenceEditMode ? (
+  return isSequenceMode ? (
     <>
-      <SequenceTypeSelectorTitle>Edit mode</SequenceTypeSelectorTitle>
+      <SequenceTypeSelectorTitle>Type</SequenceTypeSelectorTitle>
       <SequenceTypeSelector
         options={dropdownOptions}
         currentSelection={activeSequenceType}

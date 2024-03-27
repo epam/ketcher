@@ -1,23 +1,39 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   waitForPageInit,
   takeEditorScreenshot,
   selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
+  dragMouseTo,
+  waitForKetcherInit,
+  waitForIndigoToLoad,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Connection rules for Base monomers: ', () => {
-  test.beforeAll(async ({ page }) => {
-    await waitForPageInit(page);
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
     await turnOnMacromoleculesEditor(page);
   });
 
   test.beforeEach(async ({ page }) => {
     await selectClearCanvasTool(page);
+  });
+
+  test.afterEach(async () => {
+    await selectClearCanvasTool(page);
+  });
+
+  test.afterAll(async () => {
+    await page.close();
   });
 
   interface IMonomer {
@@ -65,6 +81,17 @@ test.describe('Connection rules for Base monomers: ', () => {
       baseMonomers['(R1) - Left only'].fileName,
       page,
     );
+    page.getByText('(R1) - Left only').locator('..').first().hover();
+    await dragMouseTo(100, 100, page);
+
+    await openFileAndAddToCanvasMacro(
+      baseMonomers['(R1,R2) - R3 gap'].fileName,
+      page,
+    );
+
+    page.getByText('(R1,R2) - R3 gap').locator('..').first().hover();
+    await dragMouseTo(200, 200, page);
+
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });

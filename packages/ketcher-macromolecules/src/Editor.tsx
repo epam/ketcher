@@ -101,6 +101,7 @@ import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemCont
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import generateSequenceContextMenuProps from 'helpers/generateSequenceContextMenuProps';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -158,6 +159,20 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
+  const [sequenceContextMenuTitle, setSequenceContextMenuTitle] =
+    useState<string>();
+  const [
+    sequenceIsSelectedAtLeastOneNucleotide,
+    setSequenceIsSelectedAtLeastOneNucleotide,
+  ] = useState(false);
+  const [
+    sequenceIsSelectedOnlyNucleotides,
+    setSequenceIsSelectedOnlyNucleotides,
+  ] = useState(false);
+  const [
+    sequenceSelectedNucleotideMonomers,
+    setSequenceSelectedNucleotideMonomers,
+  ] = useState<IRnaPreset[]>();
   const monomers = useAppSelector(selectMonomers);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
@@ -309,7 +324,19 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event) => {
+    editor?.events.rightClickSequence.add((event, selections) => {
+      const {
+        title,
+        isSelectedAtLeastOneNucleotide,
+        isSelectedOnlyNucleotides,
+        selectedNucleotideMonomers,
+      } = generateSequenceContextMenuProps(selections);
+
+      setSequenceContextMenuTitle(title);
+      setSequenceIsSelectedAtLeastOneNucleotide(isSelectedAtLeastOneNucleotide);
+      setSequenceIsSelectedOnlyNucleotides(isSelectedOnlyNucleotides);
+      setSequenceSelectedNucleotideMonomers(selectedNucleotideMonomers);
+
       showSequenceContextMenu({
         event,
         props: {
@@ -385,7 +412,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <Preview />
-      <SequenceItemContextMenu />
+      <SequenceItemContextMenu
+        title={sequenceContextMenuTitle}
+        isSelectedAtLeastOneNucleotide={sequenceIsSelectedAtLeastOneNucleotide}
+        isSelectedOnlyNucleotides={sequenceIsSelectedOnlyNucleotides}
+        selectedNucleotideMonomers={sequenceSelectedNucleotideMonomers}
+      />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

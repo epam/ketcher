@@ -76,6 +76,41 @@ export class Nucleotide {
     return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
   }
 
+  // TODO: update
+  static createCustomOnCanvas(
+    rnaBaseName: string,
+    sugarName: string,
+    phosphateName: string,
+    position: Vec2,
+  ) {
+    console.log('=== createCustomOnCanvas');
+    const editor = CoreEditor.provideEditorInstance();
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
+    const phosphateLibraryItem = getRnaPartLibraryItem(editor, phosphateName);
+    // const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
+    // assert(sugarName);
+
+    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
+
+    assert(sugarLibraryItem);
+    assert(rnaBaseLibraryItem);
+    assert(phosphateLibraryItem);
+
+    const { command: modelChanges, monomers } =
+      editor.drawingEntitiesManager.addRnaPreset({
+        sugar: sugarLibraryItem,
+        sugarPosition: position,
+        rnaBase: rnaBaseLibraryItem,
+        rnaBasePosition: position,
+        phosphate: phosphateLibraryItem,
+        phosphatePosition: position,
+      });
+
+    const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;
+
+    return { modelChanges, node: Nucleotide.fromSugar(sugar, false) };
+  }
+
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
     return this.sugar.isMonomerTypeDifferentForChaining(monomerToChain);
   }

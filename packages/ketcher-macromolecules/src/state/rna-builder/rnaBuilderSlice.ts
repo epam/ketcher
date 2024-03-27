@@ -30,6 +30,8 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
+  activePresets: IRnaPreset[] | undefined;
+  activePresetsName: string | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
@@ -37,16 +39,20 @@ interface IRnaBuilderState {
   presets: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
+  isOpenedBySequence: boolean;
   uniqueNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
 }
 
 const initialState: IRnaBuilderState = {
   activePreset: null,
+  activePresets: undefined,
+  activePresetsName: undefined,
   activePresetMonomerGroup: null,
   presets: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
+  isOpenedBySequence: false,
   uniqueNameError: '',
   activePresetForContextMenu: null,
 };
@@ -74,6 +80,12 @@ export const rnaBuilderSlice = createSlice({
         presetInList: action.payload,
       };
     },
+    setActivePresets: (state, action: PayloadAction<IRnaPreset[]>) => {
+      state.activePresets = [...action.payload];
+    },
+    setIsOpenedBySequence: (state, action: PayloadAction<boolean>) => {
+      state.isOpenedBySequence = action.payload;
+    },
     setActivePresetForContextMenu: (
       state,
       action: PayloadAction<IRnaPreset>,
@@ -82,6 +94,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
+    },
+    setActivePresetsName: (state, action: PayloadAction<string>) => {
+      state.activePresetsName = action.payload;
     },
     setActiveRnaBuilderItem: (
       state,
@@ -98,6 +113,7 @@ export const rnaBuilderSlice = createSlice({
     ) => {
       state.activePresetMonomerGroup = action.payload;
     },
+    // TODO: use to update Sequence?
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
       const newPreset = { ...preset };
@@ -224,6 +240,12 @@ export const selectActiveRnaBuilderItem = (state: RootState): RnaBuilderItem =>
 export const selectActivePreset = (state: RootState): IRnaPreset =>
   state.rnaBuilder.activePreset;
 
+export const selectActivePresets = (state: RootState): IRnaPreset[] =>
+  state.rnaBuilder.activePresets;
+
+export const selectActivePresetsName = (state: RootState): string =>
+  state.rnaBuilder.activePresetsName;
+
 export const selectPresets = (state: RootState): IRnaPreset[] => {
   return state.rnaBuilder.presets;
 };
@@ -249,6 +271,15 @@ export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
 export const selectIsEditMode = (state: RootState): boolean => {
   return state.rnaBuilder.isEditMode;
 };
+
+export const selectIsOpenedBySequence = (state: RootState): boolean => {
+  return state.rnaBuilder.isOpenedBySequence;
+};
+
+export const selectRNABuilder = (state: RootState): boolean => {
+  return state.rnaBuilder;
+};
+
 export const selectPresetFullName = (preset: IRnaPreset): string => {
   if (!preset) return '';
   const sugar = preset.sugar?.props.MonomerName || '';
@@ -314,9 +345,12 @@ export const selectFilteredPresets = (
 
 export const {
   setActivePreset,
+  setActivePresets,
   setActivePresetName,
+  setActivePresetsName,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
+  setIsOpenedBySequence,
   savePreset,
   deletePreset,
   createNewPreset,

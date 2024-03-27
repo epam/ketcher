@@ -49,6 +49,8 @@ interface ToolEventHandler {
 
   startNewSequence?(): void;
 
+  modifySequenceInRnaBuilder?(): void;
+
   mouseOverSequenceItem?(event: Event): void;
 
   mouseOnMoveSequenceItem?(event: Event): void;

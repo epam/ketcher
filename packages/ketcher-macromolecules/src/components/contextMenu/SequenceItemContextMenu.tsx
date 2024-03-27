@@ -4,17 +4,56 @@ import { CONTEXT_MENU_ID } from './types';
 import { StyledMenu } from './styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { BaseSequenceItemRenderer } from 'ketcher-core/dist/application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
+import { setSelectedTabIndex } from 'state/library';
+import {
+  setIsOpenedBySequence,
+  setActivePresets,
+  setIsEditMode,
+  setActivePresetsName,
+  setActivePresetMonomerGroup,
+  setActiveRnaBuilderItem,
+} from 'state/rna-builder';
 
-export const SequenceItemContextMenu = () => {
+type SequenceItemContextMenuType = {
+  title?: string;
+  isSelectedAtLeastOneNucleotide: boolean;
+  isSelectedOnlyNucleotides: boolean;
+  selectedNucleotideMonomers?: IRnaPreset[];
+};
+
+const RNA_TAB_INDEX = 2;
+
+export const SequenceItemContextMenu = ({
+  title,
+  isSelectedAtLeastOneNucleotide,
+  isSelectedOnlyNucleotides,
+  selectedNucleotideMonomers,
+}: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
+  const dispatch = useAppDispatch();
 
   const menuItems = [
     {
+      name: 'sequence_menu_title',
+      title,
+      isMenuTitle: true,
+      disabled: true,
+      hidden: !isSelectedAtLeastOneNucleotide,
+    },
+    {
+      name: 'modify_in_rna_builder',
+      title: 'Modify in RNA Builder...',
+      disabled: !isSelectedOnlyNucleotides,
+      hidden: !isSelectedAtLeastOneNucleotide,
+    },
+    {
       name: 'edit_sequence',
       title: 'Edit sequence',
+      disabled: false,
       hidden: ({
         props,
       }: {
@@ -23,11 +62,33 @@ export const SequenceItemContextMenu = () => {
         return !props?.sequenceItemRenderer;
       },
     },
-    { name: 'start_new_sequence', title: 'Start new sequence' },
+    {
+      name: 'start_new_sequence',
+      title: 'Start new sequence',
+      disabled: false,
+    },
   ];
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
+      case 'modify_in_rna_builder':
+        console.log(
+          '= handleMenuChange modify_in_rna_builder',
+          selectedNucleotideMonomers,
+        );
+        dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
+        dispatch(setIsEditMode(true));
+        dispatch(setIsOpenedBySequence(true));
+        dispatch(setActivePresets([]));
+        dispatch(setActivePresetMonomerGroup(null));
+        dispatch(setActiveRnaBuilderItem(null));
+        if (selectedNucleotideMonomers?.length && title) {
+          dispatch(setActivePresetsName(title));
+          dispatch(setActivePresets(selectedNucleotideMonomers));
+        }
+        // TODO: check if it is needed
+        // editor.events.modifySequenceInRnaBuilder.dispatch(props.sequenceItemRenderer);
+        break;
       case 'start_new_sequence':
         editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
@@ -42,7 +103,7 @@ export const SequenceItemContextMenu = () => {
   const assembleMenuItems = () => {
     const items: ReactElement[] = [];
 
-    menuItems.forEach(({ name, title, hidden }) => {
+    menuItems.forEach(({ name, title, hidden, disabled, isMenuTitle }) => {
       const item = (
         <Item
           id={name}
@@ -50,6 +111,8 @@ export const SequenceItemContextMenu = () => {
           key={name}
           data-testid={name}
           hidden={hidden}
+          disabled={disabled}
+          className={isMenuTitle ? 'contexify_item-title' : ''}
         >
           <span>{title}</span>
         </Item>

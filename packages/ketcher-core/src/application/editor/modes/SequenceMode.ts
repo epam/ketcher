@@ -137,6 +137,72 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.moveCaretToNewChain();
   }
 
+  // TODO: 1 provide position of modified elements in sequence chains via props
+  // TODO: 2 modify to array of Presets
+  public modifySequenceInRnaBuilder(newPreset) {
+    // console.log(
+    //   'modifySequenceInRnaBuilder SequenceRenderer.selections()',
+    //   SequenceRenderer.selections,
+    // );
+    // TODO: update hardcoded values
+    // const chainIndex = 0;
+    const nodeInChainIndex = 2;
+
+    console.log('modifySequenceInRnaBuilder newPreset!!!!!', newPreset);
+    console.log(
+      'modifySequenceInRnaBuilder SequenceRenderer.chainsCollection!!!!!',
+      SequenceRenderer.chainsCollection,
+    );
+
+    // TODO: add functionality
+    // transform newPreset to Nucleotide monomer (RNA)
+    // delete selected items
+    // embed updated ones
+
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    SequenceRenderer.setCaretPosition(nodeInChainIndex);
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    // const currentNode = SequenceRenderer.chainsCollection.chains[chainIndex].subChains[0].nodes[nodeInChainIndex];
+    // console.log('=== modifySequenceInRnaBuilder currentNode', currentNode);
+    const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
+    // console.log('=== modifySequenceInRnaBuilder previousNode', previousNode);
+    const nodeBeforePreviousNode = previousNode
+      ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
+      : undefined;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+
+    const newNodePosition = this.getNewSequenceItemPosition(
+      previousNode,
+      nodeBeforePreviousNode,
+    );
+
+    let modelChanges;
+
+    // eslint-disable-next-line prefer-const
+    modelChanges = this.handleCustomRnaNodeAddition(
+      newPreset,
+      currentNode,
+      previousNodeInSameChain,
+      newNodePosition,
+    );
+
+    // Case when user type symbol that does not exist in current sequence type mode
+    if (!modelChanges) {
+      return;
+    }
+
+    modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+    editor.renderersContainer.update(modelChanges);
+    modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+    history.update(modelChanges);
+
+    // Remove element(s) from the sequence
+    // TODO: add 2 + updatedElementsCount
+    SequenceRenderer.setCaretPosition(nodeInChainIndex + 2);
+    this.keyboardEventHandlers.delete?.handler();
+  }
+
   public click(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
@@ -332,6 +398,68 @@ export class SequenceMode extends BaseMode {
       currentNode instanceof Nucleotide || currentNode instanceof Nucleoside
         ? Nucleotide.createOnCanvas(enteredSymbol, newNodePosition)
         : Nucleoside.createOnCanvas(enteredSymbol, newNodePosition);
+
+    modelChanges.merge(addedNodeModelChanges);
+
+    if (!(currentNode instanceof EmptySequenceNode)) {
+      if (previousNodeInSameChain) {
+        const r2Bond =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2Bond);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+        );
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          nodeToAdd.lastMonomerInNode,
+          currentNode?.firstMonomerInNode as BaseMonomer,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+
+    if (previousNodeInSameChain instanceof Nucleoside) {
+      modelChanges.merge(
+        this.bondNodesThroughNewPhosphate(
+          newNodePosition,
+          previousNodeInSameChain,
+          nodeToAdd,
+        ),
+      );
+    } else if (previousNodeInSameChain) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          previousNodeInSameChain.lastMonomerInNode,
+          nodeToAdd.firstMonomerInNode,
+          AttachmentPointName.R2,
+          AttachmentPointName.R1,
+        ),
+      );
+    }
+
+    return modelChanges;
+  }
+
+  private handleCustomRnaNodeAddition(
+    newPreset,
+    currentNode: SubChainNode,
+    previousNodeInSameChain: SubChainNode,
+    newNodePosition: Vec2,
+  ) {
+    console.log('=== handleCustomRnaNodeAddition');
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
+      Nucleotide.createCustomOnCanvas(
+        newPreset.base.props.MonomerName,
+        newPreset.sugar.props.MonomerName,
+        newPreset.phosphate.props.MonomerName,
+        newNodePosition,
+      );
+    console.log('=== handleCustomRnaNodeAddition nodeToAdd', nodeToAdd);
 
     modelChanges.merge(addedNodeModelChanges);
 

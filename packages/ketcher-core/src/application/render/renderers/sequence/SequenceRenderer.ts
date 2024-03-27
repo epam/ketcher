@@ -25,17 +25,20 @@ import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
 
-export type NodesSelection = {
+export type NodeSelection = {
   node: SubChainNode;
   nodeIndexOverall: number;
-}[][];
+  chainIndex?: number;
+  nodeIndex?: number;
+};
+
+export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static lastChainStartPosition: Vec2;
-
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
@@ -619,15 +622,22 @@ export class SequenceRenderer {
     let lastSelectionRangeIndex = -1;
     let previousNode;
 
-    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
-      if (node.monomer.selected) {
-        if (!previousNode?.monomer.selected) {
-          lastSelectionRangeIndex = selections.push([]) - 1;
+    SequenceRenderer.forEachNode(
+      ({ node, nodeIndexOverall, chainIndex, nodeIndex }) => {
+        if (node.monomer.selected) {
+          if (!previousNode?.monomer.selected) {
+            lastSelectionRangeIndex = selections.push([]) - 1;
+          }
+          selections[lastSelectionRangeIndex].push({
+            node,
+            nodeIndexOverall,
+            chainIndex,
+            nodeIndex,
+          });
         }
-        selections[lastSelectionRangeIndex].push({ node, nodeIndexOverall });
-      }
-      previousNode = node;
-    });
+        previousNode = node;
+      },
+    );
 
     return selections;
   }

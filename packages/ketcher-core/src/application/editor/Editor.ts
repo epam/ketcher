@@ -37,6 +37,7 @@ import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { groupBy } from 'lodash';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -144,7 +145,10 @@ export class CoreEditor {
       }
 
       if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
-        this.events.rightClickSequence.dispatch(event);
+        this.events.rightClickSequence.dispatch(
+          event,
+          SequenceRenderer.selections,
+        );
       } else {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -175,6 +179,10 @@ export class CoreEditor {
     );
 
     this.events.startNewSequence.add(() => this.onStartNewSequence());
+    this.events.modifySequenceInRnaBuilder.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onModifySequenceInRnaBuilder(sequenceItemRenderer),
+    );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
@@ -194,6 +202,17 @@ export class CoreEditor {
     }
 
     this.mode.startNewSequence();
+  }
+
+  private onModifySequenceInRnaBuilder(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    console.log('=== onModifySequenceInRnaBuilder');
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.modifySequenceInRnaBuilder(sequenceItemRenderer);
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {

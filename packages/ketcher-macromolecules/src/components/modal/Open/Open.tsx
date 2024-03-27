@@ -55,25 +55,33 @@ const OpenFooter = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const FooterSelectorContainer = styled.div({
+  display: 'flex',
   height: '24px',
   fontSize: '12px',
 });
 
-const FooterFormatSelector = styled(StyledDropdown)({
-  width: '180px',
-});
+const FooterFormatSelector = styled(StyledDropdown)((props) => ({
+  width:
+    props.currentSelection === 'seq' || props.currentSelection === 'fasta'
+      ? `170px`
+      : '180px',
+}));
 
 const FooterSequenceSelector = styled(StyledDropdown)({
-  width: '140px',
-  margin: '0 8px',
+  width: '110px',
+});
+
+const FooterButtonContainer = styled('div')({
+  display: 'flex',
+  gap: '10px',
 });
 
 const FooterButton = styled(ActionButton)({
-  margin: '0 8px',
-  width: '100px',
+  width: 'min-content',
 });
 
 const KET = 'ket';
@@ -324,7 +332,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           />
         ) : null}
       </FooterSelectorContainer>
-      <div>
+      <FooterButtonContainer>
         <FooterButton
           key="openButton"
           disabled={!structStr}
@@ -340,7 +348,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           title="Structure will be loaded as fragment and added to Clipboard"
           data-testid="add-to-canvas-button"
         />
-      </div>
+      </FooterButtonContainer>
     </OpenFooter>
   );
 

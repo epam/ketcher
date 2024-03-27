@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
@@ -86,6 +86,21 @@ test.describe('Erase Tool', () => {
     await hideMonomerPreview(page);
 
     await takeEditorScreenshot(page);
+  });
+
+  test('Check tooltip for a Erase button', async ({ page }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Erase button tooltip is located in the left toolbar.
+    */
+    const icon = {
+      testId: 'erase',
+      title: 'Erase (Del)',
+    };
+    const iconButton = page.getByTestId(icon.testId);
+    await expect(iconButton).toHaveAttribute('title', icon.title);
+    await iconButton.hover();
+    expect(icon.title).toBeTruthy();
   });
 
   test('Check that RNA and its bonds are deleted when deleting monomer from RNA chain using Erase Tool', async ({
@@ -184,6 +199,38 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
     await page.getByText('A6OH').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check erasing by use short key "Delete"', async ({ page }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Structures are deleted from canvas.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check erasing part of structure by use short key "Delete"', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Part of structures are deleted from canvas.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectPartOfMolecules(page);
+    await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -145,38 +145,22 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleMonomer(
+      ({ command: modelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
           renderer.drawingEntity,
-        );
-      modelChanges =
-        this.editor.drawingEntitiesManager.selectDrawingEntities(
-          drawingEntities,
-        );
+        ));
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      const selectedMonomers: BaseMonomer[] = [];
-      this.editor.drawingEntitiesManager.selectedEntities.forEach(
-        ([, entity]) => {
-          if (entity instanceof BaseMonomer) {
-            selectedMonomers.push(entity);
-          }
-        },
-      );
-      const monomers = [
-        ...selectedMonomers,
-        renderer.drawingEntity as BaseMonomer,
+      const drawingEntities: DrawingEntity[] = [
+        ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
+        renderer.drawingEntity,
       ];
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForMonomers(
-          monomers,
-        );
-      modelChanges =
-        this.editor.drawingEntitiesManager.selectDrawingEntities(
+      ({ command: modelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
-        );
+        ));
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
         .map((node) => {

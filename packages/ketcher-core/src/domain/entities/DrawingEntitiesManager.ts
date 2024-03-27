@@ -81,6 +81,17 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
+
+  get selectedEntitiesArr() {
+    const selectedEntities: DrawingEntity[] = [];
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (drawingEntity.selected) {
+        selectedEntities.push(drawingEntity);
+      }
+    });
+    return selectedEntities;
+  }
+
   get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
@@ -1602,61 +1613,81 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public getAllSelectedEntitiesForMonomers(monomers: BaseMonomer[]) {
+  public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
+    const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
-    monomers.forEach((monomer) => monomer.turnOnSelection());
-    const drawingEntities = monomers.reduce(
-      (drawingEntities: DrawingEntity[], monomer: BaseMonomer) => {
-        return drawingEntities.concat(
-          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleMonomer(
-            monomer,
+    drawingEntities.forEach((monomer) => monomer.turnOnSelection());
+    const newDrawingEntities = drawingEntities.reduce(
+      (
+        selectedDrawingEntities: DrawingEntity[],
+        drawingEntity: DrawingEntity,
+      ) => {
+        const res =
+          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+            drawingEntity,
             true,
-            drawingEntities,
-          ),
+            selectedDrawingEntities,
+          );
+        res.drawingEntities.forEach((entity) =>
+          command.addOperation(new DrawingEntitySelectOperation(entity)),
         );
+        return selectedDrawingEntities.concat(res.drawingEntities);
       },
       [],
     );
-    return drawingEntities;
+    return { command, drawingEntities: newDrawingEntities };
   }
 
-  public getAllSelectedEntitiesForSingleMonomer(
+  public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
     selectedDrawingEntities?: DrawingEntity[],
   ) {
+    const command = new Command();
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    drawingEntity.turnOnSelection();
+    let drawingEntities: DrawingEntity[] = [drawingEntity];
+
     const editor = CoreEditor.provideEditorInstance();
     if (
       !(editor.mode instanceof SequenceMode) ||
       drawingEntity instanceof PolymerBond
     ) {
-      return [drawingEntity];
+      return { command, drawingEntities };
     }
-    let drawingEntities: DrawingEntity[] = [drawingEntity];
     if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
       const sugar = drawingEntity;
       if (isValidNucleoside(sugar)) {
         const nucleoside = Nucleoside.fromSugar(sugar);
-        drawingEntities = [...drawingEntities, ...nucleoside.monomers];
+        drawingEntities = nucleoside.monomers;
       } else if (isValidNucleotide(sugar)) {
         const nucleotide = Nucleotide.fromSugar(sugar);
-        drawingEntities = [...drawingEntities, ...nucleotide.monomers];
+        drawingEntities = nucleotide.monomers;
       }
-      drawingEntities.forEach((entity) => entity.turnOnSelection());
-    }
-    const monomer = drawingEntity as BaseMonomer;
-    if (needToSelectConnectedBonds && monomer.hasBonds) {
-      monomer.forEachBond((polymerBond) => {
-        if (
-          !selectedDrawingEntities?.includes(polymerBond) &&
-          !drawingEntities.includes(polymerBond) &&
-          polymerBond.getAnotherMonomer(monomer)?.selected
-        ) {
-          drawingEntities.push(polymerBond);
+      drawingEntities.forEach((entity) => {
+        if (!(entity instanceof Sugar)) {
+          entity.turnOnSelection();
+          command.addOperation(new DrawingEntitySelectOperation(entity));
         }
       });
     }
-    return drawingEntities;
+    drawingEntities.forEach((entity) => {
+      const monomer = entity as BaseMonomer;
+      if (needToSelectConnectedBonds && monomer.hasBonds) {
+        monomer.forEachBond((polymerBond) => {
+          if (
+            !selectedDrawingEntities?.includes(polymerBond) &&
+            !drawingEntities.includes(polymerBond) &&
+            polymerBond.getAnotherMonomer(monomer)?.selected
+          ) {
+            drawingEntities.push(polymerBond);
+            polymerBond.turnOnSelection();
+            command.addOperation(new DrawingEntitySelectOperation(polymerBond));
+          }
+        });
+      }
+    });
+    return { command, drawingEntities };
   }
 
   public validateIfApplicableForFasta() {

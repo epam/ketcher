@@ -12,6 +12,8 @@ import {
   initHotKeys,
   isClipboardAPIAvailable,
   keyNorm,
+  legacyCopy,
+  legacyPaste,
 } from 'utilities';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
@@ -184,7 +186,6 @@ export class SequenceMode extends BaseMode {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
     if (this.isEditMode && isEventOnSequenceItem && this.selectionStarted) {
-      const modelChanges = new Command();
       const editor = CoreEditor.provideEditorInstance();
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
@@ -200,14 +201,11 @@ export class SequenceMode extends BaseMode {
         startCaretPosition,
         endCaretPosition,
       );
-      const drawingEntities =
-        editor.drawingEntitiesManager.getAllSelectedEntitiesForMonomers(
+      this.unselectAllEntities();
+      const { command: modelChanges } =
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           monomers,
         );
-      this.unselectAllEntities();
-      modelChanges.merge(
-        editor.drawingEntitiesManager.selectDrawingEntities(drawingEntities),
-      );
       const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
         this.selectionStartCaretPosition,
         SequenceRenderer.caretPosition,
@@ -656,11 +654,11 @@ export class SequenceMode extends BaseMode {
       },
       copy: {
         shortcut: ['Mod+c'],
-        handler: () => this.copyToClipboard(),
+        handler: (event) => this.copyToClipboard(event),
       },
       paste: {
         shortcut: ['Mod+v'],
-        handler: () => this.pasteFromClipboard(),
+        handler: (event) => this.pasteFromClipboard(event),
       },
     };
   }
@@ -685,7 +683,7 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
-  private copyToClipboard() {
+  private copyToClipboard(event) {
     const editor = CoreEditor.provideEditorInstance();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
@@ -717,53 +715,48 @@ export class SequenceMode extends BaseMode {
       new Struct(),
       drawingEntitiesManager,
     );
+    const clipboardItemString = JSON.stringify(serializedMacromolecules);
     if (isClipboardAPIAvailable()) {
-      const clipboardItemString = JSON.stringify(serializedMacromolecules);
       navigator.clipboard.writeText(clipboardItemString);
+    } else {
+      legacyCopy(event.clipboardData, clipboardItemString);
     }
   }
 
-  private async pasteFromClipboard() {
+  private async pasteFromClipboard(event) {
+    let clipboardData;
     if (isClipboardAPIAvailable()) {
-      const editor = CoreEditor.provideEditorInstance();
-      const needCenterStructure =
-        editor.drawingEntitiesManager.allEntities.length === 0;
-
-      let pasteRes;
-      const clipboardData = await navigator.clipboard.read();
-      const pastedStr = await getStructStringFromClipboardData(clipboardData);
-
-      const format = identifyStructFormat(pastedStr);
-      if (format === SupportedFormat.ket) {
-        pasteRes = await this.pasteKetFormatFragment(pastedStr, editor);
-        // TODO: check if the str is just simple sequence string rather than other format
-      } else if (format === SupportedFormat.smiles) {
-        pasteRes = await this.pasteSequence(pastedStr, editor);
-      } else {
-        editor.events.error.dispatch(
-          'Pasted formats should only be sequence or KET.',
-        );
-      }
-      const modelChanges = pasteRes?.modelChanges;
-      if (!modelChanges) {
-        return;
-      }
-      modelChanges.addOperation(new ReinitializeSequenceModeCommand());
-      editor.renderersContainer.update(modelChanges);
-      if (this.isEditMode && pasteRes?.newFragmentLength) {
-        const newCaretPosition =
-          SequenceRenderer.caretPosition + pasteRes.newFragmentLength;
-        const moveCaretOperation = new RestoreSequenceCaretPositionCommand(
-          SequenceRenderer.caretPosition,
-          isNumber(newCaretPosition)
-            ? newCaretPosition
-            : SequenceRenderer.caretPosition,
-        );
-        modelChanges.addOperation(moveCaretOperation);
-      }
-      new EditorHistory(editor).update(modelChanges);
-      this.scrollForViewMode(needCenterStructure);
+      clipboardData = await navigator.clipboard.read();
+    } else {
+      clipboardData = legacyPaste(
+        event.clipboardData,
+        Object.values(ChemicalMimeType),
+      );
     }
+    const editor = CoreEditor.provideEditorInstance();
+    const needCenterStructure =
+      editor.drawingEntitiesManager.allEntities.length === 0;
+
+    let modelChanges;
+    const pastedStr = await getStructStringFromClipboardData(clipboardData);
+    const format = identifyStructFormat(pastedStr);
+    if (format === SupportedFormat.ket) {
+      modelChanges = await this.pasteKetFormatFragment(pastedStr, editor);
+      // TODO: check if the str is just simple sequence string rather than other format
+    } else if (format === SupportedFormat.smiles) {
+      modelChanges = await this.pasteSequence(pastedStr, editor);
+    } else {
+      editor.events.error.dispatch(
+        'Pasted formats should only be sequence or KET.',
+      );
+    }
+    if (!modelChanges) {
+      return;
+    }
+    modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+    editor.renderersContainer.update(modelChanges);
+    new EditorHistory(editor).update(modelChanges);
+    this.scrollForViewMode(needCenterStructure);
   }
 
   private checkSymbolsNotInNaturalAnalogues(str: string, editor: CoreEditor) {
@@ -820,10 +813,7 @@ export class SequenceMode extends BaseMode {
         this.insertNewSequenceFragment(chainsCollection, monomerToNewMonomer),
       );
     }
-    return {
-      modelChanges,
-      newFragmentLength: chainsCollection.chains[0].firstSubChain.length,
-    };
+    return modelChanges;
   }
 
   private async pasteSequence(pastedStr: string, editor: CoreEditor) {

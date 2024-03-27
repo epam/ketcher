@@ -570,36 +570,53 @@ export class SequenceRenderer {
 
   public static shiftArrowSelectionInEditMode(event) {
     const editor = CoreEditor.provideEditorInstance();
-    const selectDrawingEntities = (selectedNode: SubChainNode) => {
-      const drawingEntities =
-        editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleMonomer(
-          selectedNode.monomer,
-        );
-      const modelChanges =
-        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-          drawingEntities,
-        );
-      return modelChanges;
-    };
-
-    const modelChanges = new Command();
+    let modelChanges;
     const arrowKey = event.code;
     if (arrowKey === 'ArrowRight') {
-      const modelChanges = selectDrawingEntities(this.currentEdittingNode);
+      modelChanges = SequenceRenderer.getShiftArrowChanges(
+        editor,
+        this.currentEdittingNode.monomer,
+      );
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
-      let modelChanges;
       if (this.previousNodeInSameChain) {
-        modelChanges = selectDrawingEntities(this.previousNodeInSameChain);
+        modelChanges = SequenceRenderer.getShiftArrowChanges(
+          editor,
+          this.previousNodeInSameChain.monomer,
+        );
       } else if (SequenceRenderer.previousChain) {
         const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
           SequenceRenderer.previousChain,
         );
-        modelChanges = selectDrawingEntities(previousChainLastEmptyNode);
+        ({ command: modelChanges } =
+          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+            previousChainLastEmptyNode.monomer,
+          ));
       }
       modelChanges.addOperation(this.moveCaretBack());
     }
     editor.renderersContainer.update(modelChanges);
+  }
+
+  private static getShiftArrowChanges(
+    editor: CoreEditor,
+    monomer: BaseMonomer,
+  ) {
+    let modelChanges;
+    const needTurnOffSelection = monomer.selected;
+    const result =
+      editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+        monomer,
+      );
+    if (needTurnOffSelection) {
+      modelChanges =
+        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+          result.drawingEntities,
+        );
+    } else {
+      modelChanges = result.command;
+    }
+    return modelChanges;
   }
 
   public static unselectEmptySequenceNodes() {

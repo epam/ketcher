@@ -1,5 +1,7 @@
 import { ChemicalMimeType } from 'domain/services';
 
+// eslint-disable-next-line dot-notation
+const ieCb = window['clipboardData'];
 /**
  *
  * Legacy browser API doesn't support async operations, so it is not possible
@@ -10,6 +12,39 @@ export function isClipboardAPIAvailable() {
     typeof navigator?.clipboard?.writeText === 'function' &&
     typeof navigator?.clipboard?.read === 'function'
   );
+}
+
+export function legacyCopy(clipboardData, data) {
+  if (!clipboardData && ieCb) {
+    ieCb.setData('text', data['text/plain']);
+  } else {
+    let curFmt;
+    clipboardData.setData('text/plain', data['text/plain']);
+    try {
+      Object.keys(data).forEach((fmt) => {
+        curFmt = fmt;
+        clipboardData.setData(fmt, data[fmt]);
+      });
+    } catch (e) {
+      console.error('cliparea.jsx::legacyCopy', e);
+      console.info(`Could not write exact type ${curFmt}`);
+    }
+  }
+}
+
+export function legacyPaste(cb, formats) {
+  let data = {};
+  if (!cb && ieCb) {
+    data['text/plain'] = ieCb.getData('text');
+  } else {
+    data['text/plain'] = cb.getData('text/plain');
+    data = formats.reduce((res, fmt) => {
+      const d = cb.getData(fmt);
+      if (d) res[fmt] = d;
+      return res;
+    }, data);
+  }
+  return data;
 }
 
 export function notifyCopyCut() {

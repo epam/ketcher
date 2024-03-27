@@ -125,7 +125,7 @@
             <bond atomRefs2="a6 a5" order="1"/>
             <bond atomRefs2="a21 a43" order="1"/>
             <bond atomRefs2="a43 a44" order="2">
-                <bondStereo atomRefs4="a21 a43 a44 a45">T</bondStereo>
+                <bondStereo convention="MDL" conventionValue="3"/>
             </bond>
             <bond atomRefs2="a44 a45" order="1" topology="chain"/>
             <bond atomRefs2="a45 a46" order="1" queryType="Any">

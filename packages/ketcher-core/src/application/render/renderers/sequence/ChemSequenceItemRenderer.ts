@@ -4,4 +4,6 @@ export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return '@';
   }
+
+  protected drawModification() {}
 }

@@ -10,6 +10,7 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import {
   hideMonomerPreview,
@@ -284,5 +285,68 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
+  });
+
+  test('Click on canvas with selected Erase Tool not erase monomers on canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Monomers are not deleted.
+    */
+    const x = 100;
+    const y = 100;
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await selectEraseTool(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Zoom In/Zoom Out while using erase tool', async ({ page }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Monomers are deleted.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await selectEraseTool(page);
+    for (let i = 0; i < 5; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await page.getByText('Bal').locator('..').first().click();
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 8; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await page.getByText('D-2Nal').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Chceck that using Erase Tool on empty canvas not cause any errors in DevTool Console', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Erase Tool
+    Description: Erase Tool on empty canvas not cause any errors in DevTool Console.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await selectEraseTool(page);
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

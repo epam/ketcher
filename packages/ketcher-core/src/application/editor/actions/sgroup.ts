@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy,
 } from '../operations';
-import { Pile, SGroup } from 'domain/entities';
+import { Pile, SGroup, SGroupAttachmentPoint, Struct } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
@@ -45,6 +45,9 @@ export function fromSeveralSgroupAddition(
   atoms,
   attrs,
 ) {
+  const struct = restruct.molecule;
+  const attachmentPoints = findAttachmentPoints(struct, atoms);
+
   const descriptors = attrs.fieldValue;
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
@@ -53,7 +56,7 @@ export function fromSeveralSgroupAddition(
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      [],
+      attachmentPoints,
     );
   }
 
@@ -68,7 +71,7 @@ export function fromSeveralSgroupAddition(
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        [],
+        attachmentPoints,
       ),
     );
   }, new Action());
@@ -500,4 +503,32 @@ function getAtomsFromBonds(struct, bonds) {
     acc = acc.concat([bond.begin, bond.end]);
     return acc;
   }, []);
+}
+
+function findAttachmentPoints(
+  struct: Struct,
+  sgroupAtoms: number[],
+): SGroupAttachmentPoint[] {
+  const attachmentPoints: SGroupAttachmentPoint[] = [];
+  const structAtoms = struct.atoms;
+
+  structAtoms.forEach((value, key) => {
+    if (!sgroupAtoms.includes(key)) {
+      value.neighbors.forEach((structNeighbor) => {
+        sgroupAtoms.forEach((sgroupAtomId) => {
+          const sgroupAtom = structAtoms.get(sgroupAtomId);
+
+          sgroupAtom?.neighbors.forEach((sgroupNeighbor) => {
+            if (sgroupNeighbor === structNeighbor + 1) {
+              attachmentPoints.push(
+                new SGroupAttachmentPoint(sgroupAtomId, undefined, undefined),
+              );
+            }
+          });
+        });
+      });
+    }
+  });
+
+  return attachmentPoints;
 }

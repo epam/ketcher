@@ -144,6 +144,8 @@ export function sGroupAttributeAction(id, attrs) {
 }
 
 export function fromSgroupDeletion(restruct, id) {
+  console.log('fromSgroupAddition');
+
   let action = new Action();
   const struct = restruct.molecule;
 
@@ -194,6 +196,8 @@ export function fromSgroupAddition(
   name?,
   oldSgroup?,
 ) {
+  console.log('fromSgroupAddition');
+
   // eslint-disable-line
   let action = new Action();
 
@@ -519,7 +523,10 @@ function findAttachmentPoints(
           const sgroupAtom = structAtoms.get(sgroupAtomId);
 
           sgroupAtom?.neighbors.forEach((sgroupNeighbor) => {
-            if (sgroupNeighbor === structNeighbor + 1) {
+            if (
+              sgroupNeighbor === structNeighbor + 1 ||
+              sgroupNeighbor === structNeighbor - 1
+            ) {
               attachmentPoints.push(
                 new SGroupAttachmentPoint(sgroupAtomId, undefined, undefined),
               );

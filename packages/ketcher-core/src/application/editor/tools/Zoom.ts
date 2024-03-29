@@ -250,7 +250,7 @@ class ZoomTool implements BaseTool {
       this.zoom?.translateBy(
         this.canvasWrapper,
         0,
-        this.scrollBars.vertical.offsetEnd,
+        this.scrollBars.vertical.offsetEnd / this.zoomLevel,
       );
     }
   }
@@ -297,6 +297,7 @@ class ZoomTool implements BaseTool {
         bar: this.scrollBars?.vertical?.bar,
       },
     };
+    console.log('offsetEnd', this.scrollBars.vertical.offsetEnd);
   }
 
   private get zoomStep() {

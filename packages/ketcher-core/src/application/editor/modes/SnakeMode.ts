@@ -2,6 +2,7 @@ import { BaseMode } from 'application/editor/modes/BaseMode';
 import { LayoutMode } from 'application/editor/modes';
 import ZoomTool from '../tools/Zoom';
 import { CoreEditor } from '../Editor';
+import { Coordinates } from '../internal';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -28,18 +29,20 @@ export class SnakeMode extends BaseMode {
     return {
       copy: {
         shortcut: ['Mod+c'],
-        handler: (event) => this.copyToClipboard(event),
+        handler: () => this.copyToClipboard(),
       },
       paste: {
         shortcut: ['Mod+v'],
-        handler: (event) => this.pasteFromClipboard(event),
+        handler: () => this.pasteFromClipboard(),
       },
     };
   }
 
   getNewNodePosition() {
     const editor = CoreEditor.provideEditorInstance();
-    return editor.drawingEntitiesManager.lastPosition;
+    return Coordinates.canvasToModel(
+      editor.drawingEntitiesManager.lastPosition,
+    );
   }
 
   scrollForView() {

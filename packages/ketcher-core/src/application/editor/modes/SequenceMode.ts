@@ -32,6 +32,7 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -257,11 +258,17 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(peptideAddCommand);
 
-    this.handleConnectionWithCurrentNode(
+    const deletedBond = this.deleteBond(
       currentNode,
       previousNodeInSameChain,
       modelChanges,
+    );
+
+    this.handleConnectionWithCurrentNode(
+      currentNode,
+      modelChanges,
       newPeptide,
+      deletedBond,
     );
 
     this.handleConnectionWithPreviousNodeInSameChain(
@@ -269,6 +276,7 @@ export class SequenceMode extends BaseMode {
       modelChanges,
       newPeptide,
       newNodePosition,
+      deletedBond,
     );
 
     return modelChanges;
@@ -293,11 +301,17 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(addedNodeModelChanges);
 
-    this.handleConnectionWithCurrentNode(
+    const deletedBond = this.deleteBond(
       currentNode,
       previousNodeInSameChain,
       modelChanges,
+    );
+
+    this.handleConnectionWithCurrentNode(
+      currentNode,
+      modelChanges,
       nodeToAdd.lastMonomerInNode,
+      deletedBond,
     );
 
     this.handleConnectionWithPreviousNodeInSameChain(
@@ -305,36 +319,62 @@ export class SequenceMode extends BaseMode {
       modelChanges,
       nodeToAdd.lastMonomerInNode,
       newNodePosition,
+      deletedBond,
     );
     return modelChanges;
   }
 
   private handleConnectionWithCurrentNode(
     currentNode: SubChainNode,
-    previousNodeInSameChain: SubChainNode,
     modelChanges: Command,
     monomerToAdd: BaseMonomer,
+    deletedBond: PolymerBond,
   ) {
     if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
       const editor = CoreEditor.provideEditorInstance();
-      if (previousNodeInSameChain) {
-        const r2Bond =
-          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
-        assert(r2Bond);
+      const r1BondOfCurrentNode =
+        currentNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
+      const r2BondOfMonomerToAdd = monomerToAdd.attachmentPointsToBonds.R2;
+      if (
+        (!r1BondOfCurrentNode || deletedBond === r1BondOfCurrentNode) &&
+        !r2BondOfMonomerToAdd
+      ) {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(r2Bond),
+          editor.drawingEntitiesManager.createPolymerBond(
+            monomerToAdd,
+            currentNode?.firstMonomerInNode as BaseMonomer,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      } else {
+        editor.events.error.dispatch(
+          'No available attachment points to establish bonds for merge.',
         );
       }
-
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          monomerToAdd,
-          currentNode?.firstMonomerInNode as BaseMonomer,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
-        ),
-      );
     }
+  }
+
+  private deleteBond(
+    currentNode: SubChainNode,
+    previousNodeInSameChain: SubChainNode,
+    modelChanges: Command,
+  ) {
+    let r2BondOfPreviousNodeInSameChain;
+    if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
+      const editor = CoreEditor.provideEditorInstance();
+      if (previousNodeInSameChain) {
+        r2BondOfPreviousNodeInSameChain =
+          previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2;
+        assert(r2BondOfPreviousNodeInSameChain);
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(
+            r2BondOfPreviousNodeInSameChain,
+          ),
+        );
+      }
+    }
+    return r2BondOfPreviousNodeInSameChain;
   }
 
   private handleConnectionWithPreviousNodeInSameChain(
@@ -342,33 +382,53 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     monomerToAdd: BaseMonomer,
     newNodePosition: Vec2,
+    deletedBond: PolymerBond,
   ) {
     const editor = CoreEditor.provideEditorInstance();
+    const r2BondOfPreviousNodeInSameChain =
+      previousNodeInSameChain?.lastMonomerInNode?.attachmentPointsToBonds.R2;
+    const r1BondOfMonomerToAdd = monomerToAdd.attachmentPointsToBonds.R1;
     if (
       previousNodeInSameChain &&
       !(previousNodeInSameChain instanceof Nucleoside)
     ) {
-      modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          previousNodeInSameChain.lastMonomerInNode,
-          monomerToAdd,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
-        ),
-      );
+      if (
+        (!r2BondOfPreviousNodeInSameChain ||
+          deletedBond === r2BondOfPreviousNodeInSameChain) &&
+        !r1BondOfMonomerToAdd
+      ) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.createPolymerBond(
+            previousNodeInSameChain.lastMonomerInNode,
+            monomerToAdd,
+            AttachmentPointName.R2,
+            AttachmentPointName.R1,
+          ),
+        );
+      } else {
+        editor.events.error.dispatch(
+          'No available attachment points to establish bonds for merge.',
+        );
+      }
     }
 
     if (
       editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
       previousNodeInSameChain instanceof Nucleoside
     ) {
-      modelChanges.merge(
-        this.bondNodesThroughNewPhosphate(
-          newNodePosition,
-          previousNodeInSameChain.lastMonomerInNode,
-          monomerToAdd,
-        ),
-      );
+      if (!r1BondOfMonomerToAdd) {
+        modelChanges.merge(
+          this.bondNodesThroughNewPhosphate(
+            newNodePosition,
+            previousNodeInSameChain.lastMonomerInNode,
+            monomerToAdd,
+          ),
+        );
+      } else {
+        editor.events.error.dispatch(
+          'No available attachment points to establish bonds for merge.',
+        );
+      }
     }
   }
 
@@ -407,7 +467,11 @@ export class SequenceMode extends BaseMode {
       const nodeInSameChainBeforeSelection =
         SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
 
-      if (!nodeInSameChainBeforeSelection && nodeAfterSelection) {
+      if (
+        !nodeInSameChainBeforeSelection &&
+        nodeAfterSelection &&
+        !(nodeAfterSelection instanceof EmptySequenceNode)
+      ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.moveMonomer(
             nodeAfterSelection.monomer,
@@ -612,11 +676,11 @@ export class SequenceMode extends BaseMode {
       },
       copy: {
         shortcut: ['Mod+c'],
-        handler: (event) => this.copyToClipboard(event),
+        handler: () => this.copyToClipboard(),
       },
       paste: {
         shortcut: ['Mod+v'],
-        handler: (event) => this.pasteFromClipboard(event),
+        handler: () => this.pasteFromClipboard(),
       },
     };
   }
@@ -709,14 +773,19 @@ export class SequenceMode extends BaseMode {
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const modelChanges = new Command();
     const lastMonomerOfNewFragment = monomerToNewMonomer.get(
-      chainsCollection.chains[0].firstSubChain.lastNode.lastMonomerInNode,
+      chainsCollection.chains[0].lastSubChain.lastNode.lastMonomerInNode,
     );
     assert(lastMonomerOfNewFragment);
-    this.handleConnectionWithCurrentNode(
+    const deletedBond = this.deleteBond(
       currentNode,
       previousNodeInSameChain,
       modelChanges,
+    );
+    this.handleConnectionWithCurrentNode(
+      currentNode,
+      modelChanges,
       lastMonomerOfNewFragment,
+      deletedBond,
     );
     const firstMonomerOfNewFragment = monomerToNewMonomer.get(
       chainsCollection.firstNode.firstMonomerInNode,
@@ -728,6 +797,7 @@ export class SequenceMode extends BaseMode {
       modelChanges,
       firstMonomerOfNewFragment,
       newNodePosition,
+      deletedBond,
     );
     return modelChanges;
   }

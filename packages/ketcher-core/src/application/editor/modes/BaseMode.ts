@@ -7,8 +7,6 @@ import {
   initHotKeys,
   isClipboardAPIAvailable,
   keyNorm,
-  legacyCopy,
-  legacyPaste,
 } from 'utilities';
 import { ReinitializeModeCommand } from '../operations/modes';
 import { BaseMonomer, SequenceType, Struct } from 'domain/entities';
@@ -90,7 +88,7 @@ export abstract class BaseMode {
 
   scrollForView(_needCenterStructure: boolean) {}
 
-  copyToClipboard(event) {
+  copyToClipboard() {
     const editor = CoreEditor.provideEditorInstance();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
@@ -130,20 +128,13 @@ export abstract class BaseMode {
     const clipboardItemString = JSON.stringify(serializedMacromolecules);
     if (isClipboardAPIAvailable()) {
       navigator.clipboard.writeText(clipboardItemString);
-    } else {
-      legacyCopy(event.clipboardData, clipboardItemString);
     }
   }
 
-  async pasteFromClipboard(event) {
+  async pasteFromClipboard() {
     let clipboardData;
     if (isClipboardAPIAvailable()) {
       clipboardData = await navigator.clipboard.read();
-    } else {
-      clipboardData = legacyPaste(
-        event.clipboardData,
-        Object.values(ChemicalMimeType),
-      );
     }
     const editor = CoreEditor.provideEditorInstance();
     const needCenterStructure =
@@ -154,7 +145,7 @@ export abstract class BaseMode {
     const format = identifyStructFormat(pastedStr);
     if (format === SupportedFormat.ket) {
       modelChanges = this.pasteKetFormatFragment(pastedStr);
-      // TODO: check if the str is just simple sequence string rather than other format
+      // check if the str is just simple sequence string rather than other format
     } else if (format === SupportedFormat.smiles) {
       modelChanges = await this.pasteSequence(pastedStr, editor);
     } else {
@@ -162,7 +153,7 @@ export abstract class BaseMode {
         'Pasted formats should only be sequence or KET.',
       );
     }
-    if (!modelChanges) {
+    if (!modelChanges || modelChanges.operations.length === 0) {
       return;
     }
     modelChanges.addOperation(new ReinitializeModeCommand());

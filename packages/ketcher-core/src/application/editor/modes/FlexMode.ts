@@ -23,11 +23,11 @@ export class FlexMode extends BaseMode {
     return {
       copy: {
         shortcut: ['Mod+c'],
-        handler: (event) => this.copyToClipboard(event),
+        handler: () => this.copyToClipboard(),
       },
       paste: {
         shortcut: ['Mod+v'],
-        handler: (event) => this.pasteFromClipboard(event),
+        handler: () => this.pasteFromClipboard(),
       },
     };
   }

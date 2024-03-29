@@ -168,7 +168,7 @@ export function fromBondAddition(
   } else {
     [beginAtomId, endAtomId] = [begin as number, end as number];
 
-    if (reStruct.sgroups.size > 0) {
+    if (reStruct.sgroups && reStruct.sgroups.size > 0) {
       reStruct.sgroups.forEach((sgroup) => {
         if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
           addAttachmentPointToSuperatom(sgroup, beginAtomId, endAtomId);

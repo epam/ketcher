@@ -2,8 +2,13 @@ import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
+  getKet,
+  getMolfile,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
+  openFileAndAddToCanvasMacro,
+  receiveFileComparisonData,
+  saveToFile,
   selectEraseTool,
   selectPartOfMolecules,
   selectSingleBondTool,
@@ -348,5 +353,70 @@ test.describe('Erase Tool', () => {
     });
     await selectEraseTool(page);
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Erasing some parts of monomer structure, save it to .ket file and then open it', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Erase Tool
+    Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
+    erased portions are not reflected in opened file.
+    */
+    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await selectEraseTool(page);
+    await page.getByText('Bal').locator('..').first().click();
+    await page.getByText('D-2Nal').locator('..').first().click();
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/peptides-flex-chain-expected.ket', expectedFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/peptides-flex-chain-expected.ket',
+      });
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-flex-chain-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Erasing some parts of monomer structure, save it to .mol file and then open it', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Erase Tool
+    Description: After erasing some parts of monomers structure, saved it to .ket file and then opened 
+    erased portions are not reflected in opened file.
+    */
+    await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
+    await selectEraseTool(page);
+    await page.getByText('Bal').locator('..').first().click();
+    await page.getByText('D-2Nal').locator('..').first().click();
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/peptides-flex-chain-expected.mol',
+      expectedFile,
+    );
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/peptides-flex-chain-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasMacro(
+      'Molfiles-V3000/peptides-flex-chain-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

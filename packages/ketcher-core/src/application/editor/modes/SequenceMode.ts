@@ -335,6 +335,8 @@ export class SequenceMode extends BaseMode {
       const r1BondOfCurrentNode =
         currentNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
       const r2BondOfMonomerToAdd = monomerToAdd.attachmentPointsToBonds.R2;
+
+      // in case the currentNode has no R1 attachment point left for merging
       if (
         (!r1BondOfCurrentNode || deletedBond === r1BondOfCurrentNode) &&
         !r2BondOfMonomerToAdd

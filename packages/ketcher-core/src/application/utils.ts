@@ -10,6 +10,7 @@ import { ChemicalMimeType, StructService } from 'domain/services';
 import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
+import { EditorSelection } from './editor/editor.types';
 
 class KetcherProvider {
   private ketcherInstance: Ketcher | undefined;
@@ -33,9 +34,14 @@ export function getStructure(
   formatterFactory: FormatterFactory,
   struct: Struct,
   drawingEntitiesManager?: DrawingEntitiesManager,
+  selection?: EditorSelection,
 ): Promise<string> {
   const formatter = formatterFactory.create(structureFormat);
-  return formatter.getStructureFromStructAsync(struct, drawingEntitiesManager);
+  return formatter.getStructureFromStructAsync(
+    struct,
+    drawingEntitiesManager,
+    selection,
+  );
 }
 
 export async function prepareStructToRender(

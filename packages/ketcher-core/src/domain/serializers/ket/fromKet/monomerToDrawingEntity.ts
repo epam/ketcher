@@ -4,6 +4,7 @@ import {
 } from 'application/formatters/types/ket';
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 export function monomerToDrawingEntity(
   node: IKetMonomerNode,
@@ -11,6 +12,9 @@ export function monomerToDrawingEntity(
   struct: Struct,
   drawingEntitiesManager: DrawingEntitiesManager,
 ) {
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(node.position.x, node.position.y),
+  );
   return drawingEntitiesManager.addMonomer(
     {
       struct,
@@ -32,6 +36,6 @@ export function monomerToDrawingEntity(
       attachmentPoints: template.attachmentPoints,
       seqId: node.seqid,
     },
-    node.position as Vec2,
+    position,
   );
 }

@@ -25,19 +25,6 @@ export class SnakeMode extends BaseMode {
     return command;
   }
 
-  get keyboardEventHandlers() {
-    return {
-      copy: {
-        shortcut: ['Mod+c'],
-        handler: () => this.copyToClipboard(),
-      },
-      paste: {
-        shortcut: ['Mod+v'],
-        handler: () => this.pasteFromClipboard(),
-      },
-    };
-  }
-
   getNewNodePosition() {
     const editor = CoreEditor.provideEditorInstance();
     return Coordinates.canvasToModel(

@@ -32,6 +32,7 @@ test.describe('Flex mode copy&paste', () => {
     await page.mouse.move(-startX, 0);
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
+
     await clickUndo(page);
     await takeEditorScreenshot(page);
   });
@@ -44,10 +45,12 @@ test.describe('Flex mode copy&paste', () => {
     await page.getByText('Test-6-Ch').locator('..').first().click();
     await page.keyboard.up('Shift');
     await page.keyboard.press('Control+c');
-    await takeEditorScreenshot(page);
 
     await page.mouse.move(startX, startY);
     await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+
+    await clickUndo(page);
     await takeEditorScreenshot(page);
   });
 });

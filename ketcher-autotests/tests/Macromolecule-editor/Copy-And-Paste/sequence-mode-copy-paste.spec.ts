@@ -100,7 +100,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await page.getByTitle('Close window').click();
 
     await page.getByText('G').locator('..').first().click();
-    const arrowCount = 10;
+    const arrowCount = 8;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
       await page.keyboard.press('ArrowLeft');

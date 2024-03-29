@@ -676,14 +676,6 @@ export class SequenceMode extends BaseMode {
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
         },
       },
-      copy: {
-        shortcut: ['Mod+c'],
-        handler: () => this.copyToClipboard(),
-      },
-      paste: {
-        shortcut: ['Mod+v'],
-        handler: () => this.pasteFromClipboard(),
-      },
     };
   }
 
@@ -717,6 +709,10 @@ export class SequenceMode extends BaseMode {
         editor.events.error.dispatch(
           'Paste of several fragments is prohibited in text-editing mode.',
         );
+        return false;
+      }
+      if (chainsCollection.chains.length === 0) {
+        editor.events.error.dispatch('No copied fragments.');
         return false;
       }
       if (!this.deleteSelection()) {

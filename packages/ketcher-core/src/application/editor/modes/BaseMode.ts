@@ -7,9 +7,11 @@ import {
   initHotKeys,
   isClipboardAPIAvailable,
   keyNorm,
+  legacyCopy,
+  legacyPaste,
 } from 'utilities';
 import { ReinitializeModeCommand } from '../operations/modes';
-import { BaseMonomer, SequenceType, Struct } from 'domain/entities';
+import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { SupportedFormat, identifyStructFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
@@ -55,12 +57,8 @@ export abstract class BaseMode {
   async onKeyDown(event: KeyboardEvent) {
     await new Promise<void>((resolve) => {
       setTimeout(() => {
-        const isInput =
-          event.target instanceof HTMLElement &&
-          (event.target?.nodeName === 'INPUT' ||
-            event.target?.nodeName === 'TEXTAREA');
         const editor = CoreEditor.provideEditorInstance();
-        if (!isInput) {
+        if (!this.checkIfTargetIsInput(event)) {
           const hotKeys = initHotKeys(this.keyboardEventHandlers);
           const shortcutKey = keyNorm.lookup(hotKeys, event);
           this.keyboardEventHandlers[shortcutKey]?.handler(event);
@@ -71,7 +69,9 @@ export abstract class BaseMode {
     });
   }
 
-  abstract get keyboardEventHandlers();
+  get keyboardEventHandlers() {
+    return {};
+  }
 
   abstract getNewNodePosition();
 
@@ -88,7 +88,10 @@ export abstract class BaseMode {
 
   scrollForView(_needCenterStructure: boolean) {}
 
-  copyToClipboard() {
+  onCopy(event: ClipboardEvent) {
+    if (this.checkIfTargetIsInput(event)) {
+      return;
+    }
     const editor = CoreEditor.provideEditorInstance();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
@@ -119,7 +122,6 @@ export abstract class BaseMode {
         }
       }
     });
-
     const ketSerializer = new KetSerializer();
     const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
       new Struct(),
@@ -128,19 +130,32 @@ export abstract class BaseMode {
     const clipboardItemString = JSON.stringify(serializedMacromolecules);
     if (isClipboardAPIAvailable()) {
       navigator.clipboard.writeText(clipboardItemString);
+    } else {
+      legacyCopy(event.clipboardData, {
+        'text/plain': clipboardItemString,
+      });
+      event.preventDefault();
     }
   }
 
-  async pasteFromClipboard() {
-    let clipboardData;
-    if (isClipboardAPIAvailable()) {
-      clipboardData = await navigator.clipboard.read();
+  async onPaste(event: ClipboardEvent) {
+    if (!this.checkIfTargetIsInput(event)) {
+      if (isClipboardAPIAvailable()) {
+        const clipboardData = await navigator.clipboard.read();
+        this.pasteFromClipboard(clipboardData);
+      } else {
+        const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
+        this.pasteFromClipboard(clipboardData);
+        event.preventDefault();
+      }
     }
+  }
+
+  async pasteFromClipboard(clipboardData) {
+    let modelChanges;
     const editor = CoreEditor.provideEditorInstance();
     const needCenterStructure =
       editor.drawingEntitiesManager.allEntities.length === 0;
-
-    let modelChanges;
     const pastedStr = await getStructStringFromClipboardData(clipboardData);
     const format = identifyStructFormat(pastedStr);
     if (format === SupportedFormat.ket) {
@@ -164,12 +179,9 @@ export abstract class BaseMode {
 
   pasteKetFormatFragment(pastedStr: string) {
     const editor = CoreEditor.provideEditorInstance();
-    const newNodePosition = this.getNewNodePosition();
     const ketSerializer = new KetSerializer();
-    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(
-      pastedStr,
-      newNodePosition,
-    );
+    const deserialisedKet =
+      ketSerializer.deserializeToDrawingEntities(pastedStr);
     if (!deserialisedKet) {
       throw new Error('Error during parsing file');
     }
@@ -180,6 +192,7 @@ export abstract class BaseMode {
     ) {
       return;
     }
+    this.updateMonomersPosition(drawingEntitiesManager);
     const { command: modelChanges, monomerToNewMonomer } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
     const extraModelChanges = this.getExtraOperations(
@@ -223,6 +236,27 @@ export abstract class BaseMode {
     return true;
   }
 
+  private updateMonomersPosition(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    let offset: Vec2;
+    let index = 0;
+    const newNodePosition = this.getNewNodePosition();
+    drawingEntitiesManager.monomers.forEach((monomer) => {
+      let position;
+      if (index === 0) {
+        offset = Vec2.diff(newNodePosition, new Vec2(monomer.position));
+        position = newNodePosition;
+      } else {
+        position = offset
+          ? new Vec2(monomer.position).add(offset)
+          : new Vec2(monomer.position);
+      }
+      monomer.moveAbsolute(position);
+      index++;
+    });
+  }
+
   unsupportedSymbolsError(symbols: string | string[]) {
     const editor = CoreEditor.provideEditorInstance();
     editor.events.openErrorModal.dispatch({
@@ -231,6 +265,14 @@ export abstract class BaseMode {
         (symbol) => `"${symbol}"`,
       )} symbol(s) in Sequence mode. Paste operation failed.`,
     });
+  }
+
+  private checkIfTargetIsInput(event: Event) {
+    return (
+      event.target instanceof HTMLElement &&
+      (event.target?.nodeName === 'INPUT' ||
+        event.target?.nodeName === 'TEXTAREA')
+    );
   }
 
   public destroy() {}

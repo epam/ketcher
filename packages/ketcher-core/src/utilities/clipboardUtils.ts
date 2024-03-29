@@ -12,6 +12,31 @@ export function isClipboardAPIAvailable() {
   );
 }
 
+export function legacyCopy(clipboardData, data) {
+  let curFmt;
+  clipboardData.setData('text/plain', data['text/plain']);
+  try {
+    Object.keys(data).forEach((fmt) => {
+      curFmt = fmt;
+      clipboardData.setData(fmt, data[fmt]);
+    });
+  } catch (e) {
+    console.error('clipboardUtils.ts::legacyCopy', e);
+    console.info(`Could not write exact type ${curFmt}`);
+  }
+}
+
+export function legacyPaste(cb, formats) {
+  let data = {};
+  data['text/plain'] = cb.getData('text/plain');
+  data = formats.reduce((res, fmt) => {
+    const d = cb.getData(fmt);
+    if (d) res[fmt] = d;
+    return res;
+  }, data);
+  return data;
+}
+
 export function notifyCopyCut() {
   const event = new Event('copyOrCutComplete');
   window.dispatchEvent(event);
@@ -22,7 +47,7 @@ export async function getStructStringFromClipboardData(
 ): Promise<string> {
   const clipboardItem = data[0];
 
-  if (clipboardItem instanceof ClipboardItem) {
+  if (clipboardItem && clipboardItem instanceof ClipboardItem) {
     const structStr =
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
       (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||

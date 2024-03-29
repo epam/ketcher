@@ -297,7 +297,6 @@ class ZoomTool implements BaseTool {
         bar: this.scrollBars?.vertical?.bar,
       },
     };
-    console.log('offsetEnd', this.scrollBars.vertical.offsetEnd);
   }
 
   private get zoomStep() {

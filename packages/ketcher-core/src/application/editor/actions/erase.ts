@@ -47,7 +47,7 @@ function fromBondDeletion(
   bid: number,
   skipAtoms: Array<any> = [],
 ) {
-  if (restruct.sgroups.size > 0) {
+  if (restruct.sgroups && restruct.sgroups.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
       if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
         const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;

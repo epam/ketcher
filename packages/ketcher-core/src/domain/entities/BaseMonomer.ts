@@ -408,7 +408,10 @@ export abstract class BaseMonomer extends DrawingEntity {
       monomerDefinitionAttachmentPoints.push({
         attachmentAtom: attachmentAtomId,
         leavingGroup: {
-          atoms: leavingGroupsAtomId ? [leavingGroupsAtomId] : [],
+          atoms:
+            leavingGroupsAtomId === 0 || leavingGroupsAtomId
+              ? [leavingGroupsAtomId]
+              : [],
         },
         type:
           this.attachmentPointNumberToType[leavingGroupsAtom.rglabel] ||

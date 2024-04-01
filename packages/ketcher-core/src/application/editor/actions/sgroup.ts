@@ -143,8 +143,6 @@ export function sGroupAttributeAction(id, attrs) {
 }
 
 export function fromSgroupDeletion(restruct, id) {
-  console.log('fromSgroupAddition');
-
   let action = new Action();
   const struct = restruct.molecule;
 
@@ -195,8 +193,6 @@ export function fromSgroupAddition(
   name?,
   oldSgroup?,
 ) {
-  console.log('fromSgroupAddition');
-
   // eslint-disable-line
   let action = new Action();
 

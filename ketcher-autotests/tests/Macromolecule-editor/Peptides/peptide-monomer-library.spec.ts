@@ -222,7 +222,6 @@ test.describe('Peptide library testing', () => {
     /* 
     Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
     Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
-    The test is currently not functioning correctly as the bug has not been fixed
     */
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('C_C_R_P').click();

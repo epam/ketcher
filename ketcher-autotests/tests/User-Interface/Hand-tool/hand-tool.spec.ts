@@ -2,7 +2,6 @@ import { Page, test, expect } from '@playwright/test';
 import {
   LeftPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
-  moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   pressButton,
   selectLeftPanelButton,

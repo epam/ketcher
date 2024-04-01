@@ -6,6 +6,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,7 +49,7 @@ test.describe('Reagents molecule below arrow', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
   });
 
@@ -63,7 +64,7 @@ test.describe('Reagents molecule below arrow', () => {
     );
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
   });
 });

@@ -126,6 +126,19 @@ const formatProperties: FormatPropertiesMap = {
     true,
     { 'molfile-saving-mode': '3000' },
   ),
+  fasta: new SupportedFormatProperties(
+    'FASTA',
+    ChemicalMimeType.FASTA,
+    ['.fasta'],
+    true,
+  ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
+  ),
   unknown: new SupportedFormatProperties(
     'Unknown',
     ChemicalMimeType.UNKNOWN,

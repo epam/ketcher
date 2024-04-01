@@ -71,10 +71,18 @@ export type BondAttributes = {
   customQuery?: string | null;
 };
 
+export type ArrowXy = { x: number; y: number };
+export type PlusXy = { x: number; y: number };
 export type AtomXy = AtomAttributes & { x: number; y: number };
 export type BondXy = BondAttributes & { x: number; y: number };
 
 export enum ELEMENT_TITLE {
   HYDROGEN = 'Hydrogen (H)',
   BENZENE = 'Benzene (T)',
+}
+
+export enum SequenceType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  PEPTIDE = 'PEPTIDE',
 }

@@ -11,7 +11,10 @@ test('Open MOL file with RBC,SUB,UNC queries', async ({ page }) => {
     Description: MOL file with RBC,SUB,UNC queries opens without errors
   */
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('mol-with-queries-v3000.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V3000/mol-with-queries-v3000.mol',
+    page,
+  );
 
   await takeEditorScreenshot(page);
 });

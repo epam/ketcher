@@ -30,15 +30,38 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { Action } from './action';
 import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
-import { fromBondStereoUpdate } from '../actions/bond';
+import {
+  fromBondStereoUpdate,
+  removeAttachmentPointFromSuperatom,
+} from '../actions/bond';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
+import { ReStruct } from 'application/render';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
 }
 
-function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
+function fromBondDeletion(
+  restruct: ReStruct,
+  bid: number,
+  skipAtoms: Array<any> = [],
+) {
+  if (restruct.sgroups && restruct.sgroups.size > 0) {
+    restruct.sgroups.forEach((sgroup) => {
+      if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
+        const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
+        const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
+
+        removeAttachmentPointFromSuperatom(
+          sgroup,
+          beginAtomConnectedToBond,
+          endAtomConnectedToBond,
+        );
+      }
+    });
+  }
+
   let action = new Action();
   const bond: any = restruct.molecule.bonds.get(bid);
   const atomsToRemove: Array<any> = [];

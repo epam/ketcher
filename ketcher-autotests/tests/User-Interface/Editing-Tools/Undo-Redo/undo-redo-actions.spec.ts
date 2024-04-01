@@ -32,9 +32,8 @@ import {
   copyAndPaste,
   cutAndPaste,
   BondTool,
-  DELAY_IN_SECONDS,
-  delay,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -48,11 +47,11 @@ async function selectBondProperties(
   bondReactingCenter: string,
   finalizationButton: string,
 ) {
-  await page.getByRole('button', { name: 'Single', exact: true }).click();
+  await page.getByTestId('type-input-span').click();
   await page.getByRole('option', { name: bondType, exact: true }).click();
-  await page.getByRole('button', { name: 'Either' }).click();
+  await page.getByTestId('topology-input-span').click();
   await page.getByRole('option', { name: bondTopology }).click();
-  await page.getByRole('button', { name: 'Unmarked' }).click();
+  await page.getByTestId('reacting-center-input-span').click();
   await page
     .getByRole('option', { name: bondReactingCenter, exact: true })
     .click();
@@ -410,8 +409,9 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
-    await pressButton(page, 'Apply');
-    await delay(DELAY_IN_SECONDS.THREE);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -585,8 +585,9 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -715,7 +716,7 @@ test.describe('Undo/Redo Actions', () => {
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByRole('button', { name: 'After Paste' }).click();
+    await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();

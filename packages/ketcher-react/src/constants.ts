@@ -16,10 +16,6 @@
 
 export const KETCHER_INIT_EVENT_NAME = 'ketcher-init';
 
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
-
-export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
-
 export const MODES = {
   FG: 'fg',
 };
@@ -31,3 +27,6 @@ export const STRUCT_TYPE = {
 
 export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root';
 export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`;
+
+export const EditorClassName = 'Ketcher-polymer-editor-root';
+export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;

@@ -1,6 +1,8 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 let id = 0;
 
 export abstract class DrawingEntity {
@@ -44,23 +46,31 @@ export abstract class DrawingEntity {
     this.selected = false;
   }
 
+  public abstract get center(): Vec2;
+
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
+    isPreviousSelected = false,
+    shiftKey = false,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const centerX = this.baseRenderer.bodyX + this.baseRenderer.bodyWidth / 2;
-    const centerY = this.baseRenderer.bodyY + this.baseRenderer.bodyHeight / 2;
-    if (
-      rectangleBottomRightPoint.x > centerX &&
-      rectangleBottomRightPoint.y > centerY &&
-      rectangleTopLeftPoint.x < centerX &&
-      rectangleTopLeftPoint.y < centerY
-    ) {
-      this.turnOnSelection();
-    } else {
-      this.turnOffSelection();
+    let center = Coordinates.modelToCanvas(this.center);
+    if (this.baseRenderer instanceof BaseSequenceRenderer) {
+      center = this.baseRenderer.center;
+    }
+    const locatedInRectangle =
+      rectangleBottomRightPoint.x > center.x &&
+      rectangleBottomRightPoint.y > center.y &&
+      rectangleTopLeftPoint.x < center.x &&
+      rectangleTopLeftPoint.y < center.y;
+    if ((shiftKey && !isPreviousSelected) || !shiftKey) {
+      if (locatedInRectangle) {
+        this.turnOnSelection();
+      } else {
+        this.turnOffSelection();
+      }
     }
 
     return prevSelectedValue !== this.selected;
@@ -68,5 +78,9 @@ export abstract class DrawingEntity {
 
   public setBaseRenderer(renderer: BaseRenderer) {
     this.baseRenderer = renderer;
+  }
+
+  public get isPartOfRna() {
+    return false;
   }
 }

@@ -17,14 +17,15 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
 
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import Coordinates from 'application/editor/shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
+export const RNA_MONOMER_DISTANCE = 22.5;
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
@@ -36,12 +37,14 @@ class RnaPresetTool implements Tool {
   private rnaBasePreviewRenderer: BaseMonomerRenderer | undefined;
   private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
   private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
-  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.25;
-  readonly MONOMER_PREVIEW_OFFSET_X = 45;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 45;
-  readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
+  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.5;
+  readonly MONOMER_PREVIEW_OFFSET_X = 30;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 30;
+  readonly RNA_BASE_PREVIEW_OFFSET_X = 1;
   readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
+  history: EditorHistory;
+
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -53,6 +56,7 @@ class RnaPresetTool implements Tool {
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {
@@ -61,38 +65,40 @@ class RnaPresetTool implements Tool {
       return;
     }
 
-    const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
-      sugar: this.sugar,
-      sugarPosition: Coordinates.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPositionOfCanvas.x,
-          this.editor.lastCursorPositionOfCanvas.y,
+    const { command: modelChanges } =
+      this.editor.drawingEntitiesManager.addRnaPreset({
+        sugar: this.sugar,
+        sugarPosition: Coordinates.canvasToModel(
+          new Vec2(
+            this.editor.lastCursorPositionOfCanvas.x,
+            this.editor.lastCursorPositionOfCanvas.y,
+          ),
         ),
-      ),
-      phosphate: this.phosphate,
-      phosphatePosition: this.phosphatePreviewRenderer
-        ? Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x +
-                this.sugarPreviewRenderer?.width +
-                45,
-              this.editor.lastCursorPositionOfCanvas.y,
-            ),
-          )
-        : undefined,
-      rnaBase: this.rnaBase,
-      rnaBasePosition: this.rnaBasePreviewRenderer
-        ? Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x,
-              this.editor.lastCursorPositionOfCanvas.y +
-                this.sugarPreviewRenderer.height +
-                45,
-            ),
-          )
-        : undefined,
-    });
+        phosphate: this.phosphate,
+        phosphatePosition: this.phosphatePreviewRenderer
+          ? Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x +
+                  this.sugarPreviewRenderer?.width +
+                  RNA_MONOMER_DISTANCE,
+                this.editor.lastCursorPositionOfCanvas.y,
+              ),
+            )
+          : undefined,
+        rnaBase: this.rnaBase,
+        rnaBasePosition: this.rnaBasePreviewRenderer
+          ? Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x,
+                this.editor.lastCursorPositionOfCanvas.y +
+                  this.sugarPreviewRenderer.height +
+                  RNA_MONOMER_DISTANCE,
+              ),
+            )
+          : undefined,
+      });
 
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -158,7 +164,7 @@ class RnaPresetTool implements Tool {
     }
 
     const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
-    this.sugarPreview = new Sugar(this.sugar);
+    this.sugarPreview = new Sugar(this.sugar) as Sugar;
 
     this.sugarPreviewRenderer = new SugarRenderer(
       this.sugarPreview,
@@ -181,7 +187,7 @@ class RnaPresetTool implements Tool {
     if (this.phosphate) {
       const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
 
-      this.phosphatePreview = new Phosphate(this.phosphate);
+      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
 
       this.phosphatePreviewRenderer = new PhosphateRenderer(
         this.phosphatePreview,
@@ -190,6 +196,16 @@ class RnaPresetTool implements Tool {
 
       this.phosphatePreviewRenderer?.show(this.editor.theme);
     }
+  }
+
+  hidePreview() {
+    this.rnaBasePreviewRenderer?.remove();
+    this.phosphatePreviewRenderer?.remove();
+    this.sugarPreviewRenderer?.remove();
+  }
+
+  destroy(): void {
+    this.hidePreview();
   }
 }
 

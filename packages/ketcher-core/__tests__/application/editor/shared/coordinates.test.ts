@@ -1,4 +1,4 @@
-import Coordinates from 'application/editor/shared/coordinates';
+import { Coordinates } from 'application/editor/shared/coordinates';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { ZoomTransform } from 'd3';
 import { Vec2 } from 'domain/entities';

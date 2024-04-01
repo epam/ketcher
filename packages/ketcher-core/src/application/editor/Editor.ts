@@ -1,5 +1,5 @@
 import { DOMSubscription } from 'subscription';
-import { Struct, Vec2 } from 'domain/entities';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
@@ -14,17 +14,29 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import ZoomTool from './tools/Zoom';
-import Coordinates from './shared/coordinates';
+import { Coordinates } from './shared/coordinates';
 import {
   editorEvents,
+  hotkeysConfiguration,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
-import { PolymerBondRenderer } from 'application/render/renderers';
+import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
+import { initHotKeys, keyNorm } from 'utilities';
+import {
+  FlexMode,
+  LayoutMode,
+  modesMap,
+  SequenceMode,
+} from 'application/editor/modes/';
+import { BaseMode } from 'application/editor/modes/internal';
+import assert from 'assert';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { groupBy } from 'lodash';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -43,13 +55,21 @@ export class CoreEditor {
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
+  public _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
-  private tool?: Tool | BaseTool;
+  private tool?: Tool | BaseTool | undefined;
+  public get selectedTool(): Tool | BaseTool | undefined {
+    return this.tool;
+  }
+
+  public mode: BaseMode = new FlexMode();
+  public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
+  private hotKeyEventHandler: (event: unknown) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -60,6 +80,8 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
+    this.setupContextMenuEvents();
+    this.setupKeyboardEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -73,21 +95,109 @@ export class CoreEditor {
     return editor;
   }
 
+  public setMonomersLibrary(monomersLibrary: MonomerItemType[]) {
+    this._monomersLibrary = monomersLibrary;
+  }
+
+  public get monomersLibrary() {
+    return groupBy(
+      this._monomersLibrary.map((libraryItem) => {
+        return {
+          ...libraryItem,
+          label: libraryItem.props.MonomerName,
+        };
+      }),
+      (libraryItem) => libraryItem.props.MonomerType,
+    );
+  }
+
+  private handleHotKeyEvents(event) {
+    const keySettings = hotkeysConfiguration;
+    const hotKeys = initHotKeys(keySettings);
+    const shortcutKey = keyNorm.lookup(hotKeys, event);
+    const isInput =
+      event.target.nodeName === 'INPUT' || event.target.nodeName === 'TEXTAREA';
+
+    if (keySettings[shortcutKey]?.handler && !isInput) {
+      keySettings[shortcutKey].handler(this);
+      event.preventDefault();
+    }
+  }
+
+  private setupKeyboardEvents() {
+    this.setupHotKeysEvents();
+    document.addEventListener('keydown', async (event: KeyboardEvent) => {
+      await this.mode.onKeyDown(event);
+    });
+  }
+
+  private setupHotKeysEvents() {
+    this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
+    document.addEventListener('keydown', this.hotKeyEventHandler);
+  }
+
+  private setupContextMenuEvents() {
+    document.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+      if (!(this.mode instanceof SequenceMode) || this.mode.isEditMode) {
+        return false;
+      }
+
+      if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
+        this.events.rightClickSequence.dispatch(event);
+      } else {
+        this.events.rightClickCanvas.dispatch(event);
+      }
+
+      return false;
+    });
+  }
+
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
-    this.events.cancelBondCreationViaModal.add(() =>
-      this.onCancelBondCreation(),
+    this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
+      this.onCancelBondCreation(secondMonomer),
     );
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
+    this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
       this.events[eventName].add((event) =>
         this.useToolIfNeeded(eventName, event),
       );
     });
+    this.events.editSequence.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEditSequence(sequenceItemRenderer),
+    );
+
+    this.events.startNewSequence.add(() => this.onStartNewSequence());
+    this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
+      this.onChangeSequenceTypeEnterMode(mode),
+    );
+  }
+
+  private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.turnOnEditMode(sequenceItemRenderer);
+  }
+
+  private onStartNewSequence() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.startNewSequence();
+  }
+
+  private onChangeSequenceTypeEnterMode(mode: SequenceType) {
+    this.sequenceTypeEnterMode = mode;
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -95,10 +205,14 @@ export class CoreEditor {
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
-    this.selectTool('preset', preset);
+    if (preset) {
+      this.selectTool('preset', preset);
+    } else {
+      this.tool = undefined;
+    }
   }
 
-  private onSelectTool(tool: string) {
+  public onSelectTool(tool: string) {
     this.selectTool(tool);
   }
 
@@ -113,20 +227,45 @@ export class CoreEditor {
     }
   }
 
-  private onCancelBondCreation() {
+  private onCancelBondCreation(secondMonomer: BaseMonomer) {
     if (this.tool instanceof PolymerBond) {
-      this.tool.handleBondCreationCancellation();
+      this.tool.handleBondCreationCancellation(secondMonomer);
     }
   }
 
-  // todo we need to create abstraction layer for modes in future similar to the tools layer
-  private onSelectMode(isSnakeMode: boolean) {
-    PolymerBondRenderer.setSnakeMode(isSnakeMode);
-    const modelChanges = this.drawingEntitiesManager.reArrangeChains(
-      this.canvas.width.baseVal.value,
-      isSnakeMode,
+  private onSelectMode(
+    data:
+      | LayoutMode
+      | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
+  ) {
+    const mode = typeof data === 'object' ? data.mode : data;
+    const ModeConstructor = modesMap[mode];
+    assert(ModeConstructor);
+    const history = new EditorHistory(this);
+    this.mode.destroy();
+    this.mode = new ModeConstructor(this.mode.modeName);
+    const command = this.mode.initialize();
+    history.update(
+      command,
+      typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
     );
-    this.renderersContainer.update(modelChanges);
+  }
+
+  public setMode(mode: BaseMode) {
+    this.mode = mode;
+  }
+
+  public get isSequenceEditMode() {
+    return this.mode instanceof SequenceMode && this.mode.isEditMode;
+  }
+
+  public onSelectHistory(name: HistoryOperationType) {
+    const history = new EditorHistory(this);
+    if (name === 'undo') {
+      history.undo();
+    } else if (name === 'redo') {
+      history.redo();
+    }
   }
 
   public selectTool(name: string, options?) {
@@ -144,6 +283,7 @@ export class CoreEditor {
     for (const eventName in this.events) {
       this.events[eventName].handlers = [];
     }
+    document.removeEventListener('keydown', this.hotKeyEventHandler);
   }
 
   get trackedDomEvents() {
@@ -223,6 +363,7 @@ export class CoreEditor {
         //   }
         // }
 
+        this.useModeIfNeeded(toolEventHandler, event);
         const isToolUsed = this.useToolIfNeeded(toolEventHandler, event);
         if (isToolUsed) {
           return true;
@@ -236,7 +377,7 @@ export class CoreEditor {
   private updateLastCursorPosition(event) {
     const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
     if (events.includes(event.type)) {
-      const clientAreaBoundingBox = this.canvas.getBoundingClientRect();
+      const clientAreaBoundingBox = this.canvasOffset;
 
       this.lastCursorPosition = new Vec2({
         x: event.pageX - clientAreaBoundingBox.x,
@@ -268,8 +409,17 @@ export class CoreEditor {
     return false;
   }
 
+  private useModeIfNeeded(
+    eventHandlerName: ToolEventHandlerName,
+    event: Event,
+  ) {
+    this.mode?.[eventHandlerName]?.(event);
+  }
+
   public switchToMicromolecules() {
     this.unsubscribeEvents();
+    const history = new EditorHistory(this);
+    history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     const { conversionErrorMessage } =

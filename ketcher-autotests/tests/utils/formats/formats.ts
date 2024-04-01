@@ -5,6 +5,14 @@ export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
 }
 
+export async function getFasta(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getFasta());
+}
+
+export async function getSequence(page: Page): Promise<string> {
+  return await page.evaluate(() => window.ketcher.getSequence());
+}
+
 export async function getCml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCml());
 }
@@ -82,7 +90,7 @@ export async function addFragment(
   structStr: string,
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => window.ketcher.setMolecule(structStr),
+    (structStr) => window.ketcher.addFragment(structStr),
     structStr,
   );
 }

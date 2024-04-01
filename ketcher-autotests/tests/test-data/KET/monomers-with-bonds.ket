@@ -2,34 +2,34 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer3"
-            },
-            {
-                "$ref": "monomer4"
-            },
-            {
-                "$ref": "monomer5"
-            },
-            {
-                "$ref": "monomer6"
-            },
-            {
-                "$ref": "monomer7"
-            },
-            {
-                "$ref": "monomer8"
-            },
-            {
-                "$ref": "monomer9"
-            },
-            {
-                "$ref": "monomer19"
-            },
-            {
-                "$ref": "monomer20"
+                "$ref": "monomer21"
             },
             {
                 "$ref": "monomer22"
+            },
+            {
+                "$ref": "monomer23"
+            },
+            {
+                "$ref": "monomer24"
+            },
+            {
+                "$ref": "monomer25"
+            },
+            {
+                "$ref": "monomer26"
+            },
+            {
+                "$ref": "monomer27"
+            },
+            {
+                "$ref": "monomer28"
+            },
+            {
+                "$ref": "monomer29"
+            },
+            {
+                "$ref": "monomer30"
             },
             {
                 "$ref": "mol0"
@@ -42,88 +42,88 @@
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer9",
+                    "monomerId": "monomer27",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer3",
+                    "monomerId": "monomer21",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer9",
-                    "attachmentPointId": "R1"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer4",
-                    "attachmentPointId": "R2"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer9",
-                    "attachmentPointId": "R3"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer5",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer9",
-                    "attachmentPointId": "R4"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer8",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer9",
-                    "attachmentPointId": "R5"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer7",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer9",
-                    "attachmentPointId": "R6"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer6",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer19",
-                    "attachmentPointId": "R1"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer20",
-                    "attachmentPointId": "R3"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer20",
+                    "monomerId": "monomer27",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
                     "monomerId": "monomer22",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer23",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R4"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer26",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R5"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer25",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer27",
+                    "attachmentPointId": "R6"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer24",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer28",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer29",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer29",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer30",
                     "attachmentPointId": "R2"
                 }
             }
@@ -303,12 +303,12 @@
             }
         ]
     },
-    "monomer3": {
+    "monomer21": {
         "type": "monomer",
-        "id": "3",
+        "id": "21",
         "position": {
-            "x": 8.200000000000001,
-            "y": 2.475
+            "x": 16.57550781249998,
+            "y": -14.774417984058354
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -350,14 +350,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     14.370094318903023,
                     -9.087139126886763,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -393,14 +390,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     10.026507468894986,
                     -6.135943695987198,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -412,14 +406,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     10.969148525777182,
                     -9.087932512310758,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -447,25 +438,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     15.130256728266728,
                     -5.388177933873388,
                     0
-                ],
-                "$refs": [
-                    "rg-5"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     12.684646158806977,
                     -4.750692745694667,
                     0
-                ],
-                "$refs": [
-                    "rg-4"
                 ]
             },
             {
@@ -509,14 +494,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     17.210910002689502,
                     -9.718078885317539,
                     0
-                ],
-                "$refs": [
-                    "rg-6"
                 ]
             }
         ],
@@ -677,9 +659,10 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "X",
         "id": "Test-6-P___Test-6-AP-Peptide",
+        "fullName": "Test-6-P",
         "alias": "Test-6-P",
         "attachmentPoints": [
             {
@@ -724,74 +707,75 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "X"
     },
-    "monomer4": {
+    "monomer22": {
         "type": "monomer",
-        "id": "4",
+        "id": "22",
         "position": {
-            "x": 10.9,
-            "y": 2.375
+            "x": 18.00384114583332,
+            "y": -15.251084650725021
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer5": {
+    "monomer23": {
         "type": "monomer",
-        "id": "5",
+        "id": "23",
         "position": {
-            "x": 13.725000000000001,
-            "y": 2.275
+            "x": 19.57717447916667,
+            "y": -14.80608465072502
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer6": {
+    "monomer24": {
         "type": "monomer",
-        "id": "6",
+        "id": "24",
         "position": {
-            "x": 7.8500000000000005,
-            "y": 7.300000000000001
+            "x": 16.968841145833313,
+            "y": -12.417751317391664
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer7": {
+    "monomer25": {
         "type": "monomer",
-        "id": "7",
+        "id": "25",
         "position": {
-            "x": 10.65,
-            "y": 7.1000000000000005
+            "x": 18.080507812499988,
+            "y": -12.201084650725006
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer8": {
+    "monomer26": {
         "type": "monomer",
-        "id": "8",
+        "id": "26",
         "position": {
-            "x": 13.725000000000001,
-            "y": 7.1000000000000005
+            "x": 19.9255078125,
+            "y": -12.677751317391666
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer9": {
+    "monomer27": {
         "type": "monomer",
-        "id": "9",
+        "id": "27",
         "position": {
-            "x": 10.825000000000001,
-            "y": 4.7250000000000005
+            "x": 18.028841145833322,
+            "y": -13.87608465072501
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
     },
-    "monomer19": {
+    "monomer28": {
         "type": "monomer",
-        "id": "19",
+        "id": "28",
         "position": {
-            "x": 2.2,
-            "y": 8.9
+            "x": 13.988841145833307,
+            "y": -11.999417984058324
         },
         "alias": "A",
         "templateId": "A___Adenine"
@@ -880,14 +864,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -3.5871,
                     -1.5034,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -977,9 +958,10 @@
                 ]
             }
         ],
+        "class": "Base",
         "classHELM": "RNA",
-        "naturalAnalogShort": "A",
         "id": "A___Adenine",
+        "fullName": "A",
         "alias": "A",
         "attachmentPoints": [
             {
@@ -989,14 +971,15 @@
                 },
                 "type": "left"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
-    "monomer20": {
+    "monomer29": {
         "type": "monomer",
-        "id": "20",
+        "id": "29",
         "position": {
-            "x": 2.2,
-            "y": 6.3500000000000005
+            "x": 14.058841145833307,
+            "y": -13.386084650725005
         },
         "alias": "R",
         "templateId": "R___Ribose"
@@ -1073,14 +1056,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.028505008862309486,
                     -2.2776145051109995,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -1092,25 +1072,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.573094997979451,
                     1.7634527287149055,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.1556645047902916,
                     0.9376647652075489,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             }
         ],
@@ -1204,9 +1178,10 @@
                 ]
             }
         ],
+        "class": "Sugar",
         "classHELM": "RNA",
-        "naturalAnalogShort": "R",
         "id": "R___Ribose",
+        "fullName": "R",
         "alias": "R",
         "attachmentPoints": [
             {
@@ -1230,14 +1205,15 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "R"
     },
-    "monomer22": {
+    "monomer30": {
         "type": "monomer",
-        "id": "22",
+        "id": "30",
         "position": {
-            "x": 4.75,
-            "y": 6.3500000000000005
+            "x": 15.362174479166649,
+            "y": -13.399417984058337
         },
         "alias": "P",
         "templateId": "P___Phosphate"
@@ -1248,46 +1224,40 @@
             {
                 "label": "P",
                 "location": [
-                    -0.2399,
+                    -0.19991692871090108,
                     0,
                     0
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
-                    -1.4399,
+                    -1.1999182394782262,
                     0,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    0.3598,
-                    -1.0394,
+                    0.29983372634506966,
+                    -0.8661678020096315,
                     0
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
-                    0.9601,
+                    0.800084382056424,
                     0,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    0.3598,
-                    1.0394,
+                    0.29983372634506966,
+                    0.8661678020096315,
                     0
                 ]
             }
@@ -1322,9 +1292,10 @@
                 ]
             }
         ],
+        "class": "Phosphate",
         "classHELM": "RNA",
-        "naturalAnalogShort": "P",
         "id": "P___Phosphate",
+        "fullName": "P",
         "alias": "P",
         "attachmentPoints": [
             {
@@ -1341,6 +1312,7 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     }
 }

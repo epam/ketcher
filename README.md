@@ -64,6 +64,66 @@ Ketcher uses Miew-React for viewing and editing data in 3D.
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
 
+## Ketcher API
+Ketcher can return drawn structures using the following methods:
+
+`getSmiles(isExtended = false): Promise<string>` – returns `string` representation of drawn structure in SMILES format.  
+Parameters: `isExtended: boolean`. By default, `false`. Indicates, whether extended SMILES format needs to be used.
+
+`getMolfile(molfileFormat): Promise<string>` – returns `string` representation of drawn structure in MOL-format.  
+Parameters: `molfileFormat: 'v2000' | 'v3000'`. Optional, by default, 'auto'. Indicates, in which format result will be returned. If no desired format is provided, then it is chosen automatically, depending on drawn structure.
+
+`getRxn(molfileFormat): Promise<string>` – returns `string` representation of drawn structure in RXN-format.  
+Parameters: `molfileFormat: 'v2000' | 'v3000'`. Optional, by default, 'v2000'. Indicates, in which format result will be returned.
+
+`getKet(): Promise<string>` – returns `string` representation of drawn structure in internal Ket-format.
+
+`getSmarts(): Promise<string>` – returns `string` representation of drawn structure in Smarts-format.
+
+`getCml(): Promise<string>` – returns `string` representation of drawn structure in Cml-format.
+
+`getSdf(molfileFormat): Promise<string>` – returns `string` representation of drawn structure in Sdf-format.  
+Parameters: `molfileFormat: 'v2000' | 'v3000'`. Optional, by default, 'v2000'. Indicates, in which format result will be returned.
+
+`getCDXml(): Promise<string>` – returns `string` representation of drawn structure in CDXml-format.
+
+`getCDX(): Promise<string>` – returns `string` representation of drawn structure in CDX-format.
+
+`getInchi(withAuxInfo = false): Promise<string>` – returns `string` representation of drawn structure in Inchi-format.  
+Parameters: `withAuxInfo: boolean`. Optional, by default, `false`.
+
+`getInchiKey(): Promise<string>` – returns `string` representation of drawn structure in InChiKey-format.
+
+`containsReaction(): boolean` – returns `true`, in case drawn structure contains reaction; `false` otherwise.
+
+`isQueryStructureSelected(): boolean` – returns `true`, in case selected structure has query.
+
+`setMolecule(structure: string): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure is removed.  
+Parameters: `structure: string`. Structure is a string in any supported format.
+
+`addFragment(structure: string): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.  
+Parameters: `structure: string`. Structure is a string in any supported format.
+
+`layout(): Promise<void>` – performs layout algorithm for drawn structure.
+
+`recognize(image: Blob, version?: string): Promise<Struct>` – recognizes a structure from image.  
+Parameters: `image: Blob` – image to recognize. Returns `Struct` – object, which represents recognized structure.
+
+```
+generateImage(data: string, options: {  
+    outputFormat: 'png' | 'svg';
+    backgroundColor: string;
+    bondThickness: number;
+}): Promise<Blob>
+``` 
+Generates image from passed structure.  
+Parameters:  
+    `data` – `string` representation of structure in any supported format.   
+    `options` – object with the following properties:   
+        * `outputFormat` – can be 'png' or 'svg'  
+        * `backgroundColor` – image background color  
+        * `bondThickness` – thickness of bonds in output structure  
+
 ## Settings
 
 You can add extra configuration in editor.setSetting

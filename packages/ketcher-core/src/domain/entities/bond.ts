@@ -18,6 +18,10 @@ import { Atom } from './atom';
 import { Pile } from './pile';
 import { Struct } from './struct';
 import { Vec2 } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 enum CIP {
   E = 'E',
@@ -37,9 +41,10 @@ export interface BondAttributes {
   begin: number;
   cip?: CIP | null;
   isPreview?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class Bond {
+export class Bond extends BaseMicromoleculeEntity {
   static PATTERN = {
     TYPE: {
       SINGLE: 1,
@@ -107,6 +112,7 @@ export class Bond {
   isPreview: boolean;
 
   constructor(attributes: BondAttributes) {
+    super(attributes.initiallySelected);
     this.begin = attributes.begin;
     this.end = attributes.end;
     this.type = attributes.type;
@@ -259,6 +265,22 @@ export class Bond {
     if (attr in Bond.attrlist) {
       return Bond.attrlist[attr];
     }
+  }
+
+  isQuery(): boolean {
+    const TYPES = Bond.PATTERN.TYPE;
+    const QUERY_BOND_TYPES = [
+      TYPES.ANY,
+      TYPES.SINGLE_OR_DOUBLE,
+      TYPES.SINGLE_OR_AROMATIC,
+      TYPES.DOUBLE_OR_AROMATIC,
+      TYPES.AROMATIC,
+    ];
+    return (
+      this.customQuery !== null ||
+      QUERY_BOND_TYPES.includes(this.type) ||
+      (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
+    );
   }
 
   hasRxnProps(): boolean {

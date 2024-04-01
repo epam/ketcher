@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
-  delay,
   getAndCompareInchi,
   getAndCompareSmiles,
   BondType,
@@ -61,7 +59,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1887
     Description: (R) and (S) stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -91,7 +92,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     'Undo' action leads to the previous structure with stereo labels.
     */
     // will work after bugfix in 2.13-rc.3 bug#3025
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
 
@@ -110,7 +114,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await copyAndPaste(page);
     await waitForRender(page, async () => {
@@ -128,7 +135,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
@@ -141,7 +151,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1888
     Description: (E) and (Z) stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structures-with-stereo-bonds-ez.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structures-with-stereo-bonds-ez.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -154,7 +167,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-1.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-1.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -167,7 +183,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-2.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-2.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -180,7 +199,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-3.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-3.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -193,7 +215,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-4.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-4.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -206,7 +231,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-5.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-5.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -219,7 +247,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-6.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-6.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -232,7 +263,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1889
     Description: Stereo labels appear near stereobonds.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds-7.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds-7.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -270,7 +304,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds after the 'Calculate CIP' action.
     The structure appears in 3D Viewer dialog without stereo labels.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
   });
@@ -284,7 +321,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Bond with stereo label is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -306,7 +346,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: An atom of a stereo bond is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
@@ -328,9 +371,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       x: 20,
       y: 160,
     };
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+    );
     await page.keyboard.press('Control+a');
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -351,9 +399,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1925
     Description: New stereobond is added to the Chain structure.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await page.mouse.click(point.x, point.y);
@@ -364,9 +416,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-11841
     Description: The labels are next to the stereo bonds. When you hover over the label, the tooltip does not appear.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.move(point.x, point.y);
   });
@@ -384,7 +440,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-11842
     Description: CIP data located in file at atom properties section
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
@@ -410,10 +469,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V2000 file.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'structure-with-stereo-bonds-expectedV2000.mol',
+      'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
       expectedFile,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
@@ -423,7 +485,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/structure-with-stereo-bonds-expectedV2000.mol',
+          'tests/test-data/Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
         fileFormat: 'v2000',
       });
 
@@ -437,10 +499,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V3000 file.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
-      'structure-with-stereo-bonds-expectedV3000.mol',
+      'Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
       expectedFile,
     );
     const METADATA_STRING_INDEX = [1];
@@ -449,7 +514,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/structure-with-stereo-bonds-expectedV3000.mol',
+          'tests/test-data/Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
         fileFormat: 'v3000',
       });
 
@@ -461,11 +526,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1912
     Description: The file is saved as .smi file.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/structure-with-stereo-bonds.smi',
+      'tests/test-data/SMILES/structure-with-stereo-bonds.smi',
     );
   });
 
@@ -474,11 +542,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1918
     Description: The file is saved as .inchi file.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await getAndCompareInchi(
       page,
-      'tests/test-data/structure-with-stereo-bonds.inchi',
+      'tests/test-data/InChI/structure-with-stereo-bonds.inchi',
     );
   });
 });

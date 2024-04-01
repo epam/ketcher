@@ -14,7 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Vec2, Axis, Axises, Struct } from 'domain/entities';
 import { cloneDeepWith, cloneDeep } from 'lodash';
+import { EditorSelection } from 'application/editor';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -33,4 +35,45 @@ export const setMonomerPrefix = (monomerId: number) => `monomer${monomerId}`;
 
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
+};
+
+const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
+  const rotatedPosition = {
+    x: position.x,
+    y: position.y,
+  };
+
+  rotatedPosition[axis] = -rotatedPosition[axis];
+
+  return new Vec2(rotatedPosition.x, rotatedPosition.y);
+};
+
+/**
+ *
+ * System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+ * It needs to rotate them by 180 degrees in y-axis.
+ *
+ * @param position - coordinates of the structure
+ *
+ */
+export const switchIntoChemistryCoordSystem = (position: Vec2) => {
+  return rotateCoordAxisBy180Degrees(position, Axis.y);
+};
+
+export const populateStructWithSelection = (
+  populatedStruct: Struct,
+  selection?: EditorSelection,
+) => {
+  if (!selection) {
+    return populatedStruct;
+  }
+  Object.keys(selection).forEach((entity) => {
+    const selectedEntities = selection[entity];
+    populatedStruct[entity]?.forEach((value, key) => {
+      if (typeof value.setInitiallySelected === 'function') {
+        value.setInitiallySelected(selectedEntities.includes(key) || undefined);
+      }
+    });
+  });
+  return populatedStruct;
 };

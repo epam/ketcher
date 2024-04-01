@@ -445,7 +445,10 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
-    await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
@@ -453,7 +456,7 @@ test.describe('Attachment Point Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/reaction-with-arrow-and-plus-expected.rxn',
+          'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
   });
@@ -466,14 +469,17 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
-    await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/reaction-with-arrow-and-plus-expected.rxn',
+          'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
   });
@@ -486,7 +492,7 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
-      'reaction-with-arrow-and-plus-expectedV3000.rxn',
+      'Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
       expectedFile,
     );
     const METADATA_STRING_INDEX = [2];
@@ -495,7 +501,7 @@ test.describe('Attachment Point Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/reaction-with-arrow-and-plus-expectedV3000.rxn',
+          'tests/test-data/Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
         fileFormat: 'v3000',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
@@ -858,7 +864,7 @@ test.describe('Attachment Point Tool', () => {
     Description: The structures are cleaned correctly without attachment point(s) loss.
     */
     await openFileAndAddToCanvas(
-      'distorted-chain-with-attachment-points.mol',
+      'Molfiles-V2000/distorted-chain-with-attachment-points.mol',
       page,
     );
 

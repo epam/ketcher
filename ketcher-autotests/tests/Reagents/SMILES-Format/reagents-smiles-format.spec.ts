@@ -14,28 +14,25 @@ import {
   getSmiles,
   setMolecule,
   enableDearomatizeOnLoad,
+  clickOnFileFormatDropdown,
 } from '@utils/formats';
 
-async function getPreviewForSmiles(
-  page: Page,
-  formatName: string,
-  smileType: string,
-) {
+async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
 async function saveDaylightSmiles(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function saveExtendedSmiles(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Extended SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
@@ -65,12 +62,12 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -89,12 +86,12 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-below-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-below-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
   });
 
   test(`Detection molecule as reagent
@@ -112,7 +109,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+    await getPreviewForSmiles(page, 'Extended SMILES');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -130,7 +127,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+    await getPreviewForSmiles(page, 'Extended SMILES');
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {
@@ -138,7 +135,7 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4669
     Description: Reagent 'Cl' above the reaction arrow
     */
-    await openFileAndAddToCanvas('daylight-smiles-expect.smi', page);
+    await openFileAndAddToCanvas('SMILES/daylight-smiles-expect.smi', page);
   });
 
   test('Open from file in "Extended SMILES" format', async ({ page }) => {
@@ -146,7 +143,10 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4670
     Description: Reagent 'Cl' above the reaction arrow
     */
-    await openFileAndAddToCanvas('extended-smiles-expect.cxsmi', page);
+    await openFileAndAddToCanvas(
+      'Extended-SMILES/extended-smiles-expect.cxsmi',
+      page,
+    );
   });
 
   test('Paste from clipboard in "Daylight SMILES" format', async ({ page }) => {
@@ -199,7 +199,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -218,7 +218,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/extended-smiles.cxsmi',
+      'tests/test-data/Extended-SMILES/extended-smiles.cxsmi',
     );
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);

@@ -2,10 +2,8 @@
 import { test } from '@playwright/test';
 import {
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   BondType,
   selectAtomInToolbar,
   AtomButton,
@@ -13,6 +11,9 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   waitForPageInit,
+  waitForRender,
+  clickOnBond,
+  clickOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -56,7 +57,7 @@ test.describe('Right-click menu', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
-    await page.getByRole('button', { name: 'Single', exact: true }).click();
+    await page.getByTestId('type-input-span').click();
     await page.getByRole('option', { name: 'Double', exact: true }).click();
     await pressButton(page, 'Apply');
   });
@@ -90,17 +91,18 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
-    let point: { x: number; y: number };
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
-    point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Double', { exact: true }).click();
+    await waitForRender(page, async () => {
+      await clickOnBond(page, BondType.SINGLE, 0, 'right');
+    });
+    await waitForRender(page, async () => {
+      await page.getByText('Double', { exact: true }).click();
+    });
 
-    await delay(DELAY_IN_SECONDS.TWO);
-
-    point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', 1);
+    });
     await resetCurrentTool(page);
   });
 

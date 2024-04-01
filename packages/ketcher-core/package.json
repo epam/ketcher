@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "2.15.0-rc.4",
+  "version": "2.20.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -37,6 +37,7 @@
     "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
     "test:unit": "jest",
+    "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\"",
     "typedoc": "typedoc"
@@ -48,6 +49,7 @@
     "d3": "^7.8.5",
     "lodash": "^4.17.21",
     "raphael": "^2.3.0",
+    "react-device-detect": "^2.2.2",
     "svgpath": "^2.3.1"
   },
   "devDependencies": {

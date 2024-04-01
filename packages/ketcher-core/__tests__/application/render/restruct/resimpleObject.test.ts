@@ -51,7 +51,11 @@ const line = {
 it('should get hover path and style for simple objects correctly', () => {
   [ellipse, rectangle, line].forEach((simpleObject) => {
     const reSimpleObject = new ReSimpleObject(simpleObject);
-    const option = { scale: 20, width: 100, height: 100 } as RenderOptions;
+    const option = {
+      microModeScale: 20,
+      width: 100,
+      height: 100,
+    } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
     const paths = reSimpleObject.hoverPath(render);
     expect(
@@ -63,7 +67,11 @@ it('should get hover path and style for simple objects correctly', () => {
 it('should get selection plate for simple objects correctly with selection points in a separated set', () => {
   const reSimpleObject = new ReSimpleObject(ellipse);
   const initialPathLength = reSimpleObject.visel.paths.length;
-  const option = { scale: 20, width: 100, height: 100 } as RenderOptions;
+  const option = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
   const render = new Render(document as unknown as HTMLElement, option);
   const restruct = new ReStruct(new Struct(), render);
   reSimpleObject.makeSelectionPlate(restruct, render.paper, render.options);

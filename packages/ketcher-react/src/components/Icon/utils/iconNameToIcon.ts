@@ -216,6 +216,12 @@ import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
 import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
+import ExpandIcon from '../../../assets/icons/files/expand.svg';
+import MinimizeExpansionIcon from '../../../assets/icons/files/minimize-expantion.svg';
+import ExplicitHydrogensIcon from '../../../assets/icons/files/explicit-hydrogens.svg';
+import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
+import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
+import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 
 export const iconNameToIcon = {
   α,
@@ -432,4 +438,10 @@ export const iconNameToIcon = {
   preset: Preset,
   'edit-filled': EditFilled,
   'vertical-dots': VerticalDots,
+  expand: ExpandIcon,
+  'minimize-expansion': MinimizeExpansionIcon,
+  'explicit-hydrogens': ExplicitHydrogensIcon,
+  'flex-layout-mode': FlexLayoutIcon,
+  'snake-layout-mode': SnakeLayoutIcon,
+  'sequence-layout-mode': SequenceLayoutIcon,
 } as const;

@@ -20,6 +20,10 @@ import { Point, Vec2 } from './vec2';
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 /**
  * Return unions of Pick.
@@ -102,6 +106,7 @@ export interface AtomAttributes {
   pp?: Point;
   implicitH?: number;
   implicitHCount?: number | null;
+  initiallySelected?: initiallySelectedType;
 }
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<
@@ -113,7 +118,7 @@ export type AtomPropertiesInContextMenu = SubsetOfFields<
   | 'implicitHCount'
 >;
 
-export class Atom {
+export class Atom extends BaseMicromoleculeEntity {
   static PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -202,6 +207,7 @@ export class Atom {
   }
 
   constructor(attributes: AtomAttributes) {
+    super(attributes?.initiallySelected);
     this.label = attributes.label;
     this.fragment = getValueOrDefault(attributes.fragment, -1);
     this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias);
@@ -368,11 +374,26 @@ export class Atom {
   }
 
   isQuery(): boolean {
+    const { queryProperties } = this;
+    const isAnyAtom = this.label === 'A';
+    const isAnyMetal = this.label === 'M' || this.label === 'MH';
+    const isAnyHalogen = this.label === 'X' || this.label === 'XH';
+    const isAnyGroup =
+      this.label === 'G' ||
+      this.label === 'G*' ||
+      this.label === 'GH' ||
+      this.label === 'GH*';
     return Boolean(
-      this.atomList !== null ||
-        this.label === 'A' ||
-        this.attachmentPoints ||
-        this.hCount,
+      this.substitutionCount !== 0 ||
+        this.unsaturatedAtom !== 0 ||
+        this.ringBondCount !== 0 ||
+        isAnyAtom ||
+        isAnyMetal ||
+        isAnyHalogen ||
+        isAnyGroup ||
+        this.hCount !== 0 ||
+        this.atomList !== null ||
+        Object.values(queryProperties).some((value) => value),
     );
   }
 
@@ -412,7 +433,7 @@ export class Atom {
   calcValence(connectionCount: number): boolean {
     const label = this.label;
     const charge = this.charge || 0;
-    if (this.isQuery()) {
+    if (this.isQuery() || this.attachmentPoints) {
       this.implicitH = 0;
       return true;
     }

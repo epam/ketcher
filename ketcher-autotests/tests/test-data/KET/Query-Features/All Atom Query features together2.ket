@@ -1,0 +1,2233 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": -95.32508390999247,
+                            "y": -6.76019285196704,
+                            "z": 0
+                        },
+                        {
+                            "x": -91.36587348085105,
+                            "y": -6.76019285196704,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"6fp9i\",\"text\":\"All Atom Query features together\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": -111.95427376216902,
+                        "y": 1.1627256396606427,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": -111.95427376216902,
+                            "y": 1.1627256396606427,
+                            "z": 0
+                        },
+                        {
+                            "x": -111.95427376216902,
+                            "y": 0.7877256158187848,
+                            "z": 0
+                        },
+                        {
+                            "x": -107.13929153865828,
+                            "y": 0.7877256158187848,
+                            "z": 0
+                        },
+                        {
+                            "x": -107.13929153865828,
+                            "y": 1.1627256396606427,
+                            "z": 0
+                        }
+                    ]
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -105.97376112861754,
+                    4.120393415419191,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            },
+            {
+                "label": "C",
+                "location": [
+                    -104.24329507280804,
+                    4.120878649504242,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            },
+            {
+                "label": "C",
+                "location": [
+                    -105.10689043567575,
+                    4.6205484485844615,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            },
+            {
+                "label": "C",
+                "location": [
+                    -104.24329507280804,
+                    3.1198407320461286,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            },
+            {
+                "label": "C",
+                "location": [
+                    -105.97376112861754,
+                    3.1153523167594166,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            },
+            {
+                "label": "C",
+                "location": [
+                    -105.10470688229302,
+                    2.6202922414871743,
+                    0
+                ],
+                "ringBondCount": -2,
+                "substitutionCount": -2,
+                "unsaturatedAtom": true,
+                "hCount": 1,
+                "queryProperties": {
+                    "aromaticity": "aromatic",
+                    "ringMembership": 0,
+                    "ringSize": 0,
+                    "connectivity": 0,
+                    "chirality": "anticlockwise"
+                },
+                "implicitHCount": 0
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -101.18997343002101,
+                    4.016680358348815,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    -99.45950737421151,
+                    4.017165592433866,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    -100.32310273707921,
+                    4.5168353915140855,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    -99.45950737421151,
+                    3.0161276749757526,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    -101.18997343002101,
+                    3.0116392596890407,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            },
+            {
+                "label": "C",
+                "location": [
+                    -100.32091918369649,
+                    2.516579184416795,
+                    0
+                ],
+                "ringBondCount": -1,
+                "substitutionCount": -1,
+                "unsaturatedAtom": true,
+                "hCount": 2,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 1,
+                    "ringSize": 1,
+                    "connectivity": 1,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 1
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -96.16171806738471,
+                    4.044460774716967,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            },
+            {
+                "label": "C",
+                "location": [
+                    -94.43125201157521,
+                    4.044946008802018,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            },
+            {
+                "label": "C",
+                "location": [
+                    -95.29484737444291,
+                    4.544615807882238,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            },
+            {
+                "label": "C",
+                "location": [
+                    -94.43125201157521,
+                    3.043908091343905,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            },
+            {
+                "label": "C",
+                "location": [
+                    -96.16171806738471,
+                    3.039419676057193,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            },
+            {
+                "label": "C",
+                "location": [
+                    -95.29266382106019,
+                    2.5443596007849543,
+                    0
+                ],
+                "ringBondCount": 2,
+                "substitutionCount": 1,
+                "unsaturatedAtom": true,
+                "hCount": 3,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 2,
+                    "ringSize": 2,
+                    "connectivity": 2,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 2
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -91.49460811753444,
+                    4.044460774716963,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    -89.76414206172494,
+                    4.044946008802015,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    -90.62773742459265,
+                    4.544615807882234,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    -89.76414206172494,
+                    3.0439080913439014,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    -91.49460811753444,
+                    3.0394196760571894,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            },
+            {
+                "label": "C",
+                "location": [
+                    -90.62555387120992,
+                    2.5443596007849543,
+                    0
+                ],
+                "ringBondCount": 3,
+                "substitutionCount": 2,
+                "unsaturatedAtom": true,
+                "hCount": 4,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 3,
+                    "ringSize": 3,
+                    "connectivity": 3,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 3
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -86.79971775131602,
+                    4.0166803583488075,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.06925169550651,
+                    4.017165592433859,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.93284705837422,
+                    4.516835391514082,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.06925169550651,
+                    3.0161276749757455,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -86.79971775131602,
+                    3.0116392596890336,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -85.9306635049915,
+                    2.516579184416795,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -82.16038821783391,
+                    4.0166803583488075,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -80.42992216202441,
+                    4.017165592433859,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.29351752489211,
+                    4.516835391514082,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -80.42992216202441,
+                    3.0161276749757455,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -82.16038821783391,
+                    3.0116392596890336,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.29133397150939,
+                    2.516579184416795,
+                    0
+                ],
+                "ringBondCount": 4,
+                "substitutionCount": 3,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 4,
+                    "ringSize": 4,
+                    "connectivity": 4,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 4
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -77.40854799806075,
+                    4.009735254256768,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 5,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    -75.67808194225125,
+                    4.010220488341819,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 6,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    -76.54167730511897,
+                    4.509890287422039,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 6,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    -75.67808194225125,
+                    3.009182570883702,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 6,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    -77.40854799806075,
+                    3.0046941555969937,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 6,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            },
+            {
+                "label": "C",
+                "location": [
+                    -76.53949375173625,
+                    2.509634080324755,
+                    0
+                ],
+                "ringBondCount": 5,
+                "substitutionCount": 4,
+                "unsaturatedAtom": true,
+                "hCount": 6,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 5,
+                    "ringSize": 5,
+                    "connectivity": 5,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 5
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -103.83605808908791,
+                    0.33438616874968474,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            },
+            {
+                "label": "C",
+                "location": [
+                    -102.10559203327841,
+                    0.3348714028347324,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            },
+            {
+                "label": "C",
+                "location": [
+                    -102.96918739614611,
+                    0.8345412019149556,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            },
+            {
+                "label": "C",
+                "location": [
+                    -102.10559203327841,
+                    -0.6661665146233808,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            },
+            {
+                "label": "C",
+                "location": [
+                    -103.83605808908791,
+                    -0.6706549299100892,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            },
+            {
+                "label": "C",
+                "location": [
+                    -102.96700384276339,
+                    -1.1657150051823315,
+                    0
+                ],
+                "ringBondCount": 6,
+                "substitutionCount": 5,
+                "unsaturatedAtom": true,
+                "hCount": 7,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 6,
+                    "ringSize": 6,
+                    "connectivity": 6,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 6
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -98.38554039765563,
+                    0.30938379401834837,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            },
+            {
+                "label": "C",
+                "location": [
+                    -96.65507434184613,
+                    0.3098690281033889,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            },
+            {
+                "label": "C",
+                "location": [
+                    -97.51866970471383,
+                    0.8095388271836192,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            },
+            {
+                "label": "C",
+                "location": [
+                    -96.65507434184613,
+                    -0.6911688893547243,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            },
+            {
+                "label": "C",
+                "location": [
+                    -98.38554039765563,
+                    -0.6956573046414256,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            },
+            {
+                "label": "C",
+                "location": [
+                    -97.51648615133111,
+                    -1.1907173799136679,
+                    0
+                ],
+                "ringBondCount": 7,
+                "substitutionCount": 6,
+                "unsaturatedAtom": true,
+                "hCount": 8,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 7,
+                    "ringSize": 7,
+                    "connectivity": 7,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 7
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -93.28505595246212,
+                    0.2593790445556614,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    -91.55458989665262,
+                    0.25986427864070905,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    -92.41818525952033,
+                    0.7595340777209323,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    -91.55458989665262,
+                    -0.7411736388174113,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    -93.28505595246212,
+                    -0.7456620541041126,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            },
+            {
+                "label": "C",
+                "location": [
+                    -92.4160017061376,
+                    -1.2407221293763548,
+                    0
+                ],
+                "ringBondCount": 8,
+                "substitutionCount": 7,
+                "unsaturatedAtom": true,
+                "hCount": 9,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 8,
+                    "ringSize": 8,
+                    "connectivity": 8,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 8
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -87.90954538522386,
+                    0.20937429509298155,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -86.17907932941436,
+                    0.2098595291780292,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -87.04267469228208,
+                    0.7095293282582524,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -86.17907932941436,
+                    -0.791178388280084,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -87.90954538522386,
+                    -0.7956668035667924,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -87.04049113889934,
+                    -1.2907268788390347,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 8,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -82.85906568949304,
+                    0.1593695456303017,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.12859963368354,
+                    0.15985477971534934,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.99219499655125,
+                    0.6595245787955726,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.12859963368354,
+                    -0.8411831377427639,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -82.85906568949304,
+                    -0.8456715530294723,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            },
+            {
+                "label": "C",
+                "location": [
+                    -81.99001144316853,
+                    -1.3407316283017146,
+                    0
+                ],
+                "ringBondCount": 9,
+                "substitutionCount": 9,
+                "unsaturatedAtom": true,
+                "hCount": 10,
+                "queryProperties": {
+                    "aromaticity": "aliphatic",
+                    "ringMembership": 9,
+                    "ringSize": 9,
+                    "connectivity": 9,
+                    "chirality": "clockwise"
+                },
+                "implicitHCount": 9
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            }
+        ]
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -96.40904302896188,
+                    -7.234329934155111,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -95.40779145768973,
+                    -7.234329934155111,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -95.90836705527711,
+                    -6.3693891031123,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -91.20070969562855,
+                    -7.275996600821779,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -90.1994581243564,
+                    -7.275996600821779,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -90.70003372194378,
+                    -6.411055769778969,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    0
+                ]
+            }
+        ]
+    }
+}

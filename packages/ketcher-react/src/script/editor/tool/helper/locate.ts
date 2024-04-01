@@ -14,13 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup, Vec2 } from 'ketcher-core';
+import {
+  FunctionalGroup,
+  MonomerMicromolecule,
+  Struct,
+  Vec2,
+} from 'ketcher-core';
 
 function getElementsInRectangle(restruct, p0, p1) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
+  const struct: Struct = restruct.molecule;
 
   const x0 = Math.min(p0.x, p1.x);
   const x1 = Math.max(p0.x, p1.x);
@@ -28,6 +34,10 @@ function getElementsInRectangle(restruct, p0, p1) {
   const y1 = Math.max(p0.y, p1.y);
 
   restruct.bonds.forEach((bond, bid) => {
+    if (struct.isBondFromMacromolecule(bid)) {
+      return;
+    }
+
     const centre = Vec2.lc2(
       restruct.atoms.get(bond.b.begin).a.pp,
       0.5,
@@ -54,8 +64,9 @@ function getElementsInRectangle(restruct, p0, p1) {
       functionalGroups,
       aid,
     );
-    const sGroup = restruct.sgroups.get(relatedFGId);
+    const reSGroup = restruct.sgroups.get(relatedFGId);
     if (
+      !(reSGroup?.item instanceof MonomerMicromolecule) &&
       atom.a.pp.x > x0 &&
       atom.a.pp.x < x1 &&
       atom.a.pp.y > y0 &&
@@ -66,7 +77,7 @@ function getElementsInRectangle(restruct, p0, p1) {
         functionalGroups,
         true,
       ) ||
-        aid === sGroup.item.atoms[0])
+        aid === reSGroup.item.atoms[0])
     ) {
       atomList.push(aid);
     }
@@ -172,12 +183,20 @@ function getElementsInPolygon(restruct, rr) {
   const r: any = [];
   const sGroups = restruct.sgroups;
   const functionalGroups = restruct.molecule.functionalGroups;
+  const struct: Struct = restruct.molecule;
 
   for (let i = 0; i < rr.length; ++i) {
     r[i] = new Vec2(rr[i].x, rr[i].y);
   }
 
   restruct.bonds.forEach((bond, bid) => {
+    if (
+      struct.isAtomFromMacromolecule(bond.b.begin) ||
+      struct.isAtomFromMacromolecule(bond.b.end)
+    ) {
+      return;
+    }
+
     const centre = Vec2.lc2(
       restruct.atoms.get(bond.b.begin).a.pp,
       0.5,
@@ -201,8 +220,9 @@ function getElementsInPolygon(restruct, rr) {
       functionalGroups,
       aid,
     );
-    const sGroup = restruct.sgroups.get(relatedFGId);
+    const reSGroup = restruct.sgroups.get(relatedFGId);
     if (
+      !(reSGroup?.item instanceof MonomerMicromolecule) &&
       isPointInPolygon(r, atom.a.pp) &&
       (!FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,
@@ -210,7 +230,7 @@ function getElementsInPolygon(restruct, rr) {
         functionalGroups,
         true,
       ) ||
-        aid === sGroup.item.atoms[0])
+        aid === reSGroup.item.atoms[0])
     ) {
       atomList.push(aid);
     }

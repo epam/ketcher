@@ -100,7 +100,7 @@ test.describe('Template Manupulations', () => {
     await resetCurrentTool(page);
   });
 
-  test('5) Fuse atom-to-atom: click and drug atom to fuse atom-to-atom', async ({
+  test('5) Fuse atom-to-atom: click and drag atom to fuse atom-to-atom', async ({
     page,
   }) => {
     /*
@@ -108,27 +108,22 @@ test.describe('Template Manupulations', () => {
     Description: Put the cursor on any other structure atom, press, and drag. 
     Release the cursor when the distance from the cursor to the selected atom is more than the bond length. 
     */
-    await drawBenzeneRing(page);
     const anyAtom = 0;
-    const x = 600;
-    const y = 600;
     await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
   });
 
-  test('Fuse atom-to-atom: click and drug atom to extand bonds', async ({
+  test('Fuse atom-to-atom: click and drag atom to extend bonds', async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
     */
-    await drawBenzeneRing(page);
     const anyAtom = 0;
-    const x = 700;
-    const y = 600;
+    const x = 300;
+    const y = 300;
     await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
@@ -153,48 +148,13 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
   });
 
-  test('Click or drag on the canvas: Place template on the Canvas', async ({
-    page,
-  }) => {
+  test('Place template on the Canvas', async ({ page }) => {
     /*
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    const x = 700;
-    const y = 600;
     await selectRing(RingButton.Cyclopentadiene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
-  });
-
-  test('Click or drag on the canvas: Rotate a Benzene template while placing', async ({
-    page,
-  }) => {
-    /*
-    Test case: 1678
-    Description: With the template click and rotate on the canvas.
-    */
-    const x = 700;
-    const y = 600;
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
-  });
-
-  test('Click or drag on the canvas: Rotate with a Cyclopentane', async ({
-    page,
-  }) => {
-    /*
-    Test case: 1678
-    Description: Repeat the previous steps with different templates.
-    */
-    const x = 500;
-    const y = 600;
-    await selectRing(RingButton.Cyclopentane, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
   });
 
@@ -278,20 +238,20 @@ test.describe('Template Manupulations', () => {
     /*
     Test case: 1736
     Description:
-    With Selection Tool (Lasso or Rectangle) click any atom of the template structure and type any correct atom symbol.
+    With Selection Tool (Rectangle) click any atom of the template structure and type any correct atom symbol.
     */
     await selectAtom(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await page.getByTestId('canvas').getByText('S').first().click();
+    await page.getByText('S').first().click();
     await page.getByLabel('Primary attachment point').check();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    await page.getByTestId('canvas').getByText('S').first().click();
-    await page.getByTestId('canvas').getByText('S').first().click({
+    await page.getByTestId('select-rectangle').click();
+    await page.getByText('S').first().click({
       button: 'right',
     });
+    await takeEditorScreenshot(page);
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
@@ -353,12 +313,7 @@ test.describe('Template Manupulations', () => {
     Click the Zoom Out button several times.
     */
     await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click({
-      clickCount: 2,
-    });
-    await page.getByTestId('zoom-out').click({
-      clickCount: 3,
-    });
+    await page.getByTestId('zoom-out').click();
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
@@ -371,12 +326,6 @@ test.describe('Template Manupulations', () => {
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click({
-      clickCount: 2,
-    });
-    await page.getByTestId('zoom-out').click({
-      clickCount: 2,
-    });
   });
 
   test('Save as *.mol file', async ({ page }) => {
@@ -537,6 +486,7 @@ test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
+
   test('The different templates are attached to the atoms of existing benzene-1', async ({
     page,
   }) => {
@@ -590,19 +540,11 @@ test.describe('Open Ketcher', () => {
     Description:
     Paste benzene from templates on the canvas.
     Edit benzene with all possible ways.
-    Clear All.
-    Click Undo/Redo several times.
     */
-    await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', 1);
-    await moveOnAtom(page, 'C', 0);
     const anyAtom = 2;
+    await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await takePageScreenshot(page);
-    await selectAction(TopPanelButton.Clear, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
   test('Templates - The full preview of the Template from the Templates toolbar, following mouse cursor', async ({

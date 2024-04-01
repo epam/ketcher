@@ -17,6 +17,8 @@
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import { StructFormatter } from './structFormatter.types';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { EditorSelection } from 'application/editor';
 
 export class KetFormatter implements StructFormatter {
   #ketSerializer: KetSerializer;
@@ -25,8 +27,16 @@ export class KetFormatter implements StructFormatter {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const ket = this.#ketSerializer.serialize(struct);
+  async getStructureFromStructAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ): Promise<string> {
+    const ket = this.#ketSerializer.serialize(
+      struct,
+      drawingEntitiesManager,
+      selection,
+    );
     return ket;
   }
 

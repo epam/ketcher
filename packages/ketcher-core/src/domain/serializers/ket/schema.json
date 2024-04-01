@@ -109,6 +109,9 @@
             "type": "number"
           }
         },
+        "selected": {
+          "type": "boolean"
+        },
         "charge": {
           "type": "integer",
           "minimum": -1000,
@@ -141,7 +144,7 @@
         },
         "ringBondCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 2, 3, 4, 6, 7, 8, 9]
+          "enum": [0, -2, -1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "substitutionCount": {
           "type": "integer",
@@ -252,6 +255,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "selected": {
+          "type": "boolean"
         },
         "stereobox": {
           "type": "integer",
@@ -608,6 +614,9 @@
           "items": {
             "type": "number"
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -647,6 +656,9 @@
               "type": "number"
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -722,6 +734,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -757,6 +772,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     }

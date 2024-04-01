@@ -36,7 +36,8 @@ export type RenderOptions = {
   showHydrogenLabels: string;
   showValence: boolean;
   aromaticCircle: boolean;
-  scale: number;
+  microModeScale: number;
+  macroModeScale: number;
   zoom: number;
   offset: Vec2;
   lineWidth: number;

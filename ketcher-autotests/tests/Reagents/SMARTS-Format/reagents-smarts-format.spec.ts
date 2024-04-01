@@ -11,18 +11,18 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { getSmarts } from '@utils/formats';
+import { clickOnFileFormatDropdown, getSmarts } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
 }
 
@@ -50,7 +50,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts',
+      'tests/test-data/SMARTS/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -75,7 +75,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-below.smarts',
+      'tests/test-data/SMARTS/expected-smarts-below.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -92,7 +92,7 @@ test.describe('Reagents SMARTS format', () => {
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,
-      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
+      '[#6]-[#6]1-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]-[#6]1-[#6](-,:[#35])=[#6]-[#6](-[#8])=[#6](-,:[#53])-[#6]=1',
     );
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
@@ -105,7 +105,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
     */
-    await openFileAndAddToCanvas('expected-smarts-below.smarts', page);
+    await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
   });
 
   test('Structure is opened with Not List atoms saved in "Daylight SMARTS" format', async ({
@@ -115,7 +115,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4706
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
-    await openFileAndAddToCanvas('not-list-atoms-smarts.smarts', page);
+    await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
   });
 });
 
@@ -135,7 +135,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts',
+      'tests/test-data/SMARTS/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);

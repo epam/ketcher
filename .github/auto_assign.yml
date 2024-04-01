@@ -4,20 +4,10 @@ useReviewGroups: true
 addAssignees: author
 reviewGroups:
   core:
-    - nitvex
+    - ilya-asiyuk-epam
     - rrodionov91
-    - SashaGraves
-    - AKZhuk
-    - yuleicul
   developers:
-    - nanoblit
     - StarlaStarla
-    - chgayane
-    - OlgaMazurina
   QA:
     - Zhirnoff
-    - MartaWilliams
-    - y-holik
-    - AnastasiyaPiatrovaKlu
-    - ViktoriaTkacheva
-    - urszula-gawlowska
+    - AlexeyGirin

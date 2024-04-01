@@ -100,7 +100,11 @@ describe('resgroup should draw brackets with attachment points correctly', () =>
       z: 0,
     });
     restruct.rgroupAttachmentPoints.set(0, reRGroupAttachmentPoint);
-    const option = { scale: 20, width: 100, height: 100 } as RenderOptions;
+    const option = {
+      microModeScale: 20,
+      width: 100,
+      height: 100,
+    } as RenderOptions;
     const render = new Render(document as unknown as HTMLElement, option);
     render.ctab = restruct as unknown as ReStruct;
     restruct.render = render as any;

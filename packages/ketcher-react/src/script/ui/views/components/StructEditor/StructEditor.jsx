@@ -21,12 +21,8 @@ import { LoadingCircles } from '../Spinner/LoadingCircles';
 import classes from './StructEditor.module.less';
 import clsx from 'clsx';
 import { upperFirst } from 'lodash/fp';
-import handIcon from '../../../../../assets/icons/files/hand.svg';
-import compressedHandIcon from '../../../../../assets/icons/files/compressed-hand.svg';
 import { FloatingToolContainer } from '../../toolbars';
-import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
-
 import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
@@ -60,6 +56,9 @@ function setupEditor(editor, props, oldProps = {}) {
       }
     }
   });
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor, props) {
@@ -238,7 +237,6 @@ class StructEditor extends Component {
           });
           break;
         }
-
         default:
           break;
       }
@@ -249,7 +247,6 @@ class StructEditor extends Component {
     });
 
     this.editorRef.current.addEventListener('wheel', this.handleWheel);
-    this.editor.render.observeCanvasResize();
   }
 
   componentWillUnmount() {
@@ -310,12 +307,6 @@ class StructEditor extends Component {
             {/* svg here */}
           </div>
         </ContextMenuTrigger>
-
-        <Cursor
-          Icon={handIcon}
-          PressedIcon={compressedHandIcon}
-          enableHandTool={this.state.enableCursor}
-        />
 
         <div className={classes.measureLog} ref={this.logRef} />
 

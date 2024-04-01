@@ -21,7 +21,7 @@ async function generalDefaultSettings(page: Page) {
 
 async function resetSelectToolOff(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
-  await page.getByRole('button', { name: 'After Paste' }).click();
+  await page.getByTestId('reset-to-select-input-span').click();
   await page.getByTestId('off-option').click();
   await pressButton(page, 'Apply');
 }
@@ -51,8 +51,6 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-18059
-    // Task need to be fix - Undo is not working when Select tool is"Off"'
-    // https://github.com/epam/ketcher/issues/3005 - fix in Ketcher 2.17
     const pointX = 350;
     const pointY = 350;
     await resetSelectToolOff(page);

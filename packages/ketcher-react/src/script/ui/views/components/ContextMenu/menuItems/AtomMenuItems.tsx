@@ -31,6 +31,7 @@ const properties: Array<AtomQueryPropertiesName> = [
   'ringMembership',
   'ringSize',
   'connectivity',
+  'chirality',
 ];
 
 const atomPropertiesForSubMenu: {

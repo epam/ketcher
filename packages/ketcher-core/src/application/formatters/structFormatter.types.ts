@@ -16,10 +16,16 @@
 
 import { MolSerializerOptions } from 'domain/serializers';
 import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { StructServiceOptions } from 'domain/services';
+import { EditorSelection } from 'application/editor';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (struct: Struct) => Promise<string>;
+  getStructureFromStructAsync: (
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+    selection?: EditorSelection,
+  ) => Promise<string>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
   parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }
@@ -43,6 +49,8 @@ export enum SupportedFormat {
   binaryCdx = 'binaryCdx',
   sdf = 'sdf',
   sdfV3000 = 'sdfV3000',
+  fasta = 'fasta',
+  sequence = 'sequence',
   unknown = 'unknown',
 }
 

@@ -615,49 +615,48 @@ test.describe('Atom Tool', () => {
     await takeRightToolbarScreenshot(page);
   });
 
-  test('Add atoms from right toolbar to Benzene ring', async ({ page }) => {
-    /*
+  /*
     Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
+  for (const atomName of atomsNames) {
     const anyAtom = 0;
-
-    for (const atomName of atomsNames) {
+    test(`Add ${atomName} from right toolbar to Benzene ring`, async ({
+      page,
+    }) => {
       await drawBenzeneRing(page);
       await selectAtomInToolbar(atomName, page);
       await clickOnAtom(page, 'C', anyAtom);
+      await resetCurrentTool(page);
       await takeEditorScreenshot(page);
-    }
-  });
-
-  test('Add atoms by hotkey to Benzene ring', async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
-    EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
-    Description: Atom added to Benzene ring.
-    */
-    const anyAtom = 2;
-    const atomsNames = ['h', 'c', 'n', 'o', 's', 'p', 'f', 'b', 'i'];
-
-    for (const atomName of atomsNames) {
+    });
+  }
+  const atomShortcuts = ['h', 'c', 'n', 'o', 's', 'p', 'f', 'b', 'i'];
+  for (const atomName of atomShortcuts) {
+    test(`Add ${atomName} by hotkey to Benzene ring`, async ({ page }) => {
+      /*
+      Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
+      EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
+      Description: Atom added to Benzene ring.
+      */
+      const anyAtom = 2;
       await drawBenzeneRing(page);
       await resetCurrentTool(page);
       await clickOnAtom(page, 'C', anyAtom);
       await page.keyboard.press(atomName);
       await takeEditorScreenshot(page);
-    }
-  });
+    });
+  }
 
-  test('Select Atom and drag on Benzene ring', async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
-    EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
-    Description: Atom added to Benzene ring.
-    */
-    const anyAtom = 2;
-
-    for (const atomName of atomsNames) {
+  for (const atomName of atomsNames) {
+    test(`Select ${atomName} and drag on Benzene ring`, async ({ page }) => {
+      /*
+      Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
+      EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
+      Description: Atom added to Benzene ring.
+      */
+      const anyAtom = 2;
       await drawBenzeneRing(page);
       await selectAtomInToolbar(atomName, page);
       await moveOnAtom(page, 'C', anyAtom);
@@ -666,6 +665,6 @@ test.describe('Atom Tool', () => {
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
-    }
-  });
+    });
+  }
 });

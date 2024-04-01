@@ -17,6 +17,7 @@ import {
   saveToFile,
   waitForSpinnerFinishedWork,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -46,7 +47,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1868
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('non-aromatic.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -63,7 +64,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1869
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/non-aromatic-structures.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -104,7 +108,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles.
     */
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -122,7 +129,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -143,7 +153,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     inside the cycle during any manipulations.
     */
     // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
@@ -159,7 +172,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
@@ -362,5 +378,106 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('User can aromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 1
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/3529 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-query-features-with-out-custom-query.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+  });
+
+  test('User can DEaromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 2
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Press Dearomatize button
+    5. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/3529 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1757 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-query-features-with-out-custom-query.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+  });
+
+  test('User can aromatize molecules with custom query parameters.', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 3
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-custom-query-features.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+  });
+
+  test('User can Dearomatize molecules with custom query parameters.', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3849 - Test case 4
+    Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
+    1. Clear canvas
+    2. Open as New Project: AllPossibleQueryFeaturesWithOutCustomQuery.ket
+    3. Press Aromatize button
+    4. Press Dearomatize button
+    4. Validate canvas
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1753 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1754 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1759 issue.
+    Screenshots should be updated after fix.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/all-possible-custom-query-features.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 });

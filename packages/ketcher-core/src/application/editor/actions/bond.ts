@@ -24,6 +24,8 @@ import {
   AtomAttributes,
   BondAttributes,
   FunctionalGroup,
+  SGroupAttachmentPoint,
+  SGroup,
 } from 'domain/entities';
 import {
   AtomAdd,
@@ -44,7 +46,7 @@ import {
 } from './atom';
 
 import { Action } from './action';
-import { ReStruct } from '../../render';
+import { ReSGroup, ReStruct } from '../../render';
 import { StereoValidator } from 'domain/helpers';
 import utils from '../shared/utils';
 
@@ -165,6 +167,14 @@ export function fromBondAddition(
     [beginAtomId, endAtomId] = mouseDownAtomAndUpNothing(begin, end);
   } else {
     [beginAtomId, endAtomId] = [begin as number, end as number];
+
+    if (reStruct.sgroups && reStruct.sgroups.size > 0) {
+      reStruct.sgroups.forEach((sgroup) => {
+        if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
+          addAttachmentPointToSuperatom(sgroup, beginAtomId, endAtomId);
+        }
+      });
+    }
   }
 
   if (atomGetAttr(reStruct, beginAtomId, 'label') === '*') {
@@ -445,4 +455,36 @@ export function bondChangingAction(
   }
 
   return fromBondsAttrs(restruct, newItemId, bondProps).mergeWith(action);
+}
+
+function addAttachmentPointToSuperatom(
+  sgroup: ReSGroup,
+  beginAtomId: number,
+  endAtomId: number,
+) {
+  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+    if (beginAtomId === atomId || endAtomId === atomId) {
+      if (
+        !(sgroup.item as SGroup)
+          .getAttachmentPoints()
+          .map((attachmentPoint) => attachmentPoint.atomId)
+          .includes(atomId)
+      )
+        sgroup.item?.addAttachmentPoint(
+          new SGroupAttachmentPoint(atomId, undefined, undefined),
+        );
+    }
+  });
+}
+
+export function removeAttachmentPointFromSuperatom(
+  sgroup: ReSGroup,
+  beginAtomId: number | undefined,
+  endAtomId: number | undefined,
+) {
+  (sgroup.item?.atoms as number[]).forEach((atomId) => {
+    if (beginAtomId === atomId || endAtomId === atomId) {
+      sgroup.item?.removeAttachmentPoint(atomId);
+    }
+  });
 }

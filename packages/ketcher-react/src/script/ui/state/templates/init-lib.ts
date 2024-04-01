@@ -19,15 +19,16 @@ import {
   KetSerializer,
   SdfItem,
   SdfSerializer,
+  SettingsManager,
 } from 'ketcher-core';
 
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
-import { OptionsManager } from '../../utils/optionsManager';
 import { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
+let needReinitializeTemplateLibrary = false;
 
 interface TemplateLibrary {
   type: string;
@@ -47,7 +48,7 @@ const deserializeSdfTemplates = (
   _fileName: string,
 ): Promise<SdfItem[]> => {
   const options = {
-    ignoreChiralFlag: OptionsManager.ignoreChiralFlag,
+    ignoreChiralFlag: SettingsManager.ignoreChiralFlag,
   };
 
   const sdfSerializer = new SdfSerializer(options);
@@ -79,14 +80,17 @@ export default async function initTmplLib(
     const lib = res.concat(userTmpls());
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
+    if (needReinitializeTemplateLibrary) {
+      reinitializeTemplateLibrary();
+      needReinitializeTemplateLibrary = false;
+    }
   });
 }
 
 export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
-    throw new Error(
-      'The template library must be initialized before it can be reinitialized',
-    );
+    needReinitializeTemplateLibrary = true;
+    return;
   }
 
   initTmplLib(...cachedInitData);

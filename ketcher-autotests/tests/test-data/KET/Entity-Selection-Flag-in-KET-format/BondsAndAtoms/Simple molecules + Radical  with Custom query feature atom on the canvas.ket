@@ -1,0 +1,282 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "$ref": "mol5"
+            },
+            {
+                "$ref": "mol6"
+            },
+            {
+                "$ref": "mol7"
+            },
+            {
+                "$ref": "mol8"
+            },
+            {
+                "$ref": "mol9"
+            },
+            {
+                "$ref": "mol10"
+            },
+            {
+                "$ref": "mol11"
+            },
+            {
+                "$ref": "mol12"
+            },
+            {
+                "$ref": "mol13"
+            },
+            {
+                "$ref": "mol14"
+            },
+            {
+                "$ref": "mol15"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    12.81019307569498,
+                    -8.441388112650076,
+                    0
+                ],
+                "radical": 2
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    14.787558617206216,
+                    -8.432751664471457,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "He",
+                "location": [
+                    16.408978631064436,
+                    -8.445212922387451,
+                    0
+                ],
+                "radical": 3
+            }
+        ]
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    18.131939860580253,
+                    -8.356874783193526,
+                    0
+                ],
+                "radical": 2
+            }
+        ]
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    19.837873203895022,
+                    -8.360699592930903,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol5": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Li",
+                "location": [
+                    21.666567974040092,
+                    -8.363537573964411,
+                    0
+                ],
+                "radical": 3
+            }
+        ]
+    },
+    "mol6": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    12.819938857655561,
+                    -9.399162748771898,
+                    0
+                ],
+                "radical": 2
+            }
+        ]
+    },
+    "mol7": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    14.797304399166798,
+                    -9.39052630059328,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol8": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    16.42353605146626,
+                    -9.407799196950517,
+                    0
+                ],
+                "radical": 3
+            }
+        ]
+    },
+    "mol9": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    18.07913434280467,
+                    -9.309837780874105,
+                    0
+                ],
+                "radical": 2
+            }
+        ]
+    },
+    "mol10": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    19.751386217030735,
+                    -9.30885095217024,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol11": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "In",
+                "location": [
+                    21.618574094705757,
+                    -9.316500571644989,
+                    0
+                ],
+                "radical": 3
+            }
+        ]
+    },
+    "mol12": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    12.751711595852383,
+                    -10.570752426873362,
+                    0
+                ],
+                "radical": 2
+            }
+        ]
+    },
+    "mol13": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    14.724265498922376,
+                    -10.566927617135986,
+                    0
+                ],
+                "radical": 1
+            }
+        ]
+    },
+    "mol14": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Ge",
+                "location": [
+                    16.34087387433935,
+                    -10.57457723661074,
+                    0
+                ],
+                "radical": 3
+            }
+        ]
+    },
+    "mol15": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    25.13924731182796,
+                    -9.250672246461273,
+                    0
+                ],
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ]
+    }
+}

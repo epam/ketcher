@@ -19,7 +19,7 @@ import { useRef } from 'react';
 import action from '../action';
 import clsx from 'clsx';
 import { hiddenAncestor } from '../state/toolbar';
-import { shortcutStr } from '../views/toolbars/shortcutStr';
+import { shortcutStr } from 'ketcher-core';
 import { Icon } from 'components';
 
 function isMenuOpened(currentNode) {

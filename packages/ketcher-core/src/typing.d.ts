@@ -3,6 +3,7 @@ import { Ketcher } from 'ketcher-core';
 declare global {
   export interface Window {
     ketcher?: Ketcher;
+    logging: LogSettings;
     isPolymerEditorTurnedOn: boolean;
   }
 
@@ -11,6 +12,10 @@ declare global {
   }
 
   export interface Element {
+    __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
     __data__?: BaseRenderer;
   }
 }

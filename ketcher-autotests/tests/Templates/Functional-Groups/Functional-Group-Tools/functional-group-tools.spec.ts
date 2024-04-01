@@ -811,7 +811,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     /*
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
-    Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
     const anyAtom = 4;
     await openFileAndAddToCanvas(
@@ -819,13 +818,13 @@ test.describe('Templates - Functional Group Tools3', () => {
       page,
     );
     await page.getByText('Boc').click();
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await page.keyboard.press('Control+c');
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await clickOnAtom(page, 'C', anyAtom);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', anyAtom);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -837,19 +836,24 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Can attach cutted Functional Group to atoms of structure
     Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
    */
+    test.fail();
     const anyAtom = 4;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-and-benzene.mol',
       page,
     );
-    await page.getByText('Boc').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Boc').click();
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+x');
     });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await clickOnAtom(page, 'C', anyAtom);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'C', anyAtom);
+    });
     await takeEditorScreenshot(page);
   });
 

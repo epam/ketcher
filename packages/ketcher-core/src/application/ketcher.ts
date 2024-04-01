@@ -35,6 +35,7 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
+import { EditorSelection } from './editor/editor.types';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -189,6 +190,7 @@ export class Ketcher {
       this.#formatterFactory,
       this.#editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this.#editor.selection() as EditorSelection,
     );
   }
 

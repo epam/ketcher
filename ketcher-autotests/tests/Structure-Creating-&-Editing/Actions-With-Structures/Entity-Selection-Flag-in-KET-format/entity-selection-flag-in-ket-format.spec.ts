@@ -301,7 +301,6 @@ test.describe('4. User can save and than restore selection for:', () => {
 
   for (const fileName of fileNames) {
     test(`${fileName}`, async ({ page }) => {
-      test.fail(); // https://github.com/epam/ketcher/issues/4238
       await openFileAndAddToCanvasAsNewProject(
         `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/${fileName}`,
         page,

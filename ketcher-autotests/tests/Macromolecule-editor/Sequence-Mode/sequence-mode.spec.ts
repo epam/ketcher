@@ -227,4 +227,31 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await takeEditorScreenshot(page);
   });
+
+  const testData = [
+    {
+      description:
+        'System displays structure preview of DNA (preset) while hovering over letters on canvas.',
+      file: 'Molfiles-V3000/dna.mol',
+    },
+    {
+      description:
+        'System displays structure preview of RNA (preset) while hovering over letters on canvas.',
+      file: 'Molfiles-V3000/rna.mol',
+    },
+    {
+      description:
+        'System displays structure preview of Peptide (preset) while hovering over letters on canvas.',
+      file: 'KET/peptides-connected-with-bonds.ket',
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Ensure that ${data.description}`, async ({ page }) => {
+      await openFileAndAddToCanvasMacro(data.file, page);
+      await selectSequenceLayoutModeTool(page);
+      await page.getByText('G').locator('..').first().hover();
+      await takeEditorScreenshot(page);
+    });
+  }
 });

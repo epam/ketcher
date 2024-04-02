@@ -10,6 +10,8 @@ import {
   selectFlexLayoutModeTool,
   moveMouseAway,
   clickUndo,
+  selectRectangleSelectionTool,
+  selectPartOfMolecules,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -114,6 +116,54 @@ test.describe('Sequence mode selection for edit mode', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Sequence mode selection for view mode', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const testData = [
+    {
+      description:
+        'Click on a single DNA symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'Molfiles-V3000/dna.mol',
+    },
+    {
+      description:
+        'Click on a single RNA symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'Molfiles-V3000/rna.mol',
+    },
+    {
+      description:
+        'Click on a single Peptide symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'KET/peptides-connected-with-bonds.ket',
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Ensure that ${data.description}`, async ({ page }) => {
+      await openFileAndAddToCanvasMacro(data.file, page);
+      await selectSequenceLayoutModeTool(page);
+      await selectRectangleSelectionTool(page);
+      await page.getByText('G').locator('..').first().click();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Use Select tool to draw an area on canvas encompassing multiple nucleotide symbols. Confirm that all nucleotides are highlighted.', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: All selected nucleotides are highlighted.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -90,6 +90,7 @@ export const hotkeysConfiguration = {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
       if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch('erase');
+      editor.events.selectTool.dispatch('select-rectangle');
     },
   },
   clear: {

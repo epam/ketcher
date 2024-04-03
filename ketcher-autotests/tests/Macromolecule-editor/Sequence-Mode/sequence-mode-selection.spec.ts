@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -12,6 +13,8 @@ import {
   clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
+  selectSingleBondTool,
+  waitForRender,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -164,6 +167,93 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, and then press Esc button. Confirm that selection is cleared', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, then click outside selected area. Confirm that selection is cleared', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    const x = 500;
+    const y = 500;
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, then switch to another tool (excluding Erase). Confirm that selection is cleared.', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await selectSingleBondTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check selection functionality with zoom in and zoom out', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is preserved after Zoom In/Zoom Out.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await page.keyboard.press('Control+a');
+    for (let i = 0; i < 8; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 5; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Selection removed if user switches from view mode to text-editing mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.getByText('G').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
     await takeEditorScreenshot(page);
   });
 });

@@ -254,4 +254,115 @@ test.describe('Sequence Mode', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  const testsData = [
+    {
+      description:
+        'Test display of nucleotides with modified sugar (any sugar except R) in sequence view',
+      file: 'KET/mod-sugar-sequence.ket',
+    },
+    {
+      description:
+        'Test display of nucleotides with modified phosphate (any phosphate except P) in sequence view',
+      file: 'KET/mod-phosphate-sequence.ket',
+    },
+    {
+      description:
+        'Test the display of nucleotides with modified base (any base except A, C, G, T, U) in sequence view',
+      file: 'KET/mod-base-sequence.ket',
+    },
+    {
+      description:
+        'Check display of all components are modified in sequence view mode',
+      file: 'KET/mod-sugar-base-phosphate-sequence.ket',
+    },
+  ];
+
+  for (const data of testsData) {
+    test(`${data.description}`, async ({ page }) => {
+      /*
+      Test case: #3734
+      Description: Modified component is unambiguously marked.
+      */
+      await selectSequenceLayoutModeTool(page);
+      await openFileAndAddToCanvasMacro(data.file, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Test display of a phosphate connected to R2 AP of sugar and a phosphate that is not part of a nucleotide in sequence view', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: Phosphate is displayed as p symbol.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      'KET/phosphates-not-part-of-nucleoside.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test display of CHEM in sequence view and confirm that they are displayed as @', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: CHEM is displayed as @ symbol.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chem-on-the-end-of-sequence.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test display of sugars that are not part of a nucleotide or nucleoside in sequence view', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: Sugars that are not part of a nucleotide or nucleoside in sequence view are displayed as @ symbol
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/sugar-on-the-end-of-sequence.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Side chain connections between sugar and phosphate', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: Sugar and Phosphate are displayed as straight lines connecting two monomers center-to-center.
+    */
+    await openFileAndAddToCanvasMacro('KET/r3-r2-sugar-phosphate.ket', page);
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Side chain connections between sugar and base', async ({ page }) => {
+    /*
+    Test case: #3734
+    Description: Sugar and Base are displayed as straight lines connecting two monomers center-to-center.
+    For now test working with bug https://github.com/epam/ketcher/issues/4413
+    After fix need to be updated.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/r1-r1-sugar-base-connection.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

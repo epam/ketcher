@@ -480,54 +480,65 @@ export class SequenceMode extends BaseMode {
   }
 
   private get keyboardEventHandlers() {
+    const deleteNode = (direction: 'left' | 'right') => {
+      const editor = CoreEditor.provideEditorInstance();
+      const nodeToDelete =
+        direction === 'left'
+          ? SequenceRenderer.previousNode
+          : SequenceRenderer.getNodeByPointer(SequenceRenderer.caretPosition);
+      const caretPosition =
+        direction === 'left'
+          ? (SequenceRenderer.previousCaretPosition as number)
+          : SequenceRenderer.caretPosition;
+      const selections = SequenceRenderer.selections;
+      const modelChanges = new Command();
+      let nodesToDelete: NodesSelection;
+
+      if (selections.length) {
+        modelChanges.merge(this.deleteSelectedDrawingEntities());
+        nodesToDelete = selections;
+      } else if (nodeToDelete) {
+        nodeToDelete.monomers.forEach((monomer) => {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(monomer),
+          );
+        });
+        nodesToDelete = [
+          [
+            {
+              node: nodeToDelete,
+              nodeIndexOverall: caretPosition,
+            },
+          ],
+        ];
+      } else {
+        return;
+      }
+
+      modelChanges.merge(this.handleNodesDeletion(nodesToDelete));
+
+      this.finishNodesDeletion(
+        modelChanges,
+        caretPosition,
+        nodesToDelete[0][0].nodeIndexOverall,
+      );
+
+      if (
+        SequenceRenderer.caretPosition === 0 &&
+        SequenceRenderer.chainsCollection.chains.length === 0
+      ) {
+        this.startNewSequence();
+      }
+    };
+
     return {
       delete: {
-        shortcut: ['Backspace', 'Delete'],
-        handler: () => {
-          const editor = CoreEditor.provideEditorInstance();
-          const previousNode = SequenceRenderer.previousNode;
-          const previousCaretPosition = SequenceRenderer.caretPosition;
-          const selections = SequenceRenderer.selections;
-          const modelChanges = new Command();
-          let nodesToDelete: NodesSelection;
-
-          if (selections.length) {
-            modelChanges.merge(this.deleteSelectedDrawingEntities());
-            nodesToDelete = selections;
-          } else if (previousNode) {
-            previousNode.monomers.forEach((monomer) => {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.deleteMonomer(monomer),
-              );
-            });
-            nodesToDelete = [
-              [
-                {
-                  node: previousNode,
-                  nodeIndexOverall:
-                    SequenceRenderer.previousCaretPosition as number,
-                },
-              ],
-            ];
-          } else {
-            return;
-          }
-
-          modelChanges.merge(this.handleNodesDeletion(nodesToDelete));
-
-          this.finishNodesDeletion(
-            modelChanges,
-            previousCaretPosition,
-            nodesToDelete[0][0].nodeIndexOverall,
-          );
-
-          if (
-            SequenceRenderer.caretPosition === 0 &&
-            SequenceRenderer.chainsCollection.chains.length === 0
-          ) {
-            this.startNewSequence();
-          }
-        },
+        shortcut: ['Delete'],
+        handler: () => deleteNode('right'),
+      },
+      backspace: {
+        shortcut: ['Backspace'],
+        handler: () => deleteNode('left'),
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

@@ -56,6 +56,8 @@ export class ChainsCollection {
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
     );
 
+    console.log('monomersList', monomersList);
+
     const firstMonomersInChains = monomersList.filter((monomer) => {
       const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
       const isFirstMonomerWithR2R1connection =
@@ -146,6 +148,8 @@ export class ChainsCollection {
   ): boolean {
     const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
 
+    console.log(monomer.id, R1PolymerBond);
+
     if (!(firstMonomer instanceof Sugar)) {
       const R3PolymerBond = monomer.attachmentPointsToBonds.R3;
 
@@ -156,8 +160,14 @@ export class ChainsCollection {
 
     const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
 
+    const R1ConnectedMonomerR1Bond =
+      R1ConnectedMonomer?.attachmentPointsToBonds.R1;
+
+    if (R1ConnectedMonomerR1Bond === R1PolymerBond) return false;
+
     if (!R1ConnectedMonomer) return false;
-    if (R1ConnectedMonomer === firstMonomer) return true;
+
+    if (R1ConnectedMonomer.id === firstMonomer.id) return true;
 
     return this.isMonomerInCycledChain(R1ConnectedMonomer, firstMonomer);
   }

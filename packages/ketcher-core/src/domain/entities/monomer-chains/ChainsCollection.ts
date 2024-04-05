@@ -79,11 +79,121 @@ export class ChainsCollection {
         !isRnaBaseConnectedToSugar
       );
     });
+    const firstMonomersInCycledChains =
+      this.findFirstMonomersInCycledChains(monomersList);
+
+    firstMonomersInChains.push(...firstMonomersInCycledChains);
 
     return firstMonomersInChains;
   }
 
   public get firstNode() {
     return this.chains[0]?.subChains[0]?.nodes[0];
+  }
+
+  private static findFirstMonomersInCycledChains(
+    monomersList: BaseMonomer[],
+  ): BaseMonomer[] {
+    const firstMonomersOfCycledChainsSet = new Set<BaseMonomer>();
+
+    monomersList.forEach((monomer) => {
+      if (monomer instanceof RNABase) {
+        const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+        const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
+
+        if (R1ConnectedMonomer instanceof Sugar) {
+          monomer = R1ConnectedMonomer;
+        }
+      }
+
+      const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+
+      if (R1PolymerBond) {
+        const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
+
+        if (!R1ConnectedMonomer) return;
+
+        if (!(monomer instanceof Sugar)) {
+          const R3PolymerBond = monomer.attachmentPointsToBonds.R3;
+
+          if (R3PolymerBond) return false;
+        }
+
+        const isMonomerInCycledChain = this.isMonomerInCycledChain(
+          R1ConnectedMonomer,
+          monomer,
+        );
+
+        if (isMonomerInCycledChain) {
+          const monomerListInCycledChain =
+            this.getMonomerListFromCycledChain(monomer);
+
+          const monomerWithLesserId = this.getMonomerWithLesserId(
+            monomerListInCycledChain,
+          );
+
+          firstMonomersOfCycledChainsSet.add(monomerWithLesserId);
+        }
+      }
+    });
+
+    return Array.from(firstMonomersOfCycledChainsSet);
+  }
+
+  private static isMonomerInCycledChain(
+    monomer: BaseMonomer,
+    firstMonomer: BaseMonomer,
+  ): boolean {
+    const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+
+    if (!(firstMonomer instanceof Sugar)) {
+      const R3PolymerBond = monomer.attachmentPointsToBonds.R3;
+
+      if (R3PolymerBond) return false;
+    }
+
+    if (!R1PolymerBond) return false;
+
+    const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
+
+    if (!R1ConnectedMonomer) return false;
+    if (R1ConnectedMonomer === firstMonomer) return true;
+
+    return this.isMonomerInCycledChain(R1ConnectedMonomer, firstMonomer);
+  }
+
+  private static getMonomerWithLesserId(
+    monomerList: BaseMonomer[],
+  ): BaseMonomer {
+    const monomerListShallowCopy = monomerList.slice();
+
+    monomerListShallowCopy.sort((a, b) => a.id - b.id);
+
+    const monomerWithLesserId =
+      monomerList.find(
+        (monomer) => monomer.id === monomerListShallowCopy[0].id,
+      ) || monomerList[0];
+
+    return monomerWithLesserId;
+  }
+
+  private static getMonomerListFromCycledChain(
+    monomer: BaseMonomer,
+  ): BaseMonomer[] {
+    const firstMonomer = monomer;
+    const monomerList: BaseMonomer[] = [];
+
+    let nextMonomer: BaseMonomer = firstMonomer;
+
+    do {
+      const R1PolymerBond = nextMonomer.attachmentPointsToBonds.R1;
+
+      nextMonomer =
+        R1PolymerBond?.getAnotherMonomer(nextMonomer) || firstMonomer;
+
+      monomerList.push(nextMonomer);
+    } while (nextMonomer !== firstMonomer);
+
+    return monomerList;
   }
 }

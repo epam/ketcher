@@ -96,7 +96,7 @@ export class ChainsCollection {
   ): BaseMonomer[] {
     const firstMonomersOfCycledChainsSet = new Set<BaseMonomer>();
 
-    monomersList.forEach((monomer) => {
+    for (let monomer of monomersList) {
       if (monomer instanceof RNABase) {
         const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
         const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
@@ -111,12 +111,12 @@ export class ChainsCollection {
       if (R1PolymerBond) {
         const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
 
-        if (!R1ConnectedMonomer) return;
+        if (!R1ConnectedMonomer) continue;
 
         if (!(monomer instanceof Sugar)) {
           const R3PolymerBond = monomer.attachmentPointsToBonds.R3;
 
-          if (R3PolymerBond) return false;
+          if (R3PolymerBond) continue;
         }
 
         const isMonomerInCycledChain = this.isMonomerInCycledChain(
@@ -135,7 +135,7 @@ export class ChainsCollection {
           firstMonomersOfCycledChainsSet.add(monomerWithLesserId);
         }
       }
-    });
+    }
 
     return Array.from(firstMonomersOfCycledChainsSet);
   }

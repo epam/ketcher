@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -10,8 +11,14 @@ import {
   selectFlexLayoutModeTool,
   clickUndo,
   startNewSequence,
+  waitForRender,
+  switchSequenceEnteringType,
+  SequenceType,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  enterSequence,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -363,6 +370,100 @@ test.describe('Sequence Mode', () => {
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test sequence view for chains containing both modified and unmodified nucleotides', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: Modified component is marked accordingly to mockup.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/modified-and-unmodified-sequence.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test display of last nucleotide in sequence view, ensuring it lacks a phosphate', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: After switch to flex mode phosphate is absent.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'acg');
+    await page.keyboard.press('Escape');
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Zoom In and Zoom Out while add monomers in sequence view', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3734
+    Description: Monomers added without errors.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    for (let i = 0; i < 3; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await enterSequence(page, 'ac');
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await enterSequence(page, 'g');
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create a single chain in sequence mode. Switch to flex mode and verify that position of first monomer remains same', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3870
+    Description: Position of first monomer remains same.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'cgatu');
+    await page.keyboard.press('Escape');
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create a multiple chains in sequence mode. Switch to flex mode and confirm that position of first monomer defines "top left" corner on canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3870
+    Description: Position of first monomer defines "top left" corner on canvas.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Enter');
+    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Enter');
+    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await enterSequence(page, 'acfrtp');
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

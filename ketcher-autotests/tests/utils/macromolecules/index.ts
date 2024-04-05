@@ -51,3 +51,9 @@ export async function chooseFileFormat(
     await page.getByRole('option', { name: fileFomat }).click();
   });
 }
+
+export async function enterSequence(page: Page, sequence: string) {
+  for (const nucleotide of sequence) {
+    await page.keyboard.press(nucleotide);
+  }
+}

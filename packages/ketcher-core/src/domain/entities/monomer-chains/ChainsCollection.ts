@@ -56,8 +56,6 @@ export class ChainsCollection {
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
     );
 
-    console.log('monomersList', monomersList);
-
     const firstMonomersInChains = monomersList.filter((monomer) => {
       const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
       const isFirstMonomerWithR2R1connection =
@@ -147,8 +145,6 @@ export class ChainsCollection {
     firstMonomer: BaseMonomer,
   ): boolean {
     const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
-
-    console.log(monomer.id, R1PolymerBond);
 
     if (!(firstMonomer instanceof Sugar)) {
       const R3PolymerBond = monomer.attachmentPointsToBonds.R3;

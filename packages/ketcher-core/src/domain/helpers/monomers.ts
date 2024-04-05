@@ -21,11 +21,20 @@ export function checkIsR2R1Connection(
   );
 }
 
-export function getNextMonomerInChain(monomer?: BaseMonomer) {
+export function getNextMonomerInChain(
+  monomer?: BaseMonomer,
+  firstMonomer?: BaseMonomer | null,
+) {
   if (!monomer) return undefined;
 
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer = r2PolymerBond?.getAnotherMonomer(monomer);
+
+  if (nextMonomer === firstMonomer && r2PolymerBond) {
+    r2PolymerBond.isCyclic = true;
+
+    return undefined;
+  }
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===

@@ -14,8 +14,14 @@ import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
+  private firstMonomer: BaseMonomer | null;
+
   constructor(firstMonomer?: BaseMonomer) {
+    this.firstMonomer = null;
+
     if (firstMonomer) {
+      this.firstMonomer = firstMonomer;
+
       this.fillSubChains(firstMonomer);
     }
   }
@@ -45,9 +51,14 @@ export class Chain {
 
     this.add(monomer);
     if (this.lastNode instanceof Nucleotide) {
-      this.fillSubChains(getNextMonomerInChain(getPhosphateFromSugar(monomer)));
+      this.fillSubChains(
+        getNextMonomerInChain(
+          getPhosphateFromSugar(monomer),
+          this.firstMonomer,
+        ),
+      );
     } else {
-      this.fillSubChains(getNextMonomerInChain(monomer));
+      this.fillSubChains(getNextMonomerInChain(monomer, this.firstMonomer));
     }
   }
 

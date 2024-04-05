@@ -1,6 +1,6 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
-import { BaseMonomer, RNABase, Sugar, Vec2 } from 'domain/entities';
+import { BaseMonomer, Phosphate, RNABase, Sugar, Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
@@ -148,7 +148,7 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
-            if (!polymerBond.isSideChainConnection) {
+            if (!polymerBond.isSideChainConnection && !polymerBond.isCyclic) {
               polymerBond.setRenderer(
                 new BackBoneBondSequenceRenderer(polymerBond),
               );
@@ -180,6 +180,31 @@ export class SequenceRenderer {
             }
 
             let bondRenderer;
+
+            // Handle cyclic bond from Phosphate to sugar
+            if (node.monomer instanceof Sugar && polymerBond.isCyclic) {
+              const anotherMonomer = polymerBond.getAnotherMonomer(
+                node.monomer,
+              ) as BaseMonomer;
+
+              if (anotherMonomer instanceof Phosphate) {
+                const r1PolymerBond = anotherMonomer.attachmentPointsToBonds.R1;
+                const r1ConnectedMonomer =
+                  r1PolymerBond?.getAnotherMonomer(anotherMonomer);
+
+                if (r1ConnectedMonomer instanceof Sugar) {
+                  bondRenderer = new PolymerBondSequenceRenderer(
+                    new PolymerBond(node.monomer, r1ConnectedMonomer),
+                  );
+
+                  bondRenderer.show();
+                  polymerBond.setRenderer(bondRenderer);
+                  subChain.bonds.push(polymerBond);
+                }
+              }
+
+              return;
+            }
 
             // If side connection comes from rna base then take connected sugar and draw side connection from it
             // because for rna we display only one letter instead of three

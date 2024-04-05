@@ -519,7 +519,7 @@ export class SequenceMode extends BaseMode {
 
       this.finishNodesDeletion(
         modelChanges,
-        caretPosition,
+        nodesToDelete[0][nodesToDelete[0].length - 1].nodeIndexOverall + 1,
         nodesToDelete[0][0].nodeIndexOverall,
       );
 

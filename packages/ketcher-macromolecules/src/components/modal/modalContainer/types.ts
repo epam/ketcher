@@ -1,4 +1,4 @@
-import { BaseMonomer } from 'ketcher-core/dist/domain/entities/BaseMonomer';
+import { BaseMonomer } from 'ketcher-core';
 
 export interface MonomerConnectionOnlyProps {
   firstMonomer?: BaseMonomer;

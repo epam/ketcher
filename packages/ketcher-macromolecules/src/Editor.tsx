@@ -24,6 +24,7 @@ import {
   generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
+  NodeSelection,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -105,7 +106,6 @@ import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemCont
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
-import { NodeSelection } from 'ketcher-core/dist/application/render/renderers/sequence/SequenceRenderer';
 
 const muiTheme = createTheme(muiOverrides);
 

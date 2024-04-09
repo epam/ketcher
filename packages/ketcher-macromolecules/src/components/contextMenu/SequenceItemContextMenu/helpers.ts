@@ -2,11 +2,9 @@ import { flatten, get } from 'lodash';
 import {
   Nucleotide,
   LabeledNucleotideWithPositionInSequence,
-} from 'ketcher-core';
-import {
   NodeSelection,
   NodesSelection,
-} from 'ketcher-core/dist/application/render/renderers/sequence/SequenceRenderer';
+} from 'ketcher-core';
 
 const generateLabeledNucleotides = (
   selectionsFlatten: NodeSelection[],

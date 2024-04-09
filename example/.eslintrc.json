@@ -7,8 +7,10 @@
     "plugin:react/jsx-runtime",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
   ],
+  "plugins": ["@typescript-eslint", "playwright", "prettier"],
   "rules": {
     "@typescript-eslint/ban-ts-comment": "warn",
     "jsx-a11y/label-has-associated-control": "warn",
@@ -16,7 +18,17 @@
     "jsx-a11y/no-autofocus": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn"
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto",
+        "semi": true,
+        "singleQuote": false,
+        "printWidth": 100,
+        "tabWidth": 2
+      }
+    ]
   },
   "overrides": [
     {

@@ -34,6 +34,7 @@ import { selectActiveRnaBuilderItem } from 'state/rna-builder';
 const MonomerGroup = ({
   items,
   title,
+  groupName,
   selectedMonomerUniqueKey,
   libraryName,
   disabled,
@@ -115,6 +116,7 @@ const MonomerGroup = ({
               key={key}
               disabled={disabled}
               item={monomer}
+              groupName={groupName}
               isSelected={isMonomerSelected(monomer)}
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}

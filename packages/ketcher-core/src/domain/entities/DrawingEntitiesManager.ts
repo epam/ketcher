@@ -20,6 +20,7 @@ import {
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
+  MonomerItemModifyOperation,
   MonomerMoveOperation,
 } from 'application/editor/operations/monomer';
 import {
@@ -127,6 +128,17 @@ export class DrawingEntitiesManager {
     monomer.moveAbsolute(position);
     this.monomers.set(monomer.id, monomer);
     return monomer;
+  }
+
+  public updateMonomerItem(
+    monomer: BaseMonomer,
+    monomerItemNew: MonomerItemType,
+  ) {
+    const monomerNew = this.monomers.get(monomer.id);
+    if (!monomerNew) return monomer;
+    monomerNew.monomerItem = monomerItemNew;
+    this.monomers.set(monomer.id, monomerNew);
+    return monomerNew;
   }
 
   public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
@@ -357,6 +369,21 @@ export class DrawingEntitiesManager {
         command.merge(this.deletePolymerBond(bond));
       });
     }
+
+    return command;
+  }
+
+  public modifyMonomerItem(
+    monomer: BaseMonomer,
+    monomerItemNew: MonomerItemType,
+  ) {
+    const command = new Command();
+    const operation = new MonomerItemModifyOperation(
+      monomer,
+      this.updateMonomerItem.bind(this, monomer, monomerItemNew),
+      this.updateMonomerItem.bind(this, monomer, monomer.monomerItem),
+    );
+    command.addOperation(operation);
 
     return command;
   }

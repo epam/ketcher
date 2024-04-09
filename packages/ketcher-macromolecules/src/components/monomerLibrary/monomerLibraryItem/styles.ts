@@ -24,6 +24,7 @@ export const Card = styled.div<{
   height: 48px;
   text-align: center;
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
+  opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
   justify-content: center;
   align-items: center;

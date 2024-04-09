@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
-import { useAppSelector } from 'hooks';
+import { useAppSelector, useSequenceEditInRNABuilderMode } from 'hooks';
 import { IconName } from 'ketcher-react';
 import { useEffect, useState } from 'react';
 import {
@@ -79,6 +79,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const isActivePresetNewAndEmpty = useAppSelector(
     selectIsActivePresetNewAndEmpty,
   );
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
@@ -125,7 +126,9 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   ];
   const dispatch = useDispatch();
   const selectItem = (monomer, groupName) => {
-    editor.events.selectMonomer.dispatch(monomer);
+    if (!isSequenceEditInRNABuilderMode) {
+      editor.events.selectMonomer.dispatch(monomer);
+    }
     if (!isEditMode) return;
 
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
@@ -192,6 +195,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
                   <MonomerGroup
                     key={groupTitle}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
+                    groupName={groupData.groupName as MonomerGroups}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={
                       monomer ? getMonomerUniqueKey(monomer) : undefined

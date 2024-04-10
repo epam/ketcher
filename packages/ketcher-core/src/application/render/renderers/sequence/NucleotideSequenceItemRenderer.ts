@@ -24,7 +24,6 @@ export class NucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
     }
 
     if (node.rnaBase.isModification) {
-      console.log(this.node.monomer.selected);
       this.backgroundElement?.attr(
         'fill',
         this.node.monomer.selected

@@ -39,6 +39,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const editor = useAppSelector(selectEditor);
+  const countOfSequenceSelection = sequenceSelection.length;
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -69,7 +70,8 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
     >
       <Modal.Content>
         <TextWrapper>
-          You are going to make multiple changes in your sequence. Are you sure?
+          You are going to modify {countOfSequenceSelection} nucleotides. Are
+          you sure?
         </TextWrapper>
       </Modal.Content>
       <Modal.Footer>

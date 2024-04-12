@@ -318,7 +318,14 @@ export const RnaEditorExpanded = ({
   }
 
   return (
-    <RnaEditorExpandedContainer data-testid="rna-editor-expanded">
+    <RnaEditorExpandedContainer
+      data-testid="rna-editor-expanded"
+      className={
+        isSequenceEditInRNABuilderMode
+          ? 'rna-editor-expanded--sequence-edit-mode'
+          : ''
+      }
+    >
       <NameContainer
         selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
         onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}

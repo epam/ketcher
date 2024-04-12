@@ -38,7 +38,7 @@ describe('UpdateSequenceInRNABuilder modal component', () => {
           <UpdateSequenceInRNABuilder {...mockProps} />,
           {
             rnaBuilder: {
-              sequenceSelection: [labeledNucleotide],
+              sequenceSelection: [labeledNucleotide, labeledNucleotide],
             },
           },
         ),

@@ -4,9 +4,13 @@ import { CONTEXT_MENU_ID } from '../types';
 import { StyledMenu } from '../styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
 import { selectEditor } from 'state/common';
-import { BaseSequenceItemRenderer } from 'ketcher-core/dist/application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { BaseSequenceItemRenderer, NodesSelection } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
   setSequenceSelection,
@@ -16,7 +20,6 @@ import {
   setActiveRnaBuilderItem,
   setIsSequenceFirstsOnlyNucleotidesSelected,
 } from 'state/rna-builder';
-import { NodesSelection } from 'ketcher-core/dist/application/render/renderers/sequence/SequenceRenderer';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 
 type SequenceItemContextMenuType = {
@@ -31,6 +34,7 @@ export const SequenceItemContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
 
   const menuItems = [
     {
@@ -143,7 +147,7 @@ export const SequenceItemContextMenu = ({
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
 
-  return ketcherEditorRootElement
+  return ketcherEditorRootElement && !isSequenceEditInRNABuilderMode
     ? createPortal(
         <StyledMenu id={CONTEXT_MENU_ID.FOR_SEQUENCE}>
           {assembleMenuItems()}

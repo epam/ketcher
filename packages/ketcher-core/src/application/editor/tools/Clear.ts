@@ -16,6 +16,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
 
 class ClearTool implements BaseTool {
   private history: EditorHistory;
@@ -24,12 +25,13 @@ class ClearTool implements BaseTool {
     this.editor = editor;
     this.history = new EditorHistory(editor);
 
-    if (editor.mode instanceof SequenceMode) {
-      return;
-    }
-
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
     this.editor.renderersContainer.update(modelChanges);
+
+    if (editor.mode instanceof SequenceMode) {
+      modelChanges.addOperation(new ReinitializeSequenceModeCommand());
+    }
+
     this.history.update(modelChanges);
   }
 

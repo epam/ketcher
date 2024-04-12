@@ -24,22 +24,37 @@ export class NucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
     }
 
     if (node.rnaBase.isModification) {
-      this.backgroundElement?.attr('fill', '#CAD3DD');
+      this.backgroundElement?.attr(
+        'fill',
+        this.node.monomer.selected
+          ? this.isSequenceEditInRnaBuilderModeTurnedOn
+            ? '#41A8B2'
+            : '#3ACA6A'
+          : this.isSequenceEditModeTurnedOn
+          ? '#ff7a004f'
+          : '#CAD3DD',
+      );
     }
 
     if (node.sugar.isModification) {
       this.backgroundElement
-        ?.attr('stroke', '#585858')
+        ?.attr(
+          'stroke',
+          this.isSequenceEditInRnaBuilderModeTurnedOn ? '#24545A' : '#585858',
+        )
         .attr('stroke-width', '1px');
     }
 
     if (node.phosphate?.isModification) {
       this.phosphateModificationCircleElement = this.rootElement
         ?.append('circle')
-        .attr('r', '4px')
-        .attr('fill', '#585858')
+        .attr('r', '3px')
+        .attr(
+          'fill',
+          this.isSequenceEditInRnaBuilderModeTurnedOn ? '#24545A' : '#585858',
+        )
         .attr('cx', '10')
-        .attr('cy', '-15');
+        .attr('cy', '-16');
     }
   }
 }

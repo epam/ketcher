@@ -65,8 +65,8 @@ export class SequenceMode extends BaseMode {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
   }
 
-  public initialize(needScroll = true) {
-    const command = super.initialize();
+  public initialize(needScroll = true, needRemoveSelection = true) {
+    const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
@@ -121,6 +121,8 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = true;
+    this.initialize(false, false);
+
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
 
@@ -128,6 +130,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
+    this.initialize(false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 

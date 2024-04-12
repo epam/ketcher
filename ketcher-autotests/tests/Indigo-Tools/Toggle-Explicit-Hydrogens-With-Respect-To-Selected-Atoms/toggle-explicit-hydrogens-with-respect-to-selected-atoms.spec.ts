@@ -1,13 +1,36 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  waitForKetcherInit,
+  waitForIndigoToLoad,
+  selectClearCanvasTool,
 } from '@utils';
+
+let page: Page;
+
+test.beforeAll(async ({ browser }) => {
+  const sharedContext = await browser.newContext();
+
+  // Reminder: do not pass page as async paramenter to test
+  page = await sharedContext.newPage();
+  await page.goto('', { waitUntil: 'domcontentloaded' });
+  waitForKetcherInit(page);
+  waitForIndigoToLoad(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  browser.close();
+});
 
 test.describe('1. User can expand hydrogens for ', () => {
   /* 
@@ -31,10 +54,6 @@ test.describe('1. User can expand hydrogens for ', () => {
     IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1837 issue.
     Screenshots have to be corrected after fix.
     */
-
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
 
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom).ket',
@@ -259,7 +278,7 @@ test.describe('1. User can expand hydrogens for ', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
@@ -312,10 +331,6 @@ test.describe('2. User can expand hydrogens for ', () => {
       IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1627 issue.
       Screenshots have to be corrected after fix.
       */
-
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
 
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom)+A.ket',
@@ -530,7 +545,7 @@ test.describe('2. User can expand hydrogens for ', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
+    test(`by ${fileName}`, async () => {
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(

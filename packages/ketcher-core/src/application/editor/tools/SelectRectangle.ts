@@ -59,10 +59,24 @@ class SelectRectangle implements BaseTool {
       }
     };
 
+    const onStartBrush = () => {
+      const editor = CoreEditor.provideEditorInstance();
+      if (editor.isSequenceEditInRNABuilderMode) {
+        this.brushArea.select('rect.selection').style('stroke', 'transparent');
+      } else {
+        this.brushArea.select('rect.selection').style('stroke', 'darkgrey');
+      }
+    };
+
     const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
       const editor = CoreEditor.provideEditorInstance();
-      if (!selection || editor.isSequenceEditMode) return;
+      if (
+        !selection ||
+        editor.isSequenceEditMode ||
+        editor.isSequenceEditInRNABuilderMode
+      )
+        return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -83,15 +97,13 @@ class SelectRectangle implements BaseTool {
       });
     };
 
+    this.brush.on('start', onStartBrush);
     this.brush.on('brush', onBrush);
     this.brush.on('end', brushed);
 
     this.brushArea.call(this.brush);
 
-    this.brushArea
-      .select('rect.selection')
-      .style('fill', 'transparent')
-      .style('stroke', 'darkgrey');
+    this.brushArea.select('rect.selection').style('fill', 'transparent');
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;
@@ -127,7 +139,10 @@ class SelectRectangle implements BaseTool {
   mousedown(event) {
     const editor = CoreEditor.provideEditorInstance();
 
-    if (editor.mode instanceof SequenceMode && editor.mode.isEditMode) {
+    if (
+      editor.mode instanceof SequenceMode &&
+      (editor.mode.isEditMode || editor.mode.isEditInRNABuilderMode)
+    ) {
       return;
     }
 

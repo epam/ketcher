@@ -23,7 +23,11 @@ import {
   RnaEditorContainer,
   StyledHeader,
 } from './styles';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
 import {
   createNewPreset,
   RnaBuilderPresetsItem,
@@ -46,6 +50,7 @@ export const scrollToSelectedMonomer = (monomerId) => {
 export const RnaEditor = ({ duplicatePreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const activePresetFullName = selectPresetFullName(activePreset);
 
   const dispatch = useAppDispatch();
@@ -71,7 +76,13 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   return (
     <RnaEditorContainer>
-      <StyledHeader>
+      <StyledHeader
+        className={
+          isSequenceEditInRNABuilderMode
+            ? 'styled-header--sequence-edit-mode'
+            : ''
+        }
+      >
         RNA Builder
         <ExpandButton onClick={expandEditor}>
           <ExpandIcon expanded={expanded} name="chevron" />

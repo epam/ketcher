@@ -137,6 +137,9 @@ export const defaultTheme: EditorTheme = {
     monomer: {
       default: '#C8C8C8',
     },
+    editMode: {
+      sequenceInRNABuilder: '#99d7dc',
+    },
   },
   font: {
     size: {

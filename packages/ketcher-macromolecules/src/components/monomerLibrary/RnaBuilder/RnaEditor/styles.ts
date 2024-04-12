@@ -34,9 +34,13 @@ export const StyledHeader = styled.div((props) => ({
   alignItems: 'center',
   paddingLeft: '10px',
   fontSize: props.theme.ketcher.font.size.regular,
+  '&.styled-header--sequence-edit-mode': {
+    backgroundColor: props.theme.ketcher.color.editMode.sequenceInRNABuilder,
+  },
 }));
 
 export const ExpandButton = styled(Button)({
+  background: 'transparent',
   width: '32px',
   height: '100%',
   outline: 'none',

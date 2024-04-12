@@ -35,7 +35,7 @@ export abstract class BaseMode {
     editor.mode.initialize();
   }
 
-  public initialize() {
+  public initialize(needRemoveSelection = true) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 
@@ -48,7 +48,9 @@ export abstract class BaseMode {
       ),
     );
 
-    editor.events.selectTool.dispatch('select-rectangle');
+    if (needRemoveSelection) {
+      editor.events.selectTool.dispatch('select-rectangle');
+    }
 
     return command;
   }

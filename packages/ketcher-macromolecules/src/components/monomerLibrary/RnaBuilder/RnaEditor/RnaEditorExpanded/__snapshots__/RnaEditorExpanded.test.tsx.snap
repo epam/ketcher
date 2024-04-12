@@ -2,14 +2,14 @@
 
 exports[`Test Rna Editor Expanded component should render correctly in edit mode 1`] = `
 <div
-  class="css-zbq0po"
+  class=" css-s8m56i"
   data-testid="rna-editor-expanded"
 >
   <div
     class="css-19lk7et"
   >
     <input
-      class="css-9fgya1"
+      class="css-1afs730"
       placeholder="Name your structure"
       value="MyRna"
     />
@@ -171,9 +171,182 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 </div>
 `;
 
+exports[`Test Rna Editor Expanded component should render correctly in edit mode with modification of sequence 1`] = `
+<div
+  class="rna-editor-expanded--sequence-edit-mode css-s8m56i"
+  data-testid="rna-editor-expanded"
+>
+  <div
+    class="css-19lk7et"
+  >
+    <input
+      class="css-1afs730"
+      disabled=""
+      placeholder="Name your structure"
+      value="2 nucleotides"
+    />
+    <span
+      class="css-1o94icx"
+    />
+  </div>
+  <div
+    class="css-s3o4ys"
+  >
+    <div
+      class="css-1b10s7n"
+      data-testid="rna-builder-slot--sugar"
+    >
+      <svg
+        class="css-kjyl9m"
+        fill="none"
+        height="20"
+        stroke-width="2"
+        viewBox="0 0 20 20"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="18"
+          rx="1"
+          width="18"
+          x="1"
+          y="1"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Sugar
+        </span>
+        <span
+          class="css-cdjx14"
+        >
+          R
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+      data-testid="rna-builder-slot--base"
+    >
+      <svg
+        class="css-m4vfn7"
+        fill="none"
+        height="25"
+        stroke-width="2"
+        transform="translate(-3)"
+        viewBox="0 0 26 25"
+        width="26"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="15.013"
+          rx="1"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
+        />
+        <rect
+          height="15.013"
+          rx="1"
+          stroke="currentColor"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Base
+        </span>
+        <span
+          class="css-cdjx14"
+        >
+          [multiple]
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+      data-testid="rna-builder-slot--phosphate"
+    >
+      <svg
+        class="css-ow7727"
+        fill="none"
+        height="24"
+        stroke-width="2"
+        transform="translate(-2)"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="18"
+          rx="9"
+          width="18"
+          x="3"
+          y="3"
+        />
+        <rect
+          height="18"
+          rx="9"
+          stroke="currentColor"
+          width="18"
+          x="3"
+          y="3"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Phosphate
+        </span>
+        <span
+          class="css-cdjx14"
+        >
+          P
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="css-1iug9fi"
+  >
+    <button
+      class="css-1971dyf"
+      data-testid="cancel-btn"
+    >
+      Cancel
+    </button>
+    <button
+      class="css-wciliw"
+      data-testid="save-btn"
+      disabled=""
+    >
+      Update
+    </button>
+  </div>
+</div>
+`;
+
 exports[`Test Rna Editor Expanded component should render correctly in view mode 1`] = `
 <div
-  class="css-zbq0po"
+  class="rna-editor-expanded--sequence-edit-mode css-s8m56i"
   data-testid="rna-editor-expanded"
 >
   <div

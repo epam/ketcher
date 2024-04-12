@@ -34,11 +34,15 @@ export function resetEditorEvents() {
     rightClickCanvas: new Subscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
+    turnOnSequenceEditInRNABuilderMode: new Subscription(),
+    turnOffSequenceEditInRNABuilderMode: new Subscription(),
+    modifySequenceInRnaBuilder: new Subscription(),
     mouseOverSequenceItem: new Subscription(),
     mouseOnMoveSequenceItem: new Subscription(),
     mouseLeaveSequenceItem: new Subscription(),
     changeSequenceTypeEnterMode: new Subscription(),
     toggleSequenceEditMode: new Subscription(),
+    toggleSequenceEditInRNABuilderMode: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -59,11 +63,15 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'rightClickCanvas',
   'editSequence',
   'startNewSequence',
+  'turnOnSequenceEditInRNABuilderMode',
+  'turnOffSequenceEditInRNABuilderMode',
+  'modifySequenceInRnaBuilder',
   'mouseOverSequenceItem',
   'mouseOnMoveSequenceItem',
   'mouseLeaveSequenceItem',
   'changeSequenceTypeEnterMode',
   'toggleSequenceEditMode',
+  'toggleSequenceEditInRNABuilderMode',
 ];
 
 export const hotkeysConfiguration = {
@@ -91,6 +99,7 @@ export const hotkeysConfiguration = {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
       if (editor.isSequenceEditMode) return;
       editor.events.selectTool.dispatch('erase');
+      editor.events.selectTool.dispatch('select-rectangle');
     },
   },
   clear: {

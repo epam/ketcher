@@ -7,7 +7,7 @@ import {
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import { BaseMonomer, SequenceType, Vec2 } from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
@@ -34,6 +34,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
+import { LabeledNucleotideWithPositionInSequence } from 'application/editor/tools/Tool';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -42,6 +43,7 @@ const naturalAnalogues = uniq([
 
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
+  private _isEditInRNABuilderMode = false;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
 
@@ -57,8 +59,16 @@ export class SequenceMode extends BaseMode {
     this._isEditMode = isEditMode;
   }
 
-  public initialize(needScroll = true) {
-    const command = super.initialize();
+  public get isEditInRNABuilderMode() {
+    return this._isEditInRNABuilderMode;
+  }
+
+  public set isEditInRNABuilderMode(isEditInRNABuilderMode) {
+    this._isEditInRNABuilderMode = isEditInRNABuilderMode;
+  }
+
+  public initialize(needScroll = true, needRemoveSelection = true) {
+    const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
@@ -109,6 +119,23 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
+  public turnOnSequenceEditInRNABuilderMode() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.isEditInRNABuilderMode = true;
+    this.initialize(false, false);
+
+    editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
+  }
+
+  public turnOffSequenceEditInRNABuilderMode() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.isEditInRNABuilderMode = false;
+    this.initialize(false);
+    editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
+  }
+
   public startNewSequence() {
     if (!this.isEditMode) {
       this.turnOnEditMode();
@@ -119,6 +146,62 @@ export class SequenceMode extends BaseMode {
     }
 
     SequenceRenderer.moveCaretToNewChain();
+  }
+
+  public modifySequenceInRnaBuilder(
+    updatedSelection: LabeledNucleotideWithPositionInSequence[],
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
+
+    // Update Nucleotides one by one
+    for (const labeledNucleotide of updatedSelection) {
+      const nodeIndexOverall = labeledNucleotide.nodeIndexOverall;
+
+      if (nodeIndexOverall === undefined) return;
+
+      // Create monomerItem(s) based on label
+      const sugarMonomerItem = getRnaPartLibraryItem(
+        editor,
+        labeledNucleotide.sugarLabel,
+      );
+      const baseMonomerItem = getRnaPartLibraryItem(
+        editor,
+        labeledNucleotide.baseLabel,
+      );
+      const phosphateMonomerItem = getRnaPartLibraryItem(
+        editor,
+        labeledNucleotide.phosphateLabel,
+      );
+
+      const currentNode = SequenceRenderer.getNodeByPointer(nodeIndexOverall);
+
+      // Update monomerItem objects
+      modelChanges.merge(
+        editor.drawingEntitiesManager.modifyMonomerItem(
+          currentNode.sugar,
+          sugarMonomerItem as MonomerItemType,
+        ),
+      );
+      modelChanges.merge(
+        editor.drawingEntitiesManager.modifyMonomerItem(
+          currentNode.rnaBase,
+          baseMonomerItem as MonomerItemType,
+        ),
+      );
+      modelChanges.merge(
+        editor.drawingEntitiesManager.modifyMonomerItem(
+          currentNode.phosphate,
+          phosphateMonomerItem as MonomerItemType,
+        ),
+      );
+    }
+
+    // Refresh UI
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   public click(event: MouseEvent) {

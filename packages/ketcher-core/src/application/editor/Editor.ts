@@ -3,6 +3,7 @@ import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
+  LabeledNucleotideWithPositionInSequence,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
@@ -37,6 +38,7 @@ import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { groupBy } from 'lodash';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -154,7 +156,10 @@ export class CoreEditor {
       }
 
       if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
-        this.events.rightClickSequence.dispatch(event);
+        this.events.rightClickSequence.dispatch(
+          event,
+          SequenceRenderer.selections,
+        );
       } else {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -185,6 +190,16 @@ export class CoreEditor {
     );
 
     this.events.startNewSequence.add(() => this.onStartNewSequence());
+    this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
+      this.onTurnOnSequenceEditInRNABuilderMode(),
+    );
+    this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
+      this.onTurnOffSequenceEditInRNABuilderMode(),
+    );
+    this.events.modifySequenceInRnaBuilder.add(
+      (updatedSelection: LabeledNucleotideWithPositionInSequence[]) =>
+        this.onModifySequenceInRnaBuilder(updatedSelection),
+    );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
@@ -204,6 +219,32 @@ export class CoreEditor {
     }
 
     this.mode.startNewSequence();
+  }
+
+  private onTurnOnSequenceEditInRNABuilderMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.turnOnSequenceEditInRNABuilderMode();
+  }
+
+  private onTurnOffSequenceEditInRNABuilderMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.turnOffSequenceEditInRNABuilderMode();
+  }
+
+  private onModifySequenceInRnaBuilder(
+    updatedSelection: LabeledNucleotideWithPositionInSequence[],
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.modifySequenceInRnaBuilder(updatedSelection);
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
@@ -267,6 +308,12 @@ export class CoreEditor {
 
   public get isSequenceEditMode() {
     return this.mode instanceof SequenceMode && this.mode.isEditMode;
+  }
+
+  public get isSequenceEditInRNABuilderMode() {
+    return (
+      this.mode instanceof SequenceMode && this.mode.isEditInRNABuilderMode
+    );
   }
 
   public onSelectHistory(name: HistoryOperationType) {

@@ -45,6 +45,8 @@ export function fromSeveralSgroupAddition(
   atoms,
   attrs,
 ) {
+  const attachmentPoints = [];
+
   const descriptors = attrs.fieldValue;
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
@@ -53,7 +55,7 @@ export function fromSeveralSgroupAddition(
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      [],
+      attachmentPoints,
     );
   }
 
@@ -68,7 +70,7 @@ export function fromSeveralSgroupAddition(
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        [],
+        attachmentPoints,
       ),
     );
   }, new Action());

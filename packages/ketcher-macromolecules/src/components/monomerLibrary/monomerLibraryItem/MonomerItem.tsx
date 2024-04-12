@@ -20,9 +20,11 @@ import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card } from './styles';
 import { IMonomerItemProps } from './types';
 import { MONOMER_TYPES } from '../../../constants';
+import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
 const MonomerItem = ({
   item,
+  groupName,
   onMouseLeave,
   onMouseMove,
   isSelected,
@@ -31,6 +33,7 @@ const MonomerItem = ({
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
+  const isDisabled = useDisabledForSequenceMode(item, groupName) || disabled;
   const colorCode =
     item.props.MonomerType === MONOMER_TYPES.CHEM
       ? item.props.MonomerType
@@ -40,26 +43,28 @@ const MonomerItem = ({
 
   return (
     <Card
-      onClick={onClick}
       selected={isSelected}
-      disabled={disabled}
+      disabled={isDisabled}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
       code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
+      {...(!isDisabled ? { onClick } : {})}
     >
       <span>{item.label}</span>
-      <div
-        onClick={(event) => {
-          event.stopPropagation();
-          setFavorite(!favorite);
-          dispatch(toggleMonomerFavorites(item));
-        }}
-        className={`star ${favorite ? 'visible' : ''}`}
-      >
-        ★
-      </div>
+      {!isDisabled && (
+        <div
+          onClick={(event) => {
+            event.stopPropagation();
+            setFavorite(!favorite);
+            dispatch(toggleMonomerFavorites(item));
+          }}
+          className={`star ${favorite ? 'visible' : ''}`}
+        >
+          ★
+        </div>
+      )}
     </Card>
   );
 };

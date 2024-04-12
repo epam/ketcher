@@ -22,10 +22,17 @@ type MenuItemProp = {
   itemId: IconName;
   title?: string;
   testId?: string;
+  disabled?: boolean;
   onClick?: () => void;
 };
 
-const MenuItem = ({ itemId, title = '', testId, onClick }: MenuItemProp) => {
+const MenuItem = ({
+  itemId,
+  title = '',
+  disabled,
+  testId,
+  onClick,
+}: MenuItemProp) => {
   const { isActive, activate } = useMenuContext();
 
   const onClickCallback = useCallback(() => {
@@ -46,6 +53,7 @@ const MenuItem = ({ itemId, title = '', testId, onClick }: MenuItemProp) => {
       onClick={onClickCallback}
       iconName={itemId}
       testId={testId}
+      disabled={disabled}
     />
   );
 };

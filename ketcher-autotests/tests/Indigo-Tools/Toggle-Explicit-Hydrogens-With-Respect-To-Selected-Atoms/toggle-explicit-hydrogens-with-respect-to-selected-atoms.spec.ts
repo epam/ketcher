@@ -6,9 +6,8 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   openFileAndAddToCanvasAsNewProject,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   selectClearCanvasTool,
+  waitForPageInit,
 } from '@utils';
 
 let page: Page;
@@ -18,9 +17,7 @@ test.beforeAll(async ({ browser }) => {
 
   // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  waitForKetcherInit(page);
-  waitForIndigoToLoad(page);
+  await waitForPageInit(page);
 });
 
 test.afterEach(async () => {

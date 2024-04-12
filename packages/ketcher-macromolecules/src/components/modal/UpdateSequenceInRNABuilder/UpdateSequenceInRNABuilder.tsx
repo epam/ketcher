@@ -52,7 +52,6 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
 
   const cancelHandler = () => {
     onCloseCallback();
-    reset();
   };
 
   const updateHandler = () => {

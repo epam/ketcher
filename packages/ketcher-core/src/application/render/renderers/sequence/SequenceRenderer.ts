@@ -17,7 +17,7 @@ import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
-import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
+import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseMonomerRenderer } from 'application/render';
@@ -120,8 +120,8 @@ export class SequenceRenderer {
   }
 
   public static getNextChainPosition(
-    currentChainStartPosition: Vec2,
-    lastChain: Chain,
+    currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
+    lastChain: Chain = SequenceRenderer.lastChain,
   ) {
     return new Vec2(
       currentChainStartPosition.x,
@@ -312,14 +312,14 @@ export class SequenceRenderer {
   }
 
   public static moveCaretForward() {
-    return new RestoreSequenceCaretPositionCommand(
+    return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition || this.caretPosition,
     );
   }
 
   public static moveCaretBack() {
-    return new RestoreSequenceCaretPositionCommand(
+    return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition === undefined
         ? this.caretPosition
@@ -650,17 +650,27 @@ export class SequenceRenderer {
     return selections;
   }
 
-  public static getSequenceStructureCenterY() {
-    let ymin = 1e50;
-    let ymax = -ymin;
+  public static getRenderedStructuresBbox() {
+    let left;
+    let right;
+    let top;
+    let bottom;
     SequenceRenderer.forEachNode(({ node }) => {
       assert(node.monomer.renderer instanceof BaseSequenceItemRenderer);
       const nodePosition =
-        node.monomer.renderer?.scaledMonomerPositionForSequence ||
-        new Vec2(1e50, 1e50);
-      ymin = Math.min(ymin, nodePosition.y);
-      ymax = Math.max(ymax, nodePosition.y);
+        node.monomer.renderer?.scaledMonomerPositionForSequence;
+      left = left ? Math.min(left, nodePosition.x) : nodePosition.x;
+      right = right ? Math.max(right, nodePosition.x) : nodePosition.x;
+      top = top ? Math.min(top, nodePosition.y) : nodePosition.y;
+      bottom = bottom ? Math.max(bottom, nodePosition.y) : nodePosition.y;
     });
-    return (ymin + ymax) / 2;
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: bottom - top,
+    };
   }
 }

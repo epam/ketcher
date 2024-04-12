@@ -22,6 +22,11 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
 
+export enum SCROLL_POSITION {
+  CENTER = 'CENTER',
+  BOTTOM = 'BOTTOM',
+}
+
 interface ScrollBar {
   name: string;
   offsetStart: number;
@@ -219,21 +224,27 @@ class ZoomTool implements BaseTool {
     }
   };
 
-  public scrollTo(position: Vec2) {
+  public scrollTo(
+    position: Vec2,
+    stickToBottom = false,
+    xOffset = AUTO_SCROLL_OFFSET_X,
+  ) {
     const canvasWrapperHeight =
       this.canvasWrapper.node()?.height.baseVal.value || 0;
 
     const canvasWrapperWidth =
       this.canvasWrapper.node()?.width.baseVal.value || 0;
 
+    const offset = new Vec2(
+      canvasWrapperWidth / 2 - (canvasWrapperWidth * xOffset) / 100,
+      canvasWrapperHeight / 2 -
+        (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+    );
+
     this.zoom?.translateTo(
       this.canvasWrapper,
-      position.x +
-        canvasWrapperWidth / 2 -
-        (canvasWrapperWidth * AUTO_SCROLL_OFFSET_X) / 100,
-      position.y +
-        canvasWrapperHeight / 2 -
-        (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+      position.x + this.unzoomValue(offset.x),
+      position.y + this.unzoomValue(offset.y * (stickToBottom ? -1 : 1)),
     );
   }
 
@@ -363,6 +374,26 @@ class ZoomTool implements BaseTool {
     this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
     this.zoom = null;
     this.zoomEventHandlers = [];
+  }
+
+  isFitToCanvasHeight(height) {
+    const canvasWrapperHeight = this.canvasWrapperHeight;
+
+    return (
+      height <
+      this.unzoomValue(
+        canvasWrapperHeight -
+          (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+      )
+    );
+  }
+
+  private get canvasWrapperHeight() {
+    // TODO create class for Canvas and move this getter there
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return canvasWrapperBbox?.height || 0;
   }
 }
 

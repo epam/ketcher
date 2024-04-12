@@ -81,9 +81,19 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
-  private _lastPosition: Vec2 = new Vec2(0, 0, 0);
-  public get lastPosition(): Vec2 {
-    return this._lastPosition;
+  public get bottomRightMonomerPosition(): Vec2 {
+    let position: Vec2 | null = null;
+
+    this.monomers.forEach((monomer) => {
+      if (
+        !position ||
+        monomer.position.x + monomer.position.y > position.x + position.y
+      ) {
+        position = monomer.position;
+      }
+    });
+
+    return position || new Vec2(0, 0, 0);
   }
 
   get selectedEntitiesArr() {
@@ -471,6 +481,10 @@ export class DrawingEntitiesManager {
   }
 
   public deletePolymerBondChangeModel(polymerBond: PolymerBond) {
+    if (this.polymerBonds.get(polymerBond.id) !== polymerBond) {
+      return;
+    }
+
     this.polymerBonds.delete(polymerBond.id);
 
     const firstMonomerAttachmentPoint =
@@ -1175,7 +1189,6 @@ export class DrawingEntitiesManager {
         lastPosition,
       );
       command.merge(result.command);
-      this._lastPosition = result.lastPosition;
     }
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());
@@ -1490,16 +1503,24 @@ export class DrawingEntitiesManager {
   public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
     const command = new Command();
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
+    const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
       const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
         monomer.monomerItem,
         monomer.position,
       );
+
+      command.merge(monomerAddCommand);
+
+      const addedMonomer = monomerAddCommand.operations[0]
+        .monomer as BaseMonomer;
+
+      mergedDrawingEntities.monomers.set(addedMonomer.id, addedMonomer);
+
       monomerToNewMonomer.set(
         monomer,
         monomerAddCommand.operations[0].monomer as BaseMonomer,
       );
-      command.merge(monomerAddCommand);
     });
     this.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
@@ -1515,12 +1536,20 @@ export class DrawingEntitiesManager {
           ) as AttachmentPointName,
         );
       command.merge(polymerBondCreateCommand);
+
+      const addedPolymerBond = polymerBondCreateCommand.operations[0]
+        .polymerBond as PolymerBond;
+
+      mergedDrawingEntities.polymerBonds.set(
+        addedPolymerBond.id,
+        addedPolymerBond,
+      );
     });
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
 
-    return { command, monomerToNewMonomer };
+    return { command, mergedDrawingEntities };
   }
 
   public centerMacroStructure() {

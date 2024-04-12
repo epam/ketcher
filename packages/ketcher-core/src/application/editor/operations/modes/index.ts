@@ -25,7 +25,7 @@ import {
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 
-export class ReinitializeModeCommand implements Operation {
+export class ReinitializeModeOperation implements Operation {
   constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
@@ -49,7 +49,7 @@ export class ReinitializeModeCommand implements Operation {
   }
 }
 
-export class RestoreSequenceCaretPositionCommand implements Operation {
+export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
     private previousPosition: SequencePointer,
     private nextPosition: SequencePointer,

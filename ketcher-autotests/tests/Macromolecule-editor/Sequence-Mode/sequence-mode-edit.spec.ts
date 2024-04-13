@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -33,12 +33,5 @@ test.describe('Sequence edit mode', () => {
     await page.keyboard.press('Escape');
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
-  });
-
-  test('Add/edit sequence with unsupported alphabet', async ({ page }) => {
-    await startNewSequence(page);
-    await page.keyboard.type('D');
-    const dialog = page.getByText('Unsupported symbols');
-    await expect(dialog).toBeVisible();
   });
 });

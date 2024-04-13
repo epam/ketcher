@@ -12,6 +12,7 @@ import {
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { PHOSPHATE, SUGAR } from '@constants/testIdConstants';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,8 +24,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   });
 
   test('Select one nucleotide and modify sugar', async ({ page }) => {
-    await page.getByText('T').first().click();
-    await page.getByText('T').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'T');
+    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
@@ -47,8 +48,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   });
 
   test('Select one nucleotide and cancel modification', async ({ page }) => {
-    await page.getByText('T').first().click();
-    await page.getByText('T').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'T');
+    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await page.getByTestId(SUGAR).click();
     await page.getByTestId('25R___2,5-Ribose').click();
@@ -70,7 +71,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
-    await page.getByText('T').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
@@ -96,11 +97,11 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     page,
   }) => {
     await page.keyboard.down('Control');
-    await page.getByText('T').first().click();
+    await clickOnSequenceSymbol(page, 'T');
     await page.keyboard.up('Control');
     // should see the whole chain selected
     await takeEditorScreenshot(page);
-    await page.getByText('T').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     // should see correct context menu title and disabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
   });

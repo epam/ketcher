@@ -29,8 +29,6 @@ test.describe('Sequence edit mode', () => {
     await page.keyboard.press('Enter');
     await typePeptideAlphabet(page);
     await takeEditorScreenshot(page);
-    // remove after fix the bug about opening sequence type dropdown on pressing Enter
-    await page.keyboard.press('Escape');
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });

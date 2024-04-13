@@ -13,6 +13,10 @@ import {
   readFileContents,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  clickOnSequenceSymbol,
+  getSequenceSymbolLocator,
+} from '@utils/macromolecules/sequence';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -44,7 +48,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     page,
   }) => {
     await page.keyboard.down('Control');
-    await page.getByText('G').locator('..').first().click();
+    await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+c');
@@ -64,22 +68,23 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
   });
 
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
-    await page.getByText('G').locator('..').first().hover();
+    await getSequenceSymbolLocator(page, 'G').hover();
     await page.mouse.down();
     const gNthNumber = 1;
-    await page.getByText('G').locator('..').nth(gNthNumber).hover();
+    await getSequenceSymbolLocator(page, 'G', gNthNumber).hover();
+
     await page.mouse.up();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+c');
-    const cNthNumber = 6;
-    await page.getByText('C').locator('..').nth(cNthNumber).click();
+    const cNthNumber = 5;
+    await getSequenceSymbolLocator(page, 'C', cNthNumber).click();
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
 
@@ -98,7 +103,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await page.keyboard.press('Control+c');
     await page.getByTitle('Close window').click();
 
-    await page.getByText('G').locator('..').first().click();
+    await clickOnSequenceSymbol(page, 'G');
     const arrowCount = 8;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
@@ -123,13 +128,15 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await page.keyboard.press('Control+c');
     await page.getByTitle('Close window').click();
 
-    await page.getByText('G').locator('..').first().click();
+    await clickOnSequenceSymbol(page, 'G');
     const arrowCount = 10;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
       await page.keyboard.press('ArrowRight');
     }
     await page.keyboard.up('Shift');
+    await moveMouseAway(page);
+
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+v');

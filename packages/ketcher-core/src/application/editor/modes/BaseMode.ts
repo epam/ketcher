@@ -233,10 +233,13 @@ export abstract class BaseMode {
   ) {
     const indigo = ketcherProvider.getKetcher().indigo;
     try {
-      const ketStruct = await indigo.convert(pastedStr, {
-        outputFormat: ChemicalMimeType.KET,
-        inputFormat,
-      });
+      const ketStruct = await indigo.convert(
+        isSequenceOrFasta ? pastedStr.toUpperCase() : pastedStr,
+        {
+          outputFormat: ChemicalMimeType.KET,
+          inputFormat,
+        },
+      );
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {

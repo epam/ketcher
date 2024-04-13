@@ -64,7 +64,6 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
-    await scrollDown(page, SCROLL_DOWN_VALUE);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
   });

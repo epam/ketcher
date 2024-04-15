@@ -120,6 +120,9 @@ export type EditorTheme = {
     monomer: {
       default: string;
     };
+    editMode: {
+      sequenceInRNABuilder: string;
+    };
   };
   font: {
     size: {

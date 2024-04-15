@@ -24,6 +24,7 @@ import {
   generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
+  NodeSelection,
 } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -54,7 +55,11 @@ import {
   selectMonomers,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,
@@ -83,7 +88,7 @@ import {
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
-import { EditorWrapper } from './styledComponents';
+import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
@@ -97,7 +102,7 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
+import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
@@ -158,6 +163,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const [selections, setSelections] = useState<NodeSelection[][]>();
   const monomers = useAppSelector(selectMonomers);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
@@ -309,7 +316,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event) => {
+    editor?.events.rightClickSequence.add((event, selections) => {
+      setSelections(selections);
       showSequenceContextMenu({
         event,
         props: {
@@ -342,7 +350,15 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         <Layout.Top shortened={isMonomerLibraryHidden}>
           <SequenceTypeDropdown />
           <LayoutModeButton />
-          {togglerComponent}
+          <TogglerComponentWrapper
+            className={
+              isSequenceEditInRNABuilderMode
+                ? 'toggler-component-wrapper--disabled'
+                : ''
+            }
+          >
+            {togglerComponent}
+          </TogglerComponentWrapper>
           <FullscreenButton />
         </Layout.Top>
 
@@ -385,7 +401,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <Preview />
-      <SequenceItemContextMenu />
+      <SequenceItemContextMenu selections={selections} />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
@@ -413,6 +429,8 @@ function MenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
   const activeMenuItems = [activeTool];
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isDisabled = isSequenceEditInRNABuilderMode;
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
@@ -460,11 +478,13 @@ function MenuComponent() {
         <Menu.Item
           itemId="undo"
           title={`Undo (${shortcuts.undo})`}
+          disabled={isDisabled}
           testId="undo"
         />
         <Menu.Item
           itemId="redo"
           title={`Redo (${shortcuts.redo})`}
+          disabled={isDisabled}
           testId="redo"
         />
       </Menu.Group>

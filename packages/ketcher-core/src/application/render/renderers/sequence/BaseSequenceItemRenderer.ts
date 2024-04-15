@@ -73,10 +73,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.scaledMonomerPositionForSequence.add(new Vec2(4.5, 0, 0));
   }
 
-  private get isSequenceEditModeTurnedOn() {
+  protected get isSequenceEditModeTurnedOn() {
     const editor = CoreEditor.provideEditorInstance();
 
     return editor.mode instanceof SequenceMode && editor.mode.isEditMode;
+  }
+
+  protected get isSequenceEditInRnaBuilderModeTurnedOn() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    return (
+      editor.mode instanceof SequenceMode && editor.mode.isEditInRNABuilderMode
+    );
   }
 
   private appendRootElement() {
@@ -168,7 +176,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('class', 'blinking');
   }
 
-  protected removeHover() {
+  protected redrawBackgroundElementColor() {
     this.backgroundElement?.attr(
       'fill',
       this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',
@@ -183,6 +191,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
   }
 
+  private drawGreyOverlay() {
+    this.rootElement?.attr('opacity', '0.2');
+  }
+
   show(): void {
     this.rootElement = this.appendRootElement();
     if (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) {
@@ -191,11 +203,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.spacerElement = this.appendSpacerElement();
     this.backgroundElement = this.appendBackgroundElement();
 
-    if (this.isSequenceEditModeTurnedOn) {
-      if (this.isEditingSymbol) {
-        this.appendCaretElement();
-      }
-      this.drawSelection();
+    if (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) {
+      this.appendCaretElement();
     }
 
     this.textElement = this.rootElement
@@ -204,15 +213,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('font-family', 'Courier New')
       .attr('font-size', '20px')
       .attr('font-weight', '700')
-      .attr('fill', '#333333');
+      .attr(
+        'fill',
+        this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
+      );
 
     this.appendEvents();
     if (this.needDisplayCounter) {
       this.counterElement = this.appendCounterElement(this.rootElement);
     }
 
-    if (this.node.modified) {
-      this.drawModification();
+    this.drawSelection();
+
+    if (
+      this.isSequenceEditInRnaBuilderModeTurnedOn &&
+      !this.node.monomer.selected
+    ) {
+      this.drawGreyOverlay();
     }
   }
 
@@ -222,36 +239,40 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
     if (this.node.monomer.selected) {
       this.appendSelection();
-      this.removeHover();
       this.raiseElement();
     } else {
       this.removeSelection();
-      if (this.node.modified) {
-        this.drawModification();
-      }
+    }
+
+    if (this.node.modified) {
+      this.drawModification();
     }
   }
 
   public appendSelection() {
-    if (this.selectionRectangle) {
-      this.selectionRectangle
-        .attr('x', this.scaledMonomerPositionForSequence.x - 4)
-        .attr('y', this.scaledMonomerPositionForSequence.y - 16)
-        .attr('width', 20)
-        .attr('height', 20);
-    } else {
-      this.selectionBorder = this.rootElement
-        ?.append('use')
-        .attr('href', this.monomerIndexInChain)
-        .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none');
+    this.selectionRectangle =
+      this.selectionRectangle ||
+      this.rootElement?.insert('rect', ':first-child');
 
-      this.selectionRectangle = this.canvas
-        ?.insert('rect', ':first-child')
-        .attr('opacity', '0.7')
-        .attr('fill', '#57FF8F')
-        .attr('x', this.scaledMonomerPositionForSequence.x - 4)
-        .attr('y', this.scaledMonomerPositionForSequence.y - 16)
+    this.selectionBorder = this.rootElement
+      ?.append('use')
+      .attr('href', this.monomerIndexInChain)
+      .attr('stroke', '#57FF8F')
+      .attr('pointer-events', 'none');
+
+    if (this.isSequenceEditInRnaBuilderModeTurnedOn) {
+      this.selectionRectangle
+        ?.attr('fill', '#99D6DC')
+        .attr('x', -3)
+        .attr('y', -21)
+        .attr('width', 18)
+        .attr('height', 30)
+        .attr('rx', 3);
+    } else {
+      this.selectionRectangle
+        ?.attr('fill', '#57FF8F')
+        .attr('x', -4)
+        .attr('y', -16)
         .attr('width', 20)
         .attr('height', 20);
     }
@@ -265,8 +286,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private raiseElement() {
-    this.selectionRectangle?.raise();
-    this.rootElement?.raise();
+    this.selectionRectangle?.lower();
   }
 
   public remove() {

@@ -18,7 +18,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import { MonomerGroups } from '../../constants';
-import { MonomerItemType, MONOMER_CONST } from 'ketcher-core';
+import {
+  MonomerItemType,
+  MONOMER_CONST,
+  LabeledNucleotideWithPositionInSequence,
+} from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 
@@ -30,6 +34,9 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
+  sequenceSelection: LabeledNucleotideWithPositionInSequence[] | undefined;
+  sequenceSelectionName: string | undefined;
+  isSequenceFirstsOnlyNucleotidesSelected: boolean | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
@@ -43,6 +50,9 @@ interface IRnaBuilderState {
 
 const initialState: IRnaBuilderState = {
   activePreset: null,
+  sequenceSelection: undefined,
+  sequenceSelectionName: undefined,
+  isSequenceFirstsOnlyNucleotidesSelected: undefined,
   activePresetMonomerGroup: null,
   presets: [],
   activeRnaBuilderItem: null,
@@ -73,6 +83,21 @@ export const rnaBuilderSlice = createSlice({
         ...action.payload,
         presetInList: action.payload,
       };
+    },
+    setSequenceSelection: (
+      state,
+      action: PayloadAction<LabeledNucleotideWithPositionInSequence[]>,
+    ) => {
+      state.sequenceSelection = [...action.payload];
+    },
+    setSequenceSelectionName: (state, action: PayloadAction<string>) => {
+      state.sequenceSelectionName = action.payload;
+    },
+    setIsSequenceFirstsOnlyNucleotidesSelected: (
+      state,
+      action: PayloadAction<boolean>,
+    ) => {
+      state.isSequenceFirstsOnlyNucleotidesSelected = action.payload;
     },
     setActivePresetForContextMenu: (
       state,
@@ -224,6 +249,18 @@ export const selectActiveRnaBuilderItem = (state: RootState): RnaBuilderItem =>
 export const selectActivePreset = (state: RootState): IRnaPreset =>
   state.rnaBuilder.activePreset;
 
+export const selectSequenceSelection = (
+  state: RootState,
+): LabeledNucleotideWithPositionInSequence[] =>
+  state.rnaBuilder.sequenceSelection;
+
+export const selectSequenceSelectionName = (state: RootState): string =>
+  state.rnaBuilder.sequenceSelectionName;
+
+export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
+  state: RootState,
+): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleotidesSelected;
+
 export const selectPresets = (state: RootState): IRnaPreset[] => {
   return state.rnaBuilder.presets;
 };
@@ -249,6 +286,7 @@ export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
 export const selectIsEditMode = (state: RootState): boolean => {
   return state.rnaBuilder.isEditMode;
 };
+
 export const selectPresetFullName = (preset: IRnaPreset): string => {
   if (!preset) return '';
   const sugar = preset.sugar?.props.MonomerName || '';
@@ -314,6 +352,9 @@ export const selectFilteredPresets = (
 
 export const {
   setActivePreset,
+  setSequenceSelection,
+  setSequenceSelectionName,
+  setIsSequenceFirstsOnlyNucleotidesSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,

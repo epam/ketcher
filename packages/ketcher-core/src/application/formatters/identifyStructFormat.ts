@@ -19,6 +19,7 @@ import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
   stringifiedStruct: string,
+  isMacromolecules = false,
 ): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const sanitizedString = stringifiedStruct.trim();
@@ -93,13 +94,21 @@ export function identifyStructFormat(
     return SupportedFormat.inChI;
   }
 
-  if (sanitizedString.indexOf('\n') === -1) {
+  if (sanitizedString.indexOf('\n') === -1 && !isMacromolecules) {
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }
 
   if (sanitizedString.indexOf('<CDXML') !== -1) {
     return SupportedFormat.cdxml;
+  }
+
+  if (sanitizedString[0] === '>') {
+    return SupportedFormat.fasta;
+  }
+
+  if (/^[a-zA-Z\s\n]*$/.test(sanitizedString)) {
+    return SupportedFormat.sequence;
   }
 
   return SupportedFormat.unknown;

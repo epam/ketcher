@@ -114,6 +114,14 @@ class KetcherBuilder {
     );
     ketcher[this.serviceMode] = true;
 
+    const userInput = document.location.search;
+    if (
+      userInput === '__proto__' ||
+      userInput === 'constructor' ||
+      userInput === 'prototype'
+    ) {
+      return;
+    }
     const params = new URLSearchParams(document.location.search);
     const initialMol = params.get('moll');
     if (initialMol) {

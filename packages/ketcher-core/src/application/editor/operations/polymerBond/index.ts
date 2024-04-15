@@ -48,7 +48,9 @@ export class PolymerBondDeleteOperation implements Operation {
     private finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,
     ) => PolymerBond,
-  ) {}
+  ) {
+    this.deletePolymerBondChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
     this.deletePolymerBondChangeModel();

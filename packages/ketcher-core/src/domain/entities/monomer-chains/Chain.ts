@@ -1,5 +1,11 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { BaseMonomer, Peptide, Phosphate, Sugar } from 'domain/entities';
+import {
+  BaseMonomer,
+  Peptide,
+  Phosphate,
+  SubChainNode,
+  Sugar,
+} from 'domain/entities';
 import {
   getNextMonomerInChain,
   isValidNucleoside,
@@ -20,7 +26,7 @@ export class Chain {
     }
   }
 
-  public add(monomer: BaseMonomer) {
+  private createSubChainIfNeed(monomer) {
     const needCreateNewSubchain =
       !this.lastNode?.monomer ||
       monomer.isMonomerTypeDifferentForChaining(this.lastNode.monomer);
@@ -28,6 +34,10 @@ export class Chain {
     if (needCreateNewSubchain) {
       this.subChains.push(new monomer.SubChainConstructor());
     }
+  }
+
+  public add(monomer: BaseMonomer) {
+    this.createSubChainIfNeed(monomer);
 
     const nextMonomer = getNextMonomerInChain(monomer);
 
@@ -47,6 +57,14 @@ export class Chain {
     } else {
       this.lastSubChain.add(new LinkerSequenceNode(monomer));
     }
+  }
+
+  public addNode(node: SubChainNode) {
+    this.createSubChainIfNeed(node.monomer);
+
+    this.lastSubChain.add(node);
+
+    return this;
   }
 
   private fillSubChains(monomer?: BaseMonomer) {

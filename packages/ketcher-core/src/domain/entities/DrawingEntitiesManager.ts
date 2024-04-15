@@ -42,7 +42,6 @@ import {
   monomerFactory,
 } from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
-import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
@@ -54,7 +53,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode } from 'application/editor/modes/SequenceMode';
+import { SequenceMode } from 'application/editor';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -83,6 +82,31 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
+  public get bottomRightMonomerPosition(): Vec2 {
+    let position: Vec2 | null = null;
+
+    this.monomers.forEach((monomer) => {
+      if (
+        !position ||
+        monomer.position.x + monomer.position.y > position.x + position.y
+      ) {
+        position = monomer.position;
+      }
+    });
+
+    return position || new Vec2(0, 0, 0);
+  }
+
+  get selectedEntitiesArr() {
+    const selectedEntities: DrawingEntity[] = [];
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (drawingEntity.selected) {
+        selectedEntities.push(drawingEntity);
+      }
+    });
+    return selectedEntities;
+  }
+
   get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
@@ -399,13 +423,24 @@ export class DrawingEntitiesManager {
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
-      const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
-        rectangleTopLeftPoint,
-        rectangleBottomRightPoint,
-        !!isPreviousSelected,
-        shiftKey,
-      );
-
+      let isValueChanged;
+      const editor = CoreEditor.provideEditorInstance();
+      if (
+        editor.mode instanceof SequenceMode &&
+        drawingEntity instanceof PolymerBond
+      ) {
+        isValueChanged = this.checkBondSelectionForSequenceMode(
+          drawingEntity,
+          isValueChanged,
+        );
+      } else {
+        isValueChanged = drawingEntity.selectIfLocatedInRectangle(
+          rectangleTopLeftPoint,
+          rectangleBottomRightPoint,
+          !!isPreviousSelected,
+          shiftKey,
+        );
+      }
       if (isValueChanged) {
         const selectionCommand =
           this.createDrawingEntitySelectionCommand(drawingEntity);
@@ -414,6 +449,20 @@ export class DrawingEntitiesManager {
       }
     });
     return command;
+  }
+
+  private checkBondSelectionForSequenceMode(
+    bond: PolymerBond,
+    isValueChanged: boolean,
+  ) {
+    const prevSelectedValue = bond.selected;
+    if (bond.firstMonomer.selected && bond.secondMonomer?.selected) {
+      bond.turnOnSelection();
+    } else {
+      bond.turnOffSelection();
+    }
+    isValueChanged = prevSelectedValue !== bond.selected;
+    return isValueChanged;
   }
 
   public startPolymerBondCreationChangeModel(
@@ -459,6 +508,10 @@ export class DrawingEntitiesManager {
   }
 
   public deletePolymerBondChangeModel(polymerBond: PolymerBond) {
+    if (this.polymerBonds.get(polymerBond.id) !== polymerBond) {
+      return;
+    }
+
     this.polymerBonds.delete(polymerBond.id);
 
     const firstMonomerAttachmentPoint =
@@ -1477,16 +1530,24 @@ export class DrawingEntitiesManager {
   public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
     const command = new Command();
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
+    const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
       const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
         monomer.monomerItem,
         monomer.position,
       );
+
+      command.merge(monomerAddCommand);
+
+      const addedMonomer = monomerAddCommand.operations[0]
+        .monomer as BaseMonomer;
+
+      mergedDrawingEntities.monomers.set(addedMonomer.id, addedMonomer);
+
       monomerToNewMonomer.set(
         monomer,
         monomerAddCommand.operations[0].monomer as BaseMonomer,
       );
-      command.merge(monomerAddCommand);
     });
     this.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
@@ -1502,17 +1563,25 @@ export class DrawingEntitiesManager {
           ) as AttachmentPointName,
         );
       command.merge(polymerBondCreateCommand);
+
+      const addedPolymerBond = polymerBondCreateCommand.operations[0]
+        .polymerBond as PolymerBond;
+
+      mergedDrawingEntities.polymerBonds.set(
+        addedPolymerBond.id,
+        addedPolymerBond,
+      );
     });
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
 
-    return command;
+    return { command, mergedDrawingEntities };
   }
 
   public centerMacroStructure() {
     const centerPointOfModel = Coordinates.canvasToModel(
-      getCurrentCenterPointOfCanvas(),
+      this.getCurrentCenterPointOfCanvas(),
     );
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
@@ -1525,6 +1594,15 @@ export class DrawingEntitiesManager {
       const { x: endX, y: endY } = new Vec2(bond.endPosition).add(offset);
       bond.moveBondEndAbsolute(endX, endY);
     });
+  }
+
+  public getCurrentCenterPointOfCanvas() {
+    const editor = CoreEditor.provideEditorInstance();
+    const originalCenterPointOfCanvas = new Vec2(
+      editor.canvasOffset.width / 2,
+      editor.canvasOffset.height / 2,
+    );
+    return Coordinates.viewToCanvas(originalCenterPointOfCanvas);
   }
 
   public getMacroStructureCenter() {
@@ -1596,53 +1674,81 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public getAllSelectedEntities(
+  public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    drawingEntities.forEach((monomer) => monomer.turnOnSelection());
+    const newDrawingEntities = drawingEntities.reduce(
+      (
+        selectedDrawingEntities: DrawingEntity[],
+        drawingEntity: DrawingEntity,
+      ) => {
+        const res =
+          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+            drawingEntity,
+            true,
+            selectedDrawingEntities,
+          );
+        res.drawingEntities.forEach((entity) =>
+          command.addOperation(new DrawingEntitySelectOperation(entity)),
+        );
+        return selectedDrawingEntities.concat(res.drawingEntities);
+      },
+      [],
+    );
+    return { command, drawingEntities: newDrawingEntities };
+  }
+
+  public getAllSelectedEntitiesForSingleEntity(
     drawingEntity: DrawingEntity,
     needToSelectConnectedBonds = true,
+    selectedDrawingEntities?: DrawingEntity[],
   ) {
+    const command = new Command();
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+    drawingEntity.turnOnSelection();
+    let drawingEntities: DrawingEntity[] = [drawingEntity];
+
     const editor = CoreEditor.provideEditorInstance();
     if (
       !(editor.mode instanceof SequenceMode) ||
       drawingEntity instanceof PolymerBond
     ) {
-      return [drawingEntity];
+      return { command, drawingEntities };
     }
-    const drawingEntities: DrawingEntity[] = [drawingEntity];
     if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
       const sugar = drawingEntity;
       if (isValidNucleoside(sugar)) {
         const nucleoside = Nucleoside.fromSugar(sugar);
-        drawingEntities.push(nucleoside.rnaBase);
-        if (needToSelectConnectedBonds && nucleoside.rnaBase.hasBonds) {
-          nucleoside.rnaBase.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
-          });
-        }
+        drawingEntities = nucleoside.monomers;
       } else if (isValidNucleotide(sugar)) {
         const nucleotide = Nucleotide.fromSugar(sugar);
-        drawingEntities.push(nucleotide.rnaBase);
-        drawingEntities.push(nucleotide.phosphate);
-        if (needToSelectConnectedBonds && nucleotide.rnaBase.hasBonds) {
-          nucleotide.rnaBase.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
-          });
-        }
-        if (needToSelectConnectedBonds && nucleotide.phosphate.hasBonds) {
-          nucleotide.phosphate.forEachBond((polymerBond) => {
-            drawingEntities.push(polymerBond);
-          });
-        }
+        drawingEntities = nucleotide.monomers;
       }
-    }
-    const monomer = drawingEntity as BaseMonomer;
-    if (needToSelectConnectedBonds && monomer.hasBonds) {
-      monomer.forEachBond((polymerBond) => {
-        if (!drawingEntities.includes(polymerBond)) {
-          drawingEntities.push(polymerBond);
+      drawingEntities.forEach((entity) => {
+        if (!(entity instanceof Sugar)) {
+          entity.turnOnSelection();
+          command.addOperation(new DrawingEntitySelectOperation(entity));
         }
       });
     }
-    return drawingEntities;
+    drawingEntities.forEach((entity) => {
+      const monomer = entity as BaseMonomer;
+      if (needToSelectConnectedBonds && monomer.hasBonds) {
+        monomer.forEachBond((polymerBond) => {
+          if (
+            !selectedDrawingEntities?.includes(polymerBond) &&
+            !drawingEntities.includes(polymerBond) &&
+            polymerBond.getAnotherMonomer(monomer)?.selected
+          ) {
+            drawingEntities.push(polymerBond);
+            polymerBond.turnOnSelection();
+            command.addOperation(new DrawingEntitySelectOperation(polymerBond));
+          }
+        });
+      }
+    });
+    return { command, drawingEntities };
   }
 
   public validateIfApplicableForFasta() {

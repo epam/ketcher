@@ -21,6 +21,7 @@ import {
   getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
+import { CoreEditor } from 'application/editor';
 
 export class RenderersManager {
   private theme;
@@ -364,5 +365,32 @@ export class RenderersManager {
     if (this.needRecalculateMonomersBeginning) {
       this.recalculateMonomersBeginning();
     }
+  }
+
+  public static getRenderedStructuresBbox() {
+    let left;
+    let right;
+    let top;
+    let bottom;
+    const editor = CoreEditor.provideEditorInstance();
+
+    editor.drawingEntitiesManager.monomers.forEach((monomer) => {
+      const monomerPosition = monomer.renderer?.scaledMonomerPosition;
+
+      assert(monomerPosition);
+
+      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
+      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
+      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
+      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
+    });
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: bottom - top,
+    };
   }
 }

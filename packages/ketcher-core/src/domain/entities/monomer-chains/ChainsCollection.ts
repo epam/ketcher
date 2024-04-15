@@ -29,6 +29,8 @@ export class ChainsCollection {
 
   public add(chain: Chain) {
     this.chains.push(chain);
+
+    return this;
   }
 
   public static fromMonomers(monomers: BaseMonomer[]) {
@@ -85,5 +87,13 @@ export class ChainsCollection {
 
   public get firstNode() {
     return this.chains[0]?.subChains[0]?.nodes[0];
+  }
+
+  public get lastNode() {
+    return this.chains[0].lastSubChain.lastNode;
+  }
+
+  public get length() {
+    return this.chains.reduce((length, chain) => length + chain.length, 0);
   }
 }

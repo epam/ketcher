@@ -160,40 +160,40 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
-          renderer.drawingEntity,
-          false,
-        );
       modelChanges =
-        this.editor.drawingEntitiesManager.selectDrawingEntities(
-          drawingEntities,
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+          renderer.drawingEntity,
         );
+      modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
-          renderer.drawingEntity,
-        );
-      modelChanges =
-        this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+      const drawingEntities: DrawingEntity[] = [
+        ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
+        renderer.drawingEntity,
+      ];
+      ({ command: modelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
-        );
+        ));
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside) {
-            return [node.sugar, node.rnaBase];
-          } else if (node instanceof Nucleotide) {
-            return [node.sugar, node.rnaBase, node.phosphate];
+          if (node instanceof Nucleoside || node instanceof Nucleotide) {
+            return node.monomers;
           } else {
             return node.monomer;
           }
         })
         .flat();
-      drawingEntities = drawingEntities.concat(renderer.currentSubChain.bonds);
+      drawingEntities.forEach((entity) => entity.turnOnSelection());
+      const bondsInsideCurrentChain = renderer.currentSubChain.bonds.filter(
+        (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
+      );
+      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,

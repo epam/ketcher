@@ -355,7 +355,6 @@ export class SequenceRenderer {
   }
 
   public static moveCaretDown() {
-    debugger;
     const {
       currentEdittingNode: currentNode,
       currentChain,

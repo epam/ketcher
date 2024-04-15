@@ -19,30 +19,37 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { CoreEditor } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
+import { SequenceMode, SnakeMode } from 'application/editor/modes';
 import {
   SequencePointer,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import assert from 'assert';
 
-export class ReinitializeSequenceModeCommand implements Operation {
+export class ReinitializeModeOperation implements Operation {
   constructor() {}
 
   public execute(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
-    assert(editor.mode instanceof SequenceMode);
-    editor.mode.initialize(false);
+    if (
+      editor.mode instanceof SequenceMode ||
+      editor.mode instanceof SnakeMode
+    ) {
+      editor.mode.initialize(false);
+    }
   }
 
   public invert(_renderersManager: RenderersManager) {
     const editor = CoreEditor.provideEditorInstance();
-    assert(editor.mode instanceof SequenceMode);
-    editor.mode.initialize(false);
+    if (
+      editor.mode instanceof SequenceMode ||
+      editor.mode instanceof SnakeMode
+    ) {
+      editor.mode.initialize(false);
+    }
   }
 }
 
-export class RestoreSequenceCaretPositionCommand implements Operation {
+export class RestoreSequenceCaretPositionOperation implements Operation {
   constructor(
     private previousPosition: SequencePointer,
     private nextPosition: SequencePointer,

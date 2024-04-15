@@ -17,6 +17,7 @@ import {
   waitForRender,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,15 +45,15 @@ test.describe('Sequence mode selection for view mode', () => {
 
   test('Select letters with Shift+Lclick', async ({ page }) => {
     await page.keyboard.down('Shift');
-    await page.getByText('G').first().click();
-    await page.getByText('T').first().click();
+    await getSequenceSymbolLocator(page, 'G').click();
+    await getSequenceSymbolLocator(page, 'G', 1).click();
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
   });
 
   test('Select entire chain with Ctrl+Lclick', async ({ page }) => {
     await page.keyboard.down('Control');
-    await page.getByText('G').first().click();
+    await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
     await takeEditorScreenshot(page);
   });
@@ -69,15 +70,15 @@ test.describe('Sequence mode selection for edit mode', () => {
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await page.getByText('G').first().click({ button: 'right' });
+    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {
-    await page.getByText('G').first().hover();
+    await getSequenceSymbolLocator(page, 'G').hover();
     await page.mouse.down();
     const number = 5;
-    await page.getByText('G').nth(number).hover();
+    await getSequenceSymbolLocator(page, 'G', number).hover();
     await page.mouse.up();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

@@ -174,3 +174,11 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
 export async function typeAllEnglishAlphabet(page: Page) {
   await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
+
+export async function typeRNADNAAlphabet(page: Page) {
+  await page.keyboard.type('ATGCU');
+}
+
+export async function typePeptideAlphabet(page: Page) {
+  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+}

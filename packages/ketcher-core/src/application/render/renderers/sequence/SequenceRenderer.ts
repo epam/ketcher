@@ -17,7 +17,7 @@ import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { SequenceMode } from 'application/editor/modes';
-import { RestoreSequenceCaretPositionCommand } from 'application/editor/operations/modes';
+import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseMonomerRenderer } from 'application/render';
@@ -35,8 +35,8 @@ export type NodesSelection = NodeSelection[][];
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
+  public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
-  private static lastChainStartPosition: Vec2;
   public static show(chainsCollection: ChainsCollection) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
@@ -96,7 +96,7 @@ export class SequenceRenderer {
             node.monomer.renderer,
           );
           renderer.show();
-          node.monomer?.setRenderer(renderer);
+          node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
           currentMonomerIndexInChain++;
           currentMonomerIndexOverall++;
 
@@ -120,9 +120,9 @@ export class SequenceRenderer {
     this.lastChainStartPosition = currentChainStartPosition;
   }
 
-  private static getNextChainPosition(
-    currentChainStartPosition: Vec2,
-    lastChain: Chain,
+  public static getNextChainPosition(
+    currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
+    lastChain: Chain = SequenceRenderer.lastChain,
   ) {
     return new Vec2(
       currentChainStartPosition.x,
@@ -149,11 +149,13 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
+            if (!subChain.bonds.includes(polymerBond)) {
+              subChain.bonds.push(polymerBond);
+            }
             if (!polymerBond.isSideChainConnection) {
               polymerBond.setRenderer(
                 new BackBoneBondSequenceRenderer(polymerBond),
               );
-              subChain.bonds.push(polymerBond);
               return;
             }
 
@@ -194,7 +196,6 @@ export class SequenceRenderer {
             }
             bondRenderer.show();
             polymerBond.setRenderer(bondRenderer);
-            subChain.bonds.push(polymerBond);
             handledAttachmentPoints.add(attachmentPointName);
 
             if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
@@ -312,14 +313,14 @@ export class SequenceRenderer {
   }
 
   public static moveCaretForward() {
-    return new RestoreSequenceCaretPositionCommand(
+    return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition || this.caretPosition,
     );
   }
 
   public static moveCaretBack() {
-    return new RestoreSequenceCaretPositionCommand(
+    return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition === undefined
         ? this.caretPosition
@@ -570,36 +571,53 @@ export class SequenceRenderer {
 
   public static shiftArrowSelectionInEditMode(event) {
     const editor = CoreEditor.provideEditorInstance();
-    const selectDrawingEntities = (selectedNode: SubChainNode) => {
-      const drawingEntities =
-        editor.drawingEntitiesManager.getAllSelectedEntities(
-          selectedNode.monomer,
-        );
-      const modelChanges =
-        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-          drawingEntities,
-        );
-      return modelChanges;
-    };
-
-    const modelChanges = new Command();
+    let modelChanges;
     const arrowKey = event.code;
     if (arrowKey === 'ArrowRight') {
-      const modelChanges = selectDrawingEntities(this.currentEdittingNode);
+      modelChanges = SequenceRenderer.getShiftArrowChanges(
+        editor,
+        this.currentEdittingNode.monomer,
+      );
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
-      let modelChanges;
       if (this.previousNodeInSameChain) {
-        modelChanges = selectDrawingEntities(this.previousNodeInSameChain);
+        modelChanges = SequenceRenderer.getShiftArrowChanges(
+          editor,
+          this.previousNodeInSameChain.monomer,
+        );
       } else if (SequenceRenderer.previousChain) {
         const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
           SequenceRenderer.previousChain,
         );
-        modelChanges = selectDrawingEntities(previousChainLastEmptyNode);
+        ({ command: modelChanges } =
+          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+            previousChainLastEmptyNode.monomer,
+          ));
       }
       modelChanges.addOperation(this.moveCaretBack());
     }
     editor.renderersContainer.update(modelChanges);
+  }
+
+  private static getShiftArrowChanges(
+    editor: CoreEditor,
+    monomer: BaseMonomer,
+  ) {
+    let modelChanges;
+    const needTurnOffSelection = monomer.selected;
+    const result =
+      editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+        monomer,
+      );
+    if (needTurnOffSelection) {
+      modelChanges =
+        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+          result.drawingEntities,
+        );
+    } else {
+      modelChanges = result.command;
+    }
+    return modelChanges;
   }
 
   public static unselectEmptySequenceNodes() {
@@ -634,5 +652,29 @@ export class SequenceRenderer {
     });
 
     return selections;
+  }
+
+  public static getRenderedStructuresBbox() {
+    let left;
+    let right;
+    let top;
+    let bottom;
+    SequenceRenderer.forEachNode(({ node }) => {
+      assert(node.monomer.renderer instanceof BaseSequenceItemRenderer);
+      const nodePosition =
+        node.monomer.renderer?.scaledMonomerPositionForSequence;
+      left = left ? Math.min(left, nodePosition.x) : nodePosition.x;
+      right = right ? Math.max(right, nodePosition.x) : nodePosition.x;
+      top = top ? Math.min(top, nodePosition.y) : nodePosition.y;
+      bottom = bottom ? Math.max(bottom, nodePosition.y) : nodePosition.y;
+    });
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: bottom - top,
+    };
   }
 }

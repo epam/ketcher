@@ -151,21 +151,34 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Users can add new nucleotides at either end or in the middle of a sequence fragment as text', async ({
+  test('Users can add new nucleotides at end of a sequence fragment as text', async ({
     page,
   }) => {
     /*
     Test case: #3650
-    Description: Added 'U' in the end of sequence and 'T' in the middle.
+    Description: Added 'U' in the end of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
-    await page.getByText('T').locator('..').first().click({ button: 'right' });
+    await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Users can add new nucleotides in the middle of a sequence fragment as text', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3650
+    Description: Added 'U' in the end of sequence.
+    */
+    await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 't');
+    await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);

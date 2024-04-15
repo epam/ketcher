@@ -24,6 +24,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
+export type SequencePointerStep = number;
 
 export type NodeSelection = {
   node: SubChainNode;
@@ -35,6 +36,7 @@ export type NodesSelection = NodeSelection[][];
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static chainsCollection: ChainsCollection;
+  public static step: SequencePointerStep = 30;
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   public static show(chainsCollection: ChainsCollection) {
@@ -312,6 +314,95 @@ export class SequenceRenderer {
     return monomers;
   }
 
+  public static moveCaretUp() {
+    const {
+      currentEdittingNode: currentNode,
+      currentChain,
+      previousChain,
+      step,
+    } = this;
+    const currentArrayLength = currentChain.length;
+    const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
+    const nodeIndex = baseArray.indexOf(currentNode);
+    const tailLength = previousChain
+      ? previousChain.length > step
+        ? previousChain.length - step * Math.floor(previousChain.length / step)
+        : previousChain.length
+      : 0;
+
+    const restoreCaretPosition = (
+      tailOrLength,
+      caretPosition = this.caretPosition,
+    ) =>
+      new RestoreSequenceCaretPositionOperation(
+        this.caretPosition,
+        this.caretPosition - tailOrLength || caretPosition,
+      );
+
+    if (this.caretPosition >= step) {
+      if (currentArrayLength > step && nodeIndex >= step) {
+        restoreCaretPosition(step, 0);
+      } else if (nodeIndex < tailLength - 1) {
+        restoreCaretPosition(
+          tailLength - currentArrayLength + currentArrayLength,
+        );
+      } else {
+        restoreCaretPosition(nodeIndex + 1);
+      }
+    } else {
+      restoreCaretPosition(0);
+    }
+  }
+
+  public static moveCaretDown() {
+    debugger;
+    const {
+      currentEdittingNode: currentNode,
+      currentChain,
+      nextChain,
+      step,
+    } = this;
+    const restoreCaretPosition = (offset) =>
+      new RestoreSequenceCaretPositionOperation(
+        this.caretPosition,
+        this.caretPosition + offset || this.caretPosition,
+      );
+    const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
+    const currentArrayLength = currentChain.length;
+    const nodeIndex = baseArray.indexOf(currentNode);
+    const prevStepBound =
+      currentArrayLength > step
+        ? step * Math.floor(currentArrayLength / step) - 1
+        : currentArrayLength;
+
+    if (!nextChain && nodeIndex > prevStepBound) {
+      restoreCaretPosition(0);
+      return;
+    }
+
+    if (currentArrayLength > step) {
+      const remaining = currentArrayLength - nodeIndex;
+
+      if (prevStepBound >= nodeIndex) {
+        restoreCaretPosition(remaining <= step ? remaining - 1 : step);
+      } else {
+        const offset = currentArrayLength - prevStepBound - remaining;
+        restoreCaretPosition(
+          offset > nextChain.length
+            ? remaining + nextChain.length - 1
+            : currentArrayLength - prevStepBound - 1,
+        );
+      }
+    } else {
+      const offset = currentArrayLength - nodeIndex;
+      restoreCaretPosition(
+        nodeIndex > nextChain.length - 1
+          ? offset + nextChain.length - 1
+          : currentArrayLength,
+      );
+    }
+  }
+
   public static moveCaretForward() {
     return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
@@ -420,6 +511,12 @@ export class SequenceRenderer {
   public static get previousChain() {
     return SequenceRenderer.chainsCollection.chains[
       SequenceRenderer.currentChainIndex - 1
+    ];
+  }
+
+  public static get nextChain() {
+    return SequenceRenderer.chainsCollection.chains[
+      SequenceRenderer.currentChainIndex + 1
     ];
   }
 

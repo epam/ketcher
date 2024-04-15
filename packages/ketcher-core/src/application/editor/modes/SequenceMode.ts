@@ -606,6 +606,18 @@ export class SequenceMode extends BaseMode {
           this.startNewSequence();
         },
       },
+      'move-caret-up': {
+        shortcut: ['ArrowUp'],
+        handler: () => {
+          SequenceRenderer.moveCaretUp();
+        },
+      },
+      'move-caret-down': {
+        shortcut: ['ArrowDown'],
+        handler: () => {
+          SequenceRenderer.moveCaretDown();
+        },
+      },
       'move-caret-forward': {
         shortcut: ['ArrowRight'],
         handler: () => {

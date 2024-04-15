@@ -173,7 +173,7 @@ test.describe('Sequence edit mode', () => {
   }) => {
     /*
     Test case: #3650
-    Description: Added 'U' in the end of sequence.
+    Description: Added 'U' in the middle of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });

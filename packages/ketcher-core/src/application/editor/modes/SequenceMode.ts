@@ -38,6 +38,11 @@ const naturalAnalogues = uniq([
   ...peptideNaturalAnalogues,
 ]);
 
+enum Direction {
+  Left = 'left',
+  Right = 'right',
+}
+
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private selectionStarted = false;
@@ -480,14 +485,14 @@ export class SequenceMode extends BaseMode {
   }
 
   private get keyboardEventHandlers() {
-    const deleteNode = (direction: 'left' | 'right') => {
+    const deleteNode = (direction: Direction) => {
       const editor = CoreEditor.provideEditorInstance();
       const nodeToDelete =
-        direction === 'left'
+        direction === Direction.Left
           ? SequenceRenderer.previousNode
           : SequenceRenderer.getNodeByPointer(SequenceRenderer.caretPosition);
       const caretPosition =
-        direction === 'left'
+        direction === Direction.Left
           ? (SequenceRenderer.previousCaretPosition as number)
           : SequenceRenderer.caretPosition;
       const selections = SequenceRenderer.selections;
@@ -519,7 +524,7 @@ export class SequenceMode extends BaseMode {
 
       this.finishNodesDeletion(
         modelChanges,
-        nodesToDelete[0][nodesToDelete[0].length - 1].nodeIndexOverall + 1,
+        caretPosition,
         nodesToDelete[0][0].nodeIndexOverall,
       );
 
@@ -534,11 +539,11 @@ export class SequenceMode extends BaseMode {
     return {
       delete: {
         shortcut: ['Delete'],
-        handler: () => deleteNode('right'),
+        handler: () => deleteNode(Direction.Right),
       },
       backspace: {
         shortcut: ['Backspace'],
-        handler: () => deleteNode('left'),
+        handler: () => deleteNode(Direction.Left),
       },
       'turn-off-edit-mode': {
         shortcut: ['Escape'],

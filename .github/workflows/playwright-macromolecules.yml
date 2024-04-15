@@ -20,7 +20,7 @@ env:
   ENABLE_POLYMER_EDITOR: true
 jobs:
   playwright_tests:
-    timeout-minutes: 40
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

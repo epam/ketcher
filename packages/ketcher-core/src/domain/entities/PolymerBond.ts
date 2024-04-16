@@ -5,6 +5,8 @@ import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { AttachmentPointName } from 'domain/types';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
+import { Chem } from './Chem';
+import { Peptide } from './Peptide';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
@@ -78,6 +80,18 @@ export class PolymerBond extends DrawingEntity {
   }
 
   public get isSideChainConnection() {
+    if (
+      this.secondMonomer instanceof Chem &&
+      !(this.firstMonomer instanceof Chem)
+    ) {
+      return true;
+    }
+    if (
+      this.secondMonomer instanceof Peptide &&
+      !(this.firstMonomer instanceof Peptide)
+    ) {
+      return true;
+    }
     const firstMonomerAttachmentPoint =
       this.firstMonomer.getAttachmentPointByBond(this);
     const secondMonomerAttachmentPoint =

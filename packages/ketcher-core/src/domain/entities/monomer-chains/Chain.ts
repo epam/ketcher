@@ -5,6 +5,7 @@ import {
   Phosphate,
   SubChainNode,
   Sugar,
+  Chem,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
@@ -46,6 +47,8 @@ export class Chain {
     } else if (monomer instanceof Sugar && isValidNucleotide(monomer)) {
       this.lastSubChain.add(Nucleotide.fromSugar(monomer));
     } else if (monomer instanceof Peptide) {
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+    } else if (monomer instanceof Chem) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
     } else if (
       monomer instanceof Phosphate &&

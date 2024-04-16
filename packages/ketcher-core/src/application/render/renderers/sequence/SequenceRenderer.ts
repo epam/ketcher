@@ -148,7 +148,20 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
-            if (!polymerBond.isSideChainConnection && !polymerBond.isCyclic) {
+            let isReturnBondInCycledChain = false;
+
+            if (chain.isCyclic) {
+              const firstMonomerR1PolymerBond =
+                chain.firstMonomer?.attachmentPointsToBonds.R1;
+              if (polymerBond === firstMonomerR1PolymerBond) {
+                isReturnBondInCycledChain = true;
+              }
+            }
+
+            if (
+              !polymerBond.isSideChainConnection &&
+              !isReturnBondInCycledChain
+            ) {
               polymerBond.setRenderer(
                 new BackBoneBondSequenceRenderer(polymerBond),
               );
@@ -182,7 +195,7 @@ export class SequenceRenderer {
             let bondRenderer;
 
             // Handle cyclic bond from Phosphate to sugar
-            if (node.monomer instanceof Sugar && polymerBond.isCyclic) {
+            if (node.monomer instanceof Sugar && isReturnBondInCycledChain) {
               const anotherMonomer = polymerBond.getAnotherMonomer(
                 node.monomer,
               ) as BaseMonomer;

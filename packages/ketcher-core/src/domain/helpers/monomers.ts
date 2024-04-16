@@ -30,11 +30,7 @@ export function getNextMonomerInChain(
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer = r2PolymerBond?.getAnotherMonomer(monomer);
 
-  if (nextMonomer === firstMonomer && r2PolymerBond) {
-    r2PolymerBond.isCyclic = true;
-
-    return undefined;
-  }
+  if (nextMonomer === firstMonomer && r2PolymerBond) return undefined;
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===

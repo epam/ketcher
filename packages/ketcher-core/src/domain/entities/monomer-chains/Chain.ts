@@ -12,17 +12,23 @@ import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 
 export class Chain {
+  public isCyclic = false;
+
   public subChains: BaseSubChain[] = [];
 
-  private firstMonomer: BaseMonomer | null;
+  public firstMonomer: BaseMonomer | null;
 
-  constructor(firstMonomer?: BaseMonomer) {
+  constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
     this.firstMonomer = null;
 
     if (firstMonomer) {
       this.firstMonomer = firstMonomer;
 
       this.fillSubChains(firstMonomer);
+    }
+
+    if (isCyclic) {
+      this.isCyclic = isCyclic;
     }
   }
 

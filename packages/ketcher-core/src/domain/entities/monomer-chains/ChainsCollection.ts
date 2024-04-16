@@ -2,6 +2,7 @@ import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
   BaseMonomer,
   Chem,
+  IsChainCycled,
   Peptide,
   Phosphate,
   RNABase,
@@ -33,10 +34,15 @@ export class ChainsCollection {
 
   public static fromMonomers(monomers: BaseMonomer[]) {
     const chainsCollection = new ChainsCollection();
-    const firstMonomersInChains = this.getFirstMonomersInChains(monomers);
+    const [firstMonomersInRegularChains, firstMonomersInCycledChains] =
+      this.getFirstMonomersInChains(monomers);
 
-    firstMonomersInChains.forEach((monomer) => {
+    firstMonomersInRegularChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer));
+    });
+
+    firstMonomersInCycledChains.forEach((monomer) => {
+      chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
 
     return chainsCollection;
@@ -56,7 +62,9 @@ export class ChainsCollection {
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
     );
 
-    const firstMonomersInChains = monomersList.filter((monomer) => {
+    const firstMonomersInChains: BaseMonomer[][] = [];
+
+    const firstMonomersInRegularChains = monomersList.filter((monomer) => {
       const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
       const isFirstMonomerWithR2R1connection =
         !R1PolymerBond || R1PolymerBond.isSideChainConnection;
@@ -79,10 +87,14 @@ export class ChainsCollection {
         !isRnaBaseConnectedToSugar
       );
     });
-    const firstMonomersInCycledChains =
-      this.findFirstMonomersInCycledChains(monomersList);
 
-    firstMonomersInChains.push(...firstMonomersInCycledChains);
+    const firstMonomersInCycledChains =
+      this.getFirstMonomersInCycledChains(monomersList);
+
+    firstMonomersInChains.push(
+      firstMonomersInRegularChains,
+      firstMonomersInCycledChains,
+    );
 
     return firstMonomersInChains;
   }
@@ -91,7 +103,7 @@ export class ChainsCollection {
     return this.chains[0]?.subChains[0]?.nodes[0];
   }
 
-  private static findFirstMonomersInCycledChains(
+  private static getFirstMonomersInCycledChains(
     monomersList: BaseMonomer[],
   ): BaseMonomer[] {
     const firstMonomersOfCycledChainsSet = new Set<BaseMonomer>();

@@ -13,8 +13,6 @@ export class PolymerBond extends DrawingEntity {
 
   public endPosition: Vec2 = new Vec2();
 
-  public isCyclic = false;
-
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();
     this.firstMonomer = firstMonomer;

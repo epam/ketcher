@@ -158,11 +158,11 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     monomerItemNew: MonomerItemType,
   ) {
-    const monomerNew = this.monomers.get(monomer.id);
-    if (!monomerNew) return monomer;
-    monomerNew.monomerItem = monomerItemNew;
-    this.monomers.set(monomer.id, monomerNew);
-    return monomerNew;
+    const initialMonomer = this.monomers.get(monomer.id);
+    if (!initialMonomer) return monomer;
+    initialMonomer.monomerItem = monomerItemNew;
+    this.monomers.set(monomer.id, initialMonomer);
+    return initialMonomer;
   }
 
   public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
@@ -1410,6 +1410,21 @@ export class DrawingEntitiesManager {
         'R2' ||
       R2Bond?.getAnotherMonomer(monomer)?.getAttachmentPointByBond(R2Bond) ===
         'R1'
+    );
+  }
+
+  public isNucleosideAndPhosphateConnectedAsNucleotide(
+    nucleoside: Nucleoside,
+    phosphate: Phosphate,
+  ) {
+    if (
+      !(nucleoside instanceof Nucleoside) ||
+      !(phosphate instanceof Phosphate)
+    )
+      return false;
+
+    return (
+      nucleoside.sugar.attachmentPointsToBonds.R2?.secondMonomer === phosphate
     );
   }
 

@@ -3,7 +3,7 @@ import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
-  LabeledNucleotideWithPositionInSequence,
+  LabeledNodesWithPositionInSequence,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
@@ -237,7 +237,7 @@ export class CoreEditor {
       this.onTurnOffSequenceEditInRNABuilderMode(),
     );
     this.events.modifySequenceInRnaBuilder.add(
-      (updatedSelection: LabeledNucleotideWithPositionInSequence[]) =>
+      (updatedSelection: LabeledNodesWithPositionInSequence[]) =>
         this.onModifySequenceInRnaBuilder(updatedSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
@@ -278,7 +278,7 @@ export class CoreEditor {
   }
 
   private onModifySequenceInRnaBuilder(
-    updatedSelection: LabeledNucleotideWithPositionInSequence[],
+    updatedSelection: LabeledNodesWithPositionInSequence[],
   ) {
     if (!(this.mode instanceof SequenceMode)) {
       return;

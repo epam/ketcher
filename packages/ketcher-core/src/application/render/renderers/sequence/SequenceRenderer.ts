@@ -699,7 +699,7 @@ export class SequenceRenderer {
         step,
         caretPosition,
       } = this;
-      let baseArray = currentChain.subChains.flatMap((item) => item.nodes);
+      const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
       const currentArrayLength = currentChain.length;
       const nodeIndex = baseArray.indexOf(currentNode);
       const prevStepBound =

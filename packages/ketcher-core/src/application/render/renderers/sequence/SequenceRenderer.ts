@@ -691,6 +691,137 @@ export class SequenceRenderer {
           ));
       }
       modelChanges.addOperation(this.moveCaretBack());
+    } else if (arrowKey === 'ArrowDown') {
+      const {
+        currentEdittingNode: currentNode,
+        currentChain,
+        nextChain,
+        step,
+        caretPosition,
+      } = this;
+      let baseArray = currentChain.subChains.flatMap((item) => item.nodes);
+      const currentArrayLength = currentChain.length;
+      const nodeIndex = baseArray.indexOf(currentNode);
+      const prevStepBound =
+        currentArrayLength > step
+          ? step * Math.floor(currentArrayLength / step) - 1
+          : currentArrayLength;
+
+      let markPartArray: SubChainNode[] = [];
+      SequenceRenderer.forEachNode(({ node }) => {
+        markPartArray.push(node);
+      });
+      if (!nextChain && nodeIndex > prevStepBound) {
+        return;
+      }
+      if (currentArrayLength > step) {
+        if (nodeIndex < prevStepBound) {
+          if (currentArrayLength - nodeIndex <= step) {
+            markPartArray = markPartArray.slice(
+              caretPosition,
+              caretPosition + currentArrayLength - 1 - nodeIndex,
+            );
+          } else {
+            markPartArray = markPartArray.slice(
+              caretPosition,
+              caretPosition + step,
+            );
+          }
+        } else {
+          if (
+            currentArrayLength -
+              prevStepBound -
+              (currentArrayLength - nodeIndex) <=
+            nextChain.length
+          ) {
+            markPartArray = markPartArray.slice(
+              caretPosition,
+              caretPosition + currentArrayLength - 1 - prevStepBound,
+            );
+          } else {
+            markPartArray = markPartArray.slice(
+              caretPosition,
+              caretPosition +
+                currentArrayLength -
+                nodeIndex +
+                nextChain.length -
+                1,
+            );
+          }
+        }
+      } else {
+        if (nodeIndex < nextChain.length) {
+          markPartArray = markPartArray.slice(
+            caretPosition,
+            caretPosition + currentArrayLength,
+          );
+        } else {
+          markPartArray = markPartArray.slice(
+            caretPosition,
+            caretPosition +
+              (currentArrayLength - nodeIndex + nextChain.length - 1),
+          );
+        }
+      }
+
+      markPartArray.forEach((item) => {
+        modelChanges = SequenceRenderer.getShiftArrowChanges(
+          editor,
+          item.monomer,
+        );
+        modelChanges.addOperation(this.moveCaretForward());
+      });
+    } else if (arrowKey === 'ArrowUp') {
+      const {
+        currentEdittingNode: currentNode,
+        currentChain,
+        previousChain,
+        step,
+        caretPosition,
+      } = this;
+      const currentArrayLength = currentChain.length;
+      const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
+      const nodeIndex = baseArray.indexOf(currentNode);
+      const tailLength = previousChain
+        ? previousChain.length > step
+          ? previousChain.length -
+            step * Math.floor(previousChain.length / step)
+          : previousChain.length
+        : 0;
+
+      let markPartArray: SubChainNode[] = [];
+      SequenceRenderer.forEachNode(({ node }) => {
+        markPartArray.push(node);
+      });
+
+      if (caretPosition >= step) {
+        if (currentArrayLength > step && nodeIndex >= step) {
+          markPartArray = markPartArray.slice(
+            caretPosition - step,
+            caretPosition,
+          );
+        } else if (nodeIndex < tailLength - 1) {
+          markPartArray = markPartArray.slice(
+            caretPosition - (tailLength - nodeIndex) - nodeIndex,
+            caretPosition,
+          );
+        } else {
+          markPartArray = markPartArray.slice(
+            caretPosition - 1 - nodeIndex,
+            caretPosition,
+          );
+        }
+      } else {
+        markPartArray = [];
+      }
+
+      markPartArray.reverse().forEach((item) => {
+        modelChanges = SequenceRenderer.getShiftArrowChanges(
+          editor,
+          item.monomer,
+        );
+        modelChanges.addOperation(this.moveCaretBack());
+      });
     }
     editor.renderersContainer.update(modelChanges);
   }

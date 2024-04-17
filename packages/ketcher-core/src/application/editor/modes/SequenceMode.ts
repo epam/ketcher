@@ -670,7 +670,12 @@ export class SequenceMode extends BaseMode {
         },
       },
       'sequence-edit-select': {
-        shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
+        shortcut: [
+          'Shift+ArrowLeft',
+          'Shift+ArrowRight',
+          'Shift+ArrowUp',
+          'Shift+ArrowDown',
+        ],
         handler: (event) => {
           const arrowKey = event.key;
 

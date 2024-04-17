@@ -204,19 +204,20 @@ export class ChainsCollection {
   private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerWithLowerCoords = monomerList.reduce(
-      (monomerWithLowerCoordsAcc, monomer) => {
-        if (
-          monomer.position.x < monomerWithLowerCoordsAcc.position.x ||
-          (monomer.position.x === monomerWithLowerCoordsAcc.position.x &&
-            monomer.position.y < monomerWithLowerCoordsAcc.position.y)
-        ) {
-          return monomer;
-        }
-        return monomerWithLowerCoordsAcc;
-      },
-      monomerList[0],
-    );
+    const monomerListShallowCopy = monomerList.slice();
+
+    monomerListShallowCopy.sort((monomer1, monomer2) => {
+      if (
+        monomer2.position.x + monomer2.position.y >
+        monomer1.position.x + monomer1.position.y
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+    const monomerWithLowerCoords = monomerListShallowCopy[0];
 
     return monomerWithLowerCoords;
   }

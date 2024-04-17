@@ -154,12 +154,12 @@ export class ChainsCollection {
 
           if (isAlreadyInFirstMonomersRegularChainsList) continue;
 
-          const monomerWithLesserId =
-            this.getMonomerWithLesserIdFromMonomerList(
+          const monomerWithLowerCoords =
+            this.getMonomerWithLowerCoordsFromMonomerList(
               monomerListInCycledChain,
             );
 
-          firstMonomersOfCycledChainsSet.add(monomerWithLesserId);
+          firstMonomersOfCycledChainsSet.add(monomerWithLowerCoords);
         }
       }
     }
@@ -201,19 +201,24 @@ export class ChainsCollection {
     return result;
   }
 
-  private static getMonomerWithLesserIdFromMonomerList(
+  private static getMonomerWithLowerCoordsFromMonomerList(
     monomerList: BaseMonomer[],
   ): BaseMonomer {
-    const monomerListShallowCopy = monomerList.slice();
+    const monomerWithLowerCoords = monomerList.reduce(
+      (monomerWithLowerCoordsAcc, monomer) => {
+        if (
+          monomer.position.x < monomerWithLowerCoordsAcc.position.x ||
+          (monomer.position.x === monomerWithLowerCoordsAcc.position.x &&
+            monomer.position.y < monomerWithLowerCoordsAcc.position.y)
+        ) {
+          return monomer;
+        }
+        return monomerWithLowerCoordsAcc;
+      },
+      monomerList[0],
+    );
 
-    monomerListShallowCopy.sort((a, b) => a.id - b.id);
-
-    const monomerWithLesserId =
-      monomerList.find(
-        (monomer) => monomer.id === monomerListShallowCopy[0].id,
-      ) || monomerList[0];
-
-    return monomerWithLesserId;
+    return monomerWithLowerCoords;
   }
 
   private static getMonomerListFromCycledChain(

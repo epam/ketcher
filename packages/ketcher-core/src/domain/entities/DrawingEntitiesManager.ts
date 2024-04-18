@@ -1194,11 +1194,27 @@ export class DrawingEntitiesManager {
     const monomersList = currentMonomers.filter((monomer) =>
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
     );
+    const firstMonomersInChains = monomersList.filter((monomer) => {
+      const polymerBond = monomer.getBondByAttachmentPoint(
+        AttachmentPointName.R2,
+      );
 
-    const [regularChains, cycledChains] =
+      const isFirstMonomerWithR2R1connection =
+        (!monomer.attachmentPointsToBonds.R1 ||
+          monomer.attachmentPointsToBonds.R1.isSideChainConnection) &&
+        polymerBond?.isBackBoneChainConnection;
+
+      const isSingleMonomerOrNucleoside =
+        !monomer.attachmentPointsToBonds.R1 &&
+        !monomer.attachmentPointsToBonds.R2;
+
+      return isFirstMonomerWithR2R1connection || isSingleMonomerOrNucleoside;
+    });
+
+    const [_, cycledChains] =
       ChainsCollection.getFirstMonomersInChains(monomersList);
 
-    const firstMonomersInChains = [...regularChains, ...cycledChains];
+    firstMonomersInChains.push(...cycledChains);
 
     firstMonomersInChains.sort((monomer1, monomer2) => {
       if (

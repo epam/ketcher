@@ -27,6 +27,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 import { AttachmentPointName } from 'domain/types';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { Command } from 'domain/entities/Command';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -50,14 +51,17 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  private removeBond(): void {
+  private removeBond() {
     if (this.bondRenderer) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
           this.bondRenderer.polymerBond,
         );
-      this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;
+
+      return modelChanges;
+    } else {
+      return new Command();
     }
   }
 
@@ -331,7 +335,10 @@ class PolymerBond implements BaseTool {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    this.removeBond();
+
+    const modelChanges = this.removeBond();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public mouseUpMonomer(event) {
@@ -439,7 +446,12 @@ class PolymerBond implements BaseTool {
   };
 
   public destroy() {
-    this.removeBond();
+    const modelChanges = this.removeBond();
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.removeHoverForAllMonomers(),
+    );
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   private shouldInvokeModal(

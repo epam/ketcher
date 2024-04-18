@@ -36,51 +36,6 @@ test.describe('1. User can expand hydrogens for ', () => {
     await waitForPageInit(page);
   });
 
-  // The reason of tests failing will be investigated after release 2.21.0-rc.1
-  const temporaryFailedTestsFileNames = [
-    'Aromatic/Aromatic (Ring Topology) - Five hydrogens.ket',
-    'Aromatic/Aromatic (Ring Topology) - Four hydrogens.ket',
-    'Aromatic/Aromatic (Ring Topology) - Three hydrogens.ket',
-    'Dative/Dative - Five hydrogens (c5).ket',
-    'Dative/Dative - Four hydrogens (C).ket',
-    'Dative/Dative - Six hydrogens (c6).ket',
-    'Dative/Dative - Three hydrogens (N).ket',
-    'Double/Double (Ring Topology) - Four hydrogens.ket',
-    'Double/Double (Ring Topology) - Three hydrogens.ket',
-    'Double/Double - Four hydrogens.ket',
-    'Double/Double - Three hydrogens.ket',
-    'Double CIS-Trans/Double CIS-Trans (Ring Topology) - Three hydrogens.ket',
-    'Double CIS-Trans/Double CIS-Trans - Three hydrogens.ket',
-    'Hydrogen/Hydrogen - Five hydrogens (C5).ket',
-    'Hydrogen/Hydrogen - Four hydrogens (Ge).ket',
-    'Hydrogen/Hydrogen - Six hydrogens (C6).ket',
-    'Hydrogen/Hydrogen - Three hydrogens (N).ket',
-    'Single/Single (Ring Topology) - Five hydrogens (S).ket',
-    'Single/Single (Ring Topology) - Four hydrogens (S).ket',
-    'Single/Single (Ring Topology) - Three hydrogens (S).ket',
-    'Single/Single - Five hydrogens (S).ket',
-    'Single/Single - Four hydrogens (S).ket',
-    'Single/Single - Three hydrogens (S).ket',
-    'Single Down/Single Down (Ring Topology) - Five hydrogens (S).ket',
-    'Single Down/Single Down (Ring Topology) - Four hydrogens (S).ket',
-    'Single Down/Single Down (Ring Topology) - Three hydrogens (S).ket',
-    'Single Down/Single Down - Five hydrogens (S).ket',
-    'Single Down/Single Down - Four hydrogens (S).ket',
-    'Single Down/Single Down - Three hydrogens (S).ket',
-    'Single Up/Single Up (Ring Topology) - Five hydrogens (S).ket',
-    'Single Up/Single Up (Ring Topology) - Four hydrogens (S).ket',
-    'Single Up/Single Up (Ring Topology) - Three hydrogens (S).ket',
-    'Single Up/Single Up - Five hydrogens (S).ket',
-    'Single Up/Single Up - Four hydrogens (S).ket',
-    'Single Up/Single Up - Three hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Five hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Four hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Three hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down - Five hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down - Four hydrogens (S).ket',
-    'Single Up-Down/Single Up-Down - Three hydrogens (S).ket',
-  ];
-
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom).ket',
     // ^-- https://github.com/epam/Indigo/issues/1611
@@ -305,10 +260,6 @@ test.describe('1. User can expand hydrogens for ', () => {
 
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
-      if (temporaryFailedTestsFileNames.includes(fileName)) {
-        test.fail();
-      }
-
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
@@ -365,46 +316,6 @@ test.describe('2. User can expand hydrogens for ', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-
-  // The reason of tests failing will be investigated after release 2.21.0-rc.1
-  const temporaryFailedTestsFileNames = [
-    'Aromatic/Aromatic (Ring Topology) - Five hydrogens+A.ket',
-    'Aromatic/Aromatic (Ring Topology) - Four hydrogens+A.ket',
-    'Aromatic/Aromatic (Ring Topology) - Three hydrogens+A.ket',
-    'Aromatic/Aromatic - Five hydrogens+A.ket',
-    'Aromatic/Aromatic - Four hydrogens+A.ket',
-    'Aromatic/Aromatic - Three hydrogens+A.ket',
-    'Double/Double (Ring Topology) - Four hydrogens+A.ket',
-    'Double/Double (Ring Topology) - Three hydrogens+A.ket',
-    'Double/Double - Four hydrogens+A.ket',
-    'Double/Double - Three hydrogens+A.ket',
-    'Double CIS-Trans/Double CIS-Trans (Ring Topology) - Three hydrogens+A.ket',
-    'Double CIS-Trans/Double CIS-Trans - Three hydrogens+A.ket',
-    'Single/Single (Ring Topology) - Five hydrogens (S)+A.ket',
-    'Single/Single (Ring Topology) - Four hydrogens (S)+A.ket',
-    'Single/Single (Ring Topology) - Three hydrogens (S)+A.ket',
-    'Single/Single - Five hydrogens (S)+A.ket',
-    'Single/Single - Four hydrogens (S)+A.ket',
-    'Single/Single - Three hydrogens (S)+A.ket',
-    'Single Down/Single Down (Ring Topology) - Five hydrogens (S)+A.ket',
-    'Single Down/Single Down (Ring Topology) - Four hydrogens (S)+A.ket',
-    'Single Down/Single Down (Ring Topology) - Three hydrogens (S)+A.ket',
-    'Single Down/Single Down - Five hydrogens (S)+A.ket',
-    'Single Down/Single Down - Four hydrogens (S)+A.ket',
-    'Single Down/Single Down - Three hydrogens (S)+A.ket',
-    'Single Up/Single Up (Ring Topology) - Five hydrogens (S)+A.ket',
-    'Single Up/Single Up (Ring Topology) - Four hydrogens (S)+A.ket',
-    'Single Up/Single Up (Ring Topology) - Three hydrogens (S)+A.ket',
-    'Single Up/Single Up - Five hydrogens (S)+A.ket',
-    'Single Up/Single Up - Four hydrogens (S)+A.ket',
-    'Single Up/Single Up - Three hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Five hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Four hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down (Ring Topology) - Three hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down - Five hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down - Four hydrogens (S)+A.ket',
-    'Single Up-Down/Single Up-Down - Three hydrogens (S)+A.ket',
-  ];
 
   const fileNames = [
     'Any/Any (Ring Topology) - Any Valenece Atom (Any Atom)+A.ket',
@@ -620,10 +531,6 @@ test.describe('2. User can expand hydrogens for ', () => {
 
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
-      if (temporaryFailedTestsFileNames.includes(fileName)) {
-        test.fail();
-      }
-
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(

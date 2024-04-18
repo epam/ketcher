@@ -34,8 +34,6 @@ test.describe('Reagents CDX format', () => {
     Description: File saved in format (e.g. "ketcher.cdx")
     */
 
-    // The reason of test failing will be investigated after release 2.21.0-rc.1
-    test.fail();
     await openFileAndAddToCanvas('KET/two-reagents-above-and-below.ket', page);
     const expectedFile = await getCdx(page);
     await saveToFile(

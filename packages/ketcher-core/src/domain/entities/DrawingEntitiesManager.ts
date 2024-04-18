@@ -1774,6 +1774,22 @@ export class DrawingEntitiesManager {
 
     return command;
   }
+
+  public removeHoverForAllMonomers() {
+    const command = new Command();
+    this.monomers.forEach((monomer) => {
+      if (!monomer.hovered) {
+        return;
+      }
+
+      monomer.turnOffHover();
+      monomer.turnOffAttachmentPointsVisibility();
+
+      command.addOperation(new MonomerHoverOperation(monomer, true));
+    });
+
+    return command;
+  }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {
   return new Vec2(MONOMER_START_X_POSITION, lastPosition.y + height);

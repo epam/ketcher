@@ -350,7 +350,13 @@ export class SequenceRenderer {
         restoreCaretPosition(nodeIndex + 1);
       }
     } else {
-      restoreCaretPosition(0);
+      if (previousChain && previousChain.length > nodeIndex) {
+        restoreCaretPosition(previousChain.length, 0);
+      } else if (previousChain) {
+        restoreCaretPosition(nodeIndex + 1);
+      } else {
+        restoreCaretPosition(0);
+      }
     }
   }
 
@@ -374,8 +380,10 @@ export class SequenceRenderer {
         ? step * Math.floor(currentArrayLength / step) - 1
         : currentArrayLength;
 
-    if (!nextChain && nodeIndex > prevStepBound) {
-      restoreCaretPosition(0);
+    if (
+      (!nextChain && currentArrayLength < step) ||
+      (!nextChain && nodeIndex > prevStepBound)
+    ) {
       return;
     }
 
@@ -711,7 +719,18 @@ export class SequenceRenderer {
       SequenceRenderer.forEachNode(({ node }) => {
         markPartArray.push(node);
       });
-      if (!nextChain && nodeIndex > prevStepBound) {
+      if (
+        (!nextChain && currentArrayLength < step) ||
+        (!nextChain && nodeIndex > prevStepBound)
+      ) {
+        markPartArray = markPartArray.slice(caretPosition);
+        markPartArray.forEach((item) => {
+          modelChanges = SequenceRenderer.getShiftArrowChanges(
+            editor,
+            item.monomer,
+          );
+          modelChanges.addOperation(this.moveCaretForward());
+        });
         return;
       }
       if (currentArrayLength > step) {
@@ -812,7 +831,16 @@ export class SequenceRenderer {
           );
         }
       } else {
-        markPartArray = [];
+        if (previousChain && previousChain.length > nodeIndex) {
+          markPartArray = markPartArray.slice(nodeIndex, caretPosition);
+        } else if (previousChain) {
+          markPartArray = markPartArray.slice(
+            previousChain.length - 1,
+            caretPosition,
+          );
+        } else {
+          markPartArray = markPartArray.slice(0, caretPosition);
+        }
       }
 
       markPartArray.reverse().forEach((item) => {

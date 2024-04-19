@@ -750,14 +750,11 @@ export class DrawingEntitiesManager {
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
 
-    if (
-      monomer.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
-    ) {
+    if (monomer.isAttachmentPointUsed(attachmentPointName)) {
       const operation = new MonomerHoverOperation(monomer, true);
       command.addOperation(operation);
       return command;
     }
-
     if (attachmentPointName) {
       monomer.setPotentialSecondAttachmentPoint(attachmentPointName);
       monomer.setPotentialBond(attachmentPointName, bond);
@@ -1774,6 +1771,22 @@ export class DrawingEntitiesManager {
       this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
     );
     command.addOperation(operation);
+
+    return command;
+  }
+
+  public removeHoverForAllMonomers() {
+    const command = new Command();
+    this.monomers.forEach((monomer) => {
+      if (!monomer.hovered) {
+        return;
+      }
+
+      monomer.turnOffHover();
+      monomer.turnOffAttachmentPointsVisibility();
+
+      command.addOperation(new MonomerHoverOperation(monomer, true));
+    });
 
     return command;
   }

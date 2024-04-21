@@ -321,7 +321,7 @@ export class SequenceRenderer {
   }
 
   public static get collectionChainRow() {
-    let finalArray: Array<Array<SubChainNode>> = [];
+    const finalArray: Array<Array<SubChainNode>> = [];
     let chainNodes: Array<SubChainNode> = [];
     SequenceRenderer.forEachNode(({ node }) => {
       chainNodes.push(node);
@@ -332,9 +332,9 @@ export class SequenceRenderer {
     });
 
     for (let i = 0; i < finalArray.length; i++) {
-      let subArray = finalArray[i];
+      const subArray = finalArray[i];
       if (subArray.length > 30) {
-        let newSubArrays: Array<SubChainNode[]> = [];
+        const newSubArrays: Array<SubChainNode[]> = [];
         while (subArray.length > 0) {
           newSubArrays.push(subArray.splice(0, 30));
         }
@@ -792,7 +792,7 @@ export class SequenceRenderer {
         this.lastUserDefinedCursorPosition = nodeIndex;
       }
 
-      let symbolsBeforeCurrentInRow =
+      const symbolsBeforeCurrentInRow =
         currentChainRow.length - (currentChainRow.length - nodeIndex);
       let maxCaretOffsetForNextRow = Math.min(
         previousChainRow.length - this.lastUserDefinedCursorPosition,

@@ -25,6 +25,7 @@ import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
 export type SequencePointerStep = number;
+export type SequenceLastCaretPosition = number;
 
 export type NodeSelection = {
   node: SubChainNode;
@@ -35,8 +36,9 @@ export type NodesSelection = NodeSelection[][];
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
+  public static lastUserDefinedCursorPosition: SequenceLastCaretPosition = 0;
   public static chainsCollection: ChainsCollection;
-  public static step: SequencePointerStep = 30;
+  public static NUMBER_OF_SYMBOLS_IN_ROW: SequencePointerStep = 30;
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   public static show(chainsCollection: ChainsCollection) {
@@ -314,103 +316,153 @@ export class SequenceRenderer {
     return monomers;
   }
 
+  public static resetLastCaretPosition() {
+    this.lastUserDefinedCursorPosition = 0;
+  }
+
+  public static get collectionChainRow() {
+    let finalArray: Array<Array<SubChainNode>> = [];
+    let chainNodes: Array<SubChainNode> = [];
+    SequenceRenderer.forEachNode(({ node }) => {
+      chainNodes.push(node);
+      if (node instanceof EmptySequenceNode) {
+        finalArray.push([...chainNodes]);
+        chainNodes = [];
+      }
+    });
+
+    for (let i = 0; i < finalArray.length; i++) {
+      let subArray = finalArray[i];
+      if (subArray.length > 30) {
+        let newSubArrays: Array<SubChainNode[]> = [];
+        while (subArray.length > 0) {
+          newSubArrays.push(subArray.splice(0, 30));
+        }
+        finalArray.splice(i, 1, ...newSubArrays);
+        i += newSubArrays.length - 1;
+      }
+    }
+
+    return finalArray;
+  }
+
+  public static get currentChainRow() {
+    const { currentEdittingNode: currentNode } = this;
+    return (
+      this.collectionChainRow.find((idexRow) =>
+        idexRow.includes(currentNode),
+      ) || []
+    );
+  }
+
+  public static get previousChainRow() {
+    const { currentEdittingNode: currentNode } = this;
+    let previous: SubChainNode[] = [];
+    for (let i = 0; i < this.collectionChainRow.length; i++) {
+      if (this.collectionChainRow[i].includes(currentNode)) {
+        return previous;
+      }
+      previous = this.collectionChainRow[i];
+    }
+    return [];
+  }
+
+  public static get nextChainRow() {
+    const { currentEdittingNode: currentNode } = this;
+    const currentIndex = this.collectionChainRow.findIndex((row) =>
+      row.includes(currentNode),
+    );
+    if (currentIndex === -1) {
+      return [];
+    }
+    return this.collectionChainRow[currentIndex + 1] || [];
+  }
+
   public static moveCaretUp() {
     const {
       currentEdittingNode: currentNode,
-      currentChain,
-      previousChain,
-      step,
+      currentChainRow,
+      previousChainRow,
+      caretPosition,
+      NUMBER_OF_SYMBOLS_IN_ROW,
     } = this;
-    const currentArrayLength = currentChain.length;
-    const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
-    const nodeIndex = baseArray.indexOf(currentNode);
-    const tailLength = previousChain
-      ? previousChain.length > step
-        ? previousChain.length - step * Math.floor(previousChain.length / step)
-        : previousChain.length
-      : 0;
-
-    const restoreCaretPosition = (
-      tailOrLength,
-      caretPosition = this.caretPosition,
-    ) =>
+    const nodeIndex = currentChainRow.indexOf(currentNode);
+    const restoreCaretPosition = (offset) =>
       new RestoreSequenceCaretPositionOperation(
-        this.caretPosition,
-        this.caretPosition - tailOrLength || caretPosition,
+        caretPosition,
+        caretPosition - offset,
       );
 
-    if (this.caretPosition >= step) {
-      if (currentArrayLength > step && nodeIndex >= step) {
-        restoreCaretPosition(step, 0);
-      } else if (nodeIndex < tailLength - 1) {
-        restoreCaretPosition(
-          tailLength - currentArrayLength + currentArrayLength,
-        );
-      } else {
-        restoreCaretPosition(nodeIndex + 1);
-      }
-    } else {
-      if (previousChain && previousChain.length > nodeIndex) {
-        restoreCaretPosition(previousChain.length, 0);
-      } else if (previousChain) {
-        restoreCaretPosition(nodeIndex + 1);
-      } else {
-        restoreCaretPosition(0);
-      }
+    if (previousChainRow.length === 0) {
+      restoreCaretPosition(0);
+      return;
     }
+
+    if (nodeIndex > this.lastUserDefinedCursorPosition) {
+      this.lastUserDefinedCursorPosition = nodeIndex;
+    }
+
+    const symbolsBeforeCurrentInRow =
+      currentChainRow.length - (currentChainRow.length - nodeIndex);
+    let maxCaretOffsetForNextRow = Math.min(
+      previousChainRow.length - this.lastUserDefinedCursorPosition,
+      NUMBER_OF_SYMBOLS_IN_ROW - symbolsBeforeCurrentInRow,
+    );
+
+    if (maxCaretOffsetForNextRow <= 0) {
+      maxCaretOffsetForNextRow = 1;
+    }
+
+    const newCursorPosition =
+      symbolsBeforeCurrentInRow +
+      Math.min(previousChainRow.length, maxCaretOffsetForNextRow);
+
+    restoreCaretPosition(newCursorPosition);
   }
 
   public static moveCaretDown() {
     const {
       currentEdittingNode: currentNode,
-      currentChain,
-      nextChain,
-      step,
+      currentChainRow,
+      nextChainRow,
+      caretPosition,
+      NUMBER_OF_SYMBOLS_IN_ROW,
     } = this;
+    const nodeIndex = currentChainRow.indexOf(currentNode);
     const restoreCaretPosition = (offset) =>
       new RestoreSequenceCaretPositionOperation(
-        this.caretPosition,
-        this.caretPosition + offset || this.caretPosition,
+        caretPosition,
+        caretPosition + offset || caretPosition,
       );
-    const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
-    const currentArrayLength = currentChain.length;
-    const nodeIndex = baseArray.indexOf(currentNode);
-    const prevStepBound =
-      currentArrayLength > step
-        ? step * Math.floor(currentArrayLength / step) - 1
-        : currentArrayLength;
 
-    if (
-      (!nextChain && currentArrayLength < step) ||
-      (!nextChain && nodeIndex > prevStepBound)
-    ) {
+    if (nextChainRow.length === 0) {
+      restoreCaretPosition(0);
       return;
     }
 
-    if (currentArrayLength > step) {
-      const remaining = currentArrayLength - nodeIndex;
-
-      if (prevStepBound >= nodeIndex) {
-        restoreCaretPosition(remaining <= step ? remaining - 1 : step);
-      } else {
-        const offset = currentArrayLength - prevStepBound - remaining;
-        restoreCaretPosition(
-          offset > nextChain.length
-            ? remaining + nextChain.length - 1
-            : currentArrayLength - prevStepBound - 1,
-        );
-      }
-    } else {
-      const offset = currentArrayLength - nodeIndex;
-      restoreCaretPosition(
-        nodeIndex > nextChain.length - 1
-          ? offset + nextChain.length - 1
-          : currentArrayLength,
-      );
+    if (nodeIndex > this.lastUserDefinedCursorPosition) {
+      this.lastUserDefinedCursorPosition = nodeIndex;
     }
+
+    let symbolsAfterCurrentInRow =
+      currentChainRow.length - this.lastUserDefinedCursorPosition;
+    const maxCaretOffsetForNextRow = Math.min(
+      this.lastUserDefinedCursorPosition,
+      NUMBER_OF_SYMBOLS_IN_ROW - symbolsAfterCurrentInRow,
+    );
+
+    if (symbolsAfterCurrentInRow <= 0) {
+      symbolsAfterCurrentInRow = 1;
+    }
+
+    const newCursorPosition =
+      symbolsAfterCurrentInRow +
+      Math.min(nextChainRow.length - 1, maxCaretOffsetForNextRow);
+    restoreCaretPosition(newCursorPosition);
   }
 
   public static moveCaretForward() {
+    SequenceRenderer.resetLastCaretPosition();
     return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.nextCaretPosition || this.caretPosition,
@@ -418,6 +470,7 @@ export class SequenceRenderer {
   }
 
   public static moveCaretBack() {
+    SequenceRenderer.resetLastCaretPosition();
     return new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition === undefined
@@ -699,156 +752,131 @@ export class SequenceRenderer {
           ));
       }
       modelChanges.addOperation(this.moveCaretBack());
-    } else if (arrowKey === 'ArrowDown') {
+    } else if (arrowKey === 'ArrowUp') {
       const {
         currentEdittingNode: currentNode,
-        currentChain,
-        nextChain,
-        step,
-        caretPosition,
+        currentChainRow,
+        previousChainRow,
+        NUMBER_OF_SYMBOLS_IN_ROW,
       } = this;
-      const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
-      const currentArrayLength = currentChain.length;
-      const nodeIndex = baseArray.indexOf(currentNode);
-      const prevStepBound =
-        currentArrayLength > step
-          ? step * Math.floor(currentArrayLength / step) - 1
-          : currentArrayLength;
+      let combinedArrayChainRow: SubChainNode[] = previousChainRow.concat(
+        this.currentChainRow,
+      );
 
-      let markPartArray: SubChainNode[] = [];
-      SequenceRenderer.forEachNode(({ node }) => {
-        markPartArray.push(node);
-      });
-      if (
-        (!nextChain && currentArrayLength < step) ||
-        (!nextChain && nodeIndex > prevStepBound)
-      ) {
-        markPartArray = markPartArray.slice(caretPosition);
-        markPartArray.forEach((item) => {
+      const nodeIndex = currentChainRow.indexOf(currentNode);
+      const nodeIndexCombinedArrayChainRow =
+        combinedArrayChainRow.indexOf(currentNode);
+
+      const restoreCaretPosition = () => {
+        return new RestoreSequenceCaretPositionOperation(
+          this.caretPosition,
+          this.previousCaretPosition === undefined
+            ? 0
+            : this.previousCaretPosition,
+        );
+      };
+
+      if (this.previousChainRow.length === 0) {
+        combinedArrayChainRow = this.currentChainRow.slice(0, nodeIndex);
+        combinedArrayChainRow.reverse().forEach((item) => {
           modelChanges = SequenceRenderer.getShiftArrowChanges(
             editor,
             item.monomer,
           );
-          modelChanges.addOperation(this.moveCaretForward());
+          modelChanges.addOperation(restoreCaretPosition());
         });
         return;
       }
-      if (currentArrayLength > step) {
-        if (nodeIndex < prevStepBound) {
-          if (currentArrayLength - nodeIndex <= step) {
-            markPartArray = markPartArray.slice(
-              caretPosition,
-              caretPosition + currentArrayLength - 1 - nodeIndex,
-            );
-          } else {
-            markPartArray = markPartArray.slice(
-              caretPosition,
-              caretPosition + step,
-            );
-          }
-        } else {
-          if (
-            currentArrayLength -
-              prevStepBound -
-              (currentArrayLength - nodeIndex) <=
-            nextChain.length
-          ) {
-            markPartArray = markPartArray.slice(
-              caretPosition,
-              caretPosition + currentArrayLength - 1 - prevStepBound,
-            );
-          } else {
-            markPartArray = markPartArray.slice(
-              caretPosition,
-              caretPosition +
-                currentArrayLength -
-                nodeIndex +
-                nextChain.length -
-                1,
-            );
-          }
-        }
-      } else {
-        if (nodeIndex < nextChain.length) {
-          markPartArray = markPartArray.slice(
-            caretPosition,
-            caretPosition + currentArrayLength,
-          );
-        } else {
-          markPartArray = markPartArray.slice(
-            caretPosition,
-            caretPosition +
-              (currentArrayLength - nodeIndex + nextChain.length - 1),
-          );
-        }
+
+      if (nodeIndex > this.lastUserDefinedCursorPosition) {
+        this.lastUserDefinedCursorPosition = nodeIndex;
       }
 
-      markPartArray.forEach((item) => {
+      let symbolsBeforeCurrentInRow =
+        currentChainRow.length - (currentChainRow.length - nodeIndex);
+      let maxCaretOffsetForNextRow = Math.min(
+        previousChainRow.length - this.lastUserDefinedCursorPosition,
+        NUMBER_OF_SYMBOLS_IN_ROW - symbolsBeforeCurrentInRow,
+      );
+
+      if (maxCaretOffsetForNextRow <= 0) {
+        maxCaretOffsetForNextRow = 1;
+      }
+
+      const newCursorPosition =
+        symbolsBeforeCurrentInRow +
+        Math.min(previousChainRow.length, maxCaretOffsetForNextRow);
+      combinedArrayChainRow = combinedArrayChainRow.slice(
+        nodeIndexCombinedArrayChainRow - newCursorPosition,
+        nodeIndexCombinedArrayChainRow,
+      );
+
+      combinedArrayChainRow.reverse().forEach((item) => {
         modelChanges = SequenceRenderer.getShiftArrowChanges(
           editor,
           item.monomer,
         );
-        modelChanges.addOperation(this.moveCaretForward());
+        modelChanges.addOperation(restoreCaretPosition());
       });
-    } else if (arrowKey === 'ArrowUp') {
+    } else if (arrowKey === 'ArrowDown') {
       const {
         currentEdittingNode: currentNode,
-        currentChain,
-        previousChain,
-        step,
-        caretPosition,
+        currentChainRow,
+        nextChainRow,
+        NUMBER_OF_SYMBOLS_IN_ROW,
       } = this;
-      const currentArrayLength = currentChain.length;
-      const baseArray = currentChain.subChains.flatMap((item) => item.nodes);
-      const nodeIndex = baseArray.indexOf(currentNode);
-      const tailLength = previousChain
-        ? previousChain.length > step
-          ? previousChain.length -
-            step * Math.floor(previousChain.length / step)
-          : previousChain.length
-        : 0;
 
-      let markPartArray: SubChainNode[] = [];
-      SequenceRenderer.forEachNode(({ node }) => {
-        markPartArray.push(node);
-      });
+      let combinedArrayChainRow: SubChainNode[] =
+        currentChainRow.concat(nextChainRow);
+      const nodeIndex = combinedArrayChainRow.indexOf(currentNode);
+      const restoreCaretPosition = () => {
+        return new RestoreSequenceCaretPositionOperation(
+          this.caretPosition,
+          this.nextCaretPosition || this.caretPosition,
+        );
+      };
 
-      if (caretPosition >= step) {
-        if (currentArrayLength > step && nodeIndex >= step) {
-          markPartArray = markPartArray.slice(
-            caretPosition - step,
-            caretPosition,
+      if (nextChainRow.length === 0) {
+        combinedArrayChainRow = currentChainRow.slice(nodeIndex);
+        combinedArrayChainRow.forEach((item) => {
+          modelChanges = SequenceRenderer.getShiftArrowChanges(
+            editor,
+            item.monomer,
           );
-        } else if (nodeIndex < tailLength - 1) {
-          markPartArray = markPartArray.slice(
-            caretPosition - (tailLength - nodeIndex) - nodeIndex,
-            caretPosition,
-          );
-        } else {
-          markPartArray = markPartArray.slice(
-            caretPosition - 1 - nodeIndex,
-            caretPosition,
-          );
-        }
-      } else {
-        if (previousChain && previousChain.length > nodeIndex) {
-          markPartArray = markPartArray.slice(nodeIndex, caretPosition);
-        } else if (previousChain) {
-          markPartArray = markPartArray.slice(
-            previousChain.length - 1,
-            caretPosition,
-          );
-        } else {
-          markPartArray = markPartArray.slice(0, caretPosition);
-        }
+          modelChanges.addOperation(restoreCaretPosition());
+        });
+        return;
       }
 
-      markPartArray.reverse().forEach((item) => {
+      if (nodeIndex > this.lastUserDefinedCursorPosition) {
+        this.lastUserDefinedCursorPosition = nodeIndex;
+      }
+
+      let symbolsAfterCurrentInRow =
+        currentChainRow.length - this.lastUserDefinedCursorPosition;
+      const maxCaretOffsetForNextRow = Math.min(
+        this.lastUserDefinedCursorPosition,
+        NUMBER_OF_SYMBOLS_IN_ROW - symbolsAfterCurrentInRow,
+      );
+
+      if (symbolsAfterCurrentInRow <= 0) {
+        symbolsAfterCurrentInRow = 1;
+      }
+
+      const newCursorPosition =
+        symbolsAfterCurrentInRow +
+        Math.min(nextChainRow.length - 1, maxCaretOffsetForNextRow);
+      combinedArrayChainRow = combinedArrayChainRow.slice(
+        nodeIndex,
+        nodeIndex + newCursorPosition,
+      );
+
+      combinedArrayChainRow.forEach((item) => {
         modelChanges = SequenceRenderer.getShiftArrowChanges(
           editor,
           item.monomer,
         );
-        modelChanges.addOperation(this.moveCaretBack());
+        modelChanges.addOperation(restoreCaretPosition());
       });
     }
     editor.renderersContainer.update(modelChanges);

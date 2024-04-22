@@ -17,14 +17,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
-import { MonomerGroups } from '../../constants';
 import {
   MonomerItemType,
   MONOMER_CONST,
   LabeledNucleotideWithPositionInSequence,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
-import { FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
+import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
+import {
+  deleteCachedCustomRnaPreset,
+  setCachedCustomRnaPreset,
+  toggleCachedCustomRnaPresetFavorites,
+} from 'helpers/manipulateCachedRnaPresets';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -41,7 +45,8 @@ interface IRnaBuilderState {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
   } | null;
-  presets: IRnaPreset[];
+  presetsDefault: IRnaPreset[];
+  presetsCustom: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
   uniqueNameError: string;
@@ -54,7 +59,8 @@ const initialState: IRnaBuilderState = {
   sequenceSelectionName: undefined,
   isSequenceFirstsOnlyNucleotidesSelected: undefined,
   activePresetMonomerGroup: null,
-  presets: [],
+  presetsDefault: [],
+  presetsCustom: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
   uniqueNameError: '',
@@ -76,12 +82,13 @@ export const rnaBuilderSlice = createSlice({
         sugar: undefined,
         phosphate: undefined,
         name: '',
+        nameInList: '',
       };
     },
     setActivePreset: (state, action: PayloadAction<IRnaPreset>) => {
       state.activePreset = {
         ...action.payload,
-        presetInList: action.payload,
+        nameInList: action.payload.name,
       };
     },
     setSequenceSelection: (
@@ -127,28 +134,36 @@ export const rnaBuilderSlice = createSlice({
       const preset = action.payload;
       const newPreset = { ...preset };
 
-      if (preset.presetInList) {
-        const presetIndexInList = state.presets.findIndex(
-          (presetInList) => presetInList.name === preset.presetInList?.name,
+      setCachedCustomRnaPreset(newPreset);
+
+      // Save or update preset in Store
+      if (newPreset.nameInList) {
+        const presetIndexInList = state.presetsCustom.findIndex(
+          (presetInList) => presetInList.name === newPreset.nameInList,
         );
+        newPreset.nameInList = newPreset.name;
         presetIndexInList === -1
-          ? state.presets.push(newPreset)
-          : state.presets.splice(presetIndexInList, 1, newPreset);
+          ? state.presetsCustom.push(newPreset)
+          : state.presetsCustom.splice(presetIndexInList, 1, newPreset);
       } else {
-        state.presets.push(newPreset);
+        state.presetsCustom.push(newPreset);
       }
+
       if (!state.activePreset) return;
-      state.activePreset.presetInList = newPreset;
+      state.activePreset.nameInList = newPreset.name;
     },
     deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
 
-      const presetIndexInList = state.presets.findIndex(
+      deleteCachedCustomRnaPreset(preset.name);
+
+      // Delete preset from Store
+      const presetIndexInList = state.presetsCustom.findIndex(
         (presetInList) => presetInList.name === preset.name,
       );
-      state.presets.splice(presetIndexInList, 1);
+      state.presetsCustom.splice(presetIndexInList, 1);
 
-      if (preset.presetInList) {
+      if (preset.nameInList) {
         state.activePreset = null;
       }
     },
@@ -166,13 +181,19 @@ export const rnaBuilderSlice = createSlice({
       if (!defaultNucleotide) {
         return;
       }
-      const presetExists = state.presets.find(
+      const presetExists = state.presetsDefault.find(
         (item: IRnaPreset) => item.name === defaultNucleotide.name,
       );
       if (presetExists) {
         return;
       }
-      state.presets = action.payload;
+      state.presetsDefault = action.payload;
+    },
+    setCustomPresets: (
+      state: RootState,
+      action: PayloadAction<IRnaPreset[]>,
+    ) => {
+      state.presetsCustom = action.payload;
     },
 
     setFavoritePresetsFromLocalStorage: (state: RootState) => {
@@ -183,7 +204,7 @@ export const rnaBuilderSlice = createSlice({
         return;
       }
 
-      state.presets = state.presets.map((preset) => {
+      state.presetsDefault = state.presetsDefault.map((preset) => {
         const uniqueKey = `${preset.name}_${MONOMER_CONST.RNA}`;
 
         const favoriteItem = favoritesInLocalStorage.find(
@@ -202,21 +223,34 @@ export const rnaBuilderSlice = createSlice({
     },
 
     clearFavorites: (state: RootState) => {
-      state.presets = [];
+      state.presetsDefault = [];
     },
 
     togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
-      const presetIndex = state.presets.findIndex(
+      // Find preset to update in default presets
+      const presetIndex = state.presetsDefault.findIndex(
+        (presetInList) => presetInList.name === action.payload.name,
+      );
+      // Find preset to update in custom presets
+      const presetCustomIndex = state.presetsCustom.findIndex(
         (presetInList) => presetInList.name === action.payload.name,
       );
 
-      const uniquePresetKey = `${action.payload.name}_${MONOMER_CONST.RNA}`;
-
+      // If updating default preset
       if (presetIndex >= 0) {
-        const favorite = state.presets[presetIndex].favorite;
-        state.presets[presetIndex].favorite = !favorite;
+        const favorite = state.presetsDefault[presetIndex].favorite;
+        state.presetsDefault[presetIndex].favorite = !favorite;
+        // If updating custom preset
+      } else if (presetCustomIndex >= 0) {
+        toggleCachedCustomRnaPresetFavorites(
+          state.presetsCustom[presetCustomIndex].name,
+        );
+        const favorite = state.presetsCustom[presetCustomIndex].favorite;
+        state.presetsCustom[presetCustomIndex].favorite = !favorite;
+        return;
       }
 
+      const uniquePresetKey = `${action.payload.name}_${MONOMER_CONST.RNA}`;
       const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) || []) as string[];
@@ -260,10 +294,6 @@ export const selectSequenceSelectionName = (state: RootState): string =>
 export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
 ): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleotidesSelected;
-
-export const selectPresets = (state: RootState): IRnaPreset[] => {
-  return state.rnaBuilder.presets;
-};
 
 export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
@@ -315,7 +345,7 @@ export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
   const activePreset = state.rnaBuilder.activePreset;
   return (
     activePreset &&
-    !activePreset.presetInList &&
+    !activePreset.nameInList &&
     !activePreset.name &&
     !activePreset.sugar &&
     !activePreset.base &&
@@ -330,12 +360,19 @@ export const selectActivePresetForContextMenu = (state: RootState) => {
 export const selectPresetsInFavorites = (items: IRnaPreset[]) =>
   items.filter((item) => item.favorite);
 
+// Return custom and default presets
+export const selectAllPresets = (
+  state,
+): Array<IRnaPreset & { favorite: boolean }> => {
+  const { presetsDefault = [], presetsCustom = [] } = state.rnaBuilder;
+  return [...presetsDefault, ...presetsCustom];
+};
 export const selectFilteredPresets = (
   state,
 ): Array<IRnaPreset & { favorite: boolean }> => {
   const { searchFilter } = state.library;
-  const { presets } = state.rnaBuilder;
-  return presets.filter((item: IRnaPreset) => {
+  const presetsAll = selectAllPresets(state);
+  return presetsAll.filter((item: IRnaPreset) => {
     const name = item.name?.toLowerCase();
     const sugarName = item.sugar?.label?.toLowerCase();
     const phosphateName = item.phosphate?.label?.toLowerCase();
@@ -364,6 +401,7 @@ export const {
   setIsEditMode,
   setUniqueNameError,
   setDefaultPresets,
+  setCustomPresets,
   setActivePresetForContextMenu,
   togglePresetFavorites,
   setFavoritePresetsFromLocalStorage,

@@ -69,7 +69,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const expandEditor = () => {
     setExpanded(!expanded);
-    if (!activePreset?.presetInList) {
+    if (!activePreset?.nameInList) {
       dispatch(setIsEditMode(true));
     }
   };

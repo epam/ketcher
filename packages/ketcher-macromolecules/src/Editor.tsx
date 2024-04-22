@@ -48,10 +48,6 @@ import {
   showPreview,
 } from 'state/common';
 import {
-  loadMonomerLibrary,
-  setFavoriteMonomersFromLocalStorage,
-} from 'state/library';
-import {
   useAppDispatch,
   useAppSelector,
   useSequenceEditInRNABuilderMode,
@@ -87,15 +83,9 @@ import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
+import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
-import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
-import {
-  setDefaultPresets,
-  setFavoritePresetsFromLocalStorage,
-  clearFavorites,
-} from 'state/rna-builder';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
@@ -174,28 +164,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    if (editor) {
-      const monomersLibrary = editor.monomersLibrary;
-      const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
-
-      dispatch(loadMonomerLibrary(monomersLibrary));
-      dispatch(setFavoriteMonomersFromLocalStorage(null));
-
-      const defaultPresets: IRnaPreset[] = getDefaultPresets(
-        monomersLibrary,
-        defaultPresetsTemplates,
-      );
-
-      dispatch(setDefaultPresets(defaultPresets));
-      dispatch(setFavoritePresetsFromLocalStorage());
-    }
-
-    return () => {
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
-    };
-  }, [editor]);
+  useSetRnaPresets();
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),

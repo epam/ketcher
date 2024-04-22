@@ -39,7 +39,7 @@ import {
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
   selectIsPresetReadyToSave,
-  selectPresets,
+  selectAllPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
   setIsEditMode,
@@ -48,6 +48,7 @@ import {
   setUniqueNameError,
   setSequenceSelection,
   setSequenceSelectionName,
+  selectIsActivePresetNewAndEmpty,
 } from 'state/rna-builder';
 import { useAppSelector, useSequenceEditInRNABuilderMode } from 'hooks';
 import {
@@ -93,9 +94,10 @@ export const RnaEditorExpanded = ({
 
   const dispatch = useDispatch();
   const activePreset = useAppSelector(selectActivePreset);
+  const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const editor = useAppSelector(selectEditor);
-  const presets = useAppSelector(selectPresets);
+  const presets = useAppSelector(selectAllPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,
   );
@@ -233,13 +235,13 @@ export const RnaEditorExpanded = ({
     );
     if (
       presetWithSameName &&
-      activePreset.presetInList !== presetWithSameName
+      activePreset.nameInList !== presetWithSameName.name
     ) {
       dispatch(setUniqueNameError(newPreset.name));
       return;
     }
-    dispatch(setActivePreset(newPreset));
     dispatch(savePreset(newPreset));
+    dispatch(setActivePreset(newPreset));
     editor.events.selectPreset.dispatch(newPreset);
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
@@ -253,6 +255,8 @@ export const RnaEditorExpanded = ({
       resetAfterSequenceUpdate();
     } else {
       setNewPreset(activePreset);
+      dispatch(setIsEditMode(false));
+      dispatch(setActivePresetMonomerGroup(null));
     }
   };
 
@@ -281,7 +285,7 @@ export const RnaEditorExpanded = ({
 
   let mainButton;
 
-  if (!activePreset.presetInList && !isSequenceEditInRNABuilderMode) {
+  if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
       <StyledButton
         disabled={!selectIsPresetReadyToSave(newPreset)}

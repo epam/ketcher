@@ -291,6 +291,26 @@ test.describe('RNA Library', () => {
     await takePresetsScreenshot(page);
   });
 
+  test('Add Custom preset to Presets section and display after page reload', async ({
+    page,
+  }) => {
+    await expandCollapseRnaBuilder(page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await expandCollapseRnaBuilder(page);
+    await takePresetsScreenshot(page);
+    await page.reload();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await expandCollapseRnaBuilder(page);
+    await takePresetsScreenshot(page);
+  });
+
   test('Add Custom preset to Canvas', async ({ page }) => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas

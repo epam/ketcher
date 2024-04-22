@@ -32,4 +32,8 @@ export class Command {
     );
     renderersManagers.runPostRenderMethods();
   }
+
+  public clear() {
+    this.operations = [];
+  }
 }

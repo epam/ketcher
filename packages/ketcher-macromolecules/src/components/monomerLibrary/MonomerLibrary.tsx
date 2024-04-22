@@ -26,7 +26,7 @@ import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
-  selectPresets,
+  selectAllPresets,
   setActivePreset,
   setIsEditMode,
   setUniqueNameError,
@@ -50,7 +50,7 @@ const MonomerLibrary = React.memo(() => {
   const isDisabledTabsPanels =
     isSequenceMode && !isSequenceEditInRNABuilderMode;
 
-  useAppSelector(selectPresets, (presets) => {
+  useAppSelector(selectAllPresets, (presets) => {
     presetsRef.current = presets;
     return true;
   });
@@ -68,10 +68,11 @@ const MonomerLibrary = React.memo(() => {
       return;
     }
 
+    const nameToSet = presetWithSameName ? `${name}_Copy` : name;
     const duplicatedPreset = {
       ...preset,
-      presetInList: undefined,
-      name: presetWithSameName ? `${name}_Copy` : name,
+      name: nameToSet,
+      nameInList: nameToSet,
       default: false,
       favorite: false,
     };

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
@@ -19,6 +19,7 @@ import {
   pressButton,
   selectSnakeLayoutModeTool,
   turnOnMicromoleculesEditor,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   chooseFileFormat,
@@ -32,13 +33,34 @@ function removeNotComparableData(file: string) {
     .join('\n');
 }
 
+let page: Page;
+
+test.beforeAll(async ({ browser }) => {
+  const sharedContext = await browser.newContext();
+
+  // Reminder: do not pass page as async paramenter to test
+  page = await sharedContext.newPage();
+  await waitForPageInit(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  browser.close();
+});
+
 test.describe('Import-Saving .mol Files', () => {
+  /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
-
-  test('Import monomers and chem', async ({ page }) => {
+  */
+  test('Import monomers and chem', async () => {
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/monomers-and-chem.mol',
       page,
@@ -46,7 +68,7 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Import monomers and chem with clipboard', async ({ page }) => {
+  test('Import monomers and chem with clipboard', async () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard(
       'tests/test-data/Molfiles-V3000/monomers-and-chem.mol',
@@ -56,16 +78,23 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Import incorrect data', async ({ page }) => {
+  test('Import incorrect data', async () => {
     const randomText = 'asjfnsalkfl';
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByTestId('paste-from-clipboard-button').click();
     await page.getByTestId('open-structure-textarea').fill(randomText);
     await page.getByTestId('add-to-canvas-button').click();
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Export monomers and chem', async ({ page }) => {
+  test('Export monomers and chem', async () => {
     await openFileAndAddToCanvasMacro('KET/monomers-and-chem.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'MDL Molfile V3000');
@@ -83,22 +112,32 @@ test.describe('Import-Saving .mol Files', () => {
       await textArea.inputValue(),
     );
     await expect(valueInTextarea).toBe(expectedData);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async ({
-    page,
-  }) => {
+  test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3666
     Description: Structure in center of canvas after opening
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async ({
-    page,
-  }) => {
+  test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3667
     https://github.com/epam/ketcher/issues/3668
@@ -107,11 +146,16 @@ test.describe('Import-Saving .mol Files', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.getByText('K').locator('..').first().hover();
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
-    page,
-  }) => {
+  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/3669
     Description: After importing a file with modified monomers, it is clear which monomer is modified,
@@ -129,7 +173,7 @@ test.describe('Import-Saving .mol Files', () => {
   const fileTypes = ['dna', 'rna'];
 
   for (const fileType of fileTypes) {
-    test(`Import ${fileType.toUpperCase()} file`, async ({ page }) => {
+    test(`Import ${fileType.toUpperCase()} file`, async () => {
       /*
     Test case: Import/Saving files
     Description: Imported DNA file opens without errors.
@@ -142,9 +186,7 @@ test.describe('Import-Saving .mol Files', () => {
     });
   }
 
-  test('Check import of file with 50 monomers and save in MOL V3000 format', async ({
-    page,
-  }) => {
+  test('Check import of file with 50 monomers and save in MOL V3000 format', async () => {
     /*
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
@@ -178,9 +220,7 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check import of file with 100 monomers and save in MOL V3000 format', async ({
-    page,
-  }) => {
+  test('Check import of file with 100 monomers and save in MOL V3000 format', async () => {
     /*
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
@@ -204,6 +244,13 @@ test.describe('Import-Saving .mol Files', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
   const monomersToDelete = [
@@ -215,9 +262,7 @@ test.describe('Import-Saving .mol Files', () => {
    Test for deleting part of monomers structure
   */
   for (const monomer of monomersToDelete) {
-    test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async ({
-      page,
-    }) => {
+    test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
         page,
@@ -228,9 +273,7 @@ test.describe('Import-Saving .mol Files', () => {
     });
   }
 
-  test('Check that empty file can be saved in .mol format', async ({
-    page,
-  }) => {
+  test('Check that empty file can be saved in .mol format', async () => {
     /*
     Test case: Import/Saving files
     Description: Empty file can be saved in .mol format
@@ -251,9 +294,7 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Check that system does not let importing empty .mol file', async ({
-    page,
-  }) => {
+  test('Check that system does not let importing empty .mol file', async () => {
     /*
     Test case: Import/Saving files
     Description: System does not let importing empty .mol file
@@ -261,11 +302,16 @@ test.describe('Import-Saving .mol Files', () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Molfiles-V2000/empty-file.mol', page);
     await page.getByText('Add to Canvas').isDisabled();
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Check that system does not let uploading corrupted .mol file', async ({
-    page,
-  }) => {
+  test('Check that system does not let uploading corrupted .mol file', async () => {
     /*
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
@@ -277,11 +323,16 @@ test.describe('Import-Saving .mol Files', () => {
     await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async ({
-    page,
-  }) => {
+  test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {
     /*
     Test case: Import/Saving files
     Description: Sequence of Peptides displaying according to snake view mockup.
@@ -292,11 +343,16 @@ test.describe('Import-Saving .mol Files', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async ({
-    page,
-  }) => {
+  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
     /*
     Test case: Import/Saving files
     Description: Snake viewed chain of peptides saved in a Mol v3000 file
@@ -325,9 +381,7 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
-    page,
-  }) => {
+  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode when saving it in micro mode
@@ -339,9 +393,7 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that macro .mol file can be imported in micro mode', async ({
-    page,
-  }) => {
+  test('Check that macro .mol file can be imported in micro mode', async () => {
     /*
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
@@ -352,11 +404,16 @@ test.describe('Import-Saving .mol Files', () => {
       page,
     );
     await takeEditorScreenshot(page);
+
+    // Closing page since test expects it to have closed at the end
+    const context = page.context();
+    await page.close();
+    page = await context.newPage();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
 
-  test('Check that RNA preset in not changing after saving and importing it as .mol file', async ({
-    page,
-  }) => {
+  test('Check that RNA preset in not changing after saving and importing it as .mol file', async () => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode
@@ -365,9 +422,7 @@ test.describe('Import-Saving .mol Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that CHEMs in not changing after saving and importing it as .mol file', async ({
-    page,
-  }) => {
+  test('Check that CHEMs in not changing after saving and importing it as .mol file', async () => {
     /*
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode.
@@ -381,13 +436,16 @@ test.describe('Import-Saving .mol Files', () => {
 });
 
 test.describe('Import modified .mol files from external editor', () => {
+  /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
-
-  test.afterEach(async ({ page }) => {
+  */
+  test.afterEach(async () => {
     await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+0');
+    await selectClearCanvasTool(page);
   });
 
   const fileNames = [
@@ -406,7 +464,7 @@ test.describe('Import modified .mol files from external editor', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
       const numberOfPressZoomOut = 4;
       for (let i = 0; i < numberOfPressZoomOut; i++) {
@@ -425,10 +483,12 @@ test.describe('Base monomers on the canvas, their connection points and preview 
     (Base) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
+  /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+  */
 
   const fileNames = [
     '01 - (R1) - Left only',
@@ -442,7 +502,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
@@ -476,11 +536,12 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
     (CHEM) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  test.beforeEach(async ({ page }) => {
+  /*
+    test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
-
+  */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -500,7 +561,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
@@ -534,11 +595,12 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
     (Peptide) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  test.beforeEach(async ({ page }) => {
+  /*
+    test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
-
+  */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -558,7 +620,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
@@ -592,10 +654,12 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
     (Phosphate) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  test.beforeEach(async ({ page }) => {
+  /*
+    test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+  */
 
   const fileNames = [
     '01 - (R1) - Left only',
@@ -616,7 +680,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
@@ -650,11 +714,12 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     (Sugar) from .mol file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  test.beforeEach(async ({ page }) => {
+  /*
+    test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
-
+  */
   const fileNames = [
     '01 - (R1) - Left only',
     '02 - (R2) - Right only',
@@ -674,7 +739,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   ];
 
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async ({ page }) => {
+    test(`for ${fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,

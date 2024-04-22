@@ -225,10 +225,10 @@ export class SequenceMode extends BaseMode {
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
-    console.log(this.isEditMode);
-
-    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
+    if (this.isEditMode) {
       SequenceRenderer.resetLastCaretPosition();
+    }
+    if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );

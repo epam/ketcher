@@ -333,10 +333,10 @@ export class SequenceRenderer {
 
     for (let i = 0; i < finalArray.length; i++) {
       const subArray = finalArray[i];
-      if (subArray.length > 30) {
+      if (subArray.length > this.NUMBER_OF_SYMBOLS_IN_ROW) {
         const newSubArrays: Array<SubChainNode[]> = [];
         while (subArray.length > 0) {
-          newSubArrays.push(subArray.splice(0, 30));
+          newSubArrays.push(subArray.splice(0, this.NUMBER_OF_SYMBOLS_IN_ROW));
         }
         finalArray.splice(i, 1, ...newSubArrays);
         i += newSubArrays.length - 1;

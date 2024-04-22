@@ -1,13 +1,33 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  selectClearCanvasTool,
+  waitForPageInit,
 } from '@utils';
+
+let page: Page;
+
+test.beforeAll(async ({ browser }) => {
+  const sharedContext = await browser.newContext();
+
+  // Reminder: do not pass page as async paramenter to test
+  page = await sharedContext.newPage();
+  await waitForPageInit(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  browser.close();
+});
 
 test.describe('1. User can expand hydrogens for ', () => {
   /* 

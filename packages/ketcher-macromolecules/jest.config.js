@@ -7,6 +7,7 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
     '\\.svg$': '<rootDir>/testFileTransformer.js',
     '\\.sdf$': '<rootDir>/textFileTransformer.js',
+    '\\.ket': '<rootDir>/textFileTransformer.js',
   },
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
@@ -18,6 +19,7 @@ module.exports = {
     '^assets(.*)$': '<rootDir>/src/assets/$1',
     '^helpers(.*)$': '<rootDir>/src/helpers/$1',
     '\\.sdf$': '<rootDir>/textFileTransformer.js',
+    '\\.ket': '<rootDir>/textFileTransformer.js',
     '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.tsx'],

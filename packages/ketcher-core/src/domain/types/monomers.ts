@@ -7,7 +7,10 @@ import {
   Struct,
   Sugar,
 } from 'domain/entities';
-import { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import {
+  IKetAttachmentPoint,
+  IKetIdtAliases,
+} from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 
 export type MonomerColorScheme = {
@@ -33,6 +36,7 @@ export type MonomerItemType = {
     MonomerType?: string;
     MonomerClass?: string;
     isMicromoleculeFragment?: boolean;
+    idtAliases?: IKetIdtAliases;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;

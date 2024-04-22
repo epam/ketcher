@@ -19,15 +19,17 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
 import {
-  SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
   NodeSelection,
+  KetSerializer,
+  MonomerItemType,
+  KetMonomerGroupTemplateClass,
+  KetTemplateType,
 } from 'ketcher-core';
-import monomersData from './data/monomers.sdf';
-
+import monomersDataRaw from './data/monomers.ket';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -173,8 +175,18 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new SdfSerializer();
-    const library = serializer.deserialize(monomersData);
+    const serializer = new KetSerializer();
+    const library: MonomerItemType[] = [];
+    const monomersData = JSON.parse(monomersDataRaw);
+    monomersData.root.templates.forEach((templateRef) => {
+      const template = monomersData[templateRef.$ref];
+
+      if (template.type !== KetTemplateType.MONOMER_TEMPLATE) {
+        return;
+      }
+
+      library.push(serializer.convertMonomerTemplateToLibraryItem(template));
+    });
     dispatch(loadMonomerLibrary(library));
     dispatch(setFavoriteMonomersFromLocalStorage(null));
 
@@ -192,7 +204,26 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor, monomers]);
 
   useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
+    if (!monomers.length) {
+      return;
+    }
+    const monomersData = JSON.parse(monomersDataRaw);
+
+    const defaultPresetsTemplates = monomersData.root.templates
+      .filter((templateRef) => {
+        const template = monomersData[templateRef.$ref];
+
+        return (
+          template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
+          template.class === KetMonomerGroupTemplateClass.RNA
+        );
+      })
+      .map((templateRef) => monomersData[templateRef.$ref]);
+    const defaultPresets: IRnaPreset[] = getDefaultPresets(
+      monomers,
+      defaultPresetsTemplates,
+    );
+
     dispatch(setDefaultPresets(defaultPresets));
     dispatch(setFavoritePresetsFromLocalStorage());
 

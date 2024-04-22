@@ -13,7 +13,7 @@ declare namespace NodeJS {
   }
 }
 
-declare module '*.sdf' {
+declare module '*.ket' {
   const content: string;
   export default content;
 }

@@ -491,6 +491,7 @@ export class CoreEditor {
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
+    this.setMonomersLibrary([]);
   }
 
   private switchToMacromolecules() {

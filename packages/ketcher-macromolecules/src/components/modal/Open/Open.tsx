@@ -26,6 +26,7 @@ import {
   KetcherLogger,
   EditorHistory,
   SequenceMode,
+  macromoleculesFilesInputFormats,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -102,20 +103,7 @@ const additionalOptions: Array<Option> = [
   { id: 'peptide', label: 'Peptide' },
 ];
 
-const inputFormats = {
-  ket: 'chemical/x-indigo-ket',
-  mol: 'chemical/x-mdl-molfile',
-  seq: {
-    rna: 'chemical/x-rna-sequence',
-    dna: 'chemical/x-dna-sequence',
-    peptide: 'chemical/x-peptide-sequence',
-  },
-  fasta: {
-    rna: 'chemical/x-rna-fasta',
-    dna: 'chemical/x-dna-fasta',
-    peptide: 'chemical/x-peptide-fasta',
-  },
-};
+const inputFormats = macromoleculesFilesInputFormats;
 
 export const MODAL_STATES = {
   openOptions: 'openOptions',
@@ -141,9 +129,10 @@ const addToCanvas = ({
   }
 
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
-  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
+  const { command: modelChanges } =
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
   const editorHistory = new EditorHistory(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
 

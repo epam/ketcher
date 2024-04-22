@@ -84,6 +84,7 @@ export class CoreEditor {
     this.domEventSetup();
     this.setupContextMenuEvents();
     this.setupKeyboardEvents();
+    this.setupCopyPasteEvent();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -130,6 +131,15 @@ export class CoreEditor {
     this.setupHotKeysEvents();
     document.addEventListener('keydown', async (event: KeyboardEvent) => {
       await this.mode.onKeyDown(event);
+    });
+  }
+
+  private setupCopyPasteEvent() {
+    document.addEventListener('copy', (event: ClipboardEvent) => {
+      this.mode.onCopy(event);
+    });
+    document.addEventListener('paste', (event: ClipboardEvent) => {
+      this.mode.onPaste(event);
     });
   }
 

@@ -134,6 +134,10 @@ const config: PlaywrightTestConfig = {
         launchOptions: {
           headless: true,
         },
+        contextOptions: {
+          // chromium-specific permissions
+          permissions: ['clipboard-read', 'clipboard-write'],
+        },
       },
     },
 

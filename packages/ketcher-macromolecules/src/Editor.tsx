@@ -62,6 +62,7 @@ import {
 } from 'hooks';
 import {
   closeErrorTooltip,
+  openErrorModal,
   openErrorTooltip,
   openModal,
   selectErrorTooltipText,
@@ -221,6 +222,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
       });
+      editor.events.openErrorModal.add(
+        (errorData: string | { errorMessage: string; errorTitle: string }) => {
+          dispatch(openErrorModal(errorData));
+        },
+      );
+
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
       editor.events.openMonomerConnectionModal.add(

@@ -6,7 +6,8 @@ import {
   startNewSequence,
   switchSequenceEnteringType,
   takeEditorScreenshot,
-  typeAllEnglishAlphabet,
+  typePeptideAlphabet,
+  typeRNADNAAlphabet,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -20,16 +21,14 @@ test.describe('Sequence edit mode', () => {
 
   test('Add/edit sequence', async ({ page }) => {
     await startNewSequence(page);
-    await typeAllEnglishAlphabet(page);
+    await typeRNADNAAlphabet(page);
     await switchSequenceEnteringType(page, SequenceType.DNA);
-    await typeAllEnglishAlphabet(page);
+    await typeRNADNAAlphabet(page);
     await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
-    await typeAllEnglishAlphabet(page);
+    await typePeptideAlphabet(page);
     await page.keyboard.press('Enter');
-    await typeAllEnglishAlphabet(page);
+    await typePeptideAlphabet(page);
     await takeEditorScreenshot(page);
-    // remove after fix the bug about opening sequence type dropdown on pressing Enter
-    await page.keyboard.press('Escape');
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });

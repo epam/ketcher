@@ -24,12 +24,7 @@ import {
   Nucleotide,
   Nucleoside,
   NodeSelection,
-  KetSerializer,
-  MonomerItemType,
-  KetMonomerGroupTemplateClass,
-  KetTemplateType,
 } from 'ketcher-core';
-import monomersDataRaw from './data/monomers.ket';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -54,7 +49,6 @@ import {
 } from 'state/common';
 import {
   loadMonomerLibrary,
-  selectMonomers,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
 import {
@@ -168,69 +162,40 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
-  const monomers = useAppSelector(selectMonomers);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new KetSerializer();
-    const library: MonomerItemType[] = [];
-    const monomersData = JSON.parse(monomersDataRaw);
-    monomersData.root.templates.forEach((templateRef) => {
-      const template = monomersData[templateRef.$ref];
-
-      if (template.type !== KetTemplateType.MONOMER_TEMPLATE) {
-        return;
-      }
-
-      library.push(serializer.convertMonomerTemplateToLibraryItem(template));
-    });
-    dispatch(loadMonomerLibrary(library));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
     };
   }, [dispatch]);
 
   useEffect(() => {
-    if (editor && monomers) {
-      editor.setMonomersLibrary(monomers);
+    if (editor) {
+      const monomersLibrary = editor.monomersLibrary;
+      const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
+
+      dispatch(loadMonomerLibrary(monomersLibrary));
+      dispatch(setFavoriteMonomersFromLocalStorage(null));
+
+      const defaultPresets: IRnaPreset[] = getDefaultPresets(
+        monomersLibrary,
+        defaultPresetsTemplates,
+      );
+
+      dispatch(setDefaultPresets(defaultPresets));
+      dispatch(setFavoritePresetsFromLocalStorage());
     }
-  }, [editor, monomers]);
-
-  useEffect(() => {
-    if (!monomers.length) {
-      return;
-    }
-    const monomersData = JSON.parse(monomersDataRaw);
-
-    const defaultPresetsTemplates = monomersData.root.templates
-      .filter((templateRef) => {
-        const template = monomersData[templateRef.$ref];
-
-        return (
-          template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
-          template.class === KetMonomerGroupTemplateClass.RNA
-        );
-      })
-      .map((templateRef) => monomersData[templateRef.$ref]);
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(
-      monomers,
-      defaultPresetsTemplates,
-    );
-
-    dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage());
 
     return () => {
+      dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [dispatch, monomers]);
+  }, [editor]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),

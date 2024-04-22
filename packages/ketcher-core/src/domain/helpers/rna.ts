@@ -3,13 +3,13 @@ import { SequenceType } from 'domain/entities';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export function getRnaPartLibraryItem(editor: CoreEditor, rnaBaseName: string) {
-  return editor.monomersLibrary.RNA.find(
+  return editor.monomersLibraryGroupedByType.RNA.find(
     (libraryItem) => libraryItem.props.MonomerName === rnaBaseName,
   );
 }
 
 export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {
-  return editor.monomersLibrary.PEPTIDE.find(
+  return editor.monomersLibraryGroupedByType.PEPTIDE.find(
     (libraryItem) => libraryItem.props.MonomerName === peptideName,
   );
 }

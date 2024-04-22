@@ -80,6 +80,7 @@
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
     "ts-jest": "26.5.6",

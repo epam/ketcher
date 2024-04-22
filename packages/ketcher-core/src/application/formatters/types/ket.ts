@@ -24,13 +24,24 @@ export interface IKetConnectionEndPoint {
   groupId?: string;
 }
 
+export enum KetConnectionType {
+  SINGLE = 'single',
+  HYDROGEN = 'hydrogen',
+}
+
 export interface IKetTemplateConnectionEndPoint {
-  templateId: string;
+  monomerTemplateId: string;
   attachmentPointId: AttachmentPointName;
 }
 
+export interface IKetTemplateConnection {
+  connectionType: KetConnectionType;
+  endpoint1: IKetTemplateConnectionEndPoint;
+  endpoint2: IKetTemplateConnectionEndPoint;
+}
+
 export interface IKetConnection {
-  connectionType: 'single' | 'hydrogen';
+  connectionType: KetConnectionType;
   label?: string;
   endpoint1: IKetConnectionEndPoint;
   endpoint2: IKetConnectionEndPoint;
@@ -116,10 +127,10 @@ export enum KetMonomerGroupTemplateClass {
 export interface IKetMonomerGroupTemplate {
   id: string;
   name: string;
-  type: KetTemplateType.MONOMER_GROUP_TEMPLATE;
+  type: KetTemplateType;
   class?: KetMonomerGroupTemplateClass;
   templates: IKetMonomerTemplateRef[];
-  connections: IKetTemplateConnectionEndPoint[];
+  connections: IKetTemplateConnection[];
   idtAliases?: IKetIdtAliases;
 }
 

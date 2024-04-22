@@ -16,7 +16,6 @@
 
 import { Struct, Vec2 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
-
 import { Serializer } from '../serializers.types';
 import { headerToKet } from './toKet/headerToKet';
 import { moleculeToKet } from './toKet/moleculeToKet';
@@ -35,6 +34,8 @@ import {
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
   IKetMonomerTemplate,
+  KetConnectionType,
+  KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { CoreEditor, EditorSelection } from 'application/editor/internal';
@@ -197,7 +198,7 @@ export class KetSerializer implements Serializer<Struct> {
     editor: CoreEditor,
   ) {
     if (
-      connection.connectionType !== 'single' ||
+      connection.connectionType !== KetConnectionType.SINGLE ||
       !connection.endpoint1.monomerId ||
       !connection.endpoint2.monomerId ||
       !connection.endpoint1.attachmentPointId ||
@@ -440,7 +441,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     parsedFileContent.root.connections?.forEach((connection) => {
       switch (connection.connectionType) {
-        case 'single': {
+        case KetConnectionType.SINGLE: {
           const bondAdditionCommand = polymerBondToDrawingEntity(
             connection,
             drawingEntitiesManager,
@@ -536,7 +537,7 @@ export class KetSerializer implements Serializer<Struct> {
         return;
       }
       fileContent.root.connections.push({
-        connectionType: 'single',
+        connectionType: KetConnectionType.SINGLE,
         endpoint1: {
           monomerId: setMonomerPrefix(polymerBond.firstMonomer.id),
           attachmentPointId:
@@ -588,5 +589,25 @@ export class KetSerializer implements Serializer<Struct> {
     ];
 
     return JSON.stringify(fileContent, null, 4) as unknown as string;
+  }
+
+  convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {
+    const library: MonomerItemType[] = [];
+
+    monomersLibrary.root.templates.forEach((templateRef) => {
+      const template = monomersLibrary[templateRef.$ref];
+
+      if (template.type !== KetTemplateType.MONOMER_TEMPLATE) {
+        return;
+      }
+
+      library.push(
+        this.convertMonomerTemplateToLibraryItem(
+          template as IKetMonomerTemplate,
+        ),
+      );
+    });
+
+    return library;
   }
 }

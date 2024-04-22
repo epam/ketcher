@@ -14,6 +14,7 @@ import {
   waitForRender,
   switchSequenceEnteringType,
   SequenceType,
+  takeLayoutSwitcherScreenshot,
 } from '@utils';
 import {
   enterSequence,
@@ -93,6 +94,17 @@ test.describe('Sequence Mode', () => {
     );
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a dropdown menu is displayed in toolbar when sequence mode is ON', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3861
+    Description: Dropdown menu is displayed in toolbar when sequence mode is ON.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await takeLayoutSwitcherScreenshot(page);
   });
 
   test('Test sequence display for long DNA/RNA', async ({ page }) => {
@@ -463,6 +475,56 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'acfrtp');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('If nucleotide is being added to the end of sequence, then phosphate P should be added automatically between last two nucleosides', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3650
+    Description: Phosphate P added automatically between last two nucleosides.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'cactt');
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete any nucleotide within RNA fragment using keyboard keys (Del, Backspace)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3650
+    Description: RNA fragment deleted.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'cagtt');
+    await page.keyboard.press('Escape');
+    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('Delete');
+    await page.keyboard.press('Backspace');
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Merging two chains occurs when cursor is before first symbol of the second chain in text-editing mode, and Backspace is pressed', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3650
+    Description: DNA and RNA chains are merged into one chain.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
+    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });

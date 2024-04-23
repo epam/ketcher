@@ -1,6 +1,7 @@
+/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { selectSingleBondTool } from '..';
+import { moveMouseAway, selectSingleBondTool } from '..';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -29,4 +30,67 @@ export async function bondTwoMonomers(
       await page.locator('button[title=Connect]').click();
     }
   }
+}
+
+export async function bondTwoMonomersPointToPoint(
+  page: Page,
+  firstMonomerElement: Locator,
+  secondMonomerElement: Locator,
+  firstMonomerConnectionPoint?: string,
+  secondMonomerConnectionPoint?: string,
+) {
+  await selectSingleBondTool(page);
+  await firstMonomerElement.hover();
+
+  if (firstMonomerConnectionPoint) {
+    const firstConnectionPoint = await firstMonomerElement.locator(
+      `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
+    );
+    const firstConnectionPointBoundingBox =
+      await firstConnectionPoint.boundingBox();
+
+    if (firstConnectionPointBoundingBox) {
+      await page.mouse.move(
+        // if we click on the center of R5 connection point - it replace R5 connection point with R1
+        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
+        firstConnectionPointBoundingBox.x +
+          firstConnectionPointBoundingBox.width / 4,
+        firstConnectionPointBoundingBox.y +
+          firstConnectionPointBoundingBox.height / 4,
+      );
+    } else {
+      console.log(
+        'Failed to locate connection point on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.down();
+
+  await secondMonomerElement.hover();
+  if (secondMonomerConnectionPoint) {
+    const secondConnectionPoint = await secondMonomerElement.locator(
+      `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,
+    );
+
+    const secondConnectionPointBoundingBox =
+      await secondConnectionPoint.boundingBox();
+
+    if (secondConnectionPointBoundingBox) {
+      await page.mouse.move(
+        // if we click on the center of R5 connection point - it replace R5 connection point with R1
+        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
+        secondConnectionPointBoundingBox.x +
+          secondConnectionPointBoundingBox.width / 4,
+        secondConnectionPointBoundingBox.y +
+          secondConnectionPointBoundingBox.height / 4,
+      );
+    } else {
+      console.log(
+        'Failed to locate connection point on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.up();
+
+  await moveMouseAway(page);
 }

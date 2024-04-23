@@ -10,7 +10,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
     id: template.id,
     Name: template.fullName || template.name || template.alias || template.id,
-    MonomerNaturalAnalogCode: template.naturalAnalogShort,
+    MonomerNaturalAnalogCode: template.naturalAnalogShort || '.',
     MonomerName: template.alias || template.id,
     MonomerFullName: template.fullName,
     MonomerType: template.classHELM,

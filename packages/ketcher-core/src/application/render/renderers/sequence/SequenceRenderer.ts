@@ -24,7 +24,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
-export type SequencePointerStep = number;
+export type NumberOfSymbolsInRow = number;
 export type SequenceLastCaretPosition = number;
 
 export type NodeSelection = {
@@ -33,12 +33,12 @@ export type NodeSelection = {
 };
 
 export type NodesSelection = NodeSelection[][];
+const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
   public static lastUserDefinedCursorPosition: SequenceLastCaretPosition = 0;
   public static chainsCollection: ChainsCollection;
-  public static NUMBER_OF_SYMBOLS_IN_ROW: SequencePointerStep = 30;
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   public static show(chainsCollection: ChainsCollection) {
@@ -326,56 +326,43 @@ export class SequenceRenderer {
     SequenceRenderer.forEachNode(({ node }) => {
       chainNodes.push(node);
       if (node instanceof EmptySequenceNode) {
-        finalArray.push([...chainNodes]);
+        if (chainNodes.length > NUMBER_OF_SYMBOLS_IN_ROW) {
+          while (chainNodes.length > 0) {
+            finalArray.push(chainNodes.splice(0, NUMBER_OF_SYMBOLS_IN_ROW));
+          }
+        } else {
+          finalArray.push([...chainNodes]);
+        }
         chainNodes = [];
       }
     });
-
-    for (let i = 0; i < finalArray.length; i++) {
-      const subArray = finalArray[i];
-      if (subArray.length > this.NUMBER_OF_SYMBOLS_IN_ROW) {
-        const newSubArrays: Array<SubChainNode[]> = [];
-        while (subArray.length > 0) {
-          newSubArrays.push(subArray.splice(0, this.NUMBER_OF_SYMBOLS_IN_ROW));
-        }
-        finalArray.splice(i, 1, ...newSubArrays);
-        i += newSubArrays.length - 1;
-      }
-    }
 
     return finalArray;
   }
 
   public static get currentChainRow() {
-    const { currentEdittingNode: currentNode } = this;
     return (
       this.collectionChainRow.find((idexRow) =>
-        idexRow.includes(currentNode),
+        idexRow.includes(this.currentEdittingNode),
       ) || []
     );
   }
 
   public static get previousChainRow() {
-    const { currentEdittingNode: currentNode } = this;
-    let previous: SubChainNode[] = [];
-    for (let i = 0; i < this.collectionChainRow.length; i++) {
-      if (this.collectionChainRow[i].includes(currentNode)) {
-        return previous;
-      }
-      previous = this.collectionChainRow[i];
-    }
-    return [];
+    const index = this.collectionChainRow.findIndex((row) =>
+      row.includes(this.currentEdittingNode),
+    );
+    return index > 0 ? this.collectionChainRow[index - 1] : [];
   }
 
   public static get nextChainRow() {
-    const { currentEdittingNode: currentNode } = this;
     const currentIndex = this.collectionChainRow.findIndex((row) =>
-      row.includes(currentNode),
+      row.includes(this.currentEdittingNode),
     );
-    if (currentIndex === -1) {
-      return [];
-    }
-    return this.collectionChainRow[currentIndex + 1] || [];
+    return currentIndex !== -1 &&
+      currentIndex + 1 < this.collectionChainRow.length
+      ? this.collectionChainRow[currentIndex + 1]
+      : [];
   }
 
   public static moveCaretUp() {
@@ -384,7 +371,6 @@ export class SequenceRenderer {
       currentChainRow,
       previousChainRow,
       caretPosition,
-      NUMBER_OF_SYMBOLS_IN_ROW,
     } = this;
     const nodeIndex = currentChainRow.indexOf(currentNode);
     const restoreCaretPosition = (offset) =>
@@ -398,20 +384,19 @@ export class SequenceRenderer {
       return;
     }
 
-    if (nodeIndex > this.lastUserDefinedCursorPosition) {
-      this.lastUserDefinedCursorPosition = nodeIndex;
-    }
+    this.lastUserDefinedCursorPosition = Math.max(
+      this.lastUserDefinedCursorPosition,
+      nodeIndex,
+    );
 
     const symbolsBeforeCurrentInRow =
       currentChainRow.length - (currentChainRow.length - nodeIndex);
     let maxCaretOffsetForNextRow = Math.min(
       previousChainRow.length - this.lastUserDefinedCursorPosition,
-      NUMBER_OF_SYMBOLS_IN_ROW - symbolsBeforeCurrentInRow,
+      NUMBER_OF_SYMBOLS_IN_ROW - nodeIndex,
     );
 
-    if (maxCaretOffsetForNextRow <= 0) {
-      maxCaretOffsetForNextRow = 1;
-    }
+    maxCaretOffsetForNextRow = Math.max(1, maxCaretOffsetForNextRow);
 
     const newCursorPosition =
       symbolsBeforeCurrentInRow +
@@ -426,7 +411,6 @@ export class SequenceRenderer {
       currentChainRow,
       nextChainRow,
       caretPosition,
-      NUMBER_OF_SYMBOLS_IN_ROW,
     } = this;
     const nodeIndex = currentChainRow.indexOf(currentNode);
     const restoreCaretPosition = (offset) =>
@@ -440,9 +424,10 @@ export class SequenceRenderer {
       return;
     }
 
-    if (nodeIndex > this.lastUserDefinedCursorPosition) {
-      this.lastUserDefinedCursorPosition = nodeIndex;
-    }
+    this.lastUserDefinedCursorPosition = Math.max(
+      this.lastUserDefinedCursorPosition,
+      nodeIndex,
+    );
 
     let symbolsAfterCurrentInRow =
       currentChainRow.length - this.lastUserDefinedCursorPosition;
@@ -451,9 +436,7 @@ export class SequenceRenderer {
       NUMBER_OF_SYMBOLS_IN_ROW - symbolsAfterCurrentInRow,
     );
 
-    if (symbolsAfterCurrentInRow <= 0) {
-      symbolsAfterCurrentInRow = 1;
-    }
+    symbolsAfterCurrentInRow = Math.max(1, symbolsAfterCurrentInRow);
 
     const newCursorPosition =
       symbolsAfterCurrentInRow +
@@ -757,7 +740,6 @@ export class SequenceRenderer {
         currentEdittingNode: currentNode,
         currentChainRow,
         previousChainRow,
-        NUMBER_OF_SYMBOLS_IN_ROW,
       } = this;
       let combinedArrayChainRow: SubChainNode[] = previousChainRow.concat(
         this.currentChainRow,
@@ -770,9 +752,7 @@ export class SequenceRenderer {
       const restoreCaretPosition = () => {
         return new RestoreSequenceCaretPositionOperation(
           this.caretPosition,
-          this.previousCaretPosition === undefined
-            ? 0
-            : this.previousCaretPosition,
+          this.previousCaretPosition || 0,
         );
       };
 
@@ -788,20 +768,19 @@ export class SequenceRenderer {
         return;
       }
 
-      if (nodeIndex > this.lastUserDefinedCursorPosition) {
-        this.lastUserDefinedCursorPosition = nodeIndex;
-      }
+      this.lastUserDefinedCursorPosition = Math.max(
+        this.lastUserDefinedCursorPosition,
+        nodeIndex,
+      );
 
       const symbolsBeforeCurrentInRow =
         currentChainRow.length - (currentChainRow.length - nodeIndex);
       let maxCaretOffsetForNextRow = Math.min(
         previousChainRow.length - this.lastUserDefinedCursorPosition,
-        NUMBER_OF_SYMBOLS_IN_ROW - symbolsBeforeCurrentInRow,
+        NUMBER_OF_SYMBOLS_IN_ROW - nodeIndex,
       );
 
-      if (maxCaretOffsetForNextRow <= 0) {
-        maxCaretOffsetForNextRow = 1;
-      }
+      maxCaretOffsetForNextRow = Math.max(1, maxCaretOffsetForNextRow);
 
       const newCursorPosition =
         symbolsBeforeCurrentInRow +
@@ -823,7 +802,6 @@ export class SequenceRenderer {
         currentEdittingNode: currentNode,
         currentChainRow,
         nextChainRow,
-        NUMBER_OF_SYMBOLS_IN_ROW,
       } = this;
 
       let combinedArrayChainRow: SubChainNode[] =
@@ -848,9 +826,10 @@ export class SequenceRenderer {
         return;
       }
 
-      if (nodeIndex > this.lastUserDefinedCursorPosition) {
-        this.lastUserDefinedCursorPosition = nodeIndex;
-      }
+      this.lastUserDefinedCursorPosition = Math.max(
+        this.lastUserDefinedCursorPosition,
+        nodeIndex,
+      );
 
       let symbolsAfterCurrentInRow =
         currentChainRow.length - this.lastUserDefinedCursorPosition;
@@ -859,9 +838,7 @@ export class SequenceRenderer {
         NUMBER_OF_SYMBOLS_IN_ROW - symbolsAfterCurrentInRow,
       );
 
-      if (symbolsAfterCurrentInRow <= 0) {
-        symbolsAfterCurrentInRow = 1;
-      }
+      symbolsAfterCurrentInRow = Math.max(1, symbolsAfterCurrentInRow);
 
       const newCursorPosition =
         symbolsAfterCurrentInRow +

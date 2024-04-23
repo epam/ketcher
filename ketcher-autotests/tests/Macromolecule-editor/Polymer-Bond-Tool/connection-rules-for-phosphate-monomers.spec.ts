@@ -19,6 +19,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 test.describe('Connection rules for Phosphate monomers: ', () => {
   let page: Page;
   test.setTimeout(300000);
+  test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
     const sharedContext = await browser.newContext();

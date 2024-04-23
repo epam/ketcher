@@ -32,6 +32,11 @@ export type NodeSelection = {
   nodeIndexOverall: number;
 };
 
+enum CaretType {
+  caretUp = 'caretUp',
+  caretDown = 'caretDown',
+}
+
 export type NodesSelection = NodeSelection[][];
 const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
@@ -320,7 +325,7 @@ export class SequenceRenderer {
     this.lastUserDefinedCursorPosition = 0;
   }
 
-  public static get collectionChainRow() {
+  private static get collectionChainRow() {
     const finalArray: Array<Array<SubChainNode>> = [];
     let chainNodes: Array<SubChainNode> = [];
     SequenceRenderer.forEachNode(({ node }) => {
@@ -340,7 +345,7 @@ export class SequenceRenderer {
     return finalArray;
   }
 
-  public static get currentChainRow() {
+  private static get currentChainRow() {
     return (
       this.collectionChainRow.find((idexRow) =>
         idexRow.includes(this.currentEdittingNode),
@@ -348,14 +353,14 @@ export class SequenceRenderer {
     );
   }
 
-  public static get previousChainRow() {
+  private static get previousChainRow() {
     const index = this.collectionChainRow.findIndex((row) =>
       row.includes(this.currentEdittingNode),
     );
     return index > 0 ? this.collectionChainRow[index - 1] : [];
   }
 
-  public static get nextChainRow() {
+  private static get nextChainRow() {
     const currentIndex = this.collectionChainRow.findIndex((row) =>
       row.includes(this.currentEdittingNode),
     );
@@ -365,18 +370,18 @@ export class SequenceRenderer {
       : [];
   }
 
-  public static restoreCaretPosition(caretPosition, changeCaretPosition) {
+  private static restoreCaretPosition(caretPosition, changeCaretPosition) {
     return new RestoreSequenceCaretPositionOperation(
       caretPosition,
       changeCaretPosition,
     );
   }
 
-  public static getNewCursorPosition(
+  private static getNewCursorPosition(
     symbolsCurrentInRow,
     maxCaretOffset,
     chainRow,
-    caretUp,
+    caretType,
   ) {
     let symbolsAfterCurrentInRow = symbolsCurrentInRow;
 
@@ -385,20 +390,29 @@ export class SequenceRenderer {
       NUMBER_OF_SYMBOLS_IN_ROW - symbolsAfterCurrentInRow,
     );
 
-    if (caretUp) {
+    if (caretType === CaretType.caretUp) {
       maxCaretOffsetForNextRow = Math.max(1, maxCaretOffsetForNextRow);
     } else {
       symbolsAfterCurrentInRow = Math.max(1, symbolsAfterCurrentInRow);
     }
 
-    const newCursorPosition =
-      symbolsAfterCurrentInRow + Math.min(chainRow, maxCaretOffsetForNextRow);
-
-    return newCursorPosition;
+    return (
+      symbolsAfterCurrentInRow + Math.min(chainRow, maxCaretOffsetForNextRow)
+    );
   }
 
   public static moveCaretUp() {
     const nodeIndex = this.currentChainRow.indexOf(this.currentEdittingNode);
+
+    if (this.previousChainRow.length === 0) {
+      this.restoreCaretPosition(this.caretPosition, this.caretPosition);
+      return;
+    }
+
+    this.lastUserDefinedCursorPosition = Math.max(
+      this.lastUserDefinedCursorPosition,
+      nodeIndex,
+    );
 
     if (this.previousChainRow.length === 0) {
       this.restoreCaretPosition(this.caretPosition, this.caretPosition);
@@ -417,7 +431,7 @@ export class SequenceRenderer {
           nodeIndex,
           this.previousChainRow.length - this.lastUserDefinedCursorPosition,
           this.previousChainRow.length,
-          true,
+          CaretType.caretUp,
         ),
     );
   }
@@ -442,7 +456,7 @@ export class SequenceRenderer {
           this.currentChainRow.length - this.lastUserDefinedCursorPosition,
           this.lastUserDefinedCursorPosition,
           this.nextChainRow.length - 1,
-          false,
+          CaretType.caretDown,
         ),
     );
   }
@@ -759,7 +773,7 @@ export class SequenceRenderer {
             nodeIndex,
             this.previousChainRow.length - this.lastUserDefinedCursorPosition,
             this.previousChainRow.length,
-            true,
+            CaretType.caretUp,
           ),
         nodeIndexCombinedArrayChainRow,
       );
@@ -797,7 +811,7 @@ export class SequenceRenderer {
             this.currentChainRow.length - this.lastUserDefinedCursorPosition,
             this.lastUserDefinedCursorPosition,
             this.nextChainRow.length - 1,
-            false,
+            CaretType.caretDown,
           ),
       );
 

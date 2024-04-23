@@ -250,6 +250,12 @@
         "$ref": "monomerTemplate-D___Aspartic acid"
       },
       {
+        "$ref": "monomerTemplate-AspOH___Aspartic acid (OH)"
+      },
+      {
+        "$ref": "monomerTemplate-Pyrro___Pyrrolidine"
+      },
+      {
         "$ref": "monomerTemplate-Dab___2,4-diaminobutanoic acid"
       },
       {
@@ -21040,6 +21046,307 @@
       }
     ],
     "naturalAnalogShort": "D"
+  },
+  "monomerTemplate-AspOH___Aspartic acid (OH)": {
+    "type": "monomerTemplate",
+    "atoms": [
+      {
+        "label": "C",
+        "location": [
+          1.2421481710570743,
+          -1.1864000127974927,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          1.2434428687215728,
+          -2.0861387309377917,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          0.2670885123174224,
+          -0.6245773850912978,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "N",
+        "location": [
+          -0.7078949877360825,
+          -1.1864000127974927,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          -1.4869983470195816,
+          -0.7363783363550491,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          0.26541302122218907,
+          0.5007433614163251,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          -0.7095704788313159,
+          1.06256598912252,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          -1.48829304468408,
+          0.61170656713246,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          -0.7109413351819613,
+          1.962304707262819,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          2.0207945782236916,
+          -0.7355405908074325,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 2,
+        "atoms": [
+          1,
+          0
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          3,
+          4
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          5
+        ],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [
+          5,
+          6
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          6,
+          7
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          6,
+          8
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          9
+        ]
+      }
+    ],
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "AspOH___Aspartic acid (OH)",
+    "fullName": "Aspartic acid (OH)",
+    "alias": "AspOH",
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 3,
+        "leavingGroup": {
+          "atoms": [
+            4
+          ]
+        },
+        "type": "left"
+      },
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            9
+          ]
+        },
+        "type": "right"
+      },
+      {
+        "attachmentAtom": 6,
+        "leavingGroup": {
+          "atoms": [
+            8
+          ]
+        },
+        "type": "side"
+      }
+    ],
+    "naturalAnalogShort": "D"
+  },
+  "monomerTemplate-Pyrro___Pyrrolidine": {
+    "type": "monomerTemplate",
+    "atoms": [
+      {
+        "label": "N",
+        "location": [
+          14,
+          -8.6056,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          14.809,
+          -9.1934,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          14.5,
+          -10.1444,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          13.5,
+          -10.1444,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          13.191,
+          -9.1934,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          14,
+          -7.6056,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          4
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          4,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          3,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          1
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          0
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          5
+        ]
+      }
+    ],
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "Pyrro___Pyrrolidine",
+    "fullName": "Pyrrolidine",
+    "alias": "Pyrro",
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            5
+          ]
+        },
+        "type": "left"
+      }
+    ],
+    "naturalAnalogShort": "X"
   },
   "monomerTemplate-Dab___2,4-diaminobutanoic acid": {
     "type": "monomerTemplate",

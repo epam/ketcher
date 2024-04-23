@@ -18,6 +18,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for Phosphate monomers: ', () => {
   let page: Page;
+  test.setTimeout(300000);
 
   test.beforeAll(async ({ browser }) => {
     const sharedContext = await browser.newContext();
@@ -246,7 +247,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       });
     });
   });
-  /*
+
   Object.values(phosphateMonomers).forEach((leftBase) => {
     Object.values(phosphateMonomers).forEach((rightBase) => {
       Object.values(leftBase.connectionPoints).forEach(
@@ -264,7 +265,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  2. Load %phosphateType% and %phosphateType2% and put them on the canvas
                *  3. Establish connection between %phosphateType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
                *  4. Validate canvas (connection should appear)
-               
+               */
               test(`Test case2: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
                 test.setTimeout(15000);
                 await bondTwoMonomersByPointToPoint(
@@ -281,8 +282,8 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
     });
   });
-  */
 
+  /*
   let leftBaseConnectionPoint = 'R1';
   let rightBaseConnectionPoint = 'R1';
   let leftBase = phosphateMonomers['(R1,R2,R3)'];
@@ -314,4 +315,5 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       rightBaseConnectionPoint,
     );
   });
+  */
 });

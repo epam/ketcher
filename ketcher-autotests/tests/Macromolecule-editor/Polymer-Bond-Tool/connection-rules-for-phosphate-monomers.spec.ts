@@ -121,7 +121,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
   };
-
+  /*
   async function bondTwoMonomersByPointToPoint(
     page: Page,
     leftBase: IMonomer,
@@ -163,7 +163,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
     await takeEditorScreenshot(page);
   }
-
+  */
   async function bondTwoMonomersByCenterToCenter(
     page: Page,
     leftMonomer: IMonomer,

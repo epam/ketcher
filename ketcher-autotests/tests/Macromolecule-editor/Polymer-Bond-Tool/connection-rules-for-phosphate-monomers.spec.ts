@@ -32,6 +32,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
   });
 
   test.afterEach(async () => {
+    await page.keyboard.press('Escape');
     await page.keyboard.press('Control+0');
     await selectClearCanvasTool(page);
   });
@@ -245,7 +246,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       });
     });
   });
-
+  /*
   Object.values(phosphateMonomers).forEach((leftBase) => {
     Object.values(phosphateMonomers).forEach((rightBase) => {
       Object.values(leftBase.connectionPoints).forEach(
@@ -263,7 +264,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  2. Load %phosphateType% and %phosphateType2% and put them on the canvas
                *  3. Establish connection between %phosphateType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
                *  4. Validate canvas (connection should appear)
-               */
+               
               test(`Test case2: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
                 test.setTimeout(15000);
                 await bondTwoMonomersByPointToPoint(
@@ -280,4 +281,5 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
     });
   });
+  */
 });

@@ -1,5 +1,3 @@
-/* eslint-disable no-empty-pattern */
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {

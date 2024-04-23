@@ -121,7 +121,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
   };
-  /*
+
   async function bondTwoMonomersByPointToPoint(
     page: Page,
     leftBase: IMonomer,
@@ -163,7 +163,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
     await takeEditorScreenshot(page);
   }
-  */
+
   async function bondTwoMonomersByCenterToCenter(
     page: Page,
     leftMonomer: IMonomer,
@@ -282,4 +282,36 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     });
   });
   */
+
+  let leftBaseConnectionPoint = 'R1';
+  let rightBaseConnectionPoint = 'R1';
+  let leftBase = phosphateMonomers['(R1,R2,R3)'];
+  let rightBase = phosphateMonomers['(R1,R2,R3)'];
+
+  test(`Test case3: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
+    test.setTimeout(15000);
+    await bondTwoMonomersByPointToPoint(
+      page,
+      leftBase,
+      rightBase,
+      leftBaseConnectionPoint,
+      rightBaseConnectionPoint,
+    );
+  });
+
+  leftBaseConnectionPoint = 'R3';
+  rightBaseConnectionPoint = 'R2';
+  leftBase = phosphateMonomers['(R1,R3,R4,R5)'];
+  rightBase = phosphateMonomers['(R1,R2,R3)'];
+
+  test(`Test case4: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
+    test.setTimeout(15000);
+    await bondTwoMonomersByPointToPoint(
+      page,
+      leftBase,
+      rightBase,
+      leftBaseConnectionPoint,
+      rightBaseConnectionPoint,
+    );
+  });
 });

@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, chromium, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -22,7 +22,16 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
-    const sharedContext = await browser.newContext();
+    let sharedContext;
+    try {
+      sharedContext = await browser.newContext();
+    } catch (error) {
+      console.error('Error on creation browser context:', error);
+      console.log('Restarting browser...');
+      await browser.close();
+      browser = await chromium.launch();
+      sharedContext = await browser.newContext();
+    }
 
     // Reminder: do not pass page as async
     page = await sharedContext.newPage();
@@ -40,7 +49,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
   });
 
   test.afterAll(async ({ browser }) => {
-    browser.close();
+    await browser.close();
   });
 
   interface IMonomer {

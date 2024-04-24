@@ -70,10 +70,20 @@ interface ToolEventHandler {
 
 export interface IRnaPreset {
   name?: string;
+  nameInList?: string;
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
-  presetInList?: IRnaPreset;
+  default?: boolean;
+  favorite?: boolean;
+  editedName?: boolean;
+}
+
+export interface IRnaLabeledPreset
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'> {
+  base?: string;
+  sugar?: string;
+  phosphate?: string;
 }
 
 export type LabeledNodesWithPositionInSequence = {

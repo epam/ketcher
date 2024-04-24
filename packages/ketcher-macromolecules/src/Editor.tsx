@@ -19,15 +19,12 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
 import {
-  SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
   NodeSelection,
 } from 'ketcher-core';
-import monomersData from './data/monomers.sdf';
-
 import { store } from 'state';
 import {
   defaultTheme,
@@ -52,7 +49,6 @@ import {
 } from 'state/common';
 import {
   loadMonomerLibrary,
-  selectMonomers,
   setFavoriteMonomersFromLocalStorage,
 } from 'state/library';
 import {
@@ -166,40 +162,40 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
-  const monomers = useAppSelector(selectMonomers);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new SdfSerializer();
-    const library = serializer.deserialize(monomersData);
-    dispatch(loadMonomerLibrary(library));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
     };
   }, [dispatch]);
 
   useEffect(() => {
-    if (editor && monomers) {
-      editor.setMonomersLibrary(monomers);
-    }
-  }, [editor, monomers]);
+    if (editor) {
+      const monomersLibrary = editor.monomersLibrary;
+      const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
 
-  useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
-    dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage());
+      dispatch(loadMonomerLibrary(monomersLibrary));
+      dispatch(setFavoriteMonomersFromLocalStorage(null));
+
+      const defaultPresets: IRnaPreset[] = getDefaultPresets(
+        monomersLibrary,
+        defaultPresetsTemplates,
+      );
+
+      dispatch(setDefaultPresets(defaultPresets));
+      dispatch(setFavoritePresetsFromLocalStorage());
+    }
 
     return () => {
+      dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
     };
-  }, [dispatch, monomers]);
+  }, [editor]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),

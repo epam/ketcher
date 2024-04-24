@@ -26,12 +26,13 @@ import {
   thymine,
   uracil,
   adenine,
+  rnaPresetsTemplates,
 } from '../testMockData/monomerPresets';
 import { MonomerItemType } from 'ketcher-core';
 
 describe('getDefaultPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {
-    const testArr = getDefaultPresets(monomers);
+    const testArr = getDefaultPresets(monomers, []);
     expect(testArr.length).toEqual(0);
   });
 
@@ -63,7 +64,7 @@ describe('getDefaultPreset function', () => {
       default: true,
     };
 
-    const testArr = getDefaultPresets(monomerData);
+    const testArr = getDefaultPresets(monomerData, rnaPresetsTemplates);
     expect(testArr).toContainEqual(thymineNucleotide);
     expect(testArr).toContainEqual(guanineNucleotide);
     expect(testArr).not.toContainEqual({

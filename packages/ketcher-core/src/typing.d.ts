@@ -18,4 +18,9 @@ declare global {
   export interface EventTarget {
     __data__?: BaseRenderer;
   }
+
+  declare module '*.ket' {
+    const content: string;
+    export default content;
+  }
 }

@@ -6,6 +6,20 @@ import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
+export function templateToMonomerProps(template: IKetMonomerTemplate) {
+  return {
+    id: template.id,
+    Name: template.fullName || template.name || template.alias || template.id,
+    MonomerNaturalAnalogCode: template.naturalAnalogShort || '',
+    MonomerName: template.alias || template.id,
+    MonomerFullName: template.fullName,
+    MonomerType: template.classHELM,
+    MonomerClass: template.class,
+    MonomerCaps: {},
+    idtAliases: template.idtAliases,
+  };
+}
+
 export function monomerToDrawingEntity(
   node: IKetMonomerNode,
   template: IKetMonomerTemplate,
@@ -21,18 +35,7 @@ export function monomerToDrawingEntity(
       label: template.alias || template.id,
       colorScheme: undefined,
       favorite: false,
-      props: {
-        id: template.id,
-        Name:
-          template.fullName || template.name || template.alias || template.id,
-        MonomerNaturalAnalogCode: template.naturalAnalogShort,
-        MonomerName:
-          template.fullName || template.name || template.alias || template.id,
-        MonomerFullName: template.fullName,
-        MonomerType: template.classHELM,
-        MonomerClass: template.class,
-        MonomerCaps: {},
-      },
+      props: templateToMonomerProps(template),
       attachmentPoints: template.attachmentPoints,
       seqId: node.seqid,
     },

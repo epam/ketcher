@@ -88,7 +88,7 @@ describe('useDisabledForSequenceMode hook', () => {
   });
 
   describe('for Sugars', () => {
-    it('should return false if there is R2 and R3 and isSequenceFirstsOnlyNucleotidesSelected is true', () => {
+    it('should return false if there is R2 and R3 and isSequenceFirstsOnlyNucleoelementsSelected is true', () => {
       mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
       monomer.props.MonomerCaps = { R2: 'H', R3: 'H' };
@@ -98,7 +98,7 @@ describe('useDisabledForSequenceMode hook', () => {
       expect(result.current).toBe(false);
     });
 
-    it('should return true if there is no R2 or R3 and isSequenceFirstsOnlyNucleotidesSelected is true', () => {
+    it('should return true if there is no R2 or R3 and isSequenceFirstsOnlyNucleoelementsSelected is true', () => {
       mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
       monomer.props.MonomerCaps = { R2: 'H' };
@@ -117,7 +117,7 @@ describe('useDisabledForSequenceMode hook', () => {
       expect(result2.current).toBe(true);
     });
 
-    it('should return false if there is R1, R2, R3 and isSequenceFirstsOnlyNucleotidesSelected is false', () => {
+    it('should return false if there is R1, R2, R3 and isSequenceFirstsOnlyNucleoelementsSelected is false', () => {
       mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => false);
       monomer.props.MonomerCaps = { R1: 'H', R2: 'H', R3: 'H' };
@@ -127,7 +127,7 @@ describe('useDisabledForSequenceMode hook', () => {
       expect(result.current).toBe(false);
     });
 
-    it('should return true if there is no R1 or R2 or R3 and isSequenceFirstsOnlyNucleotidesSelected is false', () => {
+    it('should return true if there is no R1 or R2 or R3 and isSequenceFirstsOnlyNucleoelementsSelected is false', () => {
       mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
 

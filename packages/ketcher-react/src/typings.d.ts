@@ -8,6 +8,11 @@ declare module '*.sdf' {
   export default content;
 }
 
+declare module '*.ket' {
+  const content: string;
+  export default content;
+}
+
 declare module '*.svg' {
   export const ReactComponent: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & { title?: string }

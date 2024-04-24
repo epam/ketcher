@@ -52,6 +52,66 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takePageScreenshot(page);
   });
 
+  test('Select nucleoside and phosphate and modify sugar and phosphate as it one nucleotide', async ({
+    page,
+  }) => {
+    // Coordinates for rectangle selection
+    const startX = 300;
+    const startY = 100;
+    const endX = 400;
+    const endY = 200;
+    await selectRectangleArea(page, startX, startY, endX, endY);
+    await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
+    // should see correct context menu title and available 'modify_in_rna_builder' button
+    await takeEditorScreenshot(page);
+    await page.getByTestId('modify_in_rna_builder').click();
+    // should see uploaded nucleotide (nucleoside + phosphate) data to RNA Builder and disabled "Update" button
+    await takeRNABuilderScreenshot(page);
+    // Update Sugar
+    await page.getByTestId(SUGAR).click();
+    await page.getByTestId('25R___2,5-Ribose').click();
+    await moveMouseAway(page);
+    // Update Phosphate
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('bP___Boranophosphate').click();
+    await moveMouseAway(page);
+    // should see updated sugar and phosphate, updated title of preset and nondisabled "Update" button
+    await takeRNABuilderScreenshot(page);
+    await page.getByTestId('save-btn').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Select nucleotide, nucleoside and modify sugar and phosphate. nucleoside should become nucleotide', async ({
+    page,
+  }) => {
+    // Coordinates for rectangle selection
+    const startX = 280;
+    const startY = 100;
+    const endX = 320;
+    const endY = 200;
+    await selectRectangleArea(page, startX, startY, endX, endY);
+    await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
+    // should see correct context menu title and available 'modify_in_rna_builder' button
+    await takeEditorScreenshot(page);
+    await page.getByTestId('modify_in_rna_builder').click();
+    // should see uploaded data to RNA Builder and disabled "Update" button
+    await takeRNABuilderScreenshot(page);
+    // Update Sugar
+    await page.getByTestId(SUGAR).click();
+    await page.getByTestId('25R___2,5-Ribose').click();
+    await moveMouseAway(page);
+    // Update Phosphate
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('bP___Boranophosphate').click();
+    await moveMouseAway(page);
+    // should see updated sugar and phosphate of preset and nondisabled "Update" button
+    await takeRNABuilderScreenshot(page);
+    await page.getByTestId('save-btn').click();
+    // Click 'Yes' in modal
+    await page.getByText('Yes').click();
+    await takePageScreenshot(page);
+  });
+
   test('Select one nucleotide and cancel modification', async ({ page }) => {
     await clickOnSequenceSymbol(page, 'T');
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
@@ -98,7 +158,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select entire chain and see disabled modify_in_rna_builder button', async ({
+  test('Select entire chain and see enabled modify_in_rna_builder button', async ({
     page,
   }) => {
     await page.keyboard.down('Control');
@@ -107,7 +167,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see the whole chain selected
     await takeEditorScreenshot(page);
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
-    // should see correct context menu title and disabled 'modify_in_rna_builder' button
+    // should see correct context menu title and enabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
   });
 });

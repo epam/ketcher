@@ -1,3 +1,4 @@
+import { Entities } from 'ketcher-core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
@@ -62,16 +63,20 @@ describe('Test Rna Editor Expanded component', () => {
             sequenceSelectionName: '2 nucleotides',
             sequenceSelection: [
               {
+                type: Entities.Nucleotide,
                 baseLabel: 'A',
                 sugarLabel: 'R',
                 phosphateLabel: 'P',
                 nodeIndexOverall: 0,
+                hasR1Connection: false,
               },
               {
+                type: Entities.Nucleotide,
                 baseLabel: 'C',
                 sugarLabel: 'R',
                 phosphateLabel: 'P',
                 nodeIndexOverall: 1,
+                hasR1Connection: true,
               },
             ],
           },

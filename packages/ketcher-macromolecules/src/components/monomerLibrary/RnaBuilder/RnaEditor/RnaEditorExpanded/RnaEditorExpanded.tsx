@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -62,6 +63,7 @@ import {
   generateSequenceSelectionName,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/sequenceEdit';
 import { openModal } from 'state/modal';
+import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -131,11 +133,12 @@ export const RnaEditorExpanded = ({
   }, [activePreset]);
 
   useEffect(() => {
-    // If modifying 1 Nucleotide in sequence
-    if (sequenceSelection?.length === 1) {
+    if (!sequenceSelection) return;
+    // If modifying 1 Nucleotide or 1 Nucleoside or Nucleoside with Phosphate in sequence
+    if (getCountOfNucleoelements(sequenceSelection) === 1) {
       dispatch(
         setSequenceSelectionName(
-          generateSequenceSelectionName(sequenceSelection[0]),
+          generateSequenceSelectionName(sequenceSelection),
         ),
       );
     }
@@ -150,9 +153,19 @@ export const RnaEditorExpanded = ({
         const monomerType =
           monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
         const field = `${monomerType}Label`;
-        const updatedSequenceSelection = sequenceSelection.map((preset) => {
+        const updatedSequenceSelection = sequenceSelection.map((node) => {
+          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+          if (
+            (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+              field === 'phosphateLabel') ||
+            (node.type === Entities.Phosphate &&
+              (field === 'sugarLabel' || field === 'baseLabel'))
+          )
+            return node;
+
           return {
-            ...preset,
+            ...node,
             [field]: activePresetMonomerGroup.groupItem.label,
           };
         });
@@ -216,7 +229,7 @@ export const RnaEditorExpanded = ({
   };
 
   const onUpdateSequence = () => {
-    if (sequenceSelection.length > 1) {
+    if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);

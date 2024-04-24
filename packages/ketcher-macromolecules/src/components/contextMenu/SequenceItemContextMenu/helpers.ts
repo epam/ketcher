@@ -1,43 +1,72 @@
-import { flatten, get } from 'lodash';
+import { flatten, get, merge } from 'lodash';
 import {
   Nucleotide,
-  LabeledNucleotideWithPositionInSequence,
+  Nucleoside,
+  LabeledNodesWithPositionInSequence,
   NodeSelection,
   NodesSelection,
+  Phosphate,
+  Entities,
 } from 'ketcher-core';
+import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
-const generateLabeledNucleotides = (
+const generateLabeledNodes = (
   selectionsFlatten: NodeSelection[],
-): LabeledNucleotideWithPositionInSequence[] => {
-  const labeledNucleotides: LabeledNucleotideWithPositionInSequence[] = [];
+): LabeledNodesWithPositionInSequence[] => {
+  const labeledNodes: LabeledNodesWithPositionInSequence[] = [];
 
   for (const selection of selectionsFlatten) {
-    const node = selection.node;
-    if (!(node instanceof Nucleotide)) {
-      continue;
-    }
-
-    const { nodeIndexOverall } = selection;
-    labeledNucleotides.push({
-      baseLabel: node.rnaBase.label,
-      sugarLabel: node.sugar.label,
-      phosphateLabel: node.phosphate.label,
+    const {
+      node,
       nodeIndexOverall,
-    });
+      isNucleosideConnectedAndSelectedWithPhosphate,
+      hasR1Connection,
+    } = selection;
+
+    if (node instanceof Nucleotide) {
+      labeledNodes.push({
+        type: Entities.Nucleotide,
+        baseLabel: node?.rnaBase?.label,
+        sugarLabel: node?.sugar?.label,
+        phosphateLabel: node?.phosphate?.label,
+        hasR1Connection,
+        nodeIndexOverall,
+      });
+    } else if (node instanceof Nucleoside) {
+      labeledNodes.push({
+        type: Entities.Nucleoside,
+        baseLabel: node?.rnaBase?.label,
+        sugarLabel: node?.sugar?.label,
+        isNucleosideConnectedAndSelectedWithPhosphate,
+        hasR1Connection,
+        nodeIndexOverall,
+      });
+    } else if (node?.monomer instanceof Phosphate) {
+      labeledNodes.push({
+        type: Entities.Phosphate,
+        phosphateLabel: node?.monomer?.label,
+        nodeIndexOverall,
+      });
+    }
   }
 
-  return labeledNucleotides;
+  return labeledNodes;
 };
 
-// Generate menu title if selected one nucleotide
-const generateNucleotideTitle = (nucleotide: Nucleotide) => {
+// Generate menu title if selected:
+// one nucleotide
+// one nucleoside
+// nucleoside + phosphate
+const generateNucleoelementTitle = (
+  elements: LabeledNodesWithPositionInSequence[],
+) => {
   let tempTitle = '';
+  const element = elements.length === 1 ? elements[0] : merge({}, ...elements);
 
-  for (const property of ['sugar', 'rnaBase', 'phosphate']) {
-    const propertyVal = nucleotide[property];
-    const label = get(propertyVal, 'monomerItem.label', '');
+  for (const property of ['sugarLabel', 'baseLabel', 'phosphateLabel']) {
+    const label = get(element, property, '');
 
-    if (property === 'rnaBase') {
+    if (property === 'baseLabel') {
       tempTitle += `(${label})`;
     } else {
       tempTitle += label;
@@ -53,48 +82,54 @@ export const generateSequenceContextMenuProps = (
   if (!selections?.length) return;
 
   const selectionsFlatten: NodeSelection[] = flatten(selections);
+  const countOfSelections = selectionsFlatten.length;
+  const countOfNucleoelements = getCountOfNucleoelements(selectionsFlatten);
   let title: string;
-  let isSelectedAtLeastOneNucleotide = false;
-  let isSelectedOnlyNucleotides = true;
-  const selectionsCount = selectionsFlatten.length;
-  let isSequenceFirstsOnlyNucleotidesSelected = true;
+  let isSelectedAtLeastOneNucleoelement = false;
+  let isSelectedOnlyNucleoelements = true;
+  let isSequenceFirstsOnlyNucleoelementsSelected = true;
 
-  for (let i = 0; i < selectionsCount; i++) {
-    const node = selectionsFlatten[i].node;
-    if (node instanceof Nucleotide) {
-      const nodeAttachmentR1 = node.sugar.attachmentPointsToBonds.R1;
-      if (nodeAttachmentR1 !== null) {
-        isSequenceFirstsOnlyNucleotidesSelected = false;
-      }
-      isSelectedAtLeastOneNucleotide = true;
+  // Generate labeled elements for RNA Builder
+  const selectedSequenceLabeledNodes = generateLabeledNodes(selectionsFlatten);
+
+  for (let i = 0; i < selectedSequenceLabeledNodes.length; i++) {
+    const node = selectedSequenceLabeledNodes[i];
+    const prevNode = selectedSequenceLabeledNodes[i - 1];
+    const isNodeNucleotideOrNucleoside =
+      node.type === Entities.Nucleotide || node.type === Entities.Nucleoside;
+    const isNucleotideConnection =
+      prevNode?.isNucleosideConnectedAndSelectedWithPhosphate;
+
+    if (isNodeNucleotideOrNucleoside) {
+      isSelectedAtLeastOneNucleoelement = true;
+    }
+
+    if (isNodeNucleotideOrNucleoside || isNucleotideConnection) {
+      if (node.hasR1Connection)
+        isSequenceFirstsOnlyNucleoelementsSelected = false;
     } else {
-      isSequenceFirstsOnlyNucleotidesSelected = false;
-      isSelectedOnlyNucleotides = false;
+      isSequenceFirstsOnlyNucleoelementsSelected = false;
+      isSelectedOnlyNucleoelements = false;
     }
   }
 
   // Set title based on selected elements
   if (
-    selectionsCount === 1 &&
-    selectionsFlatten[0].node instanceof Nucleotide
+    countOfSelections === 1 ||
+    (countOfNucleoelements === 1 && isSelectedOnlyNucleoelements)
   ) {
-    title = generateNucleotideTitle(selectionsFlatten[0].node);
+    title = generateNucleoelementTitle(selectedSequenceLabeledNodes);
   } else {
-    const titleElementType = isSelectedOnlyNucleotides
-      ? 'nucleotides'
-      : 'elements';
-    title = `${selectionsCount} ${titleElementType}`;
+    title = isSelectedOnlyNucleoelements
+      ? `${countOfNucleoelements} nucleotides`
+      : `${countOfSelections} elements`;
   }
-
-  // Generate labeled elements for RNA Builder
-  const selectedSequenceLabeledNucleotides =
-    generateLabeledNucleotides(selectionsFlatten);
 
   return {
     title,
-    isSelectedOnlyNucleotides,
-    isSelectedAtLeastOneNucleotide,
-    selectedSequenceLabeledNucleotides,
-    isSequenceFirstsOnlyNucleotidesSelected,
+    selectedSequenceLabeledNodes,
+    isSelectedOnlyNucleoelements,
+    isSelectedAtLeastOneNucleoelement,
+    isSequenceFirstsOnlyNucleoelementsSelected,
   };
 };

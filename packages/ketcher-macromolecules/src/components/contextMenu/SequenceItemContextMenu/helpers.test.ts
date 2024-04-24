@@ -14,16 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 import cloneDeep from 'lodash/cloneDeep';
-import { Nucleotide, Phosphate, RNABase, Sugar } from 'ketcher-core';
+import {
+  Nucleotide,
+  Nucleoside,
+  Phosphate,
+  RNABase,
+  Sugar,
+  MonomerSequenceNode,
+  Entities,
+} from 'ketcher-core';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 
-const instanceOfNode = Object.create(Nucleotide.prototype);
+const instanceOfNucleotide = Object.create(Nucleotide.prototype);
+const instanceOfNucleoside = Object.create(Nucleoside.prototype);
+const instanceOfMonomerSequenceNode = Object.create(
+  MonomerSequenceNode.prototype,
+);
 const instanceOfRNABase = Object.create(RNABase.prototype);
 const instanceOfSugar = Object.create(Sugar.prototype);
 const instanceOfPhosphate = Object.create(Phosphate.prototype);
 
 const nodeNucleotideFirstInChain = cloneDeep(
-  Object.assign(instanceOfNode, {
+  Object.assign(instanceOfNucleotide, {
     phosphate: Object.assign(instanceOfPhosphate, {
       monomerItem: {
         label: 'P',
@@ -46,7 +58,7 @@ const nodeNucleotideFirstInChain = cloneDeep(
 );
 
 const nodeNucleotideNotFirstInChain = cloneDeep(
-  Object.assign(instanceOfNode, {
+  Object.assign(instanceOfNucleotide, {
     phosphate: Object.assign(instanceOfPhosphate, {
       monomerItem: {
         label: 'P',
@@ -70,19 +82,42 @@ const nodeNucleotideNotFirstInChain = cloneDeep(
   }),
 );
 
-const nodeMonomerInChain = {
-  monomer: {
-    monomerItem: {
-      label: 'P',
-    },
-  },
-};
+const nodeNucleosideNotFirstInChain = cloneDeep(
+  Object.assign(instanceOfNucleoside, {
+    rnaBase: Object.assign(instanceOfRNABase, {
+      monomerItem: {
+        label: 'C',
+      },
+    }),
+    sugar: Object.assign(instanceOfSugar, {
+      attachmentPointsToBonds: {
+        R1: {
+          id: 1,
+        },
+      },
+      monomerItem: {
+        label: 'R',
+      },
+    }),
+  }),
+);
+
+const nodeMonomerInChain = cloneDeep(
+  Object.assign(instanceOfMonomerSequenceNode, {
+    monomer: Object.assign(instanceOfPhosphate, {
+      monomerItem: {
+        label: 'P',
+      },
+    }),
+  }),
+);
 
 const mockedSelectionsFirstNucleotide = [
   [
     {
       node: nodeNucleotideFirstInChain,
       nodeIndexOverall: 0,
+      hasR1Connection: false,
     },
   ],
 ];
@@ -92,6 +127,17 @@ const mockedSelectionsNotFirstNucleotide = [
     {
       node: nodeNucleotideNotFirstInChain,
       nodeIndexOverall: 1,
+      hasR1Connection: true,
+    },
+  ],
+];
+
+const mockedSelectionsNotFirstNucleoside = [
+  [
+    {
+      node: nodeNucleosideNotFirstInChain,
+      nodeIndexOverall: 1,
+      hasR1Connection: true,
     },
   ],
 ];
@@ -101,10 +147,42 @@ const mockedSelections2Nucleotides = [
     {
       node: nodeNucleotideFirstInChain,
       nodeIndexOverall: 0,
+      hasR1Connection: false,
     },
     {
       node: nodeNucleotideNotFirstInChain,
       nodeIndexOverall: 1,
+      hasR1Connection: true,
+    },
+  ],
+];
+
+const mockedSelectionsNucleosideAndPhosphate = [
+  [
+    {
+      node: nodeNucleosideNotFirstInChain,
+      nodeIndexOverall: 1,
+      isNucleosideConnectedAndSelectedWithPhosphate: true,
+      hasR1Connection: true,
+    },
+    {
+      node: nodeMonomerInChain,
+      nodeIndexOverall: 2,
+    },
+  ],
+];
+
+const mockedSelectionsPhosphateAndNucleoside = [
+  [
+    {
+      node: nodeMonomerInChain,
+      nodeIndexOverall: 2,
+    },
+    {
+      node: nodeNucleosideNotFirstInChain,
+      nodeIndexOverall: 3,
+      isNucleosideConnectedAndSelectedWithPhosphate: false,
+      hasR1Connection: true,
     },
   ],
 ];
@@ -114,10 +192,12 @@ const mockedSelections3Elements = [
     {
       node: nodeNucleotideFirstInChain,
       nodeIndexOverall: 0,
+      hasR1Connection: false,
     },
     {
       node: nodeNucleotideNotFirstInChain,
       nodeIndexOverall: 1,
+      hasR1Connection: true,
     },
     {
       node: nodeMonomerInChain,
@@ -138,15 +218,17 @@ describe('SequenceItemContextMenu helpers', () => {
     );
     const expectedResult = {
       title: 'R(A)P',
-      isSelectedAtLeastOneNucleotide: true,
-      isSelectedOnlyNucleotides: true,
-      isSequenceFirstsOnlyNucleotidesSelected: true,
-      selectedSequenceLabeledNucleotides: [
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: true,
+      isSequenceFirstsOnlyNucleoelementsSelected: true,
+      selectedSequenceLabeledNodes: [
         {
+          type: Entities.Nucleotide,
           baseLabel: 'A',
           phosphateLabel: 'P',
           sugarLabel: 'R',
           nodeIndexOverall: 0,
+          hasR1Connection: false,
         },
       ],
     };
@@ -160,15 +242,41 @@ describe('SequenceItemContextMenu helpers', () => {
     );
     const expectedResult = {
       title: 'R(C)P',
-      isSelectedAtLeastOneNucleotide: true,
-      isSelectedOnlyNucleotides: true,
-      isSequenceFirstsOnlyNucleotidesSelected: false,
-      selectedSequenceLabeledNucleotides: [
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: true,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
         {
+          type: Entities.Nucleotide,
           baseLabel: 'C',
           phosphateLabel: 'P',
           sugarLabel: 'R',
           nodeIndexOverall: 1,
+          hasR1Connection: true,
+        },
+      ],
+    };
+
+    expect(result).toStrictEqual(expectedResult);
+  });
+
+  it('should return correct data for not first in chain selected Nucleoside', () => {
+    const result = generateSequenceContextMenuProps(
+      mockedSelectionsNotFirstNucleoside,
+    );
+    const expectedResult = {
+      title: 'R(C)',
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: true,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
+        {
+          type: Entities.Nucleoside,
+          baseLabel: 'C',
+          sugarLabel: 'R',
+          nodeIndexOverall: 1,
+          isNucleosideConnectedAndSelectedWithPhosphate: undefined,
+          hasR1Connection: true,
         },
       ],
     };
@@ -182,21 +290,83 @@ describe('SequenceItemContextMenu helpers', () => {
     );
     const expectedResult = {
       title: '2 nucleotides',
-      isSelectedAtLeastOneNucleotide: true,
-      isSelectedOnlyNucleotides: true,
-      isSequenceFirstsOnlyNucleotidesSelected: false,
-      selectedSequenceLabeledNucleotides: [
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: true,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
         {
+          type: Entities.Nucleotide,
           baseLabel: 'A',
           phosphateLabel: 'P',
           sugarLabel: 'R',
           nodeIndexOverall: 0,
+          hasR1Connection: false,
         },
         {
+          type: Entities.Nucleotide,
           baseLabel: 'C',
           phosphateLabel: 'P',
           sugarLabel: 'R',
           nodeIndexOverall: 1,
+          hasR1Connection: true,
+        },
+      ],
+    };
+
+    expect(result).toStrictEqual(expectedResult);
+  });
+
+  it('should return correct data for connected and selected Nucleoside-Phosphate that can be interpreted as Nucleotide', () => {
+    const result = generateSequenceContextMenuProps(
+      mockedSelectionsNucleosideAndPhosphate,
+    );
+    const expectedResult = {
+      title: 'R(C)P',
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: true,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
+        {
+          type: Entities.Nucleoside,
+          baseLabel: 'C',
+          sugarLabel: 'R',
+          nodeIndexOverall: 1,
+          hasR1Connection: true,
+          isNucleosideConnectedAndSelectedWithPhosphate: true,
+        },
+        {
+          type: Entities.Phosphate,
+          phosphateLabel: 'P',
+          nodeIndexOverall: 2,
+        },
+      ],
+    };
+
+    expect(result).toStrictEqual(expectedResult);
+  });
+
+  it('should return correct data for connected and selected Phosphate-Nucleoside that can not be interpreted as Nucleotide', () => {
+    const result = generateSequenceContextMenuProps(
+      mockedSelectionsPhosphateAndNucleoside,
+    );
+    const expectedResult = {
+      title: '2 elements',
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: false,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
+        {
+          type: Entities.Phosphate,
+          phosphateLabel: 'P',
+          nodeIndexOverall: 2,
+        },
+        {
+          type: Entities.Nucleoside,
+          baseLabel: 'C',
+          sugarLabel: 'R',
+          nodeIndexOverall: 3,
+          hasR1Connection: true,
+          isNucleosideConnectedAndSelectedWithPhosphate: false,
         },
       ],
     };
@@ -208,21 +378,30 @@ describe('SequenceItemContextMenu helpers', () => {
     const result = generateSequenceContextMenuProps(mockedSelections3Elements);
     const expectedResult = {
       title: '3 elements',
-      isSelectedAtLeastOneNucleotide: true,
-      isSelectedOnlyNucleotides: false,
-      isSequenceFirstsOnlyNucleotidesSelected: false,
-      selectedSequenceLabeledNucleotides: [
+      isSelectedAtLeastOneNucleoelement: true,
+      isSelectedOnlyNucleoelements: false,
+      isSequenceFirstsOnlyNucleoelementsSelected: false,
+      selectedSequenceLabeledNodes: [
         {
           baseLabel: 'A',
+          nodeIndexOverall: 0,
           phosphateLabel: 'P',
           sugarLabel: 'R',
-          nodeIndexOverall: 0,
+          type: Entities.Nucleotide,
+          hasR1Connection: false,
         },
         {
           baseLabel: 'C',
+          nodeIndexOverall: 1,
           phosphateLabel: 'P',
           sugarLabel: 'R',
-          nodeIndexOverall: 1,
+          type: Entities.Nucleotide,
+          hasR1Connection: true,
+        },
+        {
+          nodeIndexOverall: 2,
+          phosphateLabel: 'P',
+          type: Entities.Phosphate,
         },
       ],
     };

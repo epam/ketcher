@@ -13,11 +13,6 @@ declare namespace NodeJS {
   }
 }
 
-declare module '*.sdf' {
-  const content: string;
-  export default content;
-}
-
 declare module '*.svg' {
   import * as React from 'react';
 

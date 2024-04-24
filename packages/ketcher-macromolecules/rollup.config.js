@@ -89,7 +89,7 @@ const config = {
       include: includePattern,
     }),
     string({
-      include: '**/*.sdf',
+      include: '**/*.ket',
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],

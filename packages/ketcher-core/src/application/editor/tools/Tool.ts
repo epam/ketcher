@@ -1,4 +1,4 @@
-import { MonomerItemType } from 'domain/types';
+import { MonomerItemType, Entities } from 'domain/types';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -76,11 +76,14 @@ export interface IRnaPreset {
   presetInList?: IRnaPreset;
 }
 
-export type LabeledNucleotideWithPositionInSequence = {
-  baseLabel: string;
-  sugarLabel: string;
-  phosphateLabel: string;
+export type LabeledNodesWithPositionInSequence = {
+  type: Entities;
   nodeIndexOverall: number;
+  baseLabel?: string;
+  sugarLabel?: string;
+  phosphateLabel?: string;
+  isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
+  hasR1Connection?: boolean;
 };
 
 export interface Tool extends ToolEventHandler {

@@ -20,22 +20,11 @@ describe('Test Rna Editor Expanded component', () => {
         {
           rnaBuilder: {
             activePreset: {
-              name: 'MyRna',
-              sugar: {
-                props: {
-                  MonomerName: '',
-                },
-              },
-              phosphate: {
-                props: {
-                  MonomerName: '',
-                },
-              },
-              base: {
-                props: {
-                  MonomerName: '',
-                },
-              },
+              name: '',
+              nameInList: '',
+              sugar: undefined,
+              phosphate: undefined,
+              base: undefined,
             },
           },
         },
@@ -79,6 +68,8 @@ describe('Test Rna Editor Expanded component', () => {
                 hasR1Connection: true,
               },
             ],
+            presetsDefault: [],
+            presetsCustom: [],
           },
         },
       ),
@@ -117,8 +108,10 @@ describe('Test Rna Editor Expanded component', () => {
                   MonomerName: '',
                 },
               },
-              presetInList: {},
+              nameInList: 'MyRna',
             },
+            presetsDefault: [],
+            presetsCustom: [],
           },
         },
       ),

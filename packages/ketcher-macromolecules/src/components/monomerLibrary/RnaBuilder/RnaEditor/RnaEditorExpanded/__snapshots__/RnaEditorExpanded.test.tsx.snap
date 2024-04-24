@@ -11,7 +11,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     <input
       class="css-1afs730"
       placeholder="Name your structure"
-      value="MyRna"
+      value=""
     />
     <span
       class="css-1o94icx"
@@ -162,8 +162,9 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
       Cancel
     </button>
     <button
-      class="css-4dyvry"
+      class="css-wciliw"
       data-testid="add-to-presets-btn"
+      disabled=""
     >
       Add to Presets
     </button>

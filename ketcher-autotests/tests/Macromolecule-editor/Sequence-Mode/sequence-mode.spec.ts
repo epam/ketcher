@@ -15,6 +15,7 @@ import {
   switchSequenceEnteringType,
   SequenceType,
   takeLayoutSwitcherScreenshot,
+  takePageScreenshot,
 } from '@utils';
 import {
   enterSequence,
@@ -105,6 +106,16 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await takeLayoutSwitcherScreenshot(page);
+  });
+
+  test('Select drop-down menu', async ({ page }) => {
+    /*
+    Test case: #3861
+    Description: Dropdown menu is expanded.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await page.getByTestId('sequence-type-dropdown').click();
+    await takePageScreenshot(page);
   });
 
   test('Test sequence display for long DNA/RNA', async ({ page }) => {
@@ -528,4 +539,64 @@ test.describe('Sequence Mode', () => {
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3861
+    Description: Selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA).
+    */
+    await selectSequenceLayoutModeTool(page);
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await enterSequence(page, 'acgtu');
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testCases = [
+    {
+      name: 'Preview for RNA',
+      description:
+        'include structure of hovered nucleotide and full names of submonomers',
+      sequence: 'acgtu',
+      hoverText: 'G',
+    },
+    {
+      name: 'Preview for DNA',
+      description:
+        'include structure of hovered nucleotide and full names of submonomers',
+      sequence: 'acgtu',
+      hoverText: 'G',
+    },
+    {
+      name: 'Preview for Peptide',
+      description:
+        'include structure of hovered nucleotide and full names of submonomers',
+      sequence: 'acgtrqwkl',
+      hoverText: 'W',
+    },
+  ];
+
+  for (const testCase of testCases) {
+    test(`${testCase.name}`, async ({ page }) => {
+      /*
+      Test case: #3876
+      */
+      await selectSequenceLayoutModeTool(page);
+      if (testCase.name === 'Preview for DNA') {
+        await switchSequenceEnteringType(page, SequenceType.DNA);
+      } else if (testCase.name === 'Preview for Peptide') {
+        await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+      }
+      await startNewSequence(page);
+      await enterSequence(page, testCase.sequence);
+      await page.keyboard.press('Escape');
+      await page.getByText(testCase.hoverText).locator('..').first().hover();
+      await takeEditorScreenshot(page);
+    });
+  }
 });

@@ -9,9 +9,14 @@ import {
   moveMouseAway,
   takePageScreenshot,
   selectRectangleArea,
+  startNewSequence,
+  takePresetsScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { PHOSPHATE, SUGAR } from '@constants/testIdConstants';
+import {
+  enterSequence,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
+import { BASE, PHOSPHATE, SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
@@ -104,5 +109,91 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     // should see correct context menu title and disabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Modify nucleotides from sequence in RNA builder', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSequenceLayoutModeTool(page);
+  });
+
+  test('Selecting "Modify in RNA Builder" option from context menu after right-clicking on selected monomers switches RNA Builder to edit mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3824
+    Description: RNA Builder switched to edit mode.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Escape');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Check that if sugar has no R2 or R3, it is disabled in RNA Builder', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3824
+    Description: Sugars that have no R2 or R3 are disabled.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Escape');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await page.getByTestId('summary-Sugars').click();
+    await takePresetsScreenshot(page);
+  });
+
+  test('Verify that number of selected nucleotides is indicated within RNA Builder interface when several monomers are selected', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3824
+    Description: Number of selected nucleotides is indicated within RNA Builder interface when several monomers are selected.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Escape');
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'C');
+    await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await takeRNABuilderScreenshot(page);
+  });
+
+  test('Name of nucleotide consist of names selected Sugar, Base, Phosphates in RNA Builder', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3824
+    Description: Name of nucleotide consist of names selected Sugar, Base, Phosphates in RNA Builder.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'acgtu');
+    await page.keyboard.press('Escape');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await page.getByTestId(SUGAR).click();
+    await page.getByTestId(`3A6___6-amino-hexanol (3' end)`).click();
+    await moveMouseAway(page);
+    await page.getByTestId(BASE).click();
+    await page
+      .getByTestId('dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine')
+      .click();
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await moveMouseAway(page);
+    await takeRNABuilderScreenshot(page);
   });
 });

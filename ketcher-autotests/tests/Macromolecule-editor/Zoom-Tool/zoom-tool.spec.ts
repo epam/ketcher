@@ -1,4 +1,4 @@
-import { Locator, test, Page } from '@playwright/test';
+import { Locator, test, Page, chromium } from '@playwright/test';
 import {
   LeftPanelButton,
   addSingleMonomerToCanvas,
@@ -19,7 +19,16 @@ import {
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
-  const sharedContext = await browser.newContext();
+  let sharedContext;
+  try {
+    sharedContext = await browser.newContext();
+  } catch (error) {
+    console.error('Error on creation browser context:', error);
+    console.log('Restarting browser...');
+    await browser.close();
+    browser = await chromium.launch();
+    sharedContext = await browser.newContext();
+  }
 
   // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
@@ -34,7 +43,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  browser.close();
+  await browser.close();
 });
 
 const MONOMER_NAME_TZA = 'C___Cysteine';

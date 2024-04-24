@@ -1,11 +1,12 @@
-import { LabeledNucleotideWithPositionInSequence } from 'ketcher-core';
+import { Entities, LabeledNodesWithPositionInSequence } from 'ketcher-core';
 
 const getNucleotideMonomerGroupName = (nameSet: Set<string>): string => {
+  if (nameSet.size === 0) return '';
   return nameSet.size === 1 ? [...nameSet][0] : '[multiple]';
 };
 
 export const generateSequenceSelectionGroupNames = (
-  labeledNucleotides?: LabeledNucleotideWithPositionInSequence[],
+  labeledNucleotides?: LabeledNodesWithPositionInSequence[],
 ) => {
   if (!labeledNucleotides?.length) return;
 
@@ -16,8 +17,15 @@ export const generateSequenceSelectionGroupNames = (
   };
 
   for (let i = 0; i < labeledNucleotides.length; i++) {
-    for (const item of ['sugarLabel', 'baseLabel', 'phosphateLabel'])
-      namesSets[item].add(labeledNucleotides[i]?.[item]);
+    for (const item of ['sugarLabel', 'baseLabel', 'phosphateLabel']) {
+      if (
+        labeledNucleotides[i]?.[item] ||
+        (!labeledNucleotides[i]?.[item] &&
+          labeledNucleotides[i].type === Entities.Nucleoside &&
+          !labeledNucleotides[i].isNucleosideConnectedAndSelectedWithPhosphate)
+      )
+        namesSets[item].add(labeledNucleotides[i]?.[item]);
+    }
   }
 
   return {
@@ -28,7 +36,11 @@ export const generateSequenceSelectionGroupNames = (
 };
 
 export const generateSequenceSelectionName = (
-  labeledNucleotide: LabeledNucleotideWithPositionInSequence,
+  labeledNucleoelements: LabeledNodesWithPositionInSequence[],
 ) => {
-  return `${labeledNucleotide?.sugarLabel}(${labeledNucleotide.baseLabel})${labeledNucleotide?.phosphateLabel}`;
+  const groupNames = generateSequenceSelectionGroupNames(labeledNucleoelements);
+
+  return `${groupNames?.Sugars}(${groupNames?.Bases})${
+    groupNames?.Phosphates || ''
+  }`;
 };

@@ -1,12 +1,21 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
-import { BaseMonomer, RNABase, Sugar, Vec2 } from 'domain/entities';
+import {
+  BaseMonomer,
+  Nucleotide,
+  Phosphate,
+  RNABase,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import {
+  getNextMonomerInChain,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
 } from 'domain/helpers/monomers';
+import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -28,6 +37,8 @@ export type SequencePointer = number;
 export type NodeSelection = {
   node: SubChainNode;
   nodeIndexOverall: number;
+  isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
+  hasR1Connection?: boolean;
 };
 
 export type NodesSelection = NodeSelection[][];
@@ -634,16 +645,38 @@ export class SequenceRenderer {
   }
 
   public static get selections() {
+    const editor = CoreEditor.provideEditorInstance();
     const selections: NodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
       if (node.monomer.selected) {
+        const selection: Partial<NodeSelection> = {};
+
+        // Add field 'isNucleosideConnectedAndSelectedWithPhosphate' to the Nucleoside elements
+        if (node instanceof Nucleoside) {
+          const nextMonomer = getNextMonomerInChain(node.sugar);
+
+          selection.isNucleosideConnectedAndSelectedWithPhosphate =
+            nextMonomer instanceof Phosphate &&
+            nextMonomer.selected &&
+            editor.drawingEntitiesManager.isNucleosideAndPhosphateConnectedAsNucleotide(
+              node,
+              nextMonomer,
+            );
+        }
+
+        // Add field 'hasR1Connection' to the Nucleotide/Nucleoside elements
+        if (node instanceof Nucleotide || node instanceof Nucleoside) {
+          selection.hasR1Connection = !!node.sugar.attachmentPointsToBonds.R1;
+        }
+
         if (!previousNode?.monomer.selected) {
           lastSelectionRangeIndex = selections.push([]) - 1;
         }
         selections[lastSelectionRangeIndex].push({
+          ...selection,
           node,
           nodeIndexOverall,
         });

@@ -21,7 +21,7 @@ import { MonomerGroups } from '../../constants';
 import {
   MonomerItemType,
   MONOMER_CONST,
-  LabeledNucleotideWithPositionInSequence,
+  LabeledNodesWithPositionInSequence,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
@@ -34,9 +34,9 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
-  sequenceSelection: LabeledNucleotideWithPositionInSequence[] | undefined;
+  sequenceSelection: LabeledNodesWithPositionInSequence[] | undefined;
   sequenceSelectionName: string | undefined;
-  isSequenceFirstsOnlyNucleotidesSelected: boolean | undefined;
+  isSequenceFirstsOnlyNucleoelementsSelected: boolean | undefined;
   activePresetMonomerGroup: {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
@@ -52,7 +52,7 @@ const initialState: IRnaBuilderState = {
   activePreset: null,
   sequenceSelection: undefined,
   sequenceSelectionName: undefined,
-  isSequenceFirstsOnlyNucleotidesSelected: undefined,
+  isSequenceFirstsOnlyNucleoelementsSelected: undefined,
   activePresetMonomerGroup: null,
   presets: [],
   activeRnaBuilderItem: null,
@@ -86,18 +86,18 @@ export const rnaBuilderSlice = createSlice({
     },
     setSequenceSelection: (
       state,
-      action: PayloadAction<LabeledNucleotideWithPositionInSequence[]>,
+      action: PayloadAction<LabeledNodesWithPositionInSequence[]>,
     ) => {
       state.sequenceSelection = [...action.payload];
     },
     setSequenceSelectionName: (state, action: PayloadAction<string>) => {
       state.sequenceSelectionName = action.payload;
     },
-    setIsSequenceFirstsOnlyNucleotidesSelected: (
+    setIsSequenceFirstsOnlyNucleoelementsSelected: (
       state,
       action: PayloadAction<boolean>,
     ) => {
-      state.isSequenceFirstsOnlyNucleotidesSelected = action.payload;
+      state.isSequenceFirstsOnlyNucleoelementsSelected = action.payload;
     },
     setActivePresetForContextMenu: (
       state,
@@ -251,15 +251,14 @@ export const selectActivePreset = (state: RootState): IRnaPreset =>
 
 export const selectSequenceSelection = (
   state: RootState,
-): LabeledNucleotideWithPositionInSequence[] =>
-  state.rnaBuilder.sequenceSelection;
+): LabeledNodesWithPositionInSequence[] => state.rnaBuilder.sequenceSelection;
 
 export const selectSequenceSelectionName = (state: RootState): string =>
   state.rnaBuilder.sequenceSelectionName;
 
 export const selectIsSequenceFirstsOnlyNucleotidesSelected = (
   state: RootState,
-): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleotidesSelected;
+): boolean => state.rnaBuilder.isSequenceFirstsOnlyNucleoelementsSelected;
 
 export const selectPresets = (state: RootState): IRnaPreset[] => {
   return state.rnaBuilder.presets;
@@ -354,7 +353,7 @@ export const {
   setActivePreset,
   setSequenceSelection,
   setSequenceSelectionName,
-  setIsSequenceFirstsOnlyNucleotidesSelected,
+  setIsSequenceFirstsOnlyNucleoelementsSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,

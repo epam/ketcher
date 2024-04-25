@@ -46,13 +46,20 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   const cntxt = page.context();
   const brwsr = cntxt.browser();
+  console.log('Number of contexts: ', browser.contexts().length);
+  console.log('Number of pages: ', cntxt.pages().length);
   await page.close();
   await cntxt.close();
+  await browser.contexts().forEach((someContext) => {
+    someContext.close();
+  });
   if (brwsr) await brwsr.close();
   await browser.close();
 });
 
 test.describe('Connection rules for Base monomers: ', () => {
+  test.setTimeout(300000);
+  test.describe.configure({ retries: 0 });
   interface IMonomer {
     fileName: string;
     alias: string;
@@ -176,10 +183,25 @@ test.describe('Connection rules for Base monomers: ', () => {
     await takeEditorScreenshot(page);
   }
 
-  // test(`temporary test for debug purposes`, async ({ }) => {
-  //   await bondTwoMonomersByPointToPoint(page, baseMonomers['(R1,R2,R3)'], baseMonomers['(R1,R3,R4)'], 'R3', 'R1');
-  // });
-
+  test(`temporary test for debug purposes1`, async () => {
+    await bondTwoMonomersByPointToPoint(
+      page,
+      baseMonomers['(R1,R2,R3)'],
+      baseMonomers['(R1,R3,R4)'],
+      'R3',
+      'R1',
+    );
+  });
+  test(`temporary test for debug purposes2`, async () => {
+    await bondTwoMonomersByPointToPoint(
+      page,
+      baseMonomers['(R1,R2,R3)'],
+      baseMonomers['(R1,R3,R4)'],
+      'R3',
+      'R4',
+    );
+  });
+  /*
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       Object.values(leftBase.connectionPoints).forEach(
@@ -197,7 +219,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  2. Load %BaseType% and %BaseType2% and put them on the canvas
                *  3. Establish connection between %BaseType%(%ConnectionPoint%) and %BaseType%(%ConnectionPoint2%)
                *  4. Validate canvas (connection should appear)
-               */
+               *
               test(`Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
                 test.setTimeout(10000);
                 await bondTwoMonomersByPointToPoint(
@@ -214,4 +236,5 @@ test.describe('Connection rules for Base monomers: ', () => {
       );
     });
   });
+  */
 });

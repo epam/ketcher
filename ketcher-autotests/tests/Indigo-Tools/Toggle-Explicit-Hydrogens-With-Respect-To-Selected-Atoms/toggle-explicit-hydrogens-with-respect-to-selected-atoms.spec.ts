@@ -39,7 +39,7 @@ test.afterAll(async ({ browser }) => {
   const brwsr = cntxt.browser();
   await page.close();
   await cntxt.close();
-  await brwsr.close();
+  if (brwsr) await brwsr.close();
   await browser.close();
 });
 

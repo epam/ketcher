@@ -8,7 +8,10 @@ import {
   RNABase,
   Sugar,
 } from 'domain/entities';
-import { getRnaBaseFromSugar } from 'domain/helpers/monomers';
+import {
+  getNextMonomerInChain,
+  getRnaBaseFromSugar,
+} from 'domain/helpers/monomers';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -67,10 +70,8 @@ export class ChainsCollection {
     const firstMonomersInRegularChains =
       this.getFirstMonomersInRegularChains(monomersList);
 
-    const firstMonomersInCycledChains = this.getFirstMonomersInCycledChains(
-      monomersList,
-      firstMonomersInRegularChains,
-    );
+    const firstMonomersInCycledChains =
+      this.getFirstMonomersInCycledChains(monomersList);
 
     firstMonomersInChains.push(
       firstMonomersInRegularChains,
@@ -116,89 +117,36 @@ export class ChainsCollection {
 
   private static getFirstMonomersInCycledChains(
     monomersList: BaseMonomer[],
-    firstMonomersInRegularChainsList?: BaseMonomer[],
   ): BaseMonomer[] {
-    const firstMonomersOfCycledChainsSet = new Set<BaseMonomer>();
+    const handledMonomers = new Set<BaseMonomer>();
+    const cyclicChains: BaseMonomer[][] = [];
 
-    for (const monomer of monomersList) {
-      let currentMonomer = monomer;
-
-      if (monomer instanceof RNABase) {
-        const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
-        const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
-
-        if (R1ConnectedMonomer instanceof Sugar) {
-          currentMonomer = R1ConnectedMonomer;
-        }
+    monomersList.forEach((monomer) => {
+      if (handledMonomers.has(monomer)) {
+        return;
       }
 
-      const R1PolymerBond = currentMonomer?.attachmentPointsToBonds.R1;
+      const monomersInSameChain = new Set<BaseMonomer>();
+      monomersInSameChain.add(monomer);
+      handledMonomers.add(monomer);
+      let nextMonomerInChain = getNextMonomerInChain(monomer);
 
-      if (R1PolymerBond) {
-        const R1ConnectedMonomer =
-          R1PolymerBond?.getAnotherMonomer(currentMonomer);
-
-        if (!R1ConnectedMonomer) continue;
-
-        const isMonomerInCycledChain =
-          this.isMonomerInCycledChain(currentMonomer);
-
-        if (isMonomerInCycledChain) {
-          const monomerListInCycledChain =
-            this.getMonomerListFromCycledChain(currentMonomer);
-
-          const isAlreadyInFirstMonomersRegularChainsList =
-            !!firstMonomersInRegularChainsList?.find((monomer) =>
-              monomerListInCycledChain.includes(monomer),
-            );
-
-          if (isAlreadyInFirstMonomersRegularChainsList) continue;
-
-          const monomerWithLowerCoords =
-            this.getMonomerWithLowerCoordsFromMonomerList(
-              monomerListInCycledChain,
-            );
-
-          firstMonomersOfCycledChainsSet.add(monomerWithLowerCoords);
-        }
+      while (nextMonomerInChain && !handledMonomers.has(nextMonomerInChain)) {
+        monomersInSameChain.add(nextMonomerInChain);
+        handledMonomers.add(nextMonomerInChain);
+        nextMonomerInChain = getNextMonomerInChain(nextMonomerInChain);
       }
-    }
 
-    return Array.from(firstMonomersOfCycledChainsSet);
-  }
-
-  private static isMonomerInCycledChain(monomer: BaseMonomer): boolean {
-    let currentMonomer = monomer;
-    let result = false;
-
-    const monomersInChainSet = new Set<BaseMonomer>();
-    monomersInChainSet.add(currentMonomer);
-
-    while (true) {
-      const R1PolymerBond = currentMonomer.attachmentPointsToBonds.R1;
-
-      if (!R1PolymerBond) break;
-
-      const R1ConnectedMonomer =
-        R1PolymerBond?.getAnotherMonomer(currentMonomer);
-
-      if (!R1ConnectedMonomer) break;
-
-      const R1ConnectedMonomerR1Bond =
-        R1ConnectedMonomer?.attachmentPointsToBonds.R1;
-
-      if (R1ConnectedMonomerR1Bond === R1PolymerBond) break;
-
-      if (monomersInChainSet.has(R1ConnectedMonomer)) {
-        result = true;
-        break;
-      } else {
-        monomersInChainSet.add(R1ConnectedMonomer);
-        currentMonomer = R1ConnectedMonomer;
+      if (monomer === nextMonomerInChain) {
+        cyclicChains.push(Array.from(monomersInSameChain));
       }
-    }
+    });
 
-    return result;
+    const firstMonomersOfCycledChainsSet = cyclicChains.map((cyclicChain) =>
+      this.getMonomerWithLowerCoordsFromMonomerList(cyclicChain),
+    );
+
+    return firstMonomersOfCycledChainsSet;
   }
 
   private static getMonomerWithLowerCoordsFromMonomerList(
@@ -220,25 +168,5 @@ export class ChainsCollection {
     const monomerWithLowerCoords = monomerListShallowCopy[0];
 
     return monomerWithLowerCoords;
-  }
-
-  private static getMonomerListFromCycledChain(
-    monomer: BaseMonomer,
-  ): BaseMonomer[] {
-    const firstMonomer = monomer;
-    const monomerList: BaseMonomer[] = [];
-
-    let nextMonomer: BaseMonomer = firstMonomer;
-
-    do {
-      const R1PolymerBond = nextMonomer.attachmentPointsToBonds.R1;
-
-      nextMonomer =
-        R1PolymerBond?.getAnotherMonomer(nextMonomer) || firstMonomer;
-
-      monomerList.push(nextMonomer);
-    } while (nextMonomer !== firstMonomer);
-
-    return monomerList;
   }
 }

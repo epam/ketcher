@@ -100,4 +100,12 @@ export class Chain {
       this.subChains[0].nodes[0] instanceof EmptySequenceNode
     );
   }
+
+  public forEachNode(callback: ({ node, subChain }) => void) {
+    this.subChains.forEach((subChain) => {
+      subChain.nodes.forEach((node) => {
+        callback({ node, subChain });
+      });
+    });
+  }
 }

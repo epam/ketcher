@@ -9,6 +9,7 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   clickUndo,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -209,6 +210,25 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open monomers cyclic chains and switch to sequence mode', async ({
+    page,
+  }) => {
+    /*
+    Related bug: #4329 - Open monomers cyclic chains and switch to sequence mode
+    */
+    const ZOOM_OUT_VALUE = 400;
+    const SCROLL_DOWN_VALUE = 100;
+
+    await openFileAndAddToCanvasMacro('KET/monomers-cyclic-chains.ket', page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
+    await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 });

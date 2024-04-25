@@ -43,6 +43,11 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
+  const cntxt = page.context();
+  const brwsr = cntxt.browser();
+  await page.close();
+  await cntxt.close();
+  await brwsr.close();
   await browser.close();
 });
 

@@ -414,16 +414,6 @@ export class SequenceRenderer {
       nodeIndex,
     );
 
-    if (this.previousChainRow.length === 0) {
-      this.restoreCaretPosition(this.caretPosition, this.caretPosition);
-      return;
-    }
-
-    this.lastUserDefinedCursorPosition = Math.max(
-      this.lastUserDefinedCursorPosition,
-      nodeIndex,
-    );
-
     this.restoreCaretPosition(
       this.caretPosition,
       this.caretPosition -

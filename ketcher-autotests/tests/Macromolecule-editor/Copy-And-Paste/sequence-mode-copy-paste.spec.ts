@@ -14,11 +14,8 @@ import {
   readFileContents,
   startNewSequence,
   selectSnakeLayoutModeTool,
-  waitForSpinnerFinishedWork,
-  waitForLoad,
   waitForRender,
 } from '@utils';
-import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,

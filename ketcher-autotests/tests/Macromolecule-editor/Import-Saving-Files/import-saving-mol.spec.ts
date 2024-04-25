@@ -25,7 +25,7 @@
 //   chooseFileFormat,
 //   turnOnMacromoleculesEditor,
 // } from '@utils/macromolecules';
-
+export {};
 // function removeNotComparableData(file: string) {
 //   return file
 //     .split('\n')

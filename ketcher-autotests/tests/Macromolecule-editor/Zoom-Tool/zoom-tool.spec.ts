@@ -15,7 +15,7 @@
 //   zoomWithMouseWheel,
 //   turnOnMacromoleculesEditor,
 // } from '@utils/macromolecules';
-
+export {};
 // let page: Page;
 
 // test.beforeAll(async ({ browser }) => {

@@ -218,6 +218,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );
+      SequenceRenderer.resetLastUserDefinedCaretPosition();
       this.unselectAllEntities();
     }
   }
@@ -225,9 +226,6 @@ export class SequenceMode extends BaseMode {
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
-    if (this.isEditMode) {
-      SequenceRenderer.resetLastCaretPosition();
-    }
     if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
@@ -274,6 +272,10 @@ export class SequenceMode extends BaseMode {
   mouseup() {
     if (this.selectionStarted) {
       this.selectionStarted = false;
+    }
+
+    if (this.isEditMode) {
+      SequenceRenderer.resetLastUserDefinedCaretPosition();
     }
   }
 
@@ -455,6 +457,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
     this.selectionStartCaretPosition = -1;
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
   private handleNodesDeletion(selections: NodesSelection) {
@@ -628,6 +631,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
           SequenceRenderer.moveCaretForward();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
         },
       },
       'move-caret-back': {
@@ -637,6 +641,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
           SequenceRenderer.moveCaretBack();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
         },
       },
       'add-sequence-item': {
@@ -694,6 +699,10 @@ export class SequenceMode extends BaseMode {
               ? this.selectionStartCaretPosition
               : SequenceRenderer.caretPosition;
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
+
+          if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {
+            SequenceRenderer.resetLastUserDefinedCaretPosition();
+          }
         },
       },
     };

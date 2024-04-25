@@ -1,4 +1,4 @@
-//  eslint-disable no-magic-numbers
+//  slint-disable no-magic-numbers
 // import { Page, chromium, test } from '@playwright/test';
 // import {
 //   selectTopPanelButton,

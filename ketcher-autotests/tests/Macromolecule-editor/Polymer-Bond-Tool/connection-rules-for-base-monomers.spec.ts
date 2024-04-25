@@ -15,39 +15,39 @@ import {
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
-test.describe('Connection rules for Base monomers: ', () => {
-  let page: Page;
+let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
-
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-
-  test.afterEach(async () => {
-    await page.keyboard.press('Control+0');
-    await selectClearCanvasTool(page);
-  });
-
-  test.afterAll(async ({ browser }) => {
+test.beforeAll(async ({ browser }) => {
+  let sharedContext;
+  try {
+    sharedContext = await browser.newContext();
+  } catch (error) {
+    console.error('Error on creation browser context:', error);
+    console.log('Restarting browser...');
     await browser.close();
-  });
+    browser = await chromium.launch();
+    sharedContext = await browser.newContext();
+  }
 
+  // Reminder: do not pass page as async
+  page = await sharedContext.newPage();
+
+  await page.goto('', { waitUntil: 'domcontentloaded' });
+  await waitForKetcherInit(page);
+  await waitForIndigoToLoad(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  await browser.close();
+});
+
+test.describe('Connection rules for Base monomers: ', () => {
   interface IMonomer {
     fileName: string;
     alias: string;

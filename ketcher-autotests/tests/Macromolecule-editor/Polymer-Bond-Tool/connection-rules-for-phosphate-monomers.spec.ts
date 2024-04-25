@@ -1,20 +1,18 @@
 /* eslint-disable no-magic-numbers */
-import { BrowserContext, Page, chromium, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
-
+/*
 let page: Page;
 let sharedContext: BrowserContext;
 
@@ -64,10 +62,15 @@ test.afterAll(async ({ browser }) => {
   // if (brwsr) await brwsr.close();
   await browser.close();
 });
-
+*/
 test.describe('Connection rules for Phosphate monomers: ', () => {
   test.setTimeout(300000);
-  test.describe.configure({ retries: 0 });
+  // test.describe.configure({ retries: 0 });
+
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
 
   interface IMonomer {
     fileName: string;
@@ -268,8 +271,10 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  3. Establish connection between %phosphateType%(center) and %phosphateType%(center)
        *  4. Validate canvas (connection dialog should appear)
        */
-      test(`Test case1: Center-to-center of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-        test.setTimeout(15000);
+      test(`Test case1: Center-to-center of ${leftBase.alias} and ${rightBase.alias}`, async ({
+        page,
+      }) => {
+        // test.setTimeout(30000);
         await bondTwoMonomersByCenterToCenter(page, leftBase, rightBase);
       });
     });
@@ -293,8 +298,10 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  3. Establish connection between %phosphateType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Test case2: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-                test.setTimeout(15000);
+              test(`Test case2: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async ({
+                page,
+              }) => {
+                // test.setTimeout(30000);
                 await bondTwoMonomersByPointToPoint(
                   page,
                   leftBase,

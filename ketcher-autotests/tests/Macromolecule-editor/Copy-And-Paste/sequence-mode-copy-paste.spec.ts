@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -11,8 +12,17 @@ import {
   clickUndo,
   openPasteFromClipboard,
   readFileContents,
+  startNewSequence,
+  selectSnakeLayoutModeTool,
+  waitForSpinnerFinishedWork,
+  waitForLoad,
+  waitForRender,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
+import {
+  enterSequence,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 import {
   clickOnSequenceSymbol,
   getSequenceSymbolLocator,
@@ -56,6 +66,21 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that when there is at least one sequence on canvas, pasting is performed in next row, and canvas is moved to make newly added sequence visible', async ({
+    page,
+  }) => {
+    await page.keyboard.down('Control');
+    await getSequenceSymbolLocator(page, 'G').click();
+    await page.keyboard.up('Control');
+    await page.keyboard.press('Control+c');
+
+    for (let i = 0; i < 10; i++) {
+      await page.keyboard.press('Control+v');
+    }
+
     await takeEditorScreenshot(page);
   });
 });
@@ -145,5 +170,73 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await clickUndo(page);
     await clickUndo(page);
     await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Sequence-edit mode', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSequenceLayoutModeTool(page);
+  });
+
+  test('Check If cursor is located in the first cell of empty row of a grid, then pasted fragment is considered as new chain', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3894
+    Description: Pasted fragment is considered as new chain.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'tcgtuctucc');
+    await page.keyboard.press('Escape');
+    await page.keyboard.down('Control');
+    await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.up('Control');
+    await page.keyboard.press('Control+c');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that if an unsupported symbol is entered during paste from clipboard, system displays an error message', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3894
+    Description: Pasted fragment is considered as new chain.
+    */
+    await openPasteFromClipboard(page, '>');
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.getByTitle('Close window').click();
+    await startNewSequence(page);
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Pasting a large sequence from clipboard in sequence edit mode (500 symbols)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3894
+    Description: Sequence pasted on canvas.
+    */
+    const fileContent = await readFileContents(
+      'tests/test-data/Sequence/sequence-500-symbols.seq',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.getByTitle('Close window').click();
+    await startNewSequence(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await waitForRender(page, async () => {
+      await takeEditorScreenshot(page);
+    });
   });
 });

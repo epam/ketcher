@@ -5,11 +5,14 @@ import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { AttachmentPointName } from 'domain/types';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
+import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
-  public renderer?: PolymerBondRenderer | BackBoneBondSequenceRenderer =
-    undefined;
+  public renderer?:
+    | PolymerBondRenderer
+    | BackBoneBondSequenceRenderer
+    | PolymerBondSequenceRenderer = undefined;
 
   public endPosition: Vec2 = new Vec2();
 
@@ -28,7 +31,10 @@ export class PolymerBond extends DrawingEntity {
   }
 
   public setRenderer(
-    renderer: PolymerBondRenderer | BackBoneBondSequenceRenderer,
+    renderer:
+      | PolymerBondRenderer
+      | BackBoneBondSequenceRenderer
+      | PolymerBondSequenceRenderer,
   ) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;

@@ -9,7 +9,7 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   clickUndo,
-  startNewSequence,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -213,18 +213,22 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open modified RNA in sequence mode', async ({ page }) => {
+  test('Open monomers cyclic chains and switch to sequence mode', async ({
+    page,
+  }) => {
     /*
-    Test case: #3734
-    Description: Displaying modified nucleotide chains in sequence representation
+    Related bug: #4329 - Open monomers cyclic chains and switch to sequence mode
     */
+    const ZOOM_OUT_VALUE = 400;
+    const SCROLL_DOWN_VALUE = 100;
+
+    await openFileAndAddToCanvasMacro('KET/monomers-cyclic-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(
-      'KET/modified-nucleotide-chain.ket',
-      page,
-    );
     await takeEditorScreenshot(page);
-    await startNewSequence(page);
+    await selectSnakeLayoutModeTool(page);
+    await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
+    await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 });

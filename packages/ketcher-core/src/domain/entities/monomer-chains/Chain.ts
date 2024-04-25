@@ -8,6 +8,7 @@ import {
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
+  getPhosphateFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -20,9 +21,21 @@ import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
-  constructor(firstMonomer?: BaseMonomer) {
+  public firstMonomer: BaseMonomer | null;
+
+  public isCyclic = false;
+
+  constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
+    this.firstMonomer = null;
+
     if (firstMonomer) {
+      this.firstMonomer = firstMonomer;
+
       this.fillSubChains(firstMonomer);
+    }
+
+    if (isCyclic) {
+      this.isCyclic = isCyclic;
     }
   }
 
@@ -71,7 +84,16 @@ export class Chain {
     if (!monomer) return;
 
     this.add(monomer);
-    this.fillSubChains(getNextMonomerInChain(this.lastNode?.lastMonomerInNode));
+    if (this.lastNode instanceof Nucleotide) {
+      this.fillSubChains(
+        getNextMonomerInChain(
+          getPhosphateFromSugar(monomer),
+          this.firstMonomer,
+        ),
+      );
+    } else {
+      this.fillSubChains(getNextMonomerInChain(monomer, this.firstMonomer));
+    }
   }
 
   public get lastSubChain() {
@@ -105,5 +127,13 @@ export class Chain {
       this.subChains[0].nodes.length === 1 &&
       this.subChains[0].nodes[0] instanceof EmptySequenceNode
     );
+  }
+
+  public forEachNode(callback: ({ node, subChain }) => void) {
+    this.subChains.forEach((subChain) => {
+      subChain.nodes.forEach((node) => {
+        callback({ node, subChain });
+      });
+    });
   }
 }

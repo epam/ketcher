@@ -1,255 +1,255 @@
-// import { Locator, test, Page, chromium } from '@playwright/test';
-// import {
-//   LeftPanelButton,
-//   addSingleMonomerToCanvas,
-//   selectRectangleArea,
-//   selectRectangleSelectionTool,
-//   selectSingleBondTool,
-//   selectTool,
-//   takeEditorScreenshot,
-//   waitForPageInit,
-//   moveMouseToTheMiddleOfTheScreen,
-//   selectClearCanvasTool,
-// } from '@utils';
-// import {
-//   zoomWithMouseWheel,
-//   turnOnMacromoleculesEditor,
-// } from '@utils/macromolecules';
-export {};
-// let page: Page;
+import { Locator, test, Page, chromium } from '@playwright/test';
+import {
+  LeftPanelButton,
+  addSingleMonomerToCanvas,
+  selectRectangleArea,
+  selectRectangleSelectionTool,
+  selectSingleBondTool,
+  selectTool,
+  takeEditorScreenshot,
+  waitForPageInit,
+  moveMouseToTheMiddleOfTheScreen,
+  selectClearCanvasTool,
+} from '@utils';
+import {
+  zoomWithMouseWheel,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
-// test.beforeAll(async ({ browser }) => {
-//   let sharedContext;
-//   try {
-//     sharedContext = await browser.newContext();
-//   } catch (error) {
-//     console.error('Error on creation browser context:', error);
-//     console.log('Restarting browser...');
-//     await browser.close();
-//     browser = await chromium.launch();
-//     sharedContext = await browser.newContext();
-//   }
+let page: Page;
 
-//   // Reminder: do not pass page as async paramenter to test
-//   page = await sharedContext.newPage();
-//   await waitForPageInit(page);
-//   await turnOnMacromoleculesEditor(page);
-// });
+test.beforeAll(async ({ browser }) => {
+  let sharedContext;
+  try {
+    sharedContext = await browser.newContext();
+  } catch (error) {
+    console.error('Error on creation browser context:', error);
+    console.log('Restarting browser...');
+    await browser.close();
+    browser = await chromium.launch();
+    sharedContext = await browser.newContext();
+  }
 
-// test.afterEach(async () => {
-//   await takeEditorScreenshot(page);
-//   await page.keyboard.press('Control+0');
-//   await selectClearCanvasTool(page);
-// });
+  // Reminder: do not pass page as async paramenter to test
+  page = await sharedContext.newPage();
+  await waitForPageInit(page);
+  await turnOnMacromoleculesEditor(page);
+});
 
-// test.afterAll(async ({ browser }) => {
-//   const cntxt = page.context();
-//   const brwsr = cntxt.browser();
-//   console.log('Number of contexts: ', browser.contexts().length);
-//   console.log('Number of pages: ', cntxt.pages().length);
-//   await page.close();
-//   await cntxt.close();
-//   await browser.contexts().forEach((someContext) => {
-//     someContext.close();
-//   });
-//   if (brwsr) await brwsr.close();
-//   await browser.close();
-// });
+test.afterEach(async () => {
+  await takeEditorScreenshot(page);
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
 
-// const MONOMER_NAME_TZA = 'C___Cysteine';
-// const MONOMER_ALIAS_TZA = 'C';
-// const ZOOM_STEP = 200;
-// test.describe('Zoom Tool', () => {
-//   const deltas = { x: 0, y: 200 };
-//   const peptideCoordinates = { x: 300, y: 300 };
-//   let peptide: Locator;
-//   test.beforeEach(async () => {
-//     // await waitForPageInit(page);
-//     // await turnOnMacromoleculesEditor(page);
-//     peptide = await addSingleMonomerToCanvas(
-//       page,
-//       MONOMER_NAME_TZA,
-//       MONOMER_ALIAS_TZA,
-//       peptideCoordinates.x,
-//       peptideCoordinates.y,
-//       0,
-//     );
-//     await moveMouseToTheMiddleOfTheScreen(page);
-//   });
-//   /*
-//   test.afterEach(async ({ page }) => {
-//     await takeEditorScreenshot(page);
-//   });
-//   */
-//   test('Zoom In & Out monomer with menu buttons', async () => {
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await takeEditorScreenshot(page);
+test.afterAll(async ({ browser }) => {
+  const cntxt = page.context();
+  // const brwsr = cntxt.browser();
+  console.log('Number of contexts: ', browser.contexts().length);
+  console.log('Number of pages: ', cntxt.pages().length);
+  await page.close();
+  await cntxt.close();
+  await browser.contexts().forEach((someContext) => {
+    someContext.close();
+  });
+  // if (brwsr) await brwsr.close();
+  // await browser.close();
+});
 
-//     await selectTool(LeftPanelButton.ZoomReset, page);
-//     await takeEditorScreenshot(page);
+const MONOMER_NAME_TZA = 'C___Cysteine';
+const MONOMER_ALIAS_TZA = 'C';
+const ZOOM_STEP = 200;
+test.describe('Zoom Tool', () => {
+  const deltas = { x: 0, y: 200 };
+  const peptideCoordinates = { x: 300, y: 300 };
+  let peptide: Locator;
+  test.beforeEach(async () => {
+    // await waitForPageInit(page);
+    // await turnOnMacromoleculesEditor(page);
+    peptide = await addSingleMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      peptideCoordinates.x,
+      peptideCoordinates.y,
+      0,
+    );
+    await moveMouseToTheMiddleOfTheScreen(page);
+  });
+  /*
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+  */
+  test('Zoom In & Out monomer with menu buttons', async () => {
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await takeEditorScreenshot(page);
 
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//   });
+    await selectTool(LeftPanelButton.ZoomReset, page);
+    await takeEditorScreenshot(page);
 
-//   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
-//     await page.keyboard.down('Control');
-//     await page.mouse.wheel(deltas.x, deltas.y);
-//     await takeEditorScreenshot(page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+  });
 
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(deltas.x, deltas.y);
+    await takeEditorScreenshot(page);
 
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//   });
+    await page.mouse.wheel(deltas.x, -deltas.y);
+    await takeEditorScreenshot(page);
 
-//   test('Zoom In & Out attachment points with menu buttons', async () => {
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectSingleBondTool(page);
-//     await peptide.hover();
-//     await takeEditorScreenshot(page);
+    await page.mouse.wheel(deltas.x, -deltas.y);
+  });
 
-//     await selectTool(LeftPanelButton.ZoomReset, page);
-//     await peptide.hover();
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out attachment points with menu buttons', async () => {
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectSingleBondTool(page);
+    await peptide.hover();
+    await takeEditorScreenshot(page);
 
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await peptide.hover();
-//   });
+    await selectTool(LeftPanelButton.ZoomReset, page);
+    await peptide.hover();
+    await takeEditorScreenshot(page);
 
-//   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
-//     await page.keyboard.down('Control');
-//     await page.mouse.wheel(deltas.x, deltas.y);
-//     await selectSingleBondTool(page);
-//     await peptide.hover();
-//     await takeEditorScreenshot(page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await peptide.hover();
+  });
 
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//     await peptide.hover();
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(deltas.x, deltas.y);
+    await selectSingleBondTool(page);
+    await peptide.hover();
+    await takeEditorScreenshot(page);
 
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//     await peptide.hover();
-//   });
+    await page.mouse.wheel(deltas.x, -deltas.y);
+    await peptide.hover();
+    await takeEditorScreenshot(page);
 
-//   test('Zoom In & Out bond with menu buttons', async () => {
-//     const bondCoordinates = { x: 400, y: 400 };
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectSingleBondTool(page);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//     await takeEditorScreenshot(page);
-//     await page.mouse.up();
-//     await selectTool(LeftPanelButton.ZoomReset, page);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//     await takeEditorScreenshot(page);
-//     await page.mouse.up();
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//   });
+    await page.mouse.wheel(deltas.x, -deltas.y);
+    await peptide.hover();
+  });
 
-//   test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
-//     await page.keyboard.down('Control');
-//     const bondCoordinates = { x: 400, y: 400 };
-//     await page.mouse.wheel(deltas.x, deltas.y);
-//     await selectSingleBondTool(page);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//     await takeEditorScreenshot(page);
-//     await page.mouse.up();
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//     await takeEditorScreenshot(page);
-//     await page.mouse.up();
-//     await page.mouse.wheel(deltas.x, -deltas.y);
-//     await peptide.hover();
-//     await page.mouse.down();
-//     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
-//   });
+  test('Zoom In & Out bond with menu buttons', async () => {
+    const bondCoordinates = { x: 400, y: 400 };
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectSingleBondTool(page);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+    await takeEditorScreenshot(page);
+    await page.mouse.up();
+    await selectTool(LeftPanelButton.ZoomReset, page);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+    await takeEditorScreenshot(page);
+    await page.mouse.up();
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+  });
 
-//   test('Zoom In & Out selection rectangle with menu buttons', async () => {
-//     const selectionStart = { x: 200, y: 200 };
-//     const selectionEnd = { x: 400, y: 400 };
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectTool(LeftPanelButton.ZoomIn, page);
-//     await selectRectangleSelectionTool(page);
-//     await selectRectangleArea(
-//       page,
-//       selectionStart.x,
-//       selectionStart.y,
-//       selectionEnd.x,
-//       selectionEnd.y,
-//     );
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
+    await page.keyboard.down('Control');
+    const bondCoordinates = { x: 400, y: 400 };
+    await page.mouse.wheel(deltas.x, deltas.y);
+    await selectSingleBondTool(page);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+    await takeEditorScreenshot(page);
+    await page.mouse.up();
+    await page.mouse.wheel(deltas.x, -deltas.y);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+    await takeEditorScreenshot(page);
+    await page.mouse.up();
+    await page.mouse.wheel(deltas.x, -deltas.y);
+    await peptide.hover();
+    await page.mouse.down();
+    await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+  });
 
-//     await selectTool(LeftPanelButton.ZoomReset, page);
-//     await selectRectangleArea(
-//       page,
-//       selectionStart.x,
-//       selectionStart.y,
-//       selectionEnd.x,
-//       selectionEnd.y,
-//     );
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out selection rectangle with menu buttons', async () => {
+    const selectionStart = { x: 200, y: 200 };
+    const selectionEnd = { x: 400, y: 400 };
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectTool(LeftPanelButton.ZoomIn, page);
+    await selectRectangleSelectionTool(page);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
+    await takeEditorScreenshot(page);
 
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await selectTool(LeftPanelButton.ZoomOut, page);
-//     await selectRectangleArea(
-//       page,
-//       selectionStart.x,
-//       selectionStart.y,
-//       selectionEnd.x,
-//       selectionEnd.y,
-//     );
-//   });
+    await selectTool(LeftPanelButton.ZoomReset, page);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
+    await takeEditorScreenshot(page);
 
-//   test('Zoom In & Out selection rectangle with mouse wheel and CTRL', async () => {
-//     const selectionStart = { x: 200, y: 200 };
-//     const selectionEnd = { x: 800, y: 800 };
-//     await zoomWithMouseWheel(page, ZOOM_STEP);
-//     await selectRectangleSelectionTool(page);
-//     await selectRectangleArea(
-//       page,
-//       selectionStart.x,
-//       selectionStart.y,
-//       selectionEnd.x,
-//       selectionEnd.y,
-//     );
-//     await takeEditorScreenshot(page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await selectTool(LeftPanelButton.ZoomOut, page);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
+  });
 
-//     await zoomWithMouseWheel(page, -ZOOM_STEP);
-//     await takeEditorScreenshot(page);
+  test('Zoom In & Out selection rectangle with mouse wheel and CTRL', async () => {
+    const selectionStart = { x: 200, y: 200 };
+    const selectionEnd = { x: 800, y: 800 };
+    await zoomWithMouseWheel(page, ZOOM_STEP);
+    await selectRectangleSelectionTool(page);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
+    await takeEditorScreenshot(page);
 
-//     await zoomWithMouseWheel(page, -ZOOM_STEP);
-//   });
+    await zoomWithMouseWheel(page, -ZOOM_STEP);
+    await takeEditorScreenshot(page);
 
-//   test('Scroll canvas by mouse wheel', async () => {
-//     await takeEditorScreenshot(page);
-//     const deltaX = 900;
-//     const deltaY = 750;
+    await zoomWithMouseWheel(page, -ZOOM_STEP);
+  });
 
-//     await page.mouse.wheel(deltaX, deltaY);
-//   });
+  test('Scroll canvas by mouse wheel', async () => {
+    await takeEditorScreenshot(page);
+    const deltaX = 900;
+    const deltaY = 750;
 
-//   test('Scroll canvas horizontally with Shift pressed', async () => {
-//     const wheelDelta = 100;
+    await page.mouse.wheel(deltaX, deltaY);
+  });
 
-//     await page.keyboard.down('Shift');
-//     await page.mouse.wheel(0, wheelDelta);
-//     await page.keyboard.up('Shift');
-//   });
-// });
+  test('Scroll canvas horizontally with Shift pressed', async () => {
+    const wheelDelta = 100;
+
+    await page.keyboard.down('Shift');
+    await page.mouse.wheel(0, wheelDelta);
+    await page.keyboard.up('Shift');
+  });
+});

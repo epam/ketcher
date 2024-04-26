@@ -33,6 +33,8 @@ import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
 
 export type SequencePointer = number;
+export type NumberOfSymbolsInRow = number;
+export type SequenceLastCaretPosition = number;
 
 export type NodeSelection = {
   node: SubChainNode;
@@ -42,9 +44,11 @@ export type NodeSelection = {
 };
 
 export type NodesSelection = NodeSelection[][];
+const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
 export class SequenceRenderer {
   public static caretPosition: SequencePointer = -1;
+  public static lastUserDefinedCaretPosition: SequenceLastCaretPosition = 0;
   public static chainsCollection: ChainsCollection;
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
@@ -323,20 +327,130 @@ export class SequenceRenderer {
     return monomers;
   }
 
-  public static moveCaretForward() {
-    return new RestoreSequenceCaretPositionOperation(
-      this.caretPosition,
-      this.nextCaretPosition || this.caretPosition,
+  public static resetLastUserDefinedCaretPosition() {
+    this.lastUserDefinedCaretPosition = this.caretPosition;
+  }
+
+  private static get nodesGroupedByRows() {
+    const finalArray: Array<Array<SubChainNode>> = [];
+    let chainNodes: Array<SubChainNode> = [];
+    SequenceRenderer.forEachNode(({ node }) => {
+      chainNodes.push(node);
+      if (!(node instanceof EmptySequenceNode)) {
+        return;
+      }
+
+      if (chainNodes.length > NUMBER_OF_SYMBOLS_IN_ROW) {
+        while (chainNodes.length > 0) {
+          finalArray.push(chainNodes.splice(0, NUMBER_OF_SYMBOLS_IN_ROW));
+        }
+      } else {
+        finalArray.push([...chainNodes]);
+      }
+      chainNodes = [];
+    });
+
+    return finalArray;
+  }
+
+  private static getNodeIndexInRowByGlobalIndex(nodeIndexOverall: number) {
+    let restNodes = nodeIndexOverall;
+    let nodeIndexInRow;
+
+    this.nodesGroupedByRows.forEach((row) => {
+      if (nodeIndexInRow === undefined && restNodes - row.length < 0) {
+        nodeIndexInRow = restNodes;
+      }
+      restNodes -= row.length;
+    });
+
+    return nodeIndexInRow;
+  }
+
+  private static get currentChainRow() {
+    return (
+      this.nodesGroupedByRows.find((idexRow) =>
+        idexRow.includes(this.currentEdittingNode),
+      ) || []
     );
   }
 
+  private static get previousRowOfNodes() {
+    const index = this.nodesGroupedByRows.findIndex((row) =>
+      row.includes(this.currentEdittingNode),
+    );
+    return index > 0 ? this.nodesGroupedByRows[index - 1] : [];
+  }
+
+  private static get nextRowOfNodes() {
+    const currentIndex = this.nodesGroupedByRows.findIndex((row) =>
+      row.includes(this.currentEdittingNode),
+    );
+    return currentIndex !== -1 &&
+      currentIndex + 1 < this.nodesGroupedByRows.length
+      ? this.nodesGroupedByRows[currentIndex + 1]
+      : [];
+  }
+
+  public static moveCaretUp() {
+    const currentNodeIndexInRow = this.currentChainRow.indexOf(
+      this.currentEdittingNode,
+    );
+
+    let newCaretPosition = this.caretPosition;
+    const symbolsBeforeCaretInCurrentRow = currentNodeIndexInRow;
+    const lastUserDefinedCursorPositionInRow =
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition);
+
+    newCaretPosition -= symbolsBeforeCaretInCurrentRow;
+    newCaretPosition -= Math.max(
+      this.previousRowOfNodes.length === 0 ? 0 : 1,
+      this.previousRowOfNodes.length - lastUserDefinedCursorPositionInRow,
+    );
+
+    SequenceRenderer.setCaretPosition(newCaretPosition);
+  }
+
+  public static moveCaretDown() {
+    const currentNodeIndexInRow = this.currentChainRow.indexOf(
+      this.currentEdittingNode,
+    );
+
+    let newCaretPosition = this.caretPosition;
+    const lastUserDefinedCursorPositionInRow =
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition);
+    const symbolsAfterCaretInCurrentRow =
+      this.currentChainRow.length - currentNodeIndexInRow;
+
+    newCaretPosition += symbolsAfterCaretInCurrentRow;
+    newCaretPosition += Math.min(
+      lastUserDefinedCursorPositionInRow,
+      this.nextRowOfNodes.length - 1,
+    );
+
+    SequenceRenderer.setCaretPosition(newCaretPosition);
+  }
+
+  public static moveCaretForward() {
+    const operation = new RestoreSequenceCaretPositionOperation(
+      this.caretPosition,
+      this.nextCaretPosition || this.caretPosition,
+    );
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+    return operation;
+  }
+
   public static moveCaretBack() {
-    return new RestoreSequenceCaretPositionOperation(
+    const operation = new RestoreSequenceCaretPositionOperation(
       this.caretPosition,
       this.previousCaretPosition === undefined
         ? this.caretPosition
         : this.previousCaretPosition,
     );
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+    return operation;
   }
 
   public static get hasNewChain() {
@@ -431,6 +545,12 @@ export class SequenceRenderer {
   public static get previousChain() {
     return SequenceRenderer.chainsCollection.chains[
       SequenceRenderer.currentChainIndex - 1
+    ];
+  }
+
+  public static get nextChain() {
+    return SequenceRenderer.chainsCollection.chains[
+      SequenceRenderer.currentChainIndex + 1
     ];
   }
 
@@ -582,7 +702,7 @@ export class SequenceRenderer {
 
   public static shiftArrowSelectionInEditMode(event) {
     const editor = CoreEditor.provideEditorInstance();
-    let modelChanges;
+    let modelChanges = new Command();
     const arrowKey = event.code;
     if (arrowKey === 'ArrowRight') {
       modelChanges = SequenceRenderer.getShiftArrowChanges(
@@ -606,6 +726,36 @@ export class SequenceRenderer {
           ));
       }
       modelChanges.addOperation(this.moveCaretBack());
+    } else if (arrowKey === 'ArrowUp') {
+      const previousCaretPosition = SequenceRenderer.caretPosition;
+      SequenceRenderer.moveCaretUp();
+      const newCaretPosition = SequenceRenderer.caretPosition;
+
+      SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+        if (
+          nodeIndexOverall < previousCaretPosition &&
+          nodeIndexOverall >= newCaretPosition
+        ) {
+          modelChanges.merge(
+            SequenceRenderer.getShiftArrowChanges(editor, node.monomer),
+          );
+        }
+      });
+    } else if (arrowKey === 'ArrowDown') {
+      const previousCaretPosition = SequenceRenderer.caretPosition;
+      SequenceRenderer.moveCaretDown();
+      const newCaretPosition = SequenceRenderer.caretPosition;
+
+      SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+        if (
+          nodeIndexOverall >= previousCaretPosition &&
+          nodeIndexOverall < newCaretPosition
+        ) {
+          modelChanges.merge(
+            SequenceRenderer.getShiftArrowChanges(editor, node.monomer),
+          );
+        }
+      });
     }
     editor.renderersContainer.update(modelChanges);
   }

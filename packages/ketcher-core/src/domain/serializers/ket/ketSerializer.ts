@@ -313,7 +313,7 @@ export class KetSerializer implements Serializer<Struct> {
     template: IKetMonomerTemplate,
   ): MonomerItemType {
     const monomerLibraryItem = {
-      label: '',
+      label: template.alias || template.id,
       struct: this.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
     };

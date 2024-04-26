@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForPageInit,
   waitForKetcherInit,
   waitForIndigoToLoad,
   selectClearCanvasTool,

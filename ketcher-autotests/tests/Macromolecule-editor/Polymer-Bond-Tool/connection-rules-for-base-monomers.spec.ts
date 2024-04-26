@@ -14,7 +14,7 @@
 // import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 // /*
 // let page: Page;
-
+export {};
 // test.beforeAll(async ({ browser }) => {
 //   let sharedContext;
 //   try {

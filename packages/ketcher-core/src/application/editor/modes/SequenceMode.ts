@@ -272,6 +272,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );
+      SequenceRenderer.resetLastUserDefinedCaretPosition();
       this.unselectAllEntities();
     }
   }
@@ -325,6 +326,10 @@ export class SequenceMode extends BaseMode {
   mouseup() {
     if (this.selectionStarted) {
       this.selectionStarted = false;
+    }
+
+    if (this.isEditMode) {
+      SequenceRenderer.resetLastUserDefinedCaretPosition();
     }
   }
 
@@ -509,6 +514,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.addOperation(moveCaretOperation);
     history.update(modelChanges);
     this.selectionStartCaretPosition = -1;
+    SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
   private handleNodesDeletion(selections: NodesSelection) {
@@ -671,6 +677,18 @@ export class SequenceMode extends BaseMode {
           this.startNewSequence();
         },
       },
+      'move-caret-up': {
+        shortcut: ['ArrowUp'],
+        handler: () => {
+          SequenceRenderer.moveCaretUp();
+        },
+      },
+      'move-caret-down': {
+        shortcut: ['ArrowDown'],
+        handler: () => {
+          SequenceRenderer.moveCaretDown();
+        },
+      },
       'move-caret-forward': {
         shortcut: ['ArrowRight'],
         handler: () => {
@@ -678,6 +696,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
           SequenceRenderer.moveCaretForward();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
         },
       },
       'move-caret-back': {
@@ -687,6 +706,7 @@ export class SequenceMode extends BaseMode {
             return;
           }
           SequenceRenderer.moveCaretBack();
+          SequenceRenderer.resetLastUserDefinedCaretPosition();
         },
       },
       'add-sequence-item': {
@@ -723,7 +743,12 @@ export class SequenceMode extends BaseMode {
         },
       },
       'sequence-edit-select': {
-        shortcut: ['Shift+ArrowLeft', 'Shift+ArrowRight'],
+        shortcut: [
+          'Shift+ArrowLeft',
+          'Shift+ArrowRight',
+          'Shift+ArrowUp',
+          'Shift+ArrowDown',
+        ],
         handler: (event) => {
           const arrowKey = event.key;
 
@@ -739,6 +764,10 @@ export class SequenceMode extends BaseMode {
               ? this.selectionStartCaretPosition
               : SequenceRenderer.caretPosition;
           SequenceRenderer.shiftArrowSelectionInEditMode(event);
+
+          if (arrowKey === 'ArrowLeft' || arrowKey === 'ArrowRight') {
+            SequenceRenderer.resetLastUserDefinedCaretPosition();
+          }
         },
       },
     };

@@ -256,4 +256,30 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await moveMouseAway(page);
     await takeRNABuilderScreenshot(page);
   });
+
+  test('Check that Nucleoside editable in RNA builder', async ({ page }) => {
+    /*
+    Test case: #4388
+    Description: Nucleoside edited in RNA builder.
+    */
+    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'p');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await page.getByTestId(SUGAR).click();
+    await page.getByTestId(`3A6___6-amino-hexanol (3' end)`).click();
+    await moveMouseAway(page);
+    await page.getByTestId(BASE).click();
+    await page
+      .getByTestId('dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine')
+      .click();
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await moveMouseAway(page);
+    await page.getByTestId('save-btn').click();
+    await takeEditorScreenshot(page);
+  });
 });

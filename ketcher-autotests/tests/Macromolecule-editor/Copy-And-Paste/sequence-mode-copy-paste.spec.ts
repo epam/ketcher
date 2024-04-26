@@ -236,4 +236,75 @@ test.describe('Sequence-edit mode', () => {
       await takeEditorScreenshot(page);
     });
   });
+
+  test('Verify that when multiple unconnected fragments are selected, they are pasted as separate chains in view mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3916
+    Description: Multiple unconnected fragments are pasted as separate chains in view mode.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
+    await page.keyboard.press('Escape');
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'T');
+    await clickOnSequenceSymbol(page, 'U');
+    await clickOnSequenceSymbol(page, 'C');
+    await page.keyboard.up('Shift');
+    await page.keyboard.press('Control+c');
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Pasting several separate monomers are prohibited in text-editing mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3916
+    Description: Pasting several separate monomers are prohibited in text-editing mode.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
+    await page.keyboard.press('Escape');
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'T');
+    await clickOnSequenceSymbol(page, 'U');
+    await clickOnSequenceSymbol(page, 'C');
+    await page.keyboard.up('Shift');
+    await page.keyboard.press('Control+c');
+    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+  });
+
+  test('After pasting between two nucleotides in text-editing mode,bond R2-R1 between them is broken,and pasted fragment is merged with existing chain', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3916
+    Description: Bond R2-R1 between them is broken,and pasted fragment is merged with existing chain.
+    */
+    await startNewSequence(page);
+    await enterSequence(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    for (let i = 0; i < 4; i++) {
+      await page.keyboard.press('ArrowRight');
+    }
+    await page.keyboard.up('Shift');
+    await page.keyboard.press('Control+c');
+    await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

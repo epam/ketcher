@@ -2221,19 +2221,19 @@
         "$ref": "monomerGroupTemplate-U"
       },
       {
-        "$ref": "monomerTemplate-MOE(A)P"
+        "$ref": "monomerGroupTemplate-MOE(A)P"
       },
       {
-        "$ref": "monomerTemplate-MOE(5meC)P"
+        "$ref": "monomerGroupTemplate-MOE(5meC)P"
       },
       {
-        "$ref": "monomerTemplate-MOE(G)P"
+        "$ref": "monomerGroupTemplate-MOE(G)P"
       },
       {
-        "$ref": "monomerTemplate-MOE(T)P"
+        "$ref": "monomerGroupTemplate-MOE(T)P"
       },
       {
-        "$ref": "monomerTemplate-dR(U)P"
+        "$ref": "monomerGroupTemplate-dR(U)P"
       }
     ]
   },
@@ -169762,30 +169762,6 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "A___Adenine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
   "monomerGroupTemplate-C": {
@@ -169802,30 +169778,6 @@
       },
       {
         "$ref": "monomerTemplate-P___Phosphate"
-      }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "C___Cytosine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
       }
     ]
   },
@@ -169844,30 +169796,6 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "G___Guanine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
   "monomerGroupTemplate-T": {
@@ -169884,30 +169812,6 @@
       },
       {
         "$ref": "monomerTemplate-P___Phosphate"
-      }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "T___Thymine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
       }
     ]
   },
@@ -169926,33 +169830,9 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "U___Uracil",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "R___Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
-  "monomerTemplate-MOE(A)P": {
+  "monomerGroupTemplate-MOE(A)P": {
     "type": "monomerGroupTemplate",
     "id": "MOE(A)P",
     "name": "MOE(A)P",
@@ -169970,33 +169850,9 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "A___Adenine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
-  "monomerTemplate-MOE(5meC)P": {
+  "monomerGroupTemplate-MOE(5meC)P": {
     "type": "monomerGroupTemplate",
     "id": "MOE(5meC)P",
     "name": "MOE(5meC)P",
@@ -170014,33 +169870,9 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "5meC___5-methyl-cytidine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
-  "monomerTemplate-MOE(G)P": {
+  "monomerGroupTemplate-MOE(G)P": {
     "type": "monomerGroupTemplate",
     "id": "MOE(G)P",
     "name": "MOE(G)P",
@@ -170058,33 +169890,9 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "G___Guanine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
-  "monomerTemplate-MOE(T)P": {
+  "monomerGroupTemplate-MOE(T)P": {
     "type": "monomerGroupTemplate",
     "id": "MOE(T)P",
     "name": "MOE(T)P",
@@ -170102,33 +169910,9 @@
       {
         "$ref": "monomerTemplate-P___Phosphate"
       }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "T___Thymine",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "MOE___2'-O-Methoxyethyl ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
-      }
     ]
   },
-  "monomerTemplate-dR(U)P": {
+  "monomerGroupTemplate-dR(U)P": {
     "type": "monomerGroupTemplate",
     "id": "dR(U)P",
     "name": "dR(U)P",
@@ -170145,30 +169929,6 @@
       },
       {
         "$ref": "monomerTemplate-P___Phosphate"
-      }
-    ],
-    "connections": [
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "U___Uracil",
-          "attachmentPointId": "R1"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "dR___Deoxy-Ribose",
-          "attachmentPointId": "R3"
-        }
-      },
-      {
-        "connectionType": "single",
-        "endpoint1": {
-          "monomerTemplateId": "dR___Deoxy-Ribose",
-          "attachmentPointId": "R2"
-        },
-        "endpoint2": {
-          "monomerTemplateId": "P___Phosphate",
-          "attachmentPointId": "R1"
-        }
       }
     ]
   }

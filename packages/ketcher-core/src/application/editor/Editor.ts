@@ -37,7 +37,6 @@ import {
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { groupBy } from 'lodash';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import {
   IKetMacromoleculesContent,
@@ -65,7 +64,8 @@ export class CoreEditor {
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryJson?: IKetMacromoleculesContent;
+  private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
+  private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
@@ -86,7 +86,8 @@ export class CoreEditor {
     this.canvas = canvas;
     resetEditorEvents();
     this.events = editorEvents;
-    this._monomersLibraryJson = JSON.parse(monomersDataRaw);
+    this.setMonomersLibrary(monomersDataRaw);
+    this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -107,34 +108,25 @@ export class CoreEditor {
     return editor;
   }
 
-  public get monomersLibraryJson() {
-    return this._monomersLibraryJson;
-  }
-
-  public get monomersLibrary() {
-    if (!this.monomersLibraryJson) {
-      return [];
-    }
-
+  private setMonomersLibrary(monomersDataRaw: string) {
+    const monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
+    this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     const serializer = new KetSerializer();
-
-    return serializer.convertMonomersLibrary(this.monomersLibraryJson);
-  }
-
-  public get monomersLibraryGroupedByType() {
-    return groupBy(
-      this.monomersLibrary.map((libraryItem) => {
-        return {
-          ...libraryItem,
-          label: libraryItem.props.MonomerName,
-        };
-      }),
-      (libraryItem) => libraryItem.props.MonomerType,
+    this._monomersLibrary = serializer.convertMonomersLibrary(
+      monomersLibraryParsedJson,
     );
   }
 
+  public get monomersLibraryParsedJson() {
+    return this._monomersLibraryParsedJson;
+  }
+
+  public get monomersLibrary() {
+    return this._monomersLibrary;
+  }
+
   public get defaultRnaPresetsLibraryItems() {
-    const monomersLibraryJson = this.monomersLibraryJson;
+    const monomersLibraryJson = this.monomersLibraryParsedJson;
 
     if (!monomersLibraryJson) {
       return [];
@@ -531,7 +523,7 @@ export class CoreEditor {
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
-    this._monomersLibraryJson = undefined;
+    this._monomersLibraryParsedJson = undefined;
   }
 
   private switchToMacromolecules() {

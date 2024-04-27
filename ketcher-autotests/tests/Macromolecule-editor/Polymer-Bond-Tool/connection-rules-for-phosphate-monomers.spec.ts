@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { BrowserContext, Page, chromium, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
   waitForKetcherInit,
   waitForIndigoToLoad,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -15,41 +15,48 @@ import {
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
-test.describe('Connection rules for Phosphate monomers: ', () => {
-  let page: Page;
-  test.setTimeout(300000);
-  test.describe.configure({ retries: 0 });
+let page: Page;
+let sharedContext: BrowserContext;
 
-  test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
-
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-
-  test.afterEach(async () => {
-    await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
-    await selectClearCanvasTool(page);
-  });
-
-  test.afterAll(async ({ browser }) => {
+test.beforeAll(async ({ browser }) => {
+  // let sharedContext;
+  try {
+    sharedContext = await browser.newContext();
+  } catch (error) {
+    console.error('Error on creation browser context:', error);
+    console.log('Restarting browser...');
     await browser.close();
+    browser = await chromium.launch();
+    sharedContext = await browser.newContext();
+  }
+
+  // Reminder: do not pass page as async
+  page = await sharedContext.newPage();
+
+  await page.goto('', { waitUntil: 'domcontentloaded' });
+  await waitForKetcherInit(page);
+  await waitForIndigoToLoad(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  await page.close();
+  await sharedContext.close();
+  await browser.contexts().forEach((someContext) => {
+    someContext.close();
   });
+  // await browser.close();
+});
+
+test.describe('Connection rules for Phosphate monomers: ', () => {
+  test.setTimeout(300000);
+  // test.describe.configure({ retries: 0 });
 
   interface IMonomer {
     fileName: string;
@@ -251,7 +258,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection dialog should appear)
        */
       test(`Test case1: Center-to-center of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-        test.setTimeout(15000);
+        // test.setTimeout(15000);
         await bondTwoMonomersByCenterToCenter(page, leftBase, rightBase);
       });
     });
@@ -276,7 +283,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case2: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-                test.setTimeout(15000);
+                // test.setTimeout(15000);
                 await bondTwoMonomersByPointToPoint(
                   page,
                   leftBase,
@@ -291,38 +298,4 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
     });
   });
-
-  /*
-  let leftBaseConnectionPoint = 'R1';
-  let rightBaseConnectionPoint = 'R1';
-  let leftBase = phosphateMonomers['(R1,R2,R3)'];
-  let rightBase = phosphateMonomers['(R1,R2,R3)'];
-
-  test(`Test case3: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-    test.setTimeout(15000);
-    await bondTwoMonomersByPointToPoint(
-      page,
-      leftBase,
-      rightBase,
-      leftBaseConnectionPoint,
-      rightBaseConnectionPoint,
-    );
-  });
-
-  leftBaseConnectionPoint = 'R3';
-  rightBaseConnectionPoint = 'R2';
-  leftBase = phosphateMonomers['(R1,R3,R4,R5)'];
-  rightBase = phosphateMonomers['(R1,R2,R3)'];
-
-  test(`Test case4: Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-    test.setTimeout(15000);
-    await bondTwoMonomersByPointToPoint(
-      page,
-      leftBase,
-      rightBase,
-      leftBaseConnectionPoint,
-      rightBaseConnectionPoint,
-    );
-  });
-  */
 });

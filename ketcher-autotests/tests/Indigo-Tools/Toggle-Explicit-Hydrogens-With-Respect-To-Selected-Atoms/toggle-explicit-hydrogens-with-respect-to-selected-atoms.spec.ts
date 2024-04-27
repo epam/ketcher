@@ -35,11 +35,17 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await browser.close();
+  const cntxt = page.context();
+  await page.close();
+  await cntxt.close();
+  await browser.contexts().forEach((someContext) => {
+    someContext.close();
+  });
+  // await browser.close();
 });
 
 test.describe('1. User can expand hydrogens for ', () => {
-  /* 
+  /*
     Test case: https://github.com/epam/ketcher/issues/4258 - Case 1
     Description: User can expand hydrogens for molecules connected by ordinary type of bonds
     1. Clear canvas
@@ -48,7 +54,7 @@ test.describe('1. User can expand hydrogens for ', () => {
     4. Validate canvas
     5. Press Add/Remove explicit hydrogens button
     6. Validate canvas
-  
+
     IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1818 issue.
     IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1819 issue.
     IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1611 issue.
@@ -364,7 +370,7 @@ test.describe('1. User can expand hydrogens for ', () => {
 });
 
 test.describe('2. User can expand hydrogens for ', () => {
-  /* 
+  /*
       Test case: https://github.com/epam/ketcher/issues/4258 - Case 1
       Description: User can (having atomatic atom on the canvas) expand hydrogens for molecules connected by ordinary type of bonds
       1. Clear canvas
@@ -373,7 +379,7 @@ test.describe('2. User can expand hydrogens for ', () => {
       4. Validate canvas
       5. Press Add/Remove explicit hydrogens button
       6. Validate canvas
-    
+
       Note: Cases with atomatic atom on the canvas needed because we process canvas in different way (by another code) if it has query something on the canvas
 
       IMPORTANT: Test results are not correct because of https://github.com/epam/Indigo/issues/1818 issue.

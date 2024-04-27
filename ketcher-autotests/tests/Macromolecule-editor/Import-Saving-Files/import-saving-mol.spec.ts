@@ -60,25 +60,15 @@ test.afterEach(async () => {
 
 test.afterAll(async ({ browser }) => {
   const cntxt = page.context();
-  // const brwsr = cntxt.browser();
-  console.log('Number of contexts: ', browser.contexts().length);
-  console.log('Number of pages: ', cntxt.pages().length);
   await page.close();
   await cntxt.close();
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // if (brwsr) await brwsr.close();
   // await browser.close();
 });
 
 test.describe('Import-Saving .mol Files', () => {
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-  */
   test('Import monomers and chem', async () => {
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/monomers-and-chem.mol',

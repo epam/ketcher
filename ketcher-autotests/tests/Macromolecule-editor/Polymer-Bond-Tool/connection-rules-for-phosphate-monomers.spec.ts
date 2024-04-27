@@ -46,36 +46,18 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  // const brwsr = cntxt.browser();
-  console.log('Number of contexts: ', browser.contexts().length);
-  console.log('Number of pages: ', sharedContext.pages().length);
-  if (cntxt === sharedContext) {
-    console.log('sharedContext and cntxt are equeal');
-  }
-  if (page.context().browser() === browser) {
-    console.log('browser and brwsr are equeal');
-  }
   await page.close();
   await sharedContext.close();
   await browser.contexts().forEach((someContext) => {
     someContext.close();
   });
-  // if (brwsr) await brwsr.close();
   // await browser.close();
-  if (browser) console.log('Instance of browser exist.');
-  else console.error('Browser instance NOT found!');
 });
 
 test.describe('Connection rules for Phosphate monomers: ', () => {
   test.setTimeout(300000);
   // test.describe.configure({ retries: 0 });
-  /*
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-*/
+
   interface IMonomer {
     fileName: string;
     alias: string;

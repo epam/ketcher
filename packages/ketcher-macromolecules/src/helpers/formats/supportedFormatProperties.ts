@@ -20,6 +20,7 @@ export enum ChemicalMimeType {
   Helm = 'chemical/x-helm',
   Fasta = 'chemical/x-fasta',
   Sequence = 'chemical/x-sequence',
+  Idt = 'chemical/x-idt',
 }
 
 interface SupportedFormatPropertiesOptions {

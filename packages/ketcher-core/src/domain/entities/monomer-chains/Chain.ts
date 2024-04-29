@@ -92,7 +92,12 @@ export class Chain {
         ),
       );
     } else {
-      this.fillSubChains(getNextMonomerInChain(monomer, this.firstMonomer));
+      this.fillSubChains(
+        getNextMonomerInChain(
+          this.lastNode?.lastMonomerInNode,
+          this.firstMonomer,
+        ),
+      );
     }
   }
 

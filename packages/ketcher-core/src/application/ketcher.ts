@@ -162,6 +162,15 @@ export class Ketcher {
     return molfile;
   }
 
+  getIdt(): Promise<string> {
+    return getStructure(
+      SupportedFormat.idt,
+      this.#formatterFactory,
+      this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');

@@ -124,8 +124,9 @@ export async function openFileAndAddToCanvasMacro(
   // to stabilize the test
   await selectOptionInDropdown(filename, page);
 
-  if (typeDropdownOption)
+  if (typeDropdownOption) {
     await selectOptionInTypeDropdown(typeDropdownOption, page);
+  }
 
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');

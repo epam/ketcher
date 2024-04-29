@@ -11,6 +11,7 @@ import {
   selectRectangleArea,
   startNewSequence,
   takePresetsScreenshot,
+  selectSnakeLayoutModeTool,
 } from '@utils';
 import {
   enterSequence,
@@ -280,6 +281,89 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await page.getByTestId('nasP___Sodium Phosporothioate').click();
     await moveMouseAway(page);
     await page.getByTestId('save-btn').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Ensure "Phosphate" field is empty when single nucleoside is selected', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4388
+    Description: "Phosphate" field is empty when single nucleoside is selected.
+    */
+    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await takeRNABuilderScreenshot(page);
+  });
+
+  test('Validate conversion Nucleoside to Nucleotide upon adding Phosphate in RNA Builder', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4388
+    Description: Nucleoside converted to Nucleotide after added Phosphate in RNA Builder.
+    */
+    await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await moveMouseAway(page);
+    await page.getByTestId('save-btn').click();
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check bulk modifications of nucleotides and nucleosides simultaneously', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4388
+    Description: Instead of field 'name your structure', 'N nucleotides selected' displayed (N- the number of nucleotides and nucleosides).
+    In the 'phosphate' field - [multiple] displayed.
+    */
+    await openFileAndAddToCanvasMacro('KET/agtcu.ket', page);
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'T');
+    await clickOnSequenceSymbol(page, 'C');
+    await clickOnSequenceSymbol(page, 'U');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await takeRNABuilderScreenshot(page);
+    await page.getByTestId(PHOSPHATE).click();
+    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await moveMouseAway(page);
+    await page.getByTestId('save-btn').click();
+    await page.getByText('Yes').click();
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check If among selected elements on canvas there is a single phosphate (selected without an adjacent nucleoside to left)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4388
+    Description: If among selected elements on canvas there is a single 
+    phosphate (selected without an adjacent nucleoside to left),then in this case,editing in RNA builder prohibited.
+    */
+    await openFileAndAddToCanvasMacro('KET/modified-agtcup.ket', page);
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'G');
+    await clickOnSequenceSymbol(page, 'p');
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await takeEditorScreenshot(page);
   });
 });

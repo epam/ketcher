@@ -19,7 +19,7 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'ket' | 'fasta' | 'sequence';
+export type SupportedFormats = 'mol' | 'ket' | 'fasta' | 'sequence' | 'idt';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
@@ -51,6 +51,13 @@ const formatProperties: FormatProperties = {
     'SEQUENCE',
     ChemicalMimeType.Sequence,
     ['.seq'],
+    false,
+    {},
+  ),
+  idt: new SupportedFormatProperties(
+    'IDT',
+    ChemicalMimeType.Idt,
+    ['.idt'],
     false,
     {},
   ),

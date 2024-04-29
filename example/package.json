@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev:standalone": "cross-env MODE=standalone vite",
+    "dev:standalone:macro": "cross-env ENABLE_POLYMER_EDITOR=true MODE=standalone vite",
     "dev:remote": "cross-env MODE=remote vite",
     "start:standalone": "cross-env MODE=standalone react-app-rewired start",
     "start:remote": "cross-env MODE=remote react-app-rewired start",

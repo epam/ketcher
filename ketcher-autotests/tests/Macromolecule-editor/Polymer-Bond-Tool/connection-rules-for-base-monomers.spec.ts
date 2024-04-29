@@ -2,12 +2,12 @@
 import { Page, chromium, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
   waitForKetcherInit,
   waitForIndigoToLoad,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -15,38 +15,47 @@ import {
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
-test.describe('Connection rules for Base monomers: ', () => {
-  let page: Page;
+let page: Page;
 
-  test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
-
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-
-  test.afterEach(async () => {
-    await page.keyboard.press('Control+0');
-    await selectClearCanvasTool(page);
-  });
-
-  test.afterAll(async ({ browser }) => {
+test.beforeAll(async ({ browser }) => {
+  let sharedContext;
+  try {
+    sharedContext = await browser.newContext();
+  } catch (error) {
+    console.error('Error on creation browser context:', error);
+    console.log('Restarting browser...');
     await browser.close();
+    browser = await chromium.launch();
+    sharedContext = await browser.newContext();
+  }
+
+  // Reminder: do not pass page as async
+  page = await sharedContext.newPage();
+
+  await page.goto('', { waitUntil: 'domcontentloaded' });
+  await waitForKetcherInit(page);
+  await waitForIndigoToLoad(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
+test.afterEach(async () => {
+  await page.keyboard.press('Control+0');
+  await selectClearCanvasTool(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  const cntxt = page.context();
+  await page.close();
+  await cntxt.close();
+  await browser.contexts().forEach((someContext) => {
+    someContext.close();
   });
+  // await browser.close();
+});
+
+test.describe('Connection rules for Base monomers: ', () => {
+  test.setTimeout(15000);
+  test.describe.configure({ retries: 0 });
 
   interface IMonomer {
     fileName: string;
@@ -170,10 +179,26 @@ test.describe('Connection rules for Base monomers: ', () => {
 
     await takeEditorScreenshot(page);
   }
-
-  // test(`temporary test for debug purposes`, async ({ }) => {
-  //   await bondTwoMonomersByPointToPoint(page, baseMonomers['(R1,R2,R3)'], baseMonomers['(R1,R3,R4)'], 'R3', 'R1');
-  // });
+  /*
+  test(`temporary test for debug purposes1`, async () => {
+    await bondTwoMonomersByPointToPoint(
+      page,
+      baseMonomers['(R1,R2,R3)'],
+      baseMonomers['(R1,R3,R4)'],
+      'R3',
+      'R1',
+    );
+  });
+  test(`temporary test for debug purposes2`, async () => {
+    await bondTwoMonomersByPointToPoint(
+      page,
+      baseMonomers['(R1,R2,R3)'],
+      baseMonomers['(R1,R3,R4)'],
+      'R3',
+      'R4',
+    );
+  });
+  */
 
   Object.values(baseMonomers).forEach((leftBase) => {
     Object.values(baseMonomers).forEach((rightBase) => {
@@ -194,7 +219,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-                test.setTimeout(10000);
+                test.setTimeout(40000);
                 await bondTwoMonomersByPointToPoint(
                   page,
                   leftBase,

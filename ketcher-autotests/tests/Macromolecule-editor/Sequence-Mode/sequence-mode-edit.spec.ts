@@ -17,6 +17,7 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -200,6 +201,24 @@ test.describe('Sequence edit mode', () => {
     await selectSnakeLayoutModeTool(page);
     await selectSingleBondTool(page);
     await page.getByText('P').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4340
+    Description: After adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode.
+    The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4340
+    When fix is made, you need to update screenshot.
+    */
+    await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
+    await takeEditorScreenshot(page);
+    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
+    await enterSequence(page, 'u');
     await takeEditorScreenshot(page);
   });
 });

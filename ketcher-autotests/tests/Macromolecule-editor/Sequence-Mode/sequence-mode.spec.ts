@@ -599,4 +599,21 @@ test.describe('Sequence Mode', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Check that Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4346
+    Description: Monomers not disappear when switching to sequence view if they are attached to bases via the R2 attachment point.
+    The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4346
+    When fix is made, you need to update screenshot.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/monomers-attached-to-bases-via-r2.ket',
+      page,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

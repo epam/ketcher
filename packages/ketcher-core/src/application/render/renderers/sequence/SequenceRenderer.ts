@@ -154,78 +154,81 @@ export class SequenceRenderer {
     > = new Map();
 
     chainsCollection.chains.forEach((chain) => {
-      chain.forEachNode(({ node, subChain }) => {
-        if (node instanceof EmptySequenceNode) {
-          return;
-        }
+      chain.subChains.forEach((subChain) => {
+        subChain.nodes.forEach((node) => {
+          if (node instanceof EmptySequenceNode) {
+            return;
+          }
 
-        if (!handledMonomersToAttachmentPoints.has(node.monomer)) {
-          handledMonomersToAttachmentPoints.set(node.monomer, new Set());
-        }
-        node.monomer.forEachBond((polymerBond, attachmentPointName) => {
-          if (!polymerBond.isSideChainConnection) {
-            polymerBond.setRenderer(
-              new BackBoneBondSequenceRenderer(polymerBond),
+          if (!handledMonomersToAttachmentPoints.has(node.monomer)) {
+            handledMonomersToAttachmentPoints.set(node.monomer, new Set());
+          }
+          node.monomer.forEachBond((polymerBond, attachmentPointName) => {
+            if (!subChain.bonds.includes(polymerBond)) {
+              subChain.bonds.push(polymerBond);
+            }
+            if (!polymerBond.isSideChainConnection) {
+              polymerBond.setRenderer(
+                new BackBoneBondSequenceRenderer(polymerBond),
+              );
+              return;
+            }
+
+            const handledAttachmentPoints =
+              handledMonomersToAttachmentPoints.get(
+                node.monomer,
+              ) as Set<AttachmentPointName>;
+
+            if (handledAttachmentPoints.has(attachmentPointName)) {
+              return;
+            }
+
+            const anotherMonomer = polymerBond.getAnotherMonomer(
+              node.monomer,
+            ) as BaseMonomer;
+
+            // Skip handling side chains for sugar(R3) + base(R1) connections.
+            if (
+              (node.monomer instanceof Sugar &&
+                getRnaBaseFromSugar(node.monomer) === anotherMonomer) ||
+              (anotherMonomer instanceof Sugar &&
+                getRnaBaseFromSugar(anotherMonomer) === node.monomer)
+            ) {
+              return;
+            }
+
+            let bondRenderer;
+
+            // If side connection comes from rna base then take connected sugar and draw side connection from it
+            // because for rna we display only one letter instead of three
+            if (anotherMonomer instanceof RNABase) {
+              const connectedSugar = getSugarFromRnaBase(anotherMonomer);
+              bondRenderer = new PolymerBondSequenceRenderer(
+                new PolymerBond(node.monomer, connectedSugar),
+              );
+            } else {
+              bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
+            }
+            bondRenderer.show();
+            polymerBond.setRenderer(bondRenderer);
+            handledAttachmentPoints.add(attachmentPointName);
+
+            if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
+              handledMonomersToAttachmentPoints.set(anotherMonomer, new Set());
+            }
+            const anotherMonomerHandledAttachmentPoints =
+              handledMonomersToAttachmentPoints.get(
+                anotherMonomer,
+              ) as Set<AttachmentPointName>;
+
+            anotherMonomerHandledAttachmentPoints.add(
+              anotherMonomer?.getAttachmentPointByBond(
+                polymerBond,
+              ) as AttachmentPointName,
             );
-            subChain.bonds.push(polymerBond);
-            return;
-          }
-
-          const handledAttachmentPoints = handledMonomersToAttachmentPoints.get(
-            node.monomer,
-          ) as Set<AttachmentPointName>;
-
-          if (handledAttachmentPoints.has(attachmentPointName)) {
-            return;
-          }
-
-          const anotherMonomer = polymerBond.getAnotherMonomer(
-            node.monomer,
-          ) as BaseMonomer;
-
-          // Skip handling side chains for sugar(R3) + base(R1) connections.
-          if (
-            (node.monomer instanceof Sugar &&
-              getRnaBaseFromSugar(node.monomer) === anotherMonomer) ||
-            (anotherMonomer instanceof Sugar &&
-              getRnaBaseFromSugar(anotherMonomer) === node.monomer)
-          ) {
-            return;
-          }
-
-          let bondRenderer;
-
-          // If side connection comes from rna base then take connected sugar and draw side connection from it
-          // because for rna we display only one letter instead of three
-          if (anotherMonomer instanceof RNABase) {
-            const connectedSugar = getSugarFromRnaBase(anotherMonomer);
-            bondRenderer = new PolymerBondSequenceRenderer(
-              new PolymerBond(node.monomer, connectedSugar),
-            );
-          } else {
-            bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
-          }
-          bondRenderer.show();
-          polymerBond.setRenderer(bondRenderer);
-          subChain.bonds.push(polymerBond);
-          handledAttachmentPoints.add(attachmentPointName);
-
-          if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
-            handledMonomersToAttachmentPoints.set(anotherMonomer, new Set());
-          }
-          const anotherMonomerHandledAttachmentPoints =
-            handledMonomersToAttachmentPoints.get(
-              anotherMonomer,
-            ) as Set<AttachmentPointName>;
-
-          anotherMonomerHandledAttachmentPoints.add(
-            anotherMonomer?.getAttachmentPointByBond(
-              polymerBond,
-            ) as AttachmentPointName,
-          );
+          });
         });
       });
-
       if (chain.isCyclic) {
         const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
           .R1 as PolymerBond;

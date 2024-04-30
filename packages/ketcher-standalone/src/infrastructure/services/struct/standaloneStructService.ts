@@ -64,6 +64,7 @@ import {
   StructService,
   StructServiceOptions,
   getLabelRenderModeForIndigo,
+  CoreEditor,
 } from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -292,10 +293,13 @@ class IndigoService implements StructService {
           }
         }
       };
+      const monomerLibrary =
+        CoreEditor.provideEditorInstance().monomersLibraryParsedJson;
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
         'input-format': inputFormat,
+        monomerLibrary,
       };
 
       const commandData: ConvertCommandData = {

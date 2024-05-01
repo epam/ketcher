@@ -2,54 +2,57 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer176"
+                "$ref": "monomer740"
             },
             {
-                "$ref": "monomer178"
+                "$ref": "monomer741"
             },
             {
-                "$ref": "monomer179"
+                "$ref": "monomer742"
             },
             {
-                "$ref": "monomer180"
+                "$ref": "monomer743"
             },
             {
-                "$ref": "monomer182"
+                "$ref": "monomer744"
             },
             {
-                "$ref": "monomer213"
-            },
-            {
-                "$ref": "monomer214"
-            },
-            {
-                "$ref": "monomer215"
-            },
-            {
-                "$ref": "monomer216"
-            },
-            {
-                "$ref": "monomer217"
+                "$ref": "monomer751"
             }
         ],
         "connections": [],
         "templates": [
             {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-1"
+            },
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-2"
+            },
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-3"
+            },
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-4"
+            },
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-5"
+            },
+            {
                 "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem"
             }
         ]
     },
-    "monomer176": {
+    "monomer740": {
         "type": "monomer",
-        "id": "176",
+        "id": "740",
         "position": {
-            "x": 8.36122937258385,
-            "y": -5.3328479611747825
+            "x": 22.99199648768929,
+            "y": -4.557938751220314
         },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
+        "alias": "Test-6-Ch-1",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem-1"
     },
-    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-1": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -380,6 +383,2011 @@
         ],
         "class": "CHEM",
         "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem-1",
+        "fullName": "Test-6-AP-Chem-1",
+        "alias": "Test-6-Ch-1",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer741": {
+        "type": "monomer",
+        "id": "741",
+        "position": {
+            "x": 22.942722369955014,
+            "y": -6.298957577831255
+        },
+        "alias": "Test-6-Ch-2",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem-2"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-2": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.083841486076295,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.137338236554521,
+                    -6.103220953493176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.276735281944443,
+                    -6.698922998649142,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.330332032765988,
+                    -6.252221465039658,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -6.847823509852303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.523325828977456,
+                    -6.401121976242818,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.662722874367379,
+                    -6.996824021398784,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.716219624845604,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.771843848116424,
+                    -6.07362085187052,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282172628054775,
+                    -7.026424123021441,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -5.535119003093472,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -4.535115569895613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.31622168476432,
+                    -3.828013142281406,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575022573275927,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.609119257150113,
+                    -2.603208937300668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.86792014566172,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679167124638605,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.276735281944443,
+                    -7.698926431847001,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575026006473786,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -7.847826943050163,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.969727361556981,
+                    -8.71392991654283,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.969727361556981,
+                    -9.713933349740689,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem-2",
+        "fullName": "Test-6-AP-Chem-2",
+        "alias": "Test-6-Ch-2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer742": {
+        "type": "monomer",
+        "id": "742",
+        "position": {
+            "x": 22.938966561807,
+            "y": -8.070259831898063
+        },
+        "alias": "Test-6-Ch-3",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem-3"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-3": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.083841486076295,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.137338236554521,
+                    -6.103220953493176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.276735281944443,
+                    -6.698922998649142,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.330332032765988,
+                    -6.252221465039658,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -6.847823509852303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.523325828977456,
+                    -6.401121976242818,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.662722874367379,
+                    -6.996824021398784,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.716219624845604,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.771843848116424,
+                    -6.07362085187052,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282172628054775,
+                    -7.026424123021441,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -5.535119003093472,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -4.535115569895613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.31622168476432,
+                    -3.828013142281406,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575022573275927,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.609119257150113,
+                    -2.603208937300668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.86792014566172,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679167124638605,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.276735281944443,
+                    -7.698926431847001,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575026006473786,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -7.847826943050163,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.969727361556981,
+                    -8.71392991654283,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.969727361556981,
+                    -9.713933349740689,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem-3",
+        "fullName": "Test-6-AP-Chem-3",
+        "alias": "Test-6-Ch-3",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer743": {
+        "type": "monomer",
+        "id": "743",
+        "position": {
+            "x": 22.887814539998722,
+            "y": -9.990667431351172
+        },
+        "alias": "Test-6-Ch-4",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem-4"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-4": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.083841486076295,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.137338236554521,
+                    -6.103220953493176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.276735281944443,
+                    -6.698922998649142,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.330332032765988,
+                    -6.252221465039658,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -6.847823509852303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.523325828977456,
+                    -6.401121976242818,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.662722874367379,
+                    -6.996824021398784,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.716219624845604,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.771843848116424,
+                    -6.07362085187052,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282172628054775,
+                    -7.026424123021441,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -5.535119003093472,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -4.535115569895613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.31622168476432,
+                    -3.828013142281406,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575022573275927,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.609119257150113,
+                    -2.603208937300668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.86792014566172,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679167124638605,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.276735281944443,
+                    -7.698926431847001,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575026006473786,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -7.847826943050163,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.969727361556981,
+                    -8.71392991654283,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.969727361556981,
+                    -9.713933349740689,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem-4",
+        "fullName": "Test-6-AP-Chem-4",
+        "alias": "Test-6-Ch-4",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer744": {
+        "type": "monomer",
+        "id": "744",
+        "position": {
+            "x": 22.885849138522556,
+            "y": -11.828085337445257
+        },
+        "alias": "Test-6-Ch-5",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem-5"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem-5": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.083841486076295,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.137338236554521,
+                    -6.103220953493176,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.276735281944443,
+                    -6.698922998649142,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.330332032765988,
+                    -6.252221465039658,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -6.847823509852303,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.523325828977456,
+                    -6.401121976242818,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.662722874367379,
+                    -6.996824021398784,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.716219624845604,
+                    -6.55002248744598,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.771843848116424,
+                    -6.07362085187052,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282172628054775,
+                    -7.026424123021441,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -5.535119003093472,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.023324112378527,
+                    -4.535115569895613,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.31622168476432,
+                    -3.828013142281406,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575022573275927,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.609119257150113,
+                    -2.603208937300668,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.86792014566172,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679167124638605,
+                    -1.6373056211748553,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.276735281944443,
+                    -7.698926431847001,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575026006473786,
+                    -2.8621098261555935,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.469729078155911,
+                    -7.847826943050163,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.969727361556981,
+                    -8.71392991654283,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.969727361556981,
+                    -9.713933349740689,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem-5",
+        "fullName": "Test-6-AP-Chem-5",
+        "alias": "Test-6-Ch-5",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer751": {
+        "type": "monomer",
+        "id": "751",
+        "position": {
+            "x": 17.000710296630867,
+            "y": -7.551278495788574
+        },
+        "alias": "Test-6-Ch",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.0838,
+                    -6.55,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.1373,
+                    -6.1032,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.2767,
+                    -6.6989,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.3303,
+                    -6.2522,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.4697,
+                    -6.8478,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.5233,
+                    -6.4011,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.6627,
+                    -6.9968,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.7162,
+                    -6.55,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.7718,
+                    -6.0736,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282,
+                    -7.0264,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0233,
+                    -5.5351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0233,
+                    -4.5351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.3162,
+                    -3.828,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575,
+                    -2.8621,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.6091,
+                    -2.6032,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.8679,
+                    -1.6373,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679,
+                    -1.6373,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.2767,
+                    -7.6989,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575,
+                    -2.8621,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.4697,
+                    -7.8478,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.9697,
+                    -8.7139,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.9697,
+                    -9.7139,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
         "id": "Test-6-Ch___Test-6-AP-Chem",
         "fullName": "Test-6-AP-Chem",
         "alias": "Test-6-Ch",
@@ -439,95 +2447,5 @@
                 "type": "side"
             }
         ]
-    },
-    "monomer178": {
-        "type": "monomer",
-        "id": "178",
-        "position": {
-            "x": 8.36122937258385,
-            "y": -7.073866787785715
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer179": {
-        "type": "monomer",
-        "id": "179",
-        "position": {
-            "x": 8.36122937258385,
-            "y": -8.683487967105254
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer180": {
-        "type": "monomer",
-        "id": "180",
-        "position": {
-            "x": 8.377654078495274,
-            "y": -10.44093149962761
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer182": {
-        "type": "monomer",
-        "id": "182",
-        "position": {
-            "x": 8.377654078495274,
-            "y": -12.181950326238539
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer213": {
-        "type": "monomer",
-        "id": "213",
-        "position": {
-            "x": 22.486476456408383,
-            "y": -5.382122078909054
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer214": {
-        "type": "monomer",
-        "id": "214",
-        "position": {
-            "x": 22.486476456408383,
-            "y": -7.123140905519986
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer215": {
-        "type": "monomer",
-        "id": "215",
-        "position": {
-            "x": 22.486476456408383,
-            "y": -8.732762084839525
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer216": {
-        "type": "monomer",
-        "id": "216",
-        "position": {
-            "x": 22.50290116231981,
-            "y": -10.49020561736188
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
-    },
-    "monomer217": {
-        "type": "monomer",
-        "id": "217",
-        "position": {
-            "x": 22.50290116231981,
-            "y": -12.23122444397281
-        },
-        "alias": "Test-6-Ch",
-        "templateId": "Test-6-Ch___Test-6-AP-Chem"
     }
 }

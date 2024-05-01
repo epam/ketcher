@@ -380,7 +380,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test('User can aromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+  test('User can aromatize molecules with query parameters (not custom query, but only ordinary @IncorrectResultBecauseOfBug).', async ({
     page,
   }) => {
     /*
@@ -402,7 +402,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can DEaromatize molecules with query parameters (not custom query, but only ordinary).', async ({
+  test('User can DEaromatize molecules with query parameters (not custom query, but only ordinary). @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -429,7 +429,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can aromatize molecules with custom query parameters.', async ({
+  test('User can aromatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -453,7 +453,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('User can Dearomatize molecules with custom query parameters.', async ({
+  test('User can Dearomatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*

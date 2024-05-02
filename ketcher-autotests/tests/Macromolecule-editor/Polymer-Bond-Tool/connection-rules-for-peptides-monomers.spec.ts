@@ -336,32 +336,32 @@ test.describe('Connection rules for peptides: ', () => {
     }
   }
 
-  async function prepareCanvasNoR1R2APLeft(page: Page, peptide: IMonomer) {
-    await openFileAndAddToCanvasMacro(
-      tmpPeptideMonomers['Test-6-P-1'].fileName,
-      page,
-    );
+  // async function prepareCanvasNoR1R2APLeft(page: Page, peptide: IMonomer) {
+  //   await openFileAndAddToCanvasMacro(
+  //     tmpPeptideMonomers['Test-6-P-1'].fileName,
+  //     page,
+  //   );
 
-    await openFileAndAddToCanvasMacro(peptide.fileName, page);
-    const peptideLocator = page.getByText(peptide.alias).locator('..').first();
-    await peptideLocator.hover();
-    await dragMouseTo(550, 370, page);
-    await moveMouseAway(page);
+  //   await openFileAndAddToCanvasMacro(peptide.fileName, page);
+  //   const peptideLocator = page.getByText(peptide.alias).locator('..').first();
+  //   await peptideLocator.hover();
+  //   await dragMouseTo(550, 370, page);
+  //   await moveMouseAway(page);
 
-    for await (const peptideConnectionPoint of Object.values(['R1', 'R2'])) {
-      if (peptideConnectionPoint in peptide.connectionPoints) {
-        const tmppeptide =
-          tmpPeptideMonomers[`Test-6-P-${peptideConnectionPoint[1]}`];
-        await bondTwoMonomersByPointToPoint(
-          page,
-          peptide,
-          tmppeptide,
-          peptideConnectionPoint,
-          peptideConnectionPoint,
-        );
-      }
-    }
-  }
+  //   for await (const peptideConnectionPoint of Object.values(['R1', 'R2'])) {
+  //     if (peptideConnectionPoint in peptide.connectionPoints) {
+  //       const tmppeptide =
+  //         tmpPeptideMonomers[`Test-6-P-${peptideConnectionPoint[1]}`];
+  //       await bondTwoMonomersByPointToPoint(
+  //         page,
+  //         peptide,
+  //         tmppeptide,
+  //         peptideConnectionPoint,
+  //         peptideConnectionPoint,
+  //       );
+  //     }
+  //   }
+  // }
 
   async function loadTwoMonomers(
     page: Page,

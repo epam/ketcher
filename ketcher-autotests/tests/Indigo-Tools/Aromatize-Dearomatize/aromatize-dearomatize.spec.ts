@@ -380,7 +380,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test('User can aromatize molecules with query parameters (not custom query, but only ordinary @IncorrectResultBecauseOfBug).', async ({
+  test('User can aromatize molecules with query parameters (not custom query, but only ordinary @IncorrectResultBecauseOfBug ).', async ({
     page,
   }) => {
     /*

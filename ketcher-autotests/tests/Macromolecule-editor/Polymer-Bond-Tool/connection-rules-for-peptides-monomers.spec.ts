@@ -110,7 +110,6 @@ test.describe('Connection rules for peptides: ', () => {
         R3: 'R3',
       },
     },
-    /*
     '(R3,R4)': {
       fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
       alias: '(R3,R4)',
@@ -119,7 +118,6 @@ test.describe('Connection rules for peptides: ', () => {
         R4: 'R4',
       },
     },
-    */
     '(R1,R2,R3)': {
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
@@ -129,7 +127,6 @@ test.describe('Connection rules for peptides: ', () => {
         R3: 'R3',
       },
     },
-    /*
     '(R1,R3,R4)': {
       fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
       alias: '(R1,R3,R4)',
@@ -157,8 +154,6 @@ test.describe('Connection rules for peptides: ', () => {
         R5: 'R5',
       },
     },
-    */
-    /*
     '(R1,R2,R3,R4)': {
       fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
@@ -200,7 +195,6 @@ test.describe('Connection rules for peptides: ', () => {
         R5: 'R5',
       },
     },
-    */
   };
 
   const tmpPeptideMonomers: { [monomerName: string]: IMonomer } = {
@@ -656,113 +650,111 @@ test.describe('Connection rules for peptides: ', () => {
     peptideMonomers['(R1,R3,R4)'],
     peptideMonomers['(R2,R3,R4)'],
     peptideMonomers['(R3,R4,R5)'],
-    /*
     peptideMonomers['(R1,R2,R3,R4)'],
     peptideMonomers['(R1,R3,R4,R5)'],
     peptideMonomers['(R2,R3,R4,R5)'],
     peptideMonomers['(R1,R2,R3,R4,R5)'],
-    */
   ];
 
-  // Object.values(selectedPeptides).forEach((rightPeptide) => {
-  //   Object.values(tmpPeptideMonomers['Test-6-P-x'].connectionPoints).forEach(
-  //     (leftPeptideConnectionPoint) => {
-  //       /*
-  //        *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4.1 (point to point case)
-  //        *  Description: If default connection is not possible (R1 and R2 are occupied), and there is more than 1 free AP,
-  //        *               modal window appears where user can choose between other possibilities of APs (R3...Rn).
-  //        *   For each %peptideSType% from ((R3,R4), (R1,R3,R4), (R2,R3,R4), (R3,R4,R5), (R1,R2,R3,R4), (R1,R3,R4,R5), (R2,R3,R4,R5), (R1,R2,R3,R4,R5)):
-  //        *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
-  //        *       Establish connection between Test-6-P(%ConnectionPoint%) and %peptideType%(%MonomerConnection%)
-  //        *       Validate canvas (Dialog should appear)
-  //        *       Select any free AP and click Connect (connection should appear)
-  //        */
-  //       test(`Case 4.1: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-  //         test.setTimeout(15000);
+  Object.values(selectedPeptides).forEach((rightPeptide) => {
+    Object.values(tmpPeptideMonomers['Test-6-P-x'].connectionPoints).forEach(
+      (leftPeptideConnectionPoint) => {
+        /*
+         *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4.1 (point to point case)
+         *  Description: If default connection is not possible (R1 and R2 are occupied), and there is more than 1 free AP,
+         *               modal window appears where user can choose between other possibilities of APs (R3...Rn).
+         *   For each %peptideSType% from ((R3,R4), (R1,R3,R4), (R2,R3,R4), (R3,R4,R5), (R1,R2,R3,R4), (R1,R3,R4,R5), (R2,R3,R4,R5), (R1,R2,R3,R4,R5)):
+         *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
+         *       Establish connection between Test-6-P(%ConnectionPoint%) and %peptideType%(%MonomerConnection%)
+         *       Validate canvas (Dialog should appear)
+         *       Select any free AP and click Connect (connection should appear)
+         */
+        test(`Case 4.1: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
+          test.setTimeout(15000);
 
-  //         await prepareCanvasNoR1R2APLeft(page, rightPeptide);
+          await prepareCanvasNoR1R2APLeft(page, rightPeptide);
 
-  //         await bondTwoMonomersByPointToCenter(
-  //           page,
-  //           tmpPeptideMonomers['Test-6-P-x'],
-  //           rightPeptide,
-  //           leftPeptideConnectionPoint,
-  //         );
+          await bondTwoMonomersByPointToCenter(
+            page,
+            tmpPeptideMonomers['Test-6-P-x'],
+            rightPeptide,
+            leftPeptideConnectionPoint,
+          );
 
-  //         await takeEditorScreenshot(page);
+          await takeEditorScreenshot(page);
 
-  //         const targetConnectionPoint = Object.keys(
-  //           rightPeptide.connectionPoints,
-  //         )[Object.keys(rightPeptide.connectionPoints).length - 1];
-  //         if (await page.getByRole('dialog').isVisible()) {
-  //           if ((await page.getByTitle(targetConnectionPoint).count()) > 1) {
-  //             await page.getByTitle(targetConnectionPoint).nth(1).click();
-  //           } else {
-  //             await page.getByTitle(targetConnectionPoint).first().click();
-  //           }
-  //           await page.getByTitle('Connect').first().click();
-  //         }
+          const targetConnectionPoint = Object.keys(
+            rightPeptide.connectionPoints,
+          )[Object.keys(rightPeptide.connectionPoints).length - 1];
+          if (await page.getByRole('dialog').isVisible()) {
+            if ((await page.getByTitle(targetConnectionPoint).count()) > 1) {
+              await page.getByTitle(targetConnectionPoint).nth(1).click();
+            } else {
+              await page.getByTitle(targetConnectionPoint).first().click();
+            }
+            await page.getByTitle('Connect').first().click();
+          }
 
-  //         await zoomWithMouseWheel(page, -600);
+          await zoomWithMouseWheel(page, -600);
 
-  //         const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //         await bondLine.hover();
+          const bondLine = page.locator('g[pointer-events="stroke"]').first();
+          await bondLine.hover();
 
-  //         await takeEditorScreenshot(page);
-  //       });
-  //     },
-  //   );
-  // });
+          await takeEditorScreenshot(page);
+        });
+      },
+    );
+  });
 
-  // Object.values(selectedPeptides).forEach((rightPeptide) => {
-  //   Object.values(rightPeptide.connectionPoints).forEach(
-  //     (rightPeptideConnectionPoint) => {
-  //       /*
-  //        *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4.2 (center to point case)
-  //        *  Description: If default connection is not possible (R1 and R2 are occupied), and there is more than 1 free AP,
-  //        *               modal window appears where user can choose between other possibilities of APs (R3...Rn).
-  //        *   For each %peptideSType% from ((R3,R4), (R1,R3,R4), (R2,R3,R4), (R3,R4,R5), (R1,R2,R3,R4), (R1,R3,R4,R5), (R2,R3,R4,R5), (R1,R2,R3,R4,R5)):
-  //        *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
-  //        *       Establish connection between Test-6-P(Center) and %peptideType%(%MonomerConnection%)
-  //        *       Validate canvas (Dialog should appear)
-  //        *       Select any free AP and click Connect (connection should appear)
-  //        */
-  //       if (
-  //         !(
-  //           rightPeptideConnectionPoint === 'R1' ||
-  //           rightPeptideConnectionPoint === 'R2'
-  //         )
-  //       ) {
-  //         test(`Case 4.2: Connect Center to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
-  //           test.setTimeout(15000);
+  Object.values(selectedPeptides).forEach((rightPeptide) => {
+    Object.values(rightPeptide.connectionPoints).forEach(
+      (rightPeptideConnectionPoint) => {
+        /*
+         *  Test case: https://github.com/epam/ketcher/issues/3806 - Case 4.2 (center to point case)
+         *  Description: If default connection is not possible (R1 and R2 are occupied), and there is more than 1 free AP,
+         *               modal window appears where user can choose between other possibilities of APs (R3...Rn).
+         *   For each %peptideSType% from ((R3,R4), (R1,R3,R4), (R2,R3,R4), (R3,R4,R5), (R1,R2,R3,R4), (R1,R3,R4,R5), (R2,R3,R4,R5), (R1,R2,R3,R4,R5)):
+         *     For each %Test-6-Ch-ConnectionPoint% of Test-6-Ch from (R1, R2, R3, R4, R5)
+         *       Establish connection between Test-6-P(Center) and %peptideType%(%MonomerConnection%)
+         *       Validate canvas (Dialog should appear)
+         *       Select any free AP and click Connect (connection should appear)
+         */
+        if (
+          !(
+            rightPeptideConnectionPoint === 'R1' ||
+            rightPeptideConnectionPoint === 'R2'
+          )
+        ) {
+          test(`Case 4.2: Connect Center to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
+            test.setTimeout(15000);
 
-  //           await prepareCanvasNoR1R2APLeft(page, rightPeptide);
+            await prepareCanvasNoR1R2APLeft(page, rightPeptide);
 
-  //           await bondTwoMonomersByCenterToPoint(
-  //             page,
-  //             tmpPeptideMonomers['Test-6-P-x'],
-  //             rightPeptide,
-  //             rightPeptideConnectionPoint,
-  //           );
+            await bondTwoMonomersByCenterToPoint(
+              page,
+              tmpPeptideMonomers['Test-6-P-x'],
+              rightPeptide,
+              rightPeptideConnectionPoint,
+            );
 
-  //           await takeEditorScreenshot(page);
+            await takeEditorScreenshot(page);
 
-  //           if (await page.getByRole('dialog').isVisible()) {
-  //             await page.getByTitle('R1').first().click();
-  //             await page.getByTitle('Connect').first().click();
-  //           }
+            if (await page.getByRole('dialog').isVisible()) {
+              await page.getByTitle('R1').first().click();
+              await page.getByTitle('Connect').first().click();
+            }
 
-  //           await zoomWithMouseWheel(page, -600);
+            await zoomWithMouseWheel(page, -600);
 
-  //           const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //           await bondLine.hover();
+            const bondLine = page.locator('g[pointer-events="stroke"]').first();
+            await bondLine.hover();
 
-  //           await takeEditorScreenshot(page);
-  //         });
-  //       }
-  //     },
-  //   );
-  // });
+            await takeEditorScreenshot(page);
+          });
+        }
+      },
+    );
+  });
 
   Object.values(peptideMonomers).forEach((rightPeptide) => {
     Object.values(tmpPeptideMonomers['Test-6-P-x'].connectionPoints).forEach(

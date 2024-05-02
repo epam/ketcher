@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -364,6 +365,29 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await clickOnSequenceSymbol(page, 'p');
     await page.keyboard.up('Shift');
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('RNA builder highlighted in Edit mode. Canvas disabled', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4472
+    Description: RNA builder highlighted in Edit mode. Canvas disabled.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/all-types-of-possible-modifications.ket',
+      page,
+    );
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, 'A');
+    await clickOnSequenceSymbol(page, 'A', { nthNumber: 6 });
+    await clickOnSequenceSymbol(page, 'A', { nthNumber: 12 });
+    await clickOnSequenceSymbol(page, 'A', { nthNumber: 18 });
+    await page.keyboard.up('Shift');
+    await clickOnSequenceSymbol(page, 'A', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await takeRNABuilderScreenshot(page);
     await takeEditorScreenshot(page);
   });
 });

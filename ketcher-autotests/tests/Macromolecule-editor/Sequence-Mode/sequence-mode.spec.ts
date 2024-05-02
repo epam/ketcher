@@ -616,4 +616,37 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
+
+  const tests = [
+    {
+      fileName: 'KET/all-types-of-modifications.ket',
+      description: 'All types of modifications',
+    },
+    {
+      fileName: 'KET/all-types-of-connection-between-CHEM-and-RNA.ket',
+      description: 'All types of connection between CHEM and RNA',
+    },
+    {
+      fileName: 'KET/all-types-of-connection-between-Sugar-and-RNA.ket',
+      description: 'All types of connection between Sugar and RNA',
+    },
+    {
+      fileName: 'KET/all-types-of-connection-between-Base-and-RNA.ket',
+      description: 'All types of connection between Base and RNA',
+    },
+    {
+      fileName: 'KET/all-types-of-connection-between-Phosphate-and-RNA.ket',
+      description: 'All types of connection between Phosphate and RNA',
+    },
+  ];
+
+  for (const testInfo of tests) {
+    test(`Validate displaying modified nucleotide chains for ${testInfo.description}`, async ({
+      page,
+    }) => {
+      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await selectSequenceLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+    });
+  }
 });

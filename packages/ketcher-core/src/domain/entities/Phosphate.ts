@@ -102,14 +102,12 @@ export class Phosphate extends BaseMonomer {
       previousMonomer?.attachmentPointsToBonds.R3?.getAnotherMonomer(
         previousMonomer,
       ) instanceof RNABase;
-    if (isPreviousMonomerSugar && isSugarConnectedToBase) {
-      return true;
-    }
     const nextMonomer =
       this.attachmentPointsToBonds.R2?.getAnotherMonomer(this);
+    const isNextMonomerRna = !!nextMonomer?.isPartOfRna;
 
-    // The checking below used here because we need to interpret last phosphate of RNA chain
+    // isNextMonomerRna used here because we need to interpret last phosphate of rna chain
     // as not a part of nucleoTide but as phosphate connected to nucleoSide
-    return !!nextMonomer?.isPartOfRna;
+    return isPreviousMonomerSugar && isSugarConnectedToBase && isNextMonomerRna;
   }
 }

@@ -56,7 +56,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with 1000 single molecules', async ({
+  test('User can import from .pptx file with 1000 single molecules @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -88,7 +88,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with lots of different types of content', async ({
+  test('User can import from .pptx file with lots of different types of content @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -117,7 +117,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Arrows', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Arrows @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -154,7 +154,7 @@ test.describe('PPTX files', () => {
     }
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Brackets', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Brackets @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -268,7 +268,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -354,7 +354,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Attachment points', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Attachment points @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*

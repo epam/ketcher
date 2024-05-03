@@ -2,7 +2,6 @@ import { BaseMonomer } from './BaseMonomer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from './vec2';
 import { Sugar } from './Sugar';
-import { RNABase } from 'domain/entities/RNABase';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
@@ -95,19 +94,34 @@ export class Phosphate extends BaseMonomer {
   }
 
   public get isPartOfRna(): boolean {
-    const previousMonomer =
-      this.attachmentPointsToBonds.R1?.getAnotherMonomer(this);
-    const isPreviousMonomerSugar = previousMonomer instanceof Sugar;
-    const isSugarConnectedToBase =
-      previousMonomer?.attachmentPointsToBonds.R3?.getAnotherMonomer(
-        previousMonomer,
-      ) instanceof RNABase;
-    const nextMonomer =
-      this.attachmentPointsToBonds.R2?.getAnotherMonomer(this);
-    const isNextMonomerRna = !!nextMonomer?.isPartOfRna;
+    // To avoid endless looping when checking `monomerForR2`,
+    // we take into account that we did not return to checking `initialPhosphate`.
 
-    // isNextMonomerRna used here because we need to interpret last phosphate of rna chain
-    // as not a part of nucleoTide but as phosphate connected to nucleoSide
-    return isPreviousMonomerSugar && isSugarConnectedToBase && isNextMonomerRna;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const initialPhosphate = this;
+
+    function checkIfPhosphateIsPartOfRNA(phosphate: Phosphate): boolean {
+      const { R1: polymerBond1, R2: polymerBond2 } =
+        phosphate.attachmentPointsToBonds;
+      const monomerForR1 = polymerBond1?.getAnotherMonomer(phosphate);
+      const monomerForR2 = polymerBond2?.getAnotherMonomer(phosphate);
+      const isMonomerForR1SugarAndPartOfRNA =
+        monomerForR1 instanceof Sugar && (monomerForR1 as Sugar).isPartOfRna;
+      if (monomerForR2 === initialPhosphate) {
+        return isMonomerForR1SugarAndPartOfRNA;
+      }
+      let isMonomerForR2PartOfRNA = false;
+      if (monomerForR2) {
+        isMonomerForR2PartOfRNA =
+          monomerForR2 instanceof Phosphate
+            ? checkIfPhosphateIsPartOfRNA(monomerForR2)
+            : monomerForR2.isPartOfRna;
+      }
+      // `isMonomerForR2PartOfRNA` used here because we need to interpret last phosphate of RNA chain
+      // as not a part of nucleoTide but as phosphate connected to nucleoSide
+      return isMonomerForR1SugarAndPartOfRNA && isMonomerForR2PartOfRNA;
+    }
+
+    return checkIfPhosphateIsPartOfRNA(initialPhosphate);
   }
 }

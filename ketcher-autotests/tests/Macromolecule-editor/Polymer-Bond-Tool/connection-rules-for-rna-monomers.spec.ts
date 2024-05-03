@@ -488,39 +488,6 @@ test.describe('Connection rules for RNAs: ', () => {
     await moveMouseAway(page);
   }
 
-  async function bondTwoMonomersByPointToPoint(
-    page: Page,
-    leftSugar: IMonomer,
-    rightSugar: IMonomer,
-    leftSugarConnectionPoint?: string,
-    rightSugarConnectionPoint?: string,
-  ) {
-    const leftSugarLocator = await page
-      .getByText(leftSugar.alias, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightSugarLocator =
-      (await page.getByText(rightSugar.alias, { exact: true }).count()) > 1
-        ? page
-            .getByText(rightSugar.alias, { exact: true })
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByText(rightSugar.alias, { exact: true })
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftSugarLocator,
-      rightSugarLocator,
-      leftSugarConnectionPoint,
-      rightSugarConnectionPoint,
-    );
-  }
-
   async function bondTwoMonomersByCenterToCenter(
     page: Page,
     leftMonomer: IMonomer,
@@ -593,7 +560,55 @@ test.describe('Connection rules for RNAs: ', () => {
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();
 
-        // await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
+
+  Object.values(phosphateMonomers).forEach((leftPhosphate) => {
+    Object.values(sugarMonomers).forEach((rightSugar) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 2.1
+       *  If user drags a bond from phosphate to sugar then R2 of phosphate is connected with R1 of sugar (Center to Center).
+       *  If R2 is not available but R1 is than system establishes Sugar(R1)-Phosphate(R2)
+       */
+      test(`Case 2.1: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and Sugar(${rightSugar.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftPhosphate, rightSugar);
+
+        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
+
+        await zoomWithMouseWheel(page, -600);
+
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(phosphateMonomers).forEach((rightPhosphate) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/3809 - Case 2.2
+       *  If user drags a bond for sugar to phosphate then R2 of sugar is connected with the R1 of phosphate (Center to Center).
+       *  If R2 is not available but R1 is than system establishes Phosphate(R1)-Sugar(R2)
+       */
+      test(`Case 2.2: Connect Center to Center of Sugar(${leftSugar.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftSugar, rightPhosphate);
+
+        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPhosphate);
+
+        await zoomWithMouseWheel(page, -600);
+
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
       });
     });
   });

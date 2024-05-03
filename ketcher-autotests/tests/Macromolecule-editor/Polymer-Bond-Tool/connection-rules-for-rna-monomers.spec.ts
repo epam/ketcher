@@ -473,7 +473,7 @@ test.describe('Connection rules for RNAs: ', () => {
       .locator('..')
       .first();
     await leftsugarLocator.hover();
-    await dragMouseTo(500, 370, page);
+    await dragMouseTo(500, 371, page);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(rightSugar.fileName, page);
@@ -483,7 +483,7 @@ test.describe('Connection rules for RNAs: ', () => {
         : page.getByText(rightSugar.alias).locator('..').first();
     await rightsugarLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 371, page);
+    await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
   }
 
@@ -554,7 +554,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
 
-        await zoomWithMouseWheel(page, -600);
+        await zoomWithMouseWheel(page, -500);
 
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();

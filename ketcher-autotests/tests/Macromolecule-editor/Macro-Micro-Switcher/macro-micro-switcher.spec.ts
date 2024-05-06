@@ -20,6 +20,7 @@ import {
   waitForRender,
   moveMouseToTheMiddleOfTheScreen,
   selectOptionInDropdown,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 const topLeftCorner = {
@@ -384,6 +385,72 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
+
+  const tests = [
+    { button: TopPanelButton.Layout, description: 'Layout' },
+    { button: TopPanelButton.Clean, description: 'Clean Up' },
+  ];
+
+  for (const testInfo of tests) {
+    test(`Check that Pressing ${testInfo.description} button not erase all macromolecules from canvas`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/3712
+      Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
+      */
+      await page.getByTestId('A___Alanine').click();
+      await clickInTheMiddleOfTheScreen(page);
+      await turnOnMicromoleculesEditor(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await selectTopPanelButton(testInfo.button, page),
+      );
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Remove abbreviation restricted for CHEMs in micro mode.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('Test-6-Ch').click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  const cases = [
+    {
+      fileName: 'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+      description: 'DNA with modified monomer',
+    },
+    {
+      fileName: 'Molfiles-V3000/rna-mod-phosphate-mod-base-example.mol',
+      description: 'RNA with modified monomer',
+    },
+  ];
+
+  for (const testInfo of cases) {
+    test(`Check that switching between Macro and Micro mode not crash application when opened ${testInfo.description} with modyfied monomer`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/3747
+      Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
+      */
+      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    });
+  }
 });
 
 test.describe('Macro-Micro-Switcher', () => {

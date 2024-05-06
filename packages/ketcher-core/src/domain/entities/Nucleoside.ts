@@ -2,6 +2,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
 import {
+  getNextMonomerInChain,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
@@ -97,6 +98,10 @@ export class Nucleoside {
   }
 
   public get modified() {
-    return this.rnaBase.isModification || this.sugar.isModification;
+    const isNotLastNode = !!getNextMonomerInChain(this.sugar);
+
+    return (
+      this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
+    );
   }
 }

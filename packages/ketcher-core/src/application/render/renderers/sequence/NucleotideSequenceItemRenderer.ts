@@ -56,5 +56,20 @@ export class NucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
         .attr('cx', '10')
         .attr('cy', '-16');
     }
+
+    // show modification for not last Nucleoside
+    if (!node.phosphate) {
+      this.phosphateModificationCircleElement = this.rootElement
+        ?.append('circle')
+        .attr('r', '3px')
+        .attr(
+          'stroke',
+          this.isSequenceEditInRnaBuilderModeTurnedOn ? '#24545A' : '#585858',
+        )
+        .attr('stroke-width', '1px')
+        .attr('fill', 'none')
+        .attr('cx', '10')
+        .attr('cy', '-16');
+    }
   }
 }

@@ -96,18 +96,15 @@ export class Phosphate extends BaseMonomer {
   public get isPartOfRna(): boolean {
     // To avoid endless looping when checking `monomerForR2`,
     // we take into account that we did not return to checking `initialPhosphate`.
-
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const initialPhosphate = this;
-
-    function checkIfPhosphateIsPartOfRNA(phosphate: Phosphate): boolean {
+    const checkIfPhosphateIsPartOfRNA = (phosphate: Phosphate): boolean => {
       const { R1: polymerBond1, R2: polymerBond2 } =
         phosphate.attachmentPointsToBonds;
       const monomerForR1 = polymerBond1?.getAnotherMonomer(phosphate);
       const monomerForR2 = polymerBond2?.getAnotherMonomer(phosphate);
       const isMonomerForR1SugarAndPartOfRNA =
         monomerForR1 instanceof Sugar && (monomerForR1 as Sugar).isPartOfRna;
-      if (monomerForR2 === initialPhosphate) {
+      // `this` — the initial phosphate.
+      if (monomerForR2 === this) {
         return isMonomerForR1SugarAndPartOfRNA;
       }
       let isMonomerForR2PartOfRNA = false;
@@ -120,8 +117,8 @@ export class Phosphate extends BaseMonomer {
       // `isMonomerForR2PartOfRNA` used here because we need to interpret last phosphate of RNA chain
       // as not a part of nucleoTide but as phosphate connected to nucleoSide
       return isMonomerForR1SugarAndPartOfRNA && isMonomerForR2PartOfRNA;
-    }
+    };
 
-    return checkIfPhosphateIsPartOfRNA(initialPhosphate);
+    return checkIfPhosphateIsPartOfRNA(this);
   }
 }

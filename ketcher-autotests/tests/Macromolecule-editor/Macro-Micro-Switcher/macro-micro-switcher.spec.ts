@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -282,12 +283,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, -400);
 
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
@@ -315,7 +314,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, 250);
 
     await turnOnMacromoleculesEditor(page);
@@ -665,5 +663,25 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
     await takePageScreenshot(page);
+  });
+
+  test('Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Atoms displayed as dots, without any text or other additional information. 
+    Bonds displayed as one line regardless which type of bond it is.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    for (let i = 0; i < 3; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
   });
 });

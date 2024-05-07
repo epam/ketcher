@@ -95,7 +95,7 @@ export class Phosphate extends BaseMonomer {
 
   public get isPartOfRna(): boolean {
     // To avoid endless looping when checking `monomerForR2`,
-    // we take into account that we did not return to checking `initialPhosphate`.
+    // we take into account that we did not return to checking the initial phosphate (`this`).
     const checkIfPhosphateIsPartOfRNA = (phosphate: Phosphate): boolean => {
       const { R1: polymerBond1, R2: polymerBond2 } =
         phosphate.attachmentPointsToBonds;
@@ -103,7 +103,6 @@ export class Phosphate extends BaseMonomer {
       const monomerForR2 = polymerBond2?.getAnotherMonomer(phosphate);
       const isMonomerForR1SugarAndPartOfRNA =
         monomerForR1 instanceof Sugar && (monomerForR1 as Sugar).isPartOfRna;
-      // `this` — the initial phosphate.
       if (monomerForR2 === this) {
         return isMonomerForR1SugarAndPartOfRNA;
       }

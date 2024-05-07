@@ -22,6 +22,8 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectOptionInDropdown,
   waitForSpinnerFinishedWork,
+  selectRing,
+  RingButton,
 } from '@utils';
 
 const topLeftCorner = {
@@ -439,7 +441,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     }) => {
       /* 
-      Test case: Macro-Micro-Switcher/3747
+      Test case: Macro-Micro-Switcher/#3747
       Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
       */
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
@@ -449,6 +451,47 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('The 3D view works for micromolecules when there are macromolecules on the canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4203
+    Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
+    After closing the ticket, should update the screenshots.
+
+    */
+    await page.getByTestId('Bal___beta-Alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4094
+    Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await page.getByTestId('Bal___beta-Alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.locator('.css-1kbfai8').click();
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -682,6 +725,19 @@ test.describe('Macro-Micro-Switcher', () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro, check that structure is in center of canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#3902
+    Description: Structure is in center of canvas
+    */
+    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 });

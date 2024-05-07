@@ -758,8 +758,8 @@ function getOnlyQueryAttributesCustomQuery(atom: Atom) {
 }
 
 function addTooltip(node, text: string) {
-  const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
-  node.childNodes[0].setAttribute('data-tooltip', tooltip);
+  const tooltip = text.split(/(?<=[;,])/).join(' ');
+  node.childNodes[0].setAttribute('data-tooltip', util.escapeHtml(tooltip));
 }
 
 function buildLabel(

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { selectOption, SequenceType } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';

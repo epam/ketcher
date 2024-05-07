@@ -101,18 +101,18 @@ export class Phosphate extends BaseMonomer {
         phosphate.attachmentPointsToBonds;
       const monomerForR1 = polymerBond1?.getAnotherMonomer(phosphate);
       const monomerForR2 = polymerBond2?.getAnotherMonomer(phosphate);
+      if (!monomerForR1 || !monomerForR2) {
+        return false;
+      }
       const isMonomerForR1SugarAndPartOfRNA =
         monomerForR1 instanceof Sugar && (monomerForR1 as Sugar).isPartOfRna;
       if (monomerForR2 === this) {
         return isMonomerForR1SugarAndPartOfRNA;
       }
-      let isMonomerForR2PartOfRNA = false;
-      if (monomerForR2) {
-        isMonomerForR2PartOfRNA =
-          monomerForR2 instanceof Phosphate
-            ? checkIfPhosphateIsPartOfRNA(monomerForR2)
-            : monomerForR2.isPartOfRna;
-      }
+      const isMonomerForR2PartOfRNA =
+        monomerForR2 instanceof Phosphate
+          ? checkIfPhosphateIsPartOfRNA(monomerForR2)
+          : monomerForR2.isPartOfRna;
       // `isMonomerForR2PartOfRNA` used here because we need to interpret last phosphate of RNA chain
       // as not a part of nucleoTide but as phosphate connected to nucleoSide
       return isMonomerForR1SugarAndPartOfRNA && isMonomerForR2PartOfRNA;

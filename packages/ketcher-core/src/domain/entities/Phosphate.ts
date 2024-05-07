@@ -120,36 +120,4 @@ export class Phosphate extends BaseMonomer {
 
     return checkIfPhosphateIsPartOfRNA(this);
   }
-
-  // The second version. Unused.
-  // From my point of view, we can avoid using the cyclic getter calling.
-  // Instead of that we can describe two iterations.
-  public get isPartOfRNA(): boolean {
-    const { R1: polymerBond1, R2: polymerBond2 } = this.attachmentPointsToBonds;
-    const monomerForR1 = polymerBond1?.getAnotherMonomer(this);
-    const monomerForR2 = polymerBond2?.getAnotherMonomer(this);
-    if (!monomerForR1 || !monomerForR2) {
-      return false;
-    }
-    const { R1: polymerBond1FromMonomerForR2 } =
-      monomerForR2.attachmentPointsToBonds;
-    const monomerForR1FromMonomerForR2 =
-      polymerBond1FromMonomerForR2?.getAnotherMonomer(monomerForR2);
-    if (!monomerForR1FromMonomerForR2) {
-      return false;
-    }
-    const checkIfMonomerSugarAndPartOfRNA = (monomer: BaseMonomer): boolean => {
-      return monomer instanceof Sugar && (monomer as Sugar).isPartOfRna;
-    };
-    const isMonomerForR1SugarAndPartOfRNA =
-      checkIfMonomerSugarAndPartOfRNA(monomerForR1);
-    const isMonomerForR1FromMonomerForR2SugarAndPartOfRNA =
-      checkIfMonomerSugarAndPartOfRNA(monomerForR1FromMonomerForR2);
-    // `isMonomerForR1FromMonomerForR2SugarAndPartOfRNA` used here because we need to interpret last phosphate of RNA chain
-    // as not a part of nucleoTide but as phosphate connected to nucleoSide
-    return (
-      isMonomerForR1SugarAndPartOfRNA &&
-      isMonomerForR1FromMonomerForR2SugarAndPartOfRNA
-    );
-  }
 }

@@ -1,5 +1,4 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from 'domain/entities/Sugar';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 
 export class RNABase extends BaseMonomer {
@@ -19,11 +18,5 @@ export class RNABase extends BaseMonomer {
 
   public get SubChainConstructor() {
     return ChemSubChain;
-  }
-
-  public get isPartOfRna(): boolean {
-    return (
-      this.attachmentPointsToBonds.R1?.getAnotherMonomer(this) instanceof Sugar
-    );
   }
 }

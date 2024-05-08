@@ -92,32 +92,4 @@ export class Phosphate extends BaseMonomer {
   public get SubChainConstructor() {
     return PhosphateSubChain;
   }
-
-  public get isPartOfRna(): boolean {
-    // To avoid endless looping when checking `monomerForR2`,
-    // we take into account that we did not return to checking the initial phosphate (`this`).
-    const checkIfPhosphateIsPartOfRNA = (phosphate: Phosphate): boolean => {
-      const { R1: polymerBond1, R2: polymerBond2 } =
-        phosphate.attachmentPointsToBonds;
-      const monomerForR1 = polymerBond1?.getAnotherMonomer(phosphate);
-      const monomerForR2 = polymerBond2?.getAnotherMonomer(phosphate);
-      if (!monomerForR1 || !monomerForR2) {
-        return false;
-      }
-      const isMonomerForR1SugarAndPartOfRNA =
-        monomerForR1 instanceof Sugar && monomerForR1.isPartOfRna;
-      if (monomerForR2 === this) {
-        return isMonomerForR1SugarAndPartOfRNA;
-      }
-      const isMonomerForR2PartOfRNA =
-        monomerForR2 instanceof Phosphate
-          ? checkIfPhosphateIsPartOfRNA(monomerForR2)
-          : monomerForR2.isPartOfRna;
-      // `isMonomerForR2PartOfRNA` used here because we need to interpret last phosphate of RNA chain
-      // as not a part of nucleoTide but as phosphate connected to nucleoSide
-      return isMonomerForR1SugarAndPartOfRNA && isMonomerForR2PartOfRNA;
-    };
-
-    return checkIfPhosphateIsPartOfRNA(this);
-  }
 }

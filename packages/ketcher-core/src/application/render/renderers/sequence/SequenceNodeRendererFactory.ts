@@ -12,6 +12,7 @@ import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence
 import { BaseMonomerRenderer } from 'application/render';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
+import { NucleosideSequenceItemRenderer } from './NucleosideSequenceItemRenderer';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -30,7 +31,7 @@ export class SequenceNodeRendererFactory {
         RendererClass = NucleotideSequenceItemRenderer;
         break;
       case Nucleoside:
-        RendererClass = NucleotideSequenceItemRenderer;
+        RendererClass = NucleosideSequenceItemRenderer;
         break;
       case EmptySequenceNode:
         RendererClass = EmptySequenceItemRenderer;

@@ -105,7 +105,7 @@ export class Phosphate extends BaseMonomer {
         return false;
       }
       const isMonomerForR1SugarAndPartOfRNA =
-        monomerForR1 instanceof Sugar && (monomerForR1 as Sugar).isPartOfRna;
+        monomerForR1 instanceof Sugar && monomerForR1.isPartOfRna;
       if (monomerForR2 === this) {
         return isMonomerForR1SugarAndPartOfRNA;
       }

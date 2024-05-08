@@ -1360,8 +1360,8 @@ export class DrawingEntitiesManager {
         lastRearrangeResult = rearrangeResult;
       }
 
-      //Macro: Switching to Sequence mode causes page freeze task.
-      //Without it, there is no error.
+      // Macro: Switching to Sequence mode causes page freeze task.
+      // Without it, there is no error.
       /*
       if (rearrangeResult?.nextMonomer) {
         stack.push({

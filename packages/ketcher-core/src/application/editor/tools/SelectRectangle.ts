@@ -231,7 +231,7 @@ class SelectRectangle implements BaseTool {
 
   mouseup(event) {
     const renderer = event.target.__data__;
-    if (this.moveStarted && renderer.drawingEntity?.selected) {
+    if (this.moveStarted && renderer?.drawingEntity?.selected) {
       this.moveStarted = false;
 
       if (

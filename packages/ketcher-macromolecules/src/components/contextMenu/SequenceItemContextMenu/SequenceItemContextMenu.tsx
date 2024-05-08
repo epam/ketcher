@@ -18,7 +18,7 @@ import {
   setSequenceSelectionName,
   setActivePreset,
   setActiveRnaBuilderItem,
-  setIsSequenceFirstsOnlyNucleotidesSelected,
+  setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 
@@ -49,14 +49,14 @@ export const SequenceItemContextMenu = ({
       }) => {
         return (
           !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleotide
+          !menuProps?.isSelectedAtLeastOneNucleoelement
         );
       },
     },
     {
       name: 'modify_in_rna_builder',
       title: 'Modify in RNA Builder...',
-      disabled: !menuProps?.isSelectedOnlyNucleotides,
+      disabled: !menuProps?.isSelectedOnlyNucleoelements,
       hidden: ({
         props,
       }: {
@@ -64,7 +64,7 @@ export const SequenceItemContextMenu = ({
       }) => {
         return (
           !props?.sequenceItemRenderer ||
-          !menuProps?.isSelectedAtLeastOneNucleotide
+          !menuProps?.isSelectedAtLeastOneNucleoelement
         );
       },
     },
@@ -96,16 +96,16 @@ export const SequenceItemContextMenu = ({
         dispatch(setActivePreset({}));
         dispatch(setActiveRnaBuilderItem(null));
         if (
-          menuProps?.selectedSequenceLabeledNucleotides?.length &&
+          menuProps?.selectedSequenceLabeledNodes?.length &&
           menuProps?.title
         ) {
           dispatch(setSequenceSelectionName(menuProps?.title));
           dispatch(
-            setSequenceSelection(menuProps?.selectedSequenceLabeledNucleotides),
+            setSequenceSelection(menuProps?.selectedSequenceLabeledNodes),
           );
           dispatch(
-            setIsSequenceFirstsOnlyNucleotidesSelected(
-              menuProps?.isSequenceFirstsOnlyNucleotidesSelected,
+            setIsSequenceFirstsOnlyNucleoelementsSelected(
+              menuProps?.isSequenceFirstsOnlyNucleoelementsSelected,
             ),
           );
         }

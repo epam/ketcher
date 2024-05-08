@@ -56,7 +56,8 @@ describe('Monomer List', () => {
       ],
     },
     rnaBuilder: {
-      presets: [preset],
+      presetsDefault: [preset],
+      presetsCustom: [],
     },
   };
 

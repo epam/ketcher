@@ -9,7 +9,7 @@ describe('Test Rna Preset Item component', () => {
       base: undefined,
       name: 'MyRna',
       phosphate: undefined,
-      presetInList: undefined,
+      nameInList: undefined,
       sugar: undefined,
     };
 

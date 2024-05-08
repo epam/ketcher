@@ -1,3 +1,5 @@
+import pick from 'lodash/pick';
+import omit from 'lodash/omit';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
@@ -53,7 +55,9 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode } from 'application/editor';
+import { IRnaPreset, SequenceMode } from 'application/editor';
+import { IRnaLabeledPreset } from 'application/editor/tools';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -158,11 +162,11 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     monomerItemNew: MonomerItemType,
   ) {
-    const monomerNew = this.monomers.get(monomer.id);
-    if (!monomerNew) return monomer;
-    monomerNew.monomerItem = monomerItemNew;
-    this.monomers.set(monomer.id, monomerNew);
-    return monomerNew;
+    const initialMonomer = this.monomers.get(monomer.id);
+    if (!initialMonomer) return monomer;
+    initialMonomer.monomerItem = monomerItemNew;
+    this.monomers.set(monomer.id, initialMonomer);
+    return initialMonomer;
   }
 
   public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
@@ -750,14 +754,11 @@ export class DrawingEntitiesManager {
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
 
-    if (
-      monomer.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
-    ) {
+    if (monomer.isAttachmentPointUsed(attachmentPointName)) {
       const operation = new MonomerHoverOperation(monomer, true);
       command.addOperation(operation);
       return command;
     }
-
     if (attachmentPointName) {
       monomer.setPotentialSecondAttachmentPoint(attachmentPointName);
       monomer.setPotentialBond(attachmentPointName, bond);
@@ -890,7 +891,9 @@ export class DrawingEntitiesManager {
     if (rnaBase && rnaBasePosition) {
       monomersToAdd.push([rnaBase, rnaBasePosition]);
     }
-    monomersToAdd.push([sugar, sugarPosition]);
+    if (sugar && sugarPosition) {
+      monomersToAdd.push([sugar, sugarPosition]);
+    }
     if (phosphate && phosphatePosition) {
       monomersToAdd.push([phosphate, phosphatePosition]);
     }
@@ -912,6 +915,10 @@ export class DrawingEntitiesManager {
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
+        if (!attPointEnd) {
+          command.clear();
+          return;
+        }
         assert(attPointEnd);
 
         const operation = new PolymerBondFinishCreationOperation(
@@ -930,6 +937,53 @@ export class DrawingEntitiesManager {
     });
 
     return { command, monomers };
+  }
+
+  public createRnaPresetFromLabeledRnaPreset(preset: IRnaLabeledPreset) {
+    const editor = CoreEditor.provideEditorInstance();
+    const modifiedPreset: Partial<IRnaPreset> = omit(preset, [
+      'sugar',
+      'base',
+      'phosphate',
+    ]);
+    const position = Coordinates.canvasToModel(new Vec2(0, 0));
+    let rnaBaseLibraryItem;
+    let phosphateLibraryItem;
+    let sugarLibraryItem;
+
+    if (preset.base) {
+      rnaBaseLibraryItem = getRnaPartLibraryItem(editor, preset.base);
+      rnaBaseLibraryItem && assert(rnaBaseLibraryItem);
+    }
+    if (preset.phosphate) {
+      phosphateLibraryItem = getRnaPartLibraryItem(editor, preset.phosphate);
+      phosphateLibraryItem && assert(phosphateLibraryItem);
+    }
+    if (preset.sugar) {
+      sugarLibraryItem = getRnaPartLibraryItem(editor, preset.sugar);
+      sugarLibraryItem && assert(sugarLibraryItem);
+    }
+
+    const { monomers } = editor.drawingEntitiesManager.addRnaPreset({
+      sugar: sugarLibraryItem,
+      sugarPosition: position,
+      rnaBase: rnaBaseLibraryItem,
+      rnaBasePosition: position,
+      phosphate: phosphateLibraryItem,
+      phosphatePosition: position,
+    });
+    for (const monomer of monomers) {
+      const props = pick(monomer.monomerItem, ['label', 'props', 'struct']);
+      if (monomer instanceof RNABase) {
+        modifiedPreset.base = { ...props };
+      } else if (monomer instanceof Sugar) {
+        modifiedPreset.sugar = { ...props };
+      } else if (monomer instanceof Phosphate) {
+        modifiedPreset.phosphate = { ...props };
+      }
+    }
+
+    return modifiedPreset;
   }
 
   private findChainByMonomer(
@@ -1421,6 +1475,21 @@ export class DrawingEntitiesManager {
     );
   }
 
+  public isNucleosideAndPhosphateConnectedAsNucleotide(
+    nucleoside: Nucleoside,
+    phosphate: Phosphate,
+  ) {
+    if (
+      !(nucleoside instanceof Nucleoside) ||
+      !(phosphate instanceof Phosphate)
+    )
+      return false;
+
+    return (
+      nucleoside.sugar.attachmentPointsToBonds.R2?.secondMonomer === phosphate
+    );
+  }
+
   private getFirstMonomerInR2R1Chain(monomer: BaseMonomer) {
     const R1Bond = monomer.attachmentPointsToBonds.R1;
     return R1Bond &&
@@ -1783,6 +1852,22 @@ export class DrawingEntitiesManager {
       this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
     );
     command.addOperation(operation);
+
+    return command;
+  }
+
+  public removeHoverForAllMonomers() {
+    const command = new Command();
+    this.monomers.forEach((monomer) => {
+      if (!monomer.hovered) {
+        return;
+      }
+
+      monomer.turnOffHover();
+      monomer.turnOffAttachmentPointsVisibility();
+
+      command.addOperation(new MonomerHoverOperation(monomer, true));
+    });
 
     return command;
   }

@@ -140,11 +140,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   });
 
   test('Check that cannot add Charge more than -15', async ({ page }) => {
-    test.fail();
     /**
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
-     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
      */
     await setCharge(page, '-16');
     const applyButton = await page.getByText('Apply');
@@ -153,11 +151,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   });
 
   test('Check that cannot add Charge more than 15', async ({ page }) => {
-    test.fail();
     /**
      * Test case: https://github.com/epam/ketcher/issues/3943
      * Description: Validation should be added +-15 range allowed only
-     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
      */
     await setCharge(page, '16');
     const applyButton = await page.getByText('Apply');

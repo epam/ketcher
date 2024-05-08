@@ -62,3 +62,4 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
 } as const;
 
 export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';
+export const CUSTOM_PRESETS = 'ketcher_custom_presets';

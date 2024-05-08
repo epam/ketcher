@@ -3,9 +3,13 @@ import { Page } from '@playwright/test';
 export async function clickOnSequenceSymbol(
   page: Page,
   symbolText: string,
-  clickOptions?: { button: 'right' | 'left' },
+  clickOptions?: { button?: 'right' | 'left'; nthNumber?: number },
 ) {
-  const symbolLocator = await getSequenceSymbolLocator(page, symbolText);
+  const symbolLocator = getSequenceSymbolLocator(
+    page,
+    symbolText,
+    clickOptions?.nthNumber,
+  );
   await symbolLocator.click(clickOptions);
 }
 

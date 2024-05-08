@@ -49,12 +49,14 @@ const options: Array<Option> = [
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
+  { id: 'idt', label: 'IDT' },
 ];
 
 const formatDetector = {
   mol: ChemicalMimeType.Mol,
   fasta: ChemicalMimeType.FASTA,
   sequence: ChemicalMimeType.SEQUENCE,
+  idt: ChemicalMimeType.IDT,
 };
 
 const StyledModal = styled(Modal)({

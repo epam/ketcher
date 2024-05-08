@@ -65,6 +65,7 @@ export enum SupportedFormat {
   SDF = 'sdf',
   FASTA = 'fasta',
   SEQUENCE = 'sequence',
+  IDT = 'idt',
 }
 
 export interface WithStruct {

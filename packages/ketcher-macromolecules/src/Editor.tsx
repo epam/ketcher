@@ -19,15 +19,12 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
 import {
-  SdfSerializer,
   hotkeysConfiguration,
   generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
   NodeSelection,
 } from 'ketcher-core';
-import monomersData from './data/monomers.sdf';
-
 import { store } from 'state';
 import {
   defaultTheme,
@@ -50,11 +47,6 @@ import {
   selectTool,
   showPreview,
 } from 'state/common';
-import {
-  loadMonomerLibrary,
-  selectMonomers,
-  setFavoriteMonomersFromLocalStorage,
-} from 'state/library';
 import {
   useAppDispatch,
   useAppSelector,
@@ -91,15 +83,9 @@ import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
+import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
-import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
-import {
-  setDefaultPresets,
-  setFavoritePresetsFromLocalStorage,
-  clearFavorites,
-} from 'state/rna-builder';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
@@ -166,40 +152,19 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
-  const monomers = useAppSelector(selectMonomers);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new SdfSerializer();
-    const library = serializer.deserialize(monomersData);
-    dispatch(loadMonomerLibrary(library));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    if (editor && monomers) {
-      editor.setMonomersLibrary(monomers);
-    }
-  }, [editor, monomers]);
-
-  useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
-    dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage());
-
-    return () => {
-      dispatch(clearFavorites());
-    };
-  }, [dispatch, monomers]);
+  useSetRnaPresets();
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),

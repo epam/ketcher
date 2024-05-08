@@ -25,6 +25,7 @@ import {
 import { ActionButton } from 'components/shared/actionButton';
 import styled from '@emotion/styled';
 import { selectEditor } from 'state/common';
+import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
 export interface Props {
   onClose: () => void;
@@ -39,7 +40,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const editor = useAppSelector(selectEditor);
-  const countOfSequenceSelection = sequenceSelection.length;
+  const countOfNucleoelements = getCountOfNucleoelements(sequenceSelection);
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -69,8 +70,8 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
     >
       <Modal.Content>
         <TextWrapper>
-          You are going to modify {countOfSequenceSelection} nucleotides. Are
-          you sure?
+          You are going to modify {countOfNucleoelements} nucleotides. Are you
+          sure?
         </TextWrapper>
       </Modal.Content>
       <Modal.Footer>

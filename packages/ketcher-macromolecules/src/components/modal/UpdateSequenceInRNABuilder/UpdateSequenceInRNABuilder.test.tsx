@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { fireEvent, render, screen } from '@testing-library/react';
-import { LabeledNucleotideWithPositionInSequence } from 'ketcher-core';
+import { LabeledNodesWithPositionInSequence, Entities } from 'ketcher-core';
 import { UpdateSequenceInRNABuilder } from './UpdateSequenceInRNABuilder';
 
 const mockProps = {
@@ -24,11 +24,13 @@ const mockProps = {
 };
 
 describe('UpdateSequenceInRNABuilder modal component', () => {
-  const labeledNucleotide: LabeledNucleotideWithPositionInSequence = {
+  const labeledNucleotide: LabeledNodesWithPositionInSequence = {
+    type: Entities.Nucleotide,
     baseLabel: 'A',
     phosphateLabel: 'P',
     sugarLabel: 'R',
     nodeIndexOverall: 0,
+    hasR1Connection: false,
   };
 
   it('should render correctly', () => {

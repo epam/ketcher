@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Entities } from 'ketcher-core';
 import { Switcher } from 'components/rna/Switcher';
 import { useEffect, useState } from 'react';
 import { MonomerList } from '../../monomerLibrary/monomerLibraryList';
@@ -42,10 +43,12 @@ const getInitialMonomers = (items) => {
 const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
   const [selectedMonomers, setSelectedMonomers] =
     useState<selectedMonomersType>(getInitialMonomers(items));
-  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide');
+  const [activeMonomerType, setActiveMonomerType] = useState(
+    Entities.Nucleotide,
+  );
   useEffect(() => {
     const matchMonomerByType =
-      activeMonomerType === 'Nucleotide'
+      activeMonomerType === Entities.Nucleotide
         ? selectedMonomers
         : selectedMonomers[activeMonomerType];
     selectItem(matchMonomerByType);
@@ -53,7 +56,7 @@ const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
 
   const selectMonomerType = (type) => {
     if (type === 'reset') {
-      setActiveMonomerType('Nucleotide');
+      setActiveMonomerType(Entities.Nucleotide);
       setSelectedMonomers(getInitialMonomers(items));
     } else {
       setActiveMonomerType(type);
@@ -61,7 +64,7 @@ const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
   };
 
   const selectMonomer = (item) => {
-    if (activeMonomerType === 'Nucleotide') {
+    if (activeMonomerType === Entities.Nucleotide) {
       setSelectedMonomers(item.monomers);
     } else {
       setSelectedMonomers((prevState) => {

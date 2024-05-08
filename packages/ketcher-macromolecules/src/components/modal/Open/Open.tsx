@@ -95,6 +95,7 @@ const options: Array<Option> = [
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
+  { id: 'idt', label: 'IDT' },
 ];
 
 const additionalOptions: Array<Option> = [

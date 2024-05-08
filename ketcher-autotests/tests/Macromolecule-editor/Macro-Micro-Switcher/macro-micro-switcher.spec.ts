@@ -24,6 +24,7 @@ import {
   waitForSpinnerFinishedWork,
   selectRing,
   RingButton,
+  selectSingleBondTool,
 } from '@utils';
 
 const topLeftCorner = {
@@ -76,6 +77,27 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('bP___Boranophosphate').getByText('★').click();
   await page.getByTestId('CHEM-TAB').click();
   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').getByText('★').click();
+}
+
+async function setAtomAndBondSettings(page: Page) {
+  await page.getByTestId('settings-button').click();
+  await page.getByText('Atoms', { exact: true }).click();
+  await page.getByText('Terminal and Hetero').click();
+  await page.getByTestId('On-option').click();
+  await page.getByText('Bonds', { exact: true }).click();
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as' })
+    .getByRole('textbox')
+    .nth(1)
+    .click();
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as' })
+    .getByRole('textbox')
+    .nth(1)
+    .fill('05');
+  await page.getByTestId('OK').click();
 }
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -738,6 +760,68 @@ test.describe('Macro-Micro-Switcher', () => {
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Settings related to atom and bond display are ignored in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Settings related to atom and bond display are ignored in macromolecules mode, 
+    and display is consistently set to dots for atoms and single lines for bonds.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+    await setAtomAndBondSettings(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    for (let i = 0; i < 3; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Atom connected to R-Group label by bond used as attachment atom when switch to macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4530
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check If there are more than one attachment atom for same R-Group label', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4530
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas(
+      'KET/more-than-one-attachment-atom-for-R-Group.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
 });

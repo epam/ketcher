@@ -1,7 +1,7 @@
 import { IKetIdtAliases } from 'ketcher-core';
 
 interface IDTAliasesProps {
-  aliases: IKetIdtAliases;
+  readonly aliases: IKetIdtAliases;
 }
 
 const IDTAliases = ({ aliases }: IDTAliasesProps) => {

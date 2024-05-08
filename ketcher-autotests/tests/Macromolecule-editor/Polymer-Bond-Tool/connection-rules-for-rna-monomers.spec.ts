@@ -11,7 +11,7 @@ import {
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
+  // zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 

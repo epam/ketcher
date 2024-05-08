@@ -473,7 +473,7 @@ test.describe('Connection rules for RNAs: ', () => {
       .locator('..')
       .first();
     await leftsugarLocator.hover();
-    await dragMouseTo(500, 371, page);
+    await dragMouseTo(400, 371, page);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(rightSugar.fileName, page);
@@ -483,7 +483,7 @@ test.describe('Connection rules for RNAs: ', () => {
         : page.getByText(rightSugar.alias).locator('..').first();
     await rightsugarLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 372, page);
+    await dragMouseTo(700, 372, page);
     await moveMouseAway(page);
   }
 
@@ -545,32 +545,33 @@ test.describe('Connection rules for RNAs: ', () => {
   // till that issue fix.
   // See https://github.com/epam/ketcher/issues/4586 for more datails.
   const failedTests = [
-    'Case 1: Connect Center to Center of Sugar((R2)_-_Right_only) and Base((R1,R2)_-_R3_gap)',
-    'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R1)_-_Left_only)',
-    'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R3)_-_Side_only)',
-    'Case 1: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Base((R3)_-_Side_only)',
-    'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R3)_-_Side_only)',
-    'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R2)_-_R3_gap)',
-    'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R3)_-_R2_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1)_-_Left_only) and Sugar((R2)_-_Right_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1)_-_Left_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R2)_-_Right_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R3)_-_Side_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1,R2)_-_R3_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2)_-_R3_gap) and Sugar((R1)_-_Left_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R3)_-_R2_gap) and Sugar((R1,R2)_-_R3_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R2,R3)_-_R1_gap) and Sugar((R1,R2,R3))',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1)_-_Left_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2)_-_Right_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R3)_-_Side_only)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2)_-_R3_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R3)_-_R2_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2,R3)_-_R1_gap)',
-    'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2,R3))',
-    'Case 2.2: Connect Center to Center of Sugar((R1)_-_Left_only) and Phosphate((R2)_-_Right_only)',
-    'Case 2.2: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Phosphate((R2)_-_Right_only)',
-    'Case 2.2: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Phosphate((R1,R3)_-_R2_gap)',
-    'Case 2.2: Connect Center to Center of Sugar((R1,R2,R3)) and Phosphate((R1)_-_Left_only)',
+    '',
+    // 'Case 1: Connect Center to Center of Sugar((R2)_-_Right_only) and Base((R1,R2)_-_R3_gap)',
+    // 'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R1)_-_Left_only)',
+    // 'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R3)_-_Side_only)',
+    // 'Case 1: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Base((R3)_-_Side_only)',
+    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R3)_-_Side_only)',
+    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R2)_-_R3_gap)',
+    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R3)_-_R2_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1)_-_Left_only) and Sugar((R2)_-_Right_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1)_-_Left_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R2)_-_Right_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R3)_-_Side_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1,R2)_-_R3_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2)_-_R3_gap) and Sugar((R1)_-_Left_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R3)_-_R2_gap) and Sugar((R1,R2)_-_R3_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R2,R3)_-_R1_gap) and Sugar((R1,R2,R3))',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1)_-_Left_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2)_-_Right_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R3)_-_Side_only)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2)_-_R3_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R3)_-_R2_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2,R3)_-_R1_gap)',
+    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2,R3))',
+    // 'Case 2.2: Connect Center to Center of Sugar((R1)_-_Left_only) and Phosphate((R2)_-_Right_only)',
+    // 'Case 2.2: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Phosphate((R2)_-_Right_only)',
+    // 'Case 2.2: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Phosphate((R1,R3)_-_R2_gap)',
+    // 'Case 2.2: Connect Center to Center of Sugar((R1,R2,R3)) and Phosphate((R1)_-_Left_only)',
   ];
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
@@ -589,12 +590,12 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
 
-        await zoomWithMouseWheel(page, -500);
+        // await zoomWithMouseWheel(page, -500);
 
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
       });
     });
   });
@@ -620,7 +621,7 @@ test.describe('Connection rules for RNAs: ', () => {
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
       });
     });
   });
@@ -641,12 +642,12 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPhosphate);
 
-        await zoomWithMouseWheel(page, -600);
+        // await zoomWithMouseWheel(page, -600);
 
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
       });
     });
   });

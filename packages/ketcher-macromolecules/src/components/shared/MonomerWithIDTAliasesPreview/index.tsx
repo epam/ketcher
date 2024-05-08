@@ -21,8 +21,11 @@ import { useMemo } from 'react';
 import { selectShowPreview } from 'state/common';
 import { preview as previewConstants } from '../../../constants';
 import { Container, MonomerName, StyledStructRender } from './styles';
+import { MonomerWithIDTAliasesPreviewProps } from './types';
 
-const MonomerWithIDTAliasesPreview = () => {
+const MonomerWithIDTAliasesPreview = ({
+  className,
+}: MonomerWithIDTAliasesPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
   const ContainerDynamic = useMemo(
     () => styled(Container)`
@@ -39,7 +42,10 @@ const MonomerWithIDTAliasesPreview = () => {
 
   return (
     preview.monomer && (
-      <ContainerDynamic data-testid="polymer-library-preview">
+      <ContainerDynamic
+        className={className}
+        data-testid="polymer-library-preview"
+      >
         <MonomerName>{preview.monomer.struct.name}</MonomerName>
         <StyledStructRender struct={preview.monomer.struct} />
         {idtAliases && <IDTAliases aliases={idtAliases}></IDTAliases>}

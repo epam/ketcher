@@ -35,7 +35,7 @@ export const Preview = () => {
   ]);
   const monomerClass = preview?.monomer?.props.MonomerClass;
   if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {
-    return <MonomerWithIDTAliasesPreview />;
+    return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
   }
 
   return <MonomerPreview className="polymer-library-preview" />;

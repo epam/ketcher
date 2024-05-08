@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import MonomerWithIDTAliasesPreview from 'components/shared/MonomerWithIDTAliasesPreview';
 import { useAppSelector } from 'hooks';
+import { KetMonomerClass } from 'ketcher-core';
 import { selectShowPreview } from 'state/common';
 import NucleotidePreview from '../NucleotidePreview';
 import MonomerPreview from '../MonomerPreview';
@@ -23,6 +25,17 @@ export const Preview = () => {
 
   if (preview?.nucleotide) {
     return <NucleotidePreview />;
+  }
+
+  const ketMonomerWithIDTAliasesClassSet = new Set<KetMonomerClass>([
+    KetMonomerClass.Base,
+    KetMonomerClass.CHEM,
+    KetMonomerClass.Phosphate,
+    KetMonomerClass.Sugar,
+  ]);
+  const monomerClass = preview?.monomer?.props.MonomerClass;
+  if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {
+    return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
   }
 
   return <MonomerPreview className="polymer-library-preview" />;

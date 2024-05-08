@@ -1321,6 +1321,7 @@ export class DrawingEntitiesManager {
       lastPosition: _lastPosition,
       maxVerticalDistance: _maxVerticalDistance,
     };
+
     while (stack.length > 0) {
       const stackItem = stack.pop();
       assert(stackItem);
@@ -1359,6 +1360,9 @@ export class DrawingEntitiesManager {
         lastRearrangeResult = rearrangeResult;
       }
 
+      //Macro: Switching to Sequence mode causes page freeze task.
+      //Without it, there is no error.
+      /*
       if (rearrangeResult?.nextMonomer) {
         stack.push({
           monomer: rearrangeResult.nextMonomer,
@@ -1366,6 +1370,7 @@ export class DrawingEntitiesManager {
           maxVerticalDistance: rearrangeResult.maxVerticalDistance,
         });
       }
+      */
     }
 
     return {
@@ -1447,6 +1452,7 @@ export class DrawingEntitiesManager {
         monomersWithSideChain,
         0,
       );
+
       command.merge(rearrangeResult.command);
       lastPosition = rearrangeResult.lastPosition;
       // need to calculate the vertical distance before the next row gets to display
@@ -1466,6 +1472,7 @@ export class DrawingEntitiesManager {
             [Peptide, Chem, Sugar, Phosphate],
             currentMonomerChain,
           );
+
           if (rearrangedMonomersSet.has(monomerWithSideChain.id)) {
             return;
           }
@@ -1503,12 +1510,14 @@ export class DrawingEntitiesManager {
             rearrangedMonomersSet,
             lastPosition,
           );
+
           command.merge(rearrangeResult.command);
 
           lastPosition = rearrangeResult.lastPosition;
         });
       }
     });
+
     return { command, lastPosition };
   }
 

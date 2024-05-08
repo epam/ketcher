@@ -544,35 +544,6 @@ test.describe('Connection rules for RNAs: ', () => {
   // (i.e. one pixel down at CI so we got screenshot comparison error). This is why we decided to switch such tests off
   // till that issue fix.
   // See https://github.com/epam/ketcher/issues/4586 for more datails.
-  const failedTests = [
-    '',
-    // 'Case 1: Connect Center to Center of Sugar((R2)_-_Right_only) and Base((R1,R2)_-_R3_gap)',
-    // 'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R1)_-_Left_only)',
-    // 'Case 1: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Base((R3)_-_Side_only)',
-    // 'Case 1: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Base((R3)_-_Side_only)',
-    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R3)_-_Side_only)',
-    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R2)_-_R3_gap)',
-    // 'Case 1: Connect Center to Center of Sugar((R2,R3)_-_R1_gap) and Base((R1,R3)_-_R2_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1)_-_Left_only) and Sugar((R2)_-_Right_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1)_-_Left_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R2)_-_Right_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R3)_-_Side_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R2)_-_Right_only) and Sugar((R1,R2)_-_R3_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2)_-_R3_gap) and Sugar((R1)_-_Left_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R3)_-_R2_gap) and Sugar((R1,R2)_-_R3_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R2,R3)_-_R1_gap) and Sugar((R1,R2,R3))',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1)_-_Left_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2)_-_Right_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R3)_-_Side_only)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2)_-_R3_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R3)_-_R2_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R2,R3)_-_R1_gap)',
-    // 'Case 2.1: Connect Center to Center of Phosphate((R1,R2,R3)) and Sugar((R1,R2,R3))',
-    // 'Case 2.2: Connect Center to Center of Sugar((R1)_-_Left_only) and Phosphate((R2)_-_Right_only)',
-    // 'Case 2.2: Connect Center to Center of Sugar((R1,R2)_-_R3_gap) and Phosphate((R2)_-_Right_only)',
-    // 'Case 2.2: Connect Center to Center of Sugar((R1,R3)_-_R2_gap) and Phosphate((R1,R3)_-_R2_gap)',
-    // 'Case 2.2: Connect Center to Center of Sugar((R1,R2,R3)) and Phosphate((R1)_-_Left_only)',
-  ];
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(baseMonomers).forEach((rightBase) => {
@@ -583,8 +554,6 @@ test.describe('Connection rules for RNAs: ', () => {
        */
       test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
         test.setTimeout(15000);
-
-        if (failedTests.includes(test.info().title)) test.fail();
 
         await loadTwoMonomers(page, leftSugar, rightBase);
 
@@ -610,8 +579,6 @@ test.describe('Connection rules for RNAs: ', () => {
       test(`Case 2.1: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and Sugar(${rightSugar.alias})`, async () => {
         test.setTimeout(15000);
 
-        if (failedTests.includes(test.info().title)) test.fail();
-
         await loadTwoMonomers(page, leftPhosphate, rightSugar);
 
         await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
@@ -635,8 +602,6 @@ test.describe('Connection rules for RNAs: ', () => {
        */
       test(`Case 2.2: Connect Center to Center of Sugar(${leftSugar.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
         test.setTimeout(15000);
-
-        if (failedTests.includes(test.info().title)) test.fail();
 
         await loadTwoMonomers(page, leftSugar, rightPhosphate);
 

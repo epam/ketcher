@@ -615,7 +615,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
 
-        await zoomWithMouseWheel(page, -600);
+        // await zoomWithMouseWheel(page, -600);
 
         const bondLine = page.locator('g[pointer-events="stroke"]').first();
         await bondLine.hover();

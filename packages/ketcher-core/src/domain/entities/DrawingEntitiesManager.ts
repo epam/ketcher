@@ -1413,18 +1413,6 @@ export class DrawingEntitiesManager {
       if (rearrangeResult?.lastPosition) {
         lastRearrangeResult = rearrangeResult;
       }
-
-      // Macro: Switching to Sequence mode causes page freeze task.
-      // Without it, there is no error.
-      /*
-      if (rearrangeResult?.nextMonomer) {
-        stack.push({
-          monomer: rearrangeResult.nextMonomer,
-          lastPosition: rearrangeResult.lastPosition,
-          maxVerticalDistance: rearrangeResult.maxVerticalDistance,
-        });
-      }
-      */
     }
 
     return {

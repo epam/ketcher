@@ -426,10 +426,10 @@ export abstract class BaseMonomer extends DrawingEntity {
       },
     );
     const leavingGroupsAtomsArray: { id: number; rglabel: number }[] = [];
-    leavingGroupsAtoms.forEach((attachmentAtom, attachmentAtomId) => {
+    leavingGroupsAtoms.forEach((leavingGroupAtom, leavingGroupAtomId) => {
       leavingGroupsAtomsArray.push({
-        id: attachmentAtomId,
-        rglabel: Number(attachmentAtom.rglabel),
+        id: leavingGroupAtomId,
+        rglabel: Number(leavingGroupAtom.rglabel),
       });
     });
     leavingGroupsAtomsArray.sort((atom1, atom2) =>
@@ -443,11 +443,26 @@ export abstract class BaseMonomer extends DrawingEntity {
   > {
     const attachmentPointNameToBond = {};
 
-    this.leavingGroupsAtoms.forEach(({ rglabel }, _) => {
+    this.leavingGroupsAtoms.forEach(({ rglabel, id }, _) => {
       const label = convertAttachmentPointNumberToLabel(Number(rglabel));
+      const leavingGroupAtomId = id;
+      const bondsToLeavingGroupAtom = this.monomerItem.struct.bonds.filter(
+        (_, bond) => {
+          return (
+            bond.begin === leavingGroupAtomId || bond.end === leavingGroupAtomId
+          );
+        },
+      );
 
-      // handle up to 8 attachment points
-      if (Number(label.replace('R', '')) > 8) {
+      // Do not create attachment point if:
+      // there are multiple bonds to same leaving group atom
+      // there are multiple rglabels on same leaving group atom
+      // rglabel more than 8 (support only 8 attachment points in macromolecules mode)
+      if (
+        bondsToLeavingGroupAtom.size > 1 ||
+        label.length > 2 ||
+        Number(label.replace('R', '')) > 8
+      ) {
         return;
       }
 

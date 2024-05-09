@@ -732,4 +732,64 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
     });
   });
+
+  Object.values(phosphateMonomers).forEach((leftPhosphate) => {
+    Object.values(peptideMonomers).forEach((rightPeptide) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 3 (Phosphate - Peptide)
+       *  Description: User can connect any Phosphate to any Peptide using center-to-center way.
+       * For each %phosphateType% from the library (phosphateMonomers)
+       *   For each %peptideType% from the library (peptideMonomers)
+       *  1. Clear canvas
+       *  2. Load %phosphateType% and %peptideType% and put them on the canvas
+       *  3. Establish connection between %sphosphateType%(center) and %peptideType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case5: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftPhosphate, rightPeptide);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftPhosphate,
+          rightPeptide,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
+
+  Object.values(phosphateMonomers).forEach((leftPhosphate) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 3 (Phosphate - CHEM)
+       *  Description: User can connect any Phosphate to any CHEM using center-to-center way.
+       * For each %phosphateType% from the library (phosphateMonomers)
+       *   For each %CHEMType% from the library (CHEMMonomers)
+       *  1. Clear canvas
+       *  2. Load %phosphateType% and %CHEMType% and put them on the canvas
+       *  3. Establish connection between %sphosphateType%(center) and %CHEMType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case6: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftPhosphate, rightCHEM);
+
+        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightCHEM);
+
+        await zoomWithMouseWheel(page, -600);
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

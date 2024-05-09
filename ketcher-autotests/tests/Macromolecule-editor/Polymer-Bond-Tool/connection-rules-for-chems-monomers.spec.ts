@@ -418,6 +418,57 @@ test.describe('Connection rules for chems: ', () => {
     );
   }
 
+  async function bondTwoMonomersByCenterToCenter(
+    page: Page,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ) {
+    const leftMonomerLocator = await page
+      .getByText(leftMonomer.alias, { exact: true })
+      .locator('..')
+      .first();
+
+    const rightMonomerLocator =
+      (await page.getByText(rightMonomer.alias, { exact: true }).count()) > 1
+        ? page
+            .getByText(rightMonomer.alias, { exact: true })
+            .nth(1)
+            .locator('..')
+            .first()
+        : page
+            .getByText(rightMonomer.alias, { exact: true })
+            .locator('..')
+            .first();
+
+    await bondTwoMonomersPointToPoint(
+      page,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      undefined,
+      undefined,
+    );
+
+    if (await page.getByRole('dialog').isVisible()) {
+      const firstConnectionPointKeyForLeftMonomer = Object.keys(
+        leftMonomer.connectionPoints,
+      )[0];
+      const leftMonomerConnectionPoint =
+        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
+      await page.getByTitle(leftMonomerConnectionPoint).first().click();
+
+      const firstConnectionPointKeyForRightMonomer = Object.keys(
+        rightMonomer.connectionPoints,
+      )[0];
+      const rightMonomerConnectionPoint =
+        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
+      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
+        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
+        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
+
+      await page.getByTitle('Connect').first().click();
+    }
+  }
+
   // test(`temporary test for debug purposes`, async () => {
   //   await prepareCanvasOneFreeAPLeft(
   //     page,
@@ -829,6 +880,54 @@ test.describe('Connection rules for chems: ', () => {
           );
         },
       );
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 1
+       *  Description: User can connect any CHEM to any CHEM using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftCHEM, rightCHEM);
+
+        await bondTwoMonomersByCenterToCenter(page, leftCHEM, rightCHEM);
+
+        await zoomWithMouseWheel(page, -600);
+
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(peptideMonomers).forEach((rightPeptide) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 2
+       *  Description: User can connect any CHEM to any Peptide using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftCHEM, rightPeptide);
+
+        await bondTwoMonomersByCenterToCenter(page, leftCHEM, rightPeptide);
+
+        await zoomWithMouseWheel(page, -600);
+
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        // await takeEditorScreenshot(page);
+      });
     });
   });
 });

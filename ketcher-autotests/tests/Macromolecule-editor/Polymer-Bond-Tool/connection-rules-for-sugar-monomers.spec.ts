@@ -255,6 +255,48 @@ test.describe('Connection rules for sugars: ', () => {
     );
   }
 
+  async function bondTwoMonomersByCenterToCenter(
+    page: Page,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ) {
+    const leftMonomerLocator = page
+      .getByText(leftMonomer.alias)
+      .locator('..')
+      .first();
+
+    const rightMonomerLocator =
+      (await page.getByText(leftMonomer.alias).count()) > 1
+        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
+        : page.getByText(rightMonomer.alias).locator('..').first();
+
+    await bondTwoMonomersPointToPoint(
+      page,
+      leftMonomerLocator,
+      rightMonomerLocator,
+    );
+
+    if (await page.getByRole('dialog').isVisible()) {
+      const firstConnectionPointKeyForLeftMonomer = Object.keys(
+        leftMonomer.connectionPoints,
+      )[0];
+      const leftMonomerConnectionPoint =
+        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
+      await page.getByTitle(leftMonomerConnectionPoint).first().click();
+
+      const firstConnectionPointKeyForRightMonomer = Object.keys(
+        rightMonomer.connectionPoints,
+      )[0];
+      const rightMonomerConnectionPoint =
+        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
+      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
+        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
+        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
+
+      await page.getByTitle('Connect').first().click();
+    }
+  }
+
   // test(`temporary test for debug purposes`, async () => {
   //   await prepareCanvasOneFreeAPLeft(
   //     page,
@@ -659,6 +701,62 @@ test.describe('Connection rules for sugars: ', () => {
           );
         },
       );
+    });
+  });
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(peptideMonomers).forEach((rightPeptide) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 5 (Sugar - Peptide)
+       *  Description: User can connect any Sugar to any Peptide using center-to-center way.
+       * For each %baseType% from the library (sugarMonomers)
+       *   For each %peptideType% from the library (peptideMonomers)
+       *  1. Clear canvas
+       *  2. Load %baseType% and %peptideType% and put them on the canvas
+       *  3. Establish connection between %sugarType%(center) and %peptideType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case8: Cnnct Center to Center of Base(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftSugar, rightPeptide);
+
+        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPeptide);
+
+        await zoomWithMouseWheel(page, -600);
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(chemMonomers).forEach((rightCHEM) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 8 (Sugar - CHEM)
+       *  Description: User can connect any Sugar to any CHEM using center-to-center way.
+       * For each %baseType% from the library (sugarMonomers)
+       *   For each %CHEMType% from the library (chemMonomers)
+       *  1. Clear canvas
+       *  2. Load %baseType% and %CHEMType% and put them on the canvas
+       *  3. Establish connection between %sugarType%(center) and %CHEMType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case9: Cnnct Center to Center of Base(${leftSugar.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+        test.setTimeout(15000);
+
+        await loadTwoMonomers(page, leftSugar, rightCHEM);
+
+        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightCHEM);
+
+        await zoomWithMouseWheel(page, -600);
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
+
+        await takeEditorScreenshot(page);
+      });
     });
   });
 });

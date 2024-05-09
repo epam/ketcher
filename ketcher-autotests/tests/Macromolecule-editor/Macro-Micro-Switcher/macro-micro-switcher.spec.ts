@@ -25,6 +25,13 @@ import {
   selectRing,
   RingButton,
   selectSingleBondTool,
+  moveMouseAway,
+  selectAtomInToolbar,
+  AtomButton,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  selectSaltsAndSolvents,
+  SaltsAndSolvents,
 } from '@utils';
 
 const topLeftCorner = {
@@ -822,6 +829,106 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectSingleBondTool(page);
     await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
+    After closing the ticket, should update the screenshots.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Make sure that micro structure Atom when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
+    After closing the ticket, should update the screenshots.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Micro structure Functional Group when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
+    After closing the ticket, should update the screenshots.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Micro structure Salt and Solvent when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
+    After closing the ticket, should update the screenshots.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 });

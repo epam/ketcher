@@ -480,10 +480,6 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
   }
 
-  public get isPartOfRna() {
-    return false;
-  }
-
   public get isModification() {
     return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
   }

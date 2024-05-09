@@ -43,6 +43,9 @@ import {
   selectAllPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
   setIsEditMode,
   setActivePresetMonomerGroup,
   selectPresetFullName,
@@ -207,6 +210,22 @@ export const RnaEditorExpanded = ({
     );
     if (selectedRNAPartMonomer) {
       editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
+    }
+    if (selectedGroup === MonomerGroups.SUGARS) {
+      console.log('sugar check phosphates', newPreset);
+      const sugarValidaions = ['R3'];
+      if (newPreset.phosphate) {
+        sugarValidaions.push('R2');
+      }
+      dispatch(setSugarValidations(sugarValidaions));
+    }
+    if (selectedGroup === MonomerGroups.BASES) {
+      const baseValidaions = ['R1'];
+      dispatch(setBaseValidations(baseValidaions));
+    }
+    if (selectedGroup === MonomerGroups.PHOSPHATES) {
+      const phosphateValidaions = ['R1'];
+      dispatch(setPhosphateValidations(phosphateValidaions));
     }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));

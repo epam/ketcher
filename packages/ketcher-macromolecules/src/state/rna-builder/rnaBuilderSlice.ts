@@ -45,6 +45,11 @@ interface IRnaBuilderState {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
   } | null;
+  groupItemValidations: {
+    [MonomerGroups.BASES]: string[];
+    [MonomerGroups.SUGARS]: string[];
+    [MonomerGroups.PHOSPHATES]: string[];
+  };
   presetsDefault: IRnaPreset[];
   presetsCustom: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
@@ -59,6 +64,11 @@ const initialState: IRnaBuilderState = {
   sequenceSelectionName: undefined,
   isSequenceFirstsOnlyNucleoelementsSelected: undefined,
   activePresetMonomerGroup: null,
+  groupItemValidations: {
+    [MonomerGroups.BASES]: [],
+    [MonomerGroups.SUGARS]: [],
+    [MonomerGroups.PHOSPHATES]: [],
+  },
   presetsDefault: [],
   presetsCustom: [],
   activeRnaBuilderItem: null,
@@ -120,6 +130,15 @@ export const rnaBuilderSlice = createSlice({
       action: PayloadAction<RnaBuilderItem | null>,
     ) => {
       state.activeRnaBuilderItem = action.payload;
+    },
+    setSugarValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.SUGARS] = action.payload;
+    },
+    setBaseValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.BASES] = action.payload;
+    },
+    setPhosphateValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.PHOSPHATES] = action.payload;
     },
     setActivePresetMonomerGroup: (
       state,
@@ -280,6 +299,9 @@ export const rnaBuilderSlice = createSlice({
 export const selectActiveRnaBuilderItem = (state: RootState): RnaBuilderItem =>
   state.rnaBuilder.activeRnaBuilderItem;
 
+export const selectGroupItemValidations = (state: RootState): RnaBuilderItem =>
+  state.rnaBuilder.groupItemValidations;
+
 export const selectActivePreset = (state: RootState): IRnaPreset =>
   state.rnaBuilder.activePreset;
 
@@ -393,6 +415,9 @@ export const {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
   setActivePresetMonomerGroup,
   savePreset,
   deletePreset,

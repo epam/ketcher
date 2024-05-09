@@ -29,7 +29,10 @@ import {
   selectEditor,
   selectTool,
 } from 'state/common';
-import { selectActiveRnaBuilderItem } from 'state/rna-builder';
+import {
+  selectActiveRnaBuilderItem,
+  selectGroupItemValidations,
+} from 'state/rna-builder';
 
 const MonomerGroup = ({
   items,
@@ -44,6 +47,24 @@ const MonomerGroup = ({
   const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+
+  const isMonomerDisabled = (monomer: MonomerItemType) => {
+    if (disabled) {
+      return disabled;
+    } else {
+      const monomerValidations =
+        activeGroupItemValidations[`${monomer.props.MonomerClass}s`];
+      if (monomerValidations?.length > 0 && monomer.props.MonomerCaps) {
+        if (monomerValidations[0] in monomer.props.MonomerCaps) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      // Add validation for Sugar if Phosphat is selected
+    }
+  };
 
   const [selectedItemInGroup, setSelectedItemInGroup] =
     useState<MonomerItemType | null>(null);
@@ -88,6 +109,7 @@ const MonomerGroup = ({
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor.events.selectMonomer.dispatch(monomer);
     }
+    console.log('selectMonomer', monomer);
 
     onItemClick(monomer);
   };
@@ -114,7 +136,7 @@ const MonomerGroup = ({
           return (
             <MonomerItem
               key={key}
-              disabled={disabled}
+              disabled={isMonomerDisabled(monomer)}
               item={monomer}
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}

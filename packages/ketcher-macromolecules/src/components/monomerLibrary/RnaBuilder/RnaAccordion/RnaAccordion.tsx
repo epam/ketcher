@@ -51,6 +51,7 @@ import {
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
+  setUniqueNameError,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -126,6 +127,9 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   ];
   const dispatch = useDispatch();
   const selectItem = (monomer, groupName) => {
+    console.log('activePreset', activePreset);
+    console.log('activeRnaBuilderItem', activeRnaBuilderItem);
+    // dispatch(setUniqueNameError('test'));
     if (!isSequenceEditInRNABuilderMode) {
       editor.events.selectMonomer.dispatch(monomer);
     }

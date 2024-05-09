@@ -41,13 +41,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position);
 
     this.monomerItem = { ...monomerItem };
-    if (!this.monomerItem.props.isMicromoleculeFragment) {
-      this.attachmentPointsToBonds = this.getAttachmentPointDict();
-      this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
-      this.monomerItem.attachmentPoints =
-        this.monomerItem.attachmentPoints ||
-        this.getMonomerDefinitionAttachmentPoints();
-    }
+    this.attachmentPointsToBonds = this.getAttachmentPointDict();
+    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    this.monomerItem.attachmentPoints =
+      this.monomerItem.attachmentPoints ||
+      this.getMonomerDefinitionAttachmentPoints();
     this.chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;
@@ -447,6 +445,12 @@ export abstract class BaseMonomer extends DrawingEntity {
 
     this.leavingGroupsAtoms.forEach(({ rglabel }, _) => {
       const label = convertAttachmentPointNumberToLabel(Number(rglabel));
+
+      // handle up to 8 attachment points
+      if (Number(label.replace('R', '')) > 8) {
+        return;
+      }
+
       attachmentPointNameToBond[label] = null;
     });
 

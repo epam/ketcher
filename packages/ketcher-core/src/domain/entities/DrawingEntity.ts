@@ -79,8 +79,4 @@ export abstract class DrawingEntity {
   public setBaseRenderer(renderer: BaseRenderer) {
     this.baseRenderer = renderer;
   }
-
-  public get isPartOfRna() {
-    return false;
-  }
 }

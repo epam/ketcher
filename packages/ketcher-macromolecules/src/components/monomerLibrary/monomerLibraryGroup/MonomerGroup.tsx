@@ -50,13 +50,13 @@ const MonomerGroup = ({
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
 
   const isMonomerDisabled = (monomer: MonomerItemType) => {
+    let monomerDisabled = false;
     if (disabled) {
-      return disabled;
+      monomerDisabled = disabled;
     } else {
       const monomerValidations =
         activeGroupItemValidations[`${monomer.props.MonomerClass}s`];
       if (monomerValidations?.length > 0 && monomer.props.MonomerCaps) {
-        let monomerDisabled = false;
         for (let i = 0; i < monomerValidations.length; i++) {
           if (monomerValidations[0] in monomer.props.MonomerCaps) {
             monomerDisabled = false;
@@ -64,9 +64,9 @@ const MonomerGroup = ({
             monomerDisabled = true;
           }
         }
-        return monomerDisabled;
       }
     }
+    return monomerDisabled;
   };
 
   const [selectedItemInGroup, setSelectedItemInGroup] =

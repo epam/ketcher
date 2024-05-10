@@ -14,19 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './PolymerToggler.module.css'
+import styles from './PolymerToggler.module.css';
 
 export interface PolymerTogglerProps {
-  toggle: (isEnabled: boolean) => void
+  toggle: (isEnabled: boolean) => void;
 }
 
 const PolymerToggler = ({ toggle }: PolymerTogglerProps): JSX.Element => {
   return (
-    <label className={styles.switch}>
+    <label className={styles.switch} data-testid="polymer-toggler">
+      {/* eslint-disable jsx-a11y/label-has-associated-control */}
       <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
       <span className={styles.slider} />
+      {/* eslint-enable jsx-a11y/label-has-associated-control */}
     </label>
-  )
-}
+  );
+};
 
-export { PolymerToggler }
+export { PolymerToggler };

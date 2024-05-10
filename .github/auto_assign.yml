@@ -4,10 +4,10 @@ useReviewGroups: true
 addAssignees: author
 reviewGroups:
   core:
-    - nitvex
-    - yuleicul
-    - KonstantinEpam23
+    - ilya-asiyuk-epam
+    - rrodionov91
   developers:
-    - VasilevDO
-    - AnastasiiaPlyako
-    - gairon
+    - StarlaStarla
+  QA:
+    - Zhirnoff
+    - AlexeyGirin

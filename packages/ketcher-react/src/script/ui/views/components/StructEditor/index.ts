@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './StructEditor'
+export { default } from './StructEditor';

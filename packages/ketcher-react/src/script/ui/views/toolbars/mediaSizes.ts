@@ -19,7 +19,7 @@ const mediaSizes = {
   bondCollapsableHeight: 770,
   rGroupCollapsableHeight: 1000,
   shapeCollapsableHeight: 1000,
-  transformCollapsableHeight: 870
-}
+  transformCollapsableHeight: 870,
+};
 
-export { mediaSizes }
+export { mediaSizes };

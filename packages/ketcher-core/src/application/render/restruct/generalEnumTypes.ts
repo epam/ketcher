@@ -16,28 +16,30 @@
 
 /*
   This map is used to draw anything on 'layers'
-  You can treat these values as z-index: backround has the lowest z-index, indices has the highest
+  You can treat these values as z-index: background has the lowest z-index, indices has the highest
 */
 export enum LayerMap {
   background = 'background',
   selectionPlate = 'selectionPlate',
   hovering = 'hovering',
+  atom = 'atom',
+  bondSkeleton = 'bondSkeleton',
   warnings = 'warnings',
   data = 'data',
   additionalInfo = 'additionalInfo',
-  indices = 'indices'
+  indices = 'indices',
 }
 
 export enum StereoColoringType {
   LabelsOnly = 'LabelsOnly',
   BondsOnly = 'BondsOnly',
   LabelsAndBonds = 'LabelsAndBonds',
-  Off = 'Off'
+  Off = 'Off',
 }
 
 export enum StereLabelStyleType {
   IUPAC = 'Iupac',
   Classic = 'Classic',
   On = 'On',
-  Off = 'Off'
+  Off = 'Off',
 }

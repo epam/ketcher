@@ -19,8 +19,8 @@ export const SgContexts = {
   Multifragment: 'Multifragment',
   Bond: 'Bond',
   Atom: 'Atom',
-  Group: 'Group'
-}
+  Group: 'Group',
+};
 
 export const selectionKeys = [
   'atoms',
@@ -28,8 +28,39 @@ export const selectionKeys = [
   'frags',
   'sgroups',
   'rgroups',
+  'rgroupAttachmentPoints',
   'rxnArrows',
   'rxnPluses',
   'simpleObjects',
-  'texts'
-]
+  'texts',
+] as const;
+
+export const defaultBondThickness = 2;
+
+export enum MonomerGroups {
+  SUGARS = 'Sugars',
+  BASES = 'Bases',
+  PHOSPHATES = 'Phosphates',
+}
+
+export enum MonomerGroupCodes {
+  R = 'R',
+  A = 'A',
+  C = 'C',
+  G = 'G',
+  T = 'T',
+  U = 'U',
+  X = 'X',
+  P = 'P',
+}
+
+export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
+  R: MonomerGroups.SUGARS,
+  A: MonomerGroups.BASES,
+  C: MonomerGroups.BASES,
+  G: MonomerGroups.BASES,
+  T: MonomerGroups.BASES,
+  U: MonomerGroups.BASES,
+  X: MonomerGroups.BASES,
+  P: MonomerGroups.PHOSPHATES,
+} as const;

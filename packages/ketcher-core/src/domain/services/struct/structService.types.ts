@@ -22,27 +22,34 @@ export enum ChemicalMimeType {
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
+  InChIKey = 'chemical/x-inchi-key',
   CDX = 'chemical/x-cdx',
   CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',
   KET = 'chemical/x-indigo-ket',
-  UNKNOWN = 'chemical/x-unknown'
+  UNKNOWN = 'chemical/x-unknown',
+  SDF = 'chemical/x-sdf',
+  FASTA = 'chemical/x-fasta',
+  SEQUENCE = 'chemical/x-sequence',
 }
 
 export interface WithStruct {
-  struct: string
+  struct: string;
 }
 
 export interface WithFormat {
-  format: ChemicalMimeType
+  format: ChemicalMimeType;
 }
 
 export interface WithOutputFormat {
-  output_format: ChemicalMimeType
+  output_format: ChemicalMimeType;
+}
+export interface WithInputFormat {
+  input_format?: ChemicalMimeType;
 }
 
 export interface WithSelection {
-  selected?: Array<number>
+  selected?: Array<number>;
 }
 
 export type CheckTypes =
@@ -56,17 +63,20 @@ export type CheckTypes =
   | 'chiral'
   | '3d'
   | 'chiral_flag'
-  | 'valence'
+  | 'valence';
 
 export interface CheckData extends WithStruct {
-  types: Array<CheckTypes>
+  types: Array<CheckTypes>;
 }
 
 export interface CheckResult {
-  [key: string]: string
+  [key: string]: string;
 }
 
-export interface ConvertData extends WithStruct, WithOutputFormat {}
+export interface ConvertData
+  extends WithStruct,
+    WithOutputFormat,
+    WithInputFormat {}
 
 export interface ConvertResult extends WithStruct, WithFormat {}
 
@@ -93,87 +103,100 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
+export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
+  mode?: 'auto' | 'fold' | 'unfold';
+}
+
+export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
+
 export type CalculateProps =
   | 'molecular-weight'
   | 'most-abundant-mass'
   | 'monoisotopic-mass'
   | 'gross'
-  | 'mass-composition'
+  | 'mass-composition';
 
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: Array<CalculateProps>
+  properties: Array<CalculateProps>;
 }
 
-export type CalculateResult = Record<CalculateProps, string | number | boolean>
+export type CalculateResult = Record<CalculateProps, string | number | boolean>;
 
-export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
+
+export type AutoMapOptions = 'Discard' | 'Keep' | 'Alter' | 'Clear';
 
 export interface AutomapData extends WithStruct, WithOutputFormat {
-  mode: AutomapMode
+  mode: AutomapMode;
 }
 
 export interface AutomapResult extends WithStruct, WithFormat {}
 
 export interface InfoResult {
-  indigoVersion: string
-  imagoVersions: Array<string>
-  isAvailable: boolean
+  indigoVersion: string;
+  imagoVersions: Array<string>;
+  isAvailable: boolean;
 }
 
 export interface RecognizeResult extends WithStruct, WithOutputFormat {}
 
 export interface StructServiceOptions {
-  [key: string]: string | number | boolean | undefined
+  [key: string]: string | number | boolean | undefined;
 }
 
-export type OutputFormatType = 'png' | 'svg'
+export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
-  outputFormat: OutputFormatType
-  backgroundColor?: string
+  outputFormat: OutputFormatType;
+  backgroundColor?: string;
+  bondThickness: number;
 }
 
 export interface StructService {
-  info: () => Promise<InfoResult>
+  info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,
-    options?: StructServiceOptions
-  ) => Promise<ConvertResult>
+    options?: StructServiceOptions,
+  ) => Promise<ConvertResult>;
   layout: (
     data: LayoutData,
-    options?: StructServiceOptions
-  ) => Promise<LayoutResult>
+    options?: StructServiceOptions,
+  ) => Promise<LayoutResult>;
   clean: (
     data: CleanData,
-    options?: StructServiceOptions
-  ) => Promise<CleanResult>
+    options?: StructServiceOptions,
+  ) => Promise<CleanResult>;
   aromatize: (
     data: AromatizeData,
-    options?: StructServiceOptions
-  ) => Promise<AromatizeResult>
+    options?: StructServiceOptions,
+  ) => Promise<AromatizeResult>;
   dearomatize: (
     data: DearomatizeData,
-    options?: StructServiceOptions
-  ) => Promise<DearomatizeResult>
+    options?: StructServiceOptions,
+  ) => Promise<DearomatizeResult>;
   calculateCip: (
     data: CalculateCipData,
-    options?: StructServiceOptions
-  ) => Promise<CalculateCipResult>
+    options?: StructServiceOptions,
+  ) => Promise<CalculateCipResult>;
   automap: (
     data: AutomapData,
-    options?: StructServiceOptions
-  ) => Promise<AutomapResult>
+    options?: StructServiceOptions,
+  ) => Promise<AutomapResult>;
   check: (
     data: CheckData,
-    options?: StructServiceOptions
-  ) => Promise<CheckResult>
+    options?: StructServiceOptions,
+  ) => Promise<CheckResult>;
   calculate: (
     data: CalculateData,
-    options?: StructServiceOptions
-  ) => Promise<CalculateResult>
-  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generateInchIKey: (struct: string) => Promise<string>
+    options?: StructServiceOptions,
+  ) => Promise<CalculateResult>;
+  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
+  getInChIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
-    options?: GenerateImageOptions
-  ) => Promise<string>
+    options?: GenerateImageOptions,
+  ) => Promise<string>;
+  toggleExplicitHydrogens: (
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ) => Promise<ExplicitHydrogensResult>;
 }

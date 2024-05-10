@@ -16,7 +16,7 @@
 
 const mediaSizes = {
   smallWidth: 600,
-  smallHeight: 600
-}
+  smallHeight: 600,
+};
 
-export default mediaSizes
+export default mediaSizes;

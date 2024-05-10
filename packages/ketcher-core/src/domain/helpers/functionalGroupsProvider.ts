@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from '../entities'
+import { Struct } from '../entities';
 
 export class FunctionalGroupsProvider {
   // eslint-disable-next-line no-use-before-define
-  private static instance: FunctionalGroupsProvider
-  functionalGroupsList: Struct[]
+  private static instance: FunctionalGroupsProvider;
+  functionalGroupsList: Struct[];
   constructor() {
-    this.functionalGroupsList = []
+    this.functionalGroupsList = [];
   }
 
   public static getInstance(): FunctionalGroupsProvider {
     if (!FunctionalGroupsProvider.instance) {
-      FunctionalGroupsProvider.instance = new FunctionalGroupsProvider()
+      FunctionalGroupsProvider.instance = new FunctionalGroupsProvider();
     }
-    return FunctionalGroupsProvider.instance
+    return FunctionalGroupsProvider.instance;
   }
 
   public getFunctionalGroupsList() {
-    return this.functionalGroupsList
+    return this.functionalGroupsList;
   }
 
   public setFunctionalGroupsList(list: Struct[]): void {
-    this.functionalGroupsList = list
+    this.functionalGroupsList = list;
   }
 
   public addToFunctionalGroupsList(list: Struct[]): void {
-    this.functionalGroupsList = [...this.functionalGroupsList, ...list]
+    this.functionalGroupsList = [...this.functionalGroupsList, ...list];
   }
 }

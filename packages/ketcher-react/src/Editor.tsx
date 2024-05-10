@@ -14,64 +14,76 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer'
-import 'element-closest-polyfill'
-import 'regenerator-runtime/runtime'
-import 'url-search-params-polyfill'
-import 'whatwg-fetch'
-import './index.less'
+import 'intersection-observer';
+import 'element-closest-polyfill';
+import 'regenerator-runtime/runtime';
+import 'url-search-params-polyfill';
+import 'whatwg-fetch';
+import './index.less';
 
-import init, { Config } from './script'
-import { useEffect, useRef } from 'react'
+import init, { Config } from './script';
+import { useEffect, useRef } from 'react';
 
-import { Ketcher } from 'ketcher-core'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { ketcherInitEventName } from './constants'
-import { useResizeObserver } from './hooks'
+import { Ketcher } from 'ketcher-core';
+import classes from './Editor.module.less';
+import clsx from 'clsx';
+import { useResizeObserver } from './hooks';
+import {
+  ketcherInitEventName,
+  KETCHER_ROOT_NODE_CLASS_NAME,
+} from './constants';
+import { createRoot } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
-  smallHeight: 600
-}
+  smallHeight: 600,
+};
 
-interface EditorProps extends Omit<Config, 'element'> {
-  onInit?: (ketcher: Ketcher) => void
+interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
+  onInit?: (ketcher: Ketcher) => void;
 }
 
 function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
+  const rootElRef = useRef<HTMLDivElement>(null);
+  const { onInit } = props;
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef
-  })
+    ref: rootElRef,
+  });
 
   useEffect(() => {
+    const appRoot = createRoot(rootElRef.current as HTMLDivElement);
     init({
       ...props,
-      element: rootElRef.current
+      element: rootElRef.current,
+      appRoot,
     }).then(
       ({ ketcher, ketcherId }: { ketcher: Ketcher; ketcherId: string }) => {
         if (typeof onInit === 'function') {
-          onInit(ketcher)
-          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId))
-          window.dispatchEvent(ketcherInitEvent)
+          onInit(ketcher);
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
+          window.dispatchEvent(ketcherInitEvent);
         }
-      }
-    )
+      },
+    );
+    return () => {
+      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
+      setTimeout(() => {
+        appRoot.unmount();
+      });
+    };
     // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, [])
+  }, []);
 
   return (
     <div
       ref={rootElRef}
-      className={clsx('Ketcher-root', classes.editor, {
+      className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
-          (width && width <= mediaSizes.smallWidth)
+          (width && width <= mediaSizes.smallWidth),
       })}
     />
-  )
+  );
 }
 
-export { Editor }
+export { Editor };

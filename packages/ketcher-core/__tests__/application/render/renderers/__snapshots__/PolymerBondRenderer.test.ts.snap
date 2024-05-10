@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Polymer Bond Renderer should render bond 1`] = `
+<svg
+  height="500"
+  id="polymer-editor-canvas"
+  width="500"
+>
+  <defs>
+    <symbol
+      id="peptide"
+    >
+      <path
+        class="monomer-body"
+      />
+    </symbol>
+  </defs>
+  <g
+    class="drawn-structures"
+  >
+    <g
+      pointer-events="stroke"
+    >
+      <line
+        class="selection-area"
+        pointer-events="stroke"
+        stroke="#333333"
+        stroke-width="1"
+        x1="400"
+        x2="3600"
+        y1="400"
+        y2="4000"
+      />
+      <line
+        stroke="transparent"
+        stroke-width="10"
+        x1="400"
+        x2="3600"
+        y1="400"
+        y2="4000"
+      />
+    </g>
+  </g>
+</svg>
+`;

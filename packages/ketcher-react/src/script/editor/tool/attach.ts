@@ -14,62 +14,62 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements, FunctionalGroup } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import { Elements, FunctionalGroup } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class AttachTool implements Tool {
-  private readonly attach: { atomid: number; bondid: number }
-  private readonly editor: Editor
+  private readonly attach: { atomid: number; bondid: number };
+  private readonly editor: Editor;
 
   constructor(editor, attachPoints) {
     this.attach = {
       atomid: attachPoints.atomid || 0,
-      bondid: attachPoints.bondid || 0
-    }
-    this.editor = editor
+      bondid: attachPoints.bondid || 0,
+    };
+    this.editor = editor;
     this.editor.selection({
       atoms: [this.attach.atomid],
-      bonds: [this.attach.bondid]
-    })
+      bonds: [this.attach.bondid],
+    });
   }
 
   mousemove(event) {
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
 
-    const ci = this.editor.findItem(event, ['atoms', 'bonds'])
-    const struct = rnd.ctab.molecule
+    const ci = this.editor.findItem(event, ['atoms', 'bonds']);
+    const struct = rnd.ctab.molecule;
     if (
       ci &&
       ((ci.map === 'atoms' &&
         Elements.get(struct.atoms.get(ci.id)?.label as string)) ||
         ci.map === 'bonds')
     ) {
-      this.editor.hover(ci)
+      this.editor.hover(ci);
     } else {
-      this.editor.hover(null)
+      this.editor.hover(null);
     }
-    return true
+    return true;
   }
 
   click(event) {
-    const editor = this.editor
-    const rnd = editor.render
-    const molecule = rnd.ctab.molecule
-    const functionalGroups = molecule.functionalGroups
-    const ci = editor.findItem(event, ['atoms', 'bonds'])
-    const atomResult: Array<number> = []
-    const bondResult: Array<number> = []
-    const result: Array<number> = []
+    const editor = this.editor;
+    const rnd = editor.render;
+    const molecule = rnd.ctab.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const ci = editor.findItem(event, ['atoms', 'bonds']);
+    const atomResult: Array<number> = [];
+    const bondResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -77,11 +77,11 @@ class AttachTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (bondId !== null) {
-        bondResult.push(bondId)
+        bondResult.push(bondId);
       }
     }
 
@@ -89,29 +89,29 @@ class AttachTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
     if (
@@ -121,17 +121,17 @@ class AttachTool implements Tool {
         ci.map === 'bonds')
     ) {
       if (ci.map === 'atoms') {
-        this.attach.atomid = ci.id
-      } else this.attach.bondid = ci.id
+        this.attach.atomid = ci.id;
+      } else this.attach.bondid = ci.id;
 
       this.editor.selection({
         atoms: [this.attach.atomid],
-        bonds: [this.attach.bondid]
-      })
-      this.editor.event.attachEdit.dispatch(this.attach)
+        bonds: [this.attach.bondid],
+      });
+      this.editor.event.attachEdit.dispatch(this.attach);
     }
-    return true
+    return true;
   }
 }
 
-export default AttachTool
+export default AttachTool;

@@ -14,21 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
+import { Vec2 } from 'domain/entities';
 
 export interface ScaleOptions {
-  scale: number
+  microModeScale: number;
+  macroModeScale: number;
 }
 
-function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(1 / options.scale)
+function canvasToModel(point: Vec2, options: ScaleOptions): Vec2 {
+  return point.scaled(1 / options.microModeScale);
 }
 
-function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(options.scale)
+function modelToCanvas(vector: Vec2, options: ScaleOptions): Vec2 {
+  return vector.scaled(options.microModeScale);
 }
 
 export const Scale = {
-  scaled2obj,
-  obj2scaled
-}
+  canvasToModel,
+  modelToCanvas,
+};

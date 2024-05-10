@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom from '../../../../../../../component/view/Atom'
-import clsx from 'clsx'
+import Atom from '../../../../../../../component/view/Atom';
+import clsx from 'clsx';
 
 function OutinerRow({
   row,
@@ -24,7 +24,7 @@ function OutinerRow({
   onDoubleClick,
   currentEvents,
   atomClassNames,
-  className
+  className,
 }) {
   return (
     <tbody>
@@ -46,7 +46,7 @@ function OutinerRow({
         <td />
       </tr>
     </tbody>
-  )
+  );
 }
 
-export default OutinerRow
+export default OutinerRow;

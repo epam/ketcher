@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types'
-import RgroupLogic from './RgroupLogic'
-import { connect } from 'react-redux'
+import { BaseProps } from '../../../modal.types';
+import RgroupLogic from './RgroupLogic';
+import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>;
 
 const mapStateToProps = (state: any): StateProps => ({
-  formState: state.modal.form
-})
+  formState: state.modal.form,
+});
 
-const RgroupLogicContainer = connect(mapStateToProps)(RgroupLogic)
-export default RgroupLogicContainer
+const RgroupLogicContainer = connect(mapStateToProps)(RgroupLogic);
+export default RgroupLogicContainer;

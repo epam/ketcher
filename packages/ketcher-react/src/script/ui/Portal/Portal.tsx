@@ -14,124 +14,129 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, Component, ReactNode } from 'react'
+import { CSSProperties, Component, ReactNode } from 'react';
 
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
-const CLASSNAME_SEPARATOR = ' '
+const CLASSNAME_SEPARATOR = ' ';
 
 interface PortalProps {
-  isOpen: boolean
-  className?: string
-  style?: CSSProperties
-  children: ReactNode
+  isOpen: boolean;
+  className?: string;
+  style?: CSSProperties;
+  children: ReactNode;
 }
 
-type Props = PortalProps
+type Props = PortalProps;
 
 class Portal extends Component<Props> {
-  private readonly element: HTMLDivElement
-  private isElementInDom: boolean
+  private readonly element: HTMLDivElement;
+  private isElementInDom: boolean;
 
   constructor(props) {
-    super(props)
-    this.element = document.createElement('div')
-    this.isElementInDom = false
+    super(props);
+    this.element = document.createElement('div');
+    this.isElementInDom = false;
   }
 
   componentDidMount() {
     if (!this.isElementInDom && this.props.isOpen) {
-      this.addElementInDOM()
+      this.addElementInDOM();
     }
 
-    const { className, style } = this.props
+    const { className, style } = this.props;
     if (className) {
-      this.addClassName(className)
+      this.addClassName(className);
     }
     if (style) {
-      this.updateStyle(style)
+      this.updateStyle(style);
     }
   }
 
   componentWillUnmount() {
     if (this.isElementInDom) {
-      this.removeElementFromDOM()
+      this.removeElementFromDOM();
     }
   }
 
   componentDidUpdate(prevProps: Readonly<Props>) {
-    const { isOpen, className, style } = this.props
+    const { isOpen, className, style } = this.props;
     if (className !== prevProps.className) {
-      this.removeClassNames(prevProps.className)
-      this.addClassName(className)
+      this.removeClassNames(prevProps.className);
+      this.addClassName(className);
     }
 
     if (style !== prevProps.style) {
-      this.updateStyle(style, prevProps.style)
+      this.updateStyle(style, prevProps.style);
     }
 
     if (isOpen === prevProps.isOpen) {
-      return
+      return;
     }
 
     if (isOpen && !this.isElementInDom) {
-      this.addElementInDOM()
+      this.addElementInDOM();
     } else if (this.isElementInDom) {
-      this.removeElementFromDOM()
+      this.removeElementFromDOM();
     }
   }
 
   private addElementInDOM() {
-    document.querySelector('.Ketcher-root')?.appendChild(this.element)
-    this.isElementInDom = true
+    document
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.appendChild(this.element);
+    this.isElementInDom = true;
   }
 
   private removeElementFromDOM() {
-    document.querySelector('.Ketcher-root')?.removeChild(this.element)
-    this.isElementInDom = false
+    document
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.removeChild(this.element);
+    this.isElementInDom = false;
   }
 
   private removeClassNames(classNames?: string) {
     if (!classNames) {
-      return
+      return;
     }
 
     classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
-      this.element.classList.remove(className)
-    })
+      this.element.classList.remove(className);
+    });
   }
 
   private addClassName(classNames?: string) {
     if (!classNames) {
-      return
+      return;
     }
 
     classNames.split(CLASSNAME_SEPARATOR).forEach((className) => {
-      this.element.classList.add(className)
-    })
+      this.element.classList.add(className);
+    });
   }
 
   private updateStyle(style?: CSSProperties, prevStyle?: CSSProperties) {
     if (prevStyle) {
       Object.keys(prevStyle).forEach((property) => {
-        this.element.style[property] = ''
-      }, this)
+        this.element.style[property] = '';
+      }, this);
     }
 
     if (!style) {
-      return
+      return;
     }
 
     Object.keys(style).forEach((property) => {
-      this.element.style[property] = style[property]
-    }, this)
+      this.element.style[property] = style[property];
+    }, this);
   }
 
   render() {
-    const { children } = this.props
-    const component = ReactDOM.createPortal(children, this.element)
-    return component as any
+    const { children } = this.props;
+    const component = ReactDOM.createPortal(children, this.element);
+    return component as any;
   }
 }
 
-export { Portal }
+export { Portal };

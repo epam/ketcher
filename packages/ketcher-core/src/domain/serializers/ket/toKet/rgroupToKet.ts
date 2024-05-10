@@ -14,29 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities'
-import { ifDef } from 'utilities'
-import { moleculeToKet } from './moleculeToKet'
+import { Struct } from 'domain/entities';
+import { ifDef } from 'utilities';
+import { moleculeToKet } from './moleculeToKet';
 
 export function rgroupToKet(struct: Struct, data) {
   const body = {
     rlogic: rgroupLogicToKet(data.rgnumber, data.rgroup),
-    ...moleculeToKet(struct)
-  }
+    ...moleculeToKet(struct),
+  };
 
   return {
     ...body,
-    type: 'rgroup'
-  }
+    type: 'rgroup',
+  };
 }
 
 function rgroupLogicToKet(rgnumber, rglogic) {
-  const result = {}
+  const result = {};
 
-  ifDef(result, 'number', rgnumber)
-  ifDef(result, 'range', rglogic.range, '')
-  ifDef(result, 'resth', rglogic.resth, false)
-  ifDef(result, 'ifthen', rglogic.ifthen, 0)
+  ifDef(result, 'number', rgnumber);
+  ifDef(result, 'range', rglogic.range, '');
+  ifDef(result, 'resth', rglogic.resth, false);
+  ifDef(result, 'ifthen', rglogic.ifthen, 0);
 
-  return result
+  return result;
 }

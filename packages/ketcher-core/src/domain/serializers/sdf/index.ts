@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './sdf.types'
-export * from './sdfSerializer'
+export * from './sdf.types';
+export * from './sdfSerializer';

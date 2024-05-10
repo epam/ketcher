@@ -20,97 +20,133 @@ import {
   LayoutData,
   LayoutResult,
   StructService,
-  StructServiceOptions
-} from 'domain/services'
-import { StructFormatter, SupportedFormat } from './structFormatter.types'
+  StructServiceOptions,
+} from 'domain/services';
+import { StructFormatter, SupportedFormat } from './structFormatter.types';
 
-import { KetSerializer } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import { getPropertiesByFormat } from './formatProperties'
+import { KetSerializer } from 'domain/serializers';
+import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { getPropertiesByFormat } from './formatProperties';
+import { KetcherLogger } from 'utilities';
+import { SmilesFormatter } from './smilesFormatter';
 
 type ConvertPromise = (
   data: ConvertData,
-  options?: StructServiceOptions
-) => Promise<ConvertResult>
+  options?: StructServiceOptions,
+) => Promise<ConvertResult>;
 
 type LayoutPromise = (
   data: LayoutData,
-  options?: StructServiceOptions
-) => Promise<LayoutResult>
+  options?: StructServiceOptions,
+) => Promise<LayoutResult>;
 
 export class ServerFormatter implements StructFormatter {
-  #structService: StructService
-  #ketSerializer: KetSerializer
-  #format: SupportedFormat
-  #options?: StructServiceOptions
+  #structService: StructService;
+  #ketSerializer: KetSerializer;
+  #format: SupportedFormat;
+  #options?: StructServiceOptions;
 
   constructor(
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) {
-    this.#structService = structService
-    this.#ketSerializer = ketSerializer
-    this.#format = format
-    this.#options = options
+    this.#structService = structService;
+    this.#ketSerializer = ketSerializer;
+    this.#format = format;
+    this.#options = options;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const formatProperties = getPropertiesByFormat(this.#format)
+  async getStructureFromStructAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string> {
+    const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = this.#ketSerializer.serialize(struct)
+      const stringifiedStruct = this.#ketSerializer.serialize(
+        struct,
+        drawingEntitiesManager,
+      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
-          output_format: formatProperties.mime
+          output_format: formatProperties.mime,
         },
-        { ...this.#options, ...formatProperties.options }
-      )
+        { ...this.#options, ...formatProperties.options },
+      );
 
-      return convertResult.struct
-    } catch (error: any) {
-      let message
-      if (error.message === 'Server is not compatible') {
-        message = `${formatProperties.name} is not supported.`
+      return convertResult.struct;
+    } catch (e: any) {
+      let message;
+      if (e.message === 'Server is not compatible') {
+        message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${error.message || error}`
+        message = `Convert error!\n${e.message || e}`;
       }
-
-      throw new Error(message)
+      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
+      throw new Error(message);
     }
   }
 
-  async getStructureFromStringAsync(
-    stringifiedStruct: string
-  ): Promise<Struct> {
-    let promise: LayoutPromise | ConvertPromise
+  getCallingMethod(
+    stringifiedStruct: string,
+    format: SupportedFormat,
+  ): {
+    method: LayoutPromise | ConvertPromise;
+    struct: string;
+  } {
+    if (this.#format === SupportedFormat.smiles) {
+      return {
+        method: SmilesFormatter.isContainsCoordinates(stringifiedStruct)
+          ? this.#structService.convert
+          : this.#structService.layout,
+        struct: stringifiedStruct,
+      };
+    }
+    const withCoords = getPropertiesByFormat(format).supportsCoords;
+    if (withCoords) {
+      return {
+        method: this.#structService.convert,
+        struct: stringifiedStruct,
+      };
+    }
+    return {
+      method: this.#structService.layout,
+      struct: stringifiedStruct.trim(),
+    };
+  }
 
+  async getStructureFromStringAsync(
+    stringifiedStruct: string,
+  ): Promise<Struct> {
     const data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat(SupportedFormat.ket).mime
-    }
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
+    };
 
-    const withCoords = getPropertiesByFormat(this.#format).supportsCoords
-    if (withCoords) {
-      promise = this.#structService.convert
-      data.struct = stringifiedStruct
-    } else {
-      promise = this.#structService.layout
-      data.struct = stringifiedStruct.trim()
-    }
+    const { method, struct } = this.getCallingMethod(
+      stringifiedStruct,
+      this.#format,
+    );
+    data.struct = struct;
 
     try {
-      const result = await promise(data, this.#options)
-      const parsedStruct = this.#ketSerializer.deserialize(result.struct)
-      if (!withCoords) {
-        parsedStruct.rescale()
+      const result = await method(data, this.#options);
+      const parsedStruct = this.#ketSerializer.deserialize(result.struct);
+      if (method === this.#structService.layout) {
+        parsedStruct.rescale();
       }
-      return parsedStruct
-    } catch (error: any) {
-      if (error.message !== 'Server is not compatible') {
-        throw Error(`Convert error!\n${error.message || error}`)
+      return parsedStruct;
+    } catch (e: any) {
+      if (e.message !== 'Server is not compatible') {
+        KetcherLogger.error(
+          'serverFormatter.ts::getStructureFromStringAsync',
+          e,
+        );
+        throw Error(`Convert error!\n${e.message || e}`);
       }
 
       const formatError =
@@ -120,9 +156,9 @@ export class ServerFormatter implements StructFormatter {
             } and opening of ${
               getPropertiesByFormat(SupportedFormat.smiles).name
             }`
-          : getPropertiesByFormat(this.#format).name
+          : getPropertiesByFormat(this.#format).name;
 
-      throw Error(`${formatError} is not supported in standalone mode.`)
+      throw Error(`${formatError} is not supported in standalone mode.`);
     }
   }
 }

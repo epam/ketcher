@@ -14,75 +14,75 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReRGroup, ReStruct } from '../../../render'
+import { ReRGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { RGroup } from 'domain/entities'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { RGroup } from 'domain/entities';
 
 export class RGroupFragment extends BaseOperation {
-  rgid_new: any
-  rg_new: any
-  rgid_old: any
-  rg_old: any
-  frid: any
+  rgid_new: any;
+  rg_new: any;
+  rgid_old: any;
+  rg_old: any;
+  frid: any;
 
   constructor(rgroupId: any, fragmentId: any, rg?: any) {
-    super(OperationType.R_GROUP_FRAGMENT)
-    this.rgid_new = rgroupId
-    this.rg_new = rg
-    this.rgid_old = null
-    this.rg_old = null
-    this.frid = fragmentId
+    super(OperationType.R_GROUP_FRAGMENT);
+    this.rgid_new = rgroupId;
+    this.rg_new = rg;
+    this.rgid_old = null;
+    this.rg_old = null;
+    this.frid = fragmentId;
   }
 
   execute(restruct: ReStruct) {
     // eslint-disable-line max-statements
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
     this.rgid_old =
-      this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid)
+      this.rgid_old || RGroup.findRGroupByFragment(struct.rgroups, this.frid);
 
-    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null
+    this.rg_old = this.rgid_old ? struct.rgroups.get(this.rgid_old) : null;
 
-    this.removeOld(struct, restruct)
-    this.setNew(struct, restruct)
+    this.removeOld(struct, restruct);
+    this.setNew(struct, restruct);
   }
 
   private removeOld(struct: any, restruct: any) {
     if (!this.rg_old) {
-      return
+      return;
     }
 
-    this.rg_old.frags.delete(this.frid)
-    restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel)
+    this.rg_old.frags.delete(this.frid);
+    restruct.clearVisel(restruct.rgroups.get(this.rgid_old).visel);
 
     if (this.rg_old.frags.size === 0) {
-      restruct.rgroups.delete(this.rgid_old)
-      struct.rgroups.delete(this.rgid_old)
-      restruct.markItemRemoved()
+      restruct.rgroups.delete(this.rgid_old);
+      struct.rgroups.delete(this.rgid_old);
+      restruct.markItemRemoved();
     } else {
-      restruct.markItem('rgroups', this.rgid_old, 1)
+      restruct.markItem('rgroups', this.rgid_old, 1);
     }
   }
 
   private setNew(struct: any, restruct: ReStruct) {
     if (!this.rgid_new) {
-      return
+      return;
     }
 
-    let rgNew = struct.rgroups.get(this.rgid_new)
+    let rgNew = struct.rgroups.get(this.rgid_new);
     if (!rgNew) {
-      rgNew = this.rg_new || new RGroup()
-      struct.rgroups.set(this.rgid_new, rgNew)
-      restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew))
+      rgNew = this.rg_new || new RGroup();
+      struct.rgroups.set(this.rgid_new, rgNew);
+      restruct.rgroups.set(this.rgid_new, new ReRGroup(rgNew));
     } else {
-      restruct.markItem('rgroups', this.rgid_new, 1)
+      restruct.markItem('rgroups', this.rgid_new, 1);
     }
 
-    rgNew.frags.add(this.frid)
+    rgNew.frags.add(this.frid);
   }
 
   invert() {
-    return new RGroupFragment(this.rgid_old, this.frid, this.rg_old)
+    return new RGroupFragment(this.rgid_old, this.frid, this.rg_old);
   }
 }

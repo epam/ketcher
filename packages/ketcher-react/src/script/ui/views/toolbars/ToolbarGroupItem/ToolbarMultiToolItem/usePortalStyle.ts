@@ -14,32 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CSSProperties, RefObject, useEffect, useState } from 'react'
+import { CSSProperties, RefObject, useEffect, useState } from 'react';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
-type HookParams = [RefObject<HTMLDivElement>, boolean]
+type HookParams = [RefObject<HTMLDivElement>, boolean];
 
 function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
-  const [portalStyle, setPortalStyle] = useState<CSSProperties>({})
+  const [portalStyle, setPortalStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
     if (!ref.current) {
-      return
+      return;
     }
 
     const editorRect = document
-      .querySelector('.Ketcher-root')
-      ?.getBoundingClientRect() || { top: 0, left: 0 }
-    const menuItemRect = ref.current.getBoundingClientRect()
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.getBoundingClientRect() || { top: 0, left: 0 };
+    const menuItemRect = ref.current.getBoundingClientRect();
 
-    const top = menuItemRect.top - editorRect.top
-    const spaceBetween = 4
+    const top = menuItemRect.top - editorRect.top;
+    const spaceBetween = 4;
     const left =
-      menuItemRect.left - editorRect.left + menuItemRect.width + spaceBetween
+      menuItemRect.left - editorRect.left + menuItemRect.width + spaceBetween;
 
-    setPortalStyle({ top: `${top}px`, left: `${left}px` })
-  }, [ref, isOpen])
+    setPortalStyle({ top: `${top}px`, left: `${left}px` });
+  }, [ref, isOpen]);
 
-  return [portalStyle]
+  return [portalStyle];
 }
 
-export { usePortalStyle }
+export { usePortalStyle };

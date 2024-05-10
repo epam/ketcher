@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import SettingsContext from './../contexts/settingsContext'
+import React from 'react';
+import SettingsContext from './../contexts/settingsContext';
 
 export function useSettingsContext() {
-  return React.useContext(SettingsContext)
+  return React.useContext(SettingsContext);
 }

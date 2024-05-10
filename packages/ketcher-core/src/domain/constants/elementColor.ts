@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { ElementLabel } from './element.types'
+import type { ElementLabel } from './element.types';
 
 type ElementColorType = {
-  [key in ElementLabel]: string
-}
+  [key in ElementLabel]: string;
+};
 
 export const ElementColor: ElementColorType = {
   H: '#000000',
@@ -139,8 +139,8 @@ export const ElementColor: ElementColorType = {
   Mc: '#000000',
   Lv: '#000000',
   Ts: '#000000',
-  Og: '#000000'
-} as const
+  Og: '#000000',
+} as const;
 
-type Keys = keyof typeof ElementColor
-export type AtomColor = typeof ElementColor[Keys]
+type Keys = keyof typeof ElementColor;
+export type AtomColor = typeof ElementColor[Keys];

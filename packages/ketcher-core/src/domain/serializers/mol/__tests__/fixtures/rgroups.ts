@@ -138,4 +138,4 @@ export const rgroups =
   'M  END\n' +
   '$END CTAB\n' +
   '$END RGP\n' +
-  '$END MOL\n'
+  '$END MOL\n';

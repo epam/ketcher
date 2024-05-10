@@ -14,47 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Vec2 } from './vec2'
+import { Point, Vec2 } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum SimpleObjectMode {
   ellipse = 'ellipse',
   rectangle = 'rectangle',
-  line = 'line'
+  line = 'line',
 }
 
 export interface SimpleObjectAttributes {
-  mode: SimpleObjectMode
-  pos?: Array<Point>
+  mode: SimpleObjectMode;
+  pos?: Array<Point>;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class SimpleObject {
-  pos: Array<Vec2>
-  mode: SimpleObjectMode
+export class SimpleObject extends BaseMicromoleculeEntity {
+  pos: Array<Vec2>;
+  mode: SimpleObjectMode;
 
   constructor(attributes?: SimpleObjectAttributes) {
-    this.pos = []
+    super(attributes?.initiallySelected);
+    this.pos = [];
 
     if (attributes?.pos) {
       for (let i = 0; i < attributes.pos.length; i++) {
-        const currentP = attributes.pos[i]
-        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2()
+        const currentP = attributes.pos[i];
+        this.pos[i] = currentP ? new Vec2(attributes.pos[i]) : new Vec2();
       }
     }
 
-    this.mode = attributes?.mode || SimpleObjectMode.line
+    this.mode = attributes?.mode || SimpleObjectMode.line;
   }
 
   clone(): SimpleObject {
-    return new SimpleObject(this)
+    return new SimpleObject(this);
   }
 
   center(): Vec2 {
     switch (this.mode) {
       case SimpleObjectMode.rectangle: {
-        return Vec2.centre(this.pos[0], this.pos[1])
+        return Vec2.centre(this.pos[0], this.pos[1]);
       }
       default:
-        return this.pos[0]
+        return this.pos[0];
     }
   }
 }

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AttachPoints from './Attach'
-import { BaseProps } from '../../../modal.types'
-import { connect } from 'react-redux'
+import AttachPoints from './Attach';
+import { BaseProps } from '../../../modal.types';
+import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>;
 
 const mapStateToProps = (state: any): StateProps => ({
-  formState: state.modal.form
-})
+  formState: state.modal.form,
+});
 
-const AttachPointsContainer = connect(mapStateToProps)(AttachPoints)
-export default AttachPointsContainer
+const AttachPointsContainer = connect(mapStateToProps)(AttachPoints);
+export default AttachPointsContainer;

@@ -109,6 +109,9 @@
             "type": "number"
           }
         },
+        "selected": {
+          "type": "boolean"
+        },
         "charge": {
           "type": "integer",
           "minimum": -1000,
@@ -141,22 +144,22 @@
         },
         "ringBondCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 2, 3, 4]
+          "enum": [0, -2, -1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "substitutionCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6]
+          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "unsaturatedAtom": {
           "type": "boolean"
         },
         "hCount": {
           "type": "integer",
-          "enum": [-1, 0, 1, 2, 3, 4, 5]
+          "enum": [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         },
         "implicitHCount": {
           "type": "integer",
-          "enum": [0, 1, 2, 3, 4, 5]
+          "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "mapping": {
           "type": "integer",
@@ -172,6 +175,37 @@
         "cip": {
           "type": "string",
           "enum": ["R", "S", "r", "s"]
+        },
+        "queryProperties": {
+          "type": "object",
+          "properties": {
+            "aromaticity": {
+              "type": "string",
+              "enum": ["aromatic", "aliphatic"]
+            },
+            "ringMembership": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "ringSize": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "connectivity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9
+            },
+            "chirality": {
+              "type": "string",
+              "enum": ["clockwise", "anticlockwise"]
+            },
+            "customQuery": {
+              "type": "string"
+            }
+          }
         }
       },
       "additionalProperties": false
@@ -210,12 +244,8 @@
     },
     "bond": {
       "type": "object",
-      "required": ["atoms", "type"],
+      "required": ["atoms"],
       "properties": {
-        "type": {
-          "type": "integer",
-          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        },
         "atoms": {
           "type": "array",
           "minItems": 2,
@@ -226,17 +256,8 @@
             "minimum": 0
           }
         },
-        "stereo": {
-          "type": "integer",
-          "enum": [0, 1, 3, 4, 6]
-        },
-        "topology": {
-          "type": "integer",
-          "enum": [0, 1, 2]
-        },
-        "center": {
-          "type": "integer",
-          "enum": [0, -1, 1, 2, 4, 8, 12]
+        "selected": {
+          "type": "boolean"
         },
         "stereobox": {
           "type": "integer",
@@ -246,7 +267,38 @@
           "type": "string",
           "enum": ["Z", "E"]
         }
-      }
+      },
+      "oneOf": [
+        {
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            },
+            "stereo": {
+              "type": "integer",
+              "enum": [0, 1, 3, 4, 6]
+            },
+            "topology": {
+              "type": "integer",
+              "enum": [0, 1, 2]
+            },
+            "center": {
+              "type": "integer",
+              "enum": [0, -1, 1, 2, 4, 8, 12]
+            }
+          }
+        },
+        {
+          "required": ["customQuery"],
+          "properties": {
+            "customQuery": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "rgroup": {
       "type": "object",
@@ -278,9 +330,18 @@
               "default": 0
             }
           }
+        },
+        "fragments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/structure"
+          }
         }
       },
-      "allOf": [
+      "anyOf": [
+        {
+          "required": ["fragments"]
+        },
         {
           "$ref": "#/definitions/structure"
         }
@@ -313,6 +374,16 @@
             },
             "y": {
               "type": "number"
+            }
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": { "type": "string" },
+              "value": { "type": "string" }
             }
           }
         },
@@ -409,7 +480,7 @@
           },
           "type": {
             "type": "string",
-            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent"]
           }
         },
         "if": {
@@ -468,6 +539,28 @@
             },
             "id": {
               "type": "number"
+            },
+            "attachmentPoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["attachmentAtom"],
+                "properties": {
+                  "attachmentAtom": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "leavingAtom": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "attachmentId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2
+                  }
+                }
+              }
             }
           }
         },
@@ -479,7 +572,6 @@
           }
         },
         "then": {
-          "required": ["fieldName"],
           "properties": {
             "context": {
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
@@ -522,6 +614,9 @@
           "items": {
             "type": "number"
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -561,6 +656,9 @@
               "type": "number"
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -636,6 +734,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -671,6 +772,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     }

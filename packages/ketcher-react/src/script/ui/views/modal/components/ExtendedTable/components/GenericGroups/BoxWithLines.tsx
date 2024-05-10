@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './BoxWithLines.module.less'
+import styles from './BoxWithLines.module.less';
 
 export const HorizontalBoxWithLines = () => {
   return (
@@ -22,8 +22,8 @@ export const HorizontalBoxWithLines = () => {
       <div className={styles.upperLines} />
       <div className={styles.lowerLine} />
     </div>
-  )
-}
+  );
+};
 
 export const VerticalBoxWithLines = () => {
   return (
@@ -31,5 +31,5 @@ export const VerticalBoxWithLines = () => {
       <div className={styles.upperLines} />
       <div className={styles.lowerLine} />
     </div>
-  )
-}
+  );
+};

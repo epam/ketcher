@@ -15,6 +15,6 @@
  ***************************************************************************/
 
 export interface Serializer<T> {
-  deserialize: (content: string) => T
-  serialize: (struct: T) => string
+  deserialize: (content: string) => T;
+  serialize: (struct: T) => string;
 }

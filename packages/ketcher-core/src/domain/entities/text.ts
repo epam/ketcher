@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, Point } from './vec2'
+import { Vec2, Point } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 // TODO: move to infrastructure
 export enum TextCommand {
@@ -22,42 +26,44 @@ export enum TextCommand {
   Italic = 'ITALIC',
   Subscript = 'SUBSCRIPT',
   Superscript = 'SUPERSCRIPT',
-  FontSize = 'CUSTOM_FONT_SIZE'
+  FontSize = 'CUSTOM_FONT_SIZE',
 }
 
 export interface TextAttributes {
   // TODO: add Interface for content type
-  content: string
-  position: Point
-  pos: Array<Point>
+  content: string;
+  position: Point;
+  pos: Array<Point>;
+  initiallySelected?: initiallySelectedType;
 }
 
 function preparePositions(positions?: Array<Point>) {
   if (!positions || !positions.length) {
-    return [new Vec2(), new Vec2(), new Vec2(), new Vec2()]
+    return [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
   }
 
-  return positions.map((position) => new Vec2(position))
+  return positions.map((position) => new Vec2(position));
 }
 
-export class Text {
-  content: string
-  position: Vec2
-  pos: Array<Vec2>
+export class Text extends BaseMicromoleculeEntity {
+  content: string;
+  position: Vec2;
+  pos: Array<Vec2>;
 
   constructor(attributes?: TextAttributes) {
-    this.pos = preparePositions(attributes?.pos)
-    this.content = attributes?.content || ''
+    super(attributes?.initiallySelected);
+    this.pos = preparePositions(attributes?.pos);
+    this.content = attributes?.content || '';
     this.position = attributes?.position
       ? new Vec2(attributes.position)
-      : new Vec2()
+      : new Vec2();
   }
 
   setPos(coords: Array<Vec2>): void {
-    this.pos = coords || []
+    this.pos = coords || [];
   }
 
   clone(): Text {
-    return new Text(this)
+    return new Text(this);
   }
 }

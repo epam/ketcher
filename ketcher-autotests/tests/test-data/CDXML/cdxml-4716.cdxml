@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" p="30.000000 30.000000"/>
+            <n id="6" p="55.980778 45.000000"/>
+            <n id="7" p="81.961525 30.000000"/>
+            <n id="8" p="107.942307 45.000000"/>
+            <n id="9" p="133.923050 30.000000"/>
+            <n id="10" p="159.903809 45.000000"/>
+            <n id="11" p="185.884583 30.000000"/>
+            <n id="12" p="211.865326 45.000000"/>
+            <n id="13" p="244.045486 109.502235"/>
+            <n id="14" p="295.954529 109.487671"/>
+            <n id="15" Element="7" NumHydrogens="0" p="270.049133 94.499001">
+                <t p="270.049133 94.499001" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="16" Element="8" p="295.954529 139.515961">
+                <t p="295.954529 139.515961" LabelJustification="Left">
+                    <s font="3" size="10" face="96">O</s>
+                </t>
+            </n>
+            <n id="17" p="244.045486 139.650589"/>
+            <n id="18" p="270.114655 154.501007"/>
+            <n id="19" p="218.108246 154.725769"/>
+            <b id="20" B="5" E="6"/>
+            <b id="21" B="6" E="7"/>
+            <b id="22" B="7" E="8"/>
+            <b id="23" B="8" E="9"/>
+            <b id="24" B="9" E="10"/>
+            <b id="25" B="10" E="11"/>
+            <b id="26" B="11" E="12"/>
+            <b id="27" B="15" E="13" Order="2"/>
+            <b id="28" B="16" E="14" Order="2"/>
+            <b id="29" B="13" E="17"/>
+            <b id="30" B="14" E="15"/>
+            <b id="31" B="17" E="18" Order="2"/>
+            <b id="32" B="18" E="16"/>
+            <b id="33" B="17" E="19"/>
+        </fragment>
+    </page>
+</CDXML>

@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom from './Atom'
-import AttachPoints from './Attach'
-import Automap from './Automap'
-import Bond from './Bond'
-import RgroupLogic from './RgroupLogic'
+import Atom from './Atom';
+import AttachPoints from './Attach';
+import Automap from './Automap';
+import Bond from './Bond';
+import RgroupLogic from './RgroupLogic';
 
-export { Atom, Bond, AttachPoints, Automap, RgroupLogic }
+export { Atom, Bond, AttachPoints, Automap, RgroupLogic };

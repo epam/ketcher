@@ -20,15 +20,16 @@
   .toolbar();
   .vertical-toolbar();
 
-  margin-right: 4px;
-  margin-top: 8px;
-  width: 32px;
+  margin-right: 6px;
+  margin-top: 10px;
+  padding-left: 5px;
+  width: 41px;
 
   // TODO: change group style, if will decide to get rid of delimiter everywhere
   .group:not(:last-of-type) {
     margin-bottom: 0;
     border-bottom: none;
-    padding-bottom: 0;
+    padding-bottom: 2px;
 
     &.atomsList {
       margin-top: 2px;
@@ -37,10 +38,23 @@
   }
 }
 
+.groupItem {
+  padding: 2px 0;
+}
+
 .buttons {
   width: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
+  background-color: @color-background-primary;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px @color-select-box-shadow;
+
+  .button {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    border-radius: 4px;
+  }
 
   button {
     font-size: 14px;
@@ -48,13 +62,14 @@
     width: 28px;
     height: 28px;
     margin: 2px;
+    border-radius: 4px;
 
     svg {
       top: 1px;
-      bottom: 2px;
+      bottom: 1px;
       left: 1px;
-      right: 2px;
-
+      right: 1px;
+      margin: auto;
     }
   }
 }

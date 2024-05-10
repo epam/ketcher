@@ -14,31 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { UiAction, UiActionAction } from '../../../../action'
+import { UiAction, UiActionAction } from '../../../../action';
 
-import Icon from '../../../../component/view/icon'
-import classes from './ActionButton.module.less'
-import clsx from 'clsx'
-import { shortcutStr } from '../../shortcutStr'
+import classes from './ActionButton.module.less';
+import clsx from 'clsx';
+import { shortcutStr } from 'ketcher-core';
+import { Icon, IconName } from 'components';
 
 interface ActionButtonProps {
-  name: string
-  action?: UiAction
+  name: IconName;
+  action?: UiAction;
   status?: {
-    disabled?: boolean
-    hidden?: boolean
-  }
-  selected?: boolean
-  disableableButtons: string[]
-  indigoVerification: boolean
-  className?: string
+    disabled?: boolean;
+    hidden?: boolean;
+  };
+  selected?: boolean;
+  disableableButtons: string[];
+  indigoVerification: boolean;
+  className?: string;
+  dataTestId?: string;
 }
 
 interface ActionButtonCallProps {
-  onAction: (action: UiActionAction) => void
+  onAction: (action: UiActionAction) => void;
 }
 
-type Props = ActionButtonProps & ActionButtonCallProps
+type Props = ActionButtonProps & ActionButtonCallProps;
 
 const ActionButton = (props: Props) => {
   const {
@@ -49,42 +50,44 @@ const ActionButton = (props: Props) => {
     disableableButtons,
     indigoVerification,
     className,
-    onAction
-  } = props
+    onAction,
+    dataTestId,
+  } = props;
 
   if (status.hidden) {
-    return null
+    return null;
   }
 
-  const shortcut = shortcutStr(action?.shortcut)
+  const shortcut = shortcutStr(action?.shortcut);
   const disabled =
-    status.disabled || (indigoVerification && disableableButtons.includes(name))
+    status.disabled ||
+    (indigoVerification && disableableButtons.includes(name));
 
   const handleClick = () => {
     if (action?.action) {
-      onAction(action.action)
+      onAction(action.action);
     }
-  }
+  };
 
   return (
     <button
-      data-testid={name}
+      data-testid={dataTestId || name}
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}
       className={clsx(
         classes.button,
         {
-          [classes.selected]: selected
+          [classes.selected]: selected,
         },
-        className
+        className,
       )}
     >
       <Icon name={name} />
       <kbd>{shortcut}</kbd>
     </button>
-  )
-}
+  );
+};
 
-export type { ActionButtonProps, ActionButtonCallProps }
-export { ActionButton }
+export type { ActionButtonProps, ActionButtonCallProps };
+export { ActionButton };

@@ -16,22 +16,22 @@
 
 // Single entry point to Raphaël library
 
-import Raphael from 'raphael'
-import { Vec2 } from 'domain/entities'
+import Raphael from 'raphael';
+import { Vec2 } from 'domain/entities';
 
 // TODO: refactor ugly prototype extensions to plain old functions
 Raphael.el.translateAbs = function (x: number, y: number): void {
-  this.delta = this.delta || new Vec2()
+  this.delta = this.delta || new Vec2();
   // TODO check that only numbers might be passed to this function
-  this.delta.x += x - 0
-  this.delta.y += y - 0
-  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString())
-}
+  this.delta.x += x - 0;
+  this.delta.y += y - 0;
+  this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
+};
 
 Raphael.st.translateAbs = function (x: number, y: number): void {
   this.forEach((el) => {
-    el.translateAbs(x, y)
-  })
-}
+    el.translateAbs(x, y);
+  });
+};
 
-export default Raphael
+export default Raphael;

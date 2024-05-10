@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Slider as UnstyledSlider } from '@mui/material'
-import styled from '@emotion/styled'
+import { Slider as UnstyledSlider } from '@mui/material';
+import styled from '@emotion/styled';
 
-import { ScaleTransformer } from './ScaleTransformer'
-import { zoomList } from '../../../action/zoom'
+import { ScaleTransformer } from './ScaleTransformer';
+import { zoomList } from '../../../action/zoom';
 
 interface SliderProps {
-  zoom: number
-  setZoom: (arg) => void
+  zoom: number;
+  setZoom: (arg) => void;
 }
 
 const Slider = styled(UnstyledSlider)`
@@ -46,32 +46,32 @@ const Slider = styled(UnstyledSlider)`
   & .MuiSlider-mark {
     display: none;
   }
-`
+`;
 
 // MIN must stay 0, because it's assumed in ScaleTransformer calculations
 const INPUT_SCALE = {
   MIN: 0,
-  MAX: 100
-}
+  MAX: 100,
+};
 
-const scaleTransformer = new ScaleTransformer(INPUT_SCALE.MAX)
+const scaleTransformer = new ScaleTransformer(INPUT_SCALE.MAX);
 
 const sliderMarks = zoomList.map((zoomValue) => {
-  const sliderValueMark = scaleTransformer.getSliderValue(zoomValue)
+  const sliderValueMark = scaleTransformer.getSliderValue(zoomValue);
   return {
-    value: sliderValueMark
-  }
-})
+    value: sliderValueMark,
+  };
+});
 
 export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
   const handleChange = (event) => {
-    const parsedValue = parseFloat(event.target.value)
-    const zoomValue = scaleTransformer.getZoomValue(parsedValue)
+    const parsedValue = parseFloat(event.target.value);
+    const zoomValue = scaleTransformer.getZoomValue(parsedValue);
 
     if (zoom !== zoomValue) {
-      setZoom(zoomValue)
+      setZoom(zoomValue);
     }
-  }
+  };
 
   return (
     <Slider
@@ -84,5 +84,5 @@ export const ZoomSlider = ({ zoom, setZoom }: SliderProps) => {
       marks={sliderMarks}
       valueLabelDisplay="off"
     />
-  )
-}
+  );
+};

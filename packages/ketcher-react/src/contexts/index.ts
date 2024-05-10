@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AppContext, { IAppContext } from './appContext'
-import ErrorsContext, { IErrorsContext } from './errorsContext'
-import SettingsContext, { ISettingsContext } from './settingsContext'
+import AppContext, { IAppContext } from './appContext';
+import ErrorsContext, { IErrorsContext } from './errorsContext';
+import SettingsContext, { ISettingsContext } from './settingsContext';
 
-import FormContext from './formContext'
+import FormContext from './formContext';
 
-export { SettingsContext, FormContext, AppContext, ErrorsContext }
-export type { ISettingsContext, IAppContext, IErrorsContext }
+export { SettingsContext, FormContext, AppContext, ErrorsContext };
+export type { ISettingsContext, IAppContext, IErrorsContext };

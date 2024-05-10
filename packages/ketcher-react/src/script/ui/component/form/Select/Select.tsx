@@ -14,32 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MuiSelect, { SelectChangeEvent } from '@mui/material/Select'
-import Divider from '@mui/material/Divider'
-import MenuItem from '@mui/material/MenuItem'
-import { useEffect, useState } from 'react'
-import clsx from 'clsx'
-import styles from './Select.module.less'
-
-import Icon from '../../view/icon'
+import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+import styles from './Select.module.less';
+import { Icon } from 'components';
 
 export interface Option {
-  value: string
-  label: string
+  value: string;
+  label: string;
 }
 
 interface Props {
-  options: Array<Option>
-  onChange: (value: string) => void
-  className?: string
-  value?: string
-  multiple?: boolean
-  disabled?: boolean
+  options: Array<Option>;
+  onChange: (value: string) => void;
+  className?: string;
+  value?: string;
+  multiple?: boolean;
+  disabled?: boolean;
+  formName?: string;
+  name?: string;
+  'data-testid'?: string;
 }
 
 const ChevronIcon = ({ className }) => (
   <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
-)
+);
 
 const Select = ({
   className,
@@ -47,21 +49,24 @@ const Select = ({
   onChange,
   multiple = false,
   disabled,
-  options
+  options,
+  formName,
+  name,
+  'data-testid': testId,
 }: Props) => {
-  const [currentValue, setCurrentValue] = useState<Option>()
+  const [currentValue, setCurrentValue] = useState<Option>();
 
   useEffect(() => {
-    let option
+    let option;
     if (options) {
-      option = options.find((option) => option.value === value)
+      option = options.find((option) => option.value === value);
     }
-    return setCurrentValue(option)
-  }, [options, value])
+    return setCurrentValue(option);
+  }, [options, value]);
 
   const handleChange = (event: SelectChangeEvent) => {
-    onChange(event.target.value)
-  }
+    onChange(event.target.value);
+  };
 
   return (
     <MuiSelect
@@ -72,13 +77,14 @@ const Select = ({
       disabled={disabled}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
+      data-testid={testId}
     >
       {options &&
         options.map((option) => {
           const isDivider: boolean =
             typeof option?.value === 'string'
               ? option.value.includes('Divider')
-              : false
+              : false;
 
           return isDivider ? (
             <Divider className={styles.listDivider} key={option.value} />
@@ -87,13 +93,17 @@ const Select = ({
               value={option.value}
               key={option.value}
               disableRipple={true}
+              className={clsx({
+                [`dropdown-${formName}_${name}`]: formName,
+              })}
+              data-testid={`${option.label}-option`}
             >
               {option.label}
             </MenuItem>
-          )
+          );
         })}
     </MuiSelect>
-  )
-}
+  );
+};
 
-export default Select
+export default Select;

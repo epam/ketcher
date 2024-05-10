@@ -15,16 +15,16 @@
  ***************************************************************************/
 
 // TODO: find DOM shorthand
-import { Vec2 } from 'ketcher-core'
+import { Vec2 } from 'ketcher-core';
 
 export function elementOffset(element) {
-  let top = 0
-  let left = 0
+  let top = 0;
+  let left = 0;
   do {
-    top += element.offsetTop || 0
-    left += element.offsetLeft || 0
-    element = element.offsetParent
-  } while (element)
+    top += element.offsetTop || 0;
+    left += element.offsetLeft || 0;
+    element = element.offsetParent;
+  } while (element);
 
-  return new Vec2(left, top)
+  return new Vec2(left, top);
 }

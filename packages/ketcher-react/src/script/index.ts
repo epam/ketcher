@@ -14,40 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ButtonsConfig, KetcherBuilder } from './builders'
+import { Root } from 'react-dom/client';
+import { ButtonsConfig, KetcherBuilder } from './builders';
 
-import { StructServiceProvider } from 'ketcher-core'
+import { StructServiceProvider } from 'ketcher-core';
 
 interface Config {
-  element: HTMLDivElement | null
-  staticResourcesUrl: string
-  structServiceProvider: StructServiceProvider
-  buttons?: ButtonsConfig
-  errorHandler: (message: string) => void
+  element: HTMLDivElement | null;
+  appRoot: Root;
+  staticResourcesUrl: string;
+  structServiceProvider: StructServiceProvider;
+  buttons?: ButtonsConfig;
+  errorHandler: (message: string) => void;
+  togglerComponent?: JSX.Element;
 }
 
 async function buildKetcherAsync({
   element,
+  appRoot,
   staticResourcesUrl,
   structServiceProvider,
   buttons,
-  errorHandler
+  errorHandler,
+  togglerComponent,
 }: Config) {
-  const builder = new KetcherBuilder()
+  const builder = new KetcherBuilder();
 
-  await builder.appendApiAsync(structServiceProvider)
-  builder.appendServiceMode(structServiceProvider.mode)
+  await builder.appendApiAsync(structServiceProvider);
+  builder.appendServiceMode(structServiceProvider.mode);
   const { setKetcher, ketcherId } = await builder.appendUiAsync(
     element,
+    appRoot,
     staticResourcesUrl,
     errorHandler,
-    buttons
-  )
+    buttons,
+    togglerComponent,
+  );
 
-  const ketcher = builder.build()
-  setKetcher(ketcher)
-  return { ketcher, ketcherId }
+  const ketcher = builder.build();
+  setKetcher(ketcher);
+  return { ketcher, ketcherId };
 }
 
-export type { Config, ButtonsConfig }
-export default buildKetcherAsync
+export type { Config, ButtonsConfig };
+export * from './providers';
+export default buildKetcherAsync;

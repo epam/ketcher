@@ -14,38 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Field } from '../../component/form/form/form'
-import { getSelectOptionsFromSchema } from '../../utils'
-import Select from '../../component/form/Select'
-import { sdataCustomSchema } from '../../data/schema/sdata-schema'
-
-function SDataFieldset({ formState }) {
-  const { result } = formState
-  const formSchema = sdataCustomSchema
-
-  return (
-    <fieldset className="sdata">
-      <Field
-        name="context"
-        options={getSelectOptionsFromSchema(formSchema.properties.context)}
-        component={Select}
-      />
-      <Field name="fieldName" placeholder="Enter name" />
-      {content(
-        formSchema,
-        result.context,
-        result.fieldName,
-        result.fieldValue,
-        result.radiobuttons
-      )}
-    </fieldset>
-  )
-}
+import { Field } from '../../component/form/form/form';
+import { getSelectOptionsFromSchema } from '../../utils';
+import Select from '../../component/form/Select';
+import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 
 const content = (schema, context, fieldName, fieldValue, checked) =>
   Object.keys(schema.properties)
     .filter(
-      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
+      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName',
     )
     .map((prop) => {
       if (prop === 'radiobuttons') {
@@ -57,7 +34,7 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             key={`${context}-${fieldName}-${prop}-radio`}
             labelPos={false}
           />
-        )
+        );
       } else if (prop === 'fieldValue') {
         return (
           <Field
@@ -65,7 +42,7 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             key={`${context}-${fieldName}-${prop}-select`}
             placeholder="Enter value"
           />
-        )
+        );
       } else {
         return (
           <Field
@@ -73,8 +50,32 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             type="textarea"
             key={`${context}-${fieldName}-${prop}-select`}
           />
-        )
+        );
       }
-    })
+    });
 
-export default SDataFieldset
+function SDataFieldset({ formState }) {
+  const { result } = formState;
+  const formSchema = sdataCustomSchema;
+
+  return (
+    <fieldset className="sdata">
+      <Field
+        name="context"
+        options={getSelectOptionsFromSchema(formSchema.properties.context)}
+        component={Select}
+        data-testid="context"
+      />
+      <Field name="fieldName" placeholder="Enter name" />
+      {content(
+        formSchema,
+        result.context,
+        result.fieldName,
+        result.fieldValue,
+        result.radiobuttons,
+      )}
+    </fieldset>
+  );
+}
+
+export default SDataFieldset;

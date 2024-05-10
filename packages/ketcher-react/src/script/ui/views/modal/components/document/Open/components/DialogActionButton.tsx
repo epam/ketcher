@@ -15,19 +15,19 @@
  ***************************************************************************/
 
 type Props = {
-  clickHandler: () => void
-  disabled: boolean
-  label: string
-  styles: string
-  title?: string
-}
+  clickHandler: () => void;
+  disabled: boolean;
+  label: string;
+  styles: string;
+  title?: string;
+};
 
 export const DialogActionButton = ({
   clickHandler,
   label,
   title,
   styles,
-  disabled
+  disabled,
 }: Props) => (
   <input
     key="Open"
@@ -38,4 +38,4 @@ export const DialogActionButton = ({
     disabled={disabled}
     onClick={clickHandler}
   />
-)
+);

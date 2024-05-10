@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import _ from 'lodash'
-import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp'
-import { Option } from '../component/form/Select'
+import _ from 'lodash';
+import { escapeRegExp, filter as _filter, flow, reduce } from 'lodash/fp';
+import { Option } from '../component/form/Select';
 
 const GREEK_SIMBOLS = {
   Alpha: 'A',
@@ -23,67 +23,67 @@ const GREEK_SIMBOLS = {
   Beta: 'B',
   beta: 'β',
   Gamma: 'Г',
-  gamma: 'γ'
-}
+  gamma: 'γ',
+};
 
 const greekRe = new RegExp(
   '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
-  'g'
-)
+  'g',
+);
 
 export function greekify(str: string): string {
-  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym])
+  return str.replace(greekRe, (sym) => GREEK_SIMBOLS[sym]);
 }
 
 export function filterLib(lib, filter: string) {
-  const trimmedFilter = filter.trim()
-  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
+  const trimmedFilter = filter.trim();
+  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   return flow(
     _filter(
       (item: any) =>
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group))
+        re.test(greekify(item.props.group)),
     ),
     reduce((res, item) => {
-      if (!res[item.props.group]) res[item.props.group] = [item]
-      else res[item.props.group].push(item)
-      return res
-    }, {})
-  )(lib)
+      if (!res[item.props.group]) res[item.props.group] = [item];
+      else res[item.props.group].push(item);
+      return res;
+    }, {}),
+  )(lib);
 }
 
 export function filterFGLib(lib, filter) {
-  const trimmedFilter = filter.trim()
-  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i')
+  const trimmedFilter = filter.trim();
+  const re = new RegExp(escapeRegExp(greekify(trimmedFilter)), 'i');
   const searchFunction = (item) => {
     const fields = [
       item.struct.name,
       item.props.abbreviation,
-      item.props.name
-    ].filter(Boolean)
-    return fields.some((field) => re.test(greekify(field)))
-  }
+      item.props.name,
+    ].filter(Boolean);
+    return fields.some((field) => re.test(greekify(field)));
+  };
   return flow(
     _filter((item: any) => !trimmedFilter || searchFunction(item)),
     reduce((res, item) => {
-      if (!res[item.props.group]) res[item.props.group] = [item]
-      else res[item.props.group].push(item)
-      return res
-    }, {})
-  )(lib)
+      if (!res[item.props.group]) res[item.props.group] = [item];
+      else res[item.props.group].push(item);
+      return res;
+    }, {}),
+  )(lib);
 }
 
 export const getSelectOptionsFromSchema = (schema): Array<Option> => {
   return schema.enum.reduce((options, value, index) => {
     options.push({
       value,
-      label: schema?.enumNames?.[index] ?? value
-    })
+      label: schema?.enumNames?.[index] ?? value,
+    });
 
-    return options
-  }, [])
-}
+    return options;
+  }, []);
+};
 
 /**
  * Creates a function, which is not called if the current argument is the same as the last one
@@ -95,21 +95,21 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
 export function memoizedDebounce(
   func,
   delay = 0,
-  skipArguments: number[] = []
+  skipArguments: number[] = [],
 ) {
-  let lastArgs
-  const debouncedFunction = _.debounce(func, delay)
+  let lastArgs;
+  const debouncedFunction = _.debounce(func, delay);
   const getArgumentsToCompare = (args) =>
-    args?.filter((_, index: number) => !skipArguments.includes(index)) || []
+    args?.filter((_, index: number) => !skipArguments.includes(index)) || [];
   return function (...args) {
-    const lastArgsToCompare = getArgumentsToCompare(lastArgs)
-    const argsToCompare = getArgumentsToCompare(args)
+    const lastArgsToCompare = getArgumentsToCompare(lastArgs);
+    const argsToCompare = getArgumentsToCompare(args);
     if (lastArgs && _.isEqual(argsToCompare, lastArgsToCompare)) {
-      return
+      return;
     }
-    lastArgs = args
-    debouncedFunction(...args)
-  }
+    lastArgs = args;
+    debouncedFunction(...args);
+  };
 }
 
-export { fileOpener } from './fileOpener'
+export { fileOpener } from './fileOpener';

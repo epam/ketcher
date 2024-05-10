@@ -15,17 +15,17 @@
  ***************************************************************************/
 
 interface BaseProps {
-  className: string
+  className: string;
   formState: {
-    errors: Record<string, string>
-    result: Record<string, any>
-    valid: boolean
-  }
+    errors: Record<string, string>;
+    result: Record<string, any>;
+    valid: boolean;
+  };
 }
 
 interface BaseCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
+  onCancel: () => void;
+  onOk: (result: any) => void;
 }
 
-export type { BaseProps, BaseCallProps }
+export type { BaseProps, BaseCallProps };

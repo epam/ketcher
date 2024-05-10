@@ -1,39 +1,39 @@
-import { Atom, ReBond, ReStruct, isAttachmentBond } from 'ketcher-core'
+import { Atom, ReBond, ReStruct, isAttachmentBond } from 'ketcher-core';
 
 export function isFlipDisabled(editor): boolean {
-  const selection: { atoms: number[]; bonds: number[] } = editor.selection()
-  const restruct: ReStruct = editor.render.ctab
+  const selection: { atoms: number[]; bonds: number[] } = editor.selection();
+  const restruct: ReStruct = editor.render.ctab;
 
   if (!selection) {
-    return false
+    return false;
   }
 
-  const { bonds = [], atoms = [] } = selection
+  const { bonds = [], atoms = [] } = selection;
   const getBondIdsForAttachmentAtoms = () => {
-    const result: number[] = []
+    const result: number[] = [];
     for (const atomId of atoms) {
-      const atomBondIds = Atom.getConnectedBondIds(restruct.molecule, atomId)
+      const atomBondIds = Atom.getConnectedBondIds(restruct.molecule, atomId);
       for (const atomBondId of atomBondIds) {
-        const bond: ReBond | undefined = restruct.bonds.get(atomBondId)
+        const bond: ReBond | undefined = restruct.bonds.get(atomBondId);
         if (bond && isAttachmentBond(bond.b, selection)) {
-          result.push(atomBondId)
+          result.push(atomBondId);
         }
       }
     }
-    return result
-  }
+    return result;
+  };
   const getAmountOfAttachmentBonds = (): number => {
-    let amountOfAttachmentBonds = 0
-    const totalBondIds = new Set([...bonds, ...getBondIdsForAttachmentAtoms()])
+    let amountOfAttachmentBonds = 0;
+    const totalBondIds = new Set([...bonds, ...getBondIdsForAttachmentAtoms()]);
     for (const bondId of totalBondIds) {
-      const bond: ReBond | undefined = restruct.bonds.get(bondId)
+      const bond: ReBond | undefined = restruct.bonds.get(bondId);
       if (bond && isAttachmentBond(bond.b, selection)) {
-        amountOfAttachmentBonds++
+        amountOfAttachmentBonds++;
       }
     }
 
-    return amountOfAttachmentBonds
-  }
+    return amountOfAttachmentBonds;
+  };
 
-  return getAmountOfAttachmentBonds() > 1
+  return getAmountOfAttachmentBonds() > 1;
 }

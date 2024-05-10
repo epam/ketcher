@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './ToolbarMultiToolItem'
+export * from './ToolbarMultiToolItem';

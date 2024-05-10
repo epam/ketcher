@@ -14,30 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Field } from '../../component/form/form/form'
-import Select from '../../component/form/Select'
-import { sgroupMap as schemes } from '../../data/schema/struct-schema'
-import { getSelectOptionsFromSchema } from '../../utils'
-import classes from './sgroup.module.less'
-
-function SGroupFieldset({ formState }) {
-  const { result } = formState
-
-  const type = result.type
-
-  return (
-    <fieldset className={type === 'DAT' ? classes.data : 'base'}>
-      {content(type)}
-    </fieldset>
-  )
-}
+import { Field } from '../../component/form/form/form';
+import Select from '../../component/form/Select';
+import { sgroupMap as schemes } from '../../data/schema/struct-schema';
+import { getSelectOptionsFromSchema } from '../../utils';
+import classes from './sgroup.module.less';
 
 const propMapping = {
   name: { maxLength: 15 },
   fieldName: { maxLength: 30 },
   fieldValue: { type: 'textarea' },
-  radiobuttons: { type: 'radio' }
-}
+  radiobuttons: { type: 'radio' },
+};
 
 const content = (type) =>
   Object.keys(schemes[type].properties)
@@ -50,12 +38,25 @@ const content = (type) =>
             key={`${type}-${prop}`}
             component={Select}
             options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
+            data-testid="connectivity"
           />
-        )
+        );
       }
 
-      const props = propMapping[prop] || {}
-      return <Field name={prop} key={`${type}-${prop}`} {...props} />
-    })
+      const props = propMapping[prop] || {};
+      return <Field name={prop} key={`${type}-${prop}`} {...props} />;
+    });
 
-export default SGroupFieldset
+function SGroupFieldset({ formState }) {
+  const { result } = formState;
+
+  const type = result.type;
+
+  return (
+    <fieldset className={type === 'DAT' ? classes.data : 'base'}>
+      {content(type)}
+    </fieldset>
+  );
+}
+
+export default SGroupFieldset;

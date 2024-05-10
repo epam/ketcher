@@ -16,29 +16,29 @@
 
 import {
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../../ToolbarGroupItem'
+  ToolbarGroupItemProps,
+} from '../../ToolbarGroupItem';
 import {
   bondCommon,
   bondQuery,
   bondSpecial,
   bondStereo,
   groupDescriptors,
-  groupOptions
-} from './options'
+  groupOptions,
+} from './options';
 
-import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem'
-import { mediaSizes } from '../../mediaSizes'
+import { ToolbarMultiToolItem } from '../../ToolbarGroupItem/ToolbarMultiToolItem';
+import { mediaSizes } from '../../mediaSizes';
 
 interface BondProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  height?: number
+  height?: number;
 }
-type BondCallProps = ToolbarGroupItemCallProps
+type BondCallProps = ToolbarGroupItemCallProps;
 
-type Props = BondProps & BondCallProps
+type Props = BondProps & BondCallProps;
 
 const Bond = (props: Props) => {
-  const { height, ...rest } = props
+  const { height, ...rest } = props;
 
   if (height && height <= mediaSizes.bondCollapsableHeight) {
     return (
@@ -49,7 +49,7 @@ const Bond = (props: Props) => {
         groups={groupDescriptors}
         {...rest}
       />
-    )
+    );
   }
 
   return (
@@ -59,8 +59,8 @@ const Bond = (props: Props) => {
       <ToolbarMultiToolItem id="bond-query" options={bondQuery} {...rest} />
       <ToolbarMultiToolItem id="bond-special" options={bondSpecial} {...rest} />
     </>
-  )
-}
+  );
+};
 
-export type { BondProps, BondCallProps }
-export { Bond }
+export type { BondProps, BondCallProps };
+export { Bond };

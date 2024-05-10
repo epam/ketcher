@@ -14,22 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './Atom.module.less'
-import clsx from 'clsx'
+import classes from './Atom.module.less';
+import clsx from 'clsx';
 
 function Atom({ el, shortcut, selected, ...props }) {
   return (
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
       className={clsx(classes.atom, {
-        selected: selected
+        selected,
       })}
       value={el.number}
+      data-testid={`${el.label}-button`}
       {...props}
     >
       <span>{el.label}</span>
     </button>
-  )
+  );
 }
 
-export default Atom
+export default Atom;

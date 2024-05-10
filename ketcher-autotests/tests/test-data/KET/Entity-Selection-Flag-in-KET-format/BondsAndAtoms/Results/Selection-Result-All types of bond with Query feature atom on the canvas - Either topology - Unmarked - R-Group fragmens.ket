@@ -1,0 +1,758 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "rg9"
+            },
+            {
+                "$ref": "rg7"
+            },
+            {
+                "$ref": "rg8"
+            },
+            {
+                "$ref": "rg5"
+            },
+            {
+                "$ref": "rg6"
+            },
+            {
+                "$ref": "rg1"
+            },
+            {
+                "$ref": "rg2"
+            },
+            {
+                "$ref": "rg3"
+            },
+            {
+                "$ref": "rg4"
+            },
+            {
+                "$ref": "rg13"
+            },
+            {
+                "$ref": "rg14"
+            },
+            {
+                "$ref": "rg12"
+            },
+            {
+                "$ref": "rg10"
+            },
+            {
+                "$ref": "rg11"
+            },
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "rg9": {
+        "rlogic": {
+            "number": 9
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.250044462393243,
+                    -7.851634666571461,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.250044495267682,
+                    -7.851634666571461,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.250044495267682,
+            "y": 6.851634666571461,
+            "z": 0
+        }
+    },
+    "rg7": {
+        "rlogic": {
+            "number": 7
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.95004537984257,
+                    -4.726634563838848,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.950045412717003,
+                    -4.726634563838848,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 4,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 16.950045412717003,
+            "y": 3.7266345638388483,
+            "z": 0
+        }
+    },
+    "rg8": {
+        "rlogic": {
+            "number": 8
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    21.20004555243335,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.200045585307784,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 5,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.200045585307784,
+            "y": 3.651633798433787,
+            "z": 0
+        }
+    },
+    "rg5": {
+        "rlogic": {
+            "number": 5
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.525045800066058,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.525045832940492,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 3,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.525045832940492,
+            "y": 3.651633798433787,
+            "z": 0
+        }
+    },
+    "rg6": {
+        "rlogic": {
+            "number": 6
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.075045219579698,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.075045252454133,
+                    -4.651633798433787,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.075045252454133,
+            "y": 3.651633798433787,
+            "z": 0
+        }
+    },
+    "rg1": {
+        "rlogic": {
+            "number": 1
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    5.650045804175367,
+                    -1.5766338880797677,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.650045837049802,
+                    -1.5766338880797677,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 10,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 6.650045837049802,
+            "y": 0.5766338880797677,
+            "z": 0
+        }
+    },
+    "rg2": {
+        "rlogic": {
+            "number": 2
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    11.200045223688994,
+                    -1.5766338880797677,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.20004525656343,
+                    -1.5766338880797677,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 9,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 12.20004525656343,
+            "y": 0.5766338880797677,
+            "z": 0
+        }
+    },
+    "rg3": {
+        "rlogic": {
+            "number": 3
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    16.100046910652686,
+                    -1.626634080458358,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.100046943527126,
+                    -1.626634080458358,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 7,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 17.100046943527126,
+            "y": 0.6266340804583579,
+            "z": 0
+        }
+    },
+    "rg4": {
+        "rlogic": {
+            "number": 4
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    21.300047844539236,
+                    -1.5516337918904726,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.300047877413668,
+                    -1.5516337918904726,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 6,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.300047877413668,
+            "y": 0.5516337918904726,
+            "z": 0
+        }
+    },
+    "rg13": {
+        "rlogic": {
+            "number": 13
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    14.050036162107405,
+                    -13.407350410125563,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.050047639074014,
+                    -13.407342780730776,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.55004758976236,
+                    -12.54131492022935,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    13.55004377506497,
+                    -14.273363011837414,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 6,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 15.050047639074014,
+            "y": 11.54131492022935,
+            "z": 0
+        }
+    },
+    "rg14": {
+        "rlogic": {
+            "number": 14
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    21.15003486963694,
+                    -13.457349648829801,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    22.150046346603546,
+                    -13.457342019435021,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    20.650046297291894,
+                    -12.591314158933596,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    20.650046297291894,
+                    -14.323366065239053,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 22.150046346603546,
+            "y": 11.591314158933596,
+            "z": 0
+        }
+    },
+    "rg12": {
+        "rlogic": {
+            "number": 12
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    7.000032878584721,
+                    -13.432351936826375,
+                    0
+                ],
+                "selected": true,
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.000044355551331,
+                    -13.432336678036808,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.500046213588371,
+                    -12.566312632232776,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "N",
+                "location": [
+                    6.500046213588371,
+                    -14.298364538538234,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 4,
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ],
+                "selected": true
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 8.000044355551331,
+            "y": 11.566312632232776,
+            "z": 0
+        }
+    },
+    "rg10": {
+        "rlogic": {
+            "number": 10
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    17.050050023801433,
+                    -7.882333854911889,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.050050020745076,
+                    -7.882333854911889,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 8,
+                "atoms": [
+                    1,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 17.050050023801433,
+            "y": 6.882333854911889,
+            "z": 0
+        }
+    },
+    "rg11": {
+        "rlogic": {
+            "number": 11
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.987546849815416,
+                    -7.837499928408222,
+                    0
+                ],
+                "selected": true
+            },
+            {
+                "label": "C",
+                "location": [
+                    21.987546851380863,
+                    -7.837499928408222,
+                    0
+                ],
+                "selected": true
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 3,
+                "selected": true
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 21.987546851380863,
+            "y": 6.837499928408222,
+            "z": 0
+        }
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "A",
+                "location": [
+                    25.41792318282588,
+                    -7.910618208134658,
+                    0
+                ],
+                "selected": true,
+                "queryProperties": {
+                    "aromaticity": "aromatic"
+                }
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 25.41792318282588,
+            "y": 6.910618208134658,
+            "z": 0
+        }
+    }
+}

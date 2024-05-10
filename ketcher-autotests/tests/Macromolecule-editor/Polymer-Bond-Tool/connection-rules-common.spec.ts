@@ -6,7 +6,6 @@ import {
   selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
-  dragMouseTo,
   waitForKetcherInit,
   waitForIndigoToLoad,
   waitForRender,
@@ -14,11 +13,7 @@ import {
   selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;

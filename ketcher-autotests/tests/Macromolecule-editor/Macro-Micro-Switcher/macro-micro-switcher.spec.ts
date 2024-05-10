@@ -605,7 +605,8 @@ test.describe('Macro-Micro-Switcher', () => {
     page,
   }) => {
     /*
-    Ticket: #4530
+    Ticket: https://github.com/epam/ketcher/issues/4530
+    Description: Convert Rx connection points created in molecules mode into chem attachment points in macromolecules mode
     */
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro('KET/molecules-with-rglabels.ket', page);

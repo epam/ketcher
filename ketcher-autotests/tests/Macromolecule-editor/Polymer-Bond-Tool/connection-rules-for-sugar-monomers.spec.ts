@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
 import {

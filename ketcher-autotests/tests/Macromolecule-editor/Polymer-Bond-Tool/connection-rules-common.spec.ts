@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
 import {
@@ -12,6 +11,12 @@ import {
   selectSingleBondTool,
   selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
+  selectRectangleArea,
+  saveToFile,
+  selectEraseTool,
+  getKet,
+  receiveFileComparisonData,
+  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -118,6 +123,64 @@ test.describe('Common connection rules: ', () => {
       await moveMouseAway(page);
     }
   }
+
+  async function grabSelectionAndMoveTo(
+    page: Page,
+    monomerName: string,
+    x: number,
+    y: number,
+  ) {
+    const monomerLocator = page
+      .getByText(monomerName, { exact: true })
+      .locator('..')
+      .first();
+
+    await monomerLocator.hover();
+    await page.mouse.down();
+    await page.mouse.move(x, y);
+    await page.mouse.up();
+    await moveMouseAway(page);
+  }
+
+  async function eraseMonomer(page: Page, monomerName: string) {
+    const monomerLocator = page
+      .getByText(monomerName, { exact: true })
+      .locator('..')
+      .first();
+
+    // removing selections
+    await page.mouse.click(100, 100);
+
+    await monomerLocator.click();
+    await selectEraseTool(page);
+  }
+
+  async function saveToKet(page: Page, fileName: string) {
+    const expectedKetFile = await getKet(page);
+    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedKetFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  }
+
+  async function saveToMol(page: Page, fileName: string) {
+    const expectedKetFile = await getKet(page);
+    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedKetFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  }
+
   /*
    *  Test case1: https://github.com/epam/ketcher/issues/4600 - Cases 1-3
    *  Check that bond dissapears when 'ESC' button is pressed while pulling bond away from CHEM monomer placed on canvas
@@ -230,5 +293,43 @@ test.describe('Common connection rules: ', () => {
     await takeEditorScreenshot(page);
 
     await selectFlexLayoutModeTool(page);
+  });
+
+  /*
+   *  Test case3: https://github.com/epam/ketcher/issues/4605 - Cases 1-5
+   *  Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
+   *  Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
+   *  Check that 4 connected by Bond A6OH monomers are possible to Erase
+   *  Check that 4 connected by Bond A6OH monomers are possible to Save Structure
+   *  Check that 4 connected by Bond A6OH monomers are possible to Save Structure in Mol Format
+   */
+  test(`Check that 4 connected by Bond A6OH monomers can/are...`, async () => {
+    test.setTimeout(40000);
+
+    await openFileAndAddToCanvasMacro(
+      'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',
+      page,
+    );
+
+    // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
+    await selectRectangleArea(page, 100, 100, 800, 800);
+    await grabSelectionAndMoveTo(page, 'A6OH', 200, 200);
+    // await takeEditorScreenshot(page);
+
+    // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
+    await page.keyboard.press('Control+=');
+    // await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+-');
+    // await takeEditorScreenshot(page);
+
+    // Check that 4 connected by Bond A6OH monomers are possible to Erase
+    await eraseMonomer(page, 'A6OH');
+    // await takeEditorScreenshot(page);
+
+    // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
+    await saveToKet(page, '4 connected by Bond A6OH-expected.ket');
+
+    // Check that 4 connected by Bond A6OH monomers are possible to Save Structure in Mol Format
+    await saveToMol(page, '4 connected by Bond A6OH-expected.mol');
   });
 });

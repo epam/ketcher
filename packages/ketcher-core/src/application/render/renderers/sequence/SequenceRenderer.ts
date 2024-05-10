@@ -218,7 +218,7 @@ export class SequenceRenderer {
         const bondRenderer = new PolymerBondSequenceRenderer(
           polymerBond,
           chain.firstNode,
-          chain.lastNode,
+          chain.lastNonEmptyNode,
         );
         bondRenderer.show();
         polymerBond.setRenderer(bondRenderer);

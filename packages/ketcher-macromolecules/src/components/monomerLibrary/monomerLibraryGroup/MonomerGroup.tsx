@@ -56,13 +56,16 @@ const MonomerGroup = ({
       const monomerValidations =
         activeGroupItemValidations[`${monomer.props.MonomerClass}s`];
       if (monomerValidations?.length > 0 && monomer.props.MonomerCaps) {
-        if (monomerValidations[0] in monomer.props.MonomerCaps) {
-          return false;
-        } else {
-          return true;
+        let monomerDisabled = false;
+        for (let i = 0; i < monomerValidations.length; i++) {
+          if (monomerValidations[0] in monomer.props.MonomerCaps) {
+            monomerDisabled = false;
+          } else {
+            monomerDisabled = true;
+          }
         }
+        return monomerDisabled;
       }
-      // Add validation for Sugar if Phosphat is selected
     }
   };
 

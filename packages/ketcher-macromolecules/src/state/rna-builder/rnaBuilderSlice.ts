@@ -55,6 +55,7 @@ interface IRnaBuilderState {
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
   uniqueNameError: string;
+  invalidPresetError: string;
   activePresetForContextMenu: IRnaPreset | null;
 }
 
@@ -74,6 +75,7 @@ const initialState: IRnaBuilderState = {
   activeRnaBuilderItem: null,
   isEditMode: false,
   uniqueNameError: '',
+  invalidPresetError: '',
   activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
@@ -191,6 +193,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setUniqueNameError: (state, action: PayloadAction<string>) => {
       state.uniqueNameError = action.payload;
+    },
+    setInvalidPresetError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -330,7 +335,12 @@ export const selectActivePresetMonomerGroup = (state: RootState) =>
 
 export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
-    (preset.phosphate || preset.sugar || preset.base) && preset.name,
+    (preset.phosphate || preset.sugar || preset.base) &&
+      preset.name &&
+      Number(!!preset.phosphate) +
+        Number(!!preset.sugar) +
+        Number(!!preset.base) >=
+        2,
   );
 };
 
@@ -360,6 +370,10 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
 
 export const selectUniqueNameError = (state: RootState) => {
   return state.rnaBuilder.uniqueNameError;
+};
+
+export const selectInvalidPresetError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetError;
 };
 
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
@@ -424,6 +438,7 @@ export const {
   createNewPreset,
   setIsEditMode,
   setUniqueNameError,
+  setInvalidPresetError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

@@ -212,7 +212,6 @@ export const RnaEditorExpanded = ({
       editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
     if (selectedGroup === MonomerGroups.SUGARS) {
-      console.log('sugar check phosphates', newPreset);
       const sugarValidaions = ['R3'];
       if (newPreset.phosphate) {
         sugarValidaions.push('R2');

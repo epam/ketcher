@@ -20,6 +20,7 @@ import {
   waitForRender,
   moveMouseToTheMiddleOfTheScreen,
   selectOptionInDropdown,
+  selectSingleBondTool,
 } from '@utils';
 
 const topLeftCorner = {
@@ -598,5 +599,22 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
     await takePageScreenshot(page);
+  });
+
+  test('R-Group labels should be converted to monomer attachment points', async ({
+    page,
+  }) => {
+    /*
+    Ticket: #4530
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasMacro('KET/molecules-with-rglabels.ket', page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+    await page.getByText('F2').locator('..').hover();
+    await takeEditorScreenshot(page);
+    await page.getByText('F3').locator('..').hover();
+    await takeEditorScreenshot(page);
   });
 });

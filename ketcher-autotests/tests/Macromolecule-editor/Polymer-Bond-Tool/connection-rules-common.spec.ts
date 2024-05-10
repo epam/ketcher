@@ -62,12 +62,6 @@ test.describe('Common connection rules: ', () => {
     // await browser.close();
   });
 
-  interface IMonomer {
-    fileName: string;
-    alias: string;
-    connectionPoints: { [connectionPointName: string]: string };
-  }
-
   async function dragBondFromMonomerCenterAwayTo(
     page: Page,
     monomerName: string,

@@ -1796,7 +1796,7 @@ export class DrawingEntitiesManager {
     ) {
       return { command, drawingEntities };
     }
-    if (drawingEntity.isPartOfRna && drawingEntity instanceof Sugar) {
+    if (drawingEntity instanceof Sugar && drawingEntity.isPartOfRNA) {
       const sugar = drawingEntity;
       if (isValidNucleoside(sugar)) {
         const nucleoside = Nucleoside.fromSugar(sugar);

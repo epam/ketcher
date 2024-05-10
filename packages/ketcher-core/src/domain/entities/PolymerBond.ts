@@ -69,7 +69,7 @@ export class PolymerBond extends DrawingEntity {
     return this.position;
   }
 
-  public getAnotherMonomer(monomer: BaseMonomer) {
+  public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return this.firstMonomer === monomer
       ? this.secondMonomer
       : this.firstMonomer;

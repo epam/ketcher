@@ -8,7 +8,6 @@ import {
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
-  getPhosphateFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -84,21 +83,13 @@ export class Chain {
     if (!monomer) return;
 
     this.add(monomer);
-    if (this.lastNode instanceof Nucleotide) {
-      this.fillSubChains(
-        getNextMonomerInChain(
-          getPhosphateFromSugar(monomer),
-          this.firstMonomer,
-        ),
-      );
-    } else {
-      this.fillSubChains(
-        getNextMonomerInChain(
-          this.lastNode?.lastMonomerInNode,
-          this.firstMonomer,
-        ),
-      );
-    }
+
+    this.fillSubChains(
+      getNextMonomerInChain(
+        this.lastNode?.lastMonomerInNode,
+        this.firstMonomer,
+      ),
+    );
   }
 
   public get lastSubChain() {

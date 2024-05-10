@@ -980,6 +980,7 @@ export class DrawingEntitiesManager {
     rearrangedMonomersSet: Set<number>,
     monomersWithSideChain: Array<BaseMonomer>,
     maxVerticalDistance: number,
+    firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
     const monomerWidth = monomer.renderer?.monomerSize?.width ?? 0;
@@ -1018,7 +1019,7 @@ export class DrawingEntitiesManager {
       maxVerticalDistance:
         nextPositionAndVerticalDistance?.maxVerticalDistance ||
         maxVerticalDistance,
-      nextMonomer: getNextMonomerInChain(monomer),
+      nextMonomer: getNextMonomerInChain(monomer, firstMonomer),
       command,
     };
   }
@@ -1030,6 +1031,7 @@ export class DrawingEntitiesManager {
     rearrangedMonomersSet: Set<number>,
     monomersWithSideChain: Array<BaseMonomer>,
     maxVerticalDistance: number,
+    firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
     const nucleotideSize = this.getNucleotideSize(nucleotide);
@@ -1099,7 +1101,10 @@ export class DrawingEntitiesManager {
       rearrangedMonomersSet,
       monomersWithSideChain,
     );
-    const nextMonomer = getNextMonomerInChain(lastMonomerInNucleotide);
+    const nextMonomer = getNextMonomerInChain(
+      lastMonomerInNucleotide,
+      firstMonomer,
+    );
 
     return {
       command,
@@ -1266,7 +1271,6 @@ export class DrawingEntitiesManager {
     const monomersList = currentMonomers.filter((monomer) =>
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
     );
-
     const firstMonomersInChains = monomersList.filter((monomer) => {
       const polymerBond = monomer.getBondByAttachmentPoint(
         AttachmentPointName.R2,
@@ -1283,6 +1287,11 @@ export class DrawingEntitiesManager {
 
       return isFirstMonomerWithR2R1connection || isSingleMonomerOrNucleoside;
     });
+
+    const [_, cycledChains] =
+      ChainsCollection.getFirstMonomersInChains(monomersList);
+
+    firstMonomersInChains.push(...cycledChains);
 
     firstMonomersInChains.sort((monomer1, monomer2) => {
       if (
@@ -1306,6 +1315,7 @@ export class DrawingEntitiesManager {
     monomersWithSideChain: Array<BaseMonomer>,
     _maxVerticalDistance: number,
   ) {
+    const firstMonomer = _monomer;
     const command = new Command();
     const stack = [
       {
@@ -1348,6 +1358,7 @@ export class DrawingEntitiesManager {
         rearrangedMonomersSet,
         monomersWithSideChain,
         maxVerticalDistance,
+        firstMonomer,
       );
 
       command.merge(rearrangeResult.command);

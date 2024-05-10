@@ -26,6 +26,7 @@ export class LinkerSequenceNode {
 
   public get monomers() {
     const monomers = [this.firstMonomerInNode];
+    const firstMonomer = this.firstMonomerInNode;
     let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
     while (
       nextMonomer instanceof Chem ||
@@ -36,7 +37,7 @@ export class LinkerSequenceNode {
         !isValidNucleoside(nextMonomer))
     ) {
       monomers.push(nextMonomer);
-      nextMonomer = getNextMonomerInChain(nextMonomer);
+      nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);
     }
 
     return monomers;

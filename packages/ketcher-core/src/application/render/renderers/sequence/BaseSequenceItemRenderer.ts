@@ -267,14 +267,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('y', -21)
         .attr('width', 18)
         .attr('height', 30)
-        .attr('rx', 3);
+        .attr('rx', 3)
+        .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
         ?.attr('fill', '#57FF8F')
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
-        .attr('height', 20);
+        .attr('height', 20)
+        .attr('class', 'dynamic-element');
     }
   }
 

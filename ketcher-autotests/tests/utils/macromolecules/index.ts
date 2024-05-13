@@ -44,7 +44,13 @@ export async function scrollDown(page: Page, scrollDelta: number) {
 
 export async function chooseFileFormat(
   page: Page,
-  fileFomat: 'Ket' | 'MDL Molfile V3000' | 'FASTA' | 'Sequence' | 'IDT',
+  fileFomat:
+    | 'Ket'
+    | 'MDL Molfile V3000'
+    | 'FASTA'
+    | 'Sequence'
+    | 'IDT'
+    | 'SVG Document',
 ) {
   await page.getByTestId('dropdown-select').click();
   await waitForSpinnerFinishedWork(page, async () => {

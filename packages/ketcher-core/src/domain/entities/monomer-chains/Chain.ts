@@ -95,8 +95,27 @@ export class Chain {
     return this.subChains[this.subChains.length - 1];
   }
 
+  public get nodes() {
+    const nodes: SubChainNode[] = [];
+    this.subChains.forEach((subChain) => {
+      nodes.push(...subChain.nodes);
+    });
+
+    return nodes;
+  }
+
   public get lastNode() {
     return this.lastSubChain?.lastNode;
+  }
+
+  public get lastNonEmptyNode() {
+    if (this.lastNode instanceof EmptySequenceNode) {
+      const nodes = this.nodes;
+
+      return nodes[nodes.length - 2];
+    } else {
+      return this.lastNode;
+    }
   }
 
   public get firstSubChain() {

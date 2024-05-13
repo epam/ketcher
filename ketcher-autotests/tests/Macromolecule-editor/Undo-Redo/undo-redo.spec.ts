@@ -6,6 +6,7 @@ import {
   clickUndo,
   dragMouseTo,
   hideMonomerPreview,
+  moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectRectangleArea,
   selectSingleBondTool,
@@ -404,5 +405,29 @@ test.describe('Undo-Redo tests', () => {
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.getByTestId('redo').click();
     await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
+
+  test('Press Undo/Redo after copy/pasting Sugar-Base-Phosphate structure on canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Undo-Redo tests
+    Description: Copy/Paste working as expected and Undo/Redo
+    */
+    const x = 200;
+    const y = 200;
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('C_C_R_P').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.mouse.move(x, y);
+    await page.keyboard.press('Control+v');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await page.getByTestId('undo').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('redo').click();
+    await takeEditorScreenshot(page);
   });
 });

@@ -277,9 +277,19 @@ export class DrawingEntitiesManager {
     } else {
       assert(offset);
       drawingEntity.moveRelative(offset);
+      if (drawingEntity instanceof BaseMonomer)
+        this.moveChemAtomsPoint(drawingEntity, offset);
     }
 
     return drawingEntity;
+  }
+
+  private moveChemAtomsPoint(drawingEntity: BaseMonomer, offset?: Vec2) {
+    if (drawingEntity.monomerItem.props.isMicromoleculeFragment && offset) {
+      drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
+        atom.pp.add_(offset);
+      });
+    }
   }
 
   public moveSelectedDrawingEntities(

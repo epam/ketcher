@@ -14,3 +14,8 @@ export enum SequenceType {
   DNA = 'DNA',
   PEPTIDE = 'PEPTIDE',
 }
+
+export enum IsChainCycled {
+  NOT_CYCLED,
+  CYCLED,
+}

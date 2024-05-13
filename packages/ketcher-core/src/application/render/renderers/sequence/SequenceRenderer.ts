@@ -229,6 +229,17 @@ export class SequenceRenderer {
           });
         });
       });
+      if (chain.isCyclic) {
+        const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
+          .R1 as PolymerBond;
+        const bondRenderer = new PolymerBondSequenceRenderer(
+          polymerBond,
+          chain.firstNode,
+          chain.lastNode,
+        );
+        bondRenderer.show();
+        polymerBond.setRenderer(bondRenderer);
+      }
     });
   }
 

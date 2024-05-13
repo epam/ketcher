@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Page, chromium, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -16,7 +16,7 @@ import {
   selectEraseTool,
   getKet,
   receiveFileComparisonData,
-  moveMouseToTheMiddleOfTheScreen,
+  getMolfile,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -162,23 +162,26 @@ test.describe('Common connection rules: ', () => {
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
+        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
       });
 
     expect(ketFile).toEqual(ketFileExpected);
   }
 
   async function saveToMol(page: Page, fileName: string) {
-    const expectedKetFile = await getKet(page);
-    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedKetFile);
+    const ignoredLineIndigo = 1;
+    const expectedMolFile = await getMolfile(page, 'v3000');
+    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedMolFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
+    const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
+        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
+        metaDataIndexes: [ignoredLineIndigo],
+        fileFormat: 'v3000',
       });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    expect(molFile).toEqual(molFileExpected);
   }
 
   /*
@@ -314,17 +317,17 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, 'A6OH', 200, 200);
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await page.keyboard.press('Control+=');
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
     await page.keyboard.press('Control+-');
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, 'A6OH');
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
     await saveToKet(page, '4 connected by Bond A6OH-expected.ket');

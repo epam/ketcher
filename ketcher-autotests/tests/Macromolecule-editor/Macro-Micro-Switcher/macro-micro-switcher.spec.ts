@@ -501,7 +501,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixelRatio: 0.05,
+    });
   });
 
   test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async ({

@@ -2,7 +2,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
+import { SubChainNode, Vec2 } from 'domain/entities';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
@@ -10,47 +10,43 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
 
-  constructor(public polymerBond: PolymerBond) {
+  constructor(
+    public polymerBond: PolymerBond,
+    private firstNode?: SubChainNode,
+    private secondNode?: SubChainNode,
+  ) {
     super(polymerBond);
   }
 
+  private get firstMonomer() {
+    return this.firstNode?.monomer || this.polymerBond.firstMonomer;
+  }
+
+  private get secondMonomer() {
+    return this.secondNode?.monomer || this.polymerBond.secondMonomer;
+  }
+
   private get areMonomersOnSameRow() {
-    assert(
-      this.polymerBond.firstMonomer.renderer instanceof
-        BaseSequenceItemRenderer,
-    );
-    assert(
-      this.polymerBond.secondMonomer?.renderer instanceof
-        BaseSequenceItemRenderer,
-    );
+    assert(this.firstMonomer.renderer instanceof BaseSequenceItemRenderer);
+    assert(this.secondMonomer?.renderer instanceof BaseSequenceItemRenderer);
 
     return (
-      this.polymerBond.firstMonomer.renderer?.scaledMonomerPositionForSequence
-        .y ===
-      this.polymerBond.secondMonomer?.renderer?.scaledMonomerPositionForSequence
-        .y
+      this.firstMonomer.renderer?.scaledMonomerPositionForSequence.y ===
+      this.secondMonomer?.renderer?.scaledMonomerPositionForSequence.y
     );
   }
 
   public get scaledPosition() {
-    assert(
-      this.polymerBond.firstMonomer.renderer instanceof
-        BaseSequenceItemRenderer,
-    );
-    assert(
-      this.polymerBond.secondMonomer?.renderer instanceof
-        BaseSequenceItemRenderer,
-    );
+    assert(this.firstMonomer.renderer instanceof BaseSequenceItemRenderer);
+    assert(this.secondMonomer?.renderer instanceof BaseSequenceItemRenderer);
     const firstMonomerY =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPositionForSequence.y;
+      this.firstMonomer.renderer.scaledMonomerPositionForSequence.y;
     const firstMonomerX =
-      this.polymerBond.firstMonomer.renderer.scaledMonomerPositionForSequence.x;
+      this.firstMonomer.renderer.scaledMonomerPositionForSequence.x;
     const secondMonomerY =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPositionForSequence
-        .y;
+      this.secondMonomer.renderer.scaledMonomerPositionForSequence.y;
     const secondMonomerX =
-      this.polymerBond.secondMonomer.renderer.scaledMonomerPositionForSequence
-        .x;
+      this.secondMonomer.renderer.scaledMonomerPositionForSequence.x;
 
     return {
       startPosition: new Vec2(firstMonomerX, firstMonomerY),
@@ -136,5 +132,17 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
       }`;
     }
     return path;
+  }
+
+  public moveStart() {}
+
+  public moveEnd() {}
+
+  public get isSnake() {
+    return false;
+  }
+
+  public isMonomersOnSameHorizontalLine() {
+    return false;
   }
 }

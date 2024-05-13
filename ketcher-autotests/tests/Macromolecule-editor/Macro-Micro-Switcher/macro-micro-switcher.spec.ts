@@ -858,8 +858,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /* 
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
-    After closing the ticket, should update the screenshots.
     */
     const x = 200;
     const y = 200;
@@ -883,8 +881,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /* 
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
-    After closing the ticket, should update the screenshots.
     */
     const x = 200;
     const y = 200;
@@ -908,8 +904,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /* 
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
-    After closing the ticket, should update the screenshots.
     */
     const x = 200;
     const y = 200;
@@ -933,8 +927,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /* 
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
-    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4531
-    After closing the ticket, should update the screenshots.
     */
     const x = 200;
     const y = 200;

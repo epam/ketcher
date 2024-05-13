@@ -16,6 +16,20 @@ import {
 export class ChainsCollection {
   public chains: Chain[] = [];
 
+  private get monomerToChain() {
+    const monomerToChain = new Map<BaseMonomer, Chain>();
+
+    this.chains.forEach((chain) => {
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          monomerToChain.set(monomer, chain);
+        });
+      });
+    });
+
+    return monomerToChain;
+  }
+
   public rearrange() {
     this.chains.sort((chain1, chain2) => {
       if (
@@ -29,6 +43,29 @@ export class ChainsCollection {
         return 1;
       }
     });
+
+    const reorderedChains = new Set<Chain>();
+    const monomerToChain = this.monomerToChain;
+    this.chains.forEach((chain) => {
+      reorderedChains.add(chain);
+
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          const sideConnections = monomer.sideConnections;
+          if (sideConnections.length) {
+            sideConnections.forEach((sideConnection) => {
+              const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
+              const anotherChain =
+                anotherMonomer && monomerToChain.get(anotherMonomer);
+              if (anotherChain && !reorderedChains.has(anotherChain)) {
+                reorderedChains.add(anotherChain);
+              }
+            });
+          }
+        });
+      });
+    });
+    this.chains = [...reorderedChains.values()];
   }
 
   public add(chain: Chain) {

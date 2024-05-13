@@ -42,6 +42,7 @@ import {
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
+  getPhosphateFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -1152,13 +1153,18 @@ export class DrawingEntitiesManager {
 
       chainsCollection.chains.forEach((chain) => {
         chain.forEachNode(({ node }) => {
-          let rearrangeResult;
+          if (rearrangedMonomersSet.has(node.monomer.id)) {
+            return;
+          }
+
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
-            rearrangeResult = this.reArrangeRnaChain(
+            const rearrangeResult = this.reArrangeRnaChain(
               {
                 sugar: node.sugar,
                 phosphate:
-                  node instanceof Nucleotide ? node.phosphate : undefined,
+                  node instanceof Nucleotide
+                    ? node.phosphate
+                    : getPhosphateFromSugar(node.sugar),
                 rnaBase: node.rnaBase,
                 baseMonomer: node.firstMonomerInNode,
               },
@@ -1167,20 +1173,23 @@ export class DrawingEntitiesManager {
               rearrangedMonomersSet,
               maxVerticalDistance,
             );
+            lastPosition = rearrangeResult.lastPosition;
+            maxVerticalDistance = rearrangeResult.maxVerticalDistance;
+            command.merge(rearrangeResult.command);
           } else {
             node.monomers.forEach((monomer) => {
-              rearrangeResult = this.reArrangeChain(
+              const rearrangeResult = this.reArrangeChain(
                 monomer,
                 lastPosition,
                 canvasWidth,
                 rearrangedMonomersSet,
                 maxVerticalDistance,
               );
+              lastPosition = rearrangeResult.lastPosition;
+              maxVerticalDistance = rearrangeResult.maxVerticalDistance;
+              command.merge(rearrangeResult.command);
             });
           }
-          lastPosition = rearrangeResult.lastPosition;
-          maxVerticalDistance = rearrangeResult.maxVerticalDistance;
-          command.merge(rearrangeResult.command);
         });
         lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
         maxVerticalDistance = 0;

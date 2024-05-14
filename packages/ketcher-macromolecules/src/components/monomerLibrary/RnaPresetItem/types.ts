@@ -14,16 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import React from 'react';
 import { IRnaPreset } from '../RnaBuilder/types';
-import React, { MouseEvent } from 'react';
-
-type ReactMouseEventForDiv = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 export interface IRNAPresetItemProps {
-  preset: IRnaPreset;
-  isSelected?: boolean;
-  onClick?: VoidFunction;
-  onContextMenu?: (event: MouseEvent) => void;
-  readonly onMouseLeave: (event: ReactMouseEventForDiv) => void;
-  readonly onMouseMove: (event: ReactMouseEventForDiv) => void;
+  readonly isSelected: boolean;
+  readonly onClick: VoidFunction;
+  readonly onContextMenu: React.MouseEventHandler;
+  readonly onMouseLeave: React.MouseEventHandler;
+  readonly onMouseMove: React.MouseEventHandler;
+  readonly preset: IRnaPreset;
 }

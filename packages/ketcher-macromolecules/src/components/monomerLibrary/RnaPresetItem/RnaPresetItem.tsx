@@ -16,7 +16,7 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
@@ -39,7 +39,7 @@ const RnaPresetItem = ({
   const onMouseOut = (): void => {
     setShowDots(false);
   };
-  const addFavorite = (event: MouseEvent): void => {
+  const addFavorite = (event: React.MouseEvent): void => {
     event.stopPropagation();
     setFavorite(!favorite);
     dispatch(togglePresetFavorites(preset));

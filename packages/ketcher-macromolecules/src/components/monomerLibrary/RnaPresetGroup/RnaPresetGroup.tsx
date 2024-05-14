@@ -18,7 +18,7 @@ import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
-import React, { MouseEvent, ReactElement, useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -104,7 +104,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const preview = useAppSelector(selectShowPreview);
 
   const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
+    (payload: unknown) => dispatch(showPreview(payload)),
     [dispatch],
   );
 
@@ -120,7 +120,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   const handleItemMouseMove = (
     preset: IRnaPreset,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    e: React.MouseEvent,
   ): void => {
     handleItemMouseLeave();
     if (preview.nucleotide || !e.currentTarget) {
@@ -140,18 +140,20 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   };
   // endregion # Preview
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    event.stopPropagation();
-    dispatch(setActivePresetForContextMenu(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        editPreset,
-      },
-      position: getMenuPosition(event.currentTarget as HTMLElement),
-    });
-  };
+  const handleContextMenu =
+    (preset: IRnaPreset) =>
+    (event: React.MouseEvent): void => {
+      event.stopPropagation();
+      dispatch(setActivePresetForContextMenu(preset));
+      show({
+        event,
+        props: {
+          duplicatePreset,
+          editPreset,
+        },
+        position: getMenuPosition(event.currentTarget as HTMLElement),
+      });
+    };
 
   return (
     <GroupContainer data-testid="rna-preset-group">

@@ -11,6 +11,7 @@ import {
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
 } from 'domain/helpers/monomers';
 
 export class ChainsCollection {
@@ -89,7 +90,7 @@ export class ChainsCollection {
     firstMonomersInCycledChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
-
+    console.log(chainsCollection);
     return chainsCollection;
   }
 
@@ -140,16 +141,15 @@ export class ChainsCollection {
         monomer instanceof RNABase &&
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
-      const isSugarConnectedToR2RnaBase =
-        monomer instanceof Sugar &&
+      const isMonomerConnectedToR2RnaBase =
         R1ConnectedMonomer instanceof RNABase &&
-        getRnaBaseFromSugar(monomer) &&
+        getSugarFromRnaBase(R1ConnectedMonomer) &&
         R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
           R1ConnectedMonomer,
         ) === monomer;
 
       return (
-        (isFirstMonomerWithR2R1connection || isSugarConnectedToR2RnaBase) &&
+        (isFirstMonomerWithR2R1connection || isMonomerConnectedToR2RnaBase) &&
         !isRnaBaseConnectedToSugar
       );
     });

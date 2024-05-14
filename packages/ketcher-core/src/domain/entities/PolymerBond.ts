@@ -6,6 +6,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { AttachmentPointName } from 'domain/types';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
+import { RNABase } from 'domain/entities/RNABase';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
@@ -101,7 +102,13 @@ export class PolymerBond extends DrawingEntity {
         PolymerBond.backBoneChainAttachmentPoints.includes(
           secondMonomerAttachmentPoint,
         )
-      ) || firstMonomerAttachmentPoint === secondMonomerAttachmentPoint
+      ) ||
+      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint ||
+      // all connections with RNABase are interpreted as side chain connections
+      // backbone (R1-R3) connections between RNABase and Sugar resolved separately where needed
+      // f.e. in snake layout or sequence view algorithms
+      this.firstMonomer instanceof RNABase ||
+      this.secondMonomer instanceof RNABase
     );
   }
 }

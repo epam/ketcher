@@ -32,10 +32,13 @@ export class ChainsCollection {
 
   public rearrange() {
     this.chains.sort((chain1, chain2) => {
+      // The factor is used to reduce the influence of the X coordinate on the sorting
+      // to make the sorting more oriented to Y coordinate
+      const X_COORDINATE_REDUCTION_FACTOR = 0.01;
       if (
-        chain2.firstNode?.monomer.position.x +
+        chain2.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain2.firstNode?.monomer.position.y >
-        chain1.firstNode?.monomer.position.x +
+        chain1.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain1.firstNode?.monomer.position.y
       ) {
         return -1;

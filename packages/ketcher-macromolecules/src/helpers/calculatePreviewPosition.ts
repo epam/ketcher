@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { preview } from '../constants';
-import { EditorClassName } from 'ketcher-react';
 import { MonomerItemType } from 'ketcher-core';
+import { EditorClassName } from 'ketcher-react';
+import { preview } from '../constants';
 
+// FIXME: Deprecated. Use `calculateMonomerPreviewTop()`.
 export const calculatePreviewPosition = (
   monomer: MonomerItemType | undefined,
   target?: DOMRect,
   isNucleosideOrNucleotide = false,
 ): string => {
   if (monomer && target) {
-    const editorRect = document
-      .querySelector(`.${EditorClassName}`)
-      ?.getBoundingClientRect();
+    const editorRect = getEditorDOMRect();
 
     if (!editorRect || !target) {
       return '';
@@ -35,14 +34,38 @@ export const calculatePreviewPosition = (
       ? preview.heightForNucleotide
       : preview.height;
 
-    const top =
-      target.top > preview.height + preview.gap + preview.topPadding
-        ? target.top - preview.gap - height
-        : target.bottom + preview.gap;
+    const top = calculateTop(target, height);
 
-    const newStyle = `${top}px`;
-
-    return newStyle;
+    return `${top}px`;
   }
   return '';
 };
+
+export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
+  preview.height,
+);
+export const calculateNucleosideOrNucleotidePreviewTop =
+  createCalculatePreviewTopFunction(preview.heightForNucleotide);
+
+function calculateTop(target: DOMRect, height: number): number {
+  return target.top > height + preview.gap + preview.topPadding
+    ? target.top - preview.gap - height
+    : target.bottom + preview.gap;
+}
+
+function createCalculatePreviewTopFunction(
+  height: number,
+): (target?: DOMRect) => string {
+  return function calculatePreviewTop(target?: DOMRect): string {
+    if (!target || !getEditorDOMRect()) {
+      return '';
+    }
+
+    const top = calculateTop(target, height);
+    return `${top}px`;
+  };
+}
+
+function getEditorDOMRect(): DOMRect | undefined {
+  return document.querySelector(`.${EditorClassName}`)?.getBoundingClientRect();
+}

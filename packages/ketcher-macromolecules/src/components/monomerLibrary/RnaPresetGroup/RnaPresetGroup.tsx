@@ -132,9 +132,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       preset.phosphate,
     ];
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const previewStyle =
-      calculateNucleosideOrNucleotidePreviewTop(cardCoordinates);
-    const style = { top: previewStyle, right: '10px' };
+    const style = {
+      right: '10px',
+      top: calculateNucleosideOrNucleotidePreviewTop(cardCoordinates),
+    };
     debouncedShowPreview({ nucleotide: nucleotideParts, style });
   };
   // endregion # Preview

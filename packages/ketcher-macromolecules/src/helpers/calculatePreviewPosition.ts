@@ -44,7 +44,7 @@ export const calculatePreviewPosition = (
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,
 );
-export const calculateNucleosideOrNucleotidePreviewTop =
+export const calculateNucleoElementPreviewTop =
   createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
 function calculateTop(target: DOMRect, height: number): number {

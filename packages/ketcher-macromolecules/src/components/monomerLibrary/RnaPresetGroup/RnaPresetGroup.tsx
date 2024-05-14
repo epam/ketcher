@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { calculateNucleosideOrNucleotidePreviewTop } from 'helpers';
+import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
@@ -134,7 +134,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const style = {
       right: '10px',
-      top: calculateNucleosideOrNucleotidePreviewTop(cardCoordinates),
+      top: calculateNucleoElementPreviewTop(cardCoordinates),
     };
     debouncedShowPreview({ nucleotide: nucleotideParts, style });
   };

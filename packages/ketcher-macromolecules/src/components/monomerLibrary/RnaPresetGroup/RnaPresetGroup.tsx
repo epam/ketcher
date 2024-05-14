@@ -14,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { calculatePreviewPosition } from 'helpers';
+import { calculateNucleosideOrNucleotidePreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
-import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
 import { MouseEvent, useCallback, useMemo } from 'react';
 import {
@@ -119,17 +118,19 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   };
 
   const handleItemMouseMove = (
-    monomer: MonomerItemType, // FIXME: Need preset.
+    preset: IRnaPreset,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ): void => {
     handleItemMouseLeave();
-    if (preview.monomer || !e.currentTarget) {
+    if (preview.nucleotide || !e.currentTarget) {
       return;
     }
+    const nucleotideParts = [preset.sugar, preset.base, preset.phosphate];
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    const style = { top: previewStyle, right: '-88px' };
-    debouncedShowPreview({ monomer, style });
+    const previewStyle =
+      calculateNucleosideOrNucleotidePreviewTop(cardCoordinates);
+    const style = { top: previewStyle, right: '10px' };
+    debouncedShowPreview({ nucleotide: nucleotideParts, style });
   };
   // endregion # Preview
 

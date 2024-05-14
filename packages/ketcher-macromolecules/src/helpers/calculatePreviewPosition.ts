@@ -67,5 +67,7 @@ function createCalculatePreviewTopFunction(
 }
 
 function getEditorDOMRect(): DOMRect | undefined {
-  return document.querySelector(`.${EditorClassName}`)?.getBoundingClientRect();
+  return document
+    .getElementsByClassName(EditorClassName)[0]
+    ?.getBoundingClientRect();
 }

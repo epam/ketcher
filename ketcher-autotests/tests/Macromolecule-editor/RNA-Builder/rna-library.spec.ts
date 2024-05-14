@@ -282,11 +282,11 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
@@ -295,18 +295,18 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
     await page.reload();
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('RNA-TAB').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
@@ -327,23 +327,22 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add RNA to canvas when Sugar does not contain R3 attachment point(for example 3SS6(nC65C)oxy/ am6(daA)Rsp )', async ({
+  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3SS6)', async ({
     page,
   }) => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas https://github.com/epam/ketcher/issues/3615
-    Description: RNA added to canvas when Sugar does not contain R3 attachment point.
-    The test is currently not functioning correctly as the bug has not been fixed
+    Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3SS6).
+    Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.ThreeSS6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('3SS6(baA)bP_baA_3SS6_bP').click();
-    await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
-    await takeEditorScreenshot(page);
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await page
+      .getByTestId("3SS6___3'-Thiol-Modifier 6 S-S from Glen Research")
+      .click();
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Add to presets (different combinations: Sugar+Base', async ({
@@ -354,10 +353,10 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)_A_12ddR_.').click();
+    await page.getByTestId('25R(A)_A_25R_.').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
@@ -370,10 +369,10 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR()bP_._12ddR_bP').click();
+    await page.getByTestId('25R()bP_._25R_bP').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
@@ -399,18 +398,18 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section and can be edited.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('edit').locator('div').click();
     await page.getByTestId('rna-builder-slot--base').click();
     await page.getByTestId('baA___N-benzyl-adenine').click();
     await page.getByTestId('save-btn').click();
-    await page.getByTestId('12ddR(baA)Test-6-Ph_baA_12ddR_Test-6-Ph').click();
+    await page.getByTestId('25R(baA)Test-6-Ph_baA_25R_Test-6-Ph').click();
     // To avoid unstable test execution
     // Allows see a right preset in a viewport
     await expandCollapseRnaBuilder(page);
@@ -425,11 +424,11 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
@@ -437,14 +436,14 @@ test.describe('RNA Library', () => {
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('12ddR(A)Test-6-Ph_Copy_A_12ddR_Test-6-Ph').click({
+    await page.getByTestId('25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('edit').click();
     await page.getByTestId('rna-builder-slot--phosphate').click();
     await page.getByTestId('P___Phosphate').click();
     await page.getByTestId('save-btn').click();
-    await page.getByTestId('12ddR(A)P_A_12ddR_P').click();
+    await page.getByTestId('25R(A)P_A_25R_P').click();
     await takePresetsScreenshot(page);
   });
 

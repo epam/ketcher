@@ -16,6 +16,7 @@
 
 import { calculateNucleosideOrNucleotidePreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
+import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
 import { MouseEvent, useCallback, useMemo } from 'react';
 import {
@@ -125,7 +126,11 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     if (preview.nucleotide || !e.currentTarget) {
       return;
     }
-    const nucleotideParts = [preset.sugar, preset.base, preset.phosphate];
+    const nucleotideParts: ReadonlyArray<MonomerItemType | undefined> = [
+      preset.sugar,
+      preset.base,
+      preset.phosphate,
+    ];
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle =
       calculateNucleosideOrNucleotidePreviewTop(cardCoordinates);

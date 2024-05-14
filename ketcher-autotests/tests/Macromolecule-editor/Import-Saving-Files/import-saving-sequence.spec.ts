@@ -48,6 +48,24 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3894
+    Description: File pasted to canvas.
+    */
+    const fileContent = await readFileContents(
+      'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
+    );
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByTestId('paste-from-clipboard-button').click();
+    await page.getByTestId('open-structure-textarea').fill(fileContent);
+    await chooseFileFormat(page, 'Sequence');
+    await page.getByTestId('add-to-canvas-button').click();
+    await takeEditorScreenshot(page);
+  });
+
   test('Check import of .ket file and save in .seq format', async ({
     page,
   }) => {

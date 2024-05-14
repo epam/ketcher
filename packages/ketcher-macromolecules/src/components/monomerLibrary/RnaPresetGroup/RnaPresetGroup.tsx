@@ -18,7 +18,7 @@ import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
-import { MouseEvent, useCallback, useMemo } from 'react';
+import React, { MouseEvent, ReactElement, useCallback, useMemo } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -156,7 +156,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   return (
     <GroupContainer data-testid="rna-preset-group">
       <ItemsContainer>
-        {presets.map((preset, index) => {
+        {presets.map((preset: IRnaPreset, index: number): ReactElement => {
           return (
             <RnaPresetItem
               isSelected={activePreset?.name === preset.name}

@@ -15,13 +15,15 @@
  ***************************************************************************/
 
 import { IRnaPreset } from '../RnaBuilder/types';
-import { MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
+
+type ReactMouseEventForDiv = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 export interface IRNAPresetItemProps {
   preset: IRnaPreset;
   isSelected?: boolean;
   onClick?: VoidFunction;
   onContextMenu?: (event: MouseEvent) => void;
-  readonly onMouseLeave: (event: MouseEvent) => void;
-  readonly onMouseMove: (event: MouseEvent) => void;
+  readonly onMouseLeave: (event: ReactMouseEventForDiv) => void;
+  readonly onMouseMove: (event: ReactMouseEventForDiv) => void;
 }

@@ -322,7 +322,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return hoverAreaElement
       .append('use')
       .attr('href', this.monomerHoveredElementId)
-      .attr('pointer-events', 'none');
+      .attr('pointer-events', 'none')
+      .attr('class', 'dynamic-element');
   }
 
   public removeHover() {
@@ -360,7 +361,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         ?.append('use')
         .attr('href', this.monomerSelectedElementId)
         .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none');
+        .attr('pointer-events', 'none')
+        .attr('class', 'dynamic-element');
 
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
@@ -368,7 +370,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F');
+        .attr('fill', '#57FF8F')
+        .attr('class', 'dynamic-element');
     }
   }
 

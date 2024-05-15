@@ -210,8 +210,6 @@ test.describe('Sequence edit mode', () => {
     /*
     Test case: #4340
     Description: After adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode.
-    The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4340
-    When fix is made, you need to update screenshot.
     */
     await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
     await takeEditorScreenshot(page);

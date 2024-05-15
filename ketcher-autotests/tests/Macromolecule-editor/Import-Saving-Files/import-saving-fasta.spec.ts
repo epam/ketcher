@@ -182,4 +182,51 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await takeEditorScreenshot(page);
   });
+
+  const testData = [
+    {
+      filename: 'FASTA/fasta-dna-24.fasta',
+      monomers: 'DNA',
+    },
+    {
+      filename: 'FASTA/fasta-rna-musculus-rearranged.fasta',
+      monomers: 'RNA',
+    },
+    {
+      filename: 'FASTA/fasta-peptide.fasta',
+      monomers: 'Peptide',
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
+      page,
+    }) => {
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile(data.filename, page);
+      await selectOptionInDropdown(data.filename, page);
+
+      if (data.monomers === 'Peptide') {
+        await page.getByTestId('dropdown-select-type').click();
+        await page.getByText(data.monomers, { exact: true }).click();
+      }
+
+      await pressButton(page, 'Add to Canvas');
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-multiline-sequence.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
 });

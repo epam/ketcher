@@ -90,7 +90,7 @@ export class ChainsCollection {
     firstMonomersInCycledChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
-    console.log(chainsCollection);
+
     return chainsCollection;
   }
 

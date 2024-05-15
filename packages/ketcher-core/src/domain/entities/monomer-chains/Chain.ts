@@ -144,7 +144,15 @@ export class Chain {
     );
   }
 
-  public forEachNode(callback: ({ node, subChain }) => void) {
+  public forEachNode(
+    callback: ({
+      node,
+      subChain,
+    }: {
+      node: SubChainNode;
+      subChain: BaseSubChain;
+    }) => void,
+  ) {
     this.subChains.forEach((subChain) => {
       subChain.nodes.forEach((node) => {
         callback({ node, subChain });

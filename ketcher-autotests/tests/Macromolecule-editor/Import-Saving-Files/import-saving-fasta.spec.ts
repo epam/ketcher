@@ -15,8 +15,10 @@ import {
   readFileContents,
   getFasta,
   moveMouseAway,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
 
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
@@ -227,6 +229,99 @@ test.describe('Import-Saving .fasta Files', () => {
     await page.getByTestId('dropdown-select-type').click();
     await page.getByText('Peptide', { exact: true }).click();
     await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-without->-symbol.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-*-separator.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify ignoring "-" symbol during import', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-dash-symbol.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-selenocystein.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await selectSequenceLayoutModeTool(page);
+    await getSequenceSymbolLocator(page, 'C').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify correct export of DNA/RNA sequences with proper header', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify correct export of peptide sequences with proper header', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify ignoring CHEMs and RNA-monomers not part of nucleotides or nucleosides during export', async ({
+    page,
+  }) => {
+    /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4626
+    After fix screenshot should be updated.
+    */
+    await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
   });
 });

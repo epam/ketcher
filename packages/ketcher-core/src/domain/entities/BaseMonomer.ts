@@ -533,4 +533,14 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get isModification() {
     return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
   }
+
+  public get sideConnections() {
+    const sideConnections: PolymerBond[] = [];
+    this.forEachBond((bond) => {
+      if (bond.isSideChainConnection) {
+        sideConnections.push(bond);
+      }
+    });
+    return sideConnections;
+  }
 }

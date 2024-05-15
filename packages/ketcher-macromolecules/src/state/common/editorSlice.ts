@@ -20,11 +20,23 @@ import { CoreEditor, MonomerItemType } from 'ketcher-core';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 
+interface MonomerPreviewState {
+  readonly monomer: MonomerItemType | undefined;
+  readonly style: string;
+}
+
+interface NucleoElementPreviewState {
+  readonly nucleotide: ReadonlyArray<MonomerItemType | undefined>;
+  readonly style: string;
+}
+
+type EditorStatePreview = MonomerPreviewState | NucleoElementPreviewState;
+
 interface EditorState {
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
-  preview: { monomer: undefined | MonomerItemType; style: string };
+  preview: EditorStatePreview;
 }
 
 const initialState: EditorState = {
@@ -69,14 +81,7 @@ export const editorSlice: Slice = createSlice({
     },
     showPreview: (
       state,
-      action: PayloadAction<
-        | {
-            monomer: undefined | MonomerItemType;
-            style: string;
-            nucleotide?: MonomerItemType[];
-          }
-        | undefined
-      >,
+      action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
       state.preview = action.payload || { monomer: undefined, style: '' };
     },

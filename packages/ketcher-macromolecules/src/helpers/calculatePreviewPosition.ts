@@ -13,33 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItemType } from 'ketcher-core';
 import { EditorClassName } from 'ketcher-react';
 import { preview } from '../constants';
-
-// FIXME: Deprecated. Use `calculateMonomerPreviewTop()`.
-export const calculatePreviewPosition = (
-  monomer: MonomerItemType | undefined,
-  target?: DOMRect,
-  isNucleosideOrNucleotide = false,
-): string => {
-  if (monomer && target) {
-    const editorRect = getEditorDOMRect();
-
-    if (!editorRect || !target) {
-      return '';
-    }
-
-    const height = isNucleosideOrNucleotide
-      ? preview.heightForNucleotide
-      : preview.height;
-
-    const top = calculateTop(target, height);
-
-    return `${top}px`;
-  }
-  return '';
-};
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,

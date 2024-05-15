@@ -49,6 +49,10 @@ import {
   showPreview,
 } from 'state/common';
 import {
+  calculateMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'helpers';
+import {
   useAppDispatch,
   useAppSelector,
   useSequenceEditInRNABuilderMode,
@@ -80,7 +84,6 @@ import {
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
-import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
@@ -237,14 +240,14 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           : null;
 
       const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(
-        monomer,
-        cardCoordinates,
-        isNucleotideOrNucleoside,
-      );
+      const top = monomer
+        ? isNucleotideOrNucleoside
+          ? calculateNucleoElementPreviewTop(cardCoordinates)
+          : calculateMonomerPreviewTop(cardCoordinates)
+        : '';
       const previewStyle = {
-        top,
         left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+        top,
       };
       if (isNucleotideOrNucleoside) {
         debouncedShowPreview({

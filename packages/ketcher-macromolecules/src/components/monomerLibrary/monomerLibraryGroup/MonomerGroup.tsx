@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { EmptyFunction } from 'helpers';
+import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
-import { calculatePreviewPosition } from '../../../helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   showPreview,
@@ -98,8 +97,8 @@ const MonomerGroup = ({
       return;
     }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    const style = { top: previewStyle, right: '-88px' };
+    const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+    const style = { right: '-88px', top };
     debouncedShowPreview({ monomer, style });
   };
 

@@ -529,7 +529,8 @@ export class PolymerBondRenderer extends BaseRenderer {
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
           .attr('y2', this.scaledPosition.endPosition.y)
-          .attr('stroke-width', '5');
+          .attr('stroke-width', '5')
+          .attr('class', 'dynamic-element');
       }
     } else {
       this.selectionElement?.remove();

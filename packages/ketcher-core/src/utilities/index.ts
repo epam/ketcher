@@ -24,3 +24,4 @@ export * from './SettingsManager';
 export * from './keynorm';
 export * from './shortcutsUtil';
 export * from './clipboardUtils';
+export * from './getSvgFromDrawnStructures';

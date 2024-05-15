@@ -98,6 +98,8 @@ export class Nucleoside {
   }
 
   public get modified() {
+    // TODO move isNotLastNode to separate getter because it is not modification
+    //  It was added here because it needs to show similar icon as for phosphates modifications
     const isNotLastNode = !!getNextMonomerInChain(this.sugar);
 
     return (

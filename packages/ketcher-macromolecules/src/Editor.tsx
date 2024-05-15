@@ -220,43 +220,49 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
   const handleOpenPreview = useCallback(
     (e) => {
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+
       const sequenceNode = e.target.__data__?.node;
-      const isNucleotideOrNucleoside =
-        sequenceNode instanceof Nucleotide ||
-        sequenceNode instanceof Nucleoside;
       const monomer =
         e.target.__data__?.monomer?.monomerItem ||
         sequenceNode.monomer.monomerItem;
+      const isNucleotideOrNucleoside =
+        sequenceNode instanceof Nucleotide ||
+        sequenceNode instanceof Nucleoside;
 
-      const nucleotideParts =
-        sequenceNode instanceof Nucleotide
-          ? [
-              sequenceNode.sugar.monomerItem,
-              sequenceNode.rnaBase.monomerItem,
-              sequenceNode.phosphate?.monomerItem,
-            ]
-          : sequenceNode instanceof Nucleoside
-          ? [sequenceNode.sugar.monomerItem, sequenceNode.rnaBase.monomerItem]
-          : null;
-
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const top = monomer
-        ? isNucleotideOrNucleoside
-          ? calculateNucleoElementPreviewTop(cardCoordinates)
-          : calculateMonomerPreviewTop(cardCoordinates)
-        : '';
-      const previewStyle = {
-        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-        top,
-      };
       if (isNucleotideOrNucleoside) {
+        const nucleotideParts =
+          sequenceNode instanceof Nucleotide
+            ? [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+                sequenceNode.phosphate?.monomerItem,
+              ]
+            : [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+              ];
+
         debouncedShowPreview({
           nucleotide: nucleotideParts,
-          style: previewStyle,
+          style: {
+            left,
+            top: monomer
+              ? calculateNucleoElementPreviewTop(cardCoordinates)
+              : '',
+          },
         });
-      } else {
-        debouncedShowPreview({ monomer, style: previewStyle });
+        return;
       }
+
+      debouncedShowPreview({
+        monomer,
+        style: {
+          left,
+          top: monomer ? calculateMonomerPreviewTop(cardCoordinates) : '',
+        },
+      });
     },
     [debouncedShowPreview],
   );

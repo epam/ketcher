@@ -24,6 +24,7 @@ import {
   Nucleotide,
   Nucleoside,
   NodeSelection,
+  SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -93,6 +94,7 @@ import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemCont
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -425,6 +427,12 @@ function MenuComponent() {
           if (name === 'clear') {
             dispatch(selectTool('select-rectangle'));
             editor.events.selectTool.dispatch('select-rectangle');
+            if (
+              editor.mode instanceof SequenceMode &&
+              editor.mode.isEditInRNABuilderMode
+            ) {
+              resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+            }
           } else {
             dispatch(selectTool(name));
           }
@@ -461,7 +469,12 @@ function MenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." testId="open-button" />
+        <Menu.Item
+          itemId="open"
+          title="Open..."
+          disabled={isDisabled}
+          testId="open-button"
+        />
         <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
       <Menu.Group>

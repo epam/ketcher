@@ -260,6 +260,21 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Add to Canvas');
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
   test('Import FASTA: Verify ignoring "-" symbol during import', async ({
     page,
   }) => {

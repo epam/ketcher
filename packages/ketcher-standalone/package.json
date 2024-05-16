@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "indigo-ketcher": "1.21.0-dev.4",
+    "indigo-ketcher": "1.21.0-dev.5",
     "ketcher-core": "*"
   },
   "devDependencies": {

@@ -83,6 +83,9 @@ export class MacromoleculesConverter {
     fragmentId?: number,
   ) {
     const attachmentPointName = monomer.getAttachmentPointByBond(polymerBond);
+    if (!attachmentPointName) {
+      return;
+    }
     assert(attachmentPointName);
     const attachmentPointNumber =
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
@@ -349,6 +352,9 @@ export class MacromoleculesConverter {
           endAtomSgroup instanceof MonomerMicromolecule
             ? sgroupToMonomer.get(endAtomSgroup)
             : fragmentIdToMonomer.get(endAtom.fragment);
+        if (!firstMonomer || !secondMonomer) {
+          return;
+        }
         assert(firstMonomer);
         assert(secondMonomer);
 

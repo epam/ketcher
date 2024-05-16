@@ -556,11 +556,14 @@ function findCloseMerge(
   const struct = restruct.molecule;
 
   selected.atoms.forEach((aid) => {
-    pos.atoms.set(aid, struct.atoms.get(aid).pp);
+    pos.atoms.set(aid, struct.atoms.get(aid)?.pp);
   });
 
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
+    if (!bond) {
+      return;
+    }
     pos.bonds.set(
       bid,
       Vec2.lc2(

@@ -40,6 +40,8 @@ import {
   MonomerLibraryTitle,
 } from './styles';
 
+const COPY = '_Copy';
+
 const MonomerLibrary = React.memo(() => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
@@ -59,10 +61,16 @@ const MonomerLibrary = React.memo(() => {
   };
 
   const duplicatePreset = (preset?: IRnaPreset) => {
-    const name = `${preset?.name}_Copy`;
-    const presetWithSameName = presetsRef.current.find(
-      (preset) => preset.name === name,
-    );
+    let name = `${preset?.name}${COPY}`;
+    let presetWithSameName: IRnaPreset | undefined;
+
+    do {
+      presetWithSameName = presetsRef.current.find(
+        (preset) => preset.name === name,
+      );
+      if (presetWithSameName) name += COPY;
+    } while (presetWithSameName);
+
     if (presetWithSameName) {
       dispatch(setUniqueNameError(name));
       return;

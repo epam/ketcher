@@ -101,4 +101,8 @@ export const selectEditorActiveTool = (state: RootState) =>
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;
 
+export const selectIsSequenceEditInRNABuilderMode = (
+  state: RootState,
+): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
+
 export const editorReducer = editorSlice.reducer;

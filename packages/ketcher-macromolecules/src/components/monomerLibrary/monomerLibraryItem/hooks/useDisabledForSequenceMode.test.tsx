@@ -1,22 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { MonomerGroups, MonomerItemType, Struct } from 'ketcher-core';
 import { useSelector } from 'react-redux';
-import { useSequenceEditInRNABuilderMode } from 'hooks';
+import { useAppSelector } from 'hooks';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-jest.mock('../../../../hooks/stateHooks', () => ({
-  ...jest.requireActual('../../../../hooks/stateHooks'),
-  useSequenceEditInRNABuilderMode: jest.fn(),
+jest.mock('hooks', () => ({
+  useAppSelector: jest.fn(),
 }));
 
-const mockUseSequenceEditInRNABuilderMode =
-  useSequenceEditInRNABuilderMode as jest.Mock;
-
 const mockUseSelector = useSelector as jest.Mock;
+const mockUseAppSelector = useAppSelector as jest.Mock;
 
 const monomer: MonomerItemType = {
   label: 'for test',
@@ -31,7 +28,7 @@ const monomer: MonomerItemType = {
 
 describe('useDisabledForSequenceMode hook', () => {
   it('should return false if isSequenceEditInRNABuilderMode is false', () => {
-    mockUseSequenceEditInRNABuilderMode.mockReturnValue(false);
+    mockUseAppSelector.mockReturnValue(false);
     const { result } = renderHook(() =>
       useDisabledForSequenceMode(monomer, MonomerGroups.SUGARS),
     );
@@ -40,7 +37,7 @@ describe('useDisabledForSequenceMode hook', () => {
 
   describe('for Bases', () => {
     it('should return false if there is R1', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       monomer.props.MonomerCaps = { R1: 'H' };
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
@@ -49,7 +46,7 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return true if there is no R1', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       monomer.props.MonomerCaps = {};
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.BASES),
@@ -60,7 +57,7 @@ describe('useDisabledForSequenceMode hook', () => {
 
   describe('for Phosphates', () => {
     it('should return false if there is R1 and R2', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       monomer.props.MonomerCaps = { R1: 'H', R2: 'H' };
       const { result } = renderHook(() =>
         useDisabledForSequenceMode(monomer, MonomerGroups.PHOSPHATES),
@@ -69,8 +66,7 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return true if there is no R1 or R2', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
-
+      mockUseAppSelector.mockReturnValue(true);
       // Without R2
       monomer.props.MonomerCaps = { R1: 'H' };
       const { result: result1 } = renderHook(() =>
@@ -89,7 +85,7 @@ describe('useDisabledForSequenceMode hook', () => {
 
   describe('for Sugars', () => {
     it('should return false if there is R2 and R3 and isSequenceFirstsOnlyNucleoelementsSelected is true', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
       monomer.props.MonomerCaps = { R2: 'H', R3: 'H' };
       const { result } = renderHook(() =>
@@ -99,7 +95,7 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return true if there is no R2 or R3 and isSequenceFirstsOnlyNucleoelementsSelected is true', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
       monomer.props.MonomerCaps = { R2: 'H' };
 
@@ -118,7 +114,7 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return false if there is R1, R2, R3 and isSequenceFirstsOnlyNucleoelementsSelected is false', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => false);
       monomer.props.MonomerCaps = { R1: 'H', R2: 'H', R3: 'H' };
       const { result } = renderHook(() =>
@@ -128,7 +124,7 @@ describe('useDisabledForSequenceMode hook', () => {
     });
 
     it('should return true if there is no R1 or R2 or R3 and isSequenceFirstsOnlyNucleoelementsSelected is false', () => {
-      mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
+      mockUseAppSelector.mockReturnValue(true);
       mockUseSelector.mockImplementation(() => true);
 
       // Without R3

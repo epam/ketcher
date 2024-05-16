@@ -4,7 +4,6 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { editorEvents } from 'application/editor/editorEvents';
 import assert from 'assert';
@@ -74,17 +73,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    return editor.mode instanceof SequenceMode && editor.mode.isEditMode;
+    return CoreEditor.provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    return (
-      editor.mode instanceof SequenceMode && editor.mode.isEditInRNABuilderMode
-    );
+    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private appendRootElement() {

@@ -4,12 +4,11 @@ import { CONTEXT_MENU_ID } from '../types';
 import { StyledMenu } from '../styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  useAppDispatch,
-  useAppSelector,
-  useSequenceEditInRNABuilderMode,
-} from 'hooks';
-import { selectEditor } from 'state/common';
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { BaseSequenceItemRenderer, NodesSelection } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -34,7 +33,9 @@ export const SequenceItemContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
 
   const menuItems = [
     {

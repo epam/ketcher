@@ -16,16 +16,12 @@
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import {
-  selectSequenceSelection,
-  setSequenceSelection,
-  setIsEditMode,
-  setActivePresetMonomerGroup,
-} from 'state/rna-builder';
+import { selectSequenceSelection } from 'state/rna-builder';
 import { ActionButton } from 'components/shared/actionButton';
 import styled from '@emotion/styled';
 import { selectEditor } from 'state/common';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 export interface Props {
   onClose: () => void;
@@ -46,10 +42,7 @@ const UpdateSequenceInRNABuilder = ({ isModalOpen, onClose }: Props) => {
   }, [onClose]);
 
   const reset = () => {
-    dispatch(setSequenceSelection([]));
-    dispatch(setActivePresetMonomerGroup(null));
-    dispatch(setIsEditMode(false));
-    editor.events.turnOffSequenceEditInRNABuilderMode.dispatch();
+    resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
   };
 
   const cancelHandler = () => {

@@ -22,16 +22,17 @@ import { DeepPartial } from '../../types';
 
 interface MonomerPreviewState {
   readonly monomer: MonomerItemType | undefined;
-  readonly style: string;
+  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
 interface NucleoElementPreviewState {
   readonly nucleotide: ReadonlyArray<MonomerItemType | undefined>;
-  readonly style: string;
+  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
 type EditorStatePreview = MonomerPreviewState | NucleoElementPreviewState;
 
+// TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
   isReady: boolean | null;
   activeTool: string;
@@ -102,6 +103,14 @@ export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
 export const selectShowPreview = (state: RootState) => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+// TODO: Specify the types.
+// export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
+//   state.editor.isReady;
+// export const selectShowPreview = (state: RootState): EditorState['preview'] =>
+//   state.editor.preview;
+// export const selectEditorActiveTool = (
+//   state: RootState,
+// ): EditorState['activeTool'] => state.editor.activeTool;
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;

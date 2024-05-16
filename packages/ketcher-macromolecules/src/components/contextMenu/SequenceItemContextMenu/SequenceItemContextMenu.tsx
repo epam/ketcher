@@ -1,5 +1,5 @@
 import { Item, ItemParams } from 'react-contexify';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { CONTEXT_MENU_ID } from '../types';
 import { StyledMenu } from '../styles';
 import { createPortal } from 'react-dom';
@@ -146,6 +146,23 @@ export const SequenceItemContextMenu = ({
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      const unselectButtons =
+        event.key === 'Escape' || (event.shiftKey && event.key === 'Tab');
+      if (unselectButtons && isSequenceEditInRNABuilderMode) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress, true);
+    };
+  }, [isSequenceEditInRNABuilderMode]);
 
   return ketcherEditorRootElement && !isSequenceEditInRNABuilderMode
     ? createPortal(

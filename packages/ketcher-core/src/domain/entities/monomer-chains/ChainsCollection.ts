@@ -11,17 +11,35 @@ import {
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
 } from 'domain/helpers/monomers';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
 
+  private get monomerToChain() {
+    const monomerToChain = new Map<BaseMonomer, Chain>();
+
+    this.chains.forEach((chain) => {
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          monomerToChain.set(monomer, chain);
+        });
+      });
+    });
+
+    return monomerToChain;
+  }
+
   public rearrange() {
     this.chains.sort((chain1, chain2) => {
+      // The factor is used to reduce the influence of the X coordinate on the sorting
+      // to make the sorting more oriented to Y coordinate
+      const X_COORDINATE_REDUCTION_FACTOR = 0.01;
       if (
-        chain2.firstNode?.monomer.position.x +
+        chain2.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain2.firstNode?.monomer.position.y >
-        chain1.firstNode?.monomer.position.x +
+        chain1.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain1.firstNode?.monomer.position.y
       ) {
         return -1;
@@ -29,6 +47,29 @@ export class ChainsCollection {
         return 1;
       }
     });
+
+    const reorderedChains = new Set<Chain>();
+    const monomerToChain = this.monomerToChain;
+    this.chains.forEach((chain) => {
+      reorderedChains.add(chain);
+
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          const sideConnections = monomer.sideConnections;
+          if (sideConnections.length) {
+            sideConnections.forEach((sideConnection) => {
+              const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
+              const anotherChain =
+                anotherMonomer && monomerToChain.get(anotherMonomer);
+              if (anotherChain && !reorderedChains.has(anotherChain)) {
+                reorderedChains.add(anotherChain);
+              }
+            });
+          }
+        });
+      });
+    });
+    this.chains = [...reorderedChains.values()];
   }
 
   public add(chain: Chain) {
@@ -100,16 +141,15 @@ export class ChainsCollection {
         monomer instanceof RNABase &&
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
-      const isSugarConnectedToR2RnaBase =
-        monomer instanceof Sugar &&
+      const isMonomerConnectedToR2RnaBase =
         R1ConnectedMonomer instanceof RNABase &&
-        getRnaBaseFromSugar(monomer) &&
+        getSugarFromRnaBase(R1ConnectedMonomer) &&
         R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
           R1ConnectedMonomer,
         ) === monomer;
 
       return (
-        (isFirstMonomerWithR2R1connection || isSugarConnectedToR2RnaBase) &&
+        (isFirstMonomerWithR2R1connection || isMonomerConnectedToR2RnaBase) &&
         !isRnaBaseConnectedToSugar
       );
     });

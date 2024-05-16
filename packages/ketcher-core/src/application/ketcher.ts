@@ -18,7 +18,12 @@ import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { CoreEditor, Editor, defaultBondThickness } from './editor';
+import {
+  CoreEditor,
+  Editor,
+  defaultBondThickness,
+  SequenceMode,
+} from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { SGroup, Struct } from 'domain/entities';
@@ -345,7 +350,14 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
-  async setMolecule(structStr: string): Promise<void> {
+  async setMolecule(structStr: string): Promise<void | undefined> {
+    const editor = CoreEditor.provideEditorInstance();
+    if (
+      editor?.mode instanceof SequenceMode &&
+      editor?.mode.isEditInRNABuilderMode
+    )
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -367,7 +379,14 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async addFragment(structStr: string): Promise<void> {
+  async addFragment(structStr: string): Promise<void | undefined> {
+    const editor = CoreEditor.provideEditorInstance();
+    if (
+      editor?.mode instanceof SequenceMode &&
+      editor?.mode.isEditInRNABuilderMode
+    )
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 

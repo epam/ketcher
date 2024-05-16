@@ -98,6 +98,7 @@ export type DropDownProps = {
   customStylesForExpanded?: CSSProperties;
   label?: string;
   testId?: string;
+  disabled?: boolean;
 };
 
 export const DropDown = ({
@@ -108,6 +109,7 @@ export const DropDown = ({
   label,
   testId,
   customStylesForExpanded = {},
+  disabled = false,
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -146,6 +148,7 @@ export const DropDown = ({
         onClose={handleCollapse}
         renderValue={renderLabelById}
         IconComponent={ChevronIcon}
+        disabled={disabled}
         fullWidth
         data-testid={testId || 'dropdown-select'}
         MenuProps={{

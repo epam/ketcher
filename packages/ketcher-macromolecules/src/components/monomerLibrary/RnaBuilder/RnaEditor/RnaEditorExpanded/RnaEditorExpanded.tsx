@@ -44,7 +44,6 @@ import {
   setActivePreset,
   setActiveRnaBuilderItem,
   setIsEditMode,
-  setActivePresetMonomerGroup,
   selectPresetFullName,
   setUniqueNameError,
   setSequenceSelection,
@@ -62,7 +61,9 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
-} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/sequenceEdit';
+  resetRnaBuilder,
+  resetRnaBuilderAfterSequenceUpdate,
+} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -223,19 +224,12 @@ export const RnaEditorExpanded = ({
     }
   };
 
-  const resetAfterSequenceUpdate = () => {
-    dispatch(setSequenceSelection([]));
-    dispatch(setActivePresetMonomerGroup(null));
-    dispatch(setIsEditMode(false));
-    editor.events.turnOffSequenceEditInRNABuilderMode.dispatch();
-  };
-
   const onUpdateSequence = () => {
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
-      resetAfterSequenceUpdate();
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
   };
 
@@ -259,17 +253,15 @@ export const RnaEditorExpanded = ({
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
     }, 0);
-    dispatch(setIsEditMode(false));
-    dispatch(setActivePresetMonomerGroup(null));
+    resetRnaBuilder(dispatch);
   };
 
   const onCancel = () => {
     if (isSequenceEditInRNABuilderMode) {
-      resetAfterSequenceUpdate();
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {
       setNewPreset(activePreset);
-      dispatch(setIsEditMode(false));
-      dispatch(setActivePresetMonomerGroup(null));
+      resetRnaBuilder(dispatch);
     }
   };
 

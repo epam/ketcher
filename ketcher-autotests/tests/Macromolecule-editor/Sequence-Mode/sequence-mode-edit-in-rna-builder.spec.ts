@@ -38,7 +38,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotide data to RNA Builder and disabled "Update" button
     // should see disabled top bar's selectors
-    // should see disabled top undo/redo buttons
+    // should see disabled top undo/redo/open buttons
     await takePageScreenshot(page);
     await page.getByTestId(SUGAR).click();
     // should see disabled and nondisabled sugars
@@ -50,7 +50,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await page.getByTestId('save-btn').click();
     // should see updated nucleotide in chain
     // should see nondisabled top bar's selectors
-    // should see nondisabled top undo/redo buttons
+    // should see nondisabled top undo/redo/open buttons
     await takePageScreenshot(page);
   });
 

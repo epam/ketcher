@@ -251,6 +251,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             top: monomer
               ? calculateNucleoElementPreviewTop(cardCoordinates)
               : '',
+            transform: 'translate(-50%, 0)',
           },
         });
         return;

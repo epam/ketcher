@@ -422,8 +422,6 @@ function MenuComponent() {
           editor.events.selectTool.dispatch(name);
           editor.events.selectTool.dispatch('select-rectangle');
         } else {
-          dispatch(selectTool(name));
-          editor.events.selectTool.dispatch(name);
           if (name === 'clear') {
             dispatch(selectTool('select-rectangle'));
             editor.events.selectTool.dispatch('select-rectangle');

@@ -341,10 +341,8 @@ test.describe('1. User can expand hydrogens for ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       if (temporaryFailedTestsFileNames.includes(fileName)) {
-        test.fail();
+        test.setTimeout(150000);
       }
-
-      test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
@@ -656,10 +654,8 @@ test.describe('2. User can expand hydrogens for ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       if (temporaryFailedTestsFileNames.includes(fileName)) {
-        test.fail();
+        test.setTimeout(150000);
       }
-
-      test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,

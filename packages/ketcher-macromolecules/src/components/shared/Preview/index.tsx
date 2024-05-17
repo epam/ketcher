@@ -23,7 +23,7 @@ import MonomerPreview from '../MonomerPreview';
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
 
-  if (preview?.nucleotide) {
+  if (preview && 'nucleotide' in preview) {
     return <NucleotidePreview />;
   }
 

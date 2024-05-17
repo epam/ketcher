@@ -339,4 +339,18 @@ test.describe('Import-Saving .fasta Files', () => {
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
   });
+
+  test('Create cycled chain and side chain - save it to FASTA and sequence - verify that it is not supported and warning message occures', async ({
+    page,
+  }) => {
+    /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4332
+    Warning message NOT occures.
+    After fix screenshot should be updated.
+    */
+    await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
+    await selectSequenceLayoutModeTool(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
 });

@@ -85,7 +85,8 @@ describe('RNA ContextMenu', () => {
             monomers: monomerData,
           },
           rnaBuilder: {
-            presets: mockedPresets,
+            presetsDefault: mockedPresets,
+            presetsCustom: [],
           },
         },
       ),
@@ -112,7 +113,8 @@ describe('RNA ContextMenu', () => {
             monomers: monomerData,
           },
           rnaBuilder: {
-            presets: mockedPresets,
+            presetsDefault: mockedPresets,
+            presetsCustom: [],
           },
         },
       ),
@@ -141,7 +143,8 @@ describe('RNA ContextMenu', () => {
             monomers: monomerData,
           },
           rnaBuilder: {
-            presets: mockedPresets,
+            presetsDefault: mockedPresets,
+            presetsCustom: [],
           },
         },
       ),

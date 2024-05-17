@@ -44,10 +44,22 @@ export async function scrollDown(page: Page, scrollDelta: number) {
 
 export async function chooseFileFormat(
   page: Page,
-  fileFomat: 'Ket' | 'MDL Molfile V3000' | 'FASTA' | 'Sequence',
+  fileFomat:
+    | 'Ket'
+    | 'MDL Molfile V3000'
+    | 'FASTA'
+    | 'Sequence'
+    | 'IDT'
+    | 'SVG Document',
 ) {
   await page.getByTestId('dropdown-select').click();
   await waitForSpinnerFinishedWork(page, async () => {
     await page.getByRole('option', { name: fileFomat }).click();
   });
+}
+
+export async function enterSequence(page: Page, sequence: string) {
+  for (const nucleotide of sequence) {
+    await page.keyboard.press(nucleotide);
+  }
 }

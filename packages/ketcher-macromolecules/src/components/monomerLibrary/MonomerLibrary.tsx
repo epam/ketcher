@@ -26,7 +26,7 @@ import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
-  selectPresets,
+  selectAllPresets,
   setActivePreset,
   setIsEditMode,
   setUniqueNameError,
@@ -40,6 +40,8 @@ import {
   MonomerLibraryTitle,
 } from './styles';
 
+const COPY = '_Copy';
+
 const MonomerLibrary = React.memo(() => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
@@ -50,7 +52,7 @@ const MonomerLibrary = React.memo(() => {
   const isDisabledTabsPanels =
     isSequenceMode && !isSequenceEditInRNABuilderMode;
 
-  useAppSelector(selectPresets, (presets) => {
+  useAppSelector(selectAllPresets, (presets) => {
     presetsRef.current = presets;
     return true;
   });
@@ -59,19 +61,26 @@ const MonomerLibrary = React.memo(() => {
   };
 
   const duplicatePreset = (preset?: IRnaPreset) => {
-    const name = `${preset?.name}_Copy`;
-    const presetWithSameName = presetsRef.current.find(
-      (preset) => preset.name === name,
-    );
+    let name = `${preset?.name}${COPY}`;
+    let presetWithSameName: IRnaPreset | undefined;
+
+    do {
+      presetWithSameName = presetsRef.current.find(
+        (preset) => preset.name === name,
+      );
+      if (presetWithSameName) name += COPY;
+    } while (presetWithSameName);
+
     if (presetWithSameName) {
       dispatch(setUniqueNameError(name));
       return;
     }
 
+    const nameToSet = presetWithSameName ? `${name}_Copy` : name;
     const duplicatedPreset = {
       ...preset,
-      presetInList: undefined,
-      name: presetWithSameName ? `${name}_Copy` : name,
+      name: nameToSet,
+      nameInList: nameToSet,
       default: false,
       favorite: false,
     };

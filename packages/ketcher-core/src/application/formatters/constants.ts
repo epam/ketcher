@@ -11,4 +11,5 @@ export const macromoleculesFilesInputFormats = {
     dna: 'chemical/x-dna-fasta',
     peptide: 'chemical/x-peptide-fasta',
   },
+  idt: 'chemical/x-idt',
 };

@@ -42,8 +42,10 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
         onClose={closeErrorModal}
       >
         <Modal.Content>
-          Preset with name "{uniqueNameError}" already exists. Please choose
-          another name.
+          <div style={{ padding: '12px' }}>
+            Preset with name "{uniqueNameError}" already exists. Please choose
+            another name.
+          </div>
         </Modal.Content>
         <Modal.Footer>
           <StyledButton onClick={closeErrorModal}>Close</StyledButton>

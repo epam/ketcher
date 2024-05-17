@@ -9,7 +9,7 @@ const useDisabledForSequenceMode = (
   groupName?: MonomerGroups,
 ) => {
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
-  const isSequenceFirstsOnlyNucleotidesSelected = useSelector(
+  const isSequenceFirstsOnlyNucleoelementsSelected = useSelector(
     selectIsSequenceFirstsOnlyNucleotidesSelected,
   );
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -24,7 +24,7 @@ const useDisabledForSequenceMode = (
         !(item?.props?.MonomerCaps?.R1 && item?.props?.MonomerCaps?.R2),
       );
     } else if (groupName === MonomerGroups.SUGARS) {
-      if (isSequenceFirstsOnlyNucleotidesSelected) {
+      if (isSequenceFirstsOnlyNucleoelementsSelected) {
         setIsDisabled(
           !(item?.props?.MonomerCaps?.R3 && item?.props?.MonomerCaps?.R2),
         );
@@ -41,7 +41,7 @@ const useDisabledForSequenceMode = (
   }, [
     groupName,
     isSequenceEditInRNABuilderMode,
-    isSequenceFirstsOnlyNucleotidesSelected,
+    isSequenceFirstsOnlyNucleoelementsSelected,
     item?.props?.MonomerCaps?.R1,
     item?.props?.MonomerCaps?.R2,
     item?.props?.MonomerCaps?.R3,

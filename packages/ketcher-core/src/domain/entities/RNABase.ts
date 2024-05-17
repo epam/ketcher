@@ -1,6 +1,8 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from 'domain/entities/Sugar';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { AttachmentPointName } from 'domain/types';
+import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint() {
@@ -21,9 +23,17 @@ export class RNABase extends BaseMonomer {
     return ChemSubChain;
   }
 
-  public get isPartOfRna(): boolean {
-    return (
-      this.attachmentPointsToBonds.R1?.getAnotherMonomer(this) instanceof Sugar
-    );
+  public override get sideConnections() {
+    const sideConnections: PolymerBond[] = [];
+    this.forEachBond((polymerBond, attachmentPointName) => {
+      if (
+        attachmentPointName !== AttachmentPointName.R1 ||
+        !getSugarFromRnaBase(this)
+      ) {
+        sideConnections.push(polymerBond);
+      }
+    });
+
+    return sideConnections;
   }
 }

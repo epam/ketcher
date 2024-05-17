@@ -1,42 +1,61 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { MonomerItemType } from 'ketcher-core';
-
-const defaultPresetBases = {
-  A: 'Adenine',
-  C: 'Cytosine',
-  G: 'Guanine',
-  T: 'Thymine',
-  U: 'Uracil',
-};
-const SUGAR = 'Ribose';
-const PHOSPHATE = 'Phosphate';
+import {
+  IKetMonomerGroupTemplate,
+  monomerFactory,
+  MonomerItemType,
+  setMonomerTemplatePrefix,
+  KetMonomerClass,
+} from 'ketcher-core';
+import { getMonomerUniqueKey } from 'state/library';
 
 export const getDefaultPresets = (
   monomers: MonomerItemType[],
+  rnaPresetsTemplates: IKetMonomerGroupTemplate[],
 ): IRnaPreset[] => {
-  const defaultBaseNames = Object.values(defaultPresetBases);
-  const ribose = monomers.find((item) => item.props.Name === SUGAR);
-  const phosphate = monomers.find((item) => item.props.Name === PHOSPHATE);
-  const defaultBases = monomers.filter((item) => {
-    const base = defaultBaseNames.find(
-      (defaultName) => defaultName === item.props.Name,
-    );
-    return !!base;
+  const monomerIdToMonomerLibraryItem = {};
+
+  monomers.forEach((monomer) => {
+    const monomerKey = getMonomerUniqueKey(monomer);
+    monomerIdToMonomerLibraryItem[setMonomerTemplatePrefix(monomerKey)] =
+      monomer;
   });
-  let presets;
-  if (ribose && phosphate) {
-    presets = defaultBases.map((base) => {
-      const nucleotide: IRnaPreset = {
-        base: { ...base, label: base.props.MonomerName },
-        sugar: { ...ribose, label: ribose.props.MonomerName },
-        phosphate: { ...phosphate, label: phosphate.props.MonomerName },
-        name: base.props.MonomerName,
-        default: true,
-      };
-      return nucleotide;
-    });
-  } else {
-    presets = [];
-  }
-  return presets;
+
+  return rnaPresetsTemplates.map((rnaPresetsTemplate) => {
+    const rnaPartsMonomerLibraryItems = rnaPresetsTemplate.templates.map(
+      (rnaPartsMonomerTemplateRef) =>
+        monomerIdToMonomerLibraryItem[rnaPartsMonomerTemplateRef.$ref],
+    );
+    const rnaPartsMonomerTemplatesClasses = rnaPartsMonomerLibraryItems.map(
+      (rnaPartsMonomerLibraryItem) =>
+        monomerFactory(rnaPartsMonomerLibraryItem)[2],
+    );
+    const ribose =
+      rnaPartsMonomerLibraryItems[
+        rnaPartsMonomerTemplatesClasses.findIndex(
+          (rnaPartsMonomerTemplatesClass) =>
+            rnaPartsMonomerTemplatesClass === KetMonomerClass.Sugar,
+        )
+      ];
+    const rnaBase =
+      rnaPartsMonomerLibraryItems[
+        rnaPartsMonomerTemplatesClasses.findIndex(
+          (rnaPartsMonomerTemplatesClass) =>
+            rnaPartsMonomerTemplatesClass === KetMonomerClass.Base,
+        )
+      ];
+    const phosphate =
+      rnaPartsMonomerLibraryItems[
+        rnaPartsMonomerTemplatesClasses.findIndex(
+          (rnaPartsMonomerTemplatesClass) =>
+            rnaPartsMonomerTemplatesClass === KetMonomerClass.Phosphate,
+        )
+      ];
+    return {
+      base: { ...rnaBase, label: rnaBase.props.MonomerName },
+      sugar: { ...ribose, label: ribose.props.MonomerName },
+      phosphate: { ...phosphate, label: phosphate.props.MonomerName },
+      name: rnaPresetsTemplate.name,
+      default: true,
+    };
+  });
 };

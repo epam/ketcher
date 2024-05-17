@@ -19,7 +19,13 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'ket' | 'fasta' | 'sequence';
+export type SupportedFormats =
+  | 'mol'
+  | 'ket'
+  | 'fasta'
+  | 'sequence'
+  | 'idt'
+  | 'svg';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
@@ -54,6 +60,16 @@ const formatProperties: FormatProperties = {
     false,
     {},
   ),
+  idt: new SupportedFormatProperties(
+    'IDT',
+    ChemicalMimeType.Idt,
+    ['.idt'],
+    false,
+    {},
+  ),
+  svg: new SupportedFormatProperties('SVG Document', ChemicalMimeType.Svg, [
+    '.svg',
+  ]),
 };
 
 export const getPropertiesByFormat = (format: SupportedFormats) => {

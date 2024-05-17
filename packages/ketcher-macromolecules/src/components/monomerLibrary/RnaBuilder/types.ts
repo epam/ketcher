@@ -21,10 +21,10 @@ export interface IExpandIconProps {
 
 export interface IRnaPreset {
   name?: string;
+  nameInList?: string;
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
-  presetInList?: IRnaPreset;
   default?: boolean;
   favorite?: boolean;
   editedName?: boolean;

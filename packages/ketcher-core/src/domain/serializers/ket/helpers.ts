@@ -41,11 +41,12 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
   const rotatedPosition = {
     x: position.x,
     y: position.y,
+    z: position.z,
   };
 
   rotatedPosition[axis] = -rotatedPosition[axis];
 
-  return new Vec2(rotatedPosition.x, rotatedPosition.y);
+  return new Vec2(rotatedPosition.x, rotatedPosition.y, rotatedPosition.z);
 };
 
 /**

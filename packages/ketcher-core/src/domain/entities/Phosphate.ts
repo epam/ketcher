@@ -2,7 +2,6 @@ import { BaseMonomer } from './BaseMonomer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from './vec2';
 import { Sugar } from './Sugar';
-import { RNABase } from 'domain/entities/RNABase';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
@@ -92,22 +91,5 @@ export class Phosphate extends BaseMonomer {
 
   public get SubChainConstructor() {
     return PhosphateSubChain;
-  }
-
-  get isPartOfRna() {
-    const previousMonomer =
-      this.attachmentPointsToBonds.R1?.getAnotherMonomer(this);
-    const isPreviousMonomerSugar = previousMonomer instanceof Sugar;
-    const isSugarConnectedToBase =
-      previousMonomer?.attachmentPointsToBonds.R3?.getAnotherMonomer(
-        previousMonomer,
-      ) instanceof RNABase;
-    const nextMonomer =
-      this.attachmentPointsToBonds.R2?.getAnotherMonomer(this);
-    const isNextMonomerRna = nextMonomer?.isPartOfRna;
-
-    // isNextMonomerRna used here because we need to interpret last phosphate of rna chain
-    // as not a part of nucleoTide but as phosphate connected to nucleoSide
-    return isPreviousMonomerSugar && isSugarConnectedToBase && isNextMonomerRna;
   }
 }

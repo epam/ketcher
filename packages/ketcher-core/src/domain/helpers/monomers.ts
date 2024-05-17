@@ -21,11 +21,16 @@ export function checkIsR2R1Connection(
   );
 }
 
-export function getNextMonomerInChain(monomer?: BaseMonomer) {
+export function getNextMonomerInChain(
+  monomer?: BaseMonomer,
+  firstMonomer?: BaseMonomer | null,
+) {
   if (!monomer) return undefined;
 
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer = r2PolymerBond?.getAnotherMonomer(monomer);
+
+  if (nextMonomer === firstMonomer && r2PolymerBond) return undefined;
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===
@@ -88,8 +93,7 @@ export function isValidNucleotide(sugar: Sugar) {
   return Boolean(
     getRnaBaseFromSugar(sugar) &&
       getPhosphateFromSugar(sugar) &&
-      nextMonomerAfterPhosphate instanceof Sugar &&
-      getRnaBaseFromSugar(nextMonomerAfterPhosphate),
+      nextMonomerAfterPhosphate,
   );
 }
 
@@ -98,11 +102,6 @@ export function isValidNucleoside(sugar: Sugar) {
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
 
   return (
-    getRnaBaseFromSugar(sugar) &&
-    (!phosphate ||
-      !(
-        nextMonomerAfterPhosphate instanceof Sugar &&
-        getRnaBaseFromSugar(nextMonomerAfterPhosphate)
-      ))
+    getRnaBaseFromSugar(sugar) && (!phosphate || !nextMonomerAfterPhosphate)
   );
 }

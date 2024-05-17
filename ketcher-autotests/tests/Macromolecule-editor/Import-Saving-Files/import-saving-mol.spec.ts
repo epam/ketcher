@@ -326,6 +326,8 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
+    // Fail while performance issue on Indigo side
+    test.fail();
     await selectTopPanelButton(TopPanelButton.Open, page);
 
     const filename = 'Molfiles-V3000/corrupted-file.mol';

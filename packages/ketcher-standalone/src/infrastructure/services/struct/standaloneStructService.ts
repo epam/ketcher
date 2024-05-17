@@ -293,8 +293,9 @@ class IndigoService implements StructService {
           }
         }
       };
-      const monomerLibrary =
-        CoreEditor.provideEditorInstance().monomersLibraryParsedJson;
+      const monomerLibrary = JSON.stringify(
+        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      );
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,

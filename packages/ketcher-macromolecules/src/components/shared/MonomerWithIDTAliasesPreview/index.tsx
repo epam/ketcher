@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { IDTAliases } from 'components/shared/MonomerWithIDTAliasesPreview/IDTAliases';
+import { IDTAliases } from 'components/shared/IDTAliases';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { useMemo } from 'react';
@@ -27,14 +27,17 @@ const MonomerWithIDTAliasesPreview = ({
   className,
 }: MonomerWithIDTAliasesPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-  const ContainerDynamic = useMemo(
-    () => styled(Container)`
-      top: ${preview?.style?.top || ''};
-      left: ${preview?.style?.left || ''};
-      right: ${preview?.style?.right || ''};
-    `,
-    [preview],
-  );
+  const ContainerDynamic = useMemo(() => {
+    if (!preview?.style) {
+      return styled(Container)``;
+    }
+
+    return styled(Container)`
+      left: ${preview.style.left || ''};
+      right: ${preview.style.right || ''};
+      top: ${preview.style.top || ''};
+    `;
+  }, [preview]);
   if (!preview?.monomer) {
     return undefined;
   }
@@ -54,7 +57,7 @@ const MonomerWithIDTAliasesPreview = ({
   );
 };
 
-const StyledMonomerWithIDTAliasesPreview = styled(MonomerWithIDTAliasesPreview)`
+const MonomerWithIDTAliasesStyledPreview = styled(MonomerWithIDTAliasesPreview)`
   position: absolute;
   z-index: 5;
   width: ${previewConstants.width}px;
@@ -62,4 +65,4 @@ const StyledMonomerWithIDTAliasesPreview = styled(MonomerWithIDTAliasesPreview)`
   transform: translate(-50%, 0);
 `;
 
-export default StyledMonomerWithIDTAliasesPreview;
+export default MonomerWithIDTAliasesStyledPreview;

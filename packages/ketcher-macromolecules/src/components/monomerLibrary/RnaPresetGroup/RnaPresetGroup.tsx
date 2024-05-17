@@ -123,10 +123,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     e: React.MouseEvent,
   ): void => {
     handleItemMouseLeave();
-    if (preview.nucleotide || !e.currentTarget) {
+    if (preview.preset || !e.currentTarget) {
       return;
     }
-    const nucleotideParts: ReadonlyArray<MonomerItemType | undefined> = [
+    const monomers: ReadonlyArray<MonomerItemType | undefined> = [
       preset.sugar,
       preset.base,
       preset.phosphate,
@@ -137,7 +137,13 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
       transform: 'translate(-100%, 0)',
     };
-    debouncedShowPreview({ nucleotide: nucleotideParts, style });
+    debouncedShowPreview({
+      preset: {
+        idtAliases: null,
+        monomers,
+      },
+      style,
+    });
   };
   // endregion # Preview
 

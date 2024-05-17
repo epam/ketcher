@@ -52,14 +52,14 @@ const PresetPreview = ({ className }: IPreviewProps) => {
   }, [preview]);
 
   return (
-    preview?.nucleotide && (
+    preview?.preset && (
       <ContainerDynamic
         className={className}
         data-testid="polymer-library-preview"
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
-        <PresetName>{preview.nucleotide[1].props.Name}</PresetName>
-        {preview.nucleotide.map(
+        <PresetName>{preview.preset.monomers[1].props.Name}</PresetName>
+        {preview.preset.monomers.map(
           (monomer, index) =>
             monomer && (
               <PresetMonomerRow key={index}>

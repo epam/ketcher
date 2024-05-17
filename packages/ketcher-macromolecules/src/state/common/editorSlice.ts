@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
+import { CoreEditor, IKetIdtAliases, MonomerItemType } from 'ketcher-core';
 import { RootState } from 'state';
-import { CoreEditor, MonomerItemType } from 'ketcher-core';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 
@@ -25,12 +25,15 @@ interface MonomerPreviewState {
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
-interface NucleoElementPreviewState {
-  readonly nucleotide: ReadonlyArray<MonomerItemType | undefined>;
+interface PresetPreviewState {
+  readonly preset: {
+    readonly idtAliases?: IKetIdtAliases;
+    readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
+  };
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
-type EditorStatePreview = MonomerPreviewState | NucleoElementPreviewState;
+type EditorStatePreview = MonomerPreviewState | PresetPreviewState;
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {

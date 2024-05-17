@@ -23,7 +23,7 @@ import { selectShowPreview } from 'state/common';
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
 
-  if (preview && 'nucleotide' in preview) {
+  if (preview && 'preset' in preview) {
     return <PresetPreview />;
   }
 

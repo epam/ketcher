@@ -15,12 +15,12 @@
  ***************************************************************************/
 import { useMemo } from 'react';
 import {
-  NucleotideMonomerRow,
-  NucleotideMonomerLabel,
-  NucleotideMonomerName,
-  MonomerIcon,
-  NucleotideContainer,
-  NucleotideName,
+  PresetMonomerRow,
+  PresetMonomerLabel,
+  PresetMonomerName,
+  PresetIcon,
+  PresetContainer,
+  PresetName,
 } from './styles';
 import { IPreviewProps } from '../MonomerPreview/types';
 import { preview } from '../../../constants';
@@ -35,15 +35,15 @@ const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
   'phosphate',
 ];
 
-const NucleotidePreview = ({ className }: IPreviewProps) => {
+const PresetPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
 
   const ContainerDynamic = useMemo(() => {
     if (!preview?.style) {
-      return styled(NucleotideContainer)``;
+      return styled(PresetContainer)``;
     }
 
-    return styled(NucleotideContainer)`
+    return styled(PresetContainer)`
       left: ${preview.style.left || ''};
       right: ${preview.style.right || ''};
       top: ${preview.style.top || ''};
@@ -58,17 +58,15 @@ const NucleotidePreview = ({ className }: IPreviewProps) => {
         data-testid="polymer-library-preview"
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
-        <NucleotideName>{preview.nucleotide[1].props.Name}</NucleotideName>
+        <PresetName>{preview.nucleotide[1].props.Name}</PresetName>
         {preview.nucleotide.map(
           (monomer, index) =>
             monomer && (
-              <NucleotideMonomerRow key={index}>
-                <MonomerIcon name={icons[index]} />
-                <NucleotideMonomerLabel>{monomer.label}</NucleotideMonomerLabel>
-                <NucleotideMonomerName>
-                  ({monomer.props.Name})
-                </NucleotideMonomerName>
-              </NucleotideMonomerRow>
+              <PresetMonomerRow key={index}>
+                <PresetIcon name={icons[index]} />
+                <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
+                <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+              </PresetMonomerRow>
             ),
         )}
       </ContainerDynamic>
@@ -76,11 +74,11 @@ const NucleotidePreview = ({ className }: IPreviewProps) => {
   );
 };
 
-const StyledPreview = styled(NucleotidePreview)`
+const PresetStyledPreview = styled(PresetPreview)`
   z-index: 5;
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;
 `;
 
-export default StyledPreview;
+export default PresetStyledPreview;

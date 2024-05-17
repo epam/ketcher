@@ -133,8 +133,9 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     ];
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const style = {
-      right: '10px',
+      left: `${cardCoordinates.left + cardCoordinates.width}px`,
       top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
+      transform: 'translate(-100%, 0)',
     };
     debouncedShowPreview({ nucleotide: nucleotideParts, style });
   };

@@ -38,14 +38,18 @@ const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
 const NucleotidePreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
 
-  const ContainerDynamic = useMemo(
-    () => styled(NucleotideContainer)`
-      top: ${preview?.style?.top || ''};
-      left: ${preview?.style?.left || ''};
-      right: ${preview?.style?.right || ''};
-    `,
-    [preview],
-  );
+  const ContainerDynamic = useMemo(() => {
+    if (!preview?.style) {
+      return styled(NucleotideContainer)``;
+    }
+
+    return styled(NucleotideContainer)`
+      left: ${preview.style.left || ''};
+      right: ${preview.style.right || ''};
+      top: ${preview.style.top || ''};
+      transform: ${preview.style.transform || ''};
+    `;
+  }, [preview]);
 
   return (
     preview?.nucleotide && (
@@ -77,7 +81,6 @@ const StyledPreview = styled(NucleotidePreview)`
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;
-  transform: translate(-50%, 0);
 `;
 
 export default StyledPreview;

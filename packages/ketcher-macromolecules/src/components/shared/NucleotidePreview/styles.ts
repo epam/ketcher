@@ -20,6 +20,7 @@ export const NucleotideContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 8px;
   padding: 8px;
   background: ${(props) => props.theme.ketcher.color.background.primary};
   border: ${(props) => props.theme.ketcher.border.regular};
@@ -30,9 +31,6 @@ export const NucleotideContainer = styled.div`
 export const NucleotideMonomerRow = styled.div`
   display: flex;
   align-items: center;
-  &:not(:last-child) {
-    margin-bottom: 8px;
-  }
 `;
 
 export const NucleotideMonomerLabel = styled.div`
@@ -46,6 +44,7 @@ export const NucleotideMonomerName = styled.div`
   color: ${(props) => props.theme.ketcher.color.text.lightgrey};
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 400;
+  white-space: nowrap;
 `;
 
 export const NucleotideName = styled.p`
@@ -55,7 +54,7 @@ export const NucleotideName = styled.p`
   word-break: break-all;
   text-align: center;
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `;
 
 export const MonomerIcon = styled(Icon)`

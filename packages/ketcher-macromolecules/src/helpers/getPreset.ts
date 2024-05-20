@@ -14,64 +14,58 @@ interface RnaPresetsTemplatesType
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
 
 export const getPresets = (
-  monomers: MonomerItemType[],
-  rnaPresetsTemplates: RnaPresetsTemplatesType[],
+  monomers: ReadonlyArray<MonomerItemType>,
+  rnaPresetsTemplates: ReadonlyArray<IKetMonomerGroupTemplate>,
   isDefault?: boolean,
-): IRnaPreset[] => {
-  const monomerIdToMonomerLibraryItem = {};
+): ReadonlyArray<IRnaPreset> => {
+  const monomerLibraryItemByMonomerIDMap = new Map<string, MonomerItemType>(
+    monomers.map((monomer) => {
+      const monomerID = setMonomerTemplatePrefix(getMonomerUniqueKey(monomer));
+      return [monomerID, monomer];
+    }),
+  );
 
-  monomers.forEach((monomer) => {
-    const monomerKey = getMonomerUniqueKey(monomer);
-    monomerIdToMonomerLibraryItem[setMonomerTemplatePrefix(monomerKey)] =
-      monomer;
-  });
-
-  return rnaPresetsTemplates.map((rnaPresetsTemplate) => {
-    const rnaPartsMonomerLibraryItems = rnaPresetsTemplate.templates.map(
-      (rnaPartsMonomerTemplateRef) =>
-        monomerIdToMonomerLibraryItem[rnaPartsMonomerTemplateRef.$ref],
+  return rnaPresetsTemplates.map((rnaPresetsTemplate: IKetMonomerGroupTemplate): IRnaPreset => {
+    const rnaPartsMonomerLibraryItemByMonomerClassMap = new Map<
+      KetMonomerClass,
+      MonomerItemType
+    >(
+      rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
+        // TODO: Do we need to check for existence? Suddenly there is `undefined`.
+        const monomer = monomerLibraryItemByMonomerIDMap.get(
+          rnaPartsMonomerTemplateRef.$ref,
+        ) as MonomerItemType;
+        const [, , monomerClass] = monomerFactory(monomer);
+        return [monomerClass, monomer];
+      }),
     );
-    const rnaPartsMonomerTemplatesClasses = rnaPartsMonomerLibraryItems.map(
-      (rnaPartsMonomerLibraryItem) =>
-        monomerFactory(rnaPartsMonomerLibraryItem)[2],
-    );
-    const ribose =
-      rnaPartsMonomerLibraryItems[
-        rnaPartsMonomerTemplatesClasses.findIndex(
-          (rnaPartsMonomerTemplatesClass) =>
-            rnaPartsMonomerTemplatesClass === KetMonomerClass.Sugar,
-        )
-      ];
-    const rnaBase =
-      rnaPartsMonomerLibraryItems[
-        rnaPartsMonomerTemplatesClasses.findIndex(
-          (rnaPartsMonomerTemplatesClass) =>
-            rnaPartsMonomerTemplatesClass === KetMonomerClass.Base,
-        )
-      ];
-    const phosphate =
-      rnaPartsMonomerLibraryItems[
-        rnaPartsMonomerTemplatesClasses.findIndex(
-          (rnaPartsMonomerTemplatesClass) =>
-            rnaPartsMonomerTemplatesClass === KetMonomerClass.Phosphate,
-        )
-      ];
+    // TODO: Do we need to check for existence? Suddenly there is `undefined`.
+    const ribose = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+      KetMonomerClass.Sugar,
+    ) as MonomerItemType;
+    const rnaBase = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+      KetMonomerClass.Base,
+    ) as MonomerItemType;
+    const phosphate = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+      KetMonomerClass.Phosphate,
+    ) as MonomerItemType;
 
-    const presetToReturn: IRnaPreset = {
+    const result: IRnaPreset = {
+      base: { ...rnaBase, label: rnaBase.props.MonomerName },
       name: rnaPresetsTemplate.name,
+      phosphate: { ...phosphate, label: phosphate.props.MonomerName },
+      sugar: { ...ribose, label: ribose.props.MonomerName },
       favorite: rnaPresetsTemplate.favorite,
       default: isDefault || rnaPresetsTemplate.default,
     };
-    if (rnaBase)
-      presetToReturn.base = { ...rnaBase, label: rnaBase?.props.MonomerName };
-    if (ribose)
-      presetToReturn.sugar = { ...ribose, label: ribose?.props.MonomerName };
-    if (phosphate)
-      presetToReturn.phosphate = {
-        ...phosphate,
-        label: phosphate?.props.MonomerName,
-      };
 
-    return presetToReturn;
+    if (!rnaPresetsTemplate.idtAliases) {
+      return result;
+    }
+
+    return {
+      ...result,
+      idtAliases: rnaPresetsTemplate.idtAliases,
+    };
   });
 };

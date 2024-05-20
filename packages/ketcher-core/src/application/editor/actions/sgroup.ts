@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy,
 } from '../operations';
-import { Pile, SGroup } from 'domain/entities';
+import { Pile, SGroup, SGroupAttachmentPoint } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
@@ -502,4 +502,17 @@ function getAtomsFromBonds(struct, bonds) {
     acc = acc.concat([bond.begin, bond.end]);
     return acc;
   }, []);
+}
+
+export function fromSgroupAttachmentPointAddition(
+  restruct: Restruct,
+  sgroupId: number,
+  attachmentPoint: SGroupAttachmentPoint,
+) {
+  let action = new Action();
+
+  action.addOp(new SGroupAttachmentPointAdd(sgroupId, attachmentPoint));
+  action = action.perform(restruct);
+
+  return action;
 }

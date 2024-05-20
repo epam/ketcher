@@ -25,7 +25,7 @@ import {
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
-import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -82,7 +82,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
       'label',
       source.label === 'R#' && monomer
         ? monomer.monomerItem.props.MonomerCaps?.[
-            convertAttachmentPointNumberToLabel(source.rglabel)
+            getAttachmentPointLabelWithBinaryShift(source.rglabel)
           ]
         : source.label,
     );

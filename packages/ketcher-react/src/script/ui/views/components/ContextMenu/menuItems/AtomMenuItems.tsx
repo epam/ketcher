@@ -18,6 +18,7 @@ import {
 } from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
+import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 
 const {
   ringBondCount,
@@ -93,6 +94,7 @@ const atomPropertiesForSubMenu: {
 
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useAtomEdit();
+  const [handleAddAttachmentPoint] = useAddAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const { getKetcherInstance } = useAppContext();
@@ -169,6 +171,12 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
           );
         })}
       </Submenu>
+      <Item {...props} onClick={handleAddAttachmentPoint}>
+        Add attachment point
+      </Item>
+      <Item {...props} onClick={handleEdit}>
+        Remove attachment point
+      </Item>
       <Item {...props} onClick={handleDelete}>
         Delete
       </Item>

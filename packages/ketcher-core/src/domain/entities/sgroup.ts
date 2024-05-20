@@ -343,6 +343,10 @@ export class SGroup {
     return this.attachmentPoints.map((point) => point.clone(atomIdMap));
   }
 
+  public get isSuperatomWithoutLabel() {
+    return this.type === SGroup.TYPES.SUP && !this.data.name;
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp || !sgroup.bracketBox) return null;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);

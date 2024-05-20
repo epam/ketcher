@@ -299,6 +299,22 @@ class ReBond extends ReObject {
     const bond = restruct.molecule.bonds.get(bid)!;
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
+    const beginSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
+    const endSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
+
+    if (
+      (beginSuperatomAttachmentPoint &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, bond.begin) &&
+        bond.end === beginSuperatomAttachmentPoint.atomId) ||
+      (endSuperatomAttachmentPoint &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, bond.end) &&
+        bond.begin === endSuperatomAttachmentPoint.atomId)
+    ) {
+      return;
+    }
+
     if (
       bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(

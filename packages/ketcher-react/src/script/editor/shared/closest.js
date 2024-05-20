@@ -445,7 +445,7 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT;
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.isContracted()) return null;
+    if (sg.isContracted() || sg.isSuperatomWithoutLabel) return null;
 
     const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);

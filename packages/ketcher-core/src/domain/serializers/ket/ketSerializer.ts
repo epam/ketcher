@@ -63,7 +63,7 @@ import {
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
-import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
 import { MonomerItemType } from 'domain/types';
 
@@ -316,6 +316,7 @@ export class KetSerializer implements Serializer<Struct> {
       label: template.alias || template.id,
       struct: this.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
+      attachmentPoints: template.attachmentPoints,
     };
     this.fillStructRgLabelsByMonomerTemplate(template, monomerLibraryItem);
 
@@ -353,7 +354,9 @@ export class KetSerializer implements Serializer<Struct> {
         ).toString();
         assert(monomerItem.props.MonomerCaps);
         monomerItem.props.MonomerCaps[
-          convertAttachmentPointNumberToLabel(Number(leavingGroupAtom.rglabel))
+          getAttachmentPointLabelWithBinaryShift(
+            Number(leavingGroupAtom.rglabel),
+          )
         ] = leavingGroupAtom.label;
         leavingGroupAtom.label = 'R#';
       },

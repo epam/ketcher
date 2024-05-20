@@ -718,6 +718,53 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return rad + conn + Math.abs(charge);
   }
+
+  public static getSuperAtomAttachmentPointByLeavingGroup(
+    struct: Struct,
+    atomId: number,
+  ) {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.leaveAtomId === atomId);
+  }
+
+  public static isSuperatomLeavingGroupAtom(struct: Struct, atomId: number) {
+    return Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId);
+  }
+
+  public static isAttachmentAtomHasExternalConnections(
+    struct: Struct,
+    atomId: number,
+  ) {
+    const bonds = struct.bonds;
+    const atom = struct.atoms.get(atomId);
+    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      struct,
+      atomId,
+    );
+    const attachmentPointAtomBonds =
+      attachmentPoint &&
+      bonds.filter(
+        (_, bond) =>
+          (bond.begin === attachmentPoint.atomId &&
+            bond.end !== attachmentPoint.leaveAtomId) ||
+          (bond.end === attachmentPoint.atomId &&
+            bond.begin !== attachmentPoint.leaveAtomId),
+      );
+    const isAttachmentAtomHasExternalConnection =
+      attachmentPointAtomBonds &&
+      attachmentPointAtomBonds.some((bond) => {
+        const beginAtom = struct.atoms.get(bond.begin);
+        const endAtom = struct.atoms.get(bond.end);
+        return (
+          beginAtom?.fragment !== atom?.fragment ||
+          endAtom?.fragment !== atom?.fragment
+        );
+      });
+
+    return isAttachmentAtomHasExternalConnection;
+  }
 }
 
 export function radicalElectrons(radical: any) {

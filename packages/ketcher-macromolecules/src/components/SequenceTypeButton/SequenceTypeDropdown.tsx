@@ -15,12 +15,11 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import { useAppSelector, useLayoutMode } from 'hooks';
 import {
-  useAppSelector,
-  useLayoutMode,
-  useSequenceEditInRNABuilderMode,
-} from 'hooks';
-import { selectEditor } from 'state/common';
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { SequenceType } from 'ketcher-core';
 import { StyledDropdown } from 'components/modal/save/Save.styles';
 import styled from '@emotion/styled';
@@ -42,9 +41,11 @@ export const SequenceTypeDropdown = () => {
   );
   const [isSequenceMode, setIsSequenceMode] = useState(false);
   const editor = useAppSelector(selectEditor);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const layoutMode = useLayoutMode();
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
-  const isDisabled = isSequenceEditInRNABuilderMode;
+  const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const dropdownOptions = [
     { id: SequenceType.RNA, label: 'RNA' },

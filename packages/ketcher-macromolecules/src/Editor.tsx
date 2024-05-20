@@ -24,7 +24,6 @@ import {
   Nucleotide,
   Nucleoside,
   NodeSelection,
-  SequenceMode,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -45,6 +44,7 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
+  selectIsSequenceEditInRNABuilderMode,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -367,7 +367,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary
+            isSequenceEditInRNABuilderMode={isSequenceEditInRNABuilderMode}
+          />
         </Layout.Right>
       </Layout>
       <MonomerLibraryToggle
@@ -402,9 +404,11 @@ function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const activeMenuItems = [activeTool];
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
-  const isDisabled = isSequenceEditInRNABuilderMode;
+  const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
@@ -427,12 +431,8 @@ function MenuComponent() {
           if (name === 'clear') {
             dispatch(selectTool('select-rectangle'));
             editor.events.selectTool.dispatch('select-rectangle');
-            if (
-              editor.mode instanceof SequenceMode &&
-              editor.mode.isEditInRNABuilderMode
-            ) {
+            if (isSequenceEditInRNABuilderMode)
               resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
-            }
           } else {
             dispatch(selectTool(name));
           }

@@ -23,11 +23,7 @@ import {
   RnaEditorContainer,
   StyledHeader,
 } from './styles';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useSequenceEditInRNABuilderMode,
-} from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
   RnaBuilderPresetsItem,
@@ -38,6 +34,7 @@ import {
   setIsEditMode,
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -50,7 +47,9 @@ export const scrollToSelectedMonomer = (monomerId) => {
 export const RnaEditor = ({ duplicatePreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const activePresetFullName = selectPresetFullName(activePreset);
 
   const dispatch = useAppDispatch();

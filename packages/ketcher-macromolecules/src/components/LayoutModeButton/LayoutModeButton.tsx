@@ -17,18 +17,19 @@
 import { useEffect, useState } from 'react';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
+import { useAppSelector, useLayoutMode } from 'hooks';
 import {
-  useAppSelector,
-  useLayoutMode,
-  useSequenceEditInRNABuilderMode,
-} from 'hooks';
-import { selectEditor } from 'state/common';
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 
 export const LayoutModeButton = () => {
   const [activeMode, setActiveMode] = useState('flex-layout-mode');
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
 
   const menuContext = {
     isActive: (mode) => activeMode === mode,
@@ -51,7 +52,7 @@ export const LayoutModeButton = () => {
       <Menu.Submenu
         testId="layout-mode"
         vertical={true}
-        disabled={isSequenceEditInRNABuilderMode}
+        disabled={!!isSequenceEditInRNABuilderMode}
         needOpenByMenuItemClick={true}
       >
         <Menu.Item

@@ -141,8 +141,12 @@ export abstract class BaseMode {
   async onPaste(event: ClipboardEvent) {
     if (!this.checkIfTargetIsInput(event)) {
       if (isClipboardAPIAvailable()) {
-        if (this._pasteIsInProgress) return;
+        const isSequenceEditInRNABuilderMode =
+          CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+
+        if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
         this._pasteIsInProgress = true;
+
         const clipboardData = await navigator.clipboard.read();
         this.pasteFromClipboard(clipboardData).finally(() => {
           this._pasteIsInProgress = false;

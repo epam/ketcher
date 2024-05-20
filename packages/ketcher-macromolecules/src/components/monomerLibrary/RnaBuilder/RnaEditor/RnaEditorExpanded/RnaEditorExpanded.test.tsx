@@ -2,15 +2,6 @@ import { Entities } from 'ketcher-core';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { RnaEditorExpanded } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/RnaEditorExpanded';
 import { EmptyFunction } from 'helpers';
-import { useSequenceEditInRNABuilderMode } from 'hooks';
-
-jest.mock('../../../../../hooks/stateHooks', () => ({
-  ...jest.requireActual('../../../../../hooks/stateHooks'),
-  useSequenceEditInRNABuilderMode: jest.fn(),
-}));
-
-const mockUseSequenceEditInRNABuilderMode =
-  useSequenceEditInRNABuilderMode as jest.Mock;
 
 describe('Test Rna Editor Expanded component', () => {
   it('should render correctly in edit mode', async () => {
@@ -42,11 +33,11 @@ describe('Test Rna Editor Expanded component', () => {
   });
 
   it('should render correctly in edit mode with modification of sequence', async () => {
-    mockUseSequenceEditInRNABuilderMode.mockReturnValue(true);
     render(
       withThemeAndStoreProvider(
         <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
         {
+          editor: { editor: { isSequenceEditInRNABuilderMode: true } },
           rnaBuilder: {
             activePreset: {},
             sequenceSelectionName: '2 nucleotides',

@@ -78,8 +78,8 @@ export class MacromoleculesConverter {
     const atomIdMap = monomerToAtomIdMap.get(monomer);
 
     return (
-      attachmentPoint?.attachmentAtom &&
-      atomIdMap?.get(attachmentPoint.attachmentAtom)
+      isNumber(attachmentPoint?.attachmentAtom) &&
+      atomIdMap?.get(attachmentPoint?.attachmentAtom as number)
     );
   }
 

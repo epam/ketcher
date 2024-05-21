@@ -838,7 +838,7 @@ export class SequenceMode extends BaseMode {
 
     const currentSequence = SequenceRenderer.currentChain;
 
-    const currentSequenceHasPhosphate = currentSequence.lastNonEmptyNode
+    const currentSequenceHasPhosphate = currentSequence?.lastNonEmptyNode
       ? this.hasPhosphateAtEndOfSequence(
           currentSequence.lastNonEmptyNode.monomer,
         )

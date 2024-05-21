@@ -14,29 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { StructRender } from 'ketcher-react';
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  padding: 10px;
-  background: ${(props) => props.theme.ketcher.color.background.primary};
-  border: ${(props) => props.theme.ketcher.border.regular};
-  border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
-  box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
-`;
-
-export const MonomerName = styled.p`
-  color: ${(props) => props.theme.ketcher.color.text.light};
-  font-size: ${(props) => props.theme.ketcher.font.size.medium};
-  font-weight: 700;
-  word-break: break-all;
-  text-align: center;
-  margin: 0 0 5px 0;
-`;
-
-export const StyledStructRender = styled(StructRender)`
-  height: 100%;
-  width: 100%;
+export const IDTAliasesContainer = styled.span`
+  color: ${(props) => props.theme.ketcher.color.text.lightgrey};
 `;

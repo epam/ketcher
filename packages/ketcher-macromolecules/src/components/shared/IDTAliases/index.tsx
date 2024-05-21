@@ -1,4 +1,5 @@
 import { IKetIdtAliases } from 'ketcher-core';
+import { IDTAliasesContainer } from './styles';
 
 interface IDTAliasesProps {
   readonly aliases: IKetIdtAliases;
@@ -18,9 +19,9 @@ const IDTAliases = ({ aliases }: IDTAliasesProps) => {
   }
 
   return (
-    <span>
+    <IDTAliasesContainer>
       IDT: <b>{idtAliasesText}</b>
-    </span>
+    </IDTAliasesContainer>
   );
 };
 

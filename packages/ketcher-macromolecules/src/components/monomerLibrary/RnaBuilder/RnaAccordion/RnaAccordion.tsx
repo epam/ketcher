@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
-import { useAppSelector, useSequenceEditInRNABuilderMode } from 'hooks';
+import { useAppSelector } from 'hooks';
 import { IconName } from 'ketcher-react';
 import { useEffect, useState } from 'react';
 import {
@@ -55,7 +55,10 @@ import {
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
 import { MonomerItemType } from 'ketcher-core';
-import { selectEditor } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 
 interface IGroupsDataItem {
@@ -79,7 +82,9 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const isActivePresetNewAndEmpty = useAppSelector(
     selectIsActivePresetNewAndEmpty,
   );
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);

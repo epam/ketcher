@@ -50,13 +50,16 @@ import {
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
 } from 'state/rna-builder';
-import { useAppSelector, useSequenceEditInRNABuilderMode } from 'hooks';
+import { useAppSelector } from 'hooks';
 import {
   scrollToSelectedMonomer,
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
-import { selectEditor } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { ChangeEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
@@ -109,7 +112,9 @@ export const RnaEditorExpanded = ({
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
   const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =

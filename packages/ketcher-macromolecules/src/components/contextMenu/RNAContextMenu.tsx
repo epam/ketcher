@@ -1,10 +1,6 @@
 import { Item, ItemParams, Separator } from 'react-contexify';
 import { openModal } from 'state/modal';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useSequenceEditInRNABuilderMode,
-} from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
 import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
@@ -12,6 +8,7 @@ import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
 export const RNAContextMenu = () => {
   const RNA_TAB_INDEX = 2;
@@ -20,7 +17,9 @@ export const RNAContextMenu = () => {
     selectActivePresetForContextMenu,
   );
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const RNAMenus = [
     { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
     { name: 'edit', title: 'Edit...', seperator: true },

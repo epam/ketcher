@@ -339,12 +339,19 @@ export class CoreEditor {
   }
 
   public get isSequenceEditMode() {
-    return this.mode instanceof SequenceMode && this.mode.isEditMode;
+    return this?.mode instanceof SequenceMode && this?.mode.isEditMode;
   }
 
   public get isSequenceEditInRNABuilderMode() {
     return (
-      this.mode instanceof SequenceMode && this.mode.isEditInRNABuilderMode
+      this?.mode instanceof SequenceMode && this?.mode.isEditInRNABuilderMode
+    );
+  }
+
+  public get isSequenceAnyEditMode() {
+    return (
+      this?.mode instanceof SequenceMode &&
+      (this?.mode.isEditMode || this?.mode.isEditInRNABuilderMode)
     );
   }
 

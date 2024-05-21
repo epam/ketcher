@@ -2,13 +2,16 @@ import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { selectIsSequenceFirstsOnlyNucleotidesSelected } from 'state/rna-builder';
-import { useSequenceEditInRNABuilderMode } from 'hooks';
+import { useAppSelector } from 'hooks';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
 const useDisabledForSequenceMode = (
   item: MonomerItemType,
   groupName?: MonomerGroups,
 ) => {
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const isSequenceFirstsOnlyNucleoelementsSelected = useSelector(
     selectIsSequenceFirstsOnlyNucleotidesSelected,
   );

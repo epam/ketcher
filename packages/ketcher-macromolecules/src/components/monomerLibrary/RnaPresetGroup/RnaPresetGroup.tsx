@@ -139,7 +139,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     };
     debouncedShowPreview({
       preset: {
-        idtAliases: null,
+        idtAliases: preset.idtAliases,
         monomers,
       },
       style,

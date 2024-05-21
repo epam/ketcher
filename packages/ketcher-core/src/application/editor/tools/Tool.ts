@@ -1,4 +1,5 @@
 import { MonomerItemType, Entities } from 'domain/types';
+import { IKetMonomerGroupTemplate } from 'application/formatters';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -80,11 +81,8 @@ export interface IRnaPreset {
 }
 
 export interface IRnaLabeledPreset
-  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'> {
-  base?: string;
-  sugar?: string;
-  phosphate?: string;
-}
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+    Pick<IKetMonomerGroupTemplate, 'templates'> {}
 
 export type LabeledNodesWithPositionInSequence = {
   type: Entities;

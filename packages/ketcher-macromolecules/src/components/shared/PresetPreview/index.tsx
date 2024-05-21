@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { IDTAliases } from 'components/shared/IDTAliases';
 import { useMemo } from 'react';
 import {
   PresetMonomerRow,
@@ -26,7 +27,7 @@ import { IPreviewProps } from '../MonomerPreview/types';
 import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
-import { selectShowPreview } from 'state/common';
+import { PresetPreviewState, selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react/dist/components/Icon/types';
 
 const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
@@ -50,16 +51,23 @@ const PresetPreview = ({ className }: IPreviewProps) => {
       transform: ${preview.style.transform || ''};
     `;
   }, [preview]);
+  if (!preview || !('preset' in preview)) {
+    return undefined;
+  }
+  const { preset } = preview as PresetPreviewState;
+  const { idtAliases } = preset;
+  const [, baseMonomer] = preset.monomers;
+  const presetName = baseMonomer?.props.Name;
 
   return (
-    preview?.preset && (
+    preview.preset && (
       <ContainerDynamic
         className={className}
         data-testid="polymer-library-preview"
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
-        <PresetName>{preview.preset.monomers[1].props.Name}</PresetName>
-        {preview.preset.monomers.map(
+        <PresetName>{presetName}</PresetName>
+        {preset.monomers.map(
           (monomer, index) =>
             monomer && (
               <PresetMonomerRow key={index}>
@@ -69,6 +77,7 @@ const PresetPreview = ({ className }: IPreviewProps) => {
               </PresetMonomerRow>
             ),
         )}
+        {idtAliases && <IDTAliases aliases={idtAliases}></IDTAliases>}
       </ContainerDynamic>
     )
   );

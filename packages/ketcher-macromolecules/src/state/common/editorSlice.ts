@@ -25,7 +25,7 @@ interface MonomerPreviewState {
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
-interface PresetPreviewState {
+export interface PresetPreviewState {
   readonly preset: {
     readonly idtAliases?: IKetIdtAliases;
     readonly monomers: ReadonlyArray<MonomerItemType | undefined>;

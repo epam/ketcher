@@ -17,5 +17,7 @@ import styled from '@emotion/styled';
 
 export const IDTAliasesContainer = styled.span`
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-weight: 500;
+  line-height: normal;
   color: ${(props) => props.theme.ketcher.color.text.lightgrey};
 `;

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { EditorClassName } from 'ketcher-react';
 import { preview } from '../constants';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
@@ -32,17 +31,11 @@ function createCalculatePreviewTopFunction(
   height: number,
 ): (target?: DOMRect) => string {
   return function calculatePreviewTop(target?: DOMRect): string {
-    if (!target || !getEditorDOMRect()) {
+    if (!target) {
       return '';
     }
 
     const top = calculateTop(target, height);
     return `${top}px`;
   };
-}
-
-function getEditorDOMRect(): DOMRect | undefined {
-  return document
-    .getElementsByClassName(EditorClassName)[0]
-    ?.getBoundingClientRect();
 }

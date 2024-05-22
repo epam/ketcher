@@ -156,7 +156,8 @@ export class Vec2 {
     return new Vec2(this.x - v.x, this.y - v.y, this.z - v.z);
   }
 
-  scaled(s: number): Vec2 {
+  scaled(sInitial: number): Vec2 {
+    const s = isFinite(sInitial) ? sInitial : 1;
     return new Vec2(this.x * s, this.y * s, this.z * s);
   }
 

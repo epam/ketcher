@@ -17,8 +17,10 @@ import {
   getKet,
   receiveFileComparisonData,
   getMolfile,
+  delay,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -122,6 +124,17 @@ test.describe('Common connection rules: ', () => {
       await monomerLocator.hover();
       await moveMouseAway(page);
     }
+  }
+
+  async function hoverMouseOverMonomer(page: Page, monomerName: string) {
+    await selectSingleBondTool(page);
+
+    const monomerLocator = page
+      .getByText(monomerName, { exact: true })
+      .locator('..')
+      .first();
+
+    await monomerLocator.hover();
   }
 
   async function grabSelectionAndMoveTo(
@@ -299,7 +312,7 @@ test.describe('Common connection rules: ', () => {
   });
 
   /*
-   *  Test case3: https://github.com/epam/ketcher/issues/4605 - Cases 1-5
+   *  Test case4: https://github.com/epam/ketcher/issues/4605 - Cases 1-5
    *  Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
    *  Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
    *  Check that 4 connected by Bond A6OH monomers are possible to Erase
@@ -334,5 +347,94 @@ test.describe('Common connection rules: ', () => {
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure in Mol Format
     await saveToMol(page, '4 connected by Bond A6OH-expected.mol');
+  });
+
+  async function bondTwoMonomersByCenterToCenterByNames(
+    page: Page,
+    leftMonomerName: string,
+    rightMonomerName: string,
+  ) {
+    const leftMonomerLocator = page
+      .getByText(leftMonomerName)
+      .locator('..')
+      .first();
+
+    const rightMonomerLocator =
+      (await page.getByText(leftMonomerName).count()) > 1
+        ? page.getByText(rightMonomerName).nth(1).locator('..').first()
+        : page.getByText(rightMonomerName).locator('..').first();
+
+    await bondTwoMonomersPointToPoint(
+      page,
+      leftMonomerLocator,
+      rightMonomerLocator,
+    );
+  }
+
+  test(`Check that select attachment point window works correct`, async () => {
+    /*
+     *  Test case5: https://github.com/epam/ketcher/issues/4422 - Cases 8-10
+     *  Case 8:
+     *    "Select Attachment Points" modal: Check click button to expand modal
+     *  Case 9:
+     *    "Select Attachment Points" modal: Molecular structures of monomers in expanded window have the same scale
+     *  Case 10:
+     *    Button to collapse expanded view is added. When button is clicked, default modal view is shown
+     */
+    test.setTimeout(20000);
+
+    await openFileAndAddToCanvasMacro(
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
+      page,
+    );
+
+    await bondTwoMonomersByCenterToCenterByNames(
+      page,
+      'Test-6-Ch',
+      'Test-6-Ph',
+    );
+    // Case 8-9
+    await page.getByTitle('expand window').click();
+    await takeEditorScreenshot(page);
+    // Case 10
+    await page.getByTitle('expand window').click();
+    await takeEditorScreenshot(page);
+
+    await page.getByTitle('Cancel').click();
+  });
+
+  test(`Check that preview window of micro structure not shows pieces of macro structures and vice versa`, async () => {
+    /*
+     *  Test case5: https://github.com/epam/ketcher/issues/4422 - Cases 11
+     *  Case 11:
+     *    Check that preview window of micro structure not shows pieces of macro structures and vice versa
+     */
+    test.setTimeout(20000);
+
+    await openFileAndAddToCanvasMacro(
+      'KET/Common-Bond-Tests/Micro and macro connected.ket',
+      page,
+    );
+
+    const leftMonomerLocator = page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    const rightMonomerLocator = page.getByText('F1').locator('..').first();
+    await bondTwoMonomersPointToPoint(
+      page,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      'R1',
+      'R1',
+    );
+
+    await hoverMouseOverMonomer(page, 'Test-6-Ch');
+    await delay(1);
+    await takeEditorScreenshot(page);
+
+    await hoverMouseOverMonomer(page, 'F1');
+    await delay(1);
+    await takeEditorScreenshot(page);
   });
 });

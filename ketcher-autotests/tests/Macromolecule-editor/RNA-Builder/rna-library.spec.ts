@@ -874,4 +874,79 @@ test.describe('RNA Library', () => {
     await turnOnMicromoleculesEditor(page);
     await takePageScreenshot(page);
   });
+
+  test('It is possible to add/remove RNA presets into the Favourite library', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 6-7
+     *Description:
+     *  Case 6:
+     *    It is possible to add RNA presets into the Favourite library
+     *  Case 7:
+     *    It is possible to delete RNA presets from the Favourite library
+     */
+    await page.getByText('★').first().click();
+    await page.getByTestId('FAVORITES-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+
+    await page.getByText('★').first().click();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Check that presets and monomers appear back after cleaning search field', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4422 - Case 11-12
+    Description: 
+      Case 11:
+        Check that default presets appear back after cleaning search field
+      Case 12:
+        Check that default monomers appear back after cleaning search field
+    */
+    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
+    await rnaLibrarySearch.fill('No monomers and presets');
+    await takeMonomerLibraryScreenshot(page);
+
+    await page.getByTestId('RNA-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+
+    await page.getByTestId('CHEM-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+
+    await rnaLibrarySearch.press('Escape');
+
+    await page.getByTestId('RNA-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+
+    await page.getByTestId('PEPTIDES-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Check that can delete preset from Presets section', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 13
+     *Description:
+     *  Case 13:
+     *    Check that can delete preset from Presets section
+     */
+    await expandCollapseRnaBuilder(page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
+    await page.getByTestId('add-to-presets-btn').click();
+    await expandCollapseRnaBuilder(page);
+
+    const customPreset = page.getByTestId(
+      '12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph',
+    );
+    await customPreset.hover();
+    await customPreset.locator('circle').nth(1).click();
+    await page.getByText('Delete Preset').click();
+    await page.getByRole('button', { name: 'Delete' }).click();
+    await takeMonomerLibraryScreenshot(page);
+  });
 });

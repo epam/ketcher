@@ -7,6 +7,7 @@ import {
   AtomButton,
   BondIds,
   LeftPanelButton,
+  MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
@@ -155,6 +156,14 @@ export async function selectLeftPanelButton(
 ) {
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();
+}
+
+export async function selectMacromoleculesLeftPanelButton(
+  buttonName: MacromoleculesLeftPanelButton,
+  page: Page,
+) {
+  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
+  await topPanelButton.click();
 }
 
 export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {

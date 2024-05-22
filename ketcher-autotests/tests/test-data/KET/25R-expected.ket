@@ -1,0 +1,249 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer1"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-25R___2,5-Ribose"
+            }
+        ]
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 14.75,
+            "y": -7.65
+        },
+        "alias": "25R",
+        "templateId": "25R___2,5-Ribose"
+    },
+    "monomerTemplate-25R___2,5-Ribose": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -0.4497168133582634,
+                    -0.8142767654737866,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6184588488073848,
+                    0.24404013255469867,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.6088858459495599,
+                    -0.980804151008038,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.3358409435420487,
+                    0.7315488751054199,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0943942595449148,
+                    -0.02543275386108686,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.4690771400334166,
+                    1.5784024264237446,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.151710993095717,
+                    0.14080887039382642,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5736159249948323,
+                    0.726976694636011,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.99887855192617,
+                    -1.7441439684398161,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.4714778646749997,
+                    0.14080887039382642,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.2364608094629723,
+                    0.5275867619778833,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.690942527206626,
+                    -0.525586433022517,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    7
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    8
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    11
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "25R___2,5-Ribose",
+        "fullName": "2,5-Ribose",
+        "alias": "25R",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 10,
+                "leavingGroup": {
+                    "atoms": []
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 11,
+                "leavingGroup": {
+                    "atoms": []
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": []
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "R"
+    }
+}

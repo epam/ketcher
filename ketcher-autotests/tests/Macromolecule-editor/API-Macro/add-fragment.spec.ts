@@ -9,6 +9,7 @@ import {
   selectRectangleArea,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
+  waitForRender,
 } from '@utils';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';
@@ -50,6 +51,12 @@ test.describe('addFragment', () => {
       page,
       async () => await addFragment(page, fileContents),
     );
+    const numberOfPressZoomOut = 6;
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
   });
 
   test('ket with two monomers bonded', async ({ page }) => {
@@ -58,5 +65,11 @@ test.describe('addFragment', () => {
       page,
       async () => await addFragment(page, fileContents),
     );
+    const numberOfPressZoomOut = 6;
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
   });
 });

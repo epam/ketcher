@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  readFileContents,
   waitForPageInit,
   turnOnMacromoleculesEditor,
   saveToFile,
   getMolfile,
+  receiveFileComparisonData,
 } from '@utils';
 
 test.describe('getMolfile', () => {
@@ -21,9 +21,15 @@ test.describe('getMolfile', () => {
       'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
       mol,
     );
-    const fileContents = await readFileContents(
-      'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
-    );
-    expect(mol).toBe(fileContents);
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+    expect(molFile).toEqual(molFileExpected);
   });
 });

@@ -6,6 +6,7 @@ import {
   setMolecule,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
+  waitForRender,
 } from '@utils';
 
 test.describe('setMolecule', () => {
@@ -22,6 +23,12 @@ test.describe('setMolecule', () => {
       page,
       async () => await setMolecule(page, fileContents),
     );
+    const numberOfPressZoomOut = 6;
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -33,6 +40,12 @@ test.describe('setMolecule', () => {
       page,
       async () => await setMolecule(page, fileContents),
     );
+    const numberOfPressZoomOut = 6;
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
     await takeEditorScreenshot(page);
   });
 });

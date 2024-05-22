@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
@@ -82,5 +83,56 @@ test.describe('getKet', () => {
       throw new Error('Expected error was not thrown');
     }
     expect(errorCaught).toBe(true);
+  });
+
+  const formatsToTest = [
+    'getSmiles',
+    'getRxn',
+    'getSmarts',
+    'getCml',
+    'getSdf',
+    'getCDXml',
+    'getCDX',
+  ];
+
+  test.describe('Check that certain methods throw an Error', () => {
+    formatsToTest.forEach((format) => {
+      test(`Check that ${format} method throws an Error`, async ({ page }) => {
+        /**
+         * Test case: #3531
+         * Description: 'getSmiles','getRxn','getSmarts','getCml','getSdf','getCDXml','getCDX', method throws an Error
+         */
+
+        await page.waitForFunction(() => (window as any).ketcher);
+
+        let errorCaught = false;
+
+        page.on('console', (msg) => {
+          if (msg.type() === 'error') {
+            errorCaught = true;
+          }
+        });
+
+        try {
+          await page.evaluate((fmt) => {
+            const ketcher = (window as any).ketcher as unknown as {
+              [key: string]: () => Promise<any>;
+            };
+            if (typeof ketcher[fmt] !== 'function') {
+              throw new Error(`${fmt} is not a function`);
+            }
+            return ketcher[fmt]();
+          }, format);
+        } catch (e) {
+          errorCaught = true;
+        }
+
+        if (!errorCaught) {
+          throw new Error('Expected error was not thrown');
+        }
+
+        expect(errorCaught).toBe(true);
+      });
+    });
   });
 });

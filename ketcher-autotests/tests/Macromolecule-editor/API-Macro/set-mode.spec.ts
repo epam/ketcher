@@ -5,6 +5,8 @@ import {
   openFileAndAddToCanvasMacro,
   setMode,
   takePageScreenshot,
+  selectSnakeLayoutModeTool,
+  takeEditorScreenshot,
 } from '@utils';
 
 test.describe('setMode', () => {
@@ -18,5 +20,56 @@ test.describe('setMode', () => {
     await takePageScreenshot(page);
     await setMode(page, 'sequence');
     await takePageScreenshot(page);
+  });
+
+  test('Validate ketcher.setMode for Flex Mode', async ({ page }) => {
+    /**
+     * Test case: #4539
+     * Description: ketcher.setMode switch canvas to Flex Mode
+     */
+    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await setMode(page, 'flex');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate ketcher.setMode for Snake Mode', async ({ page }) => {
+    /**
+     * Test case: #4539
+     * Description: ketcher.setMode switch canvas to Snake Mode
+     */
+    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await takeEditorScreenshot(page);
+    await setMode(page, 'snake');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate ketcher.setMode for Sequence Mode', async ({ page }) => {
+    /**
+     * Test case: #4539
+     * Description: ketcher.setMode switch canvas to Sequence Mode
+     */
+    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await takeEditorScreenshot(page);
+    await setMode(page, 'sequence');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Switch between different modes (flex, sequence, snake) using ketcher.setMode for Complex Structures', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4539
+     * Description: ketcher.setMode switch canvas to Sequence Mode
+     */
+    await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
+    await takeEditorScreenshot(page);
+    await setMode(page, 'snake');
+    await takeEditorScreenshot(page);
+    await setMode(page, 'sequence');
+    await takeEditorScreenshot(page);
+    await setMode(page, 'flex');
+    await takeEditorScreenshot(page);
   });
 });

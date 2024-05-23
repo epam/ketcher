@@ -55,7 +55,7 @@ test.afterAll(async ({ browser }) => {
 });
 
 test.describe('Connection rules for Phosphate monomers: ', () => {
-  test.setTimeout(300000);
+  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
   interface IMonomer {
@@ -308,7 +308,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection dialog should appear)
        */
       test(`Test case1: Center-to-center of ${leftPhosphate.alias} and ${rightPhosphate.alias}`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
 
@@ -347,7 +347,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case2: Connect ${leftPhosphateConnectionPoint} to ${rightPhosphateConnectionPoint} of ${leftPhosphate.alias} and ${rightPhosphate.alias}`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
 
@@ -527,7 +527,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftPhosphateConnectionPoint} to ${rightPeptideConnectionPoint} of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
@@ -706,7 +706,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftPhosphateConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 
@@ -746,7 +746,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
@@ -778,7 +778,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case6: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 

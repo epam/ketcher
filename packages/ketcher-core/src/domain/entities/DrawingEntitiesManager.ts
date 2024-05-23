@@ -1,5 +1,3 @@
-import pick from 'lodash/pick';
-import omit from 'lodash/omit';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
@@ -53,9 +51,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { IRnaPreset, SequenceMode } from 'application/editor';
-import { IRnaLabeledPreset } from 'application/editor/tools';
-import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { SequenceMode } from 'application/editor';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -899,9 +895,7 @@ export class DrawingEntitiesManager {
     if (rnaBase && rnaBasePosition) {
       monomersToAdd.push([rnaBase, rnaBasePosition]);
     }
-    if (sugar && sugarPosition) {
-      monomersToAdd.push([sugar, sugarPosition]);
-    }
+    monomersToAdd.push([sugar, sugarPosition]);
     if (phosphate && phosphatePosition) {
       monomersToAdd.push([phosphate, phosphatePosition]);
     }
@@ -923,10 +917,6 @@ export class DrawingEntitiesManager {
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
-        if (!attPointEnd) {
-          command.clear();
-          return;
-        }
         assert(attPointEnd);
 
         const operation = new PolymerBondFinishCreationOperation(
@@ -945,53 +935,6 @@ export class DrawingEntitiesManager {
     });
 
     return { command, monomers };
-  }
-
-  public createRnaPresetFromLabeledRnaPreset(preset: IRnaLabeledPreset) {
-    const editor = CoreEditor.provideEditorInstance();
-    const modifiedPreset: Partial<IRnaPreset> = omit(preset, [
-      'sugar',
-      'base',
-      'phosphate',
-    ]);
-    const position = Coordinates.canvasToModel(new Vec2(0, 0));
-    let rnaBaseLibraryItem;
-    let phosphateLibraryItem;
-    let sugarLibraryItem;
-
-    if (preset.base) {
-      rnaBaseLibraryItem = getRnaPartLibraryItem(editor, preset.base);
-      rnaBaseLibraryItem && assert(rnaBaseLibraryItem);
-    }
-    if (preset.phosphate) {
-      phosphateLibraryItem = getRnaPartLibraryItem(editor, preset.phosphate);
-      phosphateLibraryItem && assert(phosphateLibraryItem);
-    }
-    if (preset.sugar) {
-      sugarLibraryItem = getRnaPartLibraryItem(editor, preset.sugar);
-      sugarLibraryItem && assert(sugarLibraryItem);
-    }
-
-    const { monomers } = editor.drawingEntitiesManager.addRnaPreset({
-      sugar: sugarLibraryItem,
-      sugarPosition: position,
-      rnaBase: rnaBaseLibraryItem,
-      rnaBasePosition: position,
-      phosphate: phosphateLibraryItem,
-      phosphatePosition: position,
-    });
-    for (const monomer of monomers) {
-      const props = pick(monomer.monomerItem, ['label', 'props', 'struct']);
-      if (monomer instanceof RNABase) {
-        modifiedPreset.base = { ...props };
-      } else if (monomer instanceof Sugar) {
-        modifiedPreset.sugar = { ...props };
-      } else if (monomer instanceof Phosphate) {
-        modifiedPreset.phosphate = { ...props };
-      }
-    }
-
-    return modifiedPreset;
   }
 
   private rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {

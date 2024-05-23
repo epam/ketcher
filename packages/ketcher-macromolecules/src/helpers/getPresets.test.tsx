@@ -15,7 +15,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getDefaultPresets } from './getDefaultPreset';
+import { getPresets } from './getPreset';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
   monomers,
@@ -30,9 +30,9 @@ import {
 } from '../testMockData/monomerPresets';
 import { MonomerItemType } from 'ketcher-core';
 
-describe('getDefaultPreset function', () => {
+describe('getPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {
-    const testArr = getDefaultPresets(monomers, []);
+    const testArr = getPresets(monomers, [], true);
     expect(testArr.length).toEqual(0);
   });
 
@@ -64,7 +64,8 @@ describe('getDefaultPreset function', () => {
       default: true,
     };
 
-    const testArr = getDefaultPresets(monomerData, rnaPresetsTemplates);
+    const testArr = getPresets(monomerData, rnaPresetsTemplates, true);
+
     expect(testArr).toContainEqual(thymineNucleotide);
     expect(testArr).toContainEqual(guanineNucleotide);
     expect(testArr).not.toContainEqual({

@@ -5,12 +5,18 @@ import {
   MonomerItemType,
   setMonomerTemplatePrefix,
   KetMonomerClass,
+  IRnaLabeledPreset,
 } from 'ketcher-core';
 import { getMonomerUniqueKey } from 'state/library';
 
-export const getDefaultPresets = (
+interface RnaPresetsTemplatesType
+  extends Pick<IKetMonomerGroupTemplate, 'templates'>,
+    Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
+
+export const getPresets = (
   monomers: MonomerItemType[],
-  rnaPresetsTemplates: IKetMonomerGroupTemplate[],
+  rnaPresetsTemplates: RnaPresetsTemplatesType[],
+  isDefault?: boolean,
 ): IRnaPreset[] => {
   const monomerIdToMonomerLibraryItem = {};
 
@@ -50,12 +56,22 @@ export const getDefaultPresets = (
             rnaPartsMonomerTemplatesClass === KetMonomerClass.Phosphate,
         )
       ];
-    return {
-      base: { ...rnaBase, label: rnaBase.props.MonomerName },
-      sugar: { ...ribose, label: ribose.props.MonomerName },
-      phosphate: { ...phosphate, label: phosphate.props.MonomerName },
+
+    const presetToReturn: IRnaPreset = {
       name: rnaPresetsTemplate.name,
-      default: true,
+      favorite: rnaPresetsTemplate.favorite,
+      default: isDefault || rnaPresetsTemplate.default,
     };
+    if (rnaBase)
+      presetToReturn.base = { ...rnaBase, label: rnaBase?.props.MonomerName };
+    if (ribose)
+      presetToReturn.sugar = { ...ribose, label: ribose?.props.MonomerName };
+    if (phosphate)
+      presetToReturn.phosphate = {
+        ...phosphate,
+        label: phosphate?.props.MonomerName,
+      };
+
+    return presetToReturn;
   });
 };

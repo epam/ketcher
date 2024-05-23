@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 import { selectEditor } from 'state/common';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { getDefaultPresets } from 'helpers';
+import { getPresets } from 'helpers';
 import {
   getCachedCustomRnaPresets,
   setCachedCustomRnaPreset,
@@ -27,12 +27,13 @@ function useSetRnaPresets() {
 
     const monomersLibrary = editor.monomersLibrary;
     const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(
+    const defaultPresets: IRnaPreset[] = getPresets(
       monomersLibrary,
       defaultPresetsTemplates,
+      true,
     );
     let customLabeledPresets = getCachedCustomRnaPresets();
-    const customPresets: IRnaPreset[] = [];
+    let customPresets: IRnaPreset[] = [];
     const presetsDefaultNames = defaultPresets.map((preset) => preset.name);
 
     if (customLabeledPresets) {
@@ -55,15 +56,8 @@ function useSetRnaPresets() {
         }
       }
 
-      // Transform IRnaLabeledPreset[] to IRnaPreset[]
       customLabeledPresets = getCachedCustomRnaPresets()!;
-      for (const preset of customLabeledPresets) {
-        const rnaPreset =
-          editor.drawingEntitiesManager.createRnaPresetFromLabeledRnaPreset(
-            preset,
-          );
-        if (rnaPreset) customPresets.push(rnaPreset);
-      }
+      customPresets = getPresets(monomersLibrary, customLabeledPresets);
     }
 
     dispatch(loadMonomerLibrary(monomersLibrary));

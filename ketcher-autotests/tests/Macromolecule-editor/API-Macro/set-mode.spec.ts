@@ -7,6 +7,7 @@ import {
   takePageScreenshot,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
+  setZoom,
 } from '@utils';
 
 test.describe('setMode', () => {
@@ -70,6 +71,22 @@ test.describe('setMode', () => {
     await setMode(page, 'sequence');
     await takeEditorScreenshot(page);
     await setMode(page, 'flex');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test Combination of ketcher.setMode and ketcher.setZoom', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4539
+     * Description: ketcher.setMode switch canvas to Snake Mode
+     */
+    const zoomValue = 0.5;
+    await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
+    await takeEditorScreenshot(page);
+    await setMode(page, 'snake');
+    await takeEditorScreenshot(page);
+    await setZoom(page, zoomValue);
     await takeEditorScreenshot(page);
   });
 });

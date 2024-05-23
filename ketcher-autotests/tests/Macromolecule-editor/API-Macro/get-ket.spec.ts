@@ -9,6 +9,10 @@ import {
   saveToFile,
   layout,
   recognize,
+  receiveFileComparisonData,
+  selectAtomInToolbar,
+  AtomButton,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('getKet', () => {
@@ -134,5 +138,32 @@ test.describe('getKet', () => {
         expect(errorCaught).toBe(true);
       });
     });
+  });
+});
+
+test.describe('getKet', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Check that getKet function return ket file with selection flags in Micro mode', async ({
+    page,
+  }) => {
+    /* 
+  Test case: https://github.com/epam/ketcher/issues/4238
+  Description: getKet function return ket file with selection flags in Micro mode
+  */
+    await selectAtomInToolbar(AtomButton.Hydrogen, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/selected-hydrogen-expected.ket', expectedFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/selected-hydrogen-expected.ket',
+      });
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

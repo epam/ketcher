@@ -452,6 +452,7 @@ test.describe('Import modified .mol files from external editor', () => {
     await turnOnMacromoleculesEditor(page);
   });
   We have opened feature request https://github.com/epam/ketcher/issues/4532
+  After closing the ticket, you need to delete two files from temporaryFailedTestsFileNames
   */
   test.afterEach(async () => {
     await takeEditorScreenshot(page);

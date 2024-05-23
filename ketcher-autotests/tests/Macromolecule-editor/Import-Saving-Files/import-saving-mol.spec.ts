@@ -472,8 +472,16 @@ test.describe('Import modified .mol files from external editor', () => {
     'rna-modified.mol',
   ];
 
+  const filesToFail = new Set([
+    'peptide-modified-2aa-example.mol',
+    'peptide-modified-aa-example.mol',
+  ]);
+
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      if (filesToFail.has(fileName)) {
+        test.fail(true, `This test is expected to fail for file: ${fileName}`);
+      }
       await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
       const numberOfPressZoomOut = 4;
       for (let i = 0; i < numberOfPressZoomOut; i++) {

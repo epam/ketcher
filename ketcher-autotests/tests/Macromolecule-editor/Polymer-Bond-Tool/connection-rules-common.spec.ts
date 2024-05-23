@@ -19,8 +19,16 @@ import {
   getMolfile,
   delay,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
+import {
+  bondTwoMonomersPointToPoint,
+  pressCancelAtSelectConnectionPointDialog,
+  selectLeftConnectionPointAtSelectConnectionPointDialog,
+  selectRightConnectionPointAtSelectConnectionPointDialog,
+} from '@utils/macromolecules/polymerBond';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -400,7 +408,7 @@ test.describe('Common connection rules: ', () => {
     await page.getByTitle('expand window').click();
     await takeEditorScreenshot(page);
 
-    await page.getByTitle('Cancel').click();
+    await pressCancelAtSelectConnectionPointDialog(page);
   });
 
   test(`Check that preview window of micro structure not shows pieces of macro structures and vice versa`, async () => {
@@ -436,5 +444,80 @@ test.describe('Common connection rules: ', () => {
     await hoverMouseOverMonomer(page, 'F1');
     await delay(1);
     await takeEditorScreenshot(page);
+  });
+
+  test(`Check preview for monomer after loading Mol V3000. Leaving groups are displayed correctly`, async () => {
+    /*
+     *  Test case6: https://github.com/epam/ketcher/issues/4422 - Cases 15
+     *  Case 11:
+     *    Check that preview window of micro structure not shows pieces of macro structures and vice versa
+     */
+    test.setTimeout(20000);
+
+    await openFileAndAddToCanvasMacro(
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      page,
+    );
+
+    await hoverMouseOverMonomer(page, 'C');
+    await delay(1);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode`, async () => {
+    /*
+     *  Test case7: https://github.com/epam/ketcher/issues/4422 - Cases 17
+     *  Case 17:
+     *    Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode
+     */
+    test.setTimeout(20000);
+
+    await openFileAndAddToCanvasMacro(
+      'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('C', { exact: true }).locator('..').first().hover();
+    await delay(1);
+    await takeEditorScreenshot(page);
+
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {
+    /*
+     *  Test case7: https://github.com/epam/ketcher/issues/4422 - Cases 19
+     *  Case 19:
+     *    Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)
+     */
+    test.setTimeout(20000);
+
+    await openFileAndAddToCanvasMacro(
+      'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
+      page,
+    );
+    await bondTwoMonomersByCenterToCenterByNames(
+      page,
+      'Test-6-Ch',
+      'Test-6-Ph',
+    );
+
+    const connectionPoints = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];
+
+    for (const connectionPoint of connectionPoints) {
+      await selectLeftConnectionPointAtSelectConnectionPointDialog(
+        page,
+        connectionPoint,
+      );
+      await takeEditorScreenshot(page);
+
+      await selectRightConnectionPointAtSelectConnectionPointDialog(
+        page,
+        connectionPoint,
+      );
+      await takeEditorScreenshot(page);
+    }
+
+    await pressCancelAtSelectConnectionPointDialog(page);
   });
 });

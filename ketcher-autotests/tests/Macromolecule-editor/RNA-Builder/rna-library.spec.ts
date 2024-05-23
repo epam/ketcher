@@ -28,8 +28,16 @@ import {
   waitForPageInit,
   waitForRender,
   moveMouseAway,
+  delay,
 } from '@utils';
 import { getKet } from '@utils/formats';
+import {
+  goToCHEMTab,
+  gotoRNA,
+  toggleBasesAccordion,
+  togglePhosphatesAccordion,
+  toggleSugarsAccordion,
+} from '@utils/macromolecules/rnaBuilder';
 
 async function expandCollapseRnaBuilder(page: Page) {
   await page
@@ -928,9 +936,9 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     /*
-     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 13
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 14
      *Description:
-     *  Case 13:
+     *  Case 14:
      *    Check that can delete preset from Presets section
      */
     await expandCollapseRnaBuilder(page);
@@ -947,6 +955,128 @@ test.describe('RNA Library', () => {
     await customPreset.locator('circle').nth(1).click();
     await page.getByText('Delete Preset').click();
     await page.getByRole('button', { name: 'Delete' }).click();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 16
+     *Description:
+     *  Case 16:
+     *    Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)
+     */
+    await page.getByText('Hide').click();
+    await takePageScreenshot(page);
+
+    await page.getByText('Show Library').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Check that After reloading the page, monomers added to the Favorites section not disappear', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 18
+     *Description:
+     *  Case 18:
+     *    Check that After reloading the page, monomers added to the Favorites section not disappear
+     */
+    await page.getByText('★').first().click();
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('FAVORITES-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Select all entered text in RNA Builder and delete', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 20
+     *Description:
+     *  Case 20:
+     *    Select all entered text in RNA Builder and delete
+     */
+    await gotoRNA(page);
+
+    const rnaNameEditBox = page.getByPlaceholder('Name your structure');
+    const rnaName = 'Random Text';
+
+    await rnaNameEditBox.fill(rnaName);
+    await takeRNABuilderScreenshot(page);
+
+    for (let i = 0; i < rnaName.length; i++) {
+      await rnaNameEditBox.press('Backspace');
+    }
+    await takeRNABuilderScreenshot(page);
+  });
+
+  test('Check that preview window disappears when a cursor moves off from RNA in library', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 21
+     *Description:
+     *  Case 20:
+     *    Check that preview window disappears when a cursor moves off from RNA in library
+     *    (phosphates, sugars, bases)
+     */
+    await gotoRNA(page);
+
+    await toggleSugarsAccordion(page);
+    await page.getByText('12ddR').hover();
+    await delay(1);
+    await takeMonomerLibraryScreenshot(page);
+    await moveMouseAway(page);
+    await takeMonomerLibraryScreenshot(page);
+
+    await toggleBasesAccordion(page);
+    await page.getByText('cpmA').hover();
+    await delay(1);
+    await takeMonomerLibraryScreenshot(page);
+    await moveMouseAway(page);
+    await takeMonomerLibraryScreenshot(page);
+
+    await togglePhosphatesAccordion(page);
+    await page.getByText('Test-6-Ph').hover();
+    await delay(1);
+    await takeMonomerLibraryScreenshot(page);
+    await moveMouseAway(page);
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('CHEM tab check at Library', async ({ page }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 22 - 25
+     *Description:
+     *  Case 22 - Check CHEM frame when it's being hovered over in library
+     *  Case 23 - CHEM gets highlighted when it's being selected in library
+     *  Case 24 - Preview window appearing when hover over CHEM in library
+     *  Case 25 - Search CHEM by entering its name in search field
+     */
+    await gotoRNA(page);
+    // Case 22
+    await page.getByTestId('CHEM-TAB').hover();
+    await takeMonomerLibraryScreenshot(page);
+
+    // Case 23
+    await goToCHEMTab(page);
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await takeMonomerLibraryScreenshot(page);
+    await moveMouseAway(page);
+
+    // Case 24
+    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').hover();
+    await delay(1);
+    await takeMonomerLibraryScreenshot(page);
+    await moveMouseAway(page);
+
+    // Case 25
+    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
+    await rnaLibrarySearch.fill('SMCC');
     await takeMonomerLibraryScreenshot(page);
   });
 });

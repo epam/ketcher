@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect, Page, chromium } from '@playwright/test';
 import {
   TopPanelButton,
@@ -450,6 +451,7 @@ test.describe('Import modified .mol files from external editor', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+  We have opened feature request https://github.com/epam/ketcher/issues/4532
   */
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
@@ -457,6 +459,10 @@ test.describe('Import modified .mol files from external editor', () => {
     await selectClearCanvasTool(page);
   });
 
+  const temporaryFailedTestsFileNames = [
+    'peptide-modified-2aa-example.mol',
+    'peptide-modified-aa-example.mol',
+  ];
   const fileNames = [
     'peptide-Bom.mol',
     'peptide-Fmoc.mol',
@@ -465,21 +471,30 @@ test.describe('Import modified .mol files from external editor', () => {
     'dna-peptide-conj-example.mol',
     'dna-peptideSS-conj-example.mol',
     'insulin-2-peptides-connected-with-SS.mol',
-    // 'peptide-modified-2aa-example.mol',
-    // 'peptide-modified-aa-example.mol',
+    'peptide-modified-2aa-example.mol',
+    'peptide-modified-aa-example.mol',
     'rna-mod-phosphate-example.mol',
     'rna-mod-phosphate-mod-base-example.mol',
     'rna-modified.mol',
   ];
-
+  let labeltag = '';
   for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
-      await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
+    if (!temporaryFailedTestsFileNames.includes(fileName)) labeltag = '';
+    if (temporaryFailedTestsFileNames.includes(fileName)) {
+      labeltag = '@IncorrectResultBecauseOfBug';
+    }
+    test(`for ${fileName} ${labeltag}`, async () => {
+      if (!temporaryFailedTestsFileNames.includes(fileName)) {
+        await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
+      }
       const numberOfPressZoomOut = 4;
       for (let i = 0; i < numberOfPressZoomOut; i++) {
         await waitForRender(page, async () => {
           await page.getByTestId('zoom-out-button').click();
         });
+      }
+      if (temporaryFailedTestsFileNames.includes(fileName)) {
+        test.fail();
       }
     });
   }

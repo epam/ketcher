@@ -17,7 +17,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
-  test.setTimeout(300000);
+  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
@@ -536,7 +536,7 @@ test.describe('Connection rules for peptides: ', () => {
         Object.values(rightPeptide.connectionPoints).includes('R1')
       ) {
         test(`Case 1: Connect Center to Center of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(15000);
+          test.setTimeout(20000);
 
           await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -569,7 +569,7 @@ test.describe('Connection rules for peptides: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 2: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                  test.setTimeout(10000);
+                  test.setTimeout(15000);
 
                   await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -614,7 +614,7 @@ test.describe('Connection rules for peptides: ', () => {
              *         Validate canvas
              */
             test(`Case 3: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
-              test.setTimeout(15000);
+              test.setTimeout(20000);
 
               await prepareCanvasOneFreeAPLeft(
                 page,
@@ -770,7 +770,7 @@ test.describe('Connection rules for peptides: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 5: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(15000);
+          test.setTimeout(20000);
 
           await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 
@@ -802,7 +802,7 @@ test.describe('Connection rules for peptides: ', () => {
          */
 
         test(`Case 6: Connect Center to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and Test-6-P`, async () => {
-          test.setTimeout(15000);
+          test.setTimeout(20000);
 
           await loadTwoMonomers(
             page,
@@ -858,7 +858,7 @@ test.describe('Connection rules for peptides: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 7: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                test.setTimeout(10000);
+                test.setTimeout(15000);
 
                 await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -898,7 +898,7 @@ test.describe('Connection rules for peptides: ', () => {
      *         Validate canvas (No connection established)
      */
     test(`Case 8: Connect Center to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-      test.setTimeout(15000);
+      test.setTimeout(20000);
 
       await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 

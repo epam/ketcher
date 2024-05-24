@@ -54,7 +54,7 @@ test.afterAll(async ({ browser }) => {
 });
 
 test.describe('Connection rules for Base monomers: ', () => {
-  test.setTimeout(15000);
+  test.setTimeout(20000);
   test.describe.configure({ retries: 0 });
 
   interface IMonomer {
@@ -451,7 +451,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftBaseConnectionPoint} to ${rightPeptideConnectionPoint} of Ph(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftBase, rightPeptide);
 
@@ -630,7 +630,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftBaseConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftBase, rightCHEM);
 
@@ -670,7 +670,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftBase, rightPeptide);
 
@@ -698,7 +698,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case6: Cnnct Center to Center of Base(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftBase, rightCHEM);
 

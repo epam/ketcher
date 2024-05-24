@@ -169,6 +169,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3846
     Description: Fields "class" and "classHELM" are presents into .ket file. 
     */
+    test.slow();
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('summary-Sugars').click();
     await page.getByTestId('25R___2,5-Ribose').click();

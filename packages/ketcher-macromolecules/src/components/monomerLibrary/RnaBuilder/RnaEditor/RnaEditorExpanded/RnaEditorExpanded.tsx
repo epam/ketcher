@@ -286,7 +286,6 @@ export const RnaEditorExpanded = ({
       resetAfterSequenceUpdate();
     } else {
       setNewPreset(activePreset);
-      dispatch(setIsEditMode(false));
       dispatch(setActivePresetMonomerGroup(null));
     }
   };

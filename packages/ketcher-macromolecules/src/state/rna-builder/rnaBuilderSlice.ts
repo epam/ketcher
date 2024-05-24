@@ -334,13 +334,12 @@ export const selectActivePresetMonomerGroup = (state: RootState) =>
   state.rnaBuilder.activePresetMonomerGroup;
 
 export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
+  const sugarBase = preset.sugar && preset.base;
+  const sugarPhosphate = preset.sugar && preset.phosphate;
+  const sugarBasePhosphate = preset.sugar && preset.base && preset.phosphate;
+
   return Boolean(
-    (preset.phosphate || preset.sugar || preset.base) &&
-      preset.name &&
-      Number(!!preset.phosphate) +
-        Number(!!preset.sugar) +
-        Number(!!preset.base) >=
-        2,
+    (sugarBase || sugarPhosphate || sugarBasePhosphate) && preset.name,
   );
 };
 

@@ -19,6 +19,7 @@ import assert from 'assert';
 import { AttachmentPointName } from 'domain/types';
 
 export class MacromoleculesConverter {
+  static presencePolymerBonds: (BaseMonomer | undefined)[] = [];
   private static convertMonomerToMonomerMicromolecule(
     monomer: BaseMonomer,
     struct: Struct,
@@ -83,9 +84,6 @@ export class MacromoleculesConverter {
     fragmentId?: number,
   ) {
     const attachmentPointName = monomer.getAttachmentPointByBond(polymerBond);
-    if (!attachmentPointName) {
-      return;
-    }
     assert(attachmentPointName);
     const attachmentPointNumber =
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
@@ -158,40 +156,41 @@ export class MacromoleculesConverter {
     });
 
     let conversionErrorMessage = '';
+    if (this.presencePolymerBonds.length === 0) {
+      drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+        assert(polymerBond.secondMonomer);
+        const beginAtom = this.findAttachmentPointAtom(
+          polymerBond,
+          polymerBond.firstMonomer,
+          struct,
+          monomerToSgroup.get(polymerBond.firstMonomer),
+          monomerToFragmentId.get(polymerBond.firstMonomer),
+        );
+        const endAtom = this.findAttachmentPointAtom(
+          polymerBond,
+          polymerBond.secondMonomer,
+          struct,
+          monomerToSgroup.get(polymerBond.secondMonomer),
+          monomerToFragmentId.get(polymerBond.secondMonomer),
+        );
 
-    drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
-      assert(polymerBond.secondMonomer);
-      const beginAtom = this.findAttachmentPointAtom(
-        polymerBond,
-        polymerBond.firstMonomer,
-        struct,
-        monomerToSgroup.get(polymerBond.firstMonomer),
-        monomerToFragmentId.get(polymerBond.firstMonomer),
-      );
-      const endAtom = this.findAttachmentPointAtom(
-        polymerBond,
-        polymerBond.secondMonomer,
-        struct,
-        monomerToSgroup.get(polymerBond.secondMonomer),
-        monomerToFragmentId.get(polymerBond.secondMonomer),
-      );
+        if (!beginAtom || !endAtom) {
+          conversionErrorMessage =
+            'There is no atom for provided attachment point. Bond between monomers was not created.';
 
-      if (!beginAtom || !endAtom) {
-        conversionErrorMessage =
-          'There is no atom for provided attachment point. Bond between monomers was not created.';
+          return;
+        }
 
-        return;
-      }
-
-      const bond = new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
-        begin: beginAtom,
-        end: endAtom,
+        const bond = new Bond({
+          type: Bond.PATTERN.TYPE.SINGLE,
+          begin: beginAtom,
+          end: endAtom,
+        });
+        const bondId = struct.bonds.add(bond);
+        reStruct?.bonds.set(bondId, new ReBond(bond));
       });
-      const bondId = struct.bonds.add(bond);
-      reStruct?.bonds.set(bondId, new ReBond(bond));
-    });
-
+    }
+    this.presencePolymerBonds = [];
     return { struct, reStruct, conversionErrorMessage };
   }
 
@@ -322,7 +321,7 @@ export class MacromoleculesConverter {
         drawingEntitiesManager,
       );
       fragmentIdToMonomer.set(
-        fragmentId,
+        _fragment[fragmentId],
         monomerAddCommand.operations[0].monomer as BaseMonomer,
       );
       command.merge(monomerAddCommand);
@@ -352,9 +351,8 @@ export class MacromoleculesConverter {
           endAtomSgroup instanceof MonomerMicromolecule
             ? sgroupToMonomer.get(endAtomSgroup)
             : fragmentIdToMonomer.get(endAtom.fragment);
-        if (!firstMonomer || !secondMonomer) {
-          return;
-        }
+        this.presencePolymerBonds.push(firstMonomer, secondMonomer);
+
         assert(firstMonomer);
         assert(secondMonomer);
 

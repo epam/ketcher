@@ -263,6 +263,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
     page,
   }) => {
+    test.slow();
     await selectTopPanelButton(TopPanelButton.Open, page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';

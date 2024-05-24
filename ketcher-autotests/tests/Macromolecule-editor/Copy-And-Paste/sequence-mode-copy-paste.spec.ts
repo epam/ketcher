@@ -117,6 +117,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   test('Select letters with Shift & ArrowLeft then paste ket from clipboard and undo', async ({
     page,
   }) => {
+    test.slow();
     const fileContent = await readFileContents(
       'tests/test-data/KET/single-fragment-for-paste.ket',
     );

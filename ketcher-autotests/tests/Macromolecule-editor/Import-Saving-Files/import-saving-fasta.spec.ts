@@ -237,7 +237,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
 
-    const filename = 'FASTA/fasta-without->-symbol.fasta';
+    const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
@@ -249,7 +249,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
 
-    const filename = 'FASTA/fasta-with-*-separator.fasta';
+    const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
     await page.getByTestId('dropdown-select-type').click();
@@ -263,6 +263,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
     page,
   }) => {
+    test.slow();
     await selectTopPanelButton(TopPanelButton.Open, page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';

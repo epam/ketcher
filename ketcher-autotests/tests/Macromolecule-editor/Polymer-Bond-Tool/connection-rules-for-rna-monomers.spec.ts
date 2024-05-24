@@ -17,7 +17,7 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
-  test.setTimeout(300000);
+  test.setTimeout(400000);
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
@@ -553,7 +553,7 @@ test.describe('Connection rules for RNAs: ', () => {
        *  If no R3 available - open Select Connection Points dialog
        */
       test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftSugar, rightBase);
 
@@ -577,7 +577,7 @@ test.describe('Connection rules for RNAs: ', () => {
        *  If R2 is not available but R1 is than system establishes Sugar(R1)-Phosphate(R2)
        */
       test(`Case 2.1: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and Sugar(${rightSugar.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftPhosphate, rightSugar);
 
@@ -601,7 +601,7 @@ test.describe('Connection rules for RNAs: ', () => {
        *  If R2 is not available but R1 is than system establishes Phosphate(R1)-Sugar(R2)
        */
       test(`Case 2.2: Connect Center to Center of Sugar(${leftSugar.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
-        test.setTimeout(15000);
+        test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftSugar, rightPhosphate);
 

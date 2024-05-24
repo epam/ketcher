@@ -48,7 +48,10 @@ import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
-import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
+import {
+  filterNotInContractedSGroup,
+  filterNotSuperatomLeavingGroups,
+} from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
@@ -175,6 +178,7 @@ class SelectTool implements Tool {
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
+
     if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
@@ -246,9 +250,15 @@ class SelectTool implements Tool {
 
     if (this.#lassoHelper.running()) {
       const sel = this.#lassoHelper.addPoint(event);
+      const filteredSelection = filterNotSuperatomLeavingGroups(
+        { atoms: sel?.atoms, bonds: sel?.bonds },
+        restruct.molecule,
+      );
 
       editor.selection(
-        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
+        !event.shiftKey
+          ? filteredSelection
+          : selMerge(filteredSelection, editor.selection(), false),
       );
       return true;
     }
@@ -283,7 +293,12 @@ class SelectTool implements Tool {
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
-    const newSelected = getNewSelectedItems(editor, selectedSgroups);
+    let newSelected = getNewSelectedItems(editor, selectedSgroups);
+
+    newSelected = filterNotSuperatomLeavingGroups(
+      { atoms: newSelected?.atoms, bonds: newSelected?.bonds },
+      molecule,
+    );
 
     if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 

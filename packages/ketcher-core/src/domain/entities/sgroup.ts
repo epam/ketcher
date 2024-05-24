@@ -244,7 +244,9 @@ export class SGroup {
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId }) => attachmentPoint.atomId === atomId,
+      ({ atomId, leaveAtomId }) =>
+        attachmentPoint.atomId === atomId &&
+        attachmentPoint.leaveAtomId === leaveAtomId,
     );
 
     if (isAttachmentPointAlreadyExist) {

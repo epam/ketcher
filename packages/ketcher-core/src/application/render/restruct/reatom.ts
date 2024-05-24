@@ -150,6 +150,7 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,

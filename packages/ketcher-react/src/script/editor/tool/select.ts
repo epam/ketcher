@@ -250,15 +250,9 @@ class SelectTool implements Tool {
 
     if (this.#lassoHelper.running()) {
       const sel = this.#lassoHelper.addPoint(event);
-      const filteredSelection = filterNotSuperatomLeavingGroups(
-        { atoms: sel?.atoms, bonds: sel?.bonds },
-        restruct.molecule,
-      );
 
       editor.selection(
-        !event.shiftKey
-          ? filteredSelection
-          : selMerge(filteredSelection, editor.selection(), false),
+        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
       );
       return true;
     }
@@ -293,12 +287,7 @@ class SelectTool implements Tool {
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
-    let newSelected = getNewSelectedItems(editor, selectedSgroups);
-
-    newSelected = filterNotSuperatomLeavingGroups(
-      { atoms: newSelected?.atoms, bonds: newSelected?.bonds },
-      molecule,
-    );
+    const newSelected = getNewSelectedItems(editor, selectedSgroups);
 
     if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 

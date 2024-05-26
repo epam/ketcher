@@ -183,12 +183,16 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
+  getFragment(
+    fid: number | number[],
+    copyNonFragmentObjects = true,
+    aidMap?: Map<number, number>,
+  ): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,
       true,
-      undefined,
+      aidMap,
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),

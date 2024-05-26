@@ -150,6 +150,8 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -157,7 +159,9 @@ class ReAtom extends ReObject {
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      (Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, atomId))
     ) {
       return null;
     }
@@ -171,13 +175,18 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      (Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, atomId))
     ) {
       return null;
     }

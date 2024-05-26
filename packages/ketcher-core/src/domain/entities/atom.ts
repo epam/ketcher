@@ -765,6 +765,13 @@ export class Atom extends BaseMicromoleculeEntity {
 
     return isAttachmentAtomHasExternalConnection;
   }
+
+  public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {
+    return (
+      Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
+      Atom.isAttachmentAtomHasExternalConnections(struct, atomId)
+    );
+  }
 }
 
 export function radicalElectrons(radical: any) {

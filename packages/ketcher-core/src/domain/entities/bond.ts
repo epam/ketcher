@@ -314,4 +314,20 @@ export class Bond extends BaseMicromoleculeEntity {
     const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
+
+  public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
+    const beginSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
+    const endSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
+
+    return (
+      (beginSuperatomAttachmentPoint &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, bond.begin) &&
+        bond.end === beginSuperatomAttachmentPoint.atomId) ||
+      (endSuperatomAttachmentPoint &&
+        Atom.isAttachmentAtomHasExternalConnections(struct, bond.end) &&
+        bond.begin === endSuperatomAttachmentPoint.atomId)
+    );
+  }
 }

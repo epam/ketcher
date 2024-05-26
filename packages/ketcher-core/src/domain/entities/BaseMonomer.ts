@@ -412,9 +412,7 @@ export abstract class BaseMonomer extends DrawingEntity {
           },
           type:
             this.attachmentPointNumberToType[
-              getAttachmentPointLabelWithBinaryShift(
-                superatomAttachmentPointIndex + 1,
-              )
+              superatomAttachmentPointIndex + 1
             ] || this.attachmentPointNumberToType.moreThanTwo,
         });
       },

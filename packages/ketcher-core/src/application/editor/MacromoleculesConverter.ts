@@ -61,7 +61,7 @@ export class MacromoleculesConverter {
     return Number(attachmentPointName?.replace('R', ''));
   }
 
-  private static findAttachmentPointAtom(
+  public static findAttachmentPointAtom(
     polymerBond: PolymerBond,
     monomer: BaseMonomer,
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,

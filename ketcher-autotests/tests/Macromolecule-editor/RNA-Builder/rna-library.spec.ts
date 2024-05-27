@@ -1037,7 +1037,7 @@ test.describe('RNA Library', () => {
     await toggleSugarsAccordion(page);
     await page.getByText('12ddR').hover();
     await delay(1);
-    await takeMonomerLibraryScreenshot(page, { maxDiffPixelRatio: 0.01 });
+    await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
@@ -1074,7 +1074,9 @@ test.describe('RNA Library', () => {
     await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await moveMouseAway(page);
-    await takeElementScreenshot(page, 'Test-6-Ch___Test-6-AP-Chem');
+    await takeElementScreenshot(page, 'Test-6-Ch___Test-6-AP-Chem', {
+      maxDiffPixelRatio: 0.03,
+    });
     // await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);
 

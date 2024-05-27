@@ -225,7 +225,10 @@ export const RnaEditorExpanded = ({
     }
     if (selectedGroup === MonomerGroups.BASES) {
       baseValidaions.push('R1');
-      if (newPreset.sugar && !('R3' in newPreset.sugar.props.MonomerCaps)) {
+      if (
+        newPreset?.sugar?.props?.MonomerCaps &&
+        !('R3' in newPreset.sugar.props.MonomerCaps)
+      ) {
         baseValidaions.push('DISABLED');
       }
     }

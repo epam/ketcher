@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -20,7 +21,22 @@ import {
   waitForRender,
   moveMouseToTheMiddleOfTheScreen,
   selectOptionInDropdown,
+  waitForSpinnerFinishedWork,
+  selectRing,
+  RingButton,
+  selectSingleBondTool,
+  moveMouseAway,
+  selectAtomInToolbar,
+  AtomButton,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  selectSaltsAndSolvents,
+  SaltsAndSolvents,
+  selectSnakeLayoutModeTool,
+  selectEraseTool,
+  clickUndo,
 } from '@utils';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 const topLeftCorner = {
   x: -325,
@@ -72,6 +88,27 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('bP___Boranophosphate').getByText('★').click();
   await page.getByTestId('CHEM-TAB').click();
   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').getByText('★').click();
+}
+
+async function setAtomAndBondSettings(page: Page) {
+  await page.getByTestId('settings-button').click();
+  await page.getByText('Atoms', { exact: true }).click();
+  await page.getByText('Terminal and Hetero').click();
+  await page.getByTestId('On-option').click();
+  await page.getByText('Bonds', { exact: true }).click();
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as' })
+    .getByRole('textbox')
+    .nth(1)
+    .click();
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as' })
+    .getByRole('textbox')
+    .nth(1)
+    .fill('05');
+  await page.getByTestId('OK').click();
 }
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -281,12 +318,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, -400);
 
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
@@ -314,7 +349,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, 250);
 
     await turnOnMacromoleculesEditor(page);
@@ -383,6 +417,115 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
+  });
+
+  const tests = [
+    { button: TopPanelButton.Layout, description: 'Layout' },
+    { button: TopPanelButton.Clean, description: 'Clean Up' },
+  ];
+
+  for (const testInfo of tests) {
+    test(`Check that Pressing ${testInfo.description} button not erase all macromolecules from canvas`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/3712
+      Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
+      */
+      await page.getByTestId('A___Alanine').click();
+      await clickInTheMiddleOfTheScreen(page);
+      await turnOnMicromoleculesEditor(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await selectTopPanelButton(testInfo.button, page),
+      );
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Remove abbreviation restricted for CHEMs in micro mode.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('Test-6-Ch').click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  const cases = [
+    {
+      fileName: 'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+      description: 'DNA with modified monomer',
+    },
+    {
+      fileName: 'Molfiles-V3000/rna-mod-phosphate-mod-base-example.mol',
+      description: 'RNA with modified monomer',
+    },
+  ];
+
+  for (const testInfo of cases) {
+    test(`Check that switching between Macro and Micro mode not crash application when opened ${testInfo.description} with modyfied monomer`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/#3747
+      Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
+      */
+      await openFileAndAddToCanvasMacro(testInfo.fileName, page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('The 3D view works for micromolecules when there are macromolecules on the canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4203
+    Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
+    After closing the ticket, should update the screenshots.
+
+    */
+    await page.getByTestId('Bal___beta-Alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await takeEditorScreenshot(page, {
+      maxDiffPixelRatio: 0.05,
+    });
+  });
+
+  test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4094
+    Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await page.getByTestId('Bal___beta-Alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.locator('.css-1kbfai8').click();
   });
 });
 
@@ -598,5 +741,604 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
     await takePageScreenshot(page);
+  });
+
+  test('R-Group labels should be converted to monomer attachment points', async ({
+    page,
+  }) => {
+    /*
+    Ticket: https://github.com/epam/ketcher/issues/4530
+    Description: Convert Rx connection points created in molecules mode into chem attachment points in macromolecules mode
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasMacro('KET/molecules-with-rglabels.ket', page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+    await page.getByText('F2').locator('..').hover();
+    await takeEditorScreenshot(page);
+    await page.getByText('F3').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Atoms displayed as dots, without any text or other additional information. 
+    Bonds displayed as one line regardless which type of bond it is.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    for (let i = 0; i < 3; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro, check that structure is in center of canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#3902
+    Description: Structure is in center of canvas
+    */
+    await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Settings related to atom and bond display are ignored in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Settings related to atom and bond display are ignored in macromolecules mode, 
+    and display is consistently set to dots for atoms and single lines for bonds.
+    Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
+    After closing the ticket, should update the screenshots.
+    */
+    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+    await setAtomAndBondSettings(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    for (let i = 0; i < 3; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Atom connected to R-Group label by bond used as attachment atom when switch to macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
+    */
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check If there are more than one attachment atom for same R-Group label', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
+    */
+    await openFileAndAddToCanvas(
+      'KET/more-than-one-attachment-atom-for-R-Group.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Make sure that micro structure Atom when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Micro structure Functional Group when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Micro structure Salt and Solvent when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4531
+    Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
+    */
+    const x = 200;
+    const y = 200;
+    const x1 = 600;
+    const y1 = 600;
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await dragMouseTo(x1, y1, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testData = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Connect micro structure with attachment point to ${data.description} in macro mode`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/atom-connected-to-R-Group-label-by-bond.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      await bondLine.hover();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Connect micro structure with attachment point to CHEM in macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  const testData2 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'moen',
+      monomerTestId: 'moen___2-Methoxyethylamino',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData2) {
+    test(`Connect micro structure with attachment point to ${data.description} in macro mode(snake mode)`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/atom-connected-to-R-Group-label-by-bond.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await selectSnakeLayoutModeTool(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      await bondLine.hover();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Connect micro structure with attachment point to CHEM in macro mode(snake mode)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await selectSnakeLayoutModeTool(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  const testData3 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData3) {
+    test(`Delete bond between micro structure with attachment point and ${data.description} in macro mode and Undo deletion`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/atom-connected-to-R-Group-label-by-bond.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      await selectEraseTool(page);
+      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      await bondLine.click();
+      await takeEditorScreenshot(page);
+      await clickUndo(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Delete bond between micro structure with attachment point and CHEM in macro mode and Undo deletion', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await selectEraseTool(page);
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.click();
+    await takeEditorScreenshot(page);
+    await clickUndo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testData4 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData4) {
+    test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
+      page,
+    }) => {
+      /* 
+      Test case: Macro-Micro-Switcher/#4530
+      Description: The test does not work properly because the connection of 
+      monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
+      After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/atom-connected-to-R-Group-label-by-bond.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      await turnOnMicromoleculesEditor(page);
+      await selectEraseTool(page);
+      await page.getByText(data.monomer).locator('..').click();
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4530
+    Description: The test does not work properly because the connection of 
+      monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
+      After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/atom-connected-to-R-Group-label-by-bond.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await turnOnMicromoleculesEditor(page);
+    await selectEraseTool(page);
+    await page.getByText('Test-6-Ch').locator('..').click();
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 });

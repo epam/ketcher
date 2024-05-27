@@ -47,25 +47,29 @@ import {
   setBaseValidations,
   setPhosphateValidations,
   setIsEditMode,
-  setActivePresetMonomerGroup,
   selectPresetFullName,
   setUniqueNameError,
   setSequenceSelection,
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
 } from 'state/rna-builder';
-import { useAppSelector, useSequenceEditInRNABuilderMode } from 'hooks';
+import { useAppSelector } from 'hooks';
 import {
   scrollToSelectedMonomer,
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
-import { selectEditor } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { ChangeEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
-} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers/sequenceEdit';
+  resetRnaBuilder,
+  resetRnaBuilderAfterSequenceUpdate,
+} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -111,7 +115,9 @@ export const RnaEditorExpanded = ({
   // For sequence edit in RNA Builder mode
   const sequenceSelection = useAppSelector(selectSequenceSelection);
   const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
     useState<boolean>(false);
   const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =
@@ -253,19 +259,12 @@ export const RnaEditorExpanded = ({
     }
   };
 
-  const resetAfterSequenceUpdate = () => {
-    dispatch(setSequenceSelection([]));
-    dispatch(setActivePresetMonomerGroup(null));
-    dispatch(setIsEditMode(false));
-    editor.events.turnOffSequenceEditInRNABuilderMode.dispatch();
-  };
-
   const onUpdateSequence = () => {
     if (getCountOfNucleoelements(sequenceSelection) > 1) {
       dispatch(openModal('updateSequenceInRNABuilder'));
     } else {
       editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
-      resetAfterSequenceUpdate();
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
   };
 
@@ -289,16 +288,15 @@ export const RnaEditorExpanded = ({
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
     }, 0);
-    dispatch(setIsEditMode(false));
-    dispatch(setActivePresetMonomerGroup(null));
+    resetRnaBuilder(dispatch);
   };
 
   const onCancel = () => {
     if (isSequenceEditInRNABuilderMode) {
-      resetAfterSequenceUpdate();
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     } else {
       setNewPreset(activePreset);
-      dispatch(setActivePresetMonomerGroup(null));
+      resetRnaBuilder(dispatch);
     }
   };
 

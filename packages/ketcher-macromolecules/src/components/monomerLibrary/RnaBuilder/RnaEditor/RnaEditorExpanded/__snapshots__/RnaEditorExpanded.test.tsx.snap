@@ -347,7 +347,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 
 exports[`Test Rna Editor Expanded component should render correctly in view mode 1`] = `
 <div
-  class="rna-editor-expanded--sequence-edit-mode css-s8m56i"
+  class=" css-s8m56i"
   data-testid="rna-editor-expanded"
 >
   <div

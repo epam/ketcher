@@ -17,6 +17,7 @@ import {
   selectPartOfMolecules,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
+  scrollDown,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -945,6 +946,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
     and maximum call stack size exceeded error not appears during snake layout.
     */
+    test.slow();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -1046,12 +1048,15 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Bonds connected through R1-R1 and R2-R2 connections should remain straight line. Connected through R2-R1 snake layout.
     */
+    const SCROLL_DELTA = 700;
     await openFileAndAddToCanvasMacro(
       `KET/two-peptide-chains-one-connected-through-r1-r1-and-r2-r2-another-r2-r1.ket`,
       page,
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await scrollDown(page, SCROLL_DELTA);
     await takeEditorScreenshot(page);
   });
 });

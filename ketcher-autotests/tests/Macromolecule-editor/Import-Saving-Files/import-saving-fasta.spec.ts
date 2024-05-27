@@ -15,8 +15,10 @@ import {
   readFileContents,
   getFasta,
   moveMouseAway,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
 
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
@@ -180,6 +182,176 @@ test.describe('Import-Saving .fasta Files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
 
+    await takeEditorScreenshot(page);
+  });
+
+  const testData = [
+    {
+      filename: 'FASTA/fasta-dna-24.fasta',
+      monomers: 'DNA',
+    },
+    {
+      filename: 'FASTA/fasta-rna-musculus-rearranged.fasta',
+      monomers: 'RNA',
+    },
+    {
+      filename: 'FASTA/fasta-peptide.fasta',
+      monomers: 'Peptide',
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
+      page,
+    }) => {
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile(data.filename, page);
+      await selectOptionInDropdown(data.filename, page);
+
+      if (data.monomers === 'Peptide') {
+        await page.getByTestId('dropdown-select-type').click();
+        await page.getByText(data.monomers, { exact: true }).click();
+      }
+
+      await pressButton(page, 'Add to Canvas');
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-multiline-sequence.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
+    page,
+  }) => {
+    test.slow();
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Add to Canvas');
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify ignoring "-" symbol during import', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-dash-symbol.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async ({
+    page,
+  }) => {
+    await selectTopPanelButton(TopPanelButton.Open, page);
+
+    const filename = 'FASTA/fasta-with-selenocystein.fasta';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
+    await page.getByTestId('dropdown-select-type').click();
+    await page.getByText('Peptide', { exact: true }).click();
+    await pressButton(page, 'Add to Canvas');
+    await selectSequenceLayoutModeTool(page);
+    await getSequenceSymbolLocator(page, 'C').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify correct export of DNA/RNA sequences with proper header', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify correct export of peptide sequences with proper header', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Export to FASTA: Verify ignoring CHEMs and RNA-monomers not part of nucleotides or nucleosides during export', async ({
+    page,
+  }) => {
+    /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4626
+    After fix screenshot should be updated.
+    */
+    await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create cycled chain and side chain - save it to FASTA and sequence - verify that it is not supported and warning message occures', async ({
+    page,
+  }) => {
+    /* Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/4332
+    Warning message NOT occures.
+    After fix screenshot should be updated.
+    */
+    await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
+    await selectSequenceLayoutModeTool(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
   });
 });

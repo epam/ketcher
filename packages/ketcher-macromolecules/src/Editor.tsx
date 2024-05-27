@@ -44,6 +44,7 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
+  selectIsSequenceEditInRNABuilderMode,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -93,6 +94,7 @@ import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemCont
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -365,7 +367,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary
+            isSequenceEditInRNABuilderMode={isSequenceEditInRNABuilderMode}
+          />
         </Layout.Right>
       </Layout>
       <MonomerLibraryToggle
@@ -400,9 +404,11 @@ function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const activeMenuItems = [activeTool];
-  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
-  const isDisabled = isSequenceEditInRNABuilderMode;
+  const isDisabled = !!isSequenceEditInRNABuilderMode;
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
@@ -420,11 +426,11 @@ function MenuComponent() {
           editor.events.selectTool.dispatch(name);
           editor.events.selectTool.dispatch('select-rectangle');
         } else {
-          dispatch(selectTool(name));
-          editor.events.selectTool.dispatch(name);
           if (name === 'clear') {
             dispatch(selectTool('select-rectangle'));
             editor.events.selectTool.dispatch('select-rectangle');
+            if (isSequenceEditInRNABuilderMode)
+              resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
           } else {
             dispatch(selectTool(name));
           }
@@ -461,7 +467,12 @@ function MenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." testId="open-button" />
+        <Menu.Item
+          itemId="open"
+          title="Open..."
+          disabled={isDisabled}
+          testId="open-button"
+        />
         <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
       <Menu.Group>

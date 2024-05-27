@@ -109,7 +109,8 @@ export class AttachmentPoint {
     this.attachmentPoint = this.rootElement
       .insert('g', ':first-child')
       .data([this])
-      .style('pointer-events', 'none');
+      .style('pointer-events', 'none')
+      .attr('class', 'dynamic-element');
 
     const attachmentPointElement = this.attachmentPoint.append('g');
 

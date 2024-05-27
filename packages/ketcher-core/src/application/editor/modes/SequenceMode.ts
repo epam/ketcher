@@ -906,6 +906,7 @@ export class SequenceMode extends BaseMode {
 
   getNewNodePosition() {
     if (this.isEditMode) {
+      const currentNode = SequenceRenderer.currentEdittingNode;
       const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
       const nodeBeforePreviousNode = previousNode
         ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
@@ -913,6 +914,7 @@ export class SequenceMode extends BaseMode {
       const newNodePosition = this.getNewSequenceItemPosition(
         previousNode,
         nodeBeforePreviousNode,
+        currentNode,
       );
       return newNodePosition;
     } else {
@@ -937,11 +939,14 @@ export class SequenceMode extends BaseMode {
   private getNewSequenceItemPosition(
     previousNode?: SubChainNode,
     nodeBeforePreviousNode?: SubChainNode,
+    currentNode?: SubChainNode,
   ) {
     const offsetFromPrevious = new Vec2(1, 1);
 
     if (previousNode && !(previousNode instanceof EmptySequenceNode)) {
       return previousNode.lastMonomerInNode.position.add(offsetFromPrevious);
+    } else if (currentNode && !(currentNode instanceof EmptySequenceNode)) {
+      return currentNode.firstMonomerInNode.position.add(offsetFromPrevious);
     } else if (nodeBeforePreviousNode) {
       return nodeBeforePreviousNode.lastMonomerInNode.position.add(
         offsetFromPrevious,

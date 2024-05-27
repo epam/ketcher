@@ -25,7 +25,6 @@ import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
@@ -80,9 +79,7 @@ export class SequenceRenderer {
 
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
-    const editor = CoreEditor.provideEditorInstance();
-    const isEditMode =
-      editor.mode instanceof SequenceMode && editor.mode.isEditMode;
+    const isEditMode = CoreEditor.provideEditorInstance().isSequenceEditMode;
 
     if (isEditMode) {
       chainsCollection.chains.forEach((chain) => {
@@ -229,6 +226,17 @@ export class SequenceRenderer {
           });
         });
       });
+      if (chain.isCyclic) {
+        const polymerBond = chain.firstMonomer?.attachmentPointsToBonds
+          .R1 as PolymerBond;
+        const bondRenderer = new PolymerBondSequenceRenderer(
+          polymerBond,
+          chain.firstNode,
+          chain.lastNonEmptyNode,
+        );
+        bondRenderer.show();
+        polymerBond.setRenderer(bondRenderer);
+      }
     });
   }
 

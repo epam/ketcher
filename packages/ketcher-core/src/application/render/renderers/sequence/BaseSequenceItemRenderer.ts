@@ -4,7 +4,6 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor } from 'application/editor/internal';
-import { SequenceMode } from 'application/editor/modes';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { editorEvents } from 'application/editor/editorEvents';
 import assert from 'assert';
@@ -74,17 +73,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   protected get isSequenceEditModeTurnedOn() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    return editor.mode instanceof SequenceMode && editor.mode.isEditMode;
+    return CoreEditor.provideEditorInstance().isSequenceEditMode;
   }
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
-    const editor = CoreEditor.provideEditorInstance();
-
-    return (
-      editor.mode instanceof SequenceMode && editor.mode.isEditInRNABuilderMode
-    );
+    return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
   private appendRootElement() {
@@ -267,14 +260,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('y', -21)
         .attr('width', 18)
         .attr('height', 30)
-        .attr('rx', 3);
+        .attr('rx', 3)
+        .attr('class', 'dynamic-element');
     } else {
       this.selectionRectangle
         ?.attr('fill', '#57FF8F')
         .attr('x', -4)
         .attr('y', -16)
         .attr('width', 20)
-        .attr('height', 20);
+        .attr('height', 20)
+        .attr('class', 'dynamic-element');
     }
   }
 

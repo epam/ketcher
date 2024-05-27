@@ -200,7 +200,8 @@ class ZoomTool implements BaseTool {
       .attr('cursor', 'pointer')
       .attr('stroke', this.COLOR)
       .attr('fill', this.COLOR)
-      .attr('data-testid', scrollBar.name + '-bar');
+      .attr('data-testid', scrollBar.name + '-bar')
+      .attr('class', 'dynamic-element');
   }
 
   calculateDynamicAttr(scrollBar: ScrollBar) {
@@ -320,6 +321,10 @@ class ZoomTool implements BaseTool {
 
   public zoomOut(zoomStep = this.zoomStep) {
     this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+  }
+
+  public zoomTo(zoomLevel: number) {
+    this.zoom?.scaleTo(this.canvasWrapper, zoomLevel);
   }
 
   public resetZoom() {

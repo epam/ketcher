@@ -23,6 +23,8 @@ import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export abstract class BaseMode {
+  private _pasteIsInProgress = false;
+
   protected constructor(
     public modeName: LayoutMode,
     public previousMode: LayoutMode = 'flex-layout-mode',
@@ -139,8 +141,16 @@ export abstract class BaseMode {
   async onPaste(event: ClipboardEvent) {
     if (!this.checkIfTargetIsInput(event)) {
       if (isClipboardAPIAvailable()) {
+        const isSequenceEditInRNABuilderMode =
+          CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+
+        if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
+        this._pasteIsInProgress = true;
+
         const clipboardData = await navigator.clipboard.read();
-        this.pasteFromClipboard(clipboardData);
+        this.pasteFromClipboard(clipboardData).finally(() => {
+          this._pasteIsInProgress = false;
+        });
       } else {
         const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
         this.pasteFromClipboard(clipboardData);

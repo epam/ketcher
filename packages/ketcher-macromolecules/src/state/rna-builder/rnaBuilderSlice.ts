@@ -29,6 +29,7 @@ import {
   setCachedCustomRnaPreset,
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
+import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -155,7 +156,7 @@ export const rnaBuilderSlice = createSlice({
       const preset = action.payload;
       const newPreset = { ...preset };
 
-      setCachedCustomRnaPreset(newPreset);
+      setCachedCustomRnaPreset(transformRnaPresetToRnaLabeledPreset(newPreset));
 
       // Save or update preset in Store
       if (newPreset.nameInList) {

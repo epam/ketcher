@@ -51,7 +51,9 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       isBaseValid = 'R1' in preset.base.props.MonomerCaps;
     }
     if (preset?.sugar?.props?.MonomerCaps) {
-      isSugarValid = 'R3' in preset.sugar.props.MonomerCaps;
+      if (isBaseValid && preset?.base?.props?.MonomerCaps) {
+        isSugarValid = 'R3' in preset.sugar.props.MonomerCaps;
+      }
     }
     if (preset?.phosphate?.props?.MonomerCaps) {
       isPhosphateValid = 'R1' in preset.phosphate.props.MonomerCaps;

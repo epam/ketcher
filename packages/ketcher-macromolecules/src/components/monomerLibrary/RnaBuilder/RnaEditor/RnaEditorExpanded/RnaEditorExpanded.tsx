@@ -208,26 +208,35 @@ export const RnaEditorExpanded = ({
       newPreset,
       selectedGroup,
     );
+    const sugarValidaions: string[] = [];
+    const phosphateValidaions: string[] = [];
+    const baseValidaions: string[] = [];
+
     if (selectedRNAPartMonomer) {
       editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
     if (selectedGroup === MonomerGroups.SUGARS) {
-      const sugarValidaions = ['R3'];
       if (newPreset.phosphate) {
         sugarValidaions.push('R2');
       }
-      dispatch(setSugarValidations(sugarValidaions));
+      if (newPreset.base) {
+        sugarValidaions.push('R3');
+      }
     }
     if (selectedGroup === MonomerGroups.BASES) {
-      const baseValidaions = ['R1'];
-      dispatch(setBaseValidations(baseValidaions));
+      baseValidaions.push('R1');
+      if (newPreset.sugar && !('R3' in newPreset.sugar.props.MonomerCaps)) {
+        baseValidaions.push('DISABLED');
+      }
     }
     if (selectedGroup === MonomerGroups.PHOSPHATES) {
-      const phosphateValidaions = ['R1'];
-      dispatch(setPhosphateValidations(phosphateValidaions));
+      phosphateValidaions.push('R1');
     }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));
+    dispatch(setSugarValidations(sugarValidaions));
+    dispatch(setPhosphateValidations(phosphateValidaions));
+    dispatch(setBaseValidations(baseValidaions));
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {

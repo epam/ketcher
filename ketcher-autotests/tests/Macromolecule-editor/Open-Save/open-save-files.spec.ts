@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Browser, Page, chromium, expect, test } from '@playwright/test';
+import { Page, chromium, expect, test } from '@playwright/test';
 import {
   selectClearCanvasTool,
   waitForKetcherInit,
@@ -7,7 +7,6 @@ import {
   openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
   selectSaveTool,
-  selectOpenTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 

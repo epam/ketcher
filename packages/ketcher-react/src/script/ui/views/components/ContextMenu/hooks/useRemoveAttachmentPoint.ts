@@ -1,4 +1,4 @@
-import { fromOneAtomDeletion, fromSgroupDeletion } from 'ketcher-core';
+import { fromOneAtomDeletion } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -28,10 +28,6 @@ const useRemoveAttachmentPoint = () => {
         restruct,
         attachmentPoint.leaveAtomId as number,
       );
-
-      if (sgroup && attachmentPoints.length === 0) {
-        action.mergeWith(fromSgroupDeletion(restruct, sgroup.id));
-      }
 
       editor.update(action);
       editor.selection(null);

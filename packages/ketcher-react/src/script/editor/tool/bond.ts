@@ -91,7 +91,6 @@ class BondTool implements Tool {
           functionalGroups,
           id,
         );
-        console.log(fgId);
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
         }

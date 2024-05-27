@@ -1341,4 +1341,19 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
   });
+
+  test('Connect molecule to monomer', async ({ page }) => {
+    /*
+    Github ticket: https://github.com/epam/ketcher/issues/4532
+    Description: Allow connection of molecule with monomer
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasMacro(
+      'KET/molecule-connected-to-monomers.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
 });

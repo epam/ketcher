@@ -960,7 +960,7 @@ test.describe('RNA Library', () => {
       '12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph',
     );
     await customPreset.hover();
-    await customPreset.locator('circle').nth(1).click();
+    await customPreset.click({ button: 'right' });
     await page.getByText('Delete Preset').click();
     await page.getByRole('button', { name: 'Delete' }).click();
     await takeMonomerLibraryScreenshot(page);

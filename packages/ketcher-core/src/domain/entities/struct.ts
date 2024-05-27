@@ -1166,6 +1166,12 @@ export class Struct {
     return null;
   }
 
+  getGroupFromBondId(atomId: number | undefined): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromBondId(atomId as number);
+
+    return this.sgroups?.get(sgroupId as number);
+  }
+
   getGroupsIdsFromBondId(bondId: number): number[] {
     const bond = this.bonds.get(bondId);
     if (!bond) return [];

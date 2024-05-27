@@ -1,4 +1,4 @@
-import { Atom, Bond, Struct } from 'ketcher-core';
+import { Struct } from 'ketcher-core';
 
 /**
  * return only such elements ids that not part of collapsed group
@@ -41,34 +41,18 @@ function isNotCollapsedSGroup(groupId: number | null, struct: Struct): boolean {
   return sGroup.checkAttr('expanded', true);
 }
 
-export function filterNotSuperatomLeavingGroups(
+export function filterNotPartOfSuperatomWithoutLabel(
   itemsToFilter: { atoms?: number[]; bonds?: number[] },
   struct: Struct,
 ) {
   return {
     atoms:
       itemsToFilter.atoms?.filter((atomId) => {
-        return !(
-          Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
-          Atom.isAttachmentAtomHasExternalConnections(struct, atomId)
-        );
+        return !struct.getGroupFromAtomId(atomId)?.isSuperatomWithoutLabel;
       }) ?? [],
     bonds:
       itemsToFilter.bonds?.filter((bondId) => {
-        const bond = struct.bonds.get(bondId) as Bond;
-        const beginSuperatomAttachmentPoint =
-          Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
-        const endSuperatomAttachmentPoint =
-          Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
-
-        return !(
-          (beginSuperatomAttachmentPoint &&
-            Atom.isAttachmentAtomHasExternalConnections(struct, bond.begin) &&
-            bond.end === beginSuperatomAttachmentPoint.atomId) ||
-          (endSuperatomAttachmentPoint &&
-            Atom.isAttachmentAtomHasExternalConnections(struct, bond.end) &&
-            bond.begin === endSuperatomAttachmentPoint.atomId)
-        );
+        return !struct.getGroupFromBondId(bondId)?.isSuperatomWithoutLabel;
       }) ?? [],
   };
 }

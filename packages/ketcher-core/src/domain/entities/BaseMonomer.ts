@@ -4,10 +4,7 @@ import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import {
-  getAttachmentPointLabel,
-  getAttachmentPointLabelWithBinaryShift,
-} from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import assert from 'assert';
 import {
   IKetAttachmentPoint,
@@ -315,7 +312,6 @@ export abstract class BaseMonomer extends DrawingEntity {
   private getAttachmentPointDict(): Partial<
     Record<AttachmentPointName, PolymerBond | null>
   > {
-    console.log(this.monomerItem.attachmentPoints);
     if (this.monomerItem.attachmentPoints) {
       const { attachmentPointDictionary } =
         BaseMonomer.getAttachmentPointDictFromMonomerDefinition(

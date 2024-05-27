@@ -48,10 +48,7 @@ import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
-import {
-  filterNotInContractedSGroup,
-  filterNotSuperatomLeavingGroups,
-} from './helper/filterNotInCollapsedSGroup';
+import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 

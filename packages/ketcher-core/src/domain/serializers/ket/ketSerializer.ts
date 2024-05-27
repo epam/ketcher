@@ -30,6 +30,9 @@ import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
   IKetConnection,
+  IKetConnectionEndPoint,
+  IKetConnectionMoleculeEndPoint,
+  IKetConnectionMonomerEndPoint,
   IKetMacromoleculesContent,
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
@@ -469,7 +472,10 @@ export class KetSerializer implements Serializer<Struct> {
     return this.deserializeToStruct(fileContent);
   }
 
-  getConnectionMonomerEndpoint(monomer: BaseMonomer, polymerBond: PolymerBond) {
+  getConnectionMonomerEndpoint(
+    monomer: BaseMonomer,
+    polymerBond: PolymerBond,
+  ): IKetConnectionMonomerEndPoint {
     return {
       monomerId: setMonomerPrefix(monomer.id),
       attachmentPointId: monomer.getAttachmentPointByBond(polymerBond),
@@ -481,7 +487,7 @@ export class KetSerializer implements Serializer<Struct> {
     polymerBond: PolymerBond,
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
     struct: Struct,
-  ) {
+  ): IKetConnectionMoleculeEndPoint {
     const atomId = MacromoleculesConverter.findAttachmentPointAtom(
       polymerBond,
       monomer,
@@ -572,28 +578,28 @@ export class KetSerializer implements Serializer<Struct> {
         connectionType: KetConnectionType.SINGLE,
         endpoint1: polymerBond.firstMonomer.monomerItem.props
           .isMicromoleculeFragment
-          ? this.getConnectionMoleculeEndpoint(
+          ? (this.getConnectionMoleculeEndpoint(
               polymerBond.firstMonomer,
               polymerBond,
               monomerToAtomIdMap,
               struct,
-            )
-          : this.getConnectionMonomerEndpoint(
+            ) as IKetConnectionEndPoint)
+          : (this.getConnectionMonomerEndpoint(
               polymerBond.firstMonomer,
               polymerBond,
-            ),
+            ) as IKetConnectionEndPoint),
         endpoint2: polymerBond.secondMonomer.monomerItem.props
           .isMicromoleculeFragment
-          ? this.getConnectionMoleculeEndpoint(
+          ? (this.getConnectionMoleculeEndpoint(
               polymerBond.secondMonomer,
               polymerBond,
               monomerToAtomIdMap,
               struct,
-            )
-          : this.getConnectionMonomerEndpoint(
+            ) as IKetConnectionEndPoint)
+          : (this.getConnectionMonomerEndpoint(
               polymerBond.secondMonomer,
               polymerBond,
-            ),
+            ) as IKetConnectionEndPoint),
       });
     });
 

@@ -47,6 +47,8 @@ function fromBondDeletion(
   bid: number,
   skipAtoms: Array<any> = [],
 ) {
+  let action = new Action();
+
   if (restruct.sgroups && restruct.sgroups.size > 0) {
     restruct.sgroups.forEach((sgroup) => {
       if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
@@ -57,12 +59,13 @@ function fromBondDeletion(
           sgroup,
           beginAtomConnectedToBond,
           endAtomConnectedToBond,
+          action,
+          restruct,
         );
       }
     });
   }
 
-  let action = new Action();
   const bond: any = restruct.molecule.bonds.get(bid);
   const atomsToRemove: Array<any> = [];
 

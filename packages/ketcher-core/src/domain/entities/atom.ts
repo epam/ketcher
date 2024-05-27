@@ -719,6 +719,16 @@ export class Atom extends BaseMicromoleculeEntity {
     return rad + conn + Math.abs(charge);
   }
 
+  public static getSuperAtomAttachmentPointByAttachmentAtom(
+    struct: Struct,
+    atomId: number,
+  ) {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.atomId === atomId);
+  }
+
   public static getSuperAtomAttachmentPointByLeavingGroup(
     struct: Struct,
     atomId: number,
@@ -729,8 +739,24 @@ export class Atom extends BaseMicromoleculeEntity {
       .find((attachmentPoint) => attachmentPoint.leaveAtomId === atomId);
   }
 
-  public static isSuperatomLeavingGroupAtom(struct: Struct, atomId: number) {
-    return Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId);
+  public static isSuperatomLeavingGroupAtom(struct: Struct, atomId?: number) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId),
+    );
+  }
+
+  public static isSuperatomAttachmentAtom(struct: Struct, atomId?: number) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+    );
   }
 
   public static isAttachmentAtomHasExternalConnections(

@@ -1042,7 +1042,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await toggleBasesAccordion(page);
-    await page.getByText('cpmA').hover();
+    await page.getByText('2imen2').hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);

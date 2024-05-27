@@ -57,7 +57,7 @@ test.describe('Open/save file tests: ', () => {
      *  Test case1: https://github.com/epam/ketcher/issues/4422 - Cases 28
      *  Check that it is possible to select all text by CTRL+A and delete it in 'Paste from Clipboard modal window
      */
-    test.setTimeout(20000);
+    test.setTimeout(15000);
 
     await openStructurePasteFromClipboard(page);
     const openStructureFromClipboardTextArea = page.getByTestId(

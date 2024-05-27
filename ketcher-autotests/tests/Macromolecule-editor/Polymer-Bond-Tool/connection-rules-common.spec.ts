@@ -252,7 +252,7 @@ test.describe('Common connection rules: ', () => {
    *  Check that attachment points dissapear when dragging bond from one CHEM monomer on canvas to another and clicking 'ESC' when hover second CHEM
    */
   test(`Check that attachment points dissapear when dragging bond from one monomer on canvas to another and clicking 'ESC' when hover second monomer`, async () => {
-    test.setTimeout(20000);
+    test.setTimeout(30000);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',

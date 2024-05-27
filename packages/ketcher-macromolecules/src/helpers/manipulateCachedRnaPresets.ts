@@ -1,7 +1,6 @@
-import { IRnaLabeledPreset, IRnaPreset } from 'ketcher-core';
+import { IRnaLabeledPreset } from 'ketcher-core';
 import { localStorageWrapper } from './localStorage';
 import { CUSTOM_PRESETS } from '../constants';
-import omit from 'lodash/omit';
 
 // Get custom presets from LocalStorage
 export const getCachedCustomRnaPresets = (): IRnaLabeledPreset[] | undefined =>
@@ -13,39 +12,21 @@ const getPresetIndexInList = (name?: string): number => {
 };
 
 // Save or update custom preset in LocalStorage
-export const setCachedCustomRnaPreset = (
-  preset: IRnaPreset | IRnaLabeledPreset,
-) => {
+export const setCachedCustomRnaPreset = (preset: IRnaLabeledPreset) => {
   const presetToSet = { ...preset };
   const cachedPresets = getCachedCustomRnaPresets() || [];
-  const isLabeledPreset =
-    typeof presetToSet.sugar === 'string' ||
-    typeof presetToSet.base === 'string' ||
-    typeof presetToSet.phosphate === 'string';
-  const fieldsToLabel = ['sugar', 'base', 'phosphate'];
-  const newLabeledPreset = isLabeledPreset
-    ? (presetToSet as IRnaLabeledPreset)
-    : (omit(presetToSet, fieldsToLabel) as Partial<IRnaLabeledPreset>);
 
-  if (!isLabeledPreset) {
-    for (const monomerName of fieldsToLabel) {
-      newLabeledPreset[monomerName] = presetToSet[monomerName]?.label;
-    }
-  }
+  const presetIndexInCachedList = getPresetIndexInList(presetToSet.nameInList);
 
-  const presetIndexInCachedList = getPresetIndexInList(
-    newLabeledPreset.nameInList,
-  );
-
-  newLabeledPreset.nameInList = newLabeledPreset.name;
+  presetToSet.nameInList = presetToSet.name;
 
   if (presetIndexInCachedList > -1) {
-    cachedPresets.splice(presetIndexInCachedList, 1, newLabeledPreset);
+    cachedPresets.splice(presetIndexInCachedList, 1, presetToSet);
     localStorageWrapper.setItem(CUSTOM_PRESETS, cachedPresets);
   } else {
     localStorageWrapper.setItem(CUSTOM_PRESETS, [
       ...cachedPresets,
-      newLabeledPreset,
+      presetToSet,
     ]);
   }
 };

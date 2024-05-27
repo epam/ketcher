@@ -179,28 +179,50 @@ export const selectMonomers = (state: RootState) => {
 };
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
-  const preparedData = monomers.reduce((result, monomerItem) => {
-    // separate monomers by NaturalAnalogCode
-    const code = monomerItem.props.MonomerNaturalAnalogCode;
-    if (!result[code]) {
-      result[code] = [];
-    }
-    result[code].push({
-      ...monomerItem,
-      label: monomerItem.props.MonomerName,
-    });
-    return result;
-  }, {});
+  const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
+    (result, monomerItem) => {
+      // separate monomers by NaturalAnalogCode
+      const code = monomerItem.props.MonomerNaturalAnalogCode;
+      if (!result[code]) {
+        result[code] = [];
+      }
+      result[code].push({
+        ...monomerItem,
+        label: monomerItem.props.MonomerName,
+      });
+      return result;
+    },
+    {},
+  );
+
+  const sortedPreparedData = Object.entries(preparedData).reduce(
+    (result, [code, monomers]) => {
+      const sortedMonomers = monomers.sort((a, b) =>
+        a.label.localeCompare(b.label),
+      );
+      const baseIndex = sortedMonomers.findIndex(
+        (monomer) => monomer.label === code,
+      );
+      if (baseIndex !== -1) {
+        const base = sortedMonomers.splice(baseIndex, 1);
+        sortedMonomers.unshift(base[0]);
+      }
+      result[code] = sortedMonomers;
+      return result;
+    },
+    {},
+  );
+
   // generate list of monomer groups
   const preparedGroups: Group[] = [];
-  return Object.keys(preparedData)
+  return Object.keys(sortedPreparedData)
     .sort()
     .reduce((result, code) => {
       const group: Group = {
         groupTitle: code,
         groupItems: [],
       };
-      preparedData[code].forEach((item: MonomerItemType) => {
+      sortedPreparedData[code].forEach((item: MonomerItemType) => {
         group.groupItems.push({
           ...item,
           props: { ...item.props },

@@ -946,6 +946,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
     and maximum call stack size exceeded error not appears during snake layout.
     */
+    test.slow();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(

@@ -32,3 +32,7 @@ export async function togglePhosphatesAccordion(page: Page) {
 export async function togglePresetsAccordion(page: Page) {
   await page.getByTestId('summary-Phosphates').click();
 }
+
+export async function pressNewPresetButton(page: Page) {
+  await page.getByRole('button', { name: 'New Preset' }).click();
+}

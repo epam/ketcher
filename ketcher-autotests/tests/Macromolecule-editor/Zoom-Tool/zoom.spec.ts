@@ -13,6 +13,7 @@ import {
   selectSingleBondTool,
   takePageScreenshot,
   moveMouseAway,
+  openStructurePasteFromClipboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
@@ -380,6 +381,17 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId('paste-from-clipboard-button').click();
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
+    await takePageScreenshot(page);
+  });
+
+  test('Maximum browser zoom in', async ({ page, browser }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4422 - Case 29
+    Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
+    */
+    await openStructurePasteFromClipboard(page);
+    await browser.newContext({ deviceScaleFactor: 4 });
+    await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);
   });
 });

@@ -34,6 +34,7 @@ import { getKet } from '@utils/formats';
 import {
   goToCHEMTab,
   gotoRNA,
+  pressNewPresetButton,
   toggleBasesAccordion,
   togglePhosphatesAccordion,
   toggleSugarsAccordion,
@@ -906,12 +907,14 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     /* 
-    Test case: https://github.com/epam/ketcher/issues/4422 - Case 11-12
+    Test case: https://github.com/epam/ketcher/issues/4422 - Case 11-12, 27
     Description: 
       Case 11:
         Check that default presets appear back after cleaning search field
       Case 12:
         Check that default monomers appear back after cleaning search field
+      Case 27:
+        Check that search menu clear button erase all entered text
     */
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('No monomers and presets');
@@ -923,7 +926,11 @@ test.describe('RNA Library', () => {
     await page.getByTestId('CHEM-TAB').click();
     await takeMonomerLibraryScreenshot(page);
 
-    await rnaLibrarySearch.press('Escape');
+    // await rnaLibrarySearch.press('Escape');
+    // Case 27 here. Dirty hack, can't believe I did it.
+    const xCoodinate = 1241;
+    const yCoodinate = 62;
+    await page.mouse.click(xCoodinate, yCoodinate);
 
     await page.getByTestId('RNA-TAB').click();
     await takeMonomerLibraryScreenshot(page);
@@ -1078,5 +1085,21 @@ test.describe('RNA Library', () => {
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('SMCC');
     await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('RNA builder expands when clicking on New Preset button', async ({
+    page,
+  }) => {
+    /*
+     *Test case: https://github.com/epam/ketcher/issues/4422 - Case 26
+     *Description:
+     *  Case 26 - RNA builder expands when clicking on 'New Preset' button
+     */
+    await gotoRNA(page);
+
+    await pressNewPresetButton(page);
+    await expect(page.getByTestId('cancel-btn')).toBeVisible();
+
+    await page.getByTestId('cancel-btn').click();
   });
 });

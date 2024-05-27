@@ -112,6 +112,25 @@ export async function selectRectangleSelectionTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectOpenTool(page: Page) {
+  const openToolButton = page.getByTestId('open-button');
+  await openToolButton.click();
+}
+
+export async function selectSaveTool(page: Page) {
+  const saveToolButton = page.getByTestId('save-button');
+  await saveToolButton.click();
+}
+
+export async function openStructurePasteFromClipboard(page: Page) {
+  const bondToolButton = page.getByTestId('open-button');
+  await bondToolButton.click();
+  const pasteFromClipboardButton = page.getByTestId(
+    'paste-from-clipboard-button',
+  );
+  await pasteFromClipboardButton.click();
+}
+
 // undo/redo heplers currently used for macromolecules editor because buttons are in different panel
 export async function clickUndo(page: Page) {
   const undoButton = page.getByTestId('undo');

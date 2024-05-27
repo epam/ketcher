@@ -122,7 +122,6 @@ test.describe('Calculated Values Tools', () => {
     Test case: EPMLSOPKET-2000
     Description: The calculation result for a substructure with not selected query features should be correct.
     */
-    test.fail();
     let point: { x: number; y: number };
     await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
 

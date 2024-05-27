@@ -294,6 +294,10 @@ test.describe('RNA Library', () => {
   test('Add Custom preset to Presets section and display after page reload', async ({
     page,
   }) => {
+    /* 
+    Test case: #4427 - Edit RNA mode
+    Description: Custom presets added to Presets section and saved in local storage after reload.
+    */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
@@ -309,6 +313,31 @@ test.describe('RNA Library', () => {
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
+  });
+
+  test('Add same Custom preset to Presets section', async ({ page }) => {
+    /* 
+    Test case: #4427 - Edit RNA mode
+    Description: System alert that you should rename preset.
+    */
+    await expandCollapseRnaBuilder(page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await expandCollapseRnaBuilder(page);
+    await takePresetsScreenshot(page);
+    await page.reload();
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('RNA-TAB').click();
+    await expandCollapseRnaBuilder(page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
+    await page.getByTestId('add-to-presets-btn').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Custom preset to Canvas', async ({ page }) => {
@@ -445,6 +474,25 @@ test.describe('RNA Library', () => {
     await page.getByTestId('P___Phosphate').click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('12ddR(A)P_A_12ddR_P').click();
+    await takePresetsScreenshot(page);
+  });
+
+  test('After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3633 - Edit RNA mode
+    Description: After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved
+    */
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('A_A_R_P').click({
+      button: 'right',
+    });
+    await page.getByTestId('duplicateandedit').locator('div').click();
+    await page.getByTestId('cancel-btn').click();
+    // To avoid unstable test execution
+    // Allows see a right preset in a veiwport
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 

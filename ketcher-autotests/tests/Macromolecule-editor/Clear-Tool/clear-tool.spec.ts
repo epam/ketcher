@@ -1,6 +1,7 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
   selectSingleBondTool,
   takeEditorScreenshot,
@@ -77,6 +78,37 @@ test.describe('Clear Canvas Tool', () => {
     // Click Clear Canvas Tool
     await selectClearCanvasTool(page);
 
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check tooltip for a Clear canvas button', async ({ page }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: Clear canvas button tooltip is located in the left toolbar.
+    */
+    const icon = {
+      testId: 'clear-canvas',
+      title: 'Clear Canvas (Ctrl+Del)',
+    };
+    const iconButton = page.getByTestId(icon.testId);
+    await expect(iconButton).toHaveAttribute('title', icon.title);
+    await iconButton.hover();
+    expect(icon.title).toBeTruthy();
+  });
+
+  test('Check clearing canvas by use short key "CTRL+Delete"', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: Canvas cleared.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
 });

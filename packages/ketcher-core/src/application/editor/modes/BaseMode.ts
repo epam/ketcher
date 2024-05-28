@@ -86,6 +86,10 @@ export abstract class BaseMode {
     drawingEntitiesManager: DrawingEntitiesManager,
   ): boolean;
 
+  abstract isPasteAvailable(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): boolean;
+
   abstract scrollForView(): void;
 
   onCopy(event: ClipboardEvent) {
@@ -223,6 +227,12 @@ export abstract class BaseMode {
       !drawingEntitiesManager ||
       !this.isPasteAllowedByMode(drawingEntitiesManager)
     ) {
+      return;
+    }
+    if (!this.isPasteAvailable(drawingEntitiesManager)) {
+      editor.events.error.dispatch(
+        'No available attachment points to establish bonds for merge.',
+      );
       return;
     }
     this.updateMonomersPosition(drawingEntitiesManager);

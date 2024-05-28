@@ -821,6 +821,42 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
+  private isR1Free(firstNode: SubChainNode): boolean {
+    return firstNode?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+  }
+
+  private isR2Free(lastNode: SubChainNode): boolean {
+    return lastNode?.lastMonomerInNode?.attachmentPointsToBonds.R2 === null;
+  }
+
+  private areR1R2Free(
+    firstNode: SubChainNode,
+    lastNode: SubChainNode,
+  ): boolean {
+    return this.isR1Free(firstNode) && this.isR2Free(lastNode);
+  }
+
+  isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
+    if (!this.isEditMode) {
+      return true;
+    }
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const lastNodeOfNewFragment = chainsCollection.lastNode;
+    const firstNodeOfNewFragment = chainsCollection.firstNode;
+    const isPasteInEnd = currentNode instanceof EmptySequenceNode;
+    const isPasteInStart = !previousNodeInSameChain;
+    if (isPasteInEnd && !previousNodeInSameChain) return true;
+    if (isPasteInEnd) return this.isR1Free(firstNodeOfNewFragment);
+    if (isPasteInStart) {
+      return this.isR2Free(lastNodeOfNewFragment) && this.isR1Free(currentNode);
+    }
+    return this.areR1R2Free(firstNodeOfNewFragment, lastNodeOfNewFragment);
+  }
+
   applyAdditionalPasteOperations(
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {

@@ -10,7 +10,6 @@ import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
   receiveFileComparisonData,
@@ -342,7 +341,8 @@ test.describe('RNA Library', () => {
     await page
       .getByTestId("3SS6___3'-Thiol-Modifier 6 S-S from Glen Research")
       .click();
-    await takeMonomerLibraryScreenshot(page);
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await takeRNABuilderScreenshot(page);
   });
 
   test('Add to presets (different combinations: Sugar+Base', async ({
@@ -382,14 +382,13 @@ test.describe('RNA Library', () => {
   }) => {
     /*
     Test case: #2759 - Edit RNA mode
-    Description: Custom presets added to Presets section.
+    Description: Custom preset Base+Phosphate could not be added to Presets.
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('(A)bP_A_._bP').click();
-    await takePresetsScreenshot(page);
+    await page.getByTestId('rna-builder-slot--base').click();
+    await takeRNABuilderScreenshot(page);
   });
 
   test('Add Custom preset to Presets section and Edit', async ({ page }) => {
@@ -593,18 +592,18 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Can not Add Base-Phosphate Combination to Canvas', async ({ page }) => {
+  test('Can not Add Base-Phosphate Combination to Presets', async ({
+    page,
+  }) => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
-    Description: Base-Phosphate Combination not added to Canvas.
+    Description: Base-Phosphate Combination not added to Presets.
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('(baA)bP_baA_._bP').click();
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+    await page.getByTestId('rna-builder-slot--base').click();
+    await takeRNABuilderScreenshot(page);
   });
 
   test('Add Sugar and Base Combination to Canvas and connect with bond', async ({

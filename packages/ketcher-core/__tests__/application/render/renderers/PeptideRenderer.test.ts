@@ -1,5 +1,5 @@
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { PeptideRenderer } from 'application/render/renderers';
 import { Peptide } from 'domain/entities/Peptide';
 import { peptideMonomerItem, polymerEditorTheme } from '../../../mock-data';
 

@@ -1,6 +1,6 @@
 
 FROM node:18-alpine
-FROM mcr.microsoft.com/playwright:v1.37.0-jammy
+FROM mcr.microsoft.com/playwright:v1.44.1-jammy
 
 WORKDIR /app
 

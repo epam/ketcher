@@ -3,6 +3,7 @@ import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
+  selectPartOfMolecules,
   selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -109,6 +110,87 @@ test.describe('Clear Canvas Tool', () => {
     );
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Press Clear canvas after loading .mol file containing monomers structure (i.e. arter open .mol file)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: Canvas cleared.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `Molfiles-V3000/monomers-and-chem.mol`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Chceck that using Clear canvas Tool on empty canvas not cause any errors in DevTool Console', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: Clear canvas Tool on empty canvas not cause any errors in DevTool Console.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await page.getByTestId('clear-canvas').click();
+  });
+
+  test('Check that after creating a monomer structure and click Clear Canvas button and then Undo structure back for same place', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: After click Undo structure back for same place.
+    */
+    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('undo').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that after creating and deleting a structure with the Clear Canvas button, the Undo/Redo functionality works properly', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: Undo/Redo functionality works properly.
+    */
+    await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('undo').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('redo').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that after creating monomer structure and then select part of it (Selection Tool) and then click Clear Canvas button all structure is deleted', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: All structure is deleted.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.getByTestId('clear-canvas').click();
     await takeEditorScreenshot(page);
   });
 });

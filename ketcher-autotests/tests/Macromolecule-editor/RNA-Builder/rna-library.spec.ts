@@ -1032,26 +1032,28 @@ test.describe('RNA Library', () => {
      *    Check that preview window disappears when a cursor moves off from RNA in library
      *    (phosphates, sugars, bases)
      */
+    const toolTipPreviewWindow = page.getByTestId('polymer-library-preview');
+
     await gotoRNA(page);
 
     await toggleSugarsAccordion(page);
     await page.getByText('12ddR').hover();
     await delay(1);
-    await takeMonomerLibraryScreenshot(page);
+    await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
     await toggleBasesAccordion(page);
     await page.getByText('2imen2').hover();
     await delay(1);
-    await takeMonomerLibraryScreenshot(page);
+    await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
     await togglePhosphatesAccordion(page);
-    await page.getByText('Test-6-Ph').hover();
+    await page.getByTestId('P___Phosphate').hover();
     await delay(1);
-    await takeMonomerLibraryScreenshot(page);
+    await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
   });

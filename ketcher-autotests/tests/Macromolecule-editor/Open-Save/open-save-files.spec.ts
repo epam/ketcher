@@ -66,8 +66,9 @@ test.describe('Open/save file tests: ', () => {
 
     const textToPaste = 'Random text to past from clipboard';
     await page.evaluate(async (text) => {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard?.writeText(text);
     }, textToPaste);
+    // await openStructureFromClipboardTextArea.fill(textToPaste);
 
     await openStructureFromClipboardTextArea.click();
     await page.keyboard.press('Control+V');

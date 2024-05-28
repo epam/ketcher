@@ -38,6 +38,7 @@ import {
   pressNewPresetButton,
   toggleBasesAccordion,
   togglePhosphatesAccordion,
+  toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 
@@ -50,16 +51,18 @@ async function expandCollapseRnaBuilder(page: Page) {
 }
 
 async function drawThreeMonomers(page: Page) {
-  const x = 800;
-  const y = 350;
-  const x1 = 650;
-  const y1 = 150;
+  const x1 = 300;
+  const y1 = 100;
+  const x2 = 300;
+  const y2 = 500;
+  const x3 = 700;
+  const y3 = 100;
   await selectMonomer(page, Sugars.ThreeA6);
-  await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
-  await page.mouse.click(x, y);
-  await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x1, y1);
+  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await page.mouse.click(x2, y2);
+  await selectMonomer(page, Phosphates.Phosphate);
+  await page.mouse.click(x3, y3);
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
@@ -400,6 +403,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('(A)bP_A_._bP').click();
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
@@ -579,6 +583,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
+    await moveMouseAway(page);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('3A6(baA)_baA_3A6_.').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -1022,6 +1027,15 @@ test.describe('RNA Library', () => {
     await takeRNABuilderScreenshot(page);
   });
 
+  async function scrollAccordionContentToTheTop(
+    page: Page,
+    contentLocator: string,
+  ) {
+    // Dirty hack
+    await page.getByTestId(contentLocator).click();
+    await page.keyboard.press('Home');
+  }
+
   test('Check that preview window disappears when a cursor moves off from RNA in library', async ({
     page,
   }) => {
@@ -1035,8 +1049,10 @@ test.describe('RNA Library', () => {
     const toolTipPreviewWindow = page.getByTestId('polymer-library-preview');
 
     await gotoRNA(page);
+    await toggleRnaBuilderAccordion(page);
 
     await toggleSugarsAccordion(page);
+    await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Sugars');
     await page.getByText('12ddR').hover();
     await delay(1);
     await expect(toolTipPreviewWindow).toBeVisible();
@@ -1044,6 +1060,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await toggleBasesAccordion(page);
+    await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
     await page.getByText('2imen2').hover();
     await delay(1);
     await expect(toolTipPreviewWindow).toBeVisible();
@@ -1051,6 +1068,10 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await togglePhosphatesAccordion(page);
+    await scrollAccordionContentToTheTop(
+      page,
+      'rna-accordion-details-Phosphates',
+    );
     await page.getByTestId('P___Phosphate').hover();
     await delay(1);
     await expect(toolTipPreviewWindow).toBeVisible();

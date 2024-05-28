@@ -341,6 +341,7 @@ test.describe('1. User can expand hydrogens for ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       if (temporaryFailedTestsFileNames.includes(fileName)) {
+        // These tests are not stable
         test.fail();
       }
 
@@ -656,6 +657,7 @@ test.describe('2. User can expand hydrogens for ', () => {
   for (const fileName of fileNames) {
     test(`by ${fileName}`, async ({ page }) => {
       if (temporaryFailedTestsFileNames.includes(fileName)) {
+        // These tests are not stable
         test.fail();
       }
 

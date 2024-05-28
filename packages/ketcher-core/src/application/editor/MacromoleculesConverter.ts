@@ -73,14 +73,17 @@ export class MacromoleculesConverter {
         attachmentPointName,
       );
     // TODO fix it for monomers without first attachment point
+    const attachmentPointIndex = attachmentPointNumber - 1;
     const attachmentPoint =
-      monomer.monomerItem.attachmentPoints?.[attachmentPointNumber - 1];
+      monomer.monomerItem.attachmentPoints?.[attachmentPointIndex];
     const atomIdMap = monomerToAtomIdMap.get(monomer);
 
-    return (
-      isNumber(attachmentPoint?.attachmentAtom) &&
-      atomIdMap?.get(attachmentPoint?.attachmentAtom as number)
-    );
+    return {
+      attachmentAtomId:
+        isNumber(attachmentPoint?.attachmentAtom) &&
+        atomIdMap?.get(attachmentPoint?.attachmentAtom as number),
+      attachmentPointIndex,
+    };
   }
 
   public static convertDrawingEntitiesToStruct(
@@ -133,7 +136,7 @@ export class MacromoleculesConverter {
             (attachmentPoint) =>
               new SGroupAttachmentPoint(
                 atomIdsMap.get(attachmentPoint.attachmentAtom) as number,
-                atomIdsMap.get(attachmentPoint.leavingGroup.atoms[0]),
+                atomIdsMap.get(attachmentPoint.leavingGroup?.atoms[0]),
                 undefined,
               ),
           ) || [],
@@ -155,12 +158,18 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
-      const beginAtom = this.findAttachmentPointAtom(
+      const {
+        attachmentAtomId: beginAtom,
+        attachmentPointIndex: beginAttachmentPointIndex,
+      } = this.findAttachmentPointAtom(
         polymerBond,
         polymerBond.firstMonomer,
         monomerToAtomIdMap,
       );
-      const endAtom = this.findAttachmentPointAtom(
+      const {
+        attachmentAtomId: endAtom,
+        attachmentPointIndex: endAttachmentPointIndex,
+      } = this.findAttachmentPointAtom(
         polymerBond,
         polymerBond.secondMonomer,
         monomerToAtomIdMap,
@@ -177,6 +186,8 @@ export class MacromoleculesConverter {
         type: Bond.PATTERN.TYPE.SINGLE,
         begin: beginAtom,
         end: endAtom,
+        beginAttachmentPointIndex,
+        endAttachmentPointIndex,
       });
       const bondId = struct.bonds.add(bond);
       reStruct?.bonds.set(bondId, new ReBond(bond));
@@ -327,15 +338,20 @@ export class MacromoleculesConverter {
       const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
       const endAtomSgroupAttachmentPoints =
         endAtomSgroup?.getAttachmentPoints();
-      const beginAtomAttachmentPointIndex =
-        beginAtomSgroupAttachmentPoints?.findIndex(
-          (sgroupAttachmentPoint) =>
-            sgroupAttachmentPoint.atomId === bond.begin,
-        );
-      const endAtomAttachmentPointIndex =
-        endAtomSgroupAttachmentPoints?.findIndex(
-          (sgroupAttachmentPoint) => sgroupAttachmentPoint.atomId === bond.end,
-        );
+      const beginAtomAttachmentPointIndex = isNumber(
+        bond.beginAttachmentPointIndex,
+      )
+        ? bond.beginAttachmentPointIndex
+        : beginAtomSgroupAttachmentPoints?.findIndex(
+            (sgroupAttachmentPoint) =>
+              sgroupAttachmentPoint.atomId === bond.begin,
+          );
+      const endAtomAttachmentPointIndex = isNumber(bond.endAttachmentPointIndex)
+        ? bond.endAttachmentPointIndex
+        : endAtomSgroupAttachmentPoints?.findIndex(
+            (sgroupAttachmentPoint) =>
+              sgroupAttachmentPoint.atomId === bond.end,
+          );
       if (
         endAtomSgroup !== beginAtomSgroup &&
         isNumber(beginAtomAttachmentPointIndex) &&

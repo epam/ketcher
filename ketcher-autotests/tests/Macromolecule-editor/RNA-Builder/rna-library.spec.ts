@@ -150,6 +150,12 @@ async function pressEscapeWhenPullBond(page: Page) {
     await page.mouse.up();
   });
 }
+async function pressAddToPresetsButton(page: Page) {
+  // To avoid unstable test execution
+  // Hide tooltip which overlays 'add-to-presets-btn' element
+  await moveMouseAway(page);
+  await page.getByTestId('add-to-presets-btn').click();
+}
 
 test.describe('RNA Library', () => {
   test.beforeEach(async ({ page }) => {
@@ -298,7 +304,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -311,7 +317,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -333,7 +339,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
@@ -352,7 +358,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.ThreeSS6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('3SS6(baA)bP_baA_3SS6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
@@ -369,7 +375,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)_A_12ddR_.').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -385,7 +391,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR()bP_._12ddR_bP').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -401,7 +407,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('(A)bP_A_._bP').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -416,7 +422,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
@@ -442,7 +448,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
@@ -472,7 +478,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
@@ -490,7 +496,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
       button: 'right',
     });
@@ -536,7 +542,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('cTest');
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeRNABuilderScreenshot(page);
   });
@@ -583,8 +589,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
-    await moveMouseAway(page);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)_baA_3A6_.').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
@@ -599,10 +604,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    // To avoid unstable test execution
-    // Hide tooltip which overlays 'add-to-presets-btn' element
-    await moveMouseAway(page);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('3A6()bP_._3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
@@ -617,7 +619,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('(baA)bP_baA_._bP').click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -790,12 +792,13 @@ test.describe('RNA Library', () => {
     Description: Sugar/Base/Phosphate monomer moved to new position. 
     Bonds are connected to monomers. 
     */
-      const anyPointX = 300;
-      const anyPointY = 500;
+      const anyPointX = 400;
+      const anyPointY = 400;
       await drawThreeMonomersConnectedWithBonds(page);
       await selectRectangleSelectionTool(page);
       await page.getByText(monomer).locator('..').first().click();
       await dragMouseTo(anyPointX, anyPointY, page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -958,7 +961,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await expandCollapseRnaBuilder(page);
 
     const customPreset = page.getByTestId(

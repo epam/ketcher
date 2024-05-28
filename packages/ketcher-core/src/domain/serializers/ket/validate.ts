@@ -19,6 +19,7 @@ import schema from './schema.json';
 
 export function validate(ket: any): boolean {
   const validator = new Validator();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: jsonschema type issue?
   return validator.validate(ket, schema).valid;
 }

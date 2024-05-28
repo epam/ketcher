@@ -20,6 +20,7 @@ import Raphael from 'raphael';
 import { Vec2 } from 'domain/entities';
 
 // TODO: refactor ugly prototype extensions to plain old functions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: remove any for raphael
 (Raphael.el as any).translateAbs = function (x: number, y: number): void {
   this.delta = this.delta || new Vec2();
   // TODO check that only numbers might be passed to this function
@@ -28,6 +29,7 @@ import { Vec2 } from 'domain/entities';
   this.transform('t' + this.delta.x.toString() + ',' + this.delta.y.toString());
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: remove any for raphael
 (Raphael.st as any).translateAbs = function (x: number, y: number): void {
   this.forEach((el) => {
     el.translateAbs(x, y);

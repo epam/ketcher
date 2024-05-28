@@ -51,12 +51,12 @@ async function expandCollapseRnaBuilder(page: Page) {
 }
 
 async function drawThreeMonomers(page: Page) {
-  const x1 = 300;
-  const y1 = 100;
-  const x2 = 300;
-  const y2 = 500;
-  const x3 = 700;
-  const y3 = 100;
+  const x1 = 301;
+  const y1 = 102;
+  const x2 = 303;
+  const y2 = 504;
+  const x3 = 705;
+  const y3 = 106;
   await selectMonomer(page, Sugars.ThreeA6);
   await page.mouse.click(x1, y1);
   await selectMonomer(page, Bases.NBebnzylAdenine);

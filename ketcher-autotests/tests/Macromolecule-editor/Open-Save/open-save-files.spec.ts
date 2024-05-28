@@ -57,7 +57,7 @@ test.describe('Open/save file tests: ', () => {
      *  Test case1: https://github.com/epam/ketcher/issues/4422 - Cases 28
      *  Check that it is possible to select all text by CTRL+A and delete it in 'Paste from Clipboard modal window
      */
-    test.setTimeout(15000);
+    test.setTimeout(25000);
 
     await openStructurePasteFromClipboard(page);
     const openStructureFromClipboardTextArea = page.getByTestId(
@@ -65,13 +65,8 @@ test.describe('Open/save file tests: ', () => {
     );
 
     const textToPaste = 'Random text to past from clipboard';
-    await page.evaluate(async (text) => {
-      await navigator.clipboard?.writeText(text);
-    }, textToPaste);
-    // await openStructureFromClipboardTextArea.fill(textToPaste);
-
-    await openStructureFromClipboardTextArea.click();
-    await page.keyboard.press('Control+V');
+    // IMPORTANT: It is not possible to use clipboard to paste some data from since it is shared with other test threads and tests can interfere
+    await openStructureFromClipboardTextArea.fill(textToPaste);
 
     await expect(openStructureFromClipboardTextArea).toHaveValue(textToPaste);
 

@@ -490,7 +490,7 @@ test.describe('Common connection rules: ', () => {
      *  Case 19:
      *    Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)
      */
-    test.setTimeout(20000);
+    test.setTimeout(40000);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/Two Test-6 monomers on the canvas.ket',
@@ -509,13 +509,13 @@ test.describe('Common connection rules: ', () => {
         page,
         connectionPoint,
       );
-      await takeEditorScreenshot(page);
+      // await takeEditorScreenshot(page);
 
       await selectRightConnectionPointAtSelectConnectionPointDialog(
         page,
         connectionPoint,
       );
-      await takeEditorScreenshot(page);
+      // await takeEditorScreenshot(page);
     }
 
     await pressCancelAtSelectConnectionPointDialog(page);

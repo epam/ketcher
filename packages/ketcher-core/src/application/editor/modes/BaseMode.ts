@@ -230,9 +230,11 @@ export abstract class BaseMode {
       return;
     }
     if (!this.isPasteAvailable(drawingEntitiesManager)) {
-      editor.events.error.dispatch(
-        'No available attachment points to establish bonds for merge.',
-      );
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage:
+          'Pasted fragment lacks available attachment points necessary to establish bonds for merge.',
+      });
       return;
     }
     this.updateMonomersPosition(drawingEntitiesManager);

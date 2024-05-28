@@ -104,6 +104,7 @@ class SelectRectangle implements BaseTool {
     this.brushArea.call(this.brush);
 
     this.brushArea.select('rect.selection').style('fill', 'transparent');
+    this.brushArea.select('rect.overlay').attr('cursor', 'default');
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;

@@ -626,7 +626,12 @@ export class KetSerializer implements Serializer<Struct> {
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
 
-    micromoleculesStruct.enableInitiallySelected();
+    if (selection === undefined) {
+      // if selection is not provided, then reset all initially selected flags
+      // before serialization of micromolecules.
+      // It is case of saving molecules in macromolecules mode, so we don't send to indigo/save selection.
+      micromoleculesStruct.enableInitiallySelected();
+    }
 
     const serializedMicromoleculesStruct = JSON.parse(
       this.serializeMicromolecules(micromoleculesStruct),

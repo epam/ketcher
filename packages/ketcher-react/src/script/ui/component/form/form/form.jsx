@@ -336,12 +336,7 @@ const SelectOneOf = (props) => {
 //
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  // switch from ajv to jsonschema validator
-  const ajv = new Validator({
-    allErrors: true,
-    verbose: true,
-    strictSchema: false,
-  });
+  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
   const schemaCopy = cloneDeep(schema);
 
   Validator.prototype.customFormats = {};

@@ -52,8 +52,10 @@ export class Render {
     this.clientArea = clientArea;
     this.paper = new Raphael(
       clientArea,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       options.width || '100%',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       options.height || '100%',
     );

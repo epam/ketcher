@@ -489,13 +489,16 @@ class ReAtom extends ReObject {
         // of just created text
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore: raphael typing issues
         aamPath.node.childNodes[0].setAttribute('fill', color);
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore: raphael typing issues
         aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
       const aamBox = util.relBox(aamPath.getBBox());
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;

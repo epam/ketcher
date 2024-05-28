@@ -489,11 +489,14 @@ class ReAtom extends ReObject {
         // of just created text
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel);
+        // @ts-ignore: raphael typing issues
         aamPath.node.childNodes[0].setAttribute('fill', color);
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
+        // @ts-ignore: raphael typing issues
         aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
       const aamBox = util.relBox(aamPath.getBBox());
+      // @ts-ignore: raphael typing issues
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
       let t = 3;

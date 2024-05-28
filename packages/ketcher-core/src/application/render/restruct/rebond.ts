@@ -436,6 +436,7 @@ class ReBond extends ReObject {
       const c = Scale.modelToCanvas(this.b.center, restruct.render.options);
 
       const highlightPath = getHighlightPath(restruct, hb1, hb2);
+      // @ts-ignore: raphael typing issues
       highlightPath.attr(style);
 
       restruct.addReObjectPath(
@@ -892,6 +893,7 @@ function getBondDoubleStereoBoldPath(
   );
   return draw.bondDoubleStereoBold(
     render.paper,
+    // @ts-ignore: raphael typing issues
     sgBondPath,
     b1,
     b2,
@@ -1298,6 +1300,7 @@ function getBondMark(
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
+  // @ts-ignore: raphael typing issues
   tooltip && path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
 
   return path;

@@ -220,6 +220,7 @@ class ReSimpleObject extends ReObject {
         const rx = rad.x / 2;
         const ry = rad.y / 2;
         const outerEllipse = render.paper.ellipse(
+          // @ts-ignore: raphael typing issues
           tfx(point[0].x + rx),
           tfx(point[0].y + ry),
           tfx(Math.abs(rx) + scaleFactor / 8),
@@ -234,6 +235,7 @@ class ReSimpleObject extends ReObject {
           Math.abs(ry) - scaleFactor / 8 > 0
         ) {
           const innerEllipse = render.paper.ellipse(
+            // @ts-ignore: raphael typing issues
             tfx(point[0].x + rx),
             tfx(point[0].y + ry),
             tfx(Math.abs(rx) - scaleFactor / 8),
@@ -249,6 +251,7 @@ class ReSimpleObject extends ReObject {
 
       case SimpleObjectMode.rectangle: {
         const outerRect = render.paper.rect(
+          // @ts-ignore: raphael typing issues
           tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
           tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
           tfx(
@@ -277,6 +280,7 @@ class ReSimpleObject extends ReObject {
             0
         ) {
           const innerRect = render.paper.rect(
+            // @ts-ignore: raphael typing issues
             tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
             tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
             tfx(
@@ -342,6 +346,7 @@ class ReSimpleObject extends ReObject {
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         paths.push({
+          // @ts-ignore: raphael typing issues
           path: this.getHoverPathStyle(render.paper.path(poly), render, true),
           stylesApplied: true,
         });

@@ -24,7 +24,6 @@ import { Ketcher, StructService } from 'ketcher-core';
 import App from './App.container';
 import { Provider } from 'react-redux';
 import { uniqueId } from 'lodash';
-import { createRoot } from 'react-dom/client';
 import createStore from '../state';
 import { initKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';

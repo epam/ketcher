@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Validator } from 'jsonschema'
-import schema from './schema.json'
+import { Validator } from 'jsonschema';
+import schema from './schema.json';
 
 export function validate(ket: any): boolean {
-  const validator = new Validator()
-  return validator.validate(ket, schema).valid
+  const validator = new Validator();
+  // @ts-ignore: jsonschema type issue?
+  return validator.validate(ket, schema).valid;
 }

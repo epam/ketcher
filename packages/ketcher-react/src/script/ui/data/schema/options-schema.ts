@@ -19,6 +19,8 @@ import {
   ShowHydrogenLabelNames,
   ShowHydrogenLabels,
   defaultBondThickness,
+  StereLabelStyleType,
+  StereoColoringType,
 } from 'ketcher-core';
 
 type ExtendedSchema = Schema & {

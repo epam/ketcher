@@ -144,6 +144,7 @@ function getCIPValuePath({
   const box = text.getBBox();
   const path = paper.set();
   const rect = paper
+    // @ts-ignore: raphael typing issues
     .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
     .attr({ fill: '#fff', stroke: '#fff' });
   path.push(rect.toFront(), text.toFront());
@@ -178,7 +179,9 @@ function drawCIPLabel({
   });
   const box = relBox(cipValuePath.path.getBBox());
 
+  // @ts-ignore: raphael typing issues
   cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
+  // @ts-ignore: raphael typing issues
   path.push(cipValuePath.path.toFront());
 
   restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);

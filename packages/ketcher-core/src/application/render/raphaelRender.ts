@@ -52,7 +52,9 @@ export class Render {
     this.clientArea = clientArea;
     this.paper = new Raphael(
       clientArea,
+      // @ts-ignore: raphael typing issues
       options.width || '100%',
+      // @ts-ignore: raphael typing issues
       options.height || '100%',
     );
     this.sz = this.getCanvasSizeVector();

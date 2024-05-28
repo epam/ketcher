@@ -34,9 +34,10 @@ const props: Partial<MenuProps> = {
   className: styles.contextMenu,
 };
 
-function BodyPortal(props: React.PropsWithChildren<{ refKey: string }>) {
-  return ReactDOM.createPortal(props.children, document.body, props.refKey);
-}
+// potentially not needed anymore
+// function BodyPortal(props: React.PropsWithChildren<{ refKey: string }>) {
+//   return ReactDOM.createPortal(props.children, document.body, props.refKey);
+// }
 
 const ContextMenu: React.FC = () => {
   const { getKetcherInstance } = useAppContext();

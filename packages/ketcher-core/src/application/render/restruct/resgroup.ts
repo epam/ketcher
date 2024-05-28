@@ -215,6 +215,7 @@ class ReSGroup extends ReObject {
         sGroupItem.hovering = paper
           .path(
             'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',
+            // @ts-ignore: raphael typing issues
             tfx(a0.x),
             tfx(a0.y),
             tfx(a1.x),
@@ -229,9 +230,11 @@ class ReSGroup extends ReObject {
       set.push(sGroupItem.hovering);
 
       SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+        // @ts-ignore: raphael typing issues
         set.push(render?.ctab?.atoms?.get(aid)?.makeHoverPlate(render));
       }, this);
       SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
+        // @ts-ignore: raphael typing issues
         set.push(render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render));
       }, this);
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, set);
@@ -355,6 +358,7 @@ function SGroupdrawBrackets({
         ),
         3,
       ) + 2;
+    // @ts-ignore: raphael typing issues
     indexPath.translateAbs(
       t * bracketR.bracketAngleDirection.x,
       t * bracketR.bracketAngleDirection.y,
@@ -373,6 +377,7 @@ function showValue(
   sgroup: SGroup,
   options: RenderOptions,
 ): any {
+  // @ts-ignore: raphael typing issues
   const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
     font: options.font,
     'font-size': options.fontsz,
@@ -384,6 +389,7 @@ function showValue(
     box.width + 2,
     box.height + 2,
     3,
+    // @ts-ignore: raphael typing issues
     3,
   );
   rect = sgroup.selected

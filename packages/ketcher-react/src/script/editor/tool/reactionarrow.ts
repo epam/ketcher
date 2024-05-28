@@ -125,6 +125,7 @@ class ReactionArrowTool implements Tool {
       this.editor.hover(items, null, event);
       handleMovingPosibilityCursor(
         items,
+        // @ts-ignore: raphael typing issues
         this.editor.render.paper.canvas,
         this.editor.render.options.movingStyle.cursor as string,
       );

@@ -838,23 +838,14 @@ export class SequenceMode extends BaseMode {
 
     const currentSequence = SequenceRenderer.currentChain;
 
-    const currentSequenceHasPhosphate = currentSequence?.lastNonEmptyNode
-      ? this.hasPhosphateAtEndOfSequence(
-          currentSequence.lastNonEmptyNode.monomer,
-        )
-      : false;
-
-    const newSequenceHasPhosphate = chainsCollection.lastNode
-      ? this.hasPhosphateAtEndOfSequence(chainsCollection.lastNode.monomer)
-      : false;
+    const currentSequenceHasPhosphate =
+      currentSequence.lastNonEmptyNode?.monomer?.monomerItem?.props?.Name ===
+      'Phosphate';
 
     let nextCaretPosition =
       SequenceRenderer.caretPosition + chainsCollection.length;
 
-    if (
-      (currentSequenceHasPhosphate && newSequenceHasPhosphate) ||
-      currentSequenceHasPhosphate
-    ) {
+    if (currentSequenceHasPhosphate) {
       nextCaretPosition -= 1;
     }
 
@@ -870,14 +861,6 @@ export class SequenceMode extends BaseMode {
     );
 
     return modelChanges;
-  }
-
-  private hasPhosphateAtEndOfSequence(monomer: BaseMonomer): boolean {
-    if (!monomer) return false;
-    if (!monomer.monomerItem || !monomer.monomerItem.props) {
-      return false;
-    }
-    return monomer.monomerItem.props.Name === 'Phosphate';
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {

@@ -39,6 +39,14 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
         y1="400"
         y2="4000"
       />
+      <circle
+        cursor="pointer"
+        cx="3600"
+        cy="4000"
+        fill="transparent"
+        r="1"
+        stroke-width="10"
+      />
     </g>
   </g>
 </svg>

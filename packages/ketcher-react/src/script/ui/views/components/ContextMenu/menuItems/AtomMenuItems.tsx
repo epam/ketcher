@@ -159,6 +159,17 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const atomExternalConnections = isNumber(selectedAtomId)
     ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
     : undefined;
+  const atomFreeAttachmentPoints = attachmentPoints?.filter(
+    (attachmentPoint) =>
+      attachmentPoint.atomId === selectedAtomId &&
+      !atomExternalConnections?.some(
+        (bond) =>
+          bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber ||
+          bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber,
+      ),
+  );
 
   return (
     <>
@@ -203,8 +214,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
           </Item>
         )}
       {isAtomSuperatomAttachmentPoint &&
-        (!atomExternalConnections ||
-          attachmentPoints.length > atomExternalConnections.size) && (
+        atomFreeAttachmentPoints.length > 0 && (
           <Item {...props} onClick={handleRemoveAttachmentPoint}>
             Remove attachment point
           </Item>

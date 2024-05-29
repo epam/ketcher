@@ -223,23 +223,29 @@
         "alias": "25R",
         "attachmentPoints": [
             {
-                "attachmentAtom": 10,
+                "attachmentAtom": 9,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        10
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 11,
+                "attachmentAtom": 6,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        11
+                    ]
                 },
                 "type": "right"
             },
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 2,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        8
+                    ]
                 },
                 "type": "side"
             }

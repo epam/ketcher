@@ -743,24 +743,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await takePageScreenshot(page);
   });
 
-  test('R-Group labels should be converted to monomer attachment points', async ({
-    page,
-  }) => {
-    /*
-    Ticket: https://github.com/epam/ketcher/issues/4530
-    Description: Convert Rx connection points created in molecules mode into chem attachment points in macromolecules mode
-    */
-    await turnOnMacromoleculesEditor(page);
-    await openFileAndAddToCanvasMacro('KET/molecules-with-rglabels.ket', page);
-    await selectSingleBondTool(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-    await page.getByText('F2').locator('..').hover();
-    await takeEditorScreenshot(page);
-    await page.getByText('F3').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
-
   test('Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line', async ({
     page,
   }) => {
@@ -823,6 +805,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     await openFileAndAddToCanvas(
       'KET/atom-connected-to-R-Group-label-by-bond.ket',
       page,
@@ -841,6 +825,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     await openFileAndAddToCanvas(
       'KET/more-than-one-attachment-atom-for-R-Group.ket',
       page,
@@ -976,6 +962,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
+      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+      test.fail();
       const x = 750;
       const y = 370;
       const firstMonomer = await page.getByText('F1').locator('..');
@@ -1012,6 +1000,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     const x = 750;
     const y = 370;
     const firstMonomer = await page.getByText('F1').locator('..');
@@ -1071,6 +1061,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
+      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+      test.fail();
       const x = 750;
       const y = 370;
       const firstMonomer = await page.getByText('F1').locator('..');
@@ -1108,6 +1100,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     const x = 750;
     const y = 370;
     const firstMonomer = await page.getByText('F1').locator('..');
@@ -1168,6 +1162,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/#4530
       Description:
       */
+      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+      test.fail();
       const x = 750;
       const y = 370;
       const firstMonomer = await page.getByText('F1').locator('..');
@@ -1207,6 +1203,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: CHEM connected with micro structure.
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     const x = 750;
     const y = 370;
     const firstMonomer = await page.getByText('F1').locator('..');
@@ -1312,6 +1310,8 @@ test.describe('Macro-Micro-Switcher', () => {
       monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
       After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
     */
+    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+    test.fail();
     const x = 750;
     const y = 370;
     const firstMonomer = await page.getByText('F1').locator('..');

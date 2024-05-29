@@ -1,4 +1,4 @@
-import { fromOneAtomDeletion } from 'ketcher-core';
+import { Atom, fromOneAtomDeletion } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -16,11 +16,23 @@ const useRemoveAttachmentPoint = () => {
       const atomId = props?.atomIds?.[0];
       const sgroup = struct.getGroupFromAtomId(atomId);
       const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
-      const atomAttachmentPoints = sgroupAttachmentPoints?.filter(
-        (attachmentPoint) => attachmentPoint.atomId === atomId,
+      const atomExternalConnections = Atom.getAttachmentAtomExternalConnections(
+        struct,
+        atomId,
+      );
+      const atomFreeAttachmentPoints = sgroupAttachmentPoints?.filter(
+        (attachmentPoint) =>
+          attachmentPoint.atomId === atomId &&
+          !atomExternalConnections?.find(
+            (_, bond) =>
+              bond.endSuperatomAttachmentPointNumber ===
+                attachmentPoint.attachmentPointNumber ||
+              bond.beginSuperatomAttachmentPointNumber ===
+                attachmentPoint.attachmentPointNumber,
+          ),
       );
       const attachmentPointToDelete =
-        atomAttachmentPoints[atomAttachmentPoints.length - 1];
+        atomFreeAttachmentPoints[atomFreeAttachmentPoints.length - 1];
 
       if (!isNumber(atomId) || !attachmentPointToDelete) {
         return;

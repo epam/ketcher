@@ -850,7 +850,12 @@ export class SequenceMode extends BaseMode {
     const isPasteInEnd = currentNode instanceof EmptySequenceNode;
     const isPasteInStart = !previousNodeInSameChain;
     if (isPasteInEnd && !previousNodeInSameChain) return true;
-    if (isPasteInEnd) return this.isR1Free(firstNodeOfNewFragment);
+    if (isPasteInEnd) {
+      return (
+        this.isR1Free(firstNodeOfNewFragment) &&
+        this.isR2Free(previousNodeInSameChain)
+      );
+    }
     if (isPasteInStart) {
       return this.isR2Free(lastNodeOfNewFragment) && this.isR1Free(currentNode);
     }

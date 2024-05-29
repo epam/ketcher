@@ -444,6 +444,11 @@ export class KetSerializer implements Serializer<Struct> {
       fragmentNumber++;
     });
 
+    const superatomMonomerToUsedAttachmentPoint = new Map<
+      BaseMonomer,
+      Set<string>
+    >();
+
     parsedFileContent.root.connections?.forEach((connection) => {
       switch (connection.connectionType) {
         case KetConnectionType.SINGLE: {
@@ -452,6 +457,7 @@ export class KetSerializer implements Serializer<Struct> {
             drawingEntitiesManager,
             monomerIdsMap,
             atomIdMap,
+            superatomMonomerToUsedAttachmentPoint,
           );
           command.merge(bondAdditionCommand);
           break;
@@ -488,15 +494,18 @@ export class KetSerializer implements Serializer<Struct> {
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
     struct: Struct,
   ): IKetConnectionMoleculeEndPoint {
-    const atomId = MacromoleculesConverter.findAttachmentPointAtom(
-      polymerBond,
-      monomer,
-      monomerToAtomIdMap,
-    ) as number;
+    const { attachmentAtomId } =
+      MacromoleculesConverter.findAttachmentPointAtom(
+        polymerBond,
+        monomer,
+        monomerToAtomIdMap,
+      );
 
     return {
-      moleculeId: `mol${struct.atoms.get(atomId)?.fragment}`,
-      atomId,
+      moleculeId: `mol${
+        struct.atoms.get(attachmentAtomId as number)?.fragment
+      }`,
+      atomId: `${attachmentAtomId as number}`,
     };
   }
 

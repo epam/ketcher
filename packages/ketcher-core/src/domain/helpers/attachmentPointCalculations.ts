@@ -1,6 +1,7 @@
 import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
 import { BaseMonomer } from 'domain/entities';
 import { Vec2 } from 'domain/entities/vec2';
+import { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
@@ -246,5 +247,11 @@ export function getAttachmentPointLabelWithBinaryShift(
 }
 
 export function getAttachmentPointLabel(attachmentPointNumber: number) {
-  return `R${attachmentPointNumber}`;
+  return `R${attachmentPointNumber}` as AttachmentPointName;
+}
+
+export function getAttachmentPointNumberFromLabel(
+  attachmentPointLabel: AttachmentPointName,
+) {
+  return Number(attachmentPointLabel.replace('R', ''));
 }

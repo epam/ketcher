@@ -160,8 +160,7 @@ class ReAtom extends ReObject {
         functionalGroups,
         true,
       ) ||
-      (Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
-        Atom.isAttachmentAtomHasExternalConnections(struct, atomId))
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -185,8 +184,7 @@ class ReAtom extends ReObject {
         functionalGroups,
         true,
       ) ||
-      (Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
-        Atom.isAttachmentAtomHasExternalConnections(struct, atomId))
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -242,10 +240,7 @@ class ReAtom extends ReObject {
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
     const sgroup = restruct.molecule.getGroupFromAtomId(aid);
 
-    if (
-      Atom.isSuperatomLeavingGroupAtom(struct, aid) &&
-      Atom.isAttachmentAtomHasExternalConnections(struct, aid)
-    ) {
+    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
       return;
     }
 
@@ -889,14 +884,14 @@ function buildLabel(
 
 function getLabelText(atom, atomId: number, sgroup?: SGroup) {
   if (sgroup?.isSuperatomWithoutLabel) {
-    const attachmentPointIndex = sgroup
+    const attachmentPoint = sgroup
       .getAttachmentPoints()
-      .findIndex((attachmentPoint) => {
+      .find((attachmentPoint) => {
         return attachmentPoint.leaveAtomId === atomId;
       });
 
-    if (attachmentPointIndex !== -1) {
-      return `R${attachmentPointIndex + 1}`;
+    if (attachmentPoint) {
+      return `R${attachmentPoint.attachmentPointNumber}`;
     }
   }
 

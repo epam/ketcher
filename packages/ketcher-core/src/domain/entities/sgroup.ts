@@ -268,10 +268,8 @@ export class SGroup {
     }
   }
 
-  removeAttachmentPoint(attachmentPointAtomId: number): boolean {
-    const index = this.attachmentPoints.findIndex(
-      ({ atomId }) => attachmentPointAtomId === atomId,
-    );
+  removeAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): boolean {
+    const index = this.attachmentPoints.indexOf(attachmentPoint);
     if (index !== -1) {
       this.attachmentPoints.splice(index, 1);
       return true;

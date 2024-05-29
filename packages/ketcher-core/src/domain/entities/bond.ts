@@ -42,6 +42,8 @@ export interface BondAttributes {
   cip?: CIP | null;
   isPreview?: boolean;
   initiallySelected?: initiallySelectedType;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -110,6 +112,8 @@ export class Bond extends BaseMicromoleculeEntity {
   angle: number;
   center: Vec2;
   isPreview: boolean;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);
@@ -127,6 +131,10 @@ export class Bond extends BaseMicromoleculeEntity {
     this.sa = 0;
     this.angle = 0;
     this.isPreview = false;
+    this.beginSuperatomAttachmentPointNumber =
+      attributes.beginSuperatomAttachmentPointNumber;
+    this.endSuperatomAttachmentPointNumber =
+      attributes.endSuperatomAttachmentPointNumber;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -323,10 +331,10 @@ export class Bond extends BaseMicromoleculeEntity {
 
     return (
       (beginSuperatomAttachmentPoint &&
-        Atom.isAttachmentAtomHasExternalConnections(struct, bond.begin) &&
+        Atom.isHiddenLeavingGroupAtom(struct, bond.begin) &&
         bond.end === beginSuperatomAttachmentPoint.atomId) ||
       (endSuperatomAttachmentPoint &&
-        Atom.isAttachmentAtomHasExternalConnections(struct, bond.end) &&
+        Atom.isHiddenLeavingGroupAtom(struct, bond.end) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
   }

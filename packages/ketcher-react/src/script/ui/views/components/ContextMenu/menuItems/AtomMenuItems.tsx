@@ -156,6 +156,9 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
     struct,
     selectedAtomId,
   );
+  const atomExternalConnections = isNumber(selectedAtomId)
+    ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
+    : undefined;
 
   return (
     <>
@@ -194,17 +197,18 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
       {onlyOneAtomSelected &&
         !atomInSgroupWithLabel &&
         !maxAttachmentPointsAmount &&
-        !isAtomSuperatomLeavingGroup &&
-        !isAtomSuperatomAttachmentPoint && (
+        !isAtomSuperatomLeavingGroup && (
           <Item {...props} onClick={handleAddAttachmentPoint}>
             Add attachment point
           </Item>
         )}
-      {isAtomSuperatomAttachmentPoint && (
-        <Item {...props} onClick={handleRemoveAttachmentPoint}>
-          Remove attachment point
-        </Item>
-      )}
+      {isAtomSuperatomAttachmentPoint &&
+        (!atomExternalConnections ||
+          attachmentPoints.length > atomExternalConnections.size) && (
+          <Item {...props} onClick={handleRemoveAttachmentPoint}>
+            Remove attachment point
+          </Item>
+        )}
       <Item {...props} onClick={handleDelete}>
         Delete
       </Item>

@@ -487,11 +487,14 @@ export function removeAttachmentPointFromSuperatom(
 ) {
   (sgroup.item?.atoms as number[]).forEach((atomId) => {
     if (beginAtomId === atomId || endAtomId === atomId) {
+      const anotherSideAtomId =
+        beginAtomId === atomId ? endAtomId : beginAtomId;
       action.mergeWith(
         fromSgroupAttachmentPointRemove(
           restruct,
           sgroup.item?.id as number,
           atomId as number,
+          anotherSideAtomId,
           false,
         ),
       );

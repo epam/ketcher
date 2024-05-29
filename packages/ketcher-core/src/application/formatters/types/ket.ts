@@ -26,7 +26,7 @@ export interface IKetConnectionMonomerEndPoint {
 
 export interface IKetConnectionMoleculeEndPoint {
   moleculeId: string;
-  atomId: number;
+  atomId: string;
 }
 
 export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &

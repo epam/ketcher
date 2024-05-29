@@ -15,18 +15,20 @@ const useRemoveAttachmentPoint = () => {
       const struct = editor.struct();
       const atomId = props?.atomIds?.[0];
       const sgroup = struct.getGroupFromAtomId(atomId);
-      const attachmentPoints = sgroup?.getAttachmentPoints() || [];
-      const attachmentPoint = attachmentPoints?.find(
+      const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
+      const atomAttachmentPoints = sgroupAttachmentPoints?.filter(
         (attachmentPoint) => attachmentPoint.atomId === atomId,
       );
+      const attachmentPointToDelete =
+        atomAttachmentPoints[atomAttachmentPoints.length - 1];
 
-      if (!isNumber(atomId) || !attachmentPoint) {
+      if (!isNumber(atomId) || !attachmentPointToDelete) {
         return;
       }
 
       const action = fromOneAtomDeletion(
         restruct,
-        attachmentPoint.leaveAtomId as number,
+        attachmentPointToDelete.leaveAtomId as number,
       );
 
       editor.update(action);

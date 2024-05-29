@@ -59,7 +59,7 @@ export class SGroupAttachmentPointRemove extends BaseOperation {
     const { sGroupId, attachmentPoint } = this.data;
     const struct = restruct.molecule;
     const sgroup = struct.sgroups.get(sGroupId);
-    sgroup?.removeAttachmentPoint(attachmentPoint.atomId);
+    sgroup?.removeAttachmentPoint(attachmentPoint);
   }
 
   invert() {

@@ -54,11 +54,16 @@ const useAddAttachmentPoint = () => {
                 atomId,
                 addedLeavingGroupAtomId,
                 undefined,
+                1,
               ),
             ],
           ),
         );
       } else {
+        const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
+        const lastAttachmentPoint =
+          sgroupAttachmentPoints[sgroupAttachmentPoints.length - 1];
+
         action.mergeWith(
           fromSgroupAttachmentPointAddition(
             restruct,
@@ -67,6 +72,7 @@ const useAddAttachmentPoint = () => {
               atomId,
               addedLeavingGroupAtomId,
               undefined,
+              (lastAttachmentPoint.attachmentPointNumber || 0) + 1,
             ),
           ),
         );

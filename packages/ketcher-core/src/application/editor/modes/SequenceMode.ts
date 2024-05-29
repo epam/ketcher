@@ -839,7 +839,7 @@ export class SequenceMode extends BaseMode {
     const currentSequence = SequenceRenderer.currentChain;
 
     const currentSequenceHasPhosphate =
-      currentSequence.lastNonEmptyNode?.monomer?.monomerItem?.props?.Name ===
+      currentSequence?.lastNonEmptyNode?.monomer?.monomerItem?.props?.Name ===
       'Phosphate';
 
     let nextCaretPosition =

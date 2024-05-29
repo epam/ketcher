@@ -28,6 +28,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
     void
   >;
 
+  protected hoverCircleAreaElement?: D3SvgElementSelection<
+    SVGGElement | SVGCircleElement,
+    void
+  >;
+
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;

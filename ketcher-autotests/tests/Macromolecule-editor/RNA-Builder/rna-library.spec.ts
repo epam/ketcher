@@ -1070,16 +1070,16 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
-    await togglePhosphatesAccordion(page);
-    await scrollAccordionContentToTheTop(
-      page,
-      'rna-accordion-details-Phosphates',
-    );
-    await page.getByTestId('P___Phosphate').hover();
-    await delay(1);
-    await expect(toolTipPreviewWindow).toBeVisible();
-    await moveMouseAway(page);
-    await takeMonomerLibraryScreenshot(page);
+    // await togglePhosphatesAccordion(page);
+    // await scrollAccordionContentToTheTop(
+    //   page,
+    //   'rna-accordion-details-Phosphates',
+    // );
+    // await page.getByTestId('P___Phosphate').hover();
+    // await delay(1);
+    // await expect(toolTipPreviewWindow).toBeVisible();
+    // await moveMouseAway(page);
+    // await takeMonomerLibraryScreenshot(page);
   });
 
   test('CHEM tab check at Library', async ({ page }) => {

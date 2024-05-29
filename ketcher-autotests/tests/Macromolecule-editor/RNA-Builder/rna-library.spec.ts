@@ -37,7 +37,6 @@ import {
   gotoRNA,
   pressNewPresetButton,
   toggleBasesAccordion,
-  togglePhosphatesAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';

@@ -240,6 +240,12 @@ export const RnaEditorExpanded = ({
     }
     if (selectedGroup === MonomerGroups.PHOSPHATES) {
       phosphateValidaions.push('R1');
+      if (
+        newPreset?.sugar?.props?.MonomerCaps &&
+        !('R2' in newPreset.sugar.props.MonomerCaps)
+      ) {
+        phosphateValidaions.push('DISABLED');
+      }
     }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));

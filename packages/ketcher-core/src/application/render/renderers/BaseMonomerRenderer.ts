@@ -3,6 +3,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
+import { CoreEditor, SelectRectangle } from 'application/editor/internal';
 import assert from 'assert';
 import {
   attachmentPointNumberToAngle,
@@ -23,6 +24,7 @@ const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
+  private editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
 
@@ -54,6 +56,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.editor = CoreEditor?.provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -318,8 +321,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    let cursor = 'default';
+
     if (this.hoverElement) this.hoverElement.remove();
+    if (this.editor.selectedTool instanceof SelectRectangle) cursor = 'move';
+
     return hoverAreaElement
+      .style('cursor', cursor)
       .append('use')
       .attr('href', this.monomerHoveredElementId)
       .attr('pointer-events', 'none')

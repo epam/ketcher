@@ -876,6 +876,20 @@ export class SequenceMode extends BaseMode {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
+
+    const currentSequence = SequenceRenderer.currentChain;
+
+    const currentSequenceHasPhosphate =
+      currentSequence?.lastNonEmptyNode?.monomer?.monomerItem?.props?.Name ===
+      'Phosphate';
+
+    let nextCaretPosition =
+      SequenceRenderer.caretPosition + chainsCollection.length;
+
+    if (currentSequenceHasPhosphate) {
+      nextCaretPosition -= 1;
+    }
+
     const modelChanges = this.insertNewSequenceFragment(chainsCollection);
 
     modelChanges.addOperation(new ReinitializeModeOperation());
@@ -883,7 +897,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.addOperation(
       new RestoreSequenceCaretPositionOperation(
         SequenceRenderer.caretPosition,
-        SequenceRenderer.caretPosition + chainsCollection.length,
+        nextCaretPosition,
       ),
     );
 

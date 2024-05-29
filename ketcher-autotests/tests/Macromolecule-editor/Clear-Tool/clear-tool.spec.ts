@@ -8,7 +8,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -191,6 +194,25 @@ test.describe('Clear Canvas Tool', () => {
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Adding structure on canvas, switching to Molecules and use Clear canvas button when you switch back to Macromonecules structure is still deleted from canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear canvas Tool
+    Description: When you switch back to Macromonecules structure is still deleted from canvas.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      `KET/peptides-flex-chain.ket`,
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 });

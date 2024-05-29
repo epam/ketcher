@@ -233,7 +233,7 @@ export abstract class BaseMode {
       editor.events.openErrorModal.dispatch({
         errorTitle: 'Error Message',
         errorMessage:
-          'Pasted fragment lacks available attachment points necessary to establish bonds for merge.',
+          'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
       });
       return;
     }

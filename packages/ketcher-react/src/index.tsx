@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Editor'
-export * from './constants'
-export { AppContext } from './contexts'
-export * from './script'
+export * from './Editor';
+export * from './script';
+export * from './constants';
+export * from './components';
+export { AppContext } from './contexts';

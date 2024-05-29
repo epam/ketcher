@@ -14,31 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as structFormat from '../../../../../data/convert/structConverter'
+import * as structFormat from '../../../../../data/convert/structConverter';
 
-import { Component, createRef } from 'react'
-import Form, { Field } from '../../../../../component/form/form/form'
+import { Component, createRef } from 'react';
+import { createSelector } from 'reselect';
+import Form, { Field } from '../../../../../component/form/form/form';
 import {
   FormatterFactory,
   KetSerializer,
   formatProperties,
   getPropertiesByFormat,
   getPropertiesByImgFormat,
-  b64toBlob
-} from 'ketcher-core'
+  b64toBlob,
+  KetcherLogger,
+} from 'ketcher-core';
 
-import { Dialog } from '../../../../components'
-import Tabs from 'src/script/ui/component/view/Tabs'
-import { ErrorsContext } from '../../../../../../../contexts'
-import { SaveButton } from '../../../../../component/view/savebutton'
-import { check } from '../../../../../state/server'
-import classes from './Save.module.less'
-import { connect } from 'react-redux'
-import { saveUserTmpl } from '../../../../../state/templates'
-import { updateFormState } from '../../../../../state/modal/form'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
+import { Dialog } from '../../../../components';
+import Tabs from 'src/script/ui/component/view/Tabs';
+import { ErrorsContext } from '../../../../../../../contexts';
+import { SaveButton } from '../../../../../component/view/savebutton';
+import { check } from '../../../../../state/server';
+import classes from './Save.module.less';
+import { connect } from 'react-redux';
+import { saveUserTmpl } from '../../../../../state/templates';
+import { updateFormState } from '../../../../../state/modal/form';
+import Select from '../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 
 const saveSchema = {
   title: 'Save',
@@ -50,104 +52,117 @@ const saveSchema = {
       maxLength: 128,
       pattern: '^[^.<>:?"*\\\\|\\/][^<>:?"*\\\\|\\/]*$',
       invalidMessage: (res) => {
-        if (!res) return 'Filename should contain at least one character'
-        if (res.length > 128) return 'Filename is too long'
-        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'"
-      }
+        if (!res) return 'Filename should contain at least one character';
+        if (res.length > 128) return 'Filename is too long';
+        return "A filename cannot contain characters: \\ / : * ? \" < > | and cannot start with '.'";
+      },
     },
     format: {
       title: 'File format:',
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
-        (format) => formatProperties[format].name
-      )
-    }
-  }
-}
+        (format) => formatProperties[format].name,
+      ),
+    },
+  },
+};
 
 class SaveDialog extends Component {
-  static contextType = ErrorsContext
+  static contextType = ErrorsContext;
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       disableControls: true,
       imageFormat: 'svg',
       tabIndex: 0,
-      isLoading: true
-    }
-    this.isRxn = this.props.struct.hasRxnArrow()
-    this.textAreaRef = createRef()
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'ket']
-    if (this.props.server)
-      formats.push(
-        this.isRxn ? 'rxnV3000' : 'molV3000',
-        'smilesExt',
-        'smarts',
-        'cml',
-        '<----firstDivider--->', // for dividers in select list
-        'inChI',
-        'inChIAuxInfo',
-        '<----secondDivider--->', // for dividers in select list
-        'svg',
-        'png',
-        'cdxml',
-        'cdx',
-        'binaryCdx'
-      )
-    // TODO: pass the necessary divider not like list element
+      isLoading: true,
+    };
+    this.isRxn = this.props.struct.hasRxnArrow();
+    this.textAreaRef = createRef();
 
-    this.saveSchema = saveSchema
+    const formats = !this.props.server
+      ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
+      : [
+          'ket',
+          this.isRxn ? 'rxn' : 'mol',
+          this.isRxn ? 'rxnV3000' : 'molV3000',
+          'sdf',
+          'sdfV3000',
+          'smarts',
+          'smiles',
+          'smilesExt',
+          'cml',
+          '<----firstDivider--->', // for dividers in select list
+          'inChI',
+          'inChIAuxInfo',
+          'inChIKey',
+          '<----secondDivider--->', // for dividers in select list
+          'svg',
+          'png',
+          'cdxml',
+          'cdx',
+          'binaryCdx',
+        ];
+
+    this.saveSchema = saveSchema;
     this.saveSchema.properties.format = Object.assign(
       this.saveSchema.properties.format,
       {
         enum: formats,
         enumNames: formats.map((format) => {
           const formatProps =
-            getPropertiesByFormat(format) || getPropertiesByImgFormat(format)
-          return formatProps?.name
-        })
-      }
-    )
+            getPropertiesByFormat(format) || getPropertiesByImgFormat(format);
+          return formatProps?.name;
+        }),
+      },
+    );
   }
 
   componentDidMount() {
-    const { checkOptions } = this.props.checkState
-    this.props.onCheck(checkOptions)
+    const { checkOptions } = this.props.checkState;
+    this.props.onCheck(checkOptions);
     this.changeType(this.isRxn ? 'rxn' : 'mol').then(
-      (res) => res instanceof Error && this.setState({ disableControls: true })
-    )
+      (res) => res instanceof Error && this.setState({ disableControls: true }),
+    );
   }
 
   isImageFormat = (format) => {
-    return !!getPropertiesByImgFormat(format)
-  }
+    return !!getPropertiesByImgFormat(format);
+  };
 
   isBinaryCdxFormat = (format) => {
-    return format === 'binaryCdx'
-  }
+    return format === 'binaryCdx';
+  };
 
   showStructWarningMessage = (format) => {
-    const { errors } = this.props.formState
-    return format !== 'mol' && Object.keys(errors).length > 0
-  }
+    const { errors } = this.props.formState;
+    return format !== 'mol' && Object.keys(errors).length > 0;
+  };
 
   changeType = (type) => {
-    const { struct, server, options, formState, ignoreChiralFlag } = this.props
+    const {
+      struct,
+      server,
+      options,
+      formState,
+      ignoreChiralFlag,
+      bondThickness,
+    } = this.props;
 
-    const errorHandler = this.context.errorHandler
+    const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
-      const ketSerialize = new KetSerializer()
-      const structStr = ketSerialize.serialize(struct)
+      const ketSerialize = new KetSerializer();
+      const structStr = ketSerialize.serialize(struct);
       this.setState({
         disableControls: true,
         tabIndex: 0,
         imageFormat: type,
         structStr,
-        isLoading: true
-      })
-      const options = {}
-      options.outputFormat = type
-
+        isLoading: true,
+      });
+      const options = {};
+      options.outputFormat = type;
+      options.bondThickness = bondThickness;
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
@@ -155,96 +170,131 @@ class SaveDialog extends Component {
             disableControls: false,
             tabIndex: 0,
             imageSrc: base64,
-            isLoading: false
-          })
+            isLoading: false,
+          });
         })
         .catch((e) => {
-          errorHandler(e)
-          this.props.onResetForm(formState)
-          return e
-        })
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
+          errorHandler(e);
+          this.props.onResetForm(formState);
+          return e;
+        });
     } else {
-      this.setState({ disableControls: true, isLoading: true })
-      const factory = new FormatterFactory(server)
-      const service = factory.create(type, { ...options, ignoreChiralFlag })
-
-      return service
-        .getStructureFromStructAsync(struct)
+      this.setState({ disableControls: true, isLoading: true });
+      const factory = new FormatterFactory(server);
+      // temporary check if query properties are used
+      const queryPropertiesAreUsed =
+        type === 'mol' &&
+        Array.from(struct.atoms).find(
+          ([_, atom]) =>
+            atom.queryProperties.aromaticity ||
+            atom.queryProperties.connectivity ||
+            atom.queryProperties.ringMembership ||
+            atom.queryProperties.ringSize ||
+            atom.queryProperties.customQuery ||
+            atom.implicitHCount,
+        );
+      const service = factory.create(
+        type,
+        { ...options, ignoreChiralFlag },
+        queryPropertiesAreUsed,
+      );
+      const getStructFromStringByType = () => {
+        if (type === 'ket') {
+          const selection = this.props.editor.selection();
+          return service.getStructureFromStructAsync(
+            struct,
+            undefined,
+            selection,
+          );
+        }
+        return service.getStructureFromStructAsync(struct);
+      };
+      return getStructFromStringByType()
         .then(
           (structStr) => {
             this.setState({
               tabIndex: 0,
-              structStr
-            })
+              structStr,
+            });
           },
           (e) => {
-            errorHandler(e.message)
-            this.props.onResetForm(formState)
-            return e
-          }
+            errorHandler(e.message);
+            this.props.onResetForm(formState);
+            return e;
+          },
         )
         .finally(() => {
           this.setState({
             disableControls: false,
             tabIndex: 0,
-            isLoading: false
-          })
-        })
+            isLoading: false,
+          });
+        });
     }
-  }
+  };
 
   changeTab = (index) => {
-    this.setState({ tabIndex: index })
-  }
+    this.setState({ tabIndex: index });
+  };
 
   getWarnings = (format) => {
-    const { struct, moleculeErrors } = this.props
-    const warnings = []
+    const { struct, moleculeErrors } = this.props;
+    const warnings = [];
     const structWarning =
       'Structure contains errors, please check the data, otherwise you ' +
-      'can lose some properties or the whole structure after saving in this format.'
+      'can lose some properties or the whole structure after saving in this format.';
     if (!this.isImageFormat(format)) {
-      const saveWarning = structFormat.couldBeSaved(struct, format)
-      const isStructInvalid = this.showStructWarningMessage(format)
+      const saveWarning = structFormat.couldBeSaved(struct, format);
+      const isStructInvalid = this.showStructWarningMessage(format);
       if (isStructInvalid) {
-        warnings.push(structWarning)
+        warnings.push(structWarning);
       }
       if (saveWarning) {
-        warnings.push(saveWarning)
+        warnings.push(saveWarning);
       }
     }
 
     if (moleculeErrors) {
-      warnings.push(...Object.values(moleculeErrors))
+      const filteredMoleculeErrors = Object.values(moleculeErrors).filter(
+        (error) => {
+          if (format === 'smarts' || format === 'ket') {
+            return !error.includes('Structure contains query features');
+          } else {
+            return true;
+          }
+        },
+      );
+      warnings.push(...Object.values(filteredMoleculeErrors));
     }
-    return warnings
-  }
+    return warnings;
+  };
 
   renderForm = () => {
-    const formState = Object.assign({}, this.props.formState)
-    const { filename, format } = formState.result
-    const warnings = this.getWarnings(format)
+    const formState = Object.assign({}, this.props.formState);
+    const { filename, format } = formState.result;
+    const warnings = this.getWarnings(format);
     const tabs =
       warnings.length === 0
         ? [
             {
               caption: 'Preview',
               component: this.renderSaveFile,
-              tabIndex: 0
-            }
+              tabIndex: 0,
+            },
           ]
         : [
             {
               caption: 'Preview',
               component: this.renderSaveFile,
-              tabIndex: 0
+              tabIndex: 0,
             },
             {
               caption: 'Warnings',
               component: this.renderWarnings,
-              tabIndex: 1
-            }
-          ]
+              tabIndex: 1,
+            },
+          ];
 
     return (
       <div className={classes.formContainer}>
@@ -252,7 +302,7 @@ class SaveDialog extends Component {
           schema={this.saveSchema}
           init={{
             filename,
-            format: this.isRxn ? 'rxn' : 'mol'
+            format: this.isRxn ? 'rxn' : 'mol',
           }}
           {...formState}
         >
@@ -261,9 +311,11 @@ class SaveDialog extends Component {
             name="format"
             onChange={this.changeType}
             options={getSelectOptionsFromSchema(
-              this.saveSchema.properties.format
+              this.saveSchema.properties.format,
             )}
             component={Select}
+            className="file-format-list"
+            data-testid="file-format-list"
           />
         </Form>
         <Tabs
@@ -274,21 +326,21 @@ class SaveDialog extends Component {
           tabs={tabs}
         />
       </div>
-    )
-  }
+    );
+  };
 
   renderSaveFile = () => {
-    const formState = Object.assign({}, this.props.formState)
-    delete formState.moleculeErrors
-    const { filename, format } = formState.result
-    const { structStr, imageSrc, isLoading } = this.state
-    const isCleanStruct = this.props.struct.isBlank()
+    const formState = Object.assign({}, this.props.formState);
+    delete formState.moleculeErrors;
+    const { format } = formState.result;
+    const { structStr, imageSrc, isLoading } = this.state;
+    const isCleanStruct = this.props.struct.isBlank();
 
     const LoadingState = () => (
       <div className={classes.loadingCirclesContainer}>
         <LoadingCircles />
       </div>
-    )
+    );
 
     const ImageContent = () => (
       <div className={classes.imageContainer}>
@@ -299,7 +351,7 @@ class SaveDialog extends Component {
           />
         )}
       </div>
-    )
+    );
 
     const BinaryContent = () => (
       <div className={classes.previewBackground}>
@@ -308,61 +360,67 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-binary"
         />
       </div>
-    )
+    );
 
-    const PreviewContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-        />
-      </div>
-    )
+    const PreviewContent = ({ format }) => {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+            data-testid={`${format}-preview-area-text`}
+          />
+        </div>
+      );
+    };
 
     if (isLoading) {
-      return <LoadingState />
+      return <LoadingState />;
     } else if (this.isImageFormat(format)) {
-      return <ImageContent />
+      return <ImageContent />;
     } else if (this.isBinaryCdxFormat(format)) {
-      return <BinaryContent />
+      return <BinaryContent />;
     } else {
-      return <PreviewContent />
+      return <PreviewContent format={format} />;
     }
-  }
+  };
 
   renderWarnings = () => {
-    const formState = Object.assign({}, this.props.formState)
-    const { filename, format } = formState.result
-    const warnings = this.getWarnings(format)
+    const formState = Object.assign({}, this.props.formState);
+    const { format } = formState.result;
+    const warnings = this.getWarnings(format);
 
     return warnings.length ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
-          <div className={classes.warningsContainer}>
-            <span className={classes.warningsArr}>{warning}</span>
+          <div className={classes.warningsContainer} key={warning}>
+            <span className={classes.warningsArr} data-testid="WarningTextArea">
+              {warning}
+            </span>
           </div>
         ))}
       </div>
-    ) : null
-  }
+    ) : null;
+  };
 
   getButtons = () => {
-    const { disableControls, imageFormat, isLoading, structStr } = this.state
-    const formState = this.props.formState
-    const { filename, format } = formState.result
-    const isCleanStruct = this.props.struct.isBlank()
+    const { disableControls, imageFormat, isLoading, structStr } = this.state;
+    const { formState, bondThickness } = this.props;
+    const { filename, format } = formState.result;
+    const isCleanStruct = this.props.struct.isBlank();
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading
         ? b64toBlob(structStr)
-        : structStr
+        : structStr;
 
     const isMoleculeContain =
-      this.props.struct.atoms.size && this.props.struct.bonds.size
+      this.props.struct.atoms.size && this.props.struct.bonds.size;
     const buttons = [
       <button
         key="save-tmpl"
@@ -371,8 +429,8 @@ class SaveDialog extends Component {
         onClick={() => this.props.onTmplSave(this.props.struct)}
       >
         Save to Templates
-      </button>
-    ]
+      </button>,
+    ];
 
     buttons.push(
       <button
@@ -383,8 +441,8 @@ class SaveDialog extends Component {
         type="button"
       >
         Cancel
-      </button>
-    )
+      </button>,
+    );
 
     if (this.isImageFormat(format)) {
       buttons.push(
@@ -393,6 +451,7 @@ class SaveDialog extends Component {
           data={structStr}
           filename={filename}
           outputFormat={imageFormat}
+          bondThickness={bondThickness}
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
@@ -405,8 +464,8 @@ class SaveDialog extends Component {
           className={classes.ok}
         >
           Save
-        </SaveButton>
-      )
+        </SaveButton>,
+      );
     } else {
       buttons.push(
         <SaveButton
@@ -421,11 +480,11 @@ class SaveDialog extends Component {
           className={classes.ok}
         >
           Save
-        </SaveButton>
-      )
+        </SaveButton>,
+      );
     }
-    return buttons
-  }
+    return buttons;
+  };
 
   render() {
     return (
@@ -439,26 +498,33 @@ class SaveDialog extends Component {
       >
         {this.renderForm()}
       </Dialog>
-    )
+    );
   }
 }
+
+const getOptions = (state) => state.options;
+const serverSettingsSelector = createSelector([getOptions], (options) =>
+  options.getServerSettings(),
+);
 
 const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
-  options: state.options.getServerSettings(),
+  options: serverSettingsSelector(state),
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag
-})
+  bondThickness: state.options.settings.bondThickness,
+  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
+  editor: state.editor,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onCheck: (checkOptions) => dispatch(check(checkOptions)),
   onTmplSave: (struct) => dispatch(saveUserTmpl(struct)),
-  onResetForm: (prevState) => dispatch(updateFormState(prevState))
-})
+  onResetForm: (prevState) => dispatch(updateFormState(prevState)),
+});
 
-const Save = connect(mapStateToProps, mapDispatchToProps)(SaveDialog)
+const Save = connect(mapStateToProps, mapDispatchToProps)(SaveDialog);
 
-export default Save
+export default Save;

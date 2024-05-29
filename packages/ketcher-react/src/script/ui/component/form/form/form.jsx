@@ -13,68 +13,81 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import clsx from 'clsx'
-import { Validator } from 'jsonschema'
-import { cloneDeep } from 'lodash'
-import { Component, useCallback, useState } from 'react'
-import { connect } from 'react-redux'
-import { FormContext } from '../../../../../contexts'
-import { useFormContext } from '../../../../../hooks'
-import { updateFormState } from '../../../state/modal/form'
-import { getSelectOptionsFromSchema } from '../../../utils'
-import Input from '../Input/Input'
-import Select from '../Select'
-import { ErrorPopover } from './errorPopover'
-import classes from './form.module.less'
+
+import { Component, useCallback, useState } from 'react';
+
+import { Validator } from 'jsonschema';
+import { ErrorPopover } from './errorPopover';
+import { FormContext } from '../../../../../contexts';
+import Input from '../Input/Input';
+import Select from '../Select';
+import classes from './form.module.less';
+import clsx from 'clsx';
+import { connect } from 'react-redux';
+import { getSelectOptionsFromSchema } from '../../../utils';
+import { updateFormState } from '../../../state/modal/form';
+import { useFormContext } from '../../../../../hooks';
+import { cloneDeep } from 'lodash';
+import { IconButton } from 'components';
 
 class Form extends Component {
   constructor(props) {
-    super(props)
-    const { onUpdate, schema, init } = this.props
+    super(props);
+    const { onUpdate, schema, init } = this.props;
 
-    this.schema = propSchema(schema, props)
+    this.schema = propSchema(schema, props);
 
     if (init) {
-      const { valid, errors } = this.schema.serialize(init)
-      const errs = getErrorsObj(errors)
-      const initialState = { ...init, init: true }
-      onUpdate(initialState, valid, errs)
+      const { valid, errors } = this.schema.serialize(init);
+      const errs = getErrorsObj(errors);
+      const initialState = { ...init, init: true };
+      onUpdate(initialState, valid, errs);
     }
+    this.updateState = this.updateState.bind(this);
   }
 
   componentDidUpdate(prevProps) {
-    const { schema, result, customValid, ...rest } = this.props
-    if (schema.key && schema.key !== prevProps.schema.key) {
-      this.schema = propSchema(schema, rest)
-      this.schema.serialize(result) // hack: valid first state
-      this.updateState(result)
+    const {
+      schema,
+      result,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      ...rest
+    } = this.props;
+    if (
+      (schema.key && schema.key !== prevProps.schema.key) ||
+      (rest.customValid !== prevProps.customValid &&
+        (schema.title === 'Atom' || schema.title === 'Bond'))
+    ) {
+      this.schema = propSchema(schema, rest);
+      this.schema.serialize(result); // hack: valid first state
+      this.updateState(result);
     }
   }
 
   updateState(newState) {
-    const { onUpdate } = this.props
-    const { instance, valid, errors } = this.schema.serialize(newState)
-    const errs = getErrorsObj(errors)
-    onUpdate(instance, valid, errs)
+    const { onUpdate } = this.props;
+    const { instance, valid, errors } = this.schema.serialize(newState);
+    const errs = getErrorsObj(errors);
+    onUpdate(instance, valid, errs);
   }
 
   field(name, onChange) {
-    const { result, errors } = this.props
-    const value = result[name]
+    const { result, errors } = this.props;
+    const value = result[name];
 
     return {
       dataError: errors && errors[name],
       value,
       onChange: (val) => {
-        const newState = Object.assign({}, this.props.result, { [name]: val })
-        this.updateState(newState)
-        if (onChange) onChange(val)
-      }
-    }
+        const newState = Object.assign({}, this.props.result, { [name]: val });
+        this.updateState(newState);
+        if (onChange) onChange(val);
+      },
+    };
   }
 
   render() {
-    const { schema, children } = this.props
+    const { schema, children } = this.props;
 
     return (
       <form>
@@ -82,18 +95,18 @@ class Form extends Component {
           {children}
         </FormContext.Provider>
       </form>
-    )
+    );
   }
 }
 
 export default connect(null, (dispatch) => ({
   onUpdate: (result, valid, errors) => {
-    dispatch(updateFormState({ result, valid, errors }))
-  }
-}))(Form)
+    dispatch(updateFormState({ result, valid, errors }));
+  },
+}))(Form);
 
 function Label({ labelPos, title, children, ...props }) {
-  const tooltip = props.tooltip ? props.tooltip : null
+  const tooltip = props.tooltip ? props.tooltip : null;
 
   return (
     <label {...props}>
@@ -109,29 +122,41 @@ function Label({ labelPos, title, children, ...props }) {
         ''
       )}
     </label>
-  )
+  );
 }
 
 function Field(props) {
-  const { name, onChange, component, labelPos, className, ...rest } = props
-  const [anchorEl, setAnchorEl] = useState(null)
+  const { name, onChange, component, labelPos, className, ...rest } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
   const handlePopoverOpen = useCallback((event) => {
-    setAnchorEl(event.currentTarget)
-  }, [])
+    setAnchorEl(event.currentTarget);
+  }, []);
   const handlePopoverClose = useCallback(() => {
-    setAnchorEl(null)
-  }, [])
-  const { schema, stateStore } = useFormContext()
-  const desc = rest.schema || schema.properties[name]
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange)
-  const Component = component
+    setAnchorEl(null);
+  }, []);
+  const { schema, stateStore } = useFormContext();
+  const desc = rest.schema || schema.properties[name];
+  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const Component = component;
   const formField = component ? (
-    <Component name={name} schema={desc} {...fieldOpts} {...rest} />
+    <Component
+      name={name}
+      schema={desc}
+      className={className}
+      {...fieldOpts}
+      {...rest}
+    />
   ) : (
-    <Input name={name} schema={desc} {...fieldOpts} {...rest} />
-  )
+    <Input
+      name={name}
+      schema={desc}
+      {...fieldOpts}
+      {...rest}
+      data-testid={`${name}-input`}
+    />
+  );
 
-  if (labelPos === false) return formField
+  if (labelPos === false) return formField;
   return (
     <Label
       className={clsx({ [classes.dataError]: dataError }, className)}
@@ -139,11 +164,13 @@ function Field(props) {
       title={rest.title || desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
+      data-testid={props['data-testid']}
     >
       <span
         className={classes.inputWrapper}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
+        data-testid={props['data-testid'] + '-input-span'}
       >
         {formField}
       </span>
@@ -156,22 +183,143 @@ function Field(props) {
         />
       )}
     </Label>
-  )
+  );
+}
+
+function FieldWithModal(props) {
+  const { name, onChange, labelPos, className, onEdit, ...rest } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { schema, stateStore } = useFormContext();
+  const desc = rest.schema || schema.properties[name];
+  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const handlePopoverOpen = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  return (
+    <Label
+      className={className}
+      error={dataError}
+      title={rest.title || desc.title}
+      labelPos={labelPos}
+      tooltip={rest?.tooltip}
+    >
+      <span
+        className={clsx({
+          [classes.dataError]: dataError,
+          [classes.inputWithEditButtonWrapper]: true,
+          [classes.inputWrapper]: true,
+        })}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
+        <Input name={name} schema={desc} {...fieldOpts} {...rest} />
+        <IconButton
+          onClick={() => {
+            onEdit(fieldOpts.onChange);
+          }}
+          iconName="edit"
+          className={classes.editButton}
+        />
+      </span>
+      {dataError && anchorEl && (
+        <ErrorPopover
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          error={dataError}
+          onClose={handlePopoverClose}
+        />
+      )}
+    </Label>
+  );
+}
+
+function CustomQueryField(props) {
+  const {
+    name,
+    onChange,
+    labelPos,
+    className,
+    onCheckboxChange,
+    checkboxValue,
+    ...rest
+  } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { schema, stateStore } = useFormContext();
+  const desc = rest.schema || schema.properties[name];
+  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const handlePopoverOpen = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const handleCheckboxChange = (value) => {
+    onCheckboxChange(
+      value,
+      stateStore.props.result,
+      fieldOpts.onChange,
+      stateStore.updateState,
+    );
+  };
+
+  return (
+    <>
+      <Label className={className} title={desc.title} labelPos={labelPos}>
+        <Input
+          name="customQueryCheckBox"
+          schema={{ default: false, type: 'boolean' }}
+          value={checkboxValue}
+          onChange={handleCheckboxChange}
+          data-testid="custom-query-checkbox"
+        />
+      </Label>
+      <span
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        className={clsx({
+          [classes.dataError]: dataError,
+          [classes.inputWrapper]: true,
+        })}
+      >
+        <Input
+          type="textarea"
+          data-testid="atomCustomQuery"
+          name={name}
+          schema={desc}
+          data-testId="custom-query-value"
+          {...fieldOpts}
+          {...rest}
+        />
+      </span>
+      {dataError && anchorEl && (
+        <ErrorPopover
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          error={dataError}
+          onClose={handlePopoverClose}
+        />
+      )}
+    </>
+  );
 }
 
 const SelectOneOf = (props) => {
-  const { title, name, schema, ...prop } = props
+  const { title, name, schema, ...prop } = props;
 
   const selectDesc = {
     title,
     enum: [],
-    enumNames: []
-  }
+    enumNames: [],
+  };
 
   Object.keys(schema).forEach((item) => {
-    selectDesc.enum.push(item)
-    selectDesc.enumNames.push(schema[item].title || item)
-  })
+    selectDesc.enum.push(item);
+    selectDesc.enumNames.push(schema[item].title || item);
+  });
 
   return (
     <Field
@@ -180,85 +328,88 @@ const SelectOneOf = (props) => {
       title={title}
       {...prop}
       component={Select}
+      data-testid={props['data-testid']}
     />
-  )
-}
+  );
+};
 
 //
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  const schemaCopy = cloneDeep(schema)
+  const schemaCopy = cloneDeep(schema);
 
-  Validator.prototype.customFormats = {}
+  Validator.prototype.customFormats = {};
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      Validator.prototype.customFormats[formatName] = formatValidator
+      Validator.prototype.customFormats[formatName] = formatValidator;
       const {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         pattern,
         maxLength,
         enum: enumIsReservedWord,
         enumNames,
+        /* eslint-enable @typescript-eslint/no-unused-vars */
         ...rest
-      } = schemaCopy.properties[formatName]
+      } = schemaCopy.properties[formatName];
       schemaCopy.properties[formatName] = {
         ...rest,
-        format: formatName
-      }
-    })
+        format: formatName,
+      };
+    });
   }
 
-  const validator = new Validator()
+  const validator = new Validator();
   return {
     key: schema.key || '',
     serialize: (inst) => {
-      const result = validator.validate(inst, schemaCopy)
+      const result = validator.validate(inst, schemaCopy);
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
         valid: result.valid,
-        errors: result.errors
-      }
+        errors: result.errors,
+      };
     },
     deserialize: (inst) => {
-      validator.validate(inst, schemaCopy)
-      return deserializeRewrite(deserialize, inst)
-    }
-  }
+      validator.validate(inst, schemaCopy);
+      return deserializeRewrite(deserialize, inst);
+    },
+  };
 }
 
 function serializeRewrite(serializeMap, instance, schema) {
-  const res = {}
+  const res = {};
   if (typeof instance !== 'object' || !schema.properties) {
-    return instance !== undefined ? instance : schema.default
+    return instance !== undefined ? instance : schema.default;
   }
 
   Object.keys(schema.properties).forEach((p) => {
-    if (p in instance) res[p] = instance[serializeMap[p]] || instance[p]
-  })
+    if (p in instance) res[p] = instance[serializeMap[p]] || instance[p];
+  });
 
-  return res
+  return res;
 }
 
 function deserializeRewrite(deserializeMap, instance) {
-  return instance
+  return instance;
 }
 
 function getInvalidMessage(item) {
-  if (!item.schema.invalidMessage) return item.message
+  if (!item.schema.invalidMessage) return item.message;
   return typeof item.schema.invalidMessage === 'function'
     ? item.schema.invalidMessage(item.data)
-    : item.schema.invalidMessage
+    : item.schema.invalidMessage;
 }
 
 function getErrorsObj(errors) {
-  const errs = {}
-  let field
+  const errs = {};
+  let field;
 
   errors.forEach((item) => {
-    field = item.path[item.path.length - 1]
-    if (!errs[field]) errs[field] = getInvalidMessage(item)
-  })
+    field = item.path[item.path.length - 1];
+    if (!errs[field]) errs[field] = getInvalidMessage(item);
+  });
 
-  return errs
+  return errs;
 }
 
-export { Field, SelectOneOf }
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf };

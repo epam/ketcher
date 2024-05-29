@@ -15,20 +15,20 @@
  ***************************************************************************/
 
 export interface HighlightAttributes {
-  atoms: Array<number>
-  bonds: Array<number>
-  color: string
+  atoms: Array<number>;
+  bonds: Array<number>;
+  color: string;
 }
 
 export class Highlight {
-  atoms: Array<number>
-  bonds: Array<number>
-  color: string
+  atoms: Array<number>;
+  bonds: Array<number>;
+  color: string;
 
   constructor(attributes: HighlightAttributes) {
-    const { atoms, bonds, color } = attributes
-    this.color = color
-    this.atoms = atoms
-    this.bonds = bonds
+    const { atoms, bonds, color } = attributes;
+    this.color = color;
+    this.atoms = atoms;
+    this.bonds = bonds;
   }
 }

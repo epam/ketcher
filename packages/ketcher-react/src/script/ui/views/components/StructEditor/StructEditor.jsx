@@ -14,169 +14,253 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component, createRef } from 'react'
+import { Component, createRef } from 'react';
 
-import Editor from '../../../../editor'
-import { LoadingCircles } from '../Spinner/LoadingCircles'
-import classes from './StructEditor.module.less'
-import clsx from 'clsx'
-import { upperFirst } from 'lodash/fp'
-import handIcon from '../../../../../icons/files/hand.svg'
-import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
-import Cursor from '../Cursor'
-import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
-
-import InfoPanel from './InfoPanel'
+import Editor from '../../../../editor';
+import { LoadingCircles } from '../Spinner/LoadingCircles';
+import classes from './StructEditor.module.less';
+import clsx from 'clsx';
+import { upperFirst } from 'lodash/fp';
+import { FloatingToolContainer } from '../../toolbars';
+import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
+import InfoPanel from './InfoPanel';
+import { KetcherLogger, ketcherProvider } from 'ketcher-core';
+import { getSmoothScrollDelta } from './helpers';
+import InfoTooltip from './InfoTooltip';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
-  const { struct, tool, toolOpts, options } = props
+  const { struct, tool, toolOpts, options } = props;
 
-  if (struct !== oldProps.struct) editor.struct(struct)
+  if (struct !== oldProps.struct) editor.struct(struct);
 
   if (tool !== oldProps.tool || toolOpts !== oldProps.toolOpts) {
-    editor.tool(tool, toolOpts)
+    editor.tool(tool, toolOpts);
     if (toolOpts !== oldProps.toolOpts) {
-      editor.event.message.dispatch({ info: JSON.stringify(toolOpts) })
+      editor.event.message.dispatch({ info: JSON.stringify(toolOpts) });
     }
   }
 
-  if (oldProps.options && options !== oldProps.options) editor.options(options)
+  if (oldProps.options && options !== oldProps.options) editor.options(options);
 
   Object.keys(editor.event).forEach((name) => {
-    const eventName = `on${upperFirst(name)}`
+    const eventName = `on${upperFirst(name)}`;
 
     if (props[eventName] !== oldProps[eventName]) {
       if (oldProps[eventName]) {
-        editor.event[name].remove(oldProps[eventName])
+        editor.event[name].remove(oldProps[eventName]);
       }
 
       if (props[eventName]) {
-        editor.event[name].add(props[eventName])
+        editor.event[name].add(props[eventName]);
       }
     }
-  })
+  });
+
+  editor.render.unobserveCanvasResize();
+  editor.render.observeCanvasResize();
 }
 
 function removeEditorHandlers(editor, props) {
   Object.keys(editor.event).forEach((name) => {
-    const eventName = `on${upperFirst(name)}`
+    const eventName = `on${upperFirst(name)}`;
 
-    if (props[eventName]) editor.event[name].remove(props[eventName])
-  })
+    if (props[eventName]) editor.event[name].remove(props[eventName]);
+  });
 }
 
 class StructEditor extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       enableCursor: false,
       clientX: 0,
-      clientY: 0
+      clientY: 0,
+    };
+    this.editorRef = createRef();
+    this.logRef = createRef();
+  }
+
+  handleWheel = (event) => {
+    if (event.ctrlKey) {
+      event.preventDefault();
+
+      const zoomDelta = event.deltaY > 0 ? -1 : 1;
+
+      if (zoomDelta === 1) {
+        this.props.onZoomIn(event);
+      } else {
+        this.props.onZoomOut(event);
+      }
+    } else {
+      this.scrollCanvas(event);
+      this.editor.rotateController.updateFloatingToolsPosition();
+      this.editor.hoverIcon.updatePosition();
+      this.editor.tool()?.mousemove(this.editor.lastEvent);
     }
-    this.editorRef = createRef()
-    this.logRef = createRef()
+  };
+
+  // TODO https://github.com/epam/ketcher/issues/3472
+  /**
+   * @param {WheelEvent} event
+   */
+  scrollCanvas(event) {
+    if (event.shiftKey) {
+      this.handleHorizontalScroll(event);
+    } else {
+      this.handleScroll(event);
+    }
+  }
+
+  /**
+   * @param {WheelEvent} event
+   */
+  handleHorizontalScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX:
+        prev.minX - getSmoothScrollDelta(event.wheelDelta, this.editor.zoom()),
+    }));
+  }
+
+  /**
+   * For mouse wheel and touchpad
+   * @param {WheelEvent} event
+   */
+  handleScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX: prev.minX + getSmoothScrollDelta(event.deltaX, this.editor.zoom()),
+      minY: prev.minY + getSmoothScrollDelta(event.deltaY, this.editor.zoom()),
+    }));
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
       nextState.enableCursor !== this.state.enableCursor
-    )
+    );
   }
 
   UNSAFE_componentWillReceiveProps(props) {
-    setupEditor(this.editor, props, this.props)
+    setupEditor(this.editor, props, this.props);
   }
 
   componentDidMount() {
     this.editor = new Editor(this.editorRef.current, {
-      ...this.props.options
-    })
-    setupEditor(this.editor, this.props)
-    if (this.props.onInit) this.props.onInit(this.editor)
+      ...this.props.options,
+    });
+    const ketcher = ketcherProvider.getKetcher();
+    if (ketcher?.editor.macromoleculeConvertionError) {
+      this.props.onShowMacromoleculesErrorMessage(
+        ketcher.editor.macromoleculeConvertionError,
+      );
+      ketcher.editor.clearMacromoleculeConvertionError();
+    }
+    setupEditor(this.editor, this.props);
+    if (this.props.onInit) this.props.onInit(this.editor);
 
     this.editor.event.message.add((msg) => {
-      const el = this.logRef.current
+      const el = this.logRef.current;
       if (msg.info && this.props.showAttachmentPoints) {
         try {
-          const parsedInfo = JSON.parse(msg.info)
-          el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`
-        } catch {
-          el.innerHTML = msg.info
+          const parsedInfo = JSON.parse(msg.info);
+          el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
+        } catch (e) {
+          KetcherLogger.error(
+            'StructEditor.jsx::StructEditor::componentDidMount',
+            e,
+          );
+          el.innerHTML = msg.info;
         }
-        el.classList.add(classes.visible)
+        el.classList.add(classes.visible);
       } else {
-        el.classList.remove(classes.visible)
+        el.classList.remove(classes.visible);
       }
-    })
+    });
 
     this.editor.event.cursor.add((csr) => {
-      let clientX, clientY
+      let clientX, clientY;
 
       switch (csr.status) {
-        case 'enable':
-          this.editorRef.current.classList.add(classes.enableCursor)
+        case 'enable': {
+          this.editorRef.current.classList.add(classes.enableCursor);
           const { left, top, right, bottom } =
-            this.editorRef.current.getBoundingClientRect()
+            this.editorRef.current.getBoundingClientRect();
 
-          clientX = csr.cursorPosition.clientX
-          clientY = csr.cursorPosition.clientY
+          clientX = csr.cursorPosition.clientX;
+          clientY = csr.cursorPosition.clientY;
 
           const handShouldBeShown =
             clientX >= left &&
             clientX <= right &&
             clientY >= top &&
-            clientX <= bottom
+            clientX <= bottom;
           if (!this.state.enableCursor && handShouldBeShown) {
             this.setState({
-              enableCursor: true
-            })
+              enableCursor: true,
+            });
           }
-          break
-        case 'move':
-          this.editorRef.current.classList.add(classes.enableCursor)
+          break;
+        }
+
+        case 'move': {
+          this.editorRef.current.classList.add(classes.enableCursor);
           this.setState({
             enableCursor: true,
             clientX,
-            clientY
-          })
-          break
-        case 'disable':
-          this.editorRef.current.classList.remove(classes.enableCursor)
+            clientY,
+          });
+          break;
+        }
+
+        case 'disable': {
+          this.editorRef.current.classList.remove(classes.enableCursor);
           this.setState({
-            enableCursor: false
-          })
-          break
-        case 'leave':
-          this.editorRef.current.classList.remove(classes.enableCursor)
+            enableCursor: false,
+          });
+          break;
+        }
+
+        case 'leave': {
+          this.editorRef.current.classList.remove(classes.enableCursor);
           this.setState({
-            enableCursor: false
-          })
-          break
-        case 'mouseover':
-          this.editorRef.current.classList.add(classes.enableCursor)
+            enableCursor: false,
+          });
+          break;
+        }
+
+        case 'mouseover': {
+          this.editorRef.current.classList.add(classes.enableCursor);
           this.setState({
-            enableCursor: true
-          })
-          break
+            enableCursor: true,
+          });
+          break;
+        }
         default:
-          break
+          break;
       }
-    })
+    });
 
     this.editor.event.message.dispatch({
-      info: JSON.stringify(this.props.toolOpts)
-    })
+      info: JSON.stringify(this.props.toolOpts),
+    });
+
+    this.editorRef.current.addEventListener('wheel', this.handleWheel);
   }
 
   componentWillUnmount() {
-    removeEditorHandlers(this.editor, this.props)
+    removeEditorHandlers(this.editor, this.props);
+    this.editorRef.current.removeEventListener('wheel', this.handleWheel);
+    this.editor.render.unobserveCanvasResize();
   }
 
   render() {
     const {
       Tag = 'div',
+      className,
+      indigoVerification,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
       tool,
       toolOpts,
@@ -187,6 +271,8 @@ class StructEditor extends Component {
       onEnhancedStereoEdit,
       onQuickEdit,
       onBondEdit,
+      onZoomIn,
+      onZoomOut,
       onRgroupEdit,
       onSgroupEdit,
       onRemoveFG,
@@ -194,20 +280,25 @@ class StructEditor extends Component {
       onAromatizeStruct,
       onDearomatizeStruct,
       onAttachEdit,
-      indigoVerification,
       onCipChange,
-      className,
       onConfirm,
       onShowInfo,
       onApiSettings,
       showAttachmentPoints = true,
+      onUpdateFloatingTools,
+      onShowMacromoleculesErrorMessage,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
-    } = this.props
+    } = this.props;
 
-    const { clientX = 0, clientY = 0 } = this.state
+    const { clientX = 0, clientY = 0 } = this.state;
 
     return (
-      <Tag className={clsx(classes.canvas, className)} {...props}>
+      <Tag
+        className={clsx(classes.canvas, className)}
+        {...props}
+        data-testid="ketcher-canvas"
+      >
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}
@@ -216,12 +307,6 @@ class StructEditor extends Component {
             {/* svg here */}
           </div>
         </ContextMenuTrigger>
-
-        <Cursor
-          Icon={handIcon}
-          PressedIcon={compressedHandIcon}
-          enableHandTool={this.state.enableCursor}
-        />
 
         <div className={classes.measureLog} ref={this.logRef} />
 
@@ -238,11 +323,14 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
+        <InfoTooltip render={this.props.render} />
+
+        <FloatingToolContainer />
 
         <ContextMenu />
       </Tag>
-    )
+    );
   }
 }
 
-export default StructEditor
+export default StructEditor;

@@ -18,16 +18,16 @@ import {
   ServiceMode,
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'ketcher-core'
+  StructServiceProvider,
+} from 'ketcher-core';
 
-import StandaloneStructService from './standaloneStructService'
+import StandaloneStructService from './standaloneStructService';
 
 class StandaloneStructServiceProvider implements StructServiceProvider {
-  mode: ServiceMode = 'standalone'
+  mode: ServiceMode = 'standalone';
 
   createStructService(options: StructServiceOptions): StructService {
-    return new StandaloneStructService(options)
+    return new StandaloneStructService(options);
   }
 }
-export default StandaloneStructServiceProvider
+export default StandaloneStructServiceProvider;

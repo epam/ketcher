@@ -14,30 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Field } from '../../../../../../../component/form/form/form'
-import { RgroupLogicProps } from '../../RgroupLogic'
-import classes from './IfThenSelect.module.less'
-import { useFormContext } from '../../../../../../../../../hooks'
-import Select from '../../../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../../../utils'
+import { Field } from '../../../../../../../component/form/form/form';
+import { RgroupLogicProps } from '../../RgroupLogic';
+import classes from './IfThenSelect.module.less';
+import { useFormContext } from '../../../../../../../../../hooks';
+import Select from '../../../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../../../utils';
 
-type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>
+type Props = Pick<RgroupLogicProps, 'label' | 'rgroupLabels' | 'name'>;
 
 const IfThenSelect = (props: Props) => {
-  const { rgroupLabels, label, name } = props
-  const { schema } = useFormContext() as any
+  const { rgroupLabels, label, name } = props;
+  const { schema } = useFormContext() as any;
   const desc = {
     title: schema.properties[name!].title,
     enum: [0],
-    enumNames: ['Always']
-  }
+    enumNames: ['Always'],
+  };
 
   rgroupLabels.forEach((rgroupLabel) => {
     if (label !== rgroupLabel) {
-      desc.enum.push(rgroupLabel)
-      desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`)
+      desc.enum.push(rgroupLabel);
+      desc.enumNames.push(`IF R${label} THEN R${rgroupLabel}`);
     }
-  })
+  });
 
   return (
     <Field
@@ -47,7 +47,7 @@ const IfThenSelect = (props: Props) => {
       component={Select}
       options={getSelectOptionsFromSchema(desc)}
     />
-  )
-}
+  );
+};
 
-export default IfThenSelect
+export default IfThenSelect;

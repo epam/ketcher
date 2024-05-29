@@ -21,8 +21,10 @@ function SelectList({
   value,
   onSelect,
   splitIndexes,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   selected,
   component,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
 }) {
@@ -41,11 +43,11 @@ function SelectList({
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 function isSplitIndex(index, splitIndexes) {
-  return index > 0 && splitIndexes && splitIndexes.includes(index)
+  return index > 0 && splitIndexes && splitIndexes.includes(index);
 }
 
-export default SelectList
+export default SelectList;

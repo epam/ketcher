@@ -1,1 +1,1 @@
-export * from './generateCommonProperties'
+export * from './generateCommonProperties';

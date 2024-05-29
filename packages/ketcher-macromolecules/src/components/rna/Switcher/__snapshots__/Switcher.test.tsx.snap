@@ -1,0 +1,1037 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RNA Switcher component should render correctly with each button selected 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="css-mxf4j3"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R(A)P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <div
+          class="css-11l5obs"
+        >
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
+        </div>
+        <div
+          class="css-11ydt2g"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            R
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            A
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            P
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="css-mxf4j3"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+        tabindex="0"
+        type="button"
+      >
+        R(A)P
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+      <div
+        class="css-11l5obs"
+      >
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
+      </div>
+      <div
+        class="css-11ydt2g"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          A
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`RNA Switcher component should render correctly with each button selected 2`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="css-mxf4j3"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R(A)P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <div
+          class="css-11l5obs"
+        >
+          <svg
+            class="css-1v5gmf4"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
+        </div>
+        <div
+          class="css-11ydt2g"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            R
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            A
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            P
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="css-mxf4j3"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+        tabindex="0"
+        type="button"
+      >
+        R(A)P
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+      <div
+        class="css-11l5obs"
+      >
+        <svg
+          class="css-1v5gmf4"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
+      </div>
+      <div
+        class="css-11ydt2g"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          A
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`RNA Switcher component should render correctly with each button selected 3`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="css-mxf4j3"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R(A)P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <div
+          class="css-11l5obs"
+        >
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1v5gmf4"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
+        </div>
+        <div
+          class="css-11ydt2g"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            R
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            A
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            P
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="css-mxf4j3"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+        tabindex="0"
+        type="button"
+      >
+        R(A)P
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+      <div
+        class="css-11l5obs"
+      >
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1v5gmf4"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
+      </div>
+      <div
+        class="css-11ydt2g"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          A
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`RNA Switcher component should render correctly with each button selected 4`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="css-mxf4j3"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R(A)P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <div
+          class="css-11l5obs"
+        >
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1v5gmf4"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
+        </div>
+        <div
+          class="css-11ydt2g"
+        >
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            R
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            A
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <button
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+            tabindex="0"
+            type="button"
+          >
+            P
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+        tabindex="0"
+        type="button"
+      >
+        Reset
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="css-mxf4j3"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+        tabindex="0"
+        type="button"
+      >
+        R(A)P
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </button>
+      <div
+        class="css-11l5obs"
+      >
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1v5gmf4"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
+      </div>
+      <div
+        class="css-11ydt2g"
+      >
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          R
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          A
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <button
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
+          tabindex="0"
+          type="button"
+        >
+          P
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+      </div>
+    </div>
+    <button
+      class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1l3rijb-MuiButtonBase-root-MuiButton-root"
+      tabindex="0"
+      type="button"
+    >
+      Reset
+      <span
+        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+      />
+    </button>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

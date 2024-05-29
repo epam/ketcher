@@ -16,7 +16,7 @@
 
 import {
   StandaloneStructService,
-  StandaloneStructServiceProvider
-} from './infrastructure/services'
+  StandaloneStructServiceProvider,
+} from './infrastructure/services';
 
-export { StandaloneStructServiceProvider, StandaloneStructService }
+export { StandaloneStructServiceProvider, StandaloneStructService };

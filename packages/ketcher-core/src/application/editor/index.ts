@@ -14,11 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from './shared/utils'
+import utils from './shared/utils';
 
-// TODO: delete it
-export const fracAngle = utils.fracAngle
-export * from './operations'
-export * from './actions'
-export * from './shared/constants'
-export * from './editor.types'
+export const vectorUtils = {
+  fracAngle: utils.fracAngle,
+  calcAngle: utils.calcAngle,
+  degrees: utils.degrees,
+  calcNewAtomPos: utils.calcNewAtomPos,
+};
+
+export * from './operations';
+export * from './actions';
+export * from './shared/constants';
+export * from './shared/coordinates';
+export * from './editor.types';
+export * from './Editor';
+export * from './EditorHistory';
+export * from './modes';
+export * from './editorEvents';
+export * from './editorSettings';

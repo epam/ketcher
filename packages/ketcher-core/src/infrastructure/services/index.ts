@@ -14,4 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './struct'
+export * from './struct';
+export * from './helpers';

@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct, Text } from 'domain/entities'
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { Struct, Text } from 'domain/entities';
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function textToStruct(ketItem: any, struct: Struct) {
-  const object = getNodeWithInvertedYCoord(ketItem.data)
-  struct.texts.add(new Text(object))
-
-  return struct
+  const text = new Text(getNodeWithInvertedYCoord(ketItem.data));
+  text.setInitiallySelected(ketItem.selected);
+  struct.texts.add(text);
+  return struct;
 }

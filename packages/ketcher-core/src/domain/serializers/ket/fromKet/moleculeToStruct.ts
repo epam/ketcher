@@ -14,163 +14,280 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct } from 'domain/entities'
+import {
+  Atom,
+  Bond,
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+  RGroupAttachmentPoint,
+  AttachmentPoints,
+  AtomQueryProperties,
+} from 'domain/entities';
 
-import { Elements } from 'domain/constants'
-import { ifDef } from 'utilities'
+import { Elements } from 'domain/constants';
+import { ifDef } from 'utilities';
+import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
+import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 export function toRlabel(values) {
-  let res = 0
+  let res = 0;
   values.forEach((val) => {
-    const rgi = val - 1
-    res |= 1 << rgi
-  })
-  return res
+    const rgi = val - 1;
+    res |= 1 << rgi;
+  });
+  return res;
 }
 
 export function moleculeToStruct(ketItem: any): Struct {
-  const struct = new Struct()
-  ketItem.atoms.forEach((atom) => {
-    if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
-    if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
-    if (!atom.type) struct.atoms.add(atomToStruct(atom))
-  })
+  const struct = mergeFragmentsToStruct(ketItem, new Struct());
+
+  if (ketItem.atoms) {
+    ketItem.atoms.forEach((atom) => {
+      let atomId: number | null = null;
+      if (atom.type === 'rg-label') {
+        atomId = struct.atoms.add(rglabelToStruct(atom));
+      }
+      if (!atom.type || atom.type === 'atom-list') {
+        atomId = struct.atoms.add(atomToStruct(atom));
+      }
+      if (atomId !== null) {
+        addRGroupAttachmentPointsToStruct(
+          struct,
+          atomId,
+          atom.attachmentPoints,
+          atom.selected,
+        );
+      }
+    });
+  }
 
   if (ketItem.bonds) {
-    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)))
+    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)));
   }
 
   if (ketItem.sgroups) {
-    ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup))
-    )
+    ketItem.sgroups.forEach((sgroupData) => {
+      const sgroup = sgroupToStruct(sgroupData);
+      const id = struct.sgroups.add(sgroup);
+      sgroup.id = id;
+    });
   }
 
-  struct.initHalfBonds()
-  struct.initNeighbors()
-  struct.markFragments()
-  struct.bindSGroupsToFunctionalGroups()
+  struct.initHalfBonds();
+  struct.initNeighbors();
+  struct.markFragments(ketItem.properties);
+  struct.bindSGroupsToFunctionalGroups();
 
-  return struct
+  return struct;
 }
 
 export function atomToStruct(source) {
-  const params: any = {}
+  const params: any = {};
 
-  ifDef(params, 'label', source.label)
-  ifDef(params, 'alias', source.alias)
+  const queryAttribute: Array<keyof AtomQueryProperties> = [
+    'aromaticity',
+    'ringMembership',
+    'connectivity',
+    'ringSize',
+    'chirality',
+    'customQuery',
+  ];
+  if (source.type === 'atom-list') {
+    params.label = 'L#';
+    const ids = source.elements
+      .map((el) => Elements.get(el)?.number)
+      .filter((id) => id);
+    ifDef(params, 'atomList', {
+      ids,
+      notList: source.notList,
+    });
+  } else {
+    ifDef(params, 'label', source.label);
+    // reaction
+    ifDef(params, 'aam', source.mapping);
+  }
+  ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'charge', source.charge)
-  ifDef(params, 'explicitValence', source.explicitValence)
-  ifDef(params, 'isotope', source.isotope)
-  ifDef(params, 'radical', source.radical)
-  ifDef(params, 'cip', source.cip)
-  ifDef(params, 'attpnt', source.attachmentPoints)
+    z: source.location[2] || 0.0,
+  });
+  ifDef(params, 'charge', source.charge);
+  ifDef(params, 'explicitValence', source.explicitValence);
+  ifDef(params, 'isotope', source.isotope);
+  ifDef(params, 'radical', source.radical);
+  ifDef(params, 'cip', source.cip);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   // stereo
-  ifDef(params, 'stereoLabel', source.stereoLabel)
-  ifDef(params, 'stereoParity', source.stereoParity)
-  ifDef(params, 'weight', source.weight)
+  ifDef(params, 'stereoLabel', source.stereoLabel);
+  ifDef(params, 'stereoParity', source.stereoParity);
+  ifDef(params, 'weight', source.weight);
   // query
-  ifDef(params, 'ringBondCount', source.ringBondCount)
-  ifDef(params, 'substitutionCount', source.substitutionCount)
-  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)))
-  ifDef(params, 'hCount', source.hCount)
+  ifDef(params, 'ringBondCount', source.ringBondCount);
+  ifDef(params, 'substitutionCount', source.substitutionCount);
+  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
+  ifDef(params, 'hCount', source.hCount);
+  if (
+    source.queryProperties &&
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    params.queryProperties = {};
+    queryAttribute.forEach((attributeName) => {
+      ifDef(
+        params.queryProperties,
+        attributeName,
+        source.queryProperties[attributeName],
+      );
+    });
+  }
+
   // reaction
-  ifDef(params, 'aam', source.mapping)
-  ifDef(params, 'invRet', source.invRet)
-  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)))
+  ifDef(params, 'invRet', source.invRet);
+  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
-  ifDef(params, 'implicitHCount', source.implicitHCount)
-  return new Atom(params)
+  ifDef(params, 'implicitHCount', source.implicitHCount);
+
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
 export function rglabelToStruct(source) {
-  const params: any = {}
-  params.label = 'R#'
+  const params: any = {};
+  params.label = 'R#';
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'attpnt', source.attachmentPoints)
+    z: source.location[2] || 0.0,
+  });
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(
-    source.$refs?.map((el) => parseInt(el.slice(3))) ?? []
-  )
-  ifDef(params, 'rglabel', rglabel)
-  return new Atom(params)
+    source.$refs?.map((el) => parseInt(el.slice(3))) ?? [],
+  );
+  ifDef(params, 'rglabel', rglabel);
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
-export function atomListToStruct(source) {
-  const params: any = {}
-  params.label = 'L#'
-  ifDef(params, 'pp', {
-    x: source.location[0],
-    y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'attpnt', source.attachmentPoints)
-  const ids = source.elements
-    .map((el) => Elements.get(el)?.number)
-    .filter((id) => id)
-  ifDef(params, 'atomList', {
-    ids,
-    notList: source.notList
-  })
-  return new Atom(params)
+function addRGroupAttachmentPointsToStruct(
+  struct: Struct,
+  attachedAtomId: number,
+  attachmentPoints: AttachmentPoints | null,
+  initiallySelected?: initiallySelectedType,
+) {
+  const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
+  if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
+    );
+  } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
+    );
+  } else if (attachmentPoints === AttachmentPoints.BothSides) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
+    );
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
+    );
+  }
+  rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
+    struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
+  });
 }
 
-export function bondToStruct(source) {
-  const params: any = {}
+/**
+ *
+ * @param source
+ * @param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
+ * source.atoms contains numbers related to fragment, but we need to count atoms related to struct. Example:
+ * fragments: [{
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the first fragment
+ * }, {
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the second fragment
+ * }]
+ * When we add bonds from second fragment we need to count atoms from fragments[0].atoms.length + 1, not from zero
+ * @returns newly created Bond
+ */
+export function bondToStruct(source, atomOffset = 0) {
+  const params: any = {};
 
-  ifDef(params, 'type', source.type)
-  ifDef(params, 'topology', source.topology)
-  ifDef(params, 'reactingCenterStatus', source.center)
-  ifDef(params, 'stereo', source.stereo)
-  ifDef(params, 'cip', source.cip)
+  ifDef(params, 'type', source.type);
+  ifDef(params, 'topology', source.topology);
+  ifDef(params, 'reactingCenterStatus', source.center);
+  ifDef(params, 'stereo', source.stereo);
+  ifDef(params, 'cip', source.cip);
+  ifDef(params, 'customQuery', source.customQuery);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;
-  ifDef(params, 'begin', source.atoms[0])
-  ifDef(params, 'end', source.atoms[1])
+  ifDef(params, 'begin', source.atoms[0] + atomOffset);
+  ifDef(params, 'end', source.atoms[1] + atomOffset);
+  ifDef(params, 'initiallySelected', source.selected);
 
-  return new Bond(params)
+  const newBond = new Bond(params);
+  newBond.setInitiallySelected(source.selected);
+  return newBond;
 }
 
+type KetAttachmentPoint = {
+  attachmentAtom: number;
+  leavingAtom?: number;
+  attachmentId?: string;
+};
+
 export function sgroupToStruct(source) {
-  const sgroup = new SGroup(source.type)
-  ifDef(sgroup, 'atoms', source.atoms)
+  const sgroup = new SGroup(source.type);
+  ifDef(sgroup, 'atoms', source.atoms);
   switch (source.type) {
     case 'GEN':
-      break
+      break;
     case 'MUL': {
-      ifDef(sgroup.data, 'mul', source.mul)
-      break
+      ifDef(sgroup.data, 'mul', source.mul);
+      break;
     }
     case 'SRU': {
-      ifDef(sgroup.data, 'subscript', source.subscript)
-      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase())
-      break
+      ifDef(sgroup.data, 'subscript', source.subscript);
+      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
+      break;
     }
     case 'SUP': {
-      ifDef(sgroup.data, 'name', source.name)
-      ifDef(sgroup.data, 'expanded', source.expanded)
-      ifDef(sgroup, 'id', source.id)
-      break
+      ifDef(sgroup.data, 'name', source.name);
+      ifDef(sgroup.data, 'expanded', source.expanded);
+      ifDef(sgroup, 'id', source.id);
+      source.attachmentPoints?.forEach(
+        (sourceAttachmentPoint: KetAttachmentPoint) => {
+          sgroup.addAttachmentPoint(
+            sgroupAttachmentPointToStruct(sourceAttachmentPoint),
+          );
+        },
+      );
+      break;
     }
     case 'DAT': {
-      ifDef(sgroup.data, 'absolute', source.placement)
-      ifDef(sgroup.data, 'attached', source.display)
-      ifDef(sgroup.data, 'context', source.context)
-      ifDef(sgroup.data, 'fieldName', source.fieldName)
-      ifDef(sgroup.data, 'fieldValue', source.fieldData)
-      break
+      ifDef(sgroup.data, 'absolute', source.placement);
+      ifDef(sgroup.data, 'attached', source.display);
+      ifDef(sgroup.data, 'context', source.context);
+      ifDef(sgroup.data, 'fieldName', source.fieldName);
+      ifDef(sgroup.data, 'fieldValue', source.fieldData);
+      break;
     }
     default:
-      break
+      break;
   }
-  return sgroup
+  return sgroup;
+}
+
+function sgroupAttachmentPointToStruct(
+  source: KetAttachmentPoint,
+): SGroupAttachmentPoint {
+  const atomId = source.attachmentAtom;
+  const leavingAtomId = source.leavingAtom;
+  const attachmentId = source.attachmentId;
+  return new SGroupAttachmentPoint(atomId, leavingAtomId, attachmentId);
 }

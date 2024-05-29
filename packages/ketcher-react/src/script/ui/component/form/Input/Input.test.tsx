@@ -1,6 +1,6 @@
-import { render } from '@testing-library/react'
+import { render } from '@testing-library/react';
 
-import Input from './Input'
+import Input from './Input';
 
 describe('Input component should be rendered correctly', () => {
   it('should render slider according to props', () => {
@@ -12,39 +12,39 @@ describe('Input component should be rendered correctly', () => {
         title: 'Title',
         type: 'boolean',
         description: 'slider',
-        default: true
+        default: true,
       },
-      onChange: jest.fn()
-    }
+      onChange: jest.fn(),
+    };
 
-    const { asFragment } = render(<Input {...sliderProps} />)
+    const { asFragment } = render(<Input {...sliderProps} />);
 
-    expect(asFragment()).toMatchSnapshot()
-  })
+    expect(asFragment()).toMatchSnapshot();
+  });
 
   it('should render checkbox if no schema provided and type is checkbox', () => {
     const checkboxProps = {
       name: 'Name',
       value: true,
       type: 'checkbox',
-      onChange: jest.fn()
-    }
+      onChange: jest.fn(),
+    };
 
-    const { asFragment } = render(<Input {...checkboxProps} />)
+    const { asFragment } = render(<Input {...checkboxProps} />);
 
-    expect(asFragment()).toMatchSnapshot()
-  })
+    expect(asFragment()).toMatchSnapshot();
+  });
 
   it('should render textarea if no schema provided and type is textarea', () => {
     const textareaProps = {
       name: 'Name',
       value: 'value',
       type: 'textarea',
-      onChange: jest.fn()
-    }
+      onChange: jest.fn(),
+    };
 
-    const { asFragment } = render(<Input {...textareaProps} />)
+    const { asFragment } = render(<Input {...textareaProps} />);
 
-    expect(asFragment()).toMatchSnapshot()
-  })
-})
+    expect(asFragment()).toMatchSnapshot();
+  });
+});

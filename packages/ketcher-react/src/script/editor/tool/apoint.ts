@@ -14,47 +14,55 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import assert from 'assert';
+import { FunctionalGroup } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
+import { editRGroupAttachmentPoint } from './apoint.utils';
 
 class APointTool implements Tool {
-  private readonly editor: Editor
+  private readonly editor: Editor;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousemove(event) {
-    const struct = this.editor.render.ctab.molecule
-    const closestItem = this.editor.findItem(event, ['atoms'])
-    if (closestItem) {
-      const atom = struct.atoms.get(closestItem.id)
-      if (atom?.label !== 'R#' && atom?.rglabel === null)
-        this.editor.hover(closestItem, null, event)
+    const struct = this.editor.render.ctab.molecule;
+    const closestItem = this.editor.findItem(event, [
+      'atoms',
+      'rgroupAttachmentPoints',
+    ]);
+    if (closestItem?.map === 'atoms') {
+      const atom = struct.atoms.get(closestItem.id);
+      if (atom?.label !== 'R#' && atom?.rglabel === null) {
+        this.editor.hover(closestItem, null, event);
+      }
+    } else if (closestItem?.map === 'rgroupAttachmentPoints') {
+      this.editor.hover(closestItem, null, event);
     } else {
-      this.editor.hover(null)
+      this.editor.hover(null);
     }
   }
 
   click(event) {
-    const editor = this.editor
-    const struct = editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const ci = editor.findItem(event, ['atoms'])
-    const atomResult: Array<number> = []
-    const result: Array<number> = []
+    const editor = this.editor;
+    const struct = editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const ci = editor.findItem(event, ['atoms']);
+    const atomResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -62,42 +70,29 @@ class APointTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
     if (ci && ci.map === 'atoms') {
-      this.editor.hover(null)
-      const atom = molecule.atoms.get(ci.id)
+      this.editor.hover(null);
+      const atom = molecule.atoms.get(ci.id);
+      assert(atom != null);
 
-      if (atom?.label === 'R#' && atom?.rglabel !== null) return
+      if (!atom.isRGroupAttachmentPointEditDisabled) {
+        editRGroupAttachmentPoint(editor, atom, ci.id);
+      }
 
-      const res = editor.event.elementEdit.dispatch({
-        attpnt: atom?.attpnt
-      })
-      Promise.resolve(res)
-        .then((newatom) => {
-          if (atom?.attpnt !== newatom.attpnt) {
-            const action = fromAtomsAttrs(
-              editor.render.ctab,
-              ci.id,
-              newatom,
-              null
-            )
-            editor.update(action)
-          }
-        })
-        .catch(() => null) // w/o changes
-      return true
+      return true;
     }
-    return true
+    return true;
   }
 }
 
-export default APointTool
+export default APointTool;

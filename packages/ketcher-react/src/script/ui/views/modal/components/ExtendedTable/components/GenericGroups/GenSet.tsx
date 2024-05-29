@@ -14,21 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import type { GenItemSet } from 'ketcher-core'
-import classes from './GenSet.module.less'
-import { isGenericGroup } from '../../helpers'
-import ButtonGenSet from './components/ButtonGenSet'
+import type { GenItemSet } from 'ketcher-core';
+import classes from './GenSet.module.less';
+import { isGenericGroup } from '../../helpers';
+import ButtonGenSet from './components/ButtonGenSet';
 
 type GenSetProps = {
-  labels: GenItemSet[]
-  selected: (label: string) => boolean
-  onAtomSelect: (label: string, activateImmediately: boolean) => void
-  className?: string
-  group: string
-  disabledQueryElements: Array<string> | null
-}
+  labels: GenItemSet[];
+  selected: (label: string) => boolean;
+  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  className?: string;
+  group: string;
+  disabledQueryElements: Array<string> | null;
+};
 
-const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '')
+const getGroupClassName = (groupName: string) => groupName.replaceAll(' ', '');
 
 function GenSet({
   labels,
@@ -36,13 +36,13 @@ function GenSet({
   onAtomSelect,
   className,
   group,
-  disabledQueryElements
+  disabledQueryElements,
 }: GenSetProps) {
   return (
     <>
       {labels.map((item, index) => {
-        const buttons = item.items
-        const caption = item.displayName
+        const buttons = item.items;
+        const caption = item.displayName;
         return (
           <fieldset className={className} key={index}>
             <div className={classes[getGroupClassName(group)]}>
@@ -53,7 +53,7 @@ function GenSet({
                   onAtomSelect={onAtomSelect}
                   selected={selected}
                   disabled={Boolean(
-                    disabledQueryElements?.includes(button.label)
+                    disabledQueryElements?.includes(button.label),
                   )}
                 />
               ))}
@@ -69,10 +69,10 @@ function GenSet({
               </div>
             )}
           </fieldset>
-        )
+        );
       })}
     </>
-  )
+  );
 }
 
-export { GenSet }
+export { GenSet };

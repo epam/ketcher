@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './TopToolbar.container'
+export * from './TopToolbar.container';

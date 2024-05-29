@@ -115,7 +115,7 @@ export const withoutHeaderKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeRgroupKet = `{
         "root": {
             "nodes": [
@@ -190,7 +190,7 @@ export const moleculeRgroupKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const rxnKet = `{
         "root": {
             "nodes": [
@@ -316,7 +316,7 @@ export const rxnKet = `{
                 "z": 0
             }
         }
-    }`
+    }`;
 export const simpleObjectKet = `{
         "root": {
             "nodes": [
@@ -340,7 +340,7 @@ export const simpleObjectKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const textKet = `{
         "root": {
             "nodes": [
@@ -374,12 +374,12 @@ export const textKet = `{
                               "y": -9.850043392181398,
                               "z": 0
                             }
-                          ]  
+                          ]
                     }
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeKet = `{
         "root": {
             "nodes": [
@@ -526,7 +526,7 @@ export const moleculeKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeSgroupKet = `{
         "root": {
             "nodes": [
@@ -683,7 +683,7 @@ export const moleculeSgroupKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const preparedKet = `{
         "root": {
             "nodes": [
@@ -765,7 +765,7 @@ export const preparedKet = `{
                               "y": -9.850043392181398,
                               "z": 0
                             }
-                          ]  
+                          ]
                     }
                 }
             ]
@@ -774,6 +774,8 @@ export const preparedKet = `{
             "type": "molecule",
             "atoms": [
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8,
@@ -782,6 +784,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8.866012701659344,
@@ -801,6 +805,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8,
@@ -809,6 +815,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         7.133987298340656,
@@ -873,7 +881,7 @@ export const preparedKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const errorKet = ` {
         "root": {
             "nodes": [
@@ -896,4 +904,4 @@ export const errorKet = ` {
                 }
             ]
         }
-    }`
+    }`;

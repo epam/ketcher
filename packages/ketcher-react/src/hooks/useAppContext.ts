@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import AppContext from '../contexts/appContext'
-import React from 'react'
+import AppContext from '../contexts/appContext';
+import React from 'react';
 
-export const useAppContext = () => React.useContext(AppContext)
+export const useAppContext = () => React.useContext(AppContext);

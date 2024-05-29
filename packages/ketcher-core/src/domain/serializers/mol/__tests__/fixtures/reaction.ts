@@ -172,4 +172,4 @@ export const reaction =
   'CYC\n' +
   'M  ALS  16  4 T C   Si  Ge  As \n' +
   'M  ALS  19  4 F B   C   N   P  \n' +
-  'M  END\n'
+  'M  END\n';

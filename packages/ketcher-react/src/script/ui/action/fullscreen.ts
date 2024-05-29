@@ -14,21 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
+import isHidden from './isHidden';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const requestFullscreen = (element: HTMLElement) => {
-  ;(element.requestFullscreen && element.requestFullscreen()) ||
+  (element.requestFullscreen && element.requestFullscreen()) ||
     (element.msRequestFullscreen && element.msRequestFullscreen()) ||
     (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
-    (element.webkitRequestFullscreen && element.webkitRequestFullscreen())
-}
+    (element.webkitRequestFullscreen && element.webkitRequestFullscreen());
+};
 
 const exitFullscreen = () => {
-  ;(document.exitFullscreen && document.exitFullscreen()) ||
+  (document.exitFullscreen && document.exitFullscreen()) ||
     (document.msExitFullscreen && document.msExitFullscreen()) ||
     (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-    (document.webkitExitFullscreen && document.webkitExitFullscreen())
-}
+    (document.webkitExitFullscreen && document.webkitExitFullscreen());
+};
 
 const getIfFullScreen = () => {
   return !!(
@@ -36,19 +37,20 @@ const getIfFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const toggleFullscreen = () => {
   const fullscreenElement: HTMLElement =
-    document.querySelector('.Ketcher-root') || document.documentElement
-  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
-}
+    document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+    document.documentElement;
+  getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
+};
 
 export default {
   fullscreen: {
     title: 'Fullscreen mode',
     action: () => toggleFullscreen(),
-    hidden: (options) => isHidden(options, 'fullscreen')
-  }
-}
+    hidden: (options) => isHidden(options, 'fullscreen'),
+  },
+};

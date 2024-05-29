@@ -1,11 +1,11 @@
-import { onlyHasProperty } from './utils'
+import { onlyHasProperty } from './utils';
 
 describe('Utils', () => {
   describe('onlyHasProperty', () => {
-    type OptionalObject = Record<string, unknown>
-    const REQUIRED_PROP_NAME = 'atoms'
-    const ANOTHER_PROP_NAME = 'bonds'
-    const ANOTHER_PROP_NAME2 = 'sgroups'
+    type OptionalObject = Record<string, unknown>;
+    const REQUIRED_PROP_NAME = 'atoms';
+    const ANOTHER_PROP_NAME = 'bonds';
+    const ANOTHER_PROP_NAME2 = 'sgroups';
 
     const testTable: [OptionalObject, string, string[] | undefined, boolean][] =
       [
@@ -15,39 +15,43 @@ describe('Utils', () => {
           { [ANOTHER_PROP_NAME]: null, [ANOTHER_PROP_NAME2]: null },
           REQUIRED_PROP_NAME,
           undefined,
-          false
+          false,
         ],
         [
           { [REQUIRED_PROP_NAME]: null, [ANOTHER_PROP_NAME2]: null },
           REQUIRED_PROP_NAME,
           undefined,
-          false
+          false,
         ],
         [{ [REQUIRED_PROP_NAME]: null }, REQUIRED_PROP_NAME, undefined, true],
         [
           { [REQUIRED_PROP_NAME]: null, [ANOTHER_PROP_NAME2]: null },
           REQUIRED_PROP_NAME,
           [ANOTHER_PROP_NAME2],
-          true
+          true,
         ],
         [
           {
             [REQUIRED_PROP_NAME]: null,
             [ANOTHER_PROP_NAME]: null,
-            [ANOTHER_PROP_NAME2]: null
+            [ANOTHER_PROP_NAME2]: null,
           },
           REQUIRED_PROP_NAME,
           [ANOTHER_PROP_NAME, ANOTHER_PROP_NAME2],
-          true
-        ]
-      ]
+          true,
+        ],
+      ];
 
     it.each(testTable)(
       'Should check that only a required field is present in the object except ignore list',
       (testObject, requiredPropName, ignoreList, expectedResult) => {
-        const result = onlyHasProperty(testObject, requiredPropName, ignoreList)
-        expect(result).toBe(expectedResult)
-      }
-    )
-  })
-})
+        const result = onlyHasProperty(
+          testObject,
+          requiredPropName,
+          ignoreList,
+        );
+        expect(result).toBe(expectedResult);
+      },
+    );
+  });
+});

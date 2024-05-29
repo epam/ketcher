@@ -14,40 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './ArrowScroll.module.less'
-import clsx from 'clsx'
-import { useEffect, useState } from 'react'
-import { useInterval } from '../../../../../hooks'
+import classes from './ArrowScroll.module.less';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { useInterval } from '../../../../../hooks';
 
 interface ArrowScrollProps {
-  startInView: boolean
-  endInView: boolean
-  scrollUp: any
-  scrollDown: any
+  startInView: boolean;
+  endInView: boolean;
+  scrollUp: any;
+  scrollDown: any;
 }
 
 const ArrowScroll = ({
   startInView,
   endInView,
   scrollUp,
-  scrollDown
+  scrollDown,
 }: ArrowScrollProps) => {
-  const [isScrollDown, setScrollDown] = useState(false)
-  const [isScrollUp, setScrollUp] = useState(false)
-  useInterval(scrollDown, isScrollDown ? 100 : null)
-  useInterval(scrollUp, isScrollUp ? 100 : null)
+  const [isScrollDown, setScrollDown] = useState(false);
+  const [isScrollUp, setScrollUp] = useState(false);
+  useInterval(scrollDown, isScrollDown ? 100 : null);
+  useInterval(scrollUp, isScrollUp ? 100 : null);
 
   useEffect(() => {
     return () => {
-      setScrollUp(false)
-    }
-  }, [startInView])
+      setScrollUp(false);
+    };
+  }, [startInView]);
 
   useEffect(() => {
     return () => {
-      setScrollDown(false)
-    }
-  }, [endInView])
+      setScrollDown(false);
+    };
+  }, [endInView]);
 
   return (
     <div className={classes.scroll}>
@@ -76,7 +76,7 @@ const ArrowScroll = ({
         </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { ArrowScroll }
+export { ArrowScroll };

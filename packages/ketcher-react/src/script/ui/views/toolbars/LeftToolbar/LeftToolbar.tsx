@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, MutableRefObject, useRef } from 'react'
+import { FC, MutableRefObject, useRef } from 'react';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
-import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types'
+  ToolbarGroupItemProps,
+} from '../ToolbarGroupItem';
+import { ToolbarItem, ToolbarItemVariant } from '../toolbar.types';
 import {
   arrowsOptions,
   bondCommon,
@@ -31,101 +31,116 @@ import {
   rGroupOptions,
   selectOptions,
   shapeOptions,
-  transformOptions
-} from './leftToolbarOptions'
+} from './leftToolbarOptions';
 
-import { ArrowScroll } from '../ArrowScroll'
-import { Bond } from './Bond'
-import { RGroup } from './RGroup'
-import { Shape } from './Shape'
-import { Transform } from './Transform'
-import classes from './LeftToolbar.module.less'
-import clsx from 'clsx'
-import { useInView } from 'react-intersection-observer'
-import { useResizeObserver } from '../../../../../hooks'
+import { ArrowScroll } from '../ArrowScroll';
+import { Bond } from './Bond';
+import { RGroup } from './RGroup';
+import { Shape } from './Shape';
+import classes from './LeftToolbar.module.less';
+import clsx from 'clsx';
+import { useInView } from 'react-intersection-observer';
+import { useResizeObserver } from '../../../../../hooks';
 
 interface LeftToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  className?: string
+  className?: string;
 }
 
-type LeftToolbarCallProps = ToolbarGroupItemCallProps
+type LeftToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Props = LeftToolbarProps & LeftToolbarCallProps
+type Props = LeftToolbarProps & LeftToolbarCallProps;
 
 const LeftToolbar = (props: Props) => {
-  const { className, ...rest } = props
-  const { ref, height } = useResizeObserver<HTMLDivElement>()
-  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>
-  const [startRef, startInView] = useInView({ threshold: 1 })
-  const [endRef, endInView] = useInView({ threshold: 1 })
-  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>
+  const { className, ...rest } = props;
+  const { ref, height } = useResizeObserver<HTMLDivElement>();
+  const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const [startRef, startInView] = useInView({ threshold: 1 });
+  const [endRef, endInView] = useInView({ threshold: 1 });
+  const sizeRef = useRef() as MutableRefObject<HTMLDivElement>;
 
   type ItemProps = {
-    id: ToolbarItemVariant
-    options?: ToolbarItem[]
-  }
-  const Item = ({ id, options }: ItemProps) =>
-    ToolbarGroupItem({ id, options, ...rest })
+    id: ToolbarItemVariant;
+    options?: ToolbarItem[];
+    dataTestId?: string;
+  };
+  const Item = ({ id, options, dataTestId }: ItemProps) =>
+    ToolbarGroupItem({ id, options, dataTestId, ...rest });
 
   const scrollUp = () => {
-    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight
-  }
+    scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
+  };
 
   const scrollDown = () => {
-    scrollRef.current.scrollTop += sizeRef.current.offsetHeight
-  }
+    scrollRef.current.scrollTop += sizeRef.current.offsetHeight;
+  };
 
-  const status = rest.status
+  const status = rest.status;
 
-  type GroupItem = ItemProps
+  type GroupItem = ItemProps;
 
   const Group: FC<{ items?: GroupItem[]; className?: string }> = ({
     items,
-    className
+    className,
   }) => {
-    const visibleItems: GroupItem[] = []
+    const visibleItems: GroupItem[] = [];
     if (items) {
       items.forEach((item) => {
-        let visible = true
+        let visible = true;
         if (status[item.id]?.hidden) {
-          visible = false
+          visible = false;
         } else if (item.options?.every((option) => status[option.id]?.hidden)) {
-          visible = false
+          visible = false;
         }
-        if (visible) visibleItems.push(item)
-      })
+        if (visible) visibleItems.push(item);
+      });
     }
+
     return visibleItems.length ? (
       <div className={clsx(classes.group, className)}>
         {visibleItems.map((item) => {
           switch (item.id) {
             case 'bond-common':
-              return <Bond {...rest} height={height} key={item.id} />
-            case 'transform-rotate':
-              return <Transform {...rest} height={height} key={item.id} />
+              return <Bond {...rest} height={height} key={item.id} />;
             case 'rgroup':
-              return <RGroup {...rest} key={item.id} />
+              return <RGroup {...rest} key={item.id} />;
             case 'shapes':
-              return <Shape {...rest} key={item.id} />
+              return <Shape {...rest} key={item.id} />;
+            case 'bonds':
+              return (
+                <Item
+                  id={item.id}
+                  options={item.options}
+                  key={item.id}
+                  dataTestId="bonds"
+                />
+              );
             default:
-              return <Item id={item.id} options={item.options} key={item.id} />
+              return <Item id={item.id} options={item.options} key={item.id} />;
           }
         })}
       </div>
-    ) : null
-  }
+    ) : null;
+  };
 
   return (
-    <div className={clsx(classes.root, className)} ref={ref}>
-      <div className={classes.buttons} ref={scrollRef}>
+    <div
+      data-testid="left-toolbar"
+      className={clsx(classes.root, className)}
+      ref={ref}
+    >
+      <div
+        className={classes.buttons}
+        ref={scrollRef}
+        data-testid="left-toolbar-buttons"
+      >
         <div className={classes.listener} ref={startRef}>
           <Group
             className={classes.groupItem}
             items={[
               { id: 'hand' },
               { id: 'select', options: selectOptions },
-              { id: 'erase' }
+              { id: 'erase' },
             ]}
           />
         </div>
@@ -139,34 +154,21 @@ const LeftToolbar = (props: Props) => {
                 ...bondCommon,
                 ...bondQuery,
                 ...bondSpecial,
-                ...bondStereo
-              ]
+                ...bondStereo,
+              ],
             },
-            { id: 'chain' }
+            { id: 'chain' },
+            { id: 'enhanced-stereo' },
+            { id: 'charge-plus' },
+            { id: 'charge-minus' },
           ]}
         />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'enhanced-stereo' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[
-            {
-              id: 'transforms',
-              options: transformOptions
-            }
-          ]}
-        />
-
-        <Group className={classes.groupItem} items={[{ id: 'sgroup' }]} />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'sgroup' }, { id: 'rgroup', options: rGroupOptions }]}
+          />
+        </div>
 
         <Group
           className={classes.groupItem}
@@ -175,24 +177,16 @@ const LeftToolbar = (props: Props) => {
             { id: 'arrows', options: arrowsOptions },
             {
               id: 'reaction-mapping-tools',
-              options: mappingOptions
-            }
+              options: mappingOptions,
+            },
           ]}
-        />
-        <div className={classes.listener} ref={sizeRef}>
-          <Group
-            className={classes.groupItem}
-            items={[{ id: 'rgroup', options: rGroupOptions }]}
-          />
-        </div>
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'shapes', options: shapeOptions }]}
         />
 
         <div ref={endRef}>
-          <Group className={classes.groupItem} items={[{ id: 'text' }]} />
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'shapes', options: shapeOptions }, { id: 'text' }]}
+          />
         </div>
       </div>
       {height && scrollRef?.current?.scrollHeight > height && (
@@ -204,8 +198,8 @@ const LeftToolbar = (props: Props) => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export type { LeftToolbarProps, LeftToolbarCallProps }
-export { LeftToolbar }
+export type { LeftToolbarProps, LeftToolbarCallProps };
+export { LeftToolbar };

@@ -14,32 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import { FC, useEffect, useState } from 'react'
-import { Dialog } from '../../../../components'
-import classes from './Open.module.less'
-import Recognize from '../../process/Recognize/Recognize'
-import { fileOpener } from '../../../../../utils/'
-import { DialogActionButton } from './components/DialogActionButton'
-import { ViewSwitcher } from './components/ViewSwitcher'
-
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import { FC, useEffect, useState } from 'react';
+import { Dialog, LoadingCircles } from '../../../../components';
+import classes from './Open.module.less';
+import Recognize from '../../process/Recognize/Recognize';
+import { fileOpener } from '../../../../../utils/';
+import { DialogActionButton } from './components/DialogActionButton';
+import { ViewSwitcher } from './components/ViewSwitcher';
+import { getFormatMimeTypeByFileName } from 'ketcher-core';
 interface OpenProps {
-  server: any
-  errorHandler: (err: string) => void
-  isRecognizeDisabled: boolean
-  isAnalyzingFile: boolean
-  ignoreChiralFlag: boolean
+  server: any;
+  errorHandler: (err: string) => void;
+  isRecognizeDisabled: boolean;
+  isAnalyzingFile: boolean;
+  ignoreChiralFlag: boolean;
 }
 
 type Props = OpenProps &
   Pick<BaseProps, 'className'> &
-  BaseCallProps & { onImageUpload: (file: File) => void }
+  BaseCallProps & { onImageUpload: (file: File) => void };
 
 const MODAL_STATES = {
   idle: 'idle',
   textEditor: 'textEditor',
-  imageRec: 'imageRec'
-}
+  imageRec: 'imageRec',
+  presentationViewer: 'presentationViewer',
+};
 
 const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
   return (
@@ -65,8 +66,8 @@ const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const Open: FC<Props> = (props) => {
   const {
@@ -75,58 +76,76 @@ const Open: FC<Props> = (props) => {
     errorHandler,
     isAnalyzingFile,
     isRecognizeDisabled,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     ignoreChiralFlag,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     ...rest
-  } = props
+  } = props;
 
-  const [structStr, setStructStr] = useState<string>('')
-  const [fileName, setFileName] = useState<string>('')
-  const [opener, setOpener] = useState<any>()
-  const [currentState, setCurrentState] = useState(MODAL_STATES.idle)
+  const [structStr, setStructStr] = useState<string>('');
+  const [structList, setStructList] = useState<string[]>([]);
+  const [fileName, setFileName] = useState<string>('');
+  const [opener, setOpener] = useState<any>();
+  const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (server) {
       fileOpener(server).then((chosenOpener) => {
-        setOpener({ chosenOpener })
-      })
+        setOpener({ chosenOpener });
+      });
     }
-  }, [server])
+  }, [server]);
 
   const onFileLoad = (files) => {
+    setIsLoading(true);
     const onLoad = (fileContent) => {
-      setStructStr(fileContent)
-      setCurrentState(MODAL_STATES.textEditor)
-    }
-    const onError = () => errorHandler('Error processing file')
+      if (fileContent.isPPTX) {
+        setStructStr('');
+        setStructList(fileContent.structures);
+        setCurrentState(MODAL_STATES.presentationViewer);
+      } else {
+        setStructStr(fileContent);
+        setCurrentState(MODAL_STATES.textEditor);
+      }
+      setIsLoading(false);
+    };
+    const onError = () => {
+      setIsLoading(false);
+      errorHandler('Error processing file');
+    };
 
-    setFileName(files[0].name)
-    opener.chosenOpener(files[0]).then(onLoad, onError)
-  }
+    setFileName(files[0].name);
+    opener.chosenOpener(files[0]).then(onLoad, onError);
+  };
 
   const onImageLoad = (files) => {
-    onImageUpload(files[0])
-    setCurrentState(MODAL_STATES.imageRec)
-  }
+    onImageUpload(files[0]);
+    setCurrentState(MODAL_STATES.imageRec);
+  };
 
   // @TODO after Recognize is refactored this will not be necessary
   // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
-  const { onOk } = rest
+  const { onOk } = rest;
 
   const copyHandler = () => {
-    onOk({ structStr, fragment: true })
-  }
+    const format = getFormatMimeTypeByFileName(fileName);
+    onOk({ structStr, fragment: true, 'input-format': format });
+  };
 
   const openHandler = () => {
-    onOk({ structStr, fragment: false })
-  }
+    onOk({ structStr, fragment: false });
+  };
 
   const withFooterContent =
-    currentState === MODAL_STATES.textEditor && !isAnalyzingFile
+    (currentState === MODAL_STATES.textEditor ||
+      currentState === MODAL_STATES.presentationViewer) &&
+    !isAnalyzingFile;
 
   // @TODO after refactoring of Recognize modal
   // add Recognize rendering logic into ViewSwitcher component here
   if (currentState === MODAL_STATES.imageRec) {
-    return <Recognize {...rest} />
+    return <Recognize {...rest} />;
   }
 
   return (
@@ -135,6 +154,7 @@ const Open: FC<Props> = (props) => {
       className={classes.open}
       params={rest}
       result={() => null}
+      data-testid="openStructureModal"
       footerContent={
         withFooterContent ? (
           <FooterContent
@@ -161,10 +181,16 @@ const Open: FC<Props> = (props) => {
         structStr={structStr}
         inputHandler={setStructStr}
         autoFocus
+        structList={structList}
       />
+      {isLoading && (
+        <div className={classes.loadingContainer}>
+          <LoadingCircles />
+        </div>
+      )}
     </Dialog>
-  )
-}
+  );
+};
 
-export type { OpenProps }
-export default Open
+export type { OpenProps };
+export default Open;

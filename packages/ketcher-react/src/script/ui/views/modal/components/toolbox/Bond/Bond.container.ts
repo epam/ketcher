@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseProps } from '../../../modal.types'
-import Bond from './Bond'
-import { connect } from 'react-redux'
+import { BaseProps } from '../../../modal.types';
+import Bond from './Bond';
+import { connect } from 'react-redux';
 
-type StateProps = Pick<BaseProps, 'formState'>
+type StateProps = Pick<BaseProps, 'formState'>;
 
 const mapStateToProps = (state: any): StateProps => ({
-  formState: state.modal.form
-})
+  formState: state.modal.form,
+});
 
-const BondContainer = connect(mapStateToProps)(Bond)
-export default BondContainer
+const BondContainer = connect(mapStateToProps)(Bond);
+export default BondContainer;

@@ -1,1 +1,1 @@
-export * from './updateOnlyChangedProperties'
+export * from './updateOnlyChangedProperties';

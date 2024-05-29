@@ -1,16 +1,16 @@
-import { FC } from 'react'
-import { Item } from 'react-contexify'
-import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc'
-import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove'
-import { MenuItemsProps } from '../contextMenu.types'
+import { FC } from 'react';
+import { Item } from 'react-contexify';
+import useFunctionalGroupEoc from '../hooks/useFunctionalGroupEoc';
+import useFunctionalGroupRemove from '../hooks/useFunctionalGroupRemove';
+import { MenuItemsProps } from '../contextMenu.types';
 
 const FunctionalGroupMenuItems: FC<MenuItemsProps> = (props) => {
   const [
     handleExpandOrContract,
     ExpandOrContractHidden,
-    ExpandOrContractDisabled
-  ] = useFunctionalGroupEoc()
-  const handleRemove = useFunctionalGroupRemove()
+    ExpandOrContractDisabled,
+  ] = useFunctionalGroupEoc();
+  const handleRemove = useFunctionalGroupRemove();
 
   return (
     <>
@@ -34,7 +34,7 @@ const FunctionalGroupMenuItems: FC<MenuItemsProps> = (props) => {
         Remove Abbreviation
       </Item>
     </>
-  )
-}
+  );
+};
 
-export default FunctionalGroupMenuItems
+export default FunctionalGroupMenuItems;

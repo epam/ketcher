@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType } from 'domain/services'
-import { SupportedFormat } from './structFormatter.types'
-import { SupportedFormatProperties } from './supportedFormatProperties'
+import { ChemicalMimeType } from 'domain/services';
+import { SupportedFormat } from './structFormatter.types';
+import { SupportedFormatProperties } from './supportedFormatProperties';
 
 type FormatPropertiesMap = {
-  [key in SupportedFormat]: SupportedFormatProperties
-}
+  [key in SupportedFormat]: SupportedFormatProperties;
+};
 
 const formatProperties: FormatPropertiesMap = {
   molAuto: new SupportedFormatProperties(
@@ -29,103 +29,148 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
-    { 'molfile-saving-mode': 'auto' }
+    { 'molfile-saving-mode': 'auto' },
   ),
   mol: new SupportedFormatProperties(
     'MDL Molfile V2000',
     ChemicalMimeType.Mol,
     ['.mol'],
-    true
+    true,
   ),
   molV3000: new SupportedFormatProperties(
     'MDL Molfile V3000',
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
-    { 'molfile-saving-mode': '3000' }
+    { 'molfile-saving-mode': '3000' },
   ),
   rxn: new SupportedFormatProperties(
     'MDL Rxnfile V2000',
     ChemicalMimeType.Rxn,
     ['.rxn'],
-    true
+    true,
   ),
   rxnV3000: new SupportedFormatProperties(
     'MDL Rxnfile V3000',
     ChemicalMimeType.Rxn,
     ['.rxn'],
     true,
-    { 'molfile-saving-mode': '3000' }
+    { 'molfile-saving-mode': '3000' },
   ),
   smiles: new SupportedFormatProperties(
     'Daylight SMILES',
     ChemicalMimeType.DaylightSmiles,
-    ['.smi', '.smiles']
+    ['.smi', '.smiles'],
+    true,
   ),
   smilesExt: new SupportedFormatProperties(
     'Extended SMILES',
     ChemicalMimeType.ExtendedSmiles,
-    ['.cxsmi', '.cxsmiles']
+    ['.cxsmi', '.cxsmiles'],
   ),
   smarts: new SupportedFormatProperties(
     'Daylight SMARTS',
     ChemicalMimeType.DaylightSmarts,
-    ['.smarts']
+    ['.smarts'],
   ),
   inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [
-    '.inchi'
+    '.inchi',
   ]),
   inChIAuxInfo: new SupportedFormatProperties(
     'InChI AuxInfo',
     ChemicalMimeType.InChIAuxInfo,
-    ['.inchi']
+    ['.inchi'],
+  ),
+  inChIKey: new SupportedFormatProperties(
+    'InChIKey',
+    ChemicalMimeType.InChIKey,
+    ['.inchikey'],
   ),
   cml: new SupportedFormatProperties(
     'CML',
     ChemicalMimeType.CML,
     ['.cml', '.mrv'],
-    true
+    true,
   ),
   ket: new SupportedFormatProperties('Ket Format', ChemicalMimeType.KET, [
-    '.ket'
+    '.ket',
   ]),
   cdxml: new SupportedFormatProperties(
     'CDXML',
     ChemicalMimeType.CDXML,
     ['.cdxml'],
-    true
+    true,
   ),
   cdx: new SupportedFormatProperties(
     'Base64 CDX',
     ChemicalMimeType.CDX,
     ['.b64cdx'],
-    true
+    true,
   ),
   binaryCdx: new SupportedFormatProperties(
     'CDX',
     ChemicalMimeType.CDX,
     ['.cdx'],
-    true
+    true,
+  ),
+  sdf: new SupportedFormatProperties(
+    'SDF V2000',
+    ChemicalMimeType.SDF,
+    ['.sdf'],
+    true,
+  ),
+  sdfV3000: new SupportedFormatProperties(
+    'SDF V3000',
+    ChemicalMimeType.SDF,
+    ['.sdf'],
+    true,
+    { 'molfile-saving-mode': '3000' },
+  ),
+  fasta: new SupportedFormatProperties(
+    'FASTA',
+    ChemicalMimeType.FASTA,
+    ['.fasta'],
+    true,
+  ),
+  sequence: new SupportedFormatProperties(
+    'SEQUENCE',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
   ),
   unknown: new SupportedFormatProperties(
     'Unknown',
     ChemicalMimeType.UNKNOWN,
     ['.'],
-    true
-  )
-}
+    true,
+  ),
+};
 
 const imgFormatProperties = {
   svg: { extension: '.svg', name: 'SVG Document' },
-  png: { extension: '.png', name: 'PNG Image' }
-}
+  png: { extension: '.png', name: 'PNG Image' },
+};
 
 function getPropertiesByImgFormat(format) {
-  return imgFormatProperties[format]
+  return imgFormatProperties[format];
 }
 
 function getPropertiesByFormat(format: SupportedFormat) {
-  return formatProperties[format]
+  return formatProperties[format];
 }
 
-export { formatProperties, getPropertiesByFormat, getPropertiesByImgFormat }
+function getFormatMimeTypeByFileName(fileName: string) {
+  const fileExtension = '.' + fileName.split('.').pop();
+  const format = Object.values(formatProperties).find((properties) => {
+    return properties.extensions.includes(fileExtension);
+  });
+  return format?.mime;
+}
+
+export {
+  formatProperties,
+  getPropertiesByFormat,
+  getPropertiesByImgFormat,
+  getFormatMimeTypeByFileName,
+};

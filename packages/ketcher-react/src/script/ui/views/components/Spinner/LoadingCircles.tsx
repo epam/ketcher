@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './LoadingCircles.module.less'
+import styles from './LoadingCircles.module.less';
 
 export const LoadingCircles = () => (
-  <div className={styles.container}>
+  <div className={`${styles.container} loading-spinner`}>
     <span />
     <span />
     <span />
   </div>
-)
+);

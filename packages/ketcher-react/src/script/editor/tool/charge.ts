@@ -14,54 +14,54 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class ChargeTool implements Tool {
-  private readonly editor: Editor
-  private readonly charge: any
+  private readonly editor: Editor;
+  private readonly charge: any;
 
   constructor(editor, charge) {
-    this.editor = editor
-    this.editor.selection(null)
-    this.charge = charge
+    this.editor = editor;
+    this.editor.selection(null);
+    this.charge = charge;
   }
 
   mousemove(event) {
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const ci = this.editor.findItem(event, ['atoms'])
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const ci = this.editor.findItem(event, ['atoms']);
     if (
       ci &&
       ci.map === 'atoms' &&
       Elements.get(molecule.atoms.get(ci.id)?.label as number | string)
     ) {
-      this.editor.hover(ci)
+      this.editor.hover(ci);
     } else {
-      this.editor.hover(null, null, event)
+      this.editor.hover(null, null, event);
     }
-    return true
+    return true;
   }
 
   click(event) {
-    const editor = this.editor
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const rnd = editor.render
-    const ci = editor.findItem(event, ['atoms', 'bonds'])
-    const atomResult: Array<number> = []
-    const result: Array<number> = []
+    const editor = this.editor;
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const rnd = editor.render;
+    const ci = editor.findItem(event, ['atoms', 'bonds']);
+    const atomResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
-      )
+        ci.id,
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -69,15 +69,15 @@ class ChargeTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
-        )
+          id,
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
     if (
@@ -85,20 +85,20 @@ class ChargeTool implements Tool {
       ci.map === 'atoms' &&
       Elements.get(molecule.atoms.get(ci.id)?.label as string | number)
     ) {
-      this.editor.hover(ci)
+      this.editor.hover(ci);
       this.editor.update(
         fromAtomsAttrs(
           rnd.ctab,
           ci.id,
           {
-            charge: molecule.atoms.get(ci.id)?.charge + this.charge
+            charge: molecule.atoms.get(ci.id)?.charge + this.charge,
           },
-          null
-        )
-      )
+          null,
+        ),
+      );
     }
-    return true
+    return true;
   }
 }
 
-export default ChargeTool
+export default ChargeTool;

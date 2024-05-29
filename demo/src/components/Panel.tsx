@@ -1,12 +1,12 @@
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
-import { PanelButton } from './shared/Buttons'
+import { PanelButton } from './shared/Buttons';
 
-import { InputSelect } from './InputSelect'
-import { Highlighting } from './Highlighting'
-import { ButtonsSelect } from './ButtonsSelect'
-import { FileInputForm } from './FileInputForm'
-import { ControlsCard } from './ControlsCard'
+import { InputSelect } from './InputSelect';
+import { Highlighting } from './Highlighting';
+import { ButtonsSelect } from './ButtonsSelect';
+import { FileInputForm } from './FileInputForm';
+import { ControlsCard } from './ControlsCard';
 
 const FlexBox = styled('div')`
   display: flex;
@@ -15,42 +15,40 @@ const FlexBox = styled('div')`
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 10px;
-`
+`;
 
-const clearSelection = () => KetcherFunctions.clearSelection()
+const clearSelection = () => KetcherFunctions.clearSelection();
 
-const selectAll = () => KetcherFunctions.selectAll()
+const selectAll = () => KetcherFunctions.selectAll();
 
 interface Props {
-  printToTerminal: (string) => void
-  hiddenButtons: string[]
-  buttonsHideHandler: (arg: string[]) => void
+  printToTerminal: (string) => void;
+  hiddenButtons: string[];
+  buttonsHideHandler: (arg: string[]) => void;
 }
 
 export const Panel = ({
   printToTerminal,
   hiddenButtons,
-  buttonsHideHandler
+  buttonsHideHandler,
 }: Props) => {
   const exportHandler = () => {
     KetcherFunctions.exportCtab().then((str) => {
-      let message = 'Export content:' + str
-      console.log(message)
-      printToTerminal(message)
-    })
-  }
+      let message = 'Export content:' + str;
+      console.log(message);
+      printToTerminal(message);
+    });
+  };
 
   const showAtomIds = () => {
-    const atoms = KetcherFunctions.getSelectedAtomId()
-    console.log('Selected atoms:')
-    console.log(atoms)
+    const atoms = KetcherFunctions.getSelectedAtomId();
 
     if (!atoms) {
-      printToTerminal('No atoms selected')
+      printToTerminal('No atoms selected');
     } else {
-      printToTerminal('Selected atoms: ' + atoms)
+      printToTerminal('Selected atoms: ' + atoms);
     }
-  }
+  };
 
   return (
     <FlexBox>
@@ -105,5 +103,5 @@ export const Panel = ({
         </PanelButton>
       </ControlsCard>
     </FlexBox>
-  )
-}
+  );
+};

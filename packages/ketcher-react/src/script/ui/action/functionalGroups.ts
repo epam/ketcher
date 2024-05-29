@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
-import { MODES } from 'src/constants'
+import isHidden from './isHidden';
+import { MODES } from 'src/constants';
 
 const functionalGroupsLib = {
   'functional-groups': {
@@ -25,10 +25,10 @@ const functionalGroupsLib = {
     action: { dialog: 'templates', prop: { tab: 1 } },
     selected: (editor) => editor._tool.mode === MODES.FG,
     disabled: (_, __, options) => {
-      return !options.app.functionalGroups
+      return !options.app.functionalGroups;
     },
-    hidden: (options) => isHidden(options, 'functional-groups')
-  }
-}
+    hidden: (options) => isHidden(options, 'functional-groups'),
+  },
+};
 
-export default functionalGroupsLib
+export default functionalGroupsLib;

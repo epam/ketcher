@@ -72,4 +72,4 @@ export type ButtonName =
   // text group
   | 'text'
   // right
-  | 'enhanced-stereo'
+  | 'enhanced-stereo';

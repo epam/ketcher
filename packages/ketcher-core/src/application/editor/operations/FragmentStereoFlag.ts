@@ -14,29 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
+import { BaseOperation } from './base';
+import { OperationPriority, OperationType } from './OperationType';
+import { ReStruct } from '../../render';
 
 export class FragmentStereoFlag extends BaseOperation {
-  frid: number
+  frid: number;
 
   constructor(fragmentId: number) {
-    super(OperationType.FRAGMENT_STEREO_FLAG, 6)
-    this.frid = fragmentId
+    super(
+      OperationType.FRAGMENT_STEREO_FLAG,
+      OperationPriority.FRAGMENT_STEREO_FLAG,
+    );
+    this.frid = fragmentId;
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
 
-    const fragment = struct.frags.get(this.frid)!
-    fragment.updateStereoFlag(struct)
+    const fragment = struct.frags.get(this.frid)!;
+    fragment.updateStereoFlag(struct);
 
-    BaseOperation.invalidateEnhancedFlag(restruct, this.frid)
+    BaseOperation.invalidateEnhancedFlag(restruct, this.frid);
   }
 
   invert() {
-    const inverted = new FragmentStereoFlag(this.frid)
-    return inverted
+    const inverted = new FragmentStereoFlag(this.frid);
+    return inverted;
   }
 }

@@ -23,7 +23,7 @@ function FrozenInput({ value }) {
       readOnly
       onChange={(event) => event.preventDefault()}
     />
-  )
+  );
 }
 
-export default FrozenInput
+export default FrozenInput;

@@ -1,4 +1,6 @@
 module.exports = {
   ...require('prettier-config-standard'),
-  bracketSameLine: false
-}
+  bracketSameLine: false,
+  semi: true,
+  trailingComma: 'all',
+};

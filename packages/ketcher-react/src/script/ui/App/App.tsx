@@ -18,48 +18,62 @@ import {
   BottomToolbarContainer,
   LeftToolbarContainer,
   RightToolbarContainer,
-  TopToolbarContainer
-} from '../views/toolbars'
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { createTheme, ThemeProvider } from '@mui/material'
-import AppClipArea from '../views/AppClipArea'
-import { AppHiddenContainer } from './AppHidden'
-import AppModalContainer from '../views/modal'
-import Editor from '../views/Editor'
-import classes from './App.module.less'
-import { initFGTemplates } from '../state/functionalGroups'
-import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents'
-import { useSubscriptionOnEvents } from '../../../hooks'
+  TopToolbarContainer,
+} from '../views/toolbars';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { createTheme, ThemeProvider } from '@mui/material';
+import AppClipArea from '../views/AppClipArea';
+import { AppHiddenContainer } from './AppHidden';
+import AppModalContainer from '../views/modal';
+import ConnectedEditor from '../views/Editor';
+import classes from './App.module.less';
+import { initFGroups, initFGTemplates } from '../state/functionalGroups';
+import {
+  initSaltsAndSolvents,
+  initSaltsAndSolventsTemplates,
+} from '../state/saltsAndSolvents';
+import { useSubscriptionOnEvents } from '../../../hooks';
+import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
+import { initLib } from '../state/templates/init-lib';
 
 interface AppCallProps {
-  checkServer: () => void
+  checkServer: () => void;
+  togglerComponent?: JSX.Element;
 }
 
 const muiTheme = createTheme({
   components: {
     MuiButtonBase: {
       defaultProps: {
-        disableRipple: true
-      }
-    }
-  }
-})
+        disableRipple: true,
+      },
+    },
+  },
+});
 
-type Props = AppCallProps
+type Props = AppCallProps;
 
 const App = (props: Props) => {
-  const dispatch = useDispatch()
-  const { checkServer } = props
+  const dispatch = useDispatch();
+  const { checkServer } = props;
 
-  useSubscriptionOnEvents()
+  useSubscriptionOnEvents();
 
   useEffect(() => {
-    checkServer()
-    dispatch(initFGTemplates())
-    dispatch(initSaltsAndSolventsTemplates())
-    window.scrollTo(0, 0)
-  }, [])
+    checkServer();
+    dispatch(initFGTemplates());
+    dispatch(initSaltsAndSolventsTemplates());
+    window.scrollTo(0, 0);
+    return () => {
+      dispatch(initLib([]));
+      dispatch(initSaltsAndSolvents([]));
+      dispatch(initFGroups([]));
+    };
+  }, []);
+
+  // Temporary workaround: add proper types for Editor
+  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
@@ -67,17 +81,21 @@ const App = (props: Props) => {
         <AppHiddenContainer />
         <Editor className={classes.canvas} />
 
-        <TopToolbarContainer className={classes.top} />
+        <TopToolbarContainer
+          className={classes.top}
+          togglerComponent={props.togglerComponent}
+        />
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
 
         <AppClipArea />
         <AppModalContainer />
+        <AbbreviationLookupContainer />
       </div>
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export type { AppCallProps }
-export { App }
+export type { AppCallProps };
+export { App };

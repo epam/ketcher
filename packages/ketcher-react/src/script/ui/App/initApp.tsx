@@ -14,42 +14,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
-import { Ketcher, StructService } from 'ketcher-core'
+import {
+  AppContext,
+  ErrorsContext,
+  SettingsContext,
+} from './../../../contexts';
+import { Ketcher, StructService } from 'ketcher-core';
 
-import App from './App.container'
-import { Provider } from 'react-redux'
-import { uniqueId } from 'lodash'
-import { createRoot } from 'react-dom/client'
-import createStore from '../state'
-import { initKeydownListener } from '../state/hotkeys'
-import { initResize } from '../state/toolbar'
+import App from './App.container';
+import { Provider } from 'react-redux';
+import { uniqueId } from 'lodash';
+import createStore from '../state';
+import { initKeydownListener } from '../state/hotkeys';
+import { initResize } from '../state/toolbar';
+import { Root } from 'react-dom/client';
+import { initMouseListener } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
+  appRoot: Root,
   staticResourcesUrl: string,
   options: any,
   server: StructService,
   resolve: (args: {
-    editor: any
-    setKetcher: (ketcher: Ketcher) => void
-    ketcherId: string
-  }) => void
+    editor: any;
+    setKetcher: (ketcher: Ketcher) => void;
+    ketcherId: string;
+  }) => void,
+  togglerComponent?: JSX.Element,
 ) {
-  let ketcherRef: Ketcher | null = null
+  let ketcherRef: Ketcher | null = null;
   const setKetcher = (ketcher: Ketcher) => {
-    ketcherRef = ketcher
-  }
-  const ketcherId = uniqueId()
+    ketcherRef = ketcher;
+  };
+  const ketcherId = uniqueId();
   const setEditor = (editor) => {
-    resolve({ editor, setKetcher, ketcherId })
-  }
-  const store = createStore(options, server, setEditor)
-  store.dispatch(initKeydownListener(element))
-  store.dispatch(initResize())
+    resolve({ editor, setKetcher, ketcherId });
+  };
+  const store = createStore(options, server, setEditor);
+  store.dispatch(initKeydownListener(element));
+  store.dispatch(initMouseListener(element));
+  store.dispatch(initResize());
 
-  const root = createRoot(element!)
-  root.render(
+  appRoot.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
@@ -57,15 +64,15 @@ function initApp(
             value={{
               // Expected this is set before load
               getKetcherInstance: () => ketcherRef as unknown as Ketcher,
-              ketcherId
+              ketcherId,
             }}
           >
-            <App />
+            <App togglerComponent={togglerComponent} />
           </AppContext.Provider>
         </ErrorsContext.Provider>
       </SettingsContext.Provider>
-    </Provider>
-  )
+    </Provider>,
+  );
 }
 
-export { initApp }
+export { initApp };

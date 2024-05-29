@@ -1,0 +1,13 @@
+services:
+  autotests:
+    build:
+      context: .
+    container_name: ketcher-autotest
+    env_file:
+      .env
+    network_mode: "host"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app
+      - /app/node_modules

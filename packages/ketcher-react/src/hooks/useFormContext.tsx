@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import FormContext from './../contexts/formContext'
-import React from 'react'
+import FormContext from './../contexts/formContext';
+import React from 'react';
 
 export function useFormContext() {
-  return React.useContext(FormContext)
+  return React.useContext(FormContext);
 }

@@ -14,20 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './TypeChoice.module.less'
-import { GenericInput } from 'src/script/ui/component/form/Input/Input'
+import classes from './TypeChoice.module.less';
+import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
   { title: 'List', value: 'list' },
-  { title: 'Not List', value: 'not-list' }
-]
+  { title: 'Not List', value: 'not-list' },
+];
 
 function TypeChoice({ value, onChange, ...props }) {
   return (
     <fieldset className={classes.fieldset}>
       {typeSchema.map((type) => (
         <label key={type.title}>
+          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           <GenericInput
             type="radio"
             value={type.value}
@@ -35,11 +36,12 @@ function TypeChoice({ value, onChange, ...props }) {
             onChange={() => onChange(type.value)}
             {...props}
           />
+          {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}
         </label>
       ))}
     </fieldset>
-  )
+  );
 }
 
-export default TypeChoice
+export default TypeChoice;

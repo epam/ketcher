@@ -22,6 +22,11 @@
 
   div {
     position: relative;
+    text-align: center;
+  }
+
+  & > div > div {
+    margin-bottom: 6px;
   }
 
   kbd {
@@ -31,6 +36,7 @@
 
 .group {
   display: flex;
+  align-items: center;
 }
 
 .horizontal-toolbar() {
@@ -39,12 +45,9 @@
 
   .group {
     flex-direction: row;
-  }
-
-  .group:not(:last-of-type) {
-    margin-right: 4px;
-    border-right: 1px solid #ccc;
-    padding-right: 5px;
+    background-color: @color-background-primary;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px @color-select-box-shadow;
   }
 }
 
@@ -65,15 +68,14 @@
 
 .group-separator(@placement) {
   .group:not(:last-of-type) {
-    margin-@{placement}: 4px;
+    margin-@{placement}: 6px;
     border-@{placement}: 1px solid #eff2f5;
-    padding-@{placement}: 5px;
   }
 }
 .hide-group-separator(@placement) {
   .group:not(:last-of-type) {
     margin-@{placement}: 0;
     border-@{placement}: none;
-    padding-@{placement}: 0;
+    padding-@{placement}: 2px;
   }
 }

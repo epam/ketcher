@@ -1,7 +1,21 @@
-import { Ketcher } from 'ketcher-core'
+import { Ketcher } from 'ketcher-core';
 
 declare global {
-  interface Window {
-    ketcher: Ketcher
+  export interface Window {
+    ketcher?: Ketcher;
+    logging: LogSettings;
+    isPolymerEditorTurnedOn: boolean;
+  }
+
+  export interface SVGElement {
+    getBBox: () => void;
+  }
+
+  export interface Element {
+    __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
+    __data__?: BaseRenderer;
   }
 }

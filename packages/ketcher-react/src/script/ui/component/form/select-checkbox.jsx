@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Input from './Input/Input'
+import Input from './Input/Input';
 
 function SelectCheckbox({ schema, ...props }) {
-  let currentSchema = schema
+  let currentSchema = schema;
   if (schema.type === 'boolean') {
     currentSchema = {
       title: schema.title,
       enum: [true, false],
       enumNames: ['on', 'off'],
-      default: schema.default
-    }
+      default: schema.default,
+    };
   }
 
-  return <Input schema={currentSchema} {...props} />
+  return <Input schema={currentSchema} {...props} />;
 }
 
-export default SelectCheckbox
+export default SelectCheckbox;

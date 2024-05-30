@@ -223,12 +223,8 @@ export abstract class BaseMode {
       throw new Error('Error during parsing file');
     }
     const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
-    if (
-      !drawingEntitiesManager ||
-      !this.isPasteAllowedByMode(drawingEntitiesManager)
-    ) {
-      return;
-    }
+
+    if (!drawingEntitiesManager) return;
     if (!this.isPasteAvailable(drawingEntitiesManager)) {
       editor.events.openErrorModal.dispatch({
         errorTitle: 'Error Message',
@@ -237,6 +233,8 @@ export abstract class BaseMode {
       });
       return;
     }
+    if (!this.isPasteAllowedByMode(drawingEntitiesManager)) return;
+
     this.updateMonomersPosition(drawingEntitiesManager);
     const { command: modelChanges, mergedDrawingEntities } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);

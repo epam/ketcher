@@ -847,7 +847,8 @@ export class SequenceMode extends BaseMode {
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const lastNodeOfNewFragment = chainsCollection.lastNode;
     const firstNodeOfNewFragment = chainsCollection.firstNode;
-    const isPasteInEnd = currentNode instanceof EmptySequenceNode;
+    const isPasteInEnd =
+      currentNode instanceof EmptySequenceNode || !currentNode;
     const isPasteInStart = !previousNodeInSameChain;
     if (isPasteInEnd && !previousNodeInSameChain) return true;
     if (isPasteInEnd) {
@@ -908,7 +909,23 @@ export class SequenceMode extends BaseMode {
     const currentNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
-
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
+      if (!this.isR2Free(previousNodeInSameChain)) {
+        this.showMergeWarningModal(editor);
+        return;
+      }
+    }
+    if (
+      !previousNodeInSameChain &&
+      !(currentNode instanceof EmptySequenceNode) &&
+      currentNode
+    ) {
+      if (!this.isR1Free(currentNode)) {
+        this.showMergeWarningModal(editor);
+        return;
+      }
+    }
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
       modelChanges = this.handlePeptideNodeAddition(
         enteredSymbol,
@@ -922,6 +939,14 @@ export class SequenceMode extends BaseMode {
       );
     }
     return modelChanges;
+  }
+
+  private showMergeWarningModal(editor: CoreEditor) {
+    editor.events.openErrorModal.dispatch({
+      errorTitle: 'Error Message',
+      errorMessage:
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+    });
   }
 
   private insertNewSequenceFragment(

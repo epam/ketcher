@@ -83,7 +83,6 @@ export class MacromoleculesConverter {
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
         attachmentPointName,
       );
-    // TODO fix it for monomers without first attachment point
     const attachmentPointIndex =
       monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
     const attachmentPoint =
@@ -423,9 +422,10 @@ export class MacromoleculesConverter {
           endAtomSgroup instanceof MonomerMicromolecule
             ? sgroupToMonomer.get(endAtomSgroup)
             : fragmentIdToMonomer.get(endAtom.fragment);
+
         assert(firstMonomer);
         assert(secondMonomer);
-        console.log('here');
+
         command.merge(
           drawingEntitiesManager.createPolymerBond(
             firstMonomer,

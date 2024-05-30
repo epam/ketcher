@@ -42,6 +42,7 @@ import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 
 interface ElemAttr {
   text: string;
@@ -890,8 +891,8 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
         return attachmentPoint.leaveAtomId === atomId;
       });
 
-    if (attachmentPoint) {
-      return `R${attachmentPoint.attachmentPointNumber}`;
+    if (attachmentPoint && attachmentPoint.attachmentPointNumber) {
+      return getAttachmentPointLabel(attachmentPoint.attachmentPointNumber);
     }
   }
 

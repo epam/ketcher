@@ -62,10 +62,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
     const attachmentPointList: AttachmentPointName[] = [];
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
-      if (
-        this.attachmentPointsToBonds[getAttachmentPointLabel(i)] !== undefined
-      ) {
-        attachmentPointList.push(getAttachmentPointLabel(i));
+      const attachmentPointLabel = getAttachmentPointLabel(i);
+
+      if (this.attachmentPointsToBonds[attachmentPointLabel] !== undefined) {
+        attachmentPointList.push(attachmentPointLabel);
       }
     }
     return attachmentPointList;

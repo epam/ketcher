@@ -37,6 +37,7 @@ import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
 
 export type Neighbor = {
   aid: number;
@@ -1166,8 +1167,12 @@ export class Struct {
     return null;
   }
 
-  getGroupFromBondId(atomId: number | undefined): SGroup | undefined {
-    const sgroupId = this.getGroupIdFromBondId(atomId as number);
+  getGroupFromBondId(atomId: number): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromBondId(atomId);
+
+    if (!isNumber(sgroupId)) {
+      return;
+    }
 
     return this.sgroups?.get(sgroupId as number);
   }

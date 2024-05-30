@@ -546,7 +546,6 @@ export function fromSgroupAttachmentPointRemove(
       (!isNumber(attachmentPoint.leaveAtomId) ||
         attachmentPoint.leaveAtomId === leaveAtomId)
     ) {
-      console.log(attachmentPoint.leaveAtomId, leaveAtomId);
       action.addOp(new SGroupAttachmentPointRemove(sgroupId, attachmentPoint));
     }
   });

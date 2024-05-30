@@ -656,15 +656,21 @@ test.describe('Open and Save file', () => {
      * Test case: EPMLSOPKET-1852
      * Description: The structure is correctly rendered on the canvas
      */
-    test('Open V3000 mol file contains more than 900 symbols', async ({
-      page,
-    }) => {
-      await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V3000/more-900-atoms.mol',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    });
+    test(
+      'Open V3000 mol file contains more than 900 symbols',
+      {
+        tag: ['@SlowTest'],
+      },
+      async ({ page }) => {
+        test.slow();
+
+        await openFileAndAddToCanvasAsNewProject(
+          'Molfiles-V3000/more-900-atoms.mol',
+          page,
+        );
+        await takeEditorScreenshot(page);
+      },
+    );
   });
 
   test.describe('Save file', () => {
@@ -729,35 +735,41 @@ test.describe('Open and Save file', () => {
     }
   });
 
-  test('Save V3000 mol file contains more than 900 symbols', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1859(2)
-     * Description: v3000 mol file contains more than 900 symbolsis opened and saved correctly
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/more-900-atoms.mol',
-      page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/more-900-atoms-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
+  test(
+    'Save V3000 mol file contains more than 900 symbols',
+    {
+      tag: ['@SlowTest'],
+    },
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1859(2)
+       * Description: v3000 mol file contains more than 900 symbolsis opened and saved correctly
+       */
+      test.slow();
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvasAsNewProject(
+        'Molfiles-V3000/more-900-atoms.mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/more-900-atoms-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
+      const expectedFile = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/more-900-atoms-expected.mol',
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/more-900-atoms-expected.mol',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('V3000 mol file contains different Bond properties', async ({
     page,

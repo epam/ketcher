@@ -339,34 +339,40 @@ test.describe('1. User can expand hydrogens for ', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
-      if (temporaryFailedTestsFileNames.includes(fileName)) {
-        // These tests are not stable
-        test.fail();
-      }
+    test(
+      `by ${fileName}`,
+      {
+        tag: ['@SlowTest'],
+      },
+      async ({ page }) => {
+        if (temporaryFailedTestsFileNames.includes(fileName)) {
+          // These tests are not stable
+          test.fail();
+        }
 
-      test.setTimeout(120000);
-      // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
-      await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
-        page,
-      );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
+        test.setTimeout(180000);
+        // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
+        await openFileAndAddToCanvasAsNewProject(
+          `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
           page,
         );
-      });
-      await takeEditorScreenshot(page);
+        await waitForSpinnerFinishedWork(page, async () => {
+          await selectTopPanelButton(
+            TopPanelButton.toggleExplicitHydrogens,
+            page,
+          );
+        });
+        await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
-      await takeEditorScreenshot(page);
-    });
+        await waitForSpinnerFinishedWork(page, async () => {
+          await selectTopPanelButton(
+            TopPanelButton.toggleExplicitHydrogens,
+            page,
+          );
+        });
+        await takeEditorScreenshot(page);
+      },
+    );
   }
 });
 

@@ -290,16 +290,20 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, 0, -100);
     });
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x + 60, point.y);
-      });
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test(
+      'Select reaction arrow, copy and paste it onto the canvas',
+      {
+        tag: ['@FlakyTest'],
+      },
+      async ({ page }) => {
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x + 60, point.y);
+        });
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,

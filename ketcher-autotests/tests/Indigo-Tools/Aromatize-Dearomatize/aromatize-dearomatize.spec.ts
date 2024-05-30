@@ -380,10 +380,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test('User can aromatize molecules with query parameters (not custom query, but only ordinary @IncorrectResultBecauseOfBug ).', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'User can aromatize molecules with query parameters (not custom query, but only ordinary).',
+    {
+      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 1
     Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
@@ -393,19 +396,25 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/3529 issue.
     Screenshots should be updated after fix.
      */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/all-possible-query-features-with-out-custom-query.ket',
-      page,
-    );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
-  });
+      test.slow();
 
-  test('User can DEaromatize molecules with query parameters (not custom query, but only ordinary). @IncorrectResultBecauseOfBug', async ({
-    page,
-  }) => {
-    /*
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/all-possible-query-features-with-out-custom-query.ket',
+        page,
+      );
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+    },
+  );
+
+  test(
+    'User can DEaromatize molecules with query parameters (not custom query, but only ordinary).',
+    {
+      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/3849 - Test case 2
     Description: User can aromatize molecules with query parameters (not custom query, but only ordinary).
     1. Clear canvas
@@ -417,17 +426,20 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1757 issue.
     Screenshots should be updated after fix.
      */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/all-possible-query-features-with-out-custom-query.ket',
-      page,
-    );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-    });
-  });
+      test.slow();
+
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/all-possible-query-features-with-out-custom-query.ket',
+        page,
+      );
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
+    },
+  );
 
   test('User can aromatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
     page,

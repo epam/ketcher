@@ -262,71 +262,79 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     // TODO:
-    test(`Manipulations with ${bondToolKey}`, async () => {
-      /**
-       * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
-       */
-      const DELTA_X = 100;
-      point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    test(
+      `Manipulations with ${bondToolKey}`,
+      {
+        tag: ['@FlakyTest'],
+      },
+      async () => {
+        /**
+         * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
+         */
+        const DELTA_X = 100;
+        point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-      await selectNestedTool(page, BondTool[bondToolKey]);
-      await clickInTheMiddleOfTheScreen(page);
+        await selectNestedTool(page, BondTool[bondToolKey]);
+        await clickInTheMiddleOfTheScreen(page);
 
-      await selectRectangleSelection(page);
+        await selectRectangleSelection(page);
 
-      await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA_X, point.y, page);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await moveMouseToTheMiddleOfTheScreen(page);
+        await dragMouseTo(point.x + DELTA_X, point.y, page);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await selectSelection(SelectionType.Rectangle, page);
+        await selectSelection(SelectionType.Rectangle, page);
 
-      point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+        point = await getLeftBondByAttributes(page, {
+          reactingCenterStatus: 0,
+        });
 
-      await page.mouse.click(point.x, point.y);
+        await page.mouse.click(point.x, point.y);
 
-      await page.keyboard.press('Control+C');
-      await page.keyboard.press('Control+V');
+        await page.keyboard.press('Control+C');
+        await page.keyboard.press('Control+V');
 
-      await waitForRender(page, async () => {
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x + DELTA_X, point.y);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await clickInTheMiddleOfTheScreen(page);
+        await page.keyboard.press('Control+X');
+        await page.keyboard.press('Control+V');
         await page.mouse.click(point.x + DELTA_X, point.y);
-      });
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await clickInTheMiddleOfTheScreen(page);
-      await page.keyboard.press('Control+X');
-      await page.keyboard.press('Control+V');
-      await page.mouse.click(point.x + DELTA_X, point.y);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await selectTool(LeftPanelButton.Erase, page);
+        await clickInTheMiddleOfTheScreen(page);
 
-      await selectTool(LeftPanelButton.Erase, page);
-      await clickInTheMiddleOfTheScreen(page);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await selectAtom(AtomButton.Oxygen, page);
+        point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
-      await selectAtom(AtomButton.Oxygen, page);
-      point = await getCoordinatesTopAtomOfBenzeneRing(page);
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x, point.y);
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
-
-      await selectRing(RingButton.Cyclohexane, page);
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x, point.y);
-      });
-    });
+        await selectRing(RingButton.Cyclohexane, page);
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+        });
+      },
+    );
 
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
       /**

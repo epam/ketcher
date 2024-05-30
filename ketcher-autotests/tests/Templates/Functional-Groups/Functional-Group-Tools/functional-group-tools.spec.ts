@@ -805,28 +805,32 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Attach copied Functional Group to atoms of structure', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Attach copied Functional Group to atoms of structure',
+    {
+      tag: ['@FlakyTest'],
+    },
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
    */
-    const anyAtom = 4;
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-and-benzene.mol',
-      page,
-    );
-    await page.getByText('Boc').click();
-    await page.keyboard.press('Control+c');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
-    await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
-    });
-    await takeEditorScreenshot(page);
-  });
+      const anyAtom = 4;
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/functional-group-and-benzene.mol',
+        page,
+      );
+      await page.getByText('Boc').click();
+      await page.keyboard.press('Control+c');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+v');
+      });
+      await waitForRender(page, async () => {
+        await clickOnAtom(page, 'C', anyAtom);
+      });
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Attach cutted Functional Group to atoms of structure', async ({
     page,

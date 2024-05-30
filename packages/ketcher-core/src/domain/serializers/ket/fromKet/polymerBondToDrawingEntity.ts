@@ -4,6 +4,8 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import assert from 'assert';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { BaseMonomer } from 'domain/entities';
+import { AttachmentPointName } from 'domain/types';
+import { CoreEditor } from 'application/editor';
 
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,
@@ -61,6 +63,21 @@ export function polymerBondToDrawingEntity(
               ?.has(getAttachmentPointLabel(attachmentPointIndex + 1)),
         ) as number) + 1,
     );
+
+  if (
+    !firstMonomer.isAttachmentPointExistAndFree(
+      firstAttachmentPoint as AttachmentPointName,
+    ) ||
+    !secondMonomer.isAttachmentPointExistAndFree(
+      secondAttachmentPoint as AttachmentPointName,
+    )
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.error.dispatch(
+      'There is no free attachment point for bond creation.',
+    );
+    return new Command();
+  }
 
   if (!superatomMonomerToUsedAttachmentPoint.get(firstMonomer)) {
     superatomMonomerToUsedAttachmentPoint.set(firstMonomer, new Set());

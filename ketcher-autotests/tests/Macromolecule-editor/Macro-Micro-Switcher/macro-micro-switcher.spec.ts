@@ -24,7 +24,6 @@ import {
   waitForSpinnerFinishedWork,
   selectRing,
   RingButton,
-  selectSingleBondTool,
   moveMouseAway,
   selectAtomInToolbar,
   AtomButton,
@@ -32,11 +31,7 @@ import {
   FunctionalGroups,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
-  selectSnakeLayoutModeTool,
-  selectEraseTool,
-  clickUndo,
 } from '@utils';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 const topLeftCorner = {
   x: -325,
@@ -798,45 +793,45 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that Atom connected to R-Group label by bond used as attachment atom when switch to macro mode', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    await openFileAndAddToCanvas(
-      'KET/atom-connected-to-R-Group-label-by-bond.ket',
-      page,
-    );
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Check If there are more than one attachment atom for same R-Group label', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    await openFileAndAddToCanvas(
-      'KET/more-than-one-attachment-atom-for-R-Group.ket',
-      page,
-    );
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+  // test('Check that Atom connected to R-Group label by bond used as attachment atom when switch to macro mode', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   await openFileAndAddToCanvas(
+  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //     page,
+  //   );
+  //   await takeEditorScreenshot(page);
+  //   await turnOnMacromoleculesEditor(page);
+  //   await selectSingleBondTool(page);
+  //   await page.getByText('F1').locator('..').hover();
+  //   await takeEditorScreenshot(page);
+  // });
+  //
+  // test('Check If there are more than one attachment atom for same R-Group label', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   await openFileAndAddToCanvas(
+  //     'KET/more-than-one-attachment-atom-for-R-Group.ket',
+  //     page,
+  //   );
+  //   await takeEditorScreenshot(page);
+  //   await turnOnMacromoleculesEditor(page);
+  //   await selectSingleBondTool(page);
+  //   await page.getByText('F1').locator('..').hover();
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
     page,
@@ -930,417 +925,417 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  const testData = [
-    {
-      description: 'Sugar',
-      monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
-      summaryTestId: 'summary-Sugars',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-    {
-      description: 'Base',
-      monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
-      summaryTestId: 'summary-Bases',
-      bondEndpoints: { first: 'R1', second: 'R1' },
-    },
-    {
-      description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
-      summaryTestId: 'summary-Phosphates',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-  ];
+  // const testData = [
+  //   {
+  //     description: 'Sugar',
+  //     monomer: '25R',
+  //     monomerTestId: '25R___2,5-Ribose',
+  //     summaryTestId: 'summary-Sugars',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  //   {
+  //     description: 'Base',
+  //     monomer: 'meA',
+  //     monomerTestId: 'meA___N-Methyl-Adenine',
+  //     summaryTestId: 'summary-Bases',
+  //     bondEndpoints: { first: 'R1', second: 'R1' },
+  //   },
+  //   {
+  //     description: 'Phosphate',
+  //     monomer: 'nasP',
+  //     monomerTestId: 'nasP___Sodium Phosporothioate',
+  //     summaryTestId: 'summary-Phosphates',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  // ];
 
-  for (const data of testData) {
-    test(`Connect micro structure with attachment point to ${data.description} in macro mode`, async ({
-      page,
-    }) => {
-      /* 
-      Test case: Macro-Micro-Switcher/#4530
-      Description:
-      */
-      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-      test.fail();
-      const x = 750;
-      const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
-      await openFileAndAddToCanvas(
-        'KET/atom-connected-to-R-Group-label-by-bond.ket',
-        page,
-      );
-      await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        data.bondEndpoints.first,
-        data.bondEndpoints.second,
-      );
-      const bondLine = page.locator('g[pointer-events="stroke"]').first();
-      await bondLine.hover();
-      await takeEditorScreenshot(page);
-    });
-  }
+  // for (const data of testData) {
+  //   test(`Connect micro structure with attachment point to ${data.description} in macro mode`, async ({
+  //     page,
+  //   }) => {
+  //     /*
+  //     Test case: Macro-Micro-Switcher/#4530
+  //     Description:
+  //     */
+  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //     test.fail();
+  //     const x = 750;
+  //     const y = 370;
+  //     const firstMonomer = await page.getByText('F1').locator('..');
+  //     const secondMonomer = await page
+  //       .getByText(data.monomer)
+  //       .locator('..')
+  //       .first();
+  //     await openFileAndAddToCanvas(
+  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //       page,
+  //     );
+  //     await turnOnMacromoleculesEditor(page);
+  //     await page.getByTestId('RNA-TAB').click();
+  //     await page.getByTestId(data.summaryTestId).click();
+  //     await page.getByTestId(data.monomerTestId).click();
+  //     await page.mouse.click(x, y);
+  //     await bondTwoMonomersPointToPoint(
+  //       page,
+  //       firstMonomer,
+  //       secondMonomer,
+  //       data.bondEndpoints.first,
+  //       data.bondEndpoints.second,
+  //     );
+  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //     await bondLine.hover();
+  //     await takeEditorScreenshot(page);
+  //   });
+  // }
+  //
+  // test('Connect micro structure with attachment point to CHEM in macro mode', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: CHEM connected with micro structure.
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   const x = 750;
+  //   const y = 370;
+  //   const firstMonomer = await page.getByText('F1').locator('..');
+  //   const secondMonomer = await page
+  //     .getByText('Test-6-Ch')
+  //     .locator('..')
+  //     .first();
+  //   await openFileAndAddToCanvas(
+  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //     page,
+  //   );
+  //   await turnOnMacromoleculesEditor(page);
+  //   await page.getByTestId('CHEM-TAB').click();
+  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+  //   await page.mouse.click(x, y);
+  //   await bondTwoMonomersPointToPoint(
+  //     page,
+  //     firstMonomer,
+  //     secondMonomer,
+  //     'R1',
+  //     'R3',
+  //   );
+  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //   await bondLine.hover();
+  //   await takeEditorScreenshot(page);
+  // });
+  //
+  // const testData2 = [
+  //   {
+  //     description: 'Sugar',
+  //     monomer: '25R',
+  //     monomerTestId: '25R___2,5-Ribose',
+  //     summaryTestId: 'summary-Sugars',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  //   {
+  //     description: 'Base',
+  //     monomer: 'meA',
+  //     monomerTestId: 'meA___N-Methyl-Adenine',
+  //     summaryTestId: 'summary-Bases',
+  //     bondEndpoints: { first: 'R1', second: 'R1' },
+  //   },
+  //   {
+  //     description: 'Phosphate',
+  //     monomer: 'moen',
+  //     monomerTestId: 'moen___2-Methoxyethylamino',
+  //     summaryTestId: 'summary-Phosphates',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  // ];
+  //
+  // for (const data of testData2) {
+  //   test(`Connect micro structure with attachment point to ${data.description} in macro mode(snake mode)`, async ({
+  //     page,
+  //   }) => {
+  //     /*
+  //     Test case: Macro-Micro-Switcher/#4530
+  //     Description:
+  //     */
+  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //     test.fail();
+  //     const x = 750;
+  //     const y = 370;
+  //     const firstMonomer = await page.getByText('F1').locator('..');
+  //     const secondMonomer = await page
+  //       .getByText(data.monomer)
+  //       .locator('..')
+  //       .first();
+  //     await openFileAndAddToCanvas(
+  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //       page,
+  //     );
+  //     await turnOnMacromoleculesEditor(page);
+  //     await selectSnakeLayoutModeTool(page);
+  //     await page.getByTestId('RNA-TAB').click();
+  //     await page.getByTestId(data.summaryTestId).click();
+  //     await page.getByTestId(data.monomerTestId).click();
+  //     await page.mouse.click(x, y);
+  //     await bondTwoMonomersPointToPoint(
+  //       page,
+  //       firstMonomer,
+  //       secondMonomer,
+  //       data.bondEndpoints.first,
+  //       data.bondEndpoints.second,
+  //     );
+  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //     await bondLine.hover();
+  //     await takeEditorScreenshot(page);
+  //   });
+  // }
+  //
+  // test('Connect micro structure with attachment point to CHEM in macro mode(snake mode)', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: CHEM connected with micro structure.
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   const x = 750;
+  //   const y = 370;
+  //   const firstMonomer = await page.getByText('F1').locator('..');
+  //   const secondMonomer = await page
+  //     .getByText('Test-6-Ch')
+  //     .locator('..')
+  //     .first();
+  //   await openFileAndAddToCanvas(
+  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //     page,
+  //   );
+  //   await turnOnMacromoleculesEditor(page);
+  //   await selectSnakeLayoutModeTool(page);
+  //   await page.getByTestId('CHEM-TAB').click();
+  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+  //   await page.mouse.click(x, y);
+  //   await bondTwoMonomersPointToPoint(
+  //     page,
+  //     firstMonomer,
+  //     secondMonomer,
+  //     'R1',
+  //     'R3',
+  //   );
+  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //   await bondLine.hover();
+  //   await takeEditorScreenshot(page);
+  // });
+  //
+  // const testData3 = [
+  //   {
+  //     description: 'Sugar',
+  //     monomer: '25R',
+  //     monomerTestId: '25R___2,5-Ribose',
+  //     summaryTestId: 'summary-Sugars',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  //   {
+  //     description: 'Base',
+  //     monomer: 'meA',
+  //     monomerTestId: 'meA___N-Methyl-Adenine',
+  //     summaryTestId: 'summary-Bases',
+  //     bondEndpoints: { first: 'R1', second: 'R1' },
+  //   },
+  //   {
+  //     description: 'Phosphate',
+  //     monomer: 'nasP',
+  //     monomerTestId: 'nasP___Sodium Phosporothioate',
+  //     summaryTestId: 'summary-Phosphates',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  // ];
+  //
+  // for (const data of testData3) {
+  //   test(`Delete bond between micro structure with attachment point and ${data.description} in macro mode and Undo deletion`, async ({
+  //     page,
+  //   }) => {
+  //     /*
+  //     Test case: Macro-Micro-Switcher/#4530
+  //     Description:
+  //     */
+  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //     test.fail();
+  //     const x = 750;
+  //     const y = 370;
+  //     const firstMonomer = await page.getByText('F1').locator('..');
+  //     const secondMonomer = await page
+  //       .getByText(data.monomer)
+  //       .locator('..')
+  //       .first();
+  //     await openFileAndAddToCanvas(
+  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //       page,
+  //     );
+  //     await turnOnMacromoleculesEditor(page);
+  //     await page.getByTestId('RNA-TAB').click();
+  //     await page.getByTestId(data.summaryTestId).click();
+  //     await page.getByTestId(data.monomerTestId).click();
+  //     await page.mouse.click(x, y);
+  //     await bondTwoMonomersPointToPoint(
+  //       page,
+  //       firstMonomer,
+  //       secondMonomer,
+  //       data.bondEndpoints.first,
+  //       data.bondEndpoints.second,
+  //     );
+  //     await selectEraseTool(page);
+  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //     await bondLine.click();
+  //     await takeEditorScreenshot(page);
+  //     await clickUndo(page);
+  //     await takeEditorScreenshot(page);
+  //   });
+  // }
+  //
+  // test('Delete bond between micro structure with attachment point and CHEM in macro mode and Undo deletion', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: CHEM connected with micro structure.
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   const x = 750;
+  //   const y = 370;
+  //   const firstMonomer = await page.getByText('F1').locator('..');
+  //   const secondMonomer = await page
+  //     .getByText('Test-6-Ch')
+  //     .locator('..')
+  //     .first();
+  //   await openFileAndAddToCanvas(
+  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //     page,
+  //   );
+  //   await turnOnMacromoleculesEditor(page);
+  //   await page.getByTestId('CHEM-TAB').click();
+  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+  //   await page.mouse.click(x, y);
+  //   await bondTwoMonomersPointToPoint(
+  //     page,
+  //     firstMonomer,
+  //     secondMonomer,
+  //     'R1',
+  //     'R3',
+  //   );
+  //   await selectEraseTool(page);
+  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  //   await bondLine.click();
+  //   await takeEditorScreenshot(page);
+  //   await clickUndo(page);
+  //   await takeEditorScreenshot(page);
+  // });
+  //
+  // const testData4 = [
+  //   {
+  //     description: 'Sugar',
+  //     monomer: '25R',
+  //     monomerTestId: '25R___2,5-Ribose',
+  //     summaryTestId: 'summary-Sugars',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  //   {
+  //     description: 'Base',
+  //     monomer: 'meA',
+  //     monomerTestId: 'meA___N-Methyl-Adenine',
+  //     summaryTestId: 'summary-Bases',
+  //     bondEndpoints: { first: 'R1', second: 'R1' },
+  //   },
+  //   {
+  //     description: 'Phosphate',
+  //     monomer: 'nasP',
+  //     monomerTestId: 'nasP___Sodium Phosporothioate',
+  //     summaryTestId: 'summary-Phosphates',
+  //     bondEndpoints: { first: 'R1', second: 'R2' },
+  //   },
+  // ];
+  //
+  // for (const data of testData4) {
+  //   test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
+  //     page,
+  //   }) => {
+  //     /*
+  //     Test case: Macro-Micro-Switcher/#4530
+  //     Description: The test does not work properly because the connection of
+  //     monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
+  //     After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
+  //     */
+  //     const x = 750;
+  //     const y = 370;
+  //     const firstMonomer = await page.getByText('F1').locator('..');
+  //     const secondMonomer = await page
+  //       .getByText(data.monomer)
+  //       .locator('..')
+  //       .first();
+  //     await openFileAndAddToCanvas(
+  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //       page,
+  //     );
+  //     await turnOnMacromoleculesEditor(page);
+  //     await page.getByTestId('RNA-TAB').click();
+  //     await page.getByTestId(data.summaryTestId).click();
+  //     await page.getByTestId(data.monomerTestId).click();
+  //     await page.mouse.click(x, y);
+  //     await bondTwoMonomersPointToPoint(
+  //       page,
+  //       firstMonomer,
+  //       secondMonomer,
+  //       data.bondEndpoints.first,
+  //       data.bondEndpoints.second,
+  //     );
+  //     await turnOnMicromoleculesEditor(page);
+  //     await selectEraseTool(page);
+  //     await page.getByText(data.monomer).locator('..').click();
+  //     await takeEditorScreenshot(page);
+  //     await selectTopPanelButton(TopPanelButton.Undo, page);
+  //     await takeEditorScreenshot(page);
+  //   });
+  // }
 
-  test('Connect micro structure with attachment point to CHEM in macro mode', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: CHEM connected with micro structure.
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    const x = 750;
-    const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
-    await openFileAndAddToCanvas(
-      'KET/atom-connected-to-R-Group-label-by-bond.ket',
-      page,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
-    await bondTwoMonomersPointToPoint(
-      page,
-      firstMonomer,
-      secondMonomer,
-      'R1',
-      'R3',
-    );
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-    await takeEditorScreenshot(page);
-  });
-
-  const testData2 = [
-    {
-      description: 'Sugar',
-      monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
-      summaryTestId: 'summary-Sugars',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-    {
-      description: 'Base',
-      monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
-      summaryTestId: 'summary-Bases',
-      bondEndpoints: { first: 'R1', second: 'R1' },
-    },
-    {
-      description: 'Phosphate',
-      monomer: 'moen',
-      monomerTestId: 'moen___2-Methoxyethylamino',
-      summaryTestId: 'summary-Phosphates',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-  ];
-
-  for (const data of testData2) {
-    test(`Connect micro structure with attachment point to ${data.description} in macro mode(snake mode)`, async ({
-      page,
-    }) => {
-      /* 
-      Test case: Macro-Micro-Switcher/#4530
-      Description:
-      */
-      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-      test.fail();
-      const x = 750;
-      const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
-      await openFileAndAddToCanvas(
-        'KET/atom-connected-to-R-Group-label-by-bond.ket',
-        page,
-      );
-      await turnOnMacromoleculesEditor(page);
-      await selectSnakeLayoutModeTool(page);
-      await page.getByTestId('RNA-TAB').click();
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        data.bondEndpoints.first,
-        data.bondEndpoints.second,
-      );
-      const bondLine = page.locator('g[pointer-events="stroke"]').first();
-      await bondLine.hover();
-      await takeEditorScreenshot(page);
-    });
-  }
-
-  test('Connect micro structure with attachment point to CHEM in macro mode(snake mode)', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: CHEM connected with micro structure.
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    const x = 750;
-    const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
-    await openFileAndAddToCanvas(
-      'KET/atom-connected-to-R-Group-label-by-bond.ket',
-      page,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await selectSnakeLayoutModeTool(page);
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
-    await bondTwoMonomersPointToPoint(
-      page,
-      firstMonomer,
-      secondMonomer,
-      'R1',
-      'R3',
-    );
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-    await takeEditorScreenshot(page);
-  });
-
-  const testData3 = [
-    {
-      description: 'Sugar',
-      monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
-      summaryTestId: 'summary-Sugars',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-    {
-      description: 'Base',
-      monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
-      summaryTestId: 'summary-Bases',
-      bondEndpoints: { first: 'R1', second: 'R1' },
-    },
-    {
-      description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
-      summaryTestId: 'summary-Phosphates',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-  ];
-
-  for (const data of testData3) {
-    test(`Delete bond between micro structure with attachment point and ${data.description} in macro mode and Undo deletion`, async ({
-      page,
-    }) => {
-      /* 
-      Test case: Macro-Micro-Switcher/#4530
-      Description:
-      */
-      // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-      test.fail();
-      const x = 750;
-      const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
-      await openFileAndAddToCanvas(
-        'KET/atom-connected-to-R-Group-label-by-bond.ket',
-        page,
-      );
-      await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        data.bondEndpoints.first,
-        data.bondEndpoints.second,
-      );
-      await selectEraseTool(page);
-      const bondLine = page.locator('g[pointer-events="stroke"]').first();
-      await bondLine.click();
-      await takeEditorScreenshot(page);
-      await clickUndo(page);
-      await takeEditorScreenshot(page);
-    });
-  }
-
-  test('Delete bond between micro structure with attachment point and CHEM in macro mode and Undo deletion', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: CHEM connected with micro structure.
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    const x = 750;
-    const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
-    await openFileAndAddToCanvas(
-      'KET/atom-connected-to-R-Group-label-by-bond.ket',
-      page,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
-    await bondTwoMonomersPointToPoint(
-      page,
-      firstMonomer,
-      secondMonomer,
-      'R1',
-      'R3',
-    );
-    await selectEraseTool(page);
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.click();
-    await takeEditorScreenshot(page);
-    await clickUndo(page);
-    await takeEditorScreenshot(page);
-  });
-
-  const testData4 = [
-    {
-      description: 'Sugar',
-      monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
-      summaryTestId: 'summary-Sugars',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-    {
-      description: 'Base',
-      monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
-      summaryTestId: 'summary-Bases',
-      bondEndpoints: { first: 'R1', second: 'R1' },
-    },
-    {
-      description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
-      summaryTestId: 'summary-Phosphates',
-      bondEndpoints: { first: 'R1', second: 'R2' },
-    },
-  ];
-
-  for (const data of testData4) {
-    test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
-      page,
-    }) => {
-      /* 
-      Test case: Macro-Micro-Switcher/#4530
-      Description: The test does not work properly because the connection of 
-      monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
-      After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
-      */
-      const x = 750;
-      const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
-      await openFileAndAddToCanvas(
-        'KET/atom-connected-to-R-Group-label-by-bond.ket',
-        page,
-      );
-      await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        data.bondEndpoints.first,
-        data.bondEndpoints.second,
-      );
-      await turnOnMicromoleculesEditor(page);
-      await selectEraseTool(page);
-      await page.getByText(data.monomer).locator('..').click();
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-    });
-  }
-
-  test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher/#4530
-    Description: The test does not work properly because the connection of 
-      monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
-      After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
-    */
-    // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-    test.fail();
-    const x = 750;
-    const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
-    await openFileAndAddToCanvas(
-      'KET/atom-connected-to-R-Group-label-by-bond.ket',
-      page,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
-    await bondTwoMonomersPointToPoint(
-      page,
-      firstMonomer,
-      secondMonomer,
-      'R1',
-      'R3',
-    );
-    await turnOnMicromoleculesEditor(page);
-    await selectEraseTool(page);
-    await page.getByText('Test-6-Ch').locator('..').click();
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-  });
+  // test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   Test case: Macro-Micro-Switcher/#4530
+  //   Description: The test does not work properly because the connection of
+  //     monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
+  //     After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
+  //   */
+  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
+  //   test.fail();
+  //   const x = 750;
+  //   const y = 370;
+  //   const firstMonomer = await page.getByText('F1').locator('..');
+  //   const secondMonomer = await page
+  //     .getByText('Test-6-Ch')
+  //     .locator('..')
+  //     .first();
+  //   await openFileAndAddToCanvas(
+  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
+  //     page,
+  //   );
+  //   await turnOnMacromoleculesEditor(page);
+  //   await page.getByTestId('CHEM-TAB').click();
+  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+  //   await page.mouse.click(x, y);
+  //   await bondTwoMonomersPointToPoint(
+  //     page,
+  //     firstMonomer,
+  //     secondMonomer,
+  //     'R1',
+  //     'R3',
+  //   );
+  //   await turnOnMicromoleculesEditor(page);
+  //   await selectEraseTool(page);
+  //   await page.getByText('Test-6-Ch').locator('..').click();
+  //   await takeEditorScreenshot(page);
+  //   await selectTopPanelButton(TopPanelButton.Undo, page);
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Connect molecule to monomer', async ({ page }) => {
     /*

@@ -71,7 +71,14 @@ export class MacromoleculesConverter {
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
   ) {
     const attachmentPointName = monomer.getAttachmentPointByBond(polymerBond);
-    assert(attachmentPointName);
+
+    if (!attachmentPointName) {
+      return {
+        attachmentAtomId: undefined,
+        attachmentPointNumber: undefined,
+      };
+    }
+
     const attachmentPointNumber =
       MacromoleculesConverter.convertAttachmentPointNameToNumber(
         attachmentPointName,
@@ -395,12 +402,16 @@ export class MacromoleculesConverter {
       if (endAtomAttachmentPoint) {
         superatomAttachmentPointToBond.set(endAtomAttachmentPoint, bond);
       }
-
       if (
         endAtomSgroup !== beginAtomSgroup &&
         isNumber(beginAtomAttachmentPointNumber) &&
         isNumber(endAtomAttachmentPointNumber) &&
-        (beginAtomSgroup || endAtomSgroup)
+        beginAtomSgroup &&
+        endAtomSgroup &&
+        (beginAtomSgroup instanceof MonomerMicromolecule ||
+          beginAtomSgroup.isSuperatomWithoutLabel) &&
+        (endAtomSgroup instanceof MonomerMicromolecule ||
+          endAtomSgroup.isSuperatomWithoutLabel)
       ) {
         // Here we take monomers from sgroupToMonomer in case of macromolecules structure and
         // from fragmentIdToMonomer in case of micromolecules structure.
@@ -414,7 +425,7 @@ export class MacromoleculesConverter {
             : fragmentIdToMonomer.get(endAtom.fragment);
         assert(firstMonomer);
         assert(secondMonomer);
-
+        console.log('here');
         command.merge(
           drawingEntitiesManager.createPolymerBond(
             firstMonomer,

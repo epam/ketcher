@@ -308,9 +308,11 @@
                 "type": "left"
             },
             {
-                "attachmentAtom": 15,
+                "attachmentAtom": 14,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        15
+                    ]
                 },
                 "type": "right"
             }

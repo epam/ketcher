@@ -8,6 +8,7 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   setZoom,
+  moveMouseAway,
 } from '@utils';
 
 test.describe('setMode', () => {
@@ -32,6 +33,7 @@ test.describe('setMode', () => {
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await setMode(page, 'flex');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

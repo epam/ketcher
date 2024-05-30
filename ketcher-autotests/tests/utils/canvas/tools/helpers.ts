@@ -1,6 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { selectOption, SequenceType } from '@utils';
+import {
+  MacromoleculesTopPanelButton,
+  selectOption,
+  SequenceType,
+} from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
@@ -24,7 +28,10 @@ export async function selectAtom(type: AtomButton, page: Page) {
  *  Select button from left panel
  * Usage: await selectTool(LeftPanelButton.HandTool, page)
  */
-export async function selectTool(type: LeftPanelButton, page: Page) {
+export async function selectTool(
+  type: LeftPanelButton | MacromoleculesTopPanelButton,
+  page: Page,
+) {
   await selectButtonByTitle(type, page);
 }
 
@@ -177,8 +184,8 @@ export async function selectLeftPanelButton(
   await leftPanelButton.click();
 }
 
-export async function selectMacromoleculesLeftPanelButton(
-  buttonName: MacromoleculesLeftPanelButton,
+export async function selectMacromoleculesPanelButton(
+  buttonName: MacromoleculesLeftPanelButton | MacromoleculesTopPanelButton,
   page: Page,
 ) {
   const topPanelButton = page.locator(`button[title*="${buttonName}"]`);

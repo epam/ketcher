@@ -135,6 +135,7 @@ test.describe('Import-Saving .seq Files', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

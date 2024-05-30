@@ -12,7 +12,7 @@ import {
   selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
-  takeLeftToolbarMacromoleculeScreenshot,
+  takePageScreenshot,
   turnOnMacromoleculesEditor,
   waitForPageInit,
 } from '@utils';
@@ -344,11 +344,10 @@ test.describe('Undo-Redo tests', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await page.getByTestId('undo').click();
-    await takeEditorScreenshot(page);
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('redo').click();
     await takeEditorScreenshot(page);
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
   });
 
   test('After creating a chain of Peptides and clicking multiple times "Undo" button to verify that the last actions are properly reversed', async ({
@@ -398,13 +397,13 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo and Redo buttons turn gray.
     The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('undo').click();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('redo').click();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
   });
 
   test('Press Undo/Redo after copy/pasting Sugar-Base-Phosphate structure on canvas', async ({

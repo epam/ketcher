@@ -119,6 +119,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('FASTA/fasta-snake-mode-rna.fasta', page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -294,6 +295,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   await pressButton(page, 'Add to Canvas');
   //   await takeEditorScreenshot(page);
   //   await selectSequenceLayoutModeTool(page);
+  //   await moveMouseAway(page);
   //   await takeEditorScreenshot(page);
   // });
 

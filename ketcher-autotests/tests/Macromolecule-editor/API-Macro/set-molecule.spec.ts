@@ -7,6 +7,7 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   waitForRender,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('setMolecule', () => {
@@ -24,11 +25,13 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -41,11 +44,13 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 });

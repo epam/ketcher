@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Open Ketcher', () => {
@@ -24,6 +24,6 @@ test.describe('Open Ketcher', () => {
     */
     await page.getByText('CHEM').click();
     await expect(page.getByText('A6OH')).toBeVisible();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 });

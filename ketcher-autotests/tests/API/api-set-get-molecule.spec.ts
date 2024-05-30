@@ -10,6 +10,9 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   saveToFile,
+  openFileAndAddToCanvasAsNewProject,
+  drawBenzeneRing,
+  waitForLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -716,5 +719,39 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+  });
+  test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #3531
+     * Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    const containsReaction = await page.evaluate(() => {
+      return window.ketcher.containsReaction();
+    });
+
+    expect(containsReaction).toBe(true);
+  });
+
+  test('Check that "containsReaction" method returns "false" if structure has not a reaction in micro mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #3531
+     * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
+     */
+    await waitForLoad(page, async () => {
+      await drawBenzeneRing(page);
+    });
+    const containsReaction = await page.evaluate(() => {
+      return window.ketcher.containsReaction();
+    });
+
+    expect(containsReaction).not.toBe(true);
   });
 });

@@ -338,11 +338,11 @@ test.describe('RNA Library', () => {
     Description: System alert that you should rename preset.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
     await page.reload();
@@ -350,7 +350,7 @@ test.describe('RNA Library', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('RNA-TAB').click();
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();

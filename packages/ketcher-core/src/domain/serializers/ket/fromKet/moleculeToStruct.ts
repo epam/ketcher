@@ -298,6 +298,6 @@ function sgroupAttachmentPointToStruct(
     atomId,
     leavingAtomId,
     attachmentId,
-    attachmentPointNumber,
+    attachmentId ? Number(attachmentId) : attachmentPointNumber,
   );
 }

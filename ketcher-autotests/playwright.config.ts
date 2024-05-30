@@ -62,7 +62,7 @@ function baseURL(): string {
 
 const MAX_NUMBER_OF_RETRIES = 2;
 const MIN_AMOUNT_OF_WORKERS = 2;
-// const MAX_NUMBER_OF_FAILURES = 3;
+const MAX_NUMBER_OF_FAILURES = 100;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
 function getIgnoredFiles(): string[] {
@@ -95,7 +95,7 @@ const config: PlaywrightTestConfig = {
     // },
     timeout: 10_000,
   },
-  // maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
+  maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

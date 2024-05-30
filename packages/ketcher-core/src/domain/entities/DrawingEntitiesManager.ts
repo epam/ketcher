@@ -916,9 +916,8 @@ export class DrawingEntitiesManager {
         const attPointStart = previousMonomer.getValidSourcePoint(monomer);
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
-        if (!attPointStart || !attPointEnd) {
-          return;
-        }
+        assert(attPointStart);
+        assert(attPointEnd);
 
         const operation = new PolymerBondFinishCreationOperation(
           this.finishPolymerBondCreationModelChange.bind(

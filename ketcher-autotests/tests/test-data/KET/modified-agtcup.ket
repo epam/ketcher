@@ -702,96 +702,96 @@
             {
                 "label": "C",
                 "location": [
-                    1.0354,
-                    0.2498,
+                    0.7237287541697408,
+                    0.1746063770442353,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.0792,
-                    -0.754,
+                    -0.05535958791794811,
+                    -0.5270344607340008,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -1.5057,
-                    -0.2906,
+                    -1.0524612566673544,
+                    -0.2031249526383298,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -1.8177,
-                    1.1766,
+                    -1.270544481798665,
+                    0.8224253932355776,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.7031,
-                    2.1804,
+                    -0.4914561397109761,
+                    1.5240662310138138,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    0.7235,
-                    1.717,
+                    0.5057154275080235,
+                    1.2001567229181427,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -2.3871,
-                    -1.5034,
+                    -1.6685463676633072,
+                    -1.0508535918667068,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -1.5053,
-                    -2.7168,
+                    -1.0521816627889808,
+                    -1.899001621912644,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -0.0787,
-                    -2.2532,
+                    -0.055010095569981265,
+                    -1.5749523168777864,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    2.1768,
-                    -0.1209,
+                    1.5215498861084524,
+                    -0.08450724973838289,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -0.9527,
-                    3.3542,
+                    -0.6659227198160247,
+                    2.344534467100777,
                     0
                 ]
             },
             {
                 "label": "H",
                 "location": [
-                    -3.5871,
-                    -1.5034,
+                    -2.507328002783733,
+                    -1.0508535918667068,
                     0
                 ]
             }
@@ -894,6 +894,17 @@
         "id": "G___Guanine",
         "fullName": "Guanine",
         "alias": "G",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        11
+                    ]
+                },
+                "type": "left"
+            }
+        ],
         "naturalAnalogShort": "G"
     },
     "monomer54": {
@@ -1188,6 +1199,17 @@
         "id": "T___Thymine",
         "fullName": "Thymine",
         "alias": "T",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            }
+        ],
         "naturalAnalogShort": "T"
     },
     "monomer61": {
@@ -1280,6 +1302,26 @@
         "id": "nasP___Sodium Phosporothioate",
         "fullName": "Sodium Phosporothioate",
         "alias": "nasP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        1
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
         "naturalAnalogShort": "P"
     },
     "monomer65": {
@@ -1448,6 +1490,17 @@
         "id": "C___Cytosine",
         "fullName": "Cytosine",
         "alias": "C",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            }
+        ],
         "naturalAnalogShort": "C"
     },
     "monomer68": {
@@ -1626,6 +1679,17 @@
         "id": "U___Uracil",
         "fullName": "Uracil",
         "alias": "U",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "left"
+            }
+        ],
         "naturalAnalogShort": "U"
     },
     "monomer75": {

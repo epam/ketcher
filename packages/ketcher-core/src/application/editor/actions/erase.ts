@@ -21,6 +21,7 @@ import {
   RGroupAttachmentPointRemove,
   RxnArrowDelete,
   RxnPlusDelete,
+  SGroupAtomRemove,
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
@@ -37,6 +38,7 @@ import {
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import { ReStruct } from 'application/render';
+import { isNumber } from 'lodash';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
@@ -118,7 +120,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   let action = new Action();
   const atomsToRemove: Array<number> = [];
   const frids: Array<number> = [];
-
+  const struct = restruct.molecule;
   const selection = formatSelection(rawSelection);
 
   selection.sgroups.forEach((sgroupId) => {
@@ -139,6 +141,24 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms = Array.from(new Set(selection.atoms));
   selection.bonds = Array.from(new Set(selection.bonds));
+
+  selection.atoms.forEach((atomId) => {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    if (sgroup) {
+      const attachmentPoints = sgroup.getAttachmentPoints();
+      attachmentPoints.forEach((attachmentPoint) => {
+        if (
+          attachmentPoint.atomId === atomId &&
+          isNumber(attachmentPoint.leaveAtomId)
+        ) {
+          action.addOp(
+            new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
+          );
+          action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
+        }
+      });
+    }
+  });
 
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {

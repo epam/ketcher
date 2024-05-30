@@ -722,8 +722,8 @@ test.describe('RNA Library', () => {
   });
 
   const monomersToDelete = [
-    { text: '12ddR', description: 'Sugar monomer deleted.' },
-    { text: 'baA', description: 'Base monomer deleted.' },
+    { text: 'R', description: 'Sugar monomer deleted.' },
+    { text: 'A', description: 'Base monomer deleted.' },
     { text: 'P', description: 'Phosphate monomer deleted.' },
   ];
 

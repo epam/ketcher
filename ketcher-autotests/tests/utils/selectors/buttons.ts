@@ -122,3 +122,16 @@ export type ToolbarButton =
   | LeftPanelButton
   | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
+
+export enum MacromoleculesLeftPanelButton {
+  Clear = 'Clear',
+  Undo = 'Undo',
+  Redo = 'Redo',
+  Open = 'Open...',
+  Save = 'Save',
+  Erase = 'Erase',
+  SingleBond = 'Single Bond',
+  ZoomIn = 'Zoom In',
+  ZoomOut = 'Zoom Out',
+  ZoomReset = 'Reset Zoom',
+}

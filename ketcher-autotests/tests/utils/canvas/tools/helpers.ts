@@ -7,6 +7,7 @@ import {
   AtomButton,
   BondIds,
   LeftPanelButton,
+  MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
@@ -111,6 +112,25 @@ export async function selectRectangleSelectionTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectOpenTool(page: Page) {
+  const openToolButton = page.getByTestId('open-button');
+  await openToolButton.click();
+}
+
+export async function selectSaveTool(page: Page) {
+  const saveToolButton = page.getByTestId('save-button');
+  await saveToolButton.click();
+}
+
+export async function openStructurePasteFromClipboard(page: Page) {
+  const bondToolButton = page.getByTestId('open-button');
+  await bondToolButton.click();
+  const pasteFromClipboardButton = page.getByTestId(
+    'paste-from-clipboard-button',
+  );
+  await pasteFromClipboardButton.click();
+}
+
 // undo/redo heplers currently used for macromolecules editor because buttons are in different panel
 export async function clickUndo(page: Page) {
   const undoButton = page.getByTestId('undo');
@@ -155,6 +175,14 @@ export async function selectLeftPanelButton(
 ) {
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();
+}
+
+export async function selectMacromoleculesLeftPanelButton(
+  buttonName: MacromoleculesLeftPanelButton,
+  page: Page,
+) {
+  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
+  await topPanelButton.click();
 }
 
 export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {

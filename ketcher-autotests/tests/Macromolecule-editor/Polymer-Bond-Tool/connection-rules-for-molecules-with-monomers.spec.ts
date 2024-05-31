@@ -1,15 +1,16 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  takeEditorScreenshot,
-  waitForPageInit,
-  drawBenzeneRing,
-  turnOnMacromoleculesEditor,
   addSingleMonomerToCanvas,
+  BondType,
+  clickOnAtom,
+  clickOnBond,
+  drawBenzeneRing,
+  openFileAndAddToCanvasAsNewProject,
+  takeEditorScreenshot,
+  turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-  // clickOnBond,
-  // clickOnAtom,
-  // openFileAndAddToCanvasAsNewProject,
+  waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
@@ -77,34 +78,41 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test(`Delete molecule attachment point with connection between monomer and molecule`, async ({
-  //   page,
-  // }) => {
-  //   /*
-  //    *  Github ticket: https://github.com/epam/ketcher/issues/4532
-  //    *  Description: Allow connection of molecule with monomer
-  //    */
-  //   await openFileAndAddToCanvasAsNewProject(
-  //     'KET/molecule-connected-to-monomers.ket',
-  //     page,
-  //   );
-  //   await page.waitForTimeout(60000)
-  //   await clickOnAtom(page, 'C', 20, 'right');
-  //   await page.getByText('Delete').click();
-  //   await takeEditorScreenshot(page);
-  // });
-  //
-  // test(`Delete connection between monomer and molecule`, async ({ page }) => {
-  //   /*
-  //    *  Github ticket: https://github.com/epam/ketcher/issues/4532
-  //    *  Description: Allow connection of molecule with monomer
-  //    */
-  //   await openFileAndAddToCanvasAsNewProject(
-  //     'KET/molecule-connected-to-monomers.ket',
-  //     page,
-  //   );
-  //   await clickOnBond(page, 1, 22, 'right');
-  //   await page.getByText('Delete').click();
-  //   await takeEditorScreenshot(page);
-  // });
+  test(`Delete molecule attachment point with connection between monomer and molecule`, async ({
+    page,
+  }) => {
+    /*
+     *  Github ticket: https://github.com/epam/ketcher/issues/4532
+     *  Description: Allow connection of molecule with monomer
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/molecule-connected-to-monomers.ket',
+      page,
+    );
+    await clickOnAtom(page, 'C', 10, 'right');
+    await page.getByText('Delete').click();
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Delete connection between monomer and molecule`, async ({ page }) => {
+    /*
+     *  Github ticket: https://github.com/epam/ketcher/issues/4532
+     *  Description: Allow connection of molecule with monomer
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/molecule-connected-to-monomers.ket',
+      page,
+    );
+    await clickOnBond(page, BondType.SINGLE, 18, 'right');
+    await page.getByText('Delete').click();
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
 });

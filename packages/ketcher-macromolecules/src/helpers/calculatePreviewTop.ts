@@ -14,35 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 import { preview } from '../constants';
-import { EditorClassName } from 'ketcher-react';
-import { MonomerItemType } from 'ketcher-core';
 
-export const calculatePreviewPosition = (
-  monomer: MonomerItemType | undefined,
-  target?: DOMRect,
-  isNucleosideOrNucleotide = false,
-): string => {
-  if (monomer && target) {
-    const editorRect = document
-      .querySelector(`.${EditorClassName}`)
-      ?.getBoundingClientRect();
+export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
+  preview.height,
+);
+export const calculateNucleoElementPreviewTop =
+  createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
-    if (!editorRect || !target) {
+function calculateTop(target: DOMRect, height: number): number {
+  return target.top > height + preview.gap + preview.topPadding
+    ? target.top - preview.gap - height
+    : target.bottom + preview.gap;
+}
+
+function createCalculatePreviewTopFunction(
+  height: number,
+): (target?: DOMRect) => string {
+  return function calculatePreviewTop(target?: DOMRect): string {
+    if (!target) {
       return '';
     }
 
-    const height = isNucleosideOrNucleotide
-      ? preview.heightForNucleotide
-      : preview.height;
-
-    const top =
-      target.top > preview.height + preview.gap + preview.topPadding
-        ? target.top - preview.gap - height
-        : target.bottom + preview.gap;
-
-    const newStyle = `${top}px`;
-
-    return newStyle;
-  }
-  return '';
-};
+    const top = calculateTop(target, height);
+    return `${top}px`;
+  };
+}

@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { IDTAliases } from 'components/shared/IDTAliases';
 import { useMemo } from 'react';
 import {
-  NucleotideMonomerRow,
-  NucleotideMonomerLabel,
-  NucleotideMonomerName,
-  MonomerIcon,
-  NucleotideContainer,
-  NucleotideName,
+  PresetMonomerRow,
+  PresetMonomerLabel,
+  PresetMonomerName,
+  PresetIcon,
+  PresetContainer,
+  PresetName,
 } from './styles';
 import { IPreviewProps } from '../MonomerPreview/types';
 import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
-import { selectShowPreview } from 'state/common';
+import { PresetPreviewState, selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react/dist/components/Icon/types';
 
 const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
@@ -35,49 +36,58 @@ const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
   'phosphate',
 ];
 
-const NucleotidePreview = ({ className }: IPreviewProps) => {
+const PresetPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
 
-  const ContainerDynamic = useMemo(
-    () => styled(NucleotideContainer)`
-      top: ${preview?.style?.top || ''};
-      left: ${preview?.style?.left || ''};
-      right: ${preview?.style?.right || ''};
-    `,
-    [preview],
-  );
+  const ContainerDynamic = useMemo(() => {
+    if (!preview?.style) {
+      return styled(PresetContainer)``;
+    }
+
+    return styled(PresetContainer)`
+      left: ${preview.style.left || ''};
+      right: ${preview.style.right || ''};
+      top: ${preview.style.top || ''};
+      transform: ${preview.style.transform || ''};
+    `;
+  }, [preview]);
+  if (!preview || !('preset' in preview)) {
+    return undefined;
+  }
+  const { preset } = preview as PresetPreviewState;
+  const { idtAliases } = preset;
+  const [, baseMonomer] = preset.monomers;
+  const presetName = baseMonomer?.props.Name;
 
   return (
-    preview?.nucleotide && (
+    preview.preset && (
       <ContainerDynamic
         className={className}
         data-testid="polymer-library-preview"
         style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
       >
-        <NucleotideName>{preview.nucleotide[1].props.Name}</NucleotideName>
-        {preview.nucleotide.map(
+        <PresetName>{presetName}</PresetName>
+        {preset.monomers.map(
           (monomer, index) =>
             monomer && (
-              <NucleotideMonomerRow key={index}>
-                <MonomerIcon name={icons[index]} />
-                <NucleotideMonomerLabel>{monomer.label}</NucleotideMonomerLabel>
-                <NucleotideMonomerName>
-                  ({monomer.props.Name})
-                </NucleotideMonomerName>
-              </NucleotideMonomerRow>
+              <PresetMonomerRow key={index}>
+                <PresetIcon name={icons[index]} />
+                <PresetMonomerLabel>{monomer.label}</PresetMonomerLabel>
+                <PresetMonomerName>({monomer.props.Name})</PresetMonomerName>
+              </PresetMonomerRow>
             ),
         )}
+        {idtAliases && <IDTAliases aliases={idtAliases}></IDTAliases>}
       </ContainerDynamic>
     )
   );
 };
 
-const StyledPreview = styled(NucleotidePreview)`
+const PresetStyledPreview = styled(PresetPreview)`
   z-index: 5;
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;
-  transform: translate(-50%, 0);
 `;
 
-export default StyledPreview;
+export default PresetStyledPreview;

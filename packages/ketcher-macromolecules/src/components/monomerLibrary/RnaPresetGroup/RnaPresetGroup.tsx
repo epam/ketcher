@@ -14,8 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
-import { MouseEvent } from 'react';
+import { MonomerItemType } from 'ketcher-core';
+import { debounce } from 'lodash';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -29,7 +32,7 @@ import {
   GroupContainer,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor } from 'state/common';
+import { selectEditor, selectShowPreview, showPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -97,30 +100,81 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     };
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    event.stopPropagation();
-    dispatch(setActivePresetForContextMenu(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        editPreset,
+  // region # Preview
+  const preview = useAppSelector(selectShowPreview);
+
+  const dispatchShowPreview = useCallback(
+    (payload: unknown) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
+  const handleItemMouseLeave = (): void => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
+  };
+
+  const handleItemMouseMove = (
+    preset: IRnaPreset,
+    e: React.MouseEvent,
+  ): void => {
+    handleItemMouseLeave();
+    if (preview.preset || !e.currentTarget) {
+      return;
+    }
+    const monomers: ReadonlyArray<MonomerItemType | undefined> = [
+      preset.sugar,
+      preset.base,
+      preset.phosphate,
+    ];
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const style = {
+      left: `${cardCoordinates.left + cardCoordinates.width}px`,
+      top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
+      transform: 'translate(-100%, 0)',
+    };
+    debouncedShowPreview({
+      preset: {
+        idtAliases: preset.idtAliases,
+        monomers,
       },
-      position: getMenuPosition(event.currentTarget as HTMLElement),
+      style,
     });
   };
+  // endregion # Preview
+
+  const handleContextMenu =
+    (preset: IRnaPreset) =>
+    (event: React.MouseEvent): void => {
+      event.stopPropagation();
+      dispatch(setActivePresetForContextMenu(preset));
+      show({
+        event,
+        props: {
+          duplicatePreset,
+          editPreset,
+        },
+        position: getMenuPosition(event.currentTarget as HTMLElement),
+      });
+    };
 
   return (
     <GroupContainer data-testid="rna-preset-group">
       <ItemsContainer>
-        {presets.map((preset, index) => {
+        {presets.map((preset: IRnaPreset, index: number): ReactElement => {
           return (
             <RnaPresetItem
+              isSelected={activePreset?.name === preset.name}
               key={`${preset.name}${index}`}
               preset={preset}
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
-              isSelected={activePreset?.name === preset.name}
+              onMouseMove={(e) => handleItemMouseMove(preset, e)}
+              onMouseLeave={handleItemMouseLeave}
             />
           );
         })}

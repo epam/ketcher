@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IKetIdtAliases, MonomerItemType } from 'ketcher-core';
+import styled from '@emotion/styled';
 
-export interface IExpandIconProps {
-  expanded: boolean;
-}
-
-// TODO: Perhaps more than one interface is needed.
-//  One with a minimum set of required readonly properties used by each use case,
-//  and also for places of use of `favorites`, `idtAliases` and others, which reuse the first interface.
-export interface IRnaPreset {
-  name?: string;
-  nameInList?: string;
-  base?: MonomerItemType;
-  sugar?: MonomerItemType;
-  phosphate?: MonomerItemType;
-  default?: boolean;
-  favorite?: boolean;
-  readonly idtAliases?: IKetIdtAliases;
-  editedName?: boolean;
-}
+export const IDTAliasesContainer = styled.span`
+  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-weight: 500;
+  line-height: normal;
+  color: ${(props) => props.theme.ketcher.color.text.lightgrey};
+`;

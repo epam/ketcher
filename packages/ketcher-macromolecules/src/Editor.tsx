@@ -49,6 +49,10 @@ import {
   showPreview,
 } from 'state/common';
 import {
+  calculateMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'helpers';
+import {
   useAppDispatch,
   useAppSelector,
   useSequenceEditInRNABuilderMode,
@@ -80,7 +84,6 @@ import {
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
-import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
 import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
@@ -217,43 +220,52 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
   const handleOpenPreview = useCallback(
     (e) => {
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+
       const sequenceNode = e.target.__data__?.node;
-      const isNucleotideOrNucleoside =
-        sequenceNode instanceof Nucleotide ||
-        sequenceNode instanceof Nucleoside;
       const monomer =
         e.target.__data__?.monomer?.monomerItem ||
         sequenceNode.monomer.monomerItem;
+      const isNucleotideOrNucleoside =
+        sequenceNode instanceof Nucleotide ||
+        sequenceNode instanceof Nucleoside;
 
-      const nucleotideParts =
-        sequenceNode instanceof Nucleotide
-          ? [
-              sequenceNode.sugar.monomerItem,
-              sequenceNode.rnaBase.monomerItem,
-              sequenceNode.phosphate?.monomerItem,
-            ]
-          : sequenceNode instanceof Nucleoside
-          ? [sequenceNode.sugar.monomerItem, sequenceNode.rnaBase.monomerItem]
-          : null;
-
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(
-        monomer,
-        cardCoordinates,
-        isNucleotideOrNucleoside,
-      );
-      const previewStyle = {
-        top,
-        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-      };
       if (isNucleotideOrNucleoside) {
+        const monomers =
+          sequenceNode instanceof Nucleotide
+            ? [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+                sequenceNode.phosphate?.monomerItem,
+              ]
+            : [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+              ];
+
         debouncedShowPreview({
-          nucleotide: nucleotideParts,
-          style: previewStyle,
+          preset: {
+            monomers,
+          },
+          style: {
+            left,
+            top: monomer
+              ? calculateNucleoElementPreviewTop(cardCoordinates)
+              : '',
+            transform: 'translate(-50%, 0)',
+          },
         });
-      } else {
-        debouncedShowPreview({ monomer, style: previewStyle });
+        return;
       }
+
+      debouncedShowPreview({
+        monomer,
+        style: {
+          left,
+          top: monomer ? calculateMonomerPreviewTop(cardCoordinates) : '',
+        },
+      });
     },
     [debouncedShowPreview],
   );

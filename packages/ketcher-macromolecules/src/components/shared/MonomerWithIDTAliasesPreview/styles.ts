@@ -28,8 +28,8 @@ export const Container = styled.div`
 `;
 
 export const MonomerName = styled.p`
-  color: ${(props) => props.theme.ketcher.color.text.primary};
-  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  color: ${(props) => props.theme.ketcher.color.text.light};
+  font-size: ${(props) => props.theme.ketcher.font.size.medium};
   font-weight: 700;
   word-break: break-all;
   text-align: center;

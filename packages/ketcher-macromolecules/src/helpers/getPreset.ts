@@ -10,14 +10,14 @@ import {
 import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaPresetsTemplatesType
-  extends Pick<IKetMonomerGroupTemplate, 'templates'>,
+  extends Pick<IKetMonomerGroupTemplate, 'templates' | 'idtAliases'>,
     Pick<IRnaLabeledPreset, 'default' | 'favorite' | 'name'> {}
 
 export const getPresets = (
   monomers: ReadonlyArray<MonomerItemType>,
-  rnaPresetsTemplates: ReadonlyArray<IKetMonomerGroupTemplate>,
+  rnaPresetsTemplates: ReadonlyArray<RnaPresetsTemplatesType>,
   isDefault?: boolean,
-): ReadonlyArray<IRnaPreset> => {
+): IRnaPreset[] => {
   const monomerLibraryItemByMonomerIDMap = new Map<string, MonomerItemType>(
     monomers.map((monomer) => {
       const monomerID = setMonomerTemplatePrefix(getMonomerUniqueKey(monomer));
@@ -25,47 +25,50 @@ export const getPresets = (
     }),
   );
 
-  return rnaPresetsTemplates.map((rnaPresetsTemplate: IKetMonomerGroupTemplate): IRnaPreset => {
-    const rnaPartsMonomerLibraryItemByMonomerClassMap = new Map<
-      KetMonomerClass,
-      MonomerItemType
-    >(
-      rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
-        // TODO: Do we need to check for existence? Suddenly there is `undefined`.
-        const monomer = monomerLibraryItemByMonomerIDMap.get(
-          rnaPartsMonomerTemplateRef.$ref,
-        ) as MonomerItemType;
-        const [, , monomerClass] = monomerFactory(monomer);
-        return [monomerClass, monomer];
-      }),
-    );
-    // TODO: Do we need to check for existence? Suddenly there is `undefined`.
-    const ribose = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
-      KetMonomerClass.Sugar,
-    ) as MonomerItemType;
-    const rnaBase = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
-      KetMonomerClass.Base,
-    ) as MonomerItemType;
-    const phosphate = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
-      KetMonomerClass.Phosphate,
-    ) as MonomerItemType;
+  return rnaPresetsTemplates.map(
+    (rnaPresetsTemplate: RnaPresetsTemplatesType): IRnaPreset => {
+      const rnaPartsMonomerLibraryItemByMonomerClassMap = new Map<
+        KetMonomerClass,
+        MonomerItemType
+      >(
+        rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
+          // TODO: Do we need to check for existence? Suddenly there is `undefined`.
+          const monomer = monomerLibraryItemByMonomerIDMap.get(
+            rnaPartsMonomerTemplateRef.$ref,
+          ) as MonomerItemType;
+          const [, , monomerClass] = monomerFactory(monomer);
+          return [monomerClass, monomer];
+        }),
+      );
 
-    const result: IRnaPreset = {
-      base: { ...rnaBase, label: rnaBase.props.MonomerName },
-      name: rnaPresetsTemplate.name,
-      phosphate: { ...phosphate, label: phosphate.props.MonomerName },
-      sugar: { ...ribose, label: ribose.props.MonomerName },
-      favorite: rnaPresetsTemplate.favorite,
-      default: isDefault || rnaPresetsTemplate.default,
-    };
+      // TODO: Do we need to check for existence? Suddenly there is `undefined`.
+      const ribose = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Sugar,
+      ) as MonomerItemType;
+      const rnaBase = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Base,
+      ) as MonomerItemType;
+      const phosphate = rnaPartsMonomerLibraryItemByMonomerClassMap.get(
+        KetMonomerClass.Phosphate,
+      ) as MonomerItemType;
 
-    if (!rnaPresetsTemplate.idtAliases) {
-      return result;
-    }
+      const result: IRnaPreset = {
+        base: { ...rnaBase, label: rnaBase.props.MonomerName },
+        name: rnaPresetsTemplate.name,
+        phosphate: { ...phosphate, label: phosphate.props.MonomerName },
+        sugar: { ...ribose, label: ribose.props.MonomerName },
+        favorite: rnaPresetsTemplate.favorite,
+        default: isDefault || rnaPresetsTemplate.default,
+      };
 
-    return {
-      ...result,
-      idtAliases: rnaPresetsTemplate.idtAliases,
-    };
-  });
+      if (!rnaPresetsTemplate.idtAliases) {
+        return result;
+      }
+
+      return {
+        ...result,
+        idtAliases: rnaPresetsTemplate.idtAliases,
+      };
+    },
+  );
 };

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerPreview } from 'components/shared/MonomerPreview';
+import MonomerPreview from 'components/shared/MonomerPreview';
 import MonomerWithIDTAliasesPreview from 'components/shared/MonomerWithIDTAliasesPreview';
 import PresetPreview from 'components/shared/PresetPreview';
 import { useAppSelector } from 'hooks';

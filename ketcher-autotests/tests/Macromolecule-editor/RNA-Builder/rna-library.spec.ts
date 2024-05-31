@@ -10,7 +10,6 @@ import {
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
   receiveFileComparisonData,

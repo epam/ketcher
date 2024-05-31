@@ -37,6 +37,7 @@ import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
 
 export type Neighbor = {
   aid: number;
@@ -183,12 +184,16 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
+  getFragment(
+    fid: number | number[],
+    copyNonFragmentObjects = true,
+    aidMap?: Map<number, number>,
+  ): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,
       true,
-      undefined,
+      aidMap,
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
@@ -1160,6 +1165,16 @@ export class Struct {
       }
     }
     return null;
+  }
+
+  getGroupFromBondId(atomId: number): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromBondId(atomId);
+
+    if (!isNumber(sgroupId)) {
+      return;
+    }
+
+    return this.sgroups?.get(sgroupId as number);
   }
 
   getGroupsIdsFromBondId(bondId: number): number[] {

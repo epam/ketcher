@@ -37,10 +37,10 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-A___Adenine"
             },
             {
-                "$ref": "monomerTemplate-12ddR___1',2'-Di-Deoxy-Ribose"
+                "$ref": "monomerTemplate-R___Ribose"
             },
             {
                 "$ref": "monomerTemplate-P___Phosphate"
@@ -54,153 +54,97 @@
             "x": 11.45,
             "y": -8.732500000000002
         },
-        "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "alias": "A",
+        "templateId": "A___Adenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-A___Adenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
                 "label": "C",
                 "location": [
-                    0.6972141317677308,
-                    0.16820947471081624,
+                    1.0354,
+                    0.2498,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.05333142672977042,
-                    -0.5077259564930163,
+                    -0.0792,
+                    -0.754,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -1.013903146805749,
-                    -0.19568323999584955,
+                    -1.5057,
+                    -0.2906,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -1.2239966460442386,
-                    0.79229490770515,
+                    -1.8177,
+                    1.1766,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.47345108754673704,
-                    1.4682303389089821,
+                    -0.7031,
+                    2.1804,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    0.4871879701892537,
-                    1.1561876224118157,
+                    0.7235,
+                    1.717,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -1.607417282154482,
-                    -1.0123543806254651,
+                    -2.3871,
+                    -1.5034,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -1.0136337961656996,
-                    -1.8294295472151545,
+                    -1.5053,
+                    -2.7168,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -0.05299473842970874,
-                    -1.5172521553979634,
+                    -0.0787,
+                    -2.2532,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    1.6590652673839439,
-                    -0.14201512496601743,
+                    2.1768,
+                    -0.1209,
                     0
                 ]
             },
             {
-                "label": "R#",
+                "label": "H",
                 "location": [
-                    -2.4154692023025186,
-                    -1.0123543806254651,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    2.4090721246013467,
-                    0.5353343970980742,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    3.3709232602175594,
-                    0.22510979742124046,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    5.292336051009564,
-                    -0.3989756355730931,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    5.082242551771074,
-                    0.5890025121279064,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    4.121536156375073,
-                    0.901045228625073,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    3.5810840971160607,
-                    -0.7629356879397713,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    4.541790492512064,
-                    -1.0749110667769255,
+                    -3.5871,
+                    -1.5034,
                     0
                 ]
             }
@@ -289,74 +233,20 @@
                     7,
                     8
                 ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    9,
-                    11
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    11,
-                    12
-                ]
-            },
-            {
-                "type": 2,
-                "atoms": [
-                    15,
-                    12
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    12,
-                    16
-                ]
-            },
-            {
-                "type": 2,
-                "atoms": [
-                    13,
-                    14
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    14,
-                    15
-                ]
-            },
-            {
-                "type": 2,
-                "atoms": [
-                    16,
-                    17
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    13,
-                    17
-                ]
             }
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
-        "fullName": "N-benzyl-adenine",
-        "alias": "baA",
+        "id": "A___Adenine",
+        "fullName": "Adenine",
+        "alias": "A",
         "attachmentPoints": [
             {
-                "attachmentAtom": 10,
+                "attachmentAtom": 6,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        10
+                    ]
                 },
                 "type": "left"
             }
@@ -370,25 +260,25 @@
             "x": 11.456666666666665,
             "y": -7.917500000000002
         },
-        "alias": "12ddR",
-        "templateId": "12ddR___1',2'-Di-Deoxy-Ribose"
+        "alias": "R",
+        "templateId": "R___Ribose"
     },
-    "monomerTemplate-12ddR___1',2'-Di-Deoxy-Ribose": {
+    "monomerTemplate-R___Ribose": {
         "type": "monomerTemplate",
         "atoms": [
             {
                 "label": "O",
                 "location": [
-                    -0.5921963143298201,
-                    1.0703430921677841,
+                    -1.1017,
+                    -1.0663,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.23650345417464672,
-                    0.0909895814886306,
+                    -0.5897,
+                    0.3436,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -396,16 +286,8 @@
             {
                 "label": "C",
                 "location": [
-                    0.22927985381219051,
-                    1.7111597935525977,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    0.8047368634559343,
-                    0.1266213794303615,
+                    0.0809,
+                    -1.9889,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -413,48 +295,74 @@
             {
                 "label": "C",
                 "location": [
-                    1.0926390125172882,
-                    1.127923521980055,
+                    0.9095,
+                    0.2924,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3239,
+                    -1.1493,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.8285,
+                    1.4755,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    1.4431225454879986,
-                    -0.6951326194948205,
+                    2.4518,
+                    -1.5589,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.8208510488798749,
-                    -0.7700774732553033,
+                    -1.431,
+                    1.5834,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    -1.8605632972030135,
-                    -0.6951326194948205,
+                    0.0399,
+                    -3.1881,
                     0
                 ]
             },
             {
-                "label": "R#",
+                "label": "O",
                 "location": [
-                    -2.328569251455222,
-                    -1.3847780810220063,
+                    -2.9279,
+                    1.4755,
                     0
                 ]
             },
             {
-                "label": "R#",
+                "label": "H",
                 "location": [
-                    2.2689050907691652,
-                    -0.5819165753524786,
+                    -3.6017,
+                    2.4684,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    3.0174,
+                    1.3125,
                     0
                 ]
             }
@@ -485,9 +393,9 @@
                 "type": 1,
                 "atoms": [
                     1,
-                    6
+                    7
                 ],
-                "stereo": 1
+                "stereo": 6
             },
             {
                 "type": 1,
@@ -495,6 +403,14 @@
                     2,
                     4
                 ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    8
+                ],
+                "stereo": 6
             },
             {
                 "type": 1,
@@ -509,49 +425,70 @@
                     3,
                     5
                 ],
-                "stereo": 6
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ],
+                "stereo": 1
             },
             {
                 "type": 1,
                 "atoms": [
                     5,
-                    9
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    6,
-                    7
+                    11
                 ]
             },
             {
                 "type": 1,
                 "atoms": [
                     7,
-                    8
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
                 ]
             }
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "12ddR___1',2'-Di-Deoxy-Ribose",
-        "fullName": "2'-Di-Deoxy-Ribose",
-        "alias": "12ddR",
+        "id": "R___Ribose",
+        "fullName": "Ribose",
+        "alias": "R",
         "attachmentPoints": [
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 9,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        10
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 5,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        11
+                    ]
                 },
                 "type": "right"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "side"
             }
         ],
         "naturalAnalogShort": "R"

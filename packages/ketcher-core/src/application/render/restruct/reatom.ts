@@ -19,6 +19,7 @@ import {
   Bond,
   Box2Abs,
   FunctionalGroup,
+  SGroup,
   StereoFlag,
   StereoLabel,
   Struct,
@@ -41,6 +42,7 @@ import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 
 interface ElemAttr {
   text: string;
@@ -149,13 +151,17 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -169,13 +175,17 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -223,11 +233,17 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
-    const atom = restruct.molecule.atoms.get(aid)!;
-    const sgroups = restruct.molecule.sgroups;
-    const functionalGroups = restruct.molecule.functionalGroups;
+    const struct = restruct.molecule;
+    const atom = struct.atoms.get(aid)!;
+    const sgroups = struct.sgroups;
+    const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
+    const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+
+    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
+      return;
+    }
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -237,8 +253,6 @@ class ReAtom extends ReObject {
         false,
       )
     ) {
-      const sgroup = restruct.molecule.getGroupFromAtomId(aid);
-
       const isPositionAtom =
         sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
       if (isPositionAtom) {
@@ -278,7 +292,7 @@ class ReAtom extends ReObject {
     let index: any = null;
 
     if (this.showLabel) {
-      const data = buildLabel(this, render.paper, ps, options);
+      const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
       delta = 0.5 * options.lineWidth;
       label = data.label;
       rightMargin = data.rightMargin;
@@ -767,6 +781,8 @@ function buildLabel(
   paper: any,
   ps: Vec2,
   options: any,
+  atomId: number,
+  sgroup?: SGroup,
 ): {
   rightMargin: number;
   leftMargin: number;
@@ -774,7 +790,7 @@ function buildLabel(
 } {
   // eslint-disable-line max-statements
   const label: any = {
-    text: getLabelText(atom.a),
+    text: getLabelText(atom.a, atomId, sgroup),
   };
   let tooltip: string | null = null;
   if (!label.text) {
@@ -867,7 +883,19 @@ function buildLabel(
   return { label, rightMargin, leftMargin };
 }
 
-function getLabelText(atom) {
+function getLabelText(atom, atomId: number, sgroup?: SGroup) {
+  if (sgroup?.isSuperatomWithoutLabel) {
+    const attachmentPoint = sgroup
+      .getAttachmentPoints()
+      .find((attachmentPoint) => {
+        return attachmentPoint.leaveAtomId === atomId;
+      });
+
+    if (attachmentPoint && attachmentPoint.attachmentPointNumber) {
+      return getAttachmentPointLabel(attachmentPoint.attachmentPointNumber);
+    }
+  }
+
   if (atom.atomList !== null) return atom.atomList.label();
 
   if (atom.pseudo) return atom.pseudo;

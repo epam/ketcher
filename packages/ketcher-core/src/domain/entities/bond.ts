@@ -42,6 +42,8 @@ export interface BondAttributes {
   cip?: CIP | null;
   isPreview?: boolean;
   initiallySelected?: initiallySelectedType;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -110,6 +112,8 @@ export class Bond extends BaseMicromoleculeEntity {
   angle: number;
   center: Vec2;
   isPreview: boolean;
+  beginSuperatomAttachmentPointNumber?: number;
+  endSuperatomAttachmentPointNumber?: number;
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);
@@ -127,6 +131,10 @@ export class Bond extends BaseMicromoleculeEntity {
     this.sa = 0;
     this.angle = 0;
     this.isPreview = false;
+    this.beginSuperatomAttachmentPointNumber =
+      attributes.beginSuperatomAttachmentPointNumber;
+    this.endSuperatomAttachmentPointNumber =
+      attributes.endSuperatomAttachmentPointNumber;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -313,5 +321,21 @@ export class Bond extends BaseMicromoleculeEntity {
       struct.atoms.get(this.begin)?.sgs || new Pile();
     const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
+  }
+
+  public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
+    const beginSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
+    const endSuperatomAttachmentPoint =
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.end);
+
+    return (
+      (beginSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(struct, bond.begin) &&
+        bond.end === beginSuperatomAttachmentPoint.atomId) ||
+      (endSuperatomAttachmentPoint &&
+        Atom.isHiddenLeavingGroupAtom(struct, bond.end) &&
+        bond.begin === endSuperatomAttachmentPoint.atomId)
+    );
   }
 }

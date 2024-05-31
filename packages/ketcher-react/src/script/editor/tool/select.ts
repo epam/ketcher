@@ -175,6 +175,7 @@ class SelectTool implements Tool {
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
+
     if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
@@ -709,7 +710,7 @@ function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
 
   for (const sgId of selectedSgroups) {
     const sgroup = editor.render.ctab.sgroups.get(sgId);
-    if (sgroup) {
+    if (sgroup && !sgroup.item?.isSuperatomWithoutLabel) {
       const sgroupAtoms = SGroup.getAtoms(editor.struct(), sgroup.item);
       const sgroupBonds = SGroup.getBonds(editor.struct(), sgroup.item);
       newSelected.atoms.push(...sgroupAtoms);

@@ -30,6 +30,9 @@ import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
   IKetConnection,
+  IKetConnectionEndPoint,
+  IKetConnectionMoleculeEndPoint,
+  IKetConnectionMonomerEndPoint,
   IKetMacromoleculesContent,
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
@@ -63,9 +66,10 @@ import {
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
-import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
 import { MonomerItemType } from 'domain/types';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -197,13 +201,7 @@ export class KetSerializer implements Serializer<Struct> {
     connection: IKetConnection,
     editor: CoreEditor,
   ) {
-    if (
-      connection.connectionType !== KetConnectionType.SINGLE ||
-      !connection.endpoint1.monomerId ||
-      !connection.endpoint2.monomerId ||
-      !connection.endpoint1.attachmentPointId ||
-      !connection.endpoint2.attachmentPointId
-    ) {
+    if (connection.connectionType !== KetConnectionType.SINGLE) {
       editor.events.error.dispatch('Error during file parsing');
       return true;
     }
@@ -316,6 +314,7 @@ export class KetSerializer implements Serializer<Struct> {
       label: template.alias || template.id,
       struct: this.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
+      attachmentPoints: template.attachmentPoints,
     };
     this.fillStructRgLabelsByMonomerTemplate(template, monomerLibraryItem);
 
@@ -353,7 +352,9 @@ export class KetSerializer implements Serializer<Struct> {
         ).toString();
         assert(monomerItem.props.MonomerCaps);
         monomerItem.props.MonomerCaps[
-          convertAttachmentPointNumberToLabel(Number(leavingGroupAtom.rglabel))
+          getAttachmentPointLabelWithBinaryShift(
+            Number(leavingGroupAtom.rglabel),
+          )
         ] = leavingGroupAtom.label;
         leavingGroupAtom.label = 'R#';
       },
@@ -410,10 +411,12 @@ export class KetSerializer implements Serializer<Struct> {
     const fragments = MacromoleculesConverter.getFragmentsGroupedBySgroup(
       deserializedMicromolecules,
     );
+    const atomIdMap = new Map<number, number>();
     fragments.forEach((_fragment) => {
       const fragmentStruct = deserializedMicromolecules.getFragment(
         _fragment,
         false,
+        atomIdMap,
       );
       const fragmentBbox = fragmentStruct.getCoordBoundingBox();
       const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
@@ -435,9 +438,16 @@ export class KetSerializer implements Serializer<Struct> {
           fragmentBbox.max.y - (fragmentBbox.max.y - fragmentBbox.min.y) / 2,
         ),
       );
+      const monomer = monomerAdditionCommand.operations[0].monomer;
+      monomerIdsMap[`mol${fragmentNumber - 1}`] = monomer?.id;
       command.merge(monomerAdditionCommand);
       fragmentNumber++;
     });
+
+    const superatomMonomerToUsedAttachmentPoint = new Map<
+      BaseMonomer,
+      Set<string>
+    >();
 
     parsedFileContent.root.connections?.forEach((connection) => {
       switch (connection.connectionType) {
@@ -446,6 +456,8 @@ export class KetSerializer implements Serializer<Struct> {
             connection,
             drawingEntitiesManager,
             monomerIdsMap,
+            atomIdMap,
+            superatomMonomerToUsedAttachmentPoint,
           );
           command.merge(bondAdditionCommand);
           break;
@@ -466,6 +478,37 @@ export class KetSerializer implements Serializer<Struct> {
     return this.deserializeToStruct(fileContent);
   }
 
+  getConnectionMonomerEndpoint(
+    monomer: BaseMonomer,
+    polymerBond: PolymerBond,
+  ): IKetConnectionMonomerEndPoint {
+    return {
+      monomerId: setMonomerPrefix(monomer.id),
+      attachmentPointId: monomer.getAttachmentPointByBond(polymerBond),
+    };
+  }
+
+  getConnectionMoleculeEndpoint(
+    monomer: BaseMonomer,
+    polymerBond: PolymerBond,
+    monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
+    struct: Struct,
+  ): IKetConnectionMoleculeEndPoint {
+    const { attachmentAtomId } =
+      MacromoleculesConverter.findAttachmentPointAtom(
+        polymerBond,
+        monomer,
+        monomerToAtomIdMap,
+      );
+
+    return {
+      moleculeId: `mol${
+        struct.atoms.get(attachmentAtomId as number)?.fragment
+      }`,
+      atomId: `${attachmentAtomId as number}`,
+    };
+  }
+
   serializeMacromolecules(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -477,13 +520,23 @@ export class KetSerializer implements Serializer<Struct> {
         templates: [],
       },
     };
+    const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (
         monomer instanceof Chem &&
         monomer.monomerItem.props.isMicromoleculeFragment
       ) {
-        monomer.monomerItem.struct.mergeInto(struct);
+        const atomIdMap = new Map<number, number>();
+        monomer.monomerItem.struct.mergeInto(
+          struct,
+          null,
+          null,
+          false,
+          false,
+          atomIdMap,
+        );
+        monomerToAtomIdMap.set(monomer, atomIdMap);
       } else {
         const templateId =
           monomer.monomerItem.props.id ||
@@ -530,24 +583,32 @@ export class KetSerializer implements Serializer<Struct> {
     });
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
-      if (
-        polymerBond.firstMonomer.monomerItem.props.isMicromoleculeFragment ||
-        polymerBond.secondMonomer.monomerItem.props.isMicromoleculeFragment
-      ) {
-        return;
-      }
       fileContent.root.connections.push({
         connectionType: KetConnectionType.SINGLE,
-        endpoint1: {
-          monomerId: setMonomerPrefix(polymerBond.firstMonomer.id),
-          attachmentPointId:
-            polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond),
-        },
-        endpoint2: {
-          monomerId: setMonomerPrefix(polymerBond.secondMonomer.id),
-          attachmentPointId:
-            polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond),
-        },
+        endpoint1: polymerBond.firstMonomer.monomerItem.props
+          .isMicromoleculeFragment
+          ? (this.getConnectionMoleculeEndpoint(
+              polymerBond.firstMonomer,
+              polymerBond,
+              monomerToAtomIdMap,
+              struct,
+            ) as IKetConnectionEndPoint)
+          : (this.getConnectionMonomerEndpoint(
+              polymerBond.firstMonomer,
+              polymerBond,
+            ) as IKetConnectionEndPoint),
+        endpoint2: polymerBond.secondMonomer.monomerItem.props
+          .isMicromoleculeFragment
+          ? (this.getConnectionMoleculeEndpoint(
+              polymerBond.secondMonomer,
+              polymerBond,
+              monomerToAtomIdMap,
+              struct,
+            ) as IKetConnectionEndPoint)
+          : (this.getConnectionMonomerEndpoint(
+              polymerBond.secondMonomer,
+              polymerBond,
+            ) as IKetConnectionEndPoint),
       });
     });
 
@@ -573,6 +634,13 @@ export class KetSerializer implements Serializer<Struct> {
 
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
+
+    if (selection === undefined) {
+      // if selection is not provided, then reset all initially selected flags
+      // before serialization of micromolecules.
+      // It is case of saving molecules in macromolecules mode, so we don't send to indigo/save selection.
+      micromoleculesStruct.enableInitiallySelected();
+    }
 
     const serializedMicromoleculesStruct = JSON.parse(
       this.serializeMicromolecules(micromoleculesStruct),

@@ -722,8 +722,8 @@ test.describe('RNA Library', () => {
   });
 
   const monomersToDelete = [
-    { text: '12ddR', description: 'Sugar monomer deleted.' },
-    { text: 'baA', description: 'Base monomer deleted.' },
+    { text: 'R', description: 'Sugar monomer deleted.' },
+    { text: 'A', description: 'Base monomer deleted.' },
     { text: 'P', description: 'Phosphate monomer deleted.' },
   ];
 
@@ -927,7 +927,7 @@ test.describe('RNA Library', () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/3498
     Description: Ketcher switch to Micromolecule mode
-    Test is not working properly because we have bug.
+    Sugar does not have R3 attachment point so bond between sugar and base is not created
     */
     await openFileAndAddToCanvasMacro(
       'KET/monomers-connected-with-bonds.ket',

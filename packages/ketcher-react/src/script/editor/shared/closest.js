@@ -22,6 +22,8 @@ import {
   SGroup,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ReStruct,
+  Atom,
+  Bond,
 } from 'ketcher-core';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
@@ -146,7 +148,8 @@ function findClosestAtom(restruct, pos, skip, minDist) {
         sGroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(restruct.molecule, aid)
     ) {
       return null;
     }
@@ -202,7 +205,8 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
         sGroups,
         functionalGroups,
       ) ||
-      SGroup.isBondInContractedSGroup(bond.b, sGroups)
+      SGroup.isBondInContractedSGroup(bond.b, sGroups) ||
+      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond.b)
     ) {
       return null;
     }
@@ -445,7 +449,7 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT;
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.isContracted()) return null;
+    if (sg.isContracted() || sg.isSuperatomWithoutLabel) return null;
 
     const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);

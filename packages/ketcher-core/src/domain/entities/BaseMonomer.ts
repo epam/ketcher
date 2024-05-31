@@ -4,20 +4,19 @@ import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import assert from 'assert';
 import {
   IKetAttachmentPoint,
   IKetAttachmentPointType,
 } from 'application/formatters/types/ket';
-import { Bond } from 'domain/entities/bond';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { Pool } from 'domain/entities/pool';
+import { isNumber } from 'lodash';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
@@ -61,10 +60,12 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get listOfAttachmentPoints() {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
-    const attachmentPointList: string[] = [];
+    const attachmentPointList: AttachmentPointName[] = [];
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
-      if (this.attachmentPointsToBonds[`R${i}`] !== undefined) {
-        attachmentPointList.push(`R${i}`);
+      const attachmentPointLabel = getAttachmentPointLabel(i);
+
+      if (this.attachmentPointsToBonds[attachmentPointLabel] !== undefined) {
+        attachmentPointList.push(attachmentPointLabel);
       }
     }
     return attachmentPointList;
@@ -382,94 +383,55 @@ export abstract class BaseMonomer extends DrawingEntity {
     };
   }
 
-  private isRglabelConvertableToAttachmentPoint(
-    rglabel: number | string,
-    bondsToRgLabel: Pool<Bond>,
-  ) {
-    const label =
-      typeof rglabel === 'string'
-        ? rglabel
-        : convertAttachmentPointNumberToLabel(rglabel);
-
-    // Do not create attachment point if:
-    // there are multiple bonds to same leaving group atom
-    // there are multiple rglabels on same leaving group atom
-    // rglabel more than 8 (support only 8 attachment points in macromolecules mode)
-    return (
-      bondsToRgLabel.size === 1 &&
-      label.length === 2 &&
-      Number(label.replace('R', '')) <= 8
-    );
-  }
-
   private getMonomerDefinitionAttachmentPoints() {
     const monomerDefinitionAttachmentPoints: IKetAttachmentPoint[] = [];
-    this.leavingGroupsAtoms.forEach((leavingGroupsAtom) => {
+    this.superatomAttachmentPoints.forEach((superatomAttachmentPoint) => {
+      if (!isNumber(superatomAttachmentPoint.attachmentPointNumber)) {
+        return;
+      }
+
       const bondsToLeavingGroupAtom = this.monomerItem.struct.bonds.filter(
         (_, bond) => {
           return (
-            bond.begin === leavingGroupsAtom.id ||
-            bond.end === leavingGroupsAtom.id
+            bond.begin === superatomAttachmentPoint.leaveAtomId ||
+            bond.end === superatomAttachmentPoint.leaveAtomId
           );
         },
       );
 
-      if (
-        !this.isRglabelConvertableToAttachmentPoint(
-          leavingGroupsAtom.rglabel,
-          bondsToLeavingGroupAtom,
-        )
-      ) {
+      if (bondsToLeavingGroupAtom.size !== 1) {
         return;
       }
 
-      let attachmentAtomId: number;
-      let leavingGroupsAtomId: number | undefined;
-      const bondToLeavingGroupAtom = bondsToLeavingGroupAtom.get(0);
-
-      if (bondToLeavingGroupAtom) {
-        attachmentAtomId =
-          bondToLeavingGroupAtom.begin === leavingGroupsAtom.id
-            ? bondToLeavingGroupAtom.end
-            : bondToLeavingGroupAtom.begin;
-        leavingGroupsAtomId = leavingGroupsAtom.id;
-      } else {
-        attachmentAtomId = leavingGroupsAtom.id;
-      }
-
       monomerDefinitionAttachmentPoints.push({
-        attachmentAtom: attachmentAtomId,
+        attachmentAtom: superatomAttachmentPoint.atomId,
         leavingGroup: {
           atoms:
-            leavingGroupsAtomId === 0 || leavingGroupsAtomId
-              ? [leavingGroupsAtomId]
+            superatomAttachmentPoint.leaveAtomId === 0 ||
+            superatomAttachmentPoint.leaveAtomId
+              ? [superatomAttachmentPoint.leaveAtomId]
               : [],
         },
         type:
-          this.attachmentPointNumberToType[leavingGroupsAtom.rglabel] ||
-          this.attachmentPointNumberToType.moreThanTwo,
+          this.attachmentPointNumberToType[
+            superatomAttachmentPoint.attachmentPointNumber
+          ] || this.attachmentPointNumberToType.moreThanTwo,
       });
     });
     return monomerDefinitionAttachmentPoints;
   }
 
-  get leavingGroupsAtoms() {
-    const leavingGroupsAtoms = this.monomerItem.struct.atoms.filter(
-      (_, value) => {
-        return Boolean(value.rglabel);
-      },
-    );
-    const leavingGroupsAtomsArray: { id: number; rglabel: number }[] = [];
-    leavingGroupsAtoms.forEach((leavingGroupAtom, leavingGroupAtomId) => {
-      leavingGroupsAtomsArray.push({
-        id: leavingGroupAtomId,
-        rglabel: Number(leavingGroupAtom.rglabel),
-      });
-    });
-    leavingGroupsAtomsArray.sort((atom1, atom2) =>
-      Number(atom1.rglabel) > Number(atom2.rglabel) ? 1 : -1,
-    );
-    return leavingGroupsAtomsArray;
+  get superatomAttachmentPoints() {
+    const struct = this.monomerItem.struct;
+    const superatomWithoutLabel = struct.sgroups
+      .filter((_, sgroup) => sgroup.isSuperatomWithoutLabel)
+      ?.get(0);
+
+    if (!superatomWithoutLabel) {
+      return [];
+    }
+
+    return superatomWithoutLabel.getAttachmentPoints();
   }
 
   public getAttachmentPointDictFromAtoms(): Partial<
@@ -477,9 +439,15 @@ export abstract class BaseMonomer extends DrawingEntity {
   > {
     const attachmentPointNameToBond = {};
 
-    this.leavingGroupsAtoms.forEach(({ rglabel, id }, _) => {
-      const label = convertAttachmentPointNumberToLabel(Number(rglabel));
-      const leavingGroupAtomId = id;
+    this.superatomAttachmentPoints.forEach((superatomAttachmentPoint) => {
+      if (!isNumber(superatomAttachmentPoint.attachmentPointNumber)) {
+        return;
+      }
+
+      const label = getAttachmentPointLabel(
+        superatomAttachmentPoint.attachmentPointNumber,
+      );
+      const leavingGroupAtomId = superatomAttachmentPoint.leaveAtomId;
       const bondsToLeavingGroupAtom = this.monomerItem.struct.bonds.filter(
         (_, bond) => {
           return (
@@ -488,12 +456,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         },
       );
 
-      if (
-        !this.isRglabelConvertableToAttachmentPoint(
-          label,
-          bondsToLeavingGroupAtom,
-        )
-      ) {
+      if (bondsToLeavingGroupAtom.size !== 1) {
         return;
       }
 

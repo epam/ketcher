@@ -32,14 +32,20 @@ export class SGroupAttachmentPoint {
    */
   public readonly attachmentId: string | undefined;
 
+  // Field attachmentPointNumber is used for superatom attachment points
+  // which are used for connection between molecule and monomer.
+  public readonly attachmentPointNumber?: number;
+
   constructor(
     atomId: number,
     leaveAtomId: number | undefined,
     attachmentId: string | undefined,
+    attachmentPointNumber?: number,
   ) {
     this.atomId = atomId;
     this.leaveAtomId = leaveAtomId;
     this.attachmentId = attachmentId;
+    this.attachmentPointNumber = attachmentPointNumber;
   }
 
   clone(atomIdMap: Map<number, number>): SGroupAttachmentPoint {
@@ -50,6 +56,7 @@ export class SGroupAttachmentPoint {
       newAtomId,
       newLeaveAtomId,
       this.attachmentId,
+      this.attachmentPointNumber,
     );
   }
 

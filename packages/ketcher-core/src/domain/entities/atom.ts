@@ -24,6 +24,7 @@ import {
   BaseMicromoleculeEntity,
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
+import { isNumber } from 'lodash';
 
 /**
  * Return unions of Pick.
@@ -717,6 +718,108 @@ export class Atom extends BaseMicromoleculeEntity {
     }
 
     return rad + conn + Math.abs(charge);
+  }
+
+  public static getSuperAtomAttachmentPointByAttachmentAtom(
+    struct: Struct,
+    atomId: number,
+  ) {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.atomId === atomId);
+  }
+
+  public static getSuperAtomAttachmentPointByLeavingGroup(
+    struct: Struct,
+    atomId: number,
+  ) {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    return sgroup
+      ?.getAttachmentPoints()
+      .find((attachmentPoint) => attachmentPoint.leaveAtomId === atomId);
+  }
+
+  public static isSuperatomLeavingGroupAtom(struct: Struct, atomId?: number) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId),
+    );
+  }
+
+  public static isSuperatomAttachmentAtom(struct: Struct, atomId?: number) {
+    if (atomId === undefined) {
+      return false;
+    }
+
+    return Boolean(
+      Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId),
+    );
+  }
+
+  public static getAttachmentAtomExternalConnections(
+    struct: Struct,
+    attachmentAtomId?: number,
+    leavingGroupAtomid?: number,
+  ) {
+    const bonds = struct.bonds;
+    const atomId = isNumber(attachmentAtomId)
+      ? attachmentAtomId
+      : (leavingGroupAtomid as number);
+    const atom = struct.atoms.get(atomId);
+    const attachmentPoint = isNumber(attachmentAtomId)
+      ? Atom.getSuperAtomAttachmentPointByAttachmentAtom(struct, atomId)
+      : Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId);
+    const attachmentPointAtomBonds =
+      attachmentPoint &&
+      bonds.filter(
+        (_, bond) =>
+          (bond.begin === attachmentPoint.atomId &&
+            bond.end !== attachmentPoint.leaveAtomId) ||
+          (bond.end === attachmentPoint.atomId &&
+            bond.begin !== attachmentPoint.leaveAtomId),
+      );
+    const attachmentAtomExternalConnection =
+      attachmentPointAtomBonds &&
+      attachmentPointAtomBonds.filter((_, bond) => {
+        const beginAtom = struct.atoms.get(bond.begin);
+        const endAtom = struct.atoms.get(bond.end);
+        return (
+          beginAtom?.fragment !== atom?.fragment ||
+          endAtom?.fragment !== atom?.fragment
+        );
+      });
+
+    return attachmentAtomExternalConnection;
+  }
+
+  public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {
+    const attachmentAtomExternalConnections =
+      Atom.getAttachmentAtomExternalConnections(struct, undefined, atomId);
+    const attachmentPoint = Atom.getSuperAtomAttachmentPointByLeavingGroup(
+      struct,
+      atomId,
+    );
+    const sgroup = struct.getGroupFromAtomId(atomId);
+
+    if (!sgroup || !sgroup?.isSuperatomWithoutLabel) {
+      return false;
+    }
+
+    return (
+      Atom.isSuperatomLeavingGroupAtom(struct, atomId) &&
+      attachmentAtomExternalConnections &&
+      attachmentAtomExternalConnections.find((_, bond) =>
+        bond.begin === attachmentPoint?.atomId
+          ? bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber
+          : bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint?.attachmentPointNumber,
+      )
+    );
   }
 }
 

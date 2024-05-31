@@ -262,7 +262,8 @@ class ReBond extends ReObject {
         bond,
         sgroups,
         functionalGroups,
-      )
+      ) ||
+      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
     ) {
       return null;
     }
@@ -282,7 +283,8 @@ class ReBond extends ReObject {
         bond,
         sgroups,
         functionalGroups,
-      )
+      ) ||
+      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
     ) {
       return null;
     }
@@ -299,6 +301,11 @@ class ReBond extends ReObject {
     const bond = restruct.molecule.bonds.get(bid)!;
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
+
+    if (Bond.isBondToHiddenLeavingGroup(struct, bond)) {
+      return;
+    }
+
     if (
       bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(

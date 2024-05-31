@@ -244,7 +244,9 @@ export class SGroup {
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId }) => attachmentPoint.atomId === atomId,
+      ({ atomId, leaveAtomId }) =>
+        attachmentPoint.atomId === atomId &&
+        attachmentPoint.leaveAtomId === leaveAtomId,
     );
 
     if (isAttachmentPointAlreadyExist) {
@@ -266,10 +268,8 @@ export class SGroup {
     }
   }
 
-  removeAttachmentPoint(attachmentPointAtomId: number): boolean {
-    const index = this.attachmentPoints.findIndex(
-      ({ atomId }) => attachmentPointAtomId === atomId,
-    );
+  removeAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): boolean {
+    const index = this.attachmentPoints.indexOf(attachmentPoint);
     if (index !== -1) {
       this.attachmentPoints.splice(index, 1);
       return true;
@@ -341,6 +341,10 @@ export class SGroup {
     atomIdMap: Map<number, number>,
   ): ReadonlyArray<SGroupAttachmentPoint> {
     return this.attachmentPoints.map((point) => point.clone(atomIdMap));
+  }
+
+  public get isSuperatomWithoutLabel() {
+    return this.type === SGroup.TYPES.SUP && !this.data.name;
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {

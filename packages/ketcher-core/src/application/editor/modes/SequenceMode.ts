@@ -821,6 +821,48 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
+  private isR1Free(firstNode: SubChainNode): boolean {
+    return firstNode?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+  }
+
+  private isR2Free(lastNode: SubChainNode): boolean {
+    return lastNode?.lastMonomerInNode?.attachmentPointsToBonds.R2 === null;
+  }
+
+  private areR1R2Free(
+    firstNode: SubChainNode,
+    lastNode: SubChainNode,
+  ): boolean {
+    return this.isR1Free(firstNode) && this.isR2Free(lastNode);
+  }
+
+  isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
+    if (!this.isEditMode) {
+      return true;
+    }
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const lastNodeOfNewFragment = chainsCollection.lastNode;
+    const firstNodeOfNewFragment = chainsCollection.firstNode;
+    const isPasteInEnd =
+      currentNode instanceof EmptySequenceNode || !currentNode;
+    const isPasteInStart = !previousNodeInSameChain;
+    if (isPasteInEnd && !previousNodeInSameChain) return true;
+    if (isPasteInEnd) {
+      return (
+        this.isR1Free(firstNodeOfNewFragment) &&
+        this.isR2Free(previousNodeInSameChain)
+      );
+    }
+    if (isPasteInStart) {
+      return this.isR2Free(lastNodeOfNewFragment) && this.isR1Free(currentNode);
+    }
+    return this.areR1R2Free(firstNodeOfNewFragment, lastNodeOfNewFragment);
+  }
+
   applyAdditionalPasteOperations(
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
@@ -867,7 +909,23 @@ export class SequenceMode extends BaseMode {
     const currentNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
-
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
+      if (!this.isR2Free(previousNodeInSameChain)) {
+        this.showMergeWarningModal(editor);
+        return;
+      }
+    }
+    if (
+      !previousNodeInSameChain &&
+      !(currentNode instanceof EmptySequenceNode) &&
+      currentNode
+    ) {
+      if (!this.isR1Free(currentNode)) {
+        this.showMergeWarningModal(editor);
+        return;
+      }
+    }
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
       modelChanges = this.handlePeptideNodeAddition(
         enteredSymbol,
@@ -881,6 +939,14 @@ export class SequenceMode extends BaseMode {
       );
     }
     return modelChanges;
+  }
+
+  private showMergeWarningModal(editor: CoreEditor) {
+    editor.events.openErrorModal.dispatch({
+      errorTitle: 'Error Message',
+      errorMessage:
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+    });
   }
 
   private insertNewSequenceFragment(

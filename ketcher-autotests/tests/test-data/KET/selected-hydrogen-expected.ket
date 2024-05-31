@@ -1,0 +1,25 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    14.700000000000001,
+                    -8,
+                    0
+                ],
+                "selected": true
+            }
+        ]
+    }
+}

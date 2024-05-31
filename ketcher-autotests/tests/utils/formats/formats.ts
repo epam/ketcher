@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { MolfileFormat, SupportedModes } from 'ketcher-core';
+import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
@@ -104,6 +104,24 @@ export async function addFragment(
   return await page.evaluate(
     (structStr) => window.ketcher.addFragment(structStr),
     structStr,
+  );
+}
+
+export async function layout(page: Page): Promise<void> {
+  return await page.evaluate(() => window.ketcher.layout());
+}
+
+export async function recognize(
+  page: Page,
+  image: Blob,
+  version?: string,
+): Promise<Struct> {
+  return await page.evaluate(
+    (params: { img: Blob; ver?: string }) => {
+      const { img, ver } = params;
+      return window.ketcher.recognize(img, ver);
+    },
+    { img: image, ver: version },
   );
 }
 

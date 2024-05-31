@@ -7,8 +7,9 @@ import {
   DEFAULT_KETCHER_STANDALONE_URL,
   MODES,
 } from './constants';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */

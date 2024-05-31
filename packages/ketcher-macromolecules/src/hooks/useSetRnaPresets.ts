@@ -28,7 +28,7 @@ function useSetRnaPresets() {
     const monomersLibrary = editor.monomersLibrary;
     const defaultPresetsTemplates = editor.defaultRnaPresetsLibraryItems;
     const defaultPresets: IRnaPreset[] = [
-      ...getPresets(monomersLibrary, defaultPresetsTemplates),
+      ...getPresets(monomersLibrary, defaultPresetsTemplates, true),
     ];
     let customLabeledPresets = getCachedCustomRnaPresets();
     let customPresets: IRnaPreset[] = [];

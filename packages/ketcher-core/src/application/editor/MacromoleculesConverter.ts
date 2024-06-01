@@ -90,9 +90,12 @@ export class MacromoleculesConverter {
     const atomIdMap = monomerToAtomIdMap.get(monomer);
 
     return {
-      attachmentAtomId:
+      globalAttachmentAtomId:
         isNumber(attachmentPoint?.attachmentAtom) &&
         atomIdMap?.get(attachmentPoint?.attachmentAtom as number),
+      attachmentAtomId:
+        isNumber(attachmentPoint?.attachmentAtom) &&
+        attachmentPoint?.attachmentAtom,
       attachmentPointNumber,
     };
   }
@@ -178,7 +181,7 @@ export class MacromoleculesConverter {
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
       const {
-        attachmentAtomId: beginAtom,
+        globalAttachmentAtomId: beginAtom,
         attachmentPointNumber: beginSuperatomAttachmentPointNumber,
       } = this.findAttachmentPointAtom(
         polymerBond,
@@ -186,7 +189,7 @@ export class MacromoleculesConverter {
         monomerToAtomIdMap,
       );
       const {
-        attachmentAtomId: endAtom,
+        globalAttachmentAtomId: endAtom,
         attachmentPointNumber: endSuperatomAttachmentPointNumber,
       } = this.findAttachmentPointAtom(
         polymerBond,

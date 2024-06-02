@@ -21,6 +21,7 @@ import {
   setActivePreset,
   setActivePresetForContextMenu,
   setIsEditMode,
+  setInvalidPresetError,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
@@ -42,7 +43,35 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
 
   const dispatch = useDispatch();
 
+  const validatePreset = (preset: IRnaPreset) => {
+    let isBaseValid = true;
+    let isSugarValid = true;
+    let isPhosphateValid = true;
+    if (preset?.base?.props?.MonomerCaps) {
+      isBaseValid = 'R1' in preset.base.props.MonomerCaps;
+    }
+    if (preset?.sugar?.props?.MonomerCaps) {
+      if (isBaseValid && preset?.base?.props?.MonomerCaps) {
+        isSugarValid = 'R3' in preset.sugar.props.MonomerCaps;
+      }
+    }
+    if (preset?.phosphate?.props?.MonomerCaps) {
+      isPhosphateValid = 'R1' in preset.phosphate.props.MonomerCaps;
+      if (isSugarValid && preset?.sugar?.props?.MonomerCaps) {
+        isSugarValid = 'R2' in preset.sugar.props.MonomerCaps;
+      }
+    }
+
+    return isBaseValid && isSugarValid && isPhosphateValid;
+  };
+
   const selectPreset = (preset: IRnaPreset) => () => {
+    const isPresetValid = validatePreset(preset);
+
+    if (!isPresetValid && preset.name) {
+      dispatch(setInvalidPresetError(preset.name));
+      return;
+    }
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
     if (preset === activePreset?.presetInList) return;

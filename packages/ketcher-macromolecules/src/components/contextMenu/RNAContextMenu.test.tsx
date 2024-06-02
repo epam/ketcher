@@ -67,6 +67,21 @@ const monomerData = [
 describe('RNA ContextMenu', () => {
   const editPreset = jest.fn();
   const duplicatePreset = jest.fn();
+  const initialState = {
+    library: {
+      searchFilter: '',
+      favorites: {},
+      monomers: monomerData,
+    },
+    rnaBuilder: {
+      presets: mockedPresets,
+      groupItemValidations: {
+        Bases: [],
+        Sugars: [],
+        Phosphates: [],
+      },
+    },
+  };
 
   it('should render contextMenu correctly', () => {
     render(
@@ -78,16 +93,7 @@ describe('RNA ContextMenu', () => {
             editPreset={editPreset}
           />
         </div>,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        initialState,
       ),
     );
     const presetCard = screen.getByTestId('A_A_R_P');
@@ -105,16 +111,7 @@ describe('RNA ContextMenu', () => {
             editPreset={editPreset}
           />
         </div>,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        initialState,
       ),
     );
     const preset = screen.getByTestId('A_A_R_P');
@@ -134,16 +131,7 @@ describe('RNA ContextMenu', () => {
           />
           <ModalContainer />
         </div>,
-        {
-          library: {
-            searchFilter: '',
-            favorites: {},
-            monomers: monomerData,
-          },
-          rnaBuilder: {
-            presets: mockedPresets,
-          },
-        },
+        initialState,
       ),
     );
     const preset = screen.getByTestId('A_A_R_P');

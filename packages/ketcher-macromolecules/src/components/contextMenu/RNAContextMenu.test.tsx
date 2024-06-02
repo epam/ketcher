@@ -74,8 +74,7 @@ describe('RNA ContextMenu', () => {
       monomers: monomerData,
     },
     rnaBuilder: {
-      presetsDefault: mockedPresets,
-      presetsCustom: [],
+      presets: mockedPresets,
       groupItemValidations: {
         Bases: [],
         Sugars: [],

@@ -115,6 +115,7 @@ class SGroupDelete extends BaseOperation {
     if (!sgroup) return;
     this.data.type = sgroup?.item?.type;
     this.data.pp = sgroup?.item?.pp;
+    this.data.oldSgroup = sgroup.item;
 
     if (sgroup?.item?.type === 'DAT' && sgroupData) {
       restruct.clearVisel(sgroupData.visel);

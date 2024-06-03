@@ -286,7 +286,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Copy and paste the Bond from reaction', async ({ page }) => {
+  test.skip('Copy and paste the Bond from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.

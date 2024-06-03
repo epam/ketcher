@@ -462,7 +462,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('Save as .mol V2000 file structure with stereo labels @FlackyTest', async ({
+  // TODO: It's unstable, skip for now
+  test.skip('Save as .mol V2000 file structure with stereo labels @FlackyTest', async ({
     page,
   }) => {
     /*

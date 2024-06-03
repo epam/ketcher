@@ -469,7 +469,7 @@ limitations under the License.
 
 #### Defined in
 
-[packages/ketcher-core/src/application/editor/shared/constants.js:17](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/editor/shared/constants.js#L17)
+[packages/ketcher-core/src/application/editor/shared/constants.ts:17](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/editor/shared/constants.js#L17)
 
 ___
 

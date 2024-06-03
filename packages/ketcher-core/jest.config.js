@@ -10,5 +10,12 @@ module.exports = {
     'domain(.*)$': '<rootDir>/src/domain/$1',
     'infrastructure(.*)$': '<rootDir>/src/infrastructure/$1',
     'utilities(.*)$': '<rootDir>/src/utilities/$1'
+  },
+  globals: {
+    'ts-jest': {
+      diagnostics: {
+        warnOnly: true
+      }
+    }
   }
 }

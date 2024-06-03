@@ -27,8 +27,8 @@ import { useEffect, useRef } from 'react'
 import { Ketcher } from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
+import { ketcherInitEventName } from './constants'
 import { useResizeObserver } from './hooks'
-import { KETCHER_INIT_EVENT_NAME } from './constants'
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -46,18 +46,19 @@ function Editor(props: EditorProps) {
     ref: rootElRef
   })
 
-  const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME)
-
   useEffect(() => {
     init({
       ...props,
       element: rootElRef.current
-    }).then((ketcher: Ketcher) => {
-      if (typeof onInit === 'function') {
-        onInit(ketcher)
-        window.dispatchEvent(ketcherInitEvent)
+    }).then(
+      ({ ketcher, ketcherId }: { ketcher: Ketcher; ketcherId: string }) => {
+        if (typeof onInit === 'function') {
+          onInit(ketcher)
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId))
+          window.dispatchEvent(ketcherInitEvent)
+        }
       }
-    })
+    )
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, [])
 

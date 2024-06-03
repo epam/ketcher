@@ -23,8 +23,8 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+import { tfx } from 'utilities'
 
-const tfx = util.tfx
 interface MinDistanceWithReferencePoint {
   minDist: number
   refPoint: Vec2 | null
@@ -378,7 +378,7 @@ class ReSimpleObject extends ReObject {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
 
-    const path = generatePath(this.item.mode, render.paper, pos, options)
+    const path = generatePath(this.item.mode, render.paper, pos)
 
     const offset = options.offset
     if (offset != null) path.translateAbs(offset.x, offset.y)
@@ -405,19 +405,19 @@ function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
   return dist
 }
 
-function generatePath(mode: SimpleObjectMode, paper, pos: Vec2, options?): any {
+function generatePath(mode: SimpleObjectMode, paper, pos: [Vec2, Vec2]): any {
   let path: any
   switch (mode) {
     case SimpleObjectMode.ellipse: {
-      path = draw.ellipse(paper, pos, options)
+      path = draw.ellipse(paper, pos)
       break
     }
     case SimpleObjectMode.rectangle: {
-      path = draw.rectangle(paper, pos, options)
+      path = draw.rectangle(paper, pos)
       break
     }
     case SimpleObjectMode.line: {
-      path = draw.line(paper, pos, options)
+      path = draw.line(paper, pos)
       break
     }
     default: {

@@ -81,6 +81,7 @@ export class SGroup {
   pp: Vec2 | null
   data: any
   firstSgroupAtom: any
+  firstSgroupAtomId: number
 
   constructor(type: string) {
     this.type = type
@@ -101,6 +102,7 @@ export class SGroup {
     this.xBonds = []
     this.neiAtoms = []
     this.pp = null
+    this.firstSgroupAtomId = -1
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
@@ -626,11 +628,23 @@ export class SGroup {
     })
   }
 
-  static isSuperAtom(sGroup) {
+  static isSuperAtom(sGroup: SGroup): boolean {
     if (!sGroup) {
       return false
     }
-    return sGroup.type === 'SUP'
+    return sGroup?.type === SGroup.TYPES.SUP
+  }
+
+  static isDataSGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.DAT
+  }
+
+  static isSRUSGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.SRU
+  }
+
+  static isMulSGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.MUL
   }
 
   static isExpandedSGroup(sGroup) {

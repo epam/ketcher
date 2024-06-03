@@ -14,12 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
+/*
+  This map is used to draw anything on 'layers'
+  You can treat these values as z-index: backround has the lowest z-index, indices has the highest
+*/
 export enum LayerMap {
   background = 'background',
   selectionPlate = 'selectionPlate',
   hovering = 'hovering',
   warnings = 'warnings',
   data = 'data',
+  additionalInfo = 'additionalInfo',
   indices = 'indices'
 }
 

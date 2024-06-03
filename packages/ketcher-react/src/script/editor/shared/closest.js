@@ -158,7 +158,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
   return null
 }
 
-function findClosestBond(restruct, pos, skip, minDist, scale) {
+function findClosestBond(restruct, pos, skip, minDist, options) {
   // eslint-disable-line max-params
   let closestBond = null
   let closestBondCenter = null
@@ -193,7 +193,6 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
     const cdist = Vec2.dist(pos, mid)
 
     const { render } = restruct
-    const { options } = render
     const hitboxPoints = bond.getSelectionPoints(render)
     const position = Scale.obj2scaled(pos, options)
     const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints)
@@ -228,7 +227,7 @@ function findClosestBond(restruct, pos, skip, minDist, scale) {
 
   if (
     closestBond !== null &&
-    minDist > SELECTION_DISTANCE_COEFFICIENT * scale
+    minDist > SELECTION_DISTANCE_COEFFICIENT * options.scale
   ) {
     return {
       id: closestBond,
@@ -292,7 +291,7 @@ function findClosestDataSGroupData(restruct, pos) {
   return ret
 }
 
-function findClosestFrag(restruct, pos, skip, minDist, scale) {
+function findClosestFrag(restruct, pos, skip, minDist, options) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
     SELECTION_DISTANCE_COEFFICIENT
@@ -309,7 +308,7 @@ function findClosestFrag(restruct, pos, skip, minDist, scale) {
     }
   }
 
-  const closestBond = findClosestBond(restruct, pos, skip, minDist, scale)
+  const closestBond = findClosestBond(restruct, pos, skip, minDist, options)
 
   if (closestBond) {
     const atomId = struct.bonds.get(closestBond.id).begin
@@ -442,7 +441,7 @@ function findClosestFG(restruct, pos, skip) {
   return null
 }
 
-function findClosestItem(restruct, pos, maps, skip, scale) {
+function findClosestItem(restruct, pos, maps, skip, options) {
   // eslint-disable-line max-params
   maps = maps || Object.keys(findMaps)
 
@@ -450,7 +449,7 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
 
   const closestItem = maps.reduce((res, mp) => {
     const minDist = res ? res.dist : null
-    const item = findMaps[mp](restruct, pos, skip, minDist, scale)
+    const item = findMaps[mp](restruct, pos, skip, minDist, options)
 
     if (item !== null) {
       const enrichedItem = {
@@ -475,14 +474,19 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
  * @param restruct { ReStruct }
  * @param selected { object }
  * @param maps { Array<string> }
- * @param scale { number }
+ * @param options { RenderOption }
  * @return {{
  * 		atoms: Map<number, number>?
  * 		bonds: Map<number, number>?
  *    atomToFunctionalGroup: Map<number, number>?
  * }}
  */
-function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
+function findCloseMerge(
+  restruct,
+  selected,
+  maps = ['atoms', 'bonds'],
+  options
+) {
   const pos = {
     atoms: new Map(), // aid -> position
     bonds: new Map() // bid -> position
@@ -527,7 +531,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
           pos[map].get(srcId),
           skip,
           null,
-          scale
+          options
         )
 
         if (item && !selected[map].includes(item.id)) {

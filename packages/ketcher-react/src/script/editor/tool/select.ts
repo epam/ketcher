@@ -33,7 +33,8 @@ import {
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
   scrollByVector,
-  shiftAndExtendCanvasByVector
+  shiftAndExtendCanvasByVector,
+  getItemsToFuse
 } from 'ketcher-core'
 
 import LassoHelper from './helper/lasso'
@@ -44,18 +45,22 @@ import { xor } from 'lodash/fp'
 import { Editor } from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { getMergeItems } from './helper/getMergeItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
+import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { Tool } from './Tool'
 
-class SelectTool {
-  #mode: string
-  #lassoHelper: LassoHelper
-  editor: Editor
-  dragCtx: any
+type SelectMode = 'lasso' | 'fragment' | 'rectangle'
 
-  constructor(editor, mode) {
+class SelectTool implements Tool {
+  readonly #mode: SelectMode
+  readonly #lassoHelper: LassoHelper
+  private readonly editor: Editor
+  private dragCtx: any
+  isMousedDown = false
+
+  constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor
     this.#mode = mode
     this.#lassoHelper = new LassoHelper(
@@ -70,6 +75,7 @@ class SelectTool {
   }
 
   mousedown(event) {
+    this.isMousedDown = true
     const rnd = this.editor.render
     const ctab = rnd.ctab
     const molecule = ctab.molecule
@@ -207,7 +213,11 @@ class SelectTool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      dragCtx.mergeItems = getMergeItems(editor, expSel)
+      const visibleSelectedItems = filterNotInCollapsedSGroup(
+        expSel,
+        this.editor.struct()
+      )
+      dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       resizeCanvas(rnd, event)
@@ -232,6 +242,11 @@ class SelectTool {
   }
 
   mouseup(event) {
+    if (!this.isMousedDown) {
+      return
+    }
+    this.isMousedDown = false
+
     const editor = this.editor
     const selected = editor.selection()
     const struct = editor.render.ctab
@@ -436,7 +451,7 @@ class SelectTool {
     this.editor.hover(null)
   }
 
-  selectElementsOnCanvas(
+  private selectElementsOnCanvas(
     elements: { atoms: number[]; bonds: number[] },
     editor: Editor,
     event
@@ -450,7 +465,10 @@ class SelectTool {
     )
   }
 
-  isDraggingStructureOnSaltOrSolvent(dragCtx, sgroups: Map<number, ReSGroup>) {
+  private isDraggingStructureOnSaltOrSolvent(
+    dragCtx,
+    sgroups: Map<number, ReSGroup>
+  ) {
     let isDraggingOnSaltOrSolventAtom
     let isDraggingOnSaltOrSolventBond
     if (dragCtx?.mergeItems) {

@@ -79,7 +79,10 @@ export function setExpandSGroup(restruct, sgid, attrs) {
   })
 
   const sgroup = restruct.molecule.sgroups.get(sgid)
-  if (sgroup.firstSgroupAtom) delete sgroup.firstSgroupAtom
+  if (sgroup.firstSgroupAtom) {
+    delete sgroup.firstSgroupAtom
+    delete sgroup.firstSgroupAtomId
+  }
   const atoms = SGroup.getAtoms(restruct, sgroup)
 
   atoms.forEach((aid) => {

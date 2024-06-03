@@ -29,6 +29,7 @@ const useFunctionalGroupEoc = () => {
       })
 
       editor.update(action)
+      editor.rotateController.rerender()
       highlightFG(dispatch, { group: null, id: null })
     },
     [dispatch, getKetcherInstance]

@@ -37,6 +37,7 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+import { tfx } from 'utilities'
 
 interface ElemAttr {
   text: string
@@ -200,7 +201,7 @@ class ReAtom extends ReObject {
           if (sg.atoms.includes(aid)) sgroupName = sg.data.name
         }
         const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
-          'font-weight': 700,
+          'font-weight': '700',
           'font-size': 14
         })
         restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)
@@ -251,7 +252,6 @@ class ReAtom extends ReObject {
       draw.recenterText(index.path, index.rbb)
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
     }
-    this.setHover(this.hover, render)
 
     if (this.showLabel && (!this.a.pseudo || isHydrogenIsotope)) {
       let hydroIndex: any = null
@@ -367,6 +367,9 @@ class ReAtom extends ReObject {
       }
     }
 
+    // draw hover after label is calculated
+    this.setHover(this.hover, render)
+
     if (this.a.attpnt) {
       const lsb = bisectLargestSector(this, restruct.molecule)
       showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
@@ -406,9 +409,10 @@ class ReAtom extends ReObject {
         // of just created text
         // text -> tspan
         const color = getStereoAtomColor(render.options, stereoLabel)
-        aamPath.node.childNodes[0].setAttribute('fill', color)
+        const node = aamPath.node.childNodes[0] as unknown as HTMLElement
+        node.setAttribute('fill', color)
         const opacity = getStereoAtomOpacity(render.options, stereoLabel)
-        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity)
+        node.setAttribute('fill-opacity', opacity.toString())
       }
       const aamBox = util.relBox(aamPath.getBBox())
       draw.recenterText(aamPath, aamBox)
@@ -636,10 +640,10 @@ function buildLabel(
   options: any
 ): ElemAttr {
   // eslint-disable-line max-statements
-  let label: any = {}
+  const label: any = {}
   label.text = getLabelText(atom.a)
 
-  if (label.text === '') label = 'R#' // for structures that missed 'M  RGP' tag in molfile
+  if (label.text === '') label.text = 'R#' // for structures that missed 'M  RGP' tag in molfile
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text)
@@ -965,7 +969,6 @@ function showWarning(
 ): { rbb: DOMRect; path: any } {
   const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const delta = 0.5 * render.options.lineWidth
-  const tfx = util.tfx
   const warning: any = {}
   const y = ps.y + atom.label.rbb.height / 2 + delta
   warning.path = render.paper
@@ -987,7 +990,6 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
   const asterisk = '∗'
   const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
-  const tfx = util.tfx
   let i, j
   for (i = 0; i < 4; ++i) {
     let attpntText = ''

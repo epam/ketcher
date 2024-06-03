@@ -22,6 +22,7 @@
     "build:remote:analyze": "cross-env MODE=remote run-s prebuild build:react:analyze postbuild",
     "test": "run-s test:prettier test:stylelint test:eslint test:unit",
     "test:eslint": "eslint . --ext .ts,.js,.jsx,.tsx",
+    "test:types": "tsc --noEmit",
     "test:unit": "react-app-rewired test --passWithNoTests --watchAll=false",
     "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",
     "test:prettier": "prettier --check \"./**/*.{js,ts,jsx,tsx,json}\"",

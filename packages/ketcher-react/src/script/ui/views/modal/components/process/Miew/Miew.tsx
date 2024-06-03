@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog } from '../../../../components'
+import { lazy, Suspense, useCallback, useRef, useState } from 'react'
+import { Dialog, LoadingCircles } from '../../../../components'
 import {
   FormatterFactory,
   Struct,
@@ -26,9 +27,9 @@ import classes from './Miew.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
-import Viewer from 'miew-react'
 import { Miew as MiewAsType } from 'miew'
-import { useCallback, useRef } from 'react'
+
+const Viewer = lazy(() => import('miew-react'))
 
 type MiewDialogProps = {
   miewOpts: any
@@ -117,6 +118,7 @@ const MiewDialog = ({
   ...prop
 }: Props) => {
   const miewRef = useRef<MiewAsType>()
+  const [isInitialized, setIsIsInitialized] = useState(false)
 
   const onMiewInit = useCallback(
     (miew: MiewAsType) => {
@@ -129,7 +131,10 @@ const MiewDialog = ({
         .then((res) =>
           miew.load(res, { sourceType: 'immediate', fileType: 'cml' })
         )
-        .then(() => miew.setOptions(miewOpts))
+        .then(() => {
+          miew.setOptions(miewOpts)
+          setIsIsInitialized(true)
+        })
         .catch((ex) => console.error(ex.message))
     },
     [miewOpts, server, struct]
@@ -150,7 +155,12 @@ const MiewDialog = ({
       params={prop}
       buttons={[
         'Cancel',
-        <button key="apply" onClick={exportCML} className={classes.applyButton}>
+        <button
+          key="apply"
+          onClick={exportCML}
+          className={classes.applyButton}
+          disabled={!isInitialized}
+        >
           Apply
         </button>
       ]}
@@ -163,7 +173,15 @@ const MiewDialog = ({
             miewTheme === 'dark' ? classes.miewDarkTheme : ''
           }`}
         >
-          <Viewer onInit={onMiewInit} />
+          <Suspense
+            fallback={
+              <div className={classes.loadingContainer}>
+                <LoadingCircles />
+              </div>
+            }
+          >
+            <Viewer onInit={onMiewInit} />
+          </Suspense>
         </div>
       </div>
     </Dialog>

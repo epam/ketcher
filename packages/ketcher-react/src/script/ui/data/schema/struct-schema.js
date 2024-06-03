@@ -256,8 +256,10 @@ const sgroup = {
           title: 'Polymer label',
           type: 'string',
           default: 'n',
-          pattern: '^[a-zA-Z]$',
-          invalidMessage: 'SRU subscript should consist of a single letter'
+          // any string, except empty and including double quotes
+          pattern: '^(?!\\s*$)[^"]+$',
+          invalidMessage:
+            'SRU subscript should not be empty and contain double quotes'
         },
         connectivity: {
           title: 'Repeat Pattern',

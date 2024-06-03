@@ -39,6 +39,7 @@ export const OperationType = Object.freeze({
   RXN_ARROW_ADD: 'Add rxn arrow',
   RXN_ARROW_DELETE: 'Delete rxn arrow',
   RXN_ARROW_MOVE: 'Move rxn arrow',
+  RXN_ARROW_ROTATE: 'Rotate rxn arrow',
   RXN_ARROW_RESIZE: 'Resize rxn arrow',
   RXN_PLUS_ADD: 'Add rxn plus',
   RXN_PLUS_DELETE: 'Delete rxn plus',

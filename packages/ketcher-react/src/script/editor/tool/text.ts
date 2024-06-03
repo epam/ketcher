@@ -23,14 +23,15 @@ import {
   fromTextDeletion,
   fromTextUpdating
 } from 'ketcher-core'
+import { Tool } from './Tool'
 
 interface Result {
   content: string
 }
 
-class TextTool {
-  editor: any
-  dragCtx: any
+class TextTool implements Tool {
+  private readonly editor: any
+  private dragCtx: any
 
   constructor(editor) {
     this.editor = editor

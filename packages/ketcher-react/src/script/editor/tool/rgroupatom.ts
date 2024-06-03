@@ -21,9 +21,10 @@ import {
   FunctionalGroup
 } from 'ketcher-core'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class RGroupAtomTool {
-  editor: Editor
+class RGroupAtomTool implements Tool {
+  private readonly editor: Editor
 
   constructor(editor) {
     // TODO: map atoms with labels

@@ -22,13 +22,13 @@ import { Scale } from 'domain/helpers'
 interface TextMoveData {
   id: any
   d: any
-  noinvalidate: boolean
+  noinvalidate?: boolean
 }
 
 export class TextMove extends BaseOperation {
   data: TextMoveData
 
-  constructor(id: any, d: any, noinvalidate: boolean) {
+  constructor(id: any, d: any, noinvalidate?: boolean) {
     super(OperationType.TEXT_MOVE)
     this.data = { id, d, noinvalidate }
   }

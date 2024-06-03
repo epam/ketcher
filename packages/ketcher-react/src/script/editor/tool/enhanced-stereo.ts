@@ -21,10 +21,11 @@ import {
 } from 'ketcher-core'
 
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class EnhancedStereoTool {
-  editor: Editor
-  stereoAtoms: Array<number>
+class EnhancedStereoTool implements Tool {
+  private readonly editor: Editor
+  private readonly stereoAtoms: Array<number>
   isNotActiveTool: true
 
   constructor(editor) {

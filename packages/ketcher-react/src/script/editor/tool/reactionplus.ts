@@ -16,10 +16,11 @@
 
 import { fromMultipleMove, fromPlusAddition } from 'ketcher-core'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class ReactionPlusTool {
-  editor: Editor
-  dragCtx: any
+class ReactionPlusTool implements Tool {
+  private readonly editor: Editor
+  private dragCtx: any
 
   constructor(editor) {
     this.editor = editor

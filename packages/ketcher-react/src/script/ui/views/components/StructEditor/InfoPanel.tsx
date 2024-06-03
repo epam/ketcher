@@ -29,10 +29,9 @@ import classes from './InfoPanel.module.less'
 const HOVER_PANEL_PADDING = 20
 
 function getSGroupFirstAtom(sGroup: SGroup, render: Render): Vec2 {
-  const { firstSgroupAtom } = sGroup
+  const { firstSgroupAtom, firstSgroupAtomId } = sGroup
   if (firstSgroupAtom) return firstSgroupAtom.pp
-  const [firstAtomId] = sGroup.atoms
-  return render.ctab.atoms?.get(firstAtomId)?.a.pp || new Vec2(0, 0)
+  return render.ctab.atoms?.get(firstSgroupAtomId)?.a.pp || new Vec2(0, 0)
 }
 
 function getPanelPosition(
@@ -96,7 +95,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const groupName = sGroup?.data?.name
 
   useEffect(() => {
-    if (!groupStruct && sGroup?.type === 'DAT') {
+    if (sGroup && SGroup.isDataSGroup(sGroup)) {
       setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
     } else {
       setSGroupData(null)
@@ -107,7 +106,11 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     setMolecule(groupStruct ? groupStruct.clone() : null)
   }, [groupName, groupStruct])
 
+  const nonTooltipSGroup =
+    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup)
+
   if (
+    nonTooltipSGroup ||
     (!molecule && !sGroupData) ||
     clientX === undefined ||
     clientY === undefined
@@ -120,7 +123,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const width = size.x
   const height = size.y
 
-  return molecule ? (
+  const showMolecule = molecule && sGroup && !SGroup.isDataSGroup(sGroup)
+
+  return showMolecule ? (
     <div
       style={{
         left: x + 'px',

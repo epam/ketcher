@@ -44,6 +44,7 @@ export type OperationType =
   | 'RXN_ARROW_ADD'
   | 'RXN_ARROW_DELETE'
   | 'RXN_ARROW_MOVE'
+  | 'RXN_ARROW_ROTATE'
   | 'RXN_ARROW_RESIZE'
   | 'RXN_PLUS_ADD'
   | 'RXN_PLUS_DELETE'

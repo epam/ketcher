@@ -19,14 +19,16 @@ import {
   fromArrowDeletion,
   fromArrowResizing,
   fromMultipleMove,
+  RxnArrowMode,
   Vec2
 } from 'ketcher-core'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class ReactionArrowTool {
-  mode: any
-  editor: Editor
-  dragCtx: any
+class ReactionArrowTool implements Tool {
+  private readonly mode: RxnArrowMode
+  private readonly editor: Editor
+  private dragCtx: any
 
   constructor(editor, mode) {
     this.mode = mode

@@ -33,6 +33,7 @@
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
+    "test:types": "tsc --noEmit",
     "test:unit": "jest --passWithNoTests",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\""

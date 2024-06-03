@@ -11,3 +11,13 @@ export async function addSuperatomAttachmentPoint(
   await clickOnAtom(page, atomLabel, atomIndex, 'right');
   await page.getByText('Add attachment point').click();
 }
+
+export async function removeSuperatomAttachmentPoint(
+  page: Page,
+  atomLabel: AtomLabelType,
+  atomIndex: number,
+) {
+  await page.keyboard.press('Escape');
+  await clickOnAtom(page, atomLabel, atomIndex, 'right');
+  await page.getByText('Remove attachment point').click();
+}

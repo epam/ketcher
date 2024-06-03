@@ -3,7 +3,7 @@ import { waitForPageInit } from '@utils/common';
 import {
   openFileAndAddToCanvasMacro,
   selectSingleBondTool,
-  takePageScreenshot,
+  takeEditorScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -31,6 +31,6 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
 
     bondLine.hover();
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

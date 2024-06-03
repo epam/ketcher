@@ -1,12 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test, expect } from '@playwright/test';
 import {
-  MacromoleculesLeftPanelButton,
+  MacromoleculesTopPanelButton,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
-  selectMacromoleculesLeftPanelButton,
+  selectMacromoleculesPanelButton,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -265,8 +265,8 @@ test.describe('Import/export sequence:', () => {
         Case 31: Check option "FASTA" to dropdown 'File format' of modal window 'Save Structure'
     */
     await selectSequenceLayoutModeTool(page);
-    await selectMacromoleculesLeftPanelButton(
-      MacromoleculesLeftPanelButton.Save,
+    await selectMacromoleculesPanelButton(
+      MacromoleculesTopPanelButton.Save,
       page,
     );
 

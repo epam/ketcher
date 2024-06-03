@@ -320,18 +320,22 @@ test.describe('Erase Tool', () => {
       page,
     );
     await selectEraseTool(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await page.getByText('Bal').locator('..').first().click();
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 8; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await page.getByText('D-2Nal').locator('..').first().click();
     await takeEditorScreenshot(page);
   });

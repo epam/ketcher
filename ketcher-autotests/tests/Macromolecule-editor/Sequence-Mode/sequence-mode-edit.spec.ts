@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import {
+  moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   selectSingleBondTool,
@@ -8,7 +9,6 @@ import {
   startNewSequence,
   switchSequenceEnteringType,
   takeEditorScreenshot,
-  takePageScreenshot,
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
@@ -34,7 +34,7 @@ test.describe('Sequence edit mode', () => {
     Description: Text-editing mode activates when users start a new sequence or edit an existing one.
     */
     await startNewSequence(page);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Context menu for right-click on canvas for new sequence and for clicking on existing', async ({
@@ -67,6 +67,7 @@ test.describe('Sequence edit mode', () => {
     await typePeptideAlphabet(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -5,7 +5,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   waitForRender,
-  takeLeftToolbarMacromoleculeScreenshot,
   selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
@@ -36,44 +35,35 @@ test.describe('Zoom Tool', () => {
     await turnOnMacromoleculesEditor(page);
   });
 
-  test('Validate presence of zoom button with three options: zoom in, zoom out, reset zoom.', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Zoom Tool
-    Description: Zoom button with three options: zoom in, zoom out, reset zoom are located in left toolbar.
-    */
-    await page.getByTestId('zoom-in-button').hover();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
-  });
-
   test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
     page,
   }) => {
     /* 
     Test case: Zoom Tool
-    Description: Zoom in, Zoom out, Reset buttons tooltips are located in the left toolbar.
+    Description: Zoom in, Zoom out, Reset buttons tooltips are located in the top toolbar.
     */
     const icons = [
       {
         testId: 'zoom-in-button',
-        title: 'Zoom In (Ctrl+=)',
+        title: 'Zoom In',
       },
       {
         testId: 'zoom-out-button',
-        title: 'Zoom Out (Ctrl+-)',
+        title: 'Zoom Out',
       },
       {
         testId: 'reset-zoom-button',
-        title: 'Reset Zoom (Ctrl+0)',
+        title: 'Zoom 100%',
       },
     ];
+    await page.getByTestId('zoom-selector').click();
     for (const icon of icons) {
       const iconButton = page.getByTestId(icon.testId);
       await expect(iconButton).toHaveAttribute('title', icon.title);
       await iconButton.hover();
       expect(icon.title).toBeTruthy();
     }
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into center of current view', async ({
@@ -87,17 +77,21 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -133,7 +127,9 @@ test.describe('Zoom Tool', () => {
       });
     }
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     await page.getByTestId('reset-zoom-button').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

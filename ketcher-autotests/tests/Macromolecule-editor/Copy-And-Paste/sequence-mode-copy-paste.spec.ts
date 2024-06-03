@@ -14,7 +14,7 @@ import {
   readFileContents,
   startNewSequence,
   selectSnakeLayoutModeTool,
-  // waitForRender,
+  waitForRender,
 } from '@utils';
 import {
   enterSequence,
@@ -197,6 +197,7 @@ test.describe('Sequence-edit mode', () => {
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -307,8 +308,11 @@ test.describe('Sequence-edit mode', () => {
     await clickOnSequenceSymbol(page, 'G');
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Control+v');
-    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await takeEditorScreenshot(page);
+    });
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 });

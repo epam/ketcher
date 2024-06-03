@@ -26,6 +26,7 @@ import { FunctionalGroup, Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
+import { isNumber } from 'lodash';
 
 export class SGroupBracketParams {
   readonly c: Vec2;
@@ -329,9 +330,25 @@ export class SGroup {
   } {
     let atomId = this.attachmentPoints[0]?.atomId;
     let representAtom = struct.atoms.get(atomId);
+    // if there is no attachment points in sgroup - use first externally connected atom if exist or just first atom
     if (!representAtom) {
-      atomId = this.atoms[0];
-      representAtom = struct.atoms.get(this.atoms[0]);
+      let externalConnectionAtom;
+      struct.bonds.forEach((bond) => {
+        const isBeginAtomInCurrentSgroup =
+          this.atoms.indexOf(bond.begin) !== -1;
+        const isEndAtomInCurrentSgroup = this.atoms.indexOf(bond.end) !== -1;
+
+        if (isBeginAtomInCurrentSgroup && !isEndAtomInCurrentSgroup) {
+          externalConnectionAtom = bond.begin;
+        } else if (isEndAtomInCurrentSgroup && !isBeginAtomInCurrentSgroup) {
+          externalConnectionAtom = bond.end;
+        }
+      });
+
+      atomId = isNumber(externalConnectionAtom)
+        ? externalConnectionAtom
+        : this.atoms[0];
+      representAtom = struct.atoms.get(atomId);
     }
     assert(representAtom != null);
     return { atomId, position: representAtom.pp };

@@ -80,6 +80,8 @@ export class CoreEditor {
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
+  private copyEventHandler: (event: ClipboardEvent) => void = () => {};
+  private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -167,12 +169,14 @@ export class CoreEditor {
   }
 
   private setupCopyPasteEvent() {
-    document.addEventListener('copy', (event: ClipboardEvent) => {
+    this.copyEventHandler = (event: ClipboardEvent) => {
       this.mode.onCopy(event);
-    });
-    document.addEventListener('paste', (event: ClipboardEvent) => {
+    };
+    this.pasteEventHandler = (event: ClipboardEvent) => {
       this.mode.onPaste(event);
-    });
+    };
+    document.addEventListener('copy', this.copyEventHandler);
+    document.addEventListener('paste', this.pasteEventHandler);
   }
 
   private setupHotKeysEvents() {
@@ -380,6 +384,8 @@ export class CoreEditor {
       this.events[eventName].handlers = [];
     }
     document.removeEventListener('keydown', this.hotKeyEventHandler);
+    document.removeEventListener('copy', this.copyEventHandler);
+    document.removeEventListener('paste', this.pasteEventHandler);
   }
 
   get trackedDomEvents() {

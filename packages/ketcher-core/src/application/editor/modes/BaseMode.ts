@@ -195,15 +195,11 @@ export abstract class BaseMode {
           break;
       }
 
-      if (inputFormat) {
-        modelChanges = await this.pasteWithIndigoConversion(
-          pastedStr,
-          inputFormat,
-          isSequenceOrFasta,
-        );
-      } else {
-        editor.events.error.dispatch('Pasted format could not be recognized.');
-      }
+      modelChanges = await this.pasteWithIndigoConversion(
+        pastedStr,
+        inputFormat,
+        isSequenceOrFasta,
+      );
     }
 
     if (!modelChanges || modelChanges.operations.length === 0) {

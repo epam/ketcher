@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Schema, Validator } from 'jsonschema';
 import {
   StereLabelStyleType,
   StereoColoringType,
@@ -21,9 +22,8 @@ import {
   ShowHydrogenLabelNames,
   defaultBondThickness,
 } from 'ketcher-core';
-import Ajv, { SchemaObject } from 'ajv';
 
-type ExtendedSchema = SchemaObject & {
+type ExtendedSchema = Schema & {
   enumNames?: Array<string>;
   default?: any;
 };
@@ -361,7 +361,7 @@ export function getDefaultOptions(): Record<string, any> {
   if (!optionsSchema.properties) return {};
 
   return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = (optionsSchema.properties[prop] as ExtendedSchema).default;
+    res[prop] = (optionsSchema.properties?.[prop] as ExtendedSchema)?.default;
     return res;
   }, {});
 }
@@ -369,15 +369,9 @@ export function getDefaultOptions(): Record<string, any> {
 export function validation(settings): Record<string, string> | null {
   if (typeof settings !== 'object' || settings === null) return null;
 
-  const ajv = new Ajv({
-    allErrors: true,
-    keywords: [{ keyword: 'enumNames', schemaType: 'array' }],
-  });
-
-  const validate = ajv.compile(optionsSchema);
-  validate(settings);
-  const errors = validate.errors || [];
-  const errorsProps = errors.map((el) => el.instancePath.slice(1));
+  const validator = new Validator();
+  const result = validator.validate(settings, optionsSchema);
+  const errorsProps = result.errors.map((el) => el.path[el.path.length - 1]);
 
   return Object.keys(settings).reduce((res, prop) => {
     if (!optionsSchema.properties) return res;

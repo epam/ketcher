@@ -16,7 +16,6 @@
 
 import { Component, useCallback, useState } from 'react';
 
-import Ajv from 'ajv';
 import { ErrorPopover } from './errorPopover';
 import { FormContext } from '../../../../../contexts';
 import Input from '../Input/Input';
@@ -29,6 +28,7 @@ import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
 import { cloneDeep } from 'lodash';
 import { IconButton } from 'components';
+import { Validator } from 'jsonschema';
 
 class Form extends Component {
   constructor(props) {
@@ -336,12 +336,12 @@ const SelectOneOf = (props) => {
 //
 
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
-  const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
   const schemaCopy = cloneDeep(schema);
 
+  Validator.prototype.customFormats = {};
   if (customValid) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
-      ajv.addFormat(formatName, formatValidator);
+      Validator.prototype.customFormats[formatName] = formatValidator;
       const {
         /* eslint-disable @typescript-eslint/no-unused-vars */
         pattern,
@@ -358,20 +358,20 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
     });
   }
 
-  const validate = ajv.compile(schemaCopy);
+  const validator = new Validator();
 
   return {
     key: schema.key || '',
     serialize: (inst) => {
-      validate(inst);
+      const result = validator.validate(inst, schemaCopy);
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
-        valid: validate(inst),
-        errors: validate.errors || [],
+        valid: result.valid,
+        errors: result.errors,
       };
     },
     deserialize: (inst) => {
-      validate(inst);
+      validator.validate(inst, schemaCopy);
       return deserializeRewrite(deserialize, inst);
     },
   };
@@ -395,10 +395,10 @@ function deserializeRewrite(deserializeMap, instance) {
 }
 
 function getInvalidMessage(item) {
-  if (!item.parentSchema.invalidMessage) return item.message;
-  return typeof item.parentSchema.invalidMessage === 'function'
-    ? item.parentSchema.invalidMessage(item.data)
-    : item.parentSchema.invalidMessage;
+  if (!item.schema.invalidMessage) return item.message;
+  return typeof item.schema.invalidMessage === 'function'
+    ? item.schema.invalidMessage(item.data)
+    : item.schema.invalidMessage;
 }
 
 function getErrorsObj(errors) {
@@ -406,7 +406,7 @@ function getErrorsObj(errors) {
   let field;
 
   errors.forEach((item) => {
-    field = item.instancePath.slice(1);
+    field = item.path[item.path.length - 1];
     if (!errs[field]) errs[field] = getInvalidMessage(item);
   });
 

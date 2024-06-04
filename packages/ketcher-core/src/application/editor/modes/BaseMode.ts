@@ -30,21 +30,21 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = 'flex-layout-mode',
   ) {}
 
-  private changeMode(editor: CoreEditor, modeName: LayoutMode) {
+  private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = modesMap[modeName];
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize();
+    editor.mode.initialize(true, isUndo);
   }
 
-  public initialize(needRemoveSelection = true) {
+  public initialize(needRemoveSelection = true, _isUndo = false) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 
     command.addOperation(
       new SelectLayoutModeOperation(
         this.changeMode.bind(this, editor, this.modeName),
-        this.changeMode.bind(this, editor, this.previousMode),
+        this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
       ),

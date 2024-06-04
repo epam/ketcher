@@ -144,7 +144,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms.forEach((atomId) => {
     const sgroup = struct.getGroupFromAtomId(atomId);
-    if (sgroup) {
+    if (sgroup && sgroup.isSuperatomWithoutLabel) {
       const attachmentPoints = sgroup.getAttachmentPoints();
       attachmentPoints.forEach((attachmentPoint) => {
         if (

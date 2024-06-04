@@ -120,18 +120,22 @@ export type ToolbarButton =
   | AtomButton
   | TopPanelButton
   | LeftPanelButton
+  | MacromoleculesTopPanelButton
   | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
 
 export enum MacromoleculesLeftPanelButton {
+  Erase = 'Erase',
+  SingleBond = 'Single Bond',
+}
+
+export enum MacromoleculesTopPanelButton {
   Clear = 'Clear',
   Undo = 'Undo',
   Redo = 'Redo',
   Open = 'Open...',
   Save = 'Save',
-  Erase = 'Erase',
-  SingleBond = 'Single Bond',
   ZoomIn = 'Zoom In',
   ZoomOut = 'Zoom Out',
-  ZoomReset = 'Reset Zoom',
+  ZoomReset = 'Zoom 100%',
 }

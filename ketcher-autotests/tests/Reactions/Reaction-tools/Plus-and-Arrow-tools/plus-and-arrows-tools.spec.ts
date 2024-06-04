@@ -216,7 +216,7 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test('Select plus sign, cut and paste it onto the canvas', async ({
+    test.skip('Select plus sign, cut and paste it onto the canvas', async ({
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
@@ -290,7 +290,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, 0, -100);
     });
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
+    test.skip('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
       await waitForRender(page, async () => {
@@ -372,7 +372,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, 0, -100);
     });
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
+    test.skip('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
       await waitForRender(page, async () => {

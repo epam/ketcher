@@ -494,7 +494,7 @@ export class KetSerializer implements Serializer<Struct> {
     monomerToAtomIdMap: Map<BaseMonomer, Map<number, number>>,
     struct: Struct,
   ): IKetConnectionMoleculeEndPoint {
-    const { attachmentAtomId } =
+    const { attachmentAtomId, globalAttachmentAtomId } =
       MacromoleculesConverter.findAttachmentPointAtom(
         polymerBond,
         monomer,
@@ -503,7 +503,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     return {
       moleculeId: `mol${
-        struct.atoms.get(attachmentAtomId as number)?.fragment
+        struct.atoms.get(globalAttachmentAtomId as number)?.fragment
       }`,
       atomId: `${attachmentAtomId as number}`,
     };

@@ -291,21 +291,27 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomIn; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
 
     await takeEditorScreenshot(page);
 
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     await page.getByTestId('reset-zoom-button').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -330,7 +336,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     await page.getByTestId('reset-zoom-button').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -346,11 +354,13 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomIn; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
 
@@ -760,11 +770,13 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
     await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 3; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -795,11 +807,13 @@ test.describe('Macro-Micro-Switcher', () => {
     await setAtomAndBondSettings(page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 3; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

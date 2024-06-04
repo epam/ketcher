@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import {
-  MacromoleculesLeftPanelButton,
+  MacromoleculesTopPanelButton,
   selectTopPanelButton,
   pressButton,
   TopPanelButton,
@@ -11,7 +11,7 @@ import {
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
-  selectMacromoleculesLeftPanelButton,
+  selectMacromoleculesPanelButton,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -191,8 +191,8 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectMacromoleculesLeftPanelButton(
-    MacromoleculesLeftPanelButton.Open,
+  await selectMacromoleculesPanelButton(
+    MacromoleculesTopPanelButton.Open,
     page,
   );
   await page.getByText('Paste from clipboard').click();

@@ -6,6 +6,7 @@ import {
   turnOnMacromoleculesEditor,
   openFileAndAddToCanvasMacro,
   setZoom,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('setZoom', () => {
@@ -36,9 +37,11 @@ test.describe('setZoom', () => {
       await takeEditorScreenshot(page);
 
       if (adjustZoom) {
+        await page.getByTestId('zoom-selector').click();
         for (let i = 0; i < 3; i++) {
           await page.getByTestId('zoom-in-button').click();
         }
+        await clickInTheMiddleOfTheScreen(page);
         await takeEditorScreenshot(page);
       }
 

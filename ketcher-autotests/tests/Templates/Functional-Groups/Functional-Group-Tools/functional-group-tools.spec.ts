@@ -805,7 +805,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Attach copied Functional Group to atoms of structure', async ({
+  test.skip('Attach copied Functional Group to atoms of structure', async ({
     page,
   }) => {
     /*

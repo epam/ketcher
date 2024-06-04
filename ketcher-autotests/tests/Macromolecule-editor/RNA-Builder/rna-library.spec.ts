@@ -19,7 +19,6 @@ import {
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
-  takeLeftToolbarMacromoleculeScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takePresetsScreenshot,
@@ -29,6 +28,7 @@ import {
   moveMouseAway,
   delay,
   takeElementScreenshot,
+  takeTopToolbarScreenshot,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
@@ -862,14 +862,14 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check presence of Clear canvas button in left menu', async ({
+  test('Check presence of Clear canvas button in top menu', async ({
     page,
   }) => {
     /* 
     Test case: Clear Canvas tool
     Description: Clear canvas button presence in left menu
     */
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takeTopToolbarScreenshot(page);
   });
 
   test('Draw Sugar-Base-Phosphate and press Clear canvas', async ({ page }) => {

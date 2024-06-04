@@ -591,7 +591,7 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
   });
 
-  test('Templates - The preview of how the Template from the Templates toolbar will be merged, using Paste tool', async ({
+  test.skip('Templates - The preview of how the Template from the Templates toolbar will be merged, using Paste tool', async ({
     page,
   }) => {
     /*

@@ -18,13 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
-import {
-  hotkeysConfiguration,
-  generateMenuShortcuts,
-  Nucleotide,
-  Nucleoside,
-  NodeSelection,
-} from 'ketcher-core';
+import { Nucleotide, Nucleoside, NodeSelection } from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -38,13 +32,11 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import { Menu } from 'components/menu';
 import {
   createEditor,
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
-  selectIsSequenceEditInRNABuilderMode,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -64,10 +56,7 @@ import {
   openModal,
   selectErrorTooltipText,
 } from 'state/modal';
-import {
-  modalComponentList,
-  ModalContainer,
-} from 'components/modal/modalContainer';
+import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
@@ -85,7 +74,11 @@ import {
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { ErrorModal } from 'components/modal/Error';
-import { EditorWrapper, TogglerComponentWrapper } from './styledComponents';
+import {
+  TopMenuRightWrapper,
+  EditorWrapper,
+  TogglerComponentWrapper,
+} from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
@@ -97,7 +90,10 @@ import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemCont
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
-import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
+import { TopMenuComponent } from 'components/TopMenuComponent';
+import { LeftMenuComponent } from 'components/LeftMenuComponent';
+import { ZoomControls } from 'components/ZoomControls/ZoomControls';
+import { VerticalDivider } from 'components/menu/styles';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -113,9 +109,6 @@ interface EditorProps {
 }
 
 const noPreviewTools = ['bond-single'];
-
-const shortcuts =
-  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
 
 function EditorContainer({
   onInit,
@@ -333,23 +326,31 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   return (
     <>
       <Layout>
-        <Layout.Top shortened={isMonomerLibraryHidden}>
-          <SequenceTypeDropdown />
-          <LayoutModeButton />
-          <TogglerComponentWrapper
-            className={
-              isSequenceEditInRNABuilderMode
-                ? 'toggler-component-wrapper--disabled'
-                : ''
-            }
-          >
-            {togglerComponent}
-          </TogglerComponentWrapper>
-          <FullscreenButton />
+        <Layout.Top
+          shortened={isMonomerLibraryHidden}
+          data-testid="top-toolbar"
+        >
+          <TopMenuComponent />
+          <TopMenuRightWrapper>
+            <SequenceTypeDropdown />
+            <LayoutModeButton />
+            <TogglerComponentWrapper
+              className={
+                isSequenceEditInRNABuilderMode
+                  ? 'toggler-component-wrapper--disabled'
+                  : ''
+              }
+            >
+              {togglerComponent}
+            </TogglerComponentWrapper>
+            <FullscreenButton />
+            <VerticalDivider />
+            <ZoomControls />
+          </TopMenuRightWrapper>
         </Layout.Top>
 
         <Layout.Left>
-          <MenuComponent />
+          <LeftMenuComponent />
         </Layout.Left>
 
         <Layout.Main>
@@ -409,121 +410,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </StyledToast>
       </Snackbar>
     </>
-  );
-}
-
-function MenuComponent() {
-  const dispatch = useAppDispatch();
-  const activeTool = useAppSelector(selectEditorActiveTool);
-  const editor = useAppSelector(selectEditor);
-  const isSequenceEditInRNABuilderMode = useAppSelector(
-    selectIsSequenceEditInRNABuilderMode,
-  );
-  const activeMenuItems = [activeTool];
-  const isDisabled = !!isSequenceEditInRNABuilderMode;
-
-  const menuItemChanged = (name) => {
-    if (modalComponentList[name]) {
-      dispatch(openModal(name));
-    } else if (name === 'undo' || name === 'redo') {
-      editor.events.selectHistory.dispatch(name);
-    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
-      editor.events.selectTool.dispatch(name);
-      if (name === 'clear') {
-        if (
-          name === 'erase' &&
-          editor.drawingEntitiesManager.selectedEntities.length
-        ) {
-          dispatch(selectTool('select-rectangle'));
-          editor.events.selectTool.dispatch(name);
-          editor.events.selectTool.dispatch('select-rectangle');
-        } else {
-          if (name === 'clear') {
-            dispatch(selectTool('select-rectangle'));
-            editor.events.selectTool.dispatch('select-rectangle');
-            if (isSequenceEditInRNABuilderMode)
-              resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
-          } else {
-            dispatch(selectTool(name));
-          }
-        }
-      }
-    }
-  };
-
-  return (
-    <Menu
-      testId="left-toolbar"
-      onItemClick={menuItemChanged}
-      activeMenuItems={activeMenuItems}
-    >
-      <Menu.Group>
-        <Menu.Item
-          itemId="clear"
-          title={`Clear Canvas (${shortcuts.clear})`}
-          testId="clear-canvas"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="undo"
-          title={`Undo (${shortcuts.undo})`}
-          disabled={isDisabled}
-          testId="undo"
-        />
-        <Menu.Item
-          itemId="redo"
-          title={`Redo (${shortcuts.redo})`}
-          disabled={isDisabled}
-          testId="redo"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="open"
-          title="Open..."
-          disabled={isDisabled}
-          testId="open-button"
-        />
-        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="erase"
-          title={`Erase (${shortcuts.erase})`}
-          testId="erase"
-        />
-        <Menu.Item
-          itemId="select-rectangle"
-          title="Select Rectangle"
-          testId="select-rectangle"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="bond-single"
-          title="Single Bond (1)"
-          testId="single-bond"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="zoom-in"
-          title={`Zoom In (${shortcuts['zoom-plus']})`}
-          testId="zoom-in-button"
-        />
-        <Menu.Item
-          itemId="zoom-out"
-          title={`Zoom Out (${shortcuts['zoom-minus']})`}
-          testId="zoom-out-button"
-        />
-        <Menu.Item
-          itemId="zoom-reset"
-          title={`Reset Zoom (${shortcuts['zoom-reset']})`}
-          testId="reset-zoom-button"
-        />
-      </Menu.Group>
-    </Menu>
   );
 }
 

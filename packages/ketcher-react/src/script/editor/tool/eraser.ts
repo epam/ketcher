@@ -25,7 +25,6 @@ import {
   fromSimpleObjectDeletion,
   fromTextDeletion,
   FunctionalGroup,
-  MonomerMicromolecule,
   SGroup,
 } from 'ketcher-core';
 
@@ -344,10 +343,6 @@ class EraserTool implements Tool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id);
-
-      if (sGroup?.item instanceof MonomerMicromolecule) {
-        return;
-      }
 
       this.editor.update(
         fromFragmentDeletion(rnd.ctab, {

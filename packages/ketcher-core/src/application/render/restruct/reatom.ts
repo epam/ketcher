@@ -399,7 +399,7 @@ class ReAtom extends ReObject {
         }
       }
 
-      if (this.a.charge !== null && options.showCharge) {
+      if (this.a.charge && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;
         restruct.addReObjectPath(

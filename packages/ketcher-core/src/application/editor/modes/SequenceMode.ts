@@ -531,6 +531,8 @@ export class SequenceMode extends BaseMode {
       const nodeAfterSelection = SequenceRenderer.getNextNode(selectionEndNode);
       const nodeInSameChainBeforeSelection =
         SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
+      const nodeInSameChainAfterSelection =
+        SequenceRenderer.getNextNodeInSameChain(selectionEndNode);
 
       if (
         !nodeInSameChainBeforeSelection &&
@@ -547,7 +549,9 @@ export class SequenceMode extends BaseMode {
 
       if (
         !nodeBeforeSelection ||
-        nodeBeforeSelection instanceof EmptySequenceNode
+        nodeBeforeSelection instanceof EmptySequenceNode ||
+        nodeBeforeSelection !== nodeInSameChainBeforeSelection ||
+        nodeAfterSelection !== nodeInSameChainAfterSelection
       ) {
         return;
       }

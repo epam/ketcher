@@ -283,6 +283,10 @@ export class DrawingEntitiesManager {
       drawingEntity.monomerItem.struct.atoms.forEach((atom) => {
         atom.pp.add_(offset);
       });
+
+      drawingEntity.monomerItem.struct.sgroups.forEach((sgroup) => {
+        sgroup.pp?.add_(offset);
+      });
     }
   }
 

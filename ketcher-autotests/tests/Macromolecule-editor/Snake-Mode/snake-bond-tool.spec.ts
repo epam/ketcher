@@ -670,9 +670,6 @@ test.describe('Snake Bond Tool', () => {
     /* 
     Test case: Snake Mode
     Description: Peptide moved from middle of chain above and under main snake chain.
-    The test is not functioning as expected. Because we have a bug: https://github.com/epam/ketcher/issues/4333
-    The monomer is separating from the bonds, and it's unclear why. Manual verification on the bench shows it is functioning correctly. 
-    Further investigation is needed. However, in Flex mode, it works as expected.(Look at next test for flex sequence)
     */
     const x = 450;
     const y = 150;
@@ -839,9 +836,6 @@ test.describe('Snake Bond Tool', () => {
     /* 
     Test case: Snake Mode
     Description: Part of sequence moved to the new position without any distortion.
-    The test is not functioning as expected. Because we have a bug: https://github.com/epam/ketcher/issues/4333
-    The monomer is separating from the bonds, and it's unclear why. Manual verification on the bench shows it is functioning correctly. 
-    Further investigation is needed. However, in Flex mode, it works as expected.
     */
     const x = 450;
     const y = 650;

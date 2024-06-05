@@ -18,3 +18,4 @@ export * from './Editor';
 export * from './script';
 export * from './constants';
 export * from './components';
+export { AppContext } from './contexts';

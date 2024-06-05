@@ -42,7 +42,7 @@ async function buildKetcherAsync({
 
   await builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
-  await builder.appendUiAsync(
+  const { setKetcher, ketcherId } = await builder.appendUiAsync(
     element,
     appRoot,
     staticResourcesUrl,
@@ -51,7 +51,11 @@ async function buildKetcherAsync({
     togglerComponent,
   );
 
-  return builder.build();
+  const ketcher = builder.build();
+  if (ketcher) {
+    setKetcher(ketcher);
+  }
+  return { ketcher, ketcherId };
 }
 
 export type { Config, ButtonsConfig };

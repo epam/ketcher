@@ -86,22 +86,38 @@ export function isMonomerBeginningOfChain(
   );
 }
 
-export function isValidNucleotide(sugar: Sugar) {
-  const phosphate = getPhosphateFromSugar(sugar);
-  const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
+export function isValidNucleotide(sugar: Sugar): boolean {
+  if (!getRnaBaseFromSugar(sugar)) {
+    return false;
+  }
 
-  return Boolean(
-    getRnaBaseFromSugar(sugar) &&
-      getPhosphateFromSugar(sugar) &&
-      nextMonomerAfterPhosphate,
-  );
+  const phosphate = getPhosphateFromSugar(sugar);
+  if (!phosphate) {
+    return false;
+  }
+
+  const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
+  if (!(nextMonomerAfterPhosphate instanceof Sugar)) {
+    return false;
+  }
+
+  return !!getRnaBaseFromSugar(nextMonomerAfterPhosphate);
 }
 
-export function isValidNucleoside(sugar: Sugar) {
-  const phosphate = getPhosphateFromSugar(sugar);
-  const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
+export function isValidNucleoside(sugar: Sugar): boolean {
+  if (!getRnaBaseFromSugar(sugar)) {
+    return false;
+  }
 
-  return (
-    getRnaBaseFromSugar(sugar) && (!phosphate || !nextMonomerAfterPhosphate)
-  );
+  const phosphate = getPhosphateFromSugar(sugar);
+  if (!phosphate) {
+    return true;
+  }
+
+  const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
+  if (!(nextMonomerAfterPhosphate instanceof Sugar)) {
+    return true;
+  }
+
+  return !getRnaBaseFromSugar(nextMonomerAfterPhosphate);
 }

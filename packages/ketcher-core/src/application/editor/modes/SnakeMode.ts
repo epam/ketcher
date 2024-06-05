@@ -70,4 +70,8 @@ export class SnakeMode extends BaseMode {
   isPasteAllowedByMode(): boolean {
     return true;
   }
+
+  isPasteAvailable(): boolean {
+    return true;
+  }
 }

@@ -160,8 +160,12 @@ test.describe('Rectangle Selection Tool', () => {
   test('Monomer appears above other monomers, when selected', async ({
     page,
   }) => {
+    /*
+      Test case: Selected monomer does not appear above the others
+      See issue https://github.com/epam/ketcher/issues/3703 for more detailes
+    */
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const shift = 25;
+    const shift = 12;
     const betaAlaninePosition = {
       x: center.x - shift,
       y: center.y,
@@ -176,6 +180,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Now Beta Alanine must be above Ethylthiocysteine
     await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

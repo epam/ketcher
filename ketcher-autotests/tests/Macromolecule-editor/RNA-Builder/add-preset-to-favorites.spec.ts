@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot } from '@utils';
 import { gotoRNA } from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Macromolecules add RNA presets to Favorites', () => {
@@ -11,7 +11,7 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
 
   test('Should have star when hover over RNA presets', async ({ page }) => {
     await page.getByTestId('A_A_R_P').hover();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Should add RNA presets to Favorites', async ({ page }) => {

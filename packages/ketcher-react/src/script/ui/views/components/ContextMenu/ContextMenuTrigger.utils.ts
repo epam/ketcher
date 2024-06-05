@@ -50,7 +50,8 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      return functionalGroup === null
+      return functionalGroup === null ||
+        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel
         ? {
             id: CONTEXT_MENU_ID.FOR_BONDS,
             bondIds: [closestItem.id],
@@ -68,7 +69,8 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      return functionalGroup === null
+      return functionalGroup === null ||
+        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel
         ? {
             id: CONTEXT_MENU_ID.FOR_ATOMS,
             atomIds: [closestItem.id],

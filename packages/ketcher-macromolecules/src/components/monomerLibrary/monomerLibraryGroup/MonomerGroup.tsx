@@ -14,14 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { EmptyFunction } from 'helpers';
+import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
-import { calculatePreviewPosition } from '../../../helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   showPreview,
@@ -29,7 +28,10 @@ import {
   selectEditor,
   selectTool,
 } from 'state/common';
-import { selectActiveRnaBuilderItem } from 'state/rna-builder';
+import {
+  selectActiveRnaBuilderItem,
+  selectGroupItemValidations,
+} from 'state/rna-builder';
 
 const MonomerGroup = ({
   items,
@@ -44,6 +46,25 @@ const MonomerGroup = ({
   const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
+
+  const isMonomerDisabled = (monomer: MonomerItemType) => {
+    let monomerDisabled = false;
+    if (disabled) {
+      monomerDisabled = disabled;
+    } else {
+      const monomerValidations =
+        activeGroupItemValidations[`${monomer.props.MonomerClass}s`];
+      if (monomerValidations?.length > 0 && monomer.props.MonomerCaps) {
+        for (let i = 0; i < monomerValidations.length; i++) {
+          if (!(monomerValidations[i] in monomer.props.MonomerCaps)) {
+            monomerDisabled = true;
+          }
+        }
+      }
+    }
+    return monomerDisabled;
+  };
 
   const [selectedItemInGroup, setSelectedItemInGroup] =
     useState<MonomerItemType | null>(null);
@@ -76,8 +97,8 @@ const MonomerGroup = ({
       return;
     }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    const style = { top: previewStyle, right: '-88px' };
+    const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+    const style = { right: '-88px', top };
     debouncedShowPreview({ monomer, style });
   };
 
@@ -114,7 +135,7 @@ const MonomerGroup = ({
           return (
             <MonomerItem
               key={key}
-              disabled={disabled}
+              disabled={isMonomerDisabled(monomer)}
               item={monomer}
               groupName={groupName}
               isSelected={isMonomerSelected(monomer)}

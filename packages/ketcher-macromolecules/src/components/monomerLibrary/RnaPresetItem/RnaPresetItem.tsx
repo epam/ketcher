@@ -15,8 +15,8 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
-import { IRnaPresetItemrops } from './types';
-import { useState } from 'react';
+import { IRNAPresetItemProps } from './types';
+import React, { useState } from 'react';
 import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
@@ -27,17 +27,19 @@ const RnaPresetItem = ({
   isSelected,
   onClick = EmptyFunction,
   onContextMenu = EmptyFunction,
-}: IRnaPresetItemrops) => {
+  onMouseLeave = EmptyFunction,
+  onMouseMove = EmptyFunction,
+}: IRNAPresetItemProps) => {
   const [showDots, setShowDots] = useState(false);
   const [favorite, setFavorite] = useState(preset.favorite);
   const dispatch = useAppDispatch();
-  const onMouseOver = () => {
+  const onMouseOver = (): void => {
     setShowDots(true);
   };
-  const onMouseOut = () => {
+  const onMouseOut = (): void => {
     setShowDots(false);
   };
-  const addFavorite = (event) => {
+  const addFavorite = (event: React.MouseEvent): void => {
     event.stopPropagation();
     setFavorite(!favorite);
     dispatch(togglePresetFavorites(preset));
@@ -48,6 +50,8 @@ const RnaPresetItem = ({
       data-testid={getPresetUniqueKey(preset)}
       onClick={onClick}
       onContextMenu={onContextMenu}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
       selected={isSelected}

@@ -18,15 +18,26 @@ import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { selectUniqueNameError, setUniqueNameError } from 'state/rna-builder';
+import {
+  selectUniqueNameError,
+  setUniqueNameError,
+  selectInvalidPresetError,
+  setInvalidPresetError,
+} from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
+  const invalidPresetError = useAppSelector(selectInvalidPresetError);
   const closeErrorModal = () => {
-    dispatch(setUniqueNameError(''));
+    if (uniqueNameError.length > 0) {
+      dispatch(setUniqueNameError(''));
+    }
+    if (invalidPresetError.length > 0) {
+      dispatch(setInvalidPresetError(''));
+    }
   };
   return (
     <RnaBuilderContainer>
@@ -37,14 +48,16 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
         editPreset={editPreset}
       />
       <Modal
-        isOpen={!!uniqueNameError}
+        isOpen={!!uniqueNameError || !!invalidPresetError}
         title="Error Message"
         onClose={closeErrorModal}
       >
         <Modal.Content>
           <div style={{ padding: '12px' }}>
-            Preset with name "{uniqueNameError}" already exists. Please choose
-            another name.
+            {uniqueNameError &&
+              `Preset with name "${uniqueNameError}" already exists. Please choose another name.`}
+            {invalidPresetError &&
+              `Preset with name "${invalidPresetError}" can't be used. Because it is impossible to establish bonds between monomers. Edit it's structure or choose another one.`}
           </div>
         </Modal.Content>
         <Modal.Footer>

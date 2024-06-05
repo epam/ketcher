@@ -15,6 +15,7 @@ import {
   selectPartOfMolecules,
   selectSingleBondTool,
   waitForRender,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
@@ -228,17 +229,21 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await page.keyboard.press('Control+a');
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 8; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

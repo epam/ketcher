@@ -118,7 +118,10 @@ export class FunctionalGroup {
     isFunctionalGroupReturned?: boolean,
   ): number | FunctionalGroup | null {
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atomId))
+      if (
+        !fg.relatedSGroup.isSuperatomWithoutLabel &&
+        fg.relatedSGroup.atoms.includes(atomId)
+      )
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
     }
     return null;
@@ -145,7 +148,7 @@ export class FunctionalGroup {
   ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
-      if (bonds.includes(bondId)) {
+      if (!fg.relatedSGroup.isSuperatomWithoutLabel && bonds.includes(bondId)) {
         return isFunctionalGroupReturned ? fg : fg.relatedSGroupId;
       }
     }

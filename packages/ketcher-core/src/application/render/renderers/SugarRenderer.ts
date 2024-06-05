@@ -26,7 +26,6 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .append('use')
       .data([this])
       .attr('href', SUGAR_SYMBOL_ELEMENT_ID)
-      .style('cursor', 'pointer')
       .attr('fill', this.getMonomerColor(theme));
   }
 

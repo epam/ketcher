@@ -46,11 +46,17 @@ interface IRnaBuilderState {
     groupName: MonomerGroups;
     groupItem: MonomerItemType;
   } | null;
+  groupItemValidations: {
+    [MonomerGroups.BASES]: string[];
+    [MonomerGroups.SUGARS]: string[];
+    [MonomerGroups.PHOSPHATES]: string[];
+  };
   presetsDefault: IRnaPreset[];
   presetsCustom: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
   uniqueNameError: string;
+  invalidPresetError: string;
   activePresetForContextMenu: IRnaPreset | null;
 }
 
@@ -60,11 +66,17 @@ const initialState: IRnaBuilderState = {
   sequenceSelectionName: undefined,
   isSequenceFirstsOnlyNucleoelementsSelected: undefined,
   activePresetMonomerGroup: null,
+  groupItemValidations: {
+    [MonomerGroups.BASES]: [],
+    [MonomerGroups.SUGARS]: [],
+    [MonomerGroups.PHOSPHATES]: [],
+  },
   presetsDefault: [],
   presetsCustom: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
   uniqueNameError: '',
+  invalidPresetError: '',
   activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
@@ -122,6 +134,15 @@ export const rnaBuilderSlice = createSlice({
     ) => {
       state.activeRnaBuilderItem = action.payload;
     },
+    setSugarValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.SUGARS] = action.payload;
+    },
+    setBaseValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.BASES] = action.payload;
+    },
+    setPhosphateValidations: (state, action: PayloadAction<string[]>) => {
+      state.groupItemValidations[MonomerGroups.PHOSPHATES] = action.payload;
+    },
     setActivePresetMonomerGroup: (
       state,
       action: PayloadAction<{
@@ -173,6 +194,9 @@ export const rnaBuilderSlice = createSlice({
     },
     setUniqueNameError: (state, action: PayloadAction<string>) => {
       state.uniqueNameError = action.payload;
+    },
+    setInvalidPresetError: (state, action: PayloadAction<string>) => {
+      state.invalidPresetError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -281,6 +305,9 @@ export const rnaBuilderSlice = createSlice({
 export const selectActiveRnaBuilderItem = (state: RootState): RnaBuilderItem =>
   state.rnaBuilder.activeRnaBuilderItem;
 
+export const selectGroupItemValidations = (state: RootState): RnaBuilderItem =>
+  state.rnaBuilder.groupItemValidations;
+
 export const selectActivePreset = (state: RootState): IRnaPreset =>
   state.rnaBuilder.activePreset;
 
@@ -309,7 +336,7 @@ export const selectActivePresetMonomerGroup = (state: RootState) =>
 
 export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
-    (preset.phosphate || preset.sugar || preset.base) && preset.name,
+    preset.name && preset.sugar && (preset.base || preset.phosphate),
   );
 };
 
@@ -339,6 +366,10 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
 
 export const selectUniqueNameError = (state: RootState) => {
   return state.rnaBuilder.uniqueNameError;
+};
+
+export const selectInvalidPresetError = (state: RootState) => {
+  return state.rnaBuilder.invalidPresetError;
 };
 
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
@@ -394,12 +425,16 @@ export const {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
   setActivePresetMonomerGroup,
   savePreset,
   deletePreset,
   createNewPreset,
   setIsEditMode,
   setUniqueNameError,
+  setInvalidPresetError,
   setDefaultPresets,
   setCustomPresets,
   setActivePresetForContextMenu,

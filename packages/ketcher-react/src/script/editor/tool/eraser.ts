@@ -343,6 +343,7 @@ class EraserTool implements Tool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id);
+
       this.editor.update(
         fromFragmentDeletion(rnd.ctab, {
           atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],

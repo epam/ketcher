@@ -304,6 +304,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -935,6 +936,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -959,6 +961,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

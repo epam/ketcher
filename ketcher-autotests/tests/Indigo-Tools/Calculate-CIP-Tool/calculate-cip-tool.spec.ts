@@ -462,12 +462,15 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('Save as .mol V2000 file structure with stereo labels', async ({
+  // TODO: It's unstable, skip for now
+  test.skip('Save as .mol V2000 file structure with stereo labels @FlackyTest', async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V2000 file.
+
+    IMPORTANT: This test some times fails because of https://github.com/epam/ketcher/issues/2647 and https://github.com/epam/ketcher/issues/3951
     */
     await openFileAndAddToCanvas(
       'Molfiles-V2000/structure-with-stereo-bonds.mol',

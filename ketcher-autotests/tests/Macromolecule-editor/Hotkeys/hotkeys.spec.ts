@@ -140,4 +140,21 @@ test.describe('Hotkeys', () => {
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
   });
+
+  test('Check that "Del" hotkey allows removing selection, but after that, selection tool not switches to deletion tool', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/4020
+    Description: Selection tool not switches to deletion tool.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+    await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
 });

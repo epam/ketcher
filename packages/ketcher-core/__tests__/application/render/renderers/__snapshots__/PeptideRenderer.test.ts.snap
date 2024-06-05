@@ -25,7 +25,6 @@ exports[`PeptideRenderer should render peptide 1`] = `
       <use
         fill="yellow"
         href="#peptide"
-        style="cursor: pointer;"
       />
       <text
         fill="black"

@@ -133,16 +133,20 @@
         "alias": "Bal",
         "attachmentPoints": [
             {
-                "attachmentAtom": 6,
+                "attachmentAtom": 5,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        6
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 3,
+                "attachmentAtom": 1,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        3
+                    ]
                 },
                 "type": "right"
             }

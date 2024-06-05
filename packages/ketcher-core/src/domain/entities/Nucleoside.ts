@@ -2,6 +2,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
 import {
+  getNextMonomerInChain,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
@@ -97,6 +98,12 @@ export class Nucleoside {
   }
 
   public get modified() {
-    return this.rnaBase.isModification || this.sugar.isModification;
+    // TODO move isNotLastNode to separate getter because it is not modification
+    //  It was added here because it needs to show similar icon as for phosphates modifications
+    const isNotLastNode = !!getNextMonomerInChain(this.sugar);
+
+    return (
+      this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
+    );
   }
 }

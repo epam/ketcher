@@ -1,6 +1,7 @@
 import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
 import { BaseMonomer } from 'domain/entities';
 import { Vec2 } from 'domain/entities/vec2';
+import { AttachmentPointName } from 'domain/types';
 
 export type Coordinates = { x: number; y: number };
 
@@ -221,14 +222,36 @@ export function checkFor0and360(sectorsList: number[]) {
   return sectorsList;
 }
 
-export function convertAttachmentPointNumberToLabel(
+/* attachmentPointName - R1, R2, ...
+ * returns number of attachment point with left binary shift:
+ * [attachmentPointNumber]: [binaryShiftedAttachmentPointNumber]
+ * 1: 1
+ * 2: 2
+ * 3: 4
+ * 4: 8
+ * 5: 16
+ * 6: 32
+ * It needs for conversion of attachment points to rglabels (just for same view in monomer preview)
+ * rglabel 3 means that atom has two r-group attachment points
+ * */
+export function getAttachmentPointLabelWithBinaryShift(
   attachmentPointNumber: number,
 ) {
   let attachmentPointLabel = '';
   for (let rgi = 0; rgi < 32; rgi++) {
     if (attachmentPointNumber & (1 << rgi)) {
-      attachmentPointLabel += 'R' + (rgi + 1).toString();
+      attachmentPointLabel += getAttachmentPointLabel(rgi + 1);
     }
   }
   return attachmentPointLabel;
+}
+
+export function getAttachmentPointLabel(attachmentPointNumber: number) {
+  return `R${attachmentPointNumber}` as AttachmentPointName;
+}
+
+export function getAttachmentPointNumberFromLabel(
+  attachmentPointLabel: AttachmentPointName,
+) {
+  return Number(attachmentPointLabel.replace('R', ''));
 }

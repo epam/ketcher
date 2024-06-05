@@ -100,13 +100,14 @@ selectNestedTool - select specific tool that has sub / nested levels.
     - Rc: KETCHER_URL=link_to_rc
     - Local frontend: KETCHER_URL=http://host.docker.internal:port (port where you run application)
   - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
+  - OPTIONAL: ENABLE_POLYMER_EDITOR=true (If you want to run tests for Macromolecule Editor)
 - **OPTIONAL: Build frontend**:
   if you want to run tests based on the localhost:4002, you can put KETCHER_URL=http://localhost:4002
 
 ### Run tests:
 
 **OPTIONAL: Test Polymer Editor **:
-If you want to run tests from Polymer Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
+If you want to run tests from Macromolecule Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
 
 - Root package.json: "build:example": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
 
@@ -139,6 +140,7 @@ Run this command in the directory "ketcher-autotests"
 
 - `npm run docker:test` run all tests
 - `npm run docker:test file_name` run tests in a specific file
+- `npm run docker:test file_name:N` run specific test in a file (N - line on which test starts)
 - `npm run report` show report
 - `npm run docker:update` update all snapshots
 - `npm run docker:update:test -- "test_title"` update only 1 snapshot with test_title

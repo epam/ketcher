@@ -94,3 +94,30 @@ export async function bondTwoMonomersPointToPoint(
 
   await moveMouseAway(page);
 }
+
+export async function pressCancelAtSelectConnectionPointDialog(page: Page) {
+  await page.getByRole('button', { name: 'Cancel' }).click();
+}
+
+export async function pressConnectAtSelectConnectionPointDialog(page: Page) {
+  await page.getByRole('button', { name: 'Connect' }).click();
+}
+
+export async function selectLeftConnectionPointAtSelectConnectionPointDialog(
+  page: Page,
+  connectionPoint: string,
+) {
+  await page.getByRole('button', { name: connectionPoint }).first().click();
+}
+
+export async function selectRightConnectionPointAtSelectConnectionPointDialog(
+  page: Page,
+  connectionPoint: string,
+) {
+  const rightMonomerLocator =
+    (await page.getByRole('button', { name: connectionPoint }).count()) > 1
+      ? page.getByRole('button', { name: connectionPoint }).nth(1)
+      : page.getByRole('button', { name: connectionPoint }).first();
+
+  await rightMonomerLocator.click();
+}

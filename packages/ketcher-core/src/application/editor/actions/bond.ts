@@ -49,6 +49,7 @@ import { Action } from './action';
 import { ReSGroup, ReStruct } from '../../render';
 import { StereoValidator } from 'domain/helpers';
 import utils from '../shared/utils';
+import { fromSgroupAttachmentPointRemove } from 'application/editor';
 
 export function fromBondAddition(
   reStruct: ReStruct,
@@ -481,10 +482,22 @@ export function removeAttachmentPointFromSuperatom(
   sgroup: ReSGroup,
   beginAtomId: number | undefined,
   endAtomId: number | undefined,
+  action: Action,
+  restruct: ReStruct,
 ) {
   (sgroup.item?.atoms as number[]).forEach((atomId) => {
     if (beginAtomId === atomId || endAtomId === atomId) {
-      sgroup.item?.removeAttachmentPoint(atomId);
+      const anotherSideAtomId =
+        beginAtomId === atomId ? endAtomId : beginAtomId;
+      action.mergeWith(
+        fromSgroupAttachmentPointRemove(
+          restruct,
+          sgroup.item?.id as number,
+          atomId as number,
+          anotherSideAtomId,
+          false,
+        ),
+      );
     }
   });
 }

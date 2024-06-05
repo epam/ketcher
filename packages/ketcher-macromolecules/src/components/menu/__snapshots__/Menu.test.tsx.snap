@@ -6,10 +6,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-198rm13"
+        class="css-ovqubf"
       >
         <div
-          class="css-10qeqvw"
+          class="css-498x9x"
         >
           <button
             class="open css-1odf3mo"
@@ -31,7 +31,7 @@ Object {
           </button>
         </div>
         <div
-          class="css-10qeqvw"
+          class="css-498x9x"
         >
           <button
             class="erase css-1odf3mo"
@@ -172,10 +172,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-198rm13"
+      class="css-ovqubf"
     >
       <div
-        class="css-10qeqvw"
+        class="css-498x9x"
       >
         <button
           class="open css-1odf3mo"
@@ -197,7 +197,7 @@ Object {
         </button>
       </div>
       <div
-        class="css-10qeqvw"
+        class="css-498x9x"
       >
         <button
           class="erase css-1odf3mo"

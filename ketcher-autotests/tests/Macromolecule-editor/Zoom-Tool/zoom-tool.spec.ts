@@ -1,6 +1,5 @@
 import { Locator, test, Page, chromium } from '@playwright/test';
 import {
-  LeftPanelButton,
   addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -10,6 +9,9 @@ import {
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
   selectClearCanvasTool,
+  clickInTheMiddleOfTheScreen,
+  MacromoleculesTopPanelButton,
+  moveMouseAway,
 } from '@utils';
 import {
   zoomWithMouseWheel,
@@ -78,16 +80,26 @@ test.describe('Zoom Tool', () => {
   });
   */
   test('Zoom In & Out monomer with menu buttons', async () => {
-    await selectTool(LeftPanelButton.ZoomIn, page);
-    await selectTool(LeftPanelButton.ZoomIn, page);
-    await selectTool(LeftPanelButton.ZoomIn, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomReset, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomOut, page);
-    await selectTool(LeftPanelButton.ZoomOut, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
@@ -102,18 +114,24 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out attachment points with menu buttons', async () => {
-    await selectTool(LeftPanelButton.ZoomIn, page);
-    await selectTool(LeftPanelButton.ZoomIn, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await clickInTheMiddleOfTheScreen(page);
     await selectSingleBondTool(page);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomReset, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomOut, page);
-    await selectTool(LeftPanelButton.ZoomOut, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
   });
 
@@ -134,22 +152,28 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out bond with menu buttons', async () => {
     const bondCoordinates = { x: 400, y: 400 };
-    await selectTool(LeftPanelButton.ZoomIn, page);
-    await selectTool(LeftPanelButton.ZoomIn, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await clickInTheMiddleOfTheScreen(page);
     await selectSingleBondTool(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
-    await selectTool(LeftPanelButton.ZoomReset, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
-    await selectTool(LeftPanelButton.ZoomOut, page);
-    await selectTool(LeftPanelButton.ZoomOut, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -180,8 +204,10 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out selection rectangle with menu buttons', async () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 400, y: 400 };
-    await selectTool(LeftPanelButton.ZoomIn, page);
-    await selectTool(LeftPanelButton.ZoomIn, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await selectRectangleArea(
       page,
@@ -192,7 +218,9 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomReset, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
       selectionStart.x,
@@ -202,8 +230,10 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTool(LeftPanelButton.ZoomOut, page);
-    await selectTool(LeftPanelButton.ZoomOut, page);
+    await page.getByTestId('zoom-selector').click();
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
       selectionStart.x,

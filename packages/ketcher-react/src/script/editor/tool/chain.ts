@@ -93,8 +93,10 @@ class ChainTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
@@ -107,8 +109,10 @@ class ChainTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
     this.editor.hover(null);

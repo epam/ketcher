@@ -44,7 +44,7 @@ export const ZoomControls = () => {
     ZoomTool?.instance?.subscribeOnZoomEvent(() => {
       setCurrentZoom(Math.round(ZoomTool?.instance?.getZoomLevel() * 100));
     });
-  }, [ZoomTool?.instance?.subscribeOnZoomEvent]);
+  }, [ZoomTool?.instance]);
 
   const onZoomSubmit = useCallback(() => {
     const inputEl = inputRef.current;

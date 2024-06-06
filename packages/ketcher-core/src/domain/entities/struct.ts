@@ -371,6 +371,11 @@ export class Struct {
     for (let i = 0; i < atom.neighbors.length; ++i) {
       const hb = this.halfBonds.get(atom.neighbors[i])!;
       const bond = this.bonds.get(hb.bid)!;
+
+      if (Bond.isBondToHiddenLeavingGroup(this, bond)) {
+        continue;
+      }
+
       switch (bond.type) {
         case Bond.PATTERN.TYPE.SINGLE:
           conn += 1;

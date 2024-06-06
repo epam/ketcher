@@ -549,17 +549,16 @@ export class SequenceMode extends BaseMode {
 
       if (
         !nodeBeforeSelection ||
-        nodeBeforeSelection instanceof EmptySequenceNode ||
-        nodeBeforeSelection !== nodeInSameChainBeforeSelection ||
-        nodeAfterSelection !== nodeInSameChainAfterSelection
+        nodeBeforeSelection instanceof EmptySequenceNode
       ) {
         return;
       }
 
       if (
+        nodeBeforeSelection === nodeInSameChainBeforeSelection &&
         nodeBeforeSelection instanceof Nucleotide &&
-        !(nodeAfterSelection instanceof Nucleotide) &&
-        !(nodeAfterSelection instanceof Nucleoside)
+        !(nodeInSameChainAfterSelection instanceof Nucleotide) &&
+        !(nodeInSameChainAfterSelection instanceof Nucleoside)
       ) {
         // delete phosphate from last nucleotide
         modelChanges.merge(
@@ -573,7 +572,10 @@ export class SequenceMode extends BaseMode {
 
       if (
         !nodeAfterSelection ||
-        nodeAfterSelection instanceof EmptySequenceNode
+        nodeAfterSelection instanceof EmptySequenceNode ||
+        (!this.isEditMode &&
+          (nodeAfterSelection !== nodeInSameChainAfterSelection ||
+            nodeBeforeSelection !== nodeInSameChainBeforeSelection))
       ) {
         return;
       }

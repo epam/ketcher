@@ -241,7 +241,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: SequencePointer) {
-    const oldSubChainNode = SequenceRenderer.currentEdittingNode;
+    const oldSubChainNode = SequenceRenderer.currentEditingNode;
 
     if (oldSubChainNode) {
       assert(oldSubChainNode.renderer instanceof BaseSequenceItemRenderer);
@@ -250,7 +250,7 @@ export class SequenceRenderer {
       oldSubChainNode.renderer?.show();
     }
     SequenceRenderer.caretPosition = caretPosition;
-    const subChainNode = SequenceRenderer.currentEdittingNode;
+    const subChainNode = SequenceRenderer.currentEditingNode;
 
     if (!subChainNode) {
       return;
@@ -378,21 +378,21 @@ export class SequenceRenderer {
   private static get currentChainRow() {
     return (
       this.nodesGroupedByRows.find((idexRow) =>
-        idexRow.includes(this.currentEdittingNode),
+        idexRow.includes(this.currentEditingNode),
       ) || []
     );
   }
 
   private static get previousRowOfNodes() {
     const index = this.nodesGroupedByRows.findIndex((row) =>
-      row.includes(this.currentEdittingNode),
+      row.includes(this.currentEditingNode),
     );
     return index > 0 ? this.nodesGroupedByRows[index - 1] : [];
   }
 
   private static get nextRowOfNodes() {
     const currentIndex = this.nodesGroupedByRows.findIndex((row) =>
-      row.includes(this.currentEdittingNode),
+      row.includes(this.currentEditingNode),
     );
     return currentIndex !== -1 &&
       currentIndex + 1 < this.nodesGroupedByRows.length
@@ -402,7 +402,7 @@ export class SequenceRenderer {
 
   public static moveCaretUp() {
     const currentNodeIndexInRow = this.currentChainRow.indexOf(
-      this.currentEdittingNode,
+      this.currentEditingNode,
     );
 
     let newCaretPosition = this.caretPosition;
@@ -421,7 +421,7 @@ export class SequenceRenderer {
 
   public static moveCaretDown() {
     const currentNodeIndexInRow = this.currentChainRow.indexOf(
-      this.currentEdittingNode,
+      this.currentEditingNode,
     );
 
     let newCaretPosition = this.caretPosition;
@@ -534,11 +534,11 @@ export class SequenceRenderer {
     return chainToReturn;
   }
 
-  public static get currentEdittingNode() {
+  public static get currentEditingNode() {
     return SequenceRenderer.getNodeByPointer(this.caretPosition);
   }
 
-  public static get previousFromCurrentEdittingMonomer() {
+  public static get previousFromCurrentEditingMonomer() {
     return SequenceRenderer.getNodeByPointer(
       SequenceRenderer.previousCaretPosition,
     );
@@ -598,7 +598,7 @@ export class SequenceRenderer {
 
   public static get previousNodeInSameChain() {
     return SequenceRenderer.getPreviousNodeInSameChain(
-      SequenceRenderer.currentEdittingNode,
+      SequenceRenderer.currentEditingNode,
     );
   }
 
@@ -715,7 +715,7 @@ export class SequenceRenderer {
     if (arrowKey === 'ArrowRight') {
       modelChanges = SequenceRenderer.getShiftArrowChanges(
         editor,
-        this.currentEdittingNode.monomer,
+        this.currentEditingNode.monomer,
       );
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {

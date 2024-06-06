@@ -610,6 +610,22 @@ export class SequenceMode extends BaseMode {
         direction === Direction.Left
           ? SequenceRenderer.previousNode
           : SequenceRenderer.getNodeByPointer(SequenceRenderer.caretPosition);
+
+      if (
+        !this.areR1R2Free(
+          SequenceRenderer.nextNode,
+          SequenceRenderer.previousNode,
+        )
+      ) {
+        editor.events.openErrorModal.dispatch({
+          errorTitle: 'Error Message',
+          errorMessage:
+            'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+        });
+
+        return;
+      }
+
       const caretPosition =
         direction === Direction.Left
           ? (SequenceRenderer.previousCaretPosition as number)
@@ -843,7 +859,7 @@ export class SequenceMode extends BaseMode {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManager.monomers.values(),
     ]);
-    const currentNode = SequenceRenderer.currentEdittingNode;
+    const currentNode = SequenceRenderer.currentEditingNode;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const lastNodeOfNewFragment = chainsCollection.lastNode;
     const firstNodeOfNewFragment = chainsCollection.firstNode;
@@ -906,7 +922,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
-    const currentNode = SequenceRenderer.currentEdittingNode;
+    const currentNode = SequenceRenderer.currentEditingNode;
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
@@ -958,7 +974,7 @@ export class SequenceMode extends BaseMode {
         : new ChainsCollection().add(
             new Chain().addNode(chainsCollectionOrNode),
           );
-    const currentNode = SequenceRenderer.currentEdittingNode;
+    const currentNode = SequenceRenderer.currentEditingNode;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const modelChanges = new Command();
     const lastNodeOfNewFragment = chainsCollection.lastNode;
@@ -986,8 +1002,8 @@ export class SequenceMode extends BaseMode {
 
   getNewNodePosition() {
     if (this.isEditMode) {
-      const currentNode = SequenceRenderer.currentEdittingNode;
-      const previousNode = SequenceRenderer.previousFromCurrentEdittingMonomer;
+      const currentNode = SequenceRenderer.currentEditingNode;
+      const previousNode = SequenceRenderer.previousFromCurrentEditingMonomer;
       const nodeBeforePreviousNode = previousNode
         ? SequenceRenderer.getPreviousNodeInSameChain(previousNode)
         : undefined;

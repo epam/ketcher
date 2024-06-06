@@ -124,11 +124,6 @@ export function fromPaste(
     );
   });
 
-  pasteItems.atoms.forEach((aid) => {
-    action.addOp(new CalcImplicitH([aid]).perform(restruct));
-    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
-  });
-
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
@@ -154,6 +149,11 @@ export function fromPaste(
     sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper);
     });
+  });
+
+  pasteItems.atoms.forEach((aid) => {
+    action.addOp(new CalcImplicitH([aid]).perform(restruct));
+    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
   });
 
   pstruct.rxnArrows.forEach((rxnArrow) => {

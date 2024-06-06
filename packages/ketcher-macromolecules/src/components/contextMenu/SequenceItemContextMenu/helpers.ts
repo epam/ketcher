@@ -120,9 +120,10 @@ export const generateSequenceContextMenuProps = (
   ) {
     title = generateNucleoelementTitle(selectedSequenceLabeledNodes);
   } else {
-    title = isSelectedOnlyNucleoelements
-      ? `${countOfNucleoelements} nucleotides`
-      : `${countOfSelections} elements`;
+    title =
+      countOfSelections === countOfNucleoelements
+        ? `${countOfNucleoelements} nucleotides`
+        : `${countOfSelections} elements`;
   }
 
   return {

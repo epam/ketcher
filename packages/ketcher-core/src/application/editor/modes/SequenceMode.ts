@@ -913,6 +913,14 @@ export class SequenceMode extends BaseMode {
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+
+    if (
+      currentNode instanceof MonomerSequenceNode &&
+      currentNode.monomer instanceof Phosphate
+    ) {
+      return;
+    }
+
     if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
       if (!this.isR2Free(previousNodeInSameChain)) {
         this.showMergeWarningModal(editor);

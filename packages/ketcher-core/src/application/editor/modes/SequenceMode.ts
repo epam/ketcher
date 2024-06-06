@@ -430,24 +430,26 @@ export class SequenceMode extends BaseMode {
   }
 
   private connectNodes(
-    node: SubChainNode | undefined,
-    nextNode: SubChainNode | undefined,
+    firstNodeToConnect: SubChainNode | undefined,
+    secondNodeToConnect: SubChainNode | undefined,
     modelChanges: Command,
     newNodePosition: Vec2,
+    nextNodeInSameChain?: SubChainNode,
   ) {
     if (
-      !node ||
-      node instanceof EmptySequenceNode ||
-      !nextNode ||
-      nextNode instanceof EmptySequenceNode
+      !firstNodeToConnect ||
+      firstNodeToConnect instanceof EmptySequenceNode ||
+      !secondNodeToConnect ||
+      secondNodeToConnect instanceof EmptySequenceNode
     ) {
       return;
     }
 
     const editor = CoreEditor.provideEditorInstance();
-    const nodeR2Bond = node.lastMonomerInNode.attachmentPointsToBonds?.R2;
+    const nodeR2Bond =
+      firstNodeToConnect.lastMonomerInNode.attachmentPointsToBonds?.R2;
     const nextNodeR1Bond =
-      nextNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
+      secondNodeToConnect?.firstMonomerInNode?.attachmentPointsToBonds.R1;
 
     if (nodeR2Bond || nextNodeR1Bond) {
       editor.events.error.dispatch(
@@ -458,21 +460,23 @@ export class SequenceMode extends BaseMode {
     }
 
     if (
-      node instanceof Nucleoside &&
-      (nextNode instanceof Nucleotide || nextNode instanceof Nucleoside)
+      nextNodeInSameChain instanceof EmptySequenceNode &&
+      firstNodeToConnect instanceof Nucleoside &&
+      (secondNodeToConnect instanceof Nucleotide ||
+        secondNodeToConnect instanceof Nucleoside)
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
           newNodePosition,
-          node.lastMonomerInNode,
-          nextNode.firstMonomerInNode,
+          firstNodeToConnect.lastMonomerInNode,
+          secondNodeToConnect.firstMonomerInNode,
         ),
       );
     } else {
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          node.lastMonomerInNode,
-          nextNode.firstMonomerInNode,
+          firstNodeToConnect.lastMonomerInNode,
+          secondNodeToConnect.firstMonomerInNode,
           AttachmentPointName.R2,
           AttachmentPointName.R1,
         ),
@@ -576,8 +580,7 @@ export class SequenceMode extends BaseMode {
 
       if (
         nodeBeforeSelection instanceof Nucleoside &&
-        (nodeAfterSelection instanceof Nucleotide ||
-          nodeAfterSelection instanceof Nucleoside)
+        nodeAfterSelection instanceof Nucleotide
       ) {
         modelChanges.merge(
           this.bondNodesThroughNewPhosphate(
@@ -972,6 +975,7 @@ export class SequenceMode extends BaseMode {
       firstNodeOfNewFragment,
       modelChanges,
       newNodePosition,
+      currentNode,
     );
 
     this.connectNodes(

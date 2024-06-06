@@ -51,24 +51,36 @@ export class Chain {
   public add(monomer: BaseMonomer) {
     this.createSubChainIfNeed(monomer);
 
-    const nextMonomer = getNextMonomerInChain(monomer);
-
-    if (monomer instanceof Sugar && isValidNucleoside(monomer)) {
-      this.lastSubChain.add(Nucleoside.fromSugar(monomer));
-    } else if (monomer instanceof Sugar && isValidNucleotide(monomer)) {
-      this.lastSubChain.add(Nucleotide.fromSugar(monomer));
-    } else if (monomer instanceof Peptide) {
+    if (monomer instanceof Sugar) {
+      if (isValidNucleoside(monomer)) {
+        this.lastSubChain.add(Nucleoside.fromSugar(monomer));
+        return;
+      }
+      if (isValidNucleotide(monomer)) {
+        this.lastSubChain.add(Nucleotide.fromSugar(monomer));
+        return;
+      }
+    }
+    if (monomer instanceof Peptide) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
-    } else if (
+      return;
+    }
+    const nextMonomer = getNextMonomerInChain(monomer);
+    const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
+      const isNucleosideOrNucleotide =
+        nextMonomer instanceof Sugar &&
+        (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
+      return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
+    };
+    if (
       monomer instanceof Phosphate &&
-      (this.lastNode instanceof Nucleoside ||
-        (nextMonomer instanceof Sugar &&
-          (isValidNucleotide(nextMonomer) || isValidNucleotide(nextMonomer))))
+      this.lastNode instanceof Nucleoside &&
+      (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
-    } else {
-      this.lastSubChain.add(new LinkerSequenceNode(monomer));
+      return;
     }
+    this.lastSubChain.add(new LinkerSequenceNode(monomer));
   }
 
   public addNode(node: SubChainNode) {

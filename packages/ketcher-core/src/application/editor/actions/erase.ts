@@ -149,7 +149,8 @@ export function fromFragmentDeletion(restruct, rawSelection) {
       attachmentPoints.forEach((attachmentPoint) => {
         if (
           attachmentPoint.atomId === atomId &&
-          isNumber(attachmentPoint.leaveAtomId)
+          isNumber(attachmentPoint.leaveAtomId) &&
+          !selection.atoms.includes(attachmentPoint.leaveAtomId)
         ) {
           action.addOp(
             new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),

@@ -104,7 +104,13 @@ class BondDelete extends BaseOperation {
 
   constructor(bondId?: any) {
     super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);
-    this.data = { bid: bondId, bond: null, begin: null, end: null };
+    this.data = {
+      bid: bondId,
+      bond: null,
+      begin: null,
+      end: null,
+      needInvalidateAtoms: true,
+    };
   }
 
   execute(restruct: ReStruct) {

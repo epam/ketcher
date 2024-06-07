@@ -356,22 +356,12 @@ export class SequenceMode extends BaseMode {
       .monomer as BaseMonomer;
 
     modelChanges.merge(
-      editor.drawingEntitiesManager.createPolymerBond(
-        previousMonomer,
-        additionalPhosphate,
-        AttachmentPointName.R2,
-        AttachmentPointName.R1,
-      ),
+      this.tryToCreatePolymerBond(previousMonomer, additionalPhosphate),
     );
 
     if (nextMonomer) {
       modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          additionalPhosphate,
-          nextMonomer,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
-        ),
+        this.tryToCreatePolymerBond(additionalPhosphate, nextMonomer),
       );
     }
 
@@ -474,11 +464,9 @@ export class SequenceMode extends BaseMode {
       );
     } else {
       modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
+        this.tryToCreatePolymerBond(
           firstNodeToConnect.lastMonomerInNode,
           secondNodeToConnect.firstMonomerInNode,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
         ),
       );
     }
@@ -519,6 +507,27 @@ export class SequenceMode extends BaseMode {
     history.update(modelChanges);
     this.selectionStartCaretPosition = -1;
     SequenceRenderer.resetLastUserDefinedCaretPosition();
+  }
+
+  private tryToCreatePolymerBond(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    const isConnectionPossible = this.areR1R2Free(secondMonomer, firstMonomer);
+
+    if (!isConnectionPossible) {
+      this.showMergeWarningModal();
+      return new Command();
+    }
+
+    return editor.drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
+      secondMonomer,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
   }
 
   private handleNodesDeletion(selections: NodesSelection) {
@@ -597,13 +606,11 @@ export class SequenceMode extends BaseMode {
         );
       } else {
         modelChanges.merge(
-          editor.drawingEntitiesManager.createPolymerBond(
+          this.tryToCreatePolymerBond(
             isPhosphateAdditionalyDeleted
               ? nodeBeforeSelection.firstMonomerInNode
               : nodeBeforeSelection.lastMonomerInNode,
             nodeAfterSelection.firstMonomerInNode,
-            AttachmentPointName.R2,
-            AttachmentPointName.R1,
           ),
         );
       }
@@ -830,19 +837,27 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
-  private isR1Free(firstNode: SubChainNode): boolean {
-    return firstNode?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+  private isR1Free(entity: SubChainNode | BaseMonomer): boolean {
+    if (entity instanceof BaseMonomer) {
+      return entity.attachmentPointsToBonds.R1 === null;
+    }
+
+    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
   }
 
-  private isR2Free(lastNode: SubChainNode): boolean {
-    return lastNode?.lastMonomerInNode?.attachmentPointsToBonds.R2 === null;
+  private isR2Free(entity: SubChainNode | BaseMonomer): boolean {
+    if (entity instanceof BaseMonomer) {
+      return entity.attachmentPointsToBonds.R2 === null;
+    }
+
+    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 === null;
   }
 
   private areR1R2Free(
-    firstNode: SubChainNode,
-    lastNode: SubChainNode,
+    firstEntity: SubChainNode | BaseMonomer,
+    lastEntity: SubChainNode | BaseMonomer,
   ): boolean {
-    return this.isR1Free(firstNode) && this.isR2Free(lastNode);
+    return this.isR1Free(firstEntity) && this.isR2Free(lastEntity);
   }
 
   isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
@@ -929,7 +944,7 @@ export class SequenceMode extends BaseMode {
 
     if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
       if (!this.isR2Free(previousNodeInSameChain)) {
-        this.showMergeWarningModal(editor);
+        this.showMergeWarningModal();
         return;
       }
     }
@@ -939,7 +954,7 @@ export class SequenceMode extends BaseMode {
       currentNode
     ) {
       if (!this.isR1Free(currentNode)) {
-        this.showMergeWarningModal(editor);
+        this.showMergeWarningModal();
         return;
       }
     }
@@ -958,7 +973,9 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private showMergeWarningModal(editor: CoreEditor) {
+  private showMergeWarningModal() {
+    const editor = CoreEditor.provideEditorInstance();
+
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error Message',
       errorMessage:

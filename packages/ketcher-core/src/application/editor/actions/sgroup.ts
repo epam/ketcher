@@ -476,7 +476,7 @@ export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
     const sGroup = restruct.sgroups.get(sid)?.item;
     const sgAtoms = SGroup.getAtoms(restruct.molecule, sGroup);
 
-    if (sgAtoms.length === count) {
+    if (sgAtoms.length === count && !sGroup?.isSuperatomWithoutLabel) {
       // delete whole s-group
       const sgroup = struct.sgroups.get(sid) as SGroup;
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));

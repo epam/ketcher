@@ -25,6 +25,7 @@ import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
 import { KetcherLogger } from 'utilities';
+import { isNumber } from 'lodash';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 
@@ -658,6 +659,8 @@ export class Molfile {
 
     const attachmentId = attachmentPoint.attachmentId
       ? attachmentPoint.attachmentId.slice(0, 2)
+      : isNumber(attachmentPoint.attachmentPointNumber)
+      ? attachmentPoint.attachmentPointNumber.toString()
       : '  ';
     this.writePadded(attachmentId, 2);
     this.writeCR();

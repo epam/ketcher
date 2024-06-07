@@ -1,5 +1,6 @@
 import assert from 'assert';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
+import { isNumber } from 'lodash';
 
 /**
  * This is data model for Sgrou attachment point.
@@ -39,12 +40,14 @@ export class SGroupAttachmentPoint {
   constructor(
     atomId: number,
     leaveAtomId: number | undefined,
-    attachmentId: string | undefined,
+    attachmentId: string | number | undefined,
     attachmentPointNumber?: number,
   ) {
     this.atomId = atomId;
     this.leaveAtomId = leaveAtomId;
-    this.attachmentId = attachmentId;
+    this.attachmentId = isNumber(attachmentId)
+      ? attachmentId.toString()
+      : attachmentId;
     this.attachmentPointNumber = attachmentPointNumber;
   }
 

@@ -3,7 +3,6 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   SequenceType,
   startNewSequence,
@@ -187,24 +186,6 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Bonds between existing and new nucleotides adhere to RNA monomer connection rules', async ({
-    page,
-  }) => {
-    /*
-    Test case: #3650
-    Description: Phosphate R2 of first nucleotide should be connected with the sugar R1 of next nucleotide.
-    */
-    await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
-    await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
-    await page.keyboard.press('Escape');
-    await selectSnakeLayoutModeTool(page);
-    await selectSingleBondTool(page);
-    await page.getByText('P').locator('..').nth(1).hover();
-    await takeEditorScreenshot(page);
-  });
-
   test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async ({
     page,
   }) => {
@@ -218,6 +199,23 @@ test.describe('Sequence edit mode', () => {
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowLeft');
     await enterSequence(page, 'u');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Adding symbols before separate phosphate should be restricted', async ({
+    page,
+  }) => {
+    /*
+    Github ticket: https://github.com/epam/ketcher/issues/4726
+    Description: It was decided to restrict adding symbols before separate phosphate to prevent adding of nucleosides
+    by entering symbols before the phosphate.
+    */
+    await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
+    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await enterSequence(page, 'u');
+    await page.keyboard.press('Escape');
+    await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

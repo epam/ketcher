@@ -86,22 +86,32 @@ export function isMonomerBeginningOfChain(
   );
 }
 
-export function isValidNucleotide(sugar: Sugar) {
+export function isValidNucleotide(
+  sugar: Sugar,
+  firstMonomerInCyclicChain?: BaseMonomer,
+) {
   const phosphate = getPhosphateFromSugar(sugar);
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
 
   return Boolean(
     getRnaBaseFromSugar(sugar) &&
       getPhosphateFromSugar(sugar) &&
-      nextMonomerAfterPhosphate,
+      nextMonomerAfterPhosphate &&
+      phosphate !== firstMonomerInCyclicChain,
   );
 }
 
-export function isValidNucleoside(sugar: Sugar) {
+export function isValidNucleoside(
+  sugar: Sugar,
+  firstMonomerInCyclicChain?: BaseMonomer,
+) {
   const phosphate = getPhosphateFromSugar(sugar);
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
 
   return (
-    getRnaBaseFromSugar(sugar) && (!phosphate || !nextMonomerAfterPhosphate)
+    getRnaBaseFromSugar(sugar) &&
+    (!phosphate ||
+      !nextMonomerAfterPhosphate ||
+      phosphate === firstMonomerInCyclicChain)
   );
 }

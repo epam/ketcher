@@ -82,6 +82,7 @@ export class CoreEditor {
   private hotKeyEventHandler: (event: unknown) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
+  private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -163,9 +164,11 @@ export class CoreEditor {
 
   private setupKeyboardEvents() {
     this.setupHotKeysEvents();
-    document.addEventListener('keydown', async (event: KeyboardEvent) => {
+    this.keydownEventHandler = async (event: KeyboardEvent) => {
       await this.mode.onKeyDown(event);
-    });
+    };
+
+    document.addEventListener('keydown', this.keydownEventHandler);
   }
 
   private setupCopyPasteEvent() {
@@ -386,6 +389,7 @@ export class CoreEditor {
     document.removeEventListener('keydown', this.hotKeyEventHandler);
     document.removeEventListener('copy', this.copyEventHandler);
     document.removeEventListener('paste', this.pasteEventHandler);
+    document.removeEventListener('keydown', this.keydownEventHandler);
   }
 
   get trackedDomEvents() {

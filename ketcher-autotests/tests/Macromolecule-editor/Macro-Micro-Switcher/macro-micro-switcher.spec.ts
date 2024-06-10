@@ -1,9 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import {
+  enterSequence,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   TopPanelButton,
@@ -36,12 +37,21 @@ import {
   selectSnakeLayoutModeTool,
   selectEraseTool,
   clickUndo,
+  clickOnAtom,
+  getKet,
+  saveToFile,
+  receiveFileComparisonData,
+  getMolfile,
+  selectSequenceLayoutModeTool,
+  switchSequenceEnteringType,
+  SequenceType,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 const topLeftCorner = {
   x: -325,
@@ -873,6 +883,41 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Ensure that new attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
+    */
+    // await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas('KET/long-chain.ket', page);
+    await addSuperatomAttachmentPoint(page, 'C', 4);
+    await addSuperatomAttachmentPoint(page, 'C', 6);
+    await addSuperatomAttachmentPoint(page, 'C', 8);
+    await addSuperatomAttachmentPoint(page, 'C', 10);
+    await addSuperatomAttachmentPoint(page, 'C', 12);
+    await addSuperatomAttachmentPoint(page, 'C', 14);
+    await addSuperatomAttachmentPoint(page, 'C', 16);
+    await addSuperatomAttachmentPoint(page, 'C', 17);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chain-with-eight-attachment-points.ket',
+      page,
+    );
+    await clickOnAtom(page, 'C', 9, 'right');
+    await takeEditorScreenshot(page);
+  });
+
   test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
     page,
   }) => {
@@ -1378,4 +1423,139 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Check it is impossible to create attachment point if atom is a part of s-group', async ({
+    page,
+  }) => {
+    /*
+    Github ticket: #4530
+    Description: It is impossible to create attachment point if atom is a part of s-group
+    */
+    await openFileAndAddToCanvasMacro('KET/part-chain-with-s-group.ket', page);
+    await clickOnAtom(page, 'C', 2, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that attachment points and leaving groups are correctly represented in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in KET format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  const testData5 = [
+    { type: 'RNA', sequenceType: null },
+    { type: 'DNA', sequenceType: SequenceType.DNA },
+    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
+  ];
+
+  for (const data of testData5) {
+    test(`Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`, async ({
+      page,
+    }) => {
+      /*
+      Github ticket: #4530
+      Description: R2-R1 connection was formed when switching to flex or snake mode
+      */
+      await openFileAndAddToCanvas(
+        'KET/two-attachment-points-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await selectSequenceLayoutModeTool(page);
+
+      if (data.sequenceType) {
+        await switchSequenceEnteringType(page, data.sequenceType);
+      }
+
+      await clickOnSequenceSymbol(page, '@', { button: 'right' });
+      await page.getByTestId('edit_sequence').click();
+      await enterSequence(page, 'a');
+      await page.keyboard.press('Escape');
+      await selectSnakeLayoutModeTool(page);
+      await selectSingleBondTool(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const testData6 = [
+    { type: 'RNA', sequenceType: null },
+    { type: 'DNA', sequenceType: SequenceType.DNA },
+    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
+  ];
+
+  for (const data of testData6) {
+    test(`Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`, async ({
+      page,
+    }) => {
+      /*
+      Github ticket: #4530
+      Description: R2-R1 connection was formed when switching to flex or snake mode
+      */
+      await drawBenzeneRing(page);
+      await turnOnMacromoleculesEditor(page);
+      await selectSequenceLayoutModeTool(page);
+
+      if (data.sequenceType) {
+        await switchSequenceEnteringType(page, data.sequenceType);
+      }
+
+      await clickOnSequenceSymbol(page, '@', { button: 'right' });
+      await page.getByTestId('edit_sequence').click();
+      await enterSequence(page, 'a');
+      await takeEditorScreenshot(page);
+    });
+  }
 });

@@ -45,6 +45,11 @@ import {
   selectSequenceLayoutModeTool,
   switchSequenceEnteringType,
   SequenceType,
+  selectLeftPanelButton,
+  LeftPanelButton,
+  selectDropdownTool,
+  openFileAndAddToCanvasAsNewProject,
+  getSdf,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -845,6 +850,28 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Ensure that system does not allow create s-group if structure have attachment point', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not allow create s-group if structure have attachment point.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
+  });
+
   test('Check that multiple attachment points added in micro mode used as attachment point when switch to macro mode', async ({
     page,
   }) => {
@@ -915,6 +942,79 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await clickOnAtom(page, 'C', 9, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that system start to use missed labels if user want to create AP greater that R8 (if it has R1,R3-R8 - attempt to add causes R2 selection)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
+    Working not a proper way because we have bug https://github.com/epam/ketcher/issues/4784
+    After fix we need update snapshot.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chain-with-eight-attachment-points.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R2').locator('..').click();
+    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that in context menu for AP - only Delete avaliable', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: In context menu for AP - only Delete avaliable.
+    Working not a proper way because we have bug https://github.com/epam/ketcher/issues/4793
+    After fix we need update snapshot.
+    */
+    await openFileAndAddToCanvas(
+      'KET/structure-with-two-attachment-points.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R2').locator('..').click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that AP label selection works but not saves to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: AP label selection works but not saves to KET.
+    */
+    await openFileAndAddToCanvas(
+      'KET/structure-with-two-attachment-points.ket',
+      page,
+    );
+    await page.keyboard.down('Shift');
+    await page.getByText('R1').locator('..').click();
+    await page.getByText('R2').locator('..').click();
+    await page.keyboard.up('Shift');
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/structure-with-two-attachment-points-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/structure-with-two-attachment-points-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/structure-with-two-attachment-points-expected.ket',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -1461,6 +1561,11 @@ test.describe('Macro-Micro-Switcher', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
@@ -1492,6 +1597,121 @@ test.describe('Macro-Micro-Switcher', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of MOL V2000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in Mol V2000 format.
+    The structure after opening is not similar to the original one. 
+    We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V2000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in SDF V2000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getSdf(page, 'v2000');
+    await saveToFile(
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   const testData5 = [
@@ -1558,4 +1778,113 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Check it is NOT possible to attach old AP to new AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach old AP to new AP label.
+    We have bug https://github.com/epam/ketcher/issues/4776
+    After fix need to be updated.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to wrap AP labed to R-group (by fragment tool)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to wrap AP labed to R-group (by fragment tool).
+    We have bug https://github.com/epam/ketcher/issues/4775
+    After fix need to be updated.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to attach R-Group to AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach R-Group to AP label.
+    We have bug https://github.com/epam/ketcher/issues/4774
+    After fix need to be updated.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to change charge of AP label (select it and use A+/A- buttons)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to change charge of AP label (select it and use A+/A- buttons).
+    We have bug https://github.com/epam/ketcher/issues/4779
+    After fix need to be updated.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to attach bond to AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach bond to AP label.
+    Test not working in proper way because we have bug https://github.com/epam/ketcher/issues/4782
+    Bond joins the attachment point even though he shouldn't. After fixing the bug, screenshots need to be updated
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+  });
 });

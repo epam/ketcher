@@ -53,6 +53,15 @@ const generateLabeledNodes = (
   return labeledNodes;
 };
 
+function isNucleotideNucleosideOrPhosphate(selection: NodeSelection): boolean {
+  const { node } = selection;
+  return (
+    node instanceof Nucleotide ||
+    node instanceof Nucleoside ||
+    node?.monomer instanceof Phosphate
+  );
+}
+
 // Generate menu title if selected:
 // one nucleotide
 // one nucleoside
@@ -109,6 +118,11 @@ export const generateSequenceContextMenuProps = (
         isSequenceFirstsOnlyNucleoelementsSelected = false;
     } else {
       isSequenceFirstsOnlyNucleoelementsSelected = false;
+      isSelectedOnlyNucleoelements = false;
+    }
+  }
+  if (countOfSelections > countOfNucleoelements) {
+    if (!selectionsFlatten.every(isNucleotideNucleosideOrPhosphate)) {
       isSelectedOnlyNucleoelements = false;
     }
   }

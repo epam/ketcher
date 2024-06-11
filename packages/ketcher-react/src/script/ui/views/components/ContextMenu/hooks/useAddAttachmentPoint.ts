@@ -61,8 +61,26 @@ const useAddAttachmentPoint = () => {
         );
       } else {
         const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
-        const lastAttachmentPoint =
-          sgroupAttachmentPoints[sgroupAttachmentPoints.length - 1];
+        let lastMinimalPointNumber: number | undefined;
+        const allPointsNumbers = sgroupAttachmentPoints
+          .map((point) => point.attachmentPointNumber || 0)
+          .sort((a, b) => a - b);
+        if (!allPointsNumbers.includes(1)) {
+          lastMinimalPointNumber = 0;
+        } else {
+          for (let i = 1; i < allPointsNumbers.length; i += 1) {
+            const prevNumber = allPointsNumbers[i - 1];
+            const currentNumber = allPointsNumbers[i];
+            if (currentNumber > prevNumber + 1) {
+              lastMinimalPointNumber = prevNumber;
+              break;
+            }
+          }
+          if (!lastMinimalPointNumber) {
+            lastMinimalPointNumber =
+              allPointsNumbers[allPointsNumbers.length - 1];
+          }
+        }
 
         action.mergeWith(
           fromSgroupAttachmentPointAddition(
@@ -72,7 +90,7 @@ const useAddAttachmentPoint = () => {
               atomId,
               addedLeavingGroupAtomId,
               undefined,
-              (lastAttachmentPoint.attachmentPointNumber || 0) + 1,
+              lastMinimalPointNumber + 1,
             ),
           ),
         );

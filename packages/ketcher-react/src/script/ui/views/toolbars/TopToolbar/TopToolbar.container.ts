@@ -82,6 +82,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onClear: () => dispatchAction('clear'),
     onFileOpen: () => dispatchAction('open'),
     onSave: () => {
+      dispatchAction('deselect-all');
       dispatch(removeStructAction());
       dispatchAction('save');
     },

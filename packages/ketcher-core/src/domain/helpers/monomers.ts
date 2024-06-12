@@ -97,11 +97,7 @@ export function isValidNucleotide(sugar: Sugar): boolean {
   }
 
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
-  if (!(nextMonomerAfterPhosphate instanceof Sugar)) {
-    return false;
-  }
-
-  return !!getRnaBaseFromSugar(nextMonomerAfterPhosphate);
+  return !!nextMonomerAfterPhosphate;
 }
 
 export function isValidNucleoside(sugar: Sugar): boolean {
@@ -115,9 +111,5 @@ export function isValidNucleoside(sugar: Sugar): boolean {
   }
 
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
-  if (!(nextMonomerAfterPhosphate instanceof Sugar)) {
-    return true;
-  }
-
-  return !getRnaBaseFromSugar(nextMonomerAfterPhosphate);
+  return !nextMonomerAfterPhosphate;
 }

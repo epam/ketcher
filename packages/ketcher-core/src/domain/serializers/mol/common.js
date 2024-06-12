@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pile, SGroup } from 'domain/entities';
+import { MonomerMicromolecule, Pile, SGroup } from 'domain/entities';
 
 import utils from './utils';
 import v2000 from './v2000';
@@ -202,9 +202,19 @@ function saveSupToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
   let lines = [];
   lines = lines.concat(makeAtomBondLines('SAL', idstr, sgroup.atoms, atomMap));
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
-  if (sgroup.data.name && sgroup.data.name !== '') {
-    lines.push('M  SMT ' + idstr + ' ' + sgroup.data.name);
+
+  let sgroupName;
+
+  if (sgroup instanceof MonomerMicromolecule) {
+    sgroupName = sgroup.monomer.label;
+  } else if (sgroup.data.name && sgroup.data.name !== '') {
+    sgroupName = sgroup.data.name;
   }
+
+  if (sgroupName) {
+    lines.push('M  SMT ' + idstr + ' ' + sgroupName);
+  }
+
   return lines.join('\n');
 }
 

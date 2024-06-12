@@ -1015,8 +1015,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: In context menu for AP - only Delete avaliable.
-    Working not a proper way because we have bug https://github.com/epam/ketcher/issues/4793
-    After fix we need update snapshot.
     */
     await openFileAndAddToCanvas(
       'KET/structure-with-two-attachment-points.ket',

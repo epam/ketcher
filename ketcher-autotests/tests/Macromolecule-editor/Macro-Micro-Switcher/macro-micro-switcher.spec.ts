@@ -50,6 +50,12 @@ import {
   selectDropdownTool,
   openFileAndAddToCanvasAsNewProject,
   getSdf,
+  getCdx,
+  openFile,
+  getCdxml,
+  getCml,
+  clickOnFileFormatDropdown,
+  takeTopToolbarScreenshot,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -129,6 +135,45 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(1)
     .fill('05');
   await page.getByTestId('OK').click();
+}
+
+async function openCdxFile(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
+}
+
+async function openCdxmlFile(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
+}
+
+enum FileFormat {
+  SVGDocument = 'SVG Document',
+  PNGImage = 'PNG Image',
+}
+
+async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await clickOnFileFormatDropdown(page);
+  await page.getByRole('option', { name: FileFormat }).click();
 }
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -1711,6 +1756,148 @@ test.describe('Macro-Micro-Switcher', () => {
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1994
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+    await openCdxFile(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure not opens because we have bug https://github.com/epam/Indigo/issues/1993
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openCdxmlFile(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (atomRefs) in the SuperatomSgroup segment of CML molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1990
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      expectedFile,
+    );
+
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Undo-Redo invalidation if we change mode from micro to macro and back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Undo-Redo invalidation if we change mode from micro to macro and back.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeTopToolbarScreenshot(page);
+  });
+
+  test('Check saving to SVG Document format', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Structure saves in SVG Document format.
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check saving to PNG Image format', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Structure saves in PNG Image format.
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
     await takeEditorScreenshot(page);
   });
 

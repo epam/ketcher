@@ -74,7 +74,7 @@ export class Chain {
     };
     if (
       monomer instanceof Phosphate &&
-      this.lastNode instanceof Nucleoside &&
+      (!this.lastNode || this.lastNode instanceof Nucleoside) &&
       (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
@@ -117,7 +117,12 @@ export class Chain {
     return nodes;
   }
 
-  public get lastNode() {
+  public get lastNode():
+    | EmptySequenceNode
+    | MonomerSequenceNode
+    | Nucleoside
+    | Nucleotide
+    | undefined {
     return this.lastSubChain?.lastNode;
   }
 

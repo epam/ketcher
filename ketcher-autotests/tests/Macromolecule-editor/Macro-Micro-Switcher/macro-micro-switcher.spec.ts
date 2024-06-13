@@ -63,6 +63,7 @@ import {
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 
 const topLeftCorner = {
   x: -325,
@@ -174,6 +175,15 @@ async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
+}
+
+async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
+  await waitForRender(page, async () => {
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+  });
+  if (waitForButtonIsEnabled) {
+    await miewApplyButtonIsEnabled(page);
+  }
 }
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -1897,6 +1907,124 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
     await takeEditorScreenshot(page);
+  });
+
+  test('Check that Aromatize/Dearomatize works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Aromatize/Dearomatize works for molecules with AP.
+    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4804
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Layout works for molecules with AP', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Layout works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Clean Up works for molecules with AP', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Clean Up works for molecules with AP.
+    */
+    await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
+  });
+
+  test('Check that Calculate CIPs works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Calculate CIPs works for molecules with AP.
+    */
+    await openFileAndAddToCanvas('KET/structure-with-ap-and-stereo.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Structure Check works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Structure Check works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Check, page),
+    );
+    await takeEditorScreenshot(page, {
+      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+    });
+  });
+
+  test('Check that Calculate values works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Calculate values works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that 3D view works for molecules with AP but hydrohen is shown instead of AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: 3D view works for molecules with AP but hydrohen is shown instead of AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await open3DViewer(page);
+    await expect(page).toHaveScreenshot({
+      animations: 'disabled',
+      maxDiffPixelRatio: 0.05,
+    });
   });
 
   const testData5 = [

@@ -36,32 +36,32 @@ export function polymerBondToDrawingEntity(
   const firstAttachmentPoint =
     connection.endpoint1.attachmentPointId ||
     getAttachmentPointLabel(
-      (firstMonomer.monomerItem.struct.sgroups
+      firstMonomer.monomerItem.struct.sgroups
         .get(0)
         ?.getAttachmentPoints()
-        .findIndex(
+        .find(
           (attachmentPoint, attachmentPointIndex) =>
             attachmentPoint.atomId ===
               atomIdMap.get(Number(connection.endpoint1.atomId)) &&
             !superatomMonomerToUsedAttachmentPoint
               .get(firstMonomer)
               ?.has(getAttachmentPointLabel(attachmentPointIndex + 1)),
-        ) as number) + 1,
+        )?.attachmentPointNumber as number,
     );
   const secondAttachmentPoint =
     connection.endpoint2.attachmentPointId ||
     getAttachmentPointLabel(
-      (secondMonomer.monomerItem.struct.sgroups
+      secondMonomer.monomerItem.struct.sgroups
         .get(0)
         ?.getAttachmentPoints()
-        .findIndex(
+        .find(
           (attachmentPoint, attachmentPointIndex) =>
             attachmentPoint.atomId ===
               atomIdMap.get(Number(connection.endpoint2.atomId)) &&
             !superatomMonomerToUsedAttachmentPoint
               .get(secondMonomer)
               ?.has(getAttachmentPointLabel(attachmentPointIndex + 1)),
-        ) as number) + 1,
+        )?.attachmentPointNumber as number,
     );
 
   if (

@@ -40,12 +40,16 @@ export function polymerBondToDrawingEntity(
         .get(0)
         ?.getAttachmentPoints()
         .find(
-          (attachmentPoint, attachmentPointIndex) =>
+          (attachmentPoint) =>
             attachmentPoint.atomId ===
               atomIdMap.get(Number(connection.endpoint1.atomId)) &&
             !superatomMonomerToUsedAttachmentPoint
               .get(firstMonomer)
-              ?.has(getAttachmentPointLabel(attachmentPointIndex + 1)),
+              ?.has(
+                getAttachmentPointLabel(
+                  attachmentPoint.attachmentPointNumber as number,
+                ),
+              ),
         )?.attachmentPointNumber as number,
     );
   const secondAttachmentPoint =
@@ -55,12 +59,16 @@ export function polymerBondToDrawingEntity(
         .get(0)
         ?.getAttachmentPoints()
         .find(
-          (attachmentPoint, attachmentPointIndex) =>
+          (attachmentPoint) =>
             attachmentPoint.atomId ===
               atomIdMap.get(Number(connection.endpoint2.atomId)) &&
             !superatomMonomerToUsedAttachmentPoint
               .get(secondMonomer)
-              ?.has(getAttachmentPointLabel(attachmentPointIndex + 1)),
+              ?.has(
+                getAttachmentPointLabel(
+                  attachmentPoint.attachmentPointNumber as number,
+                ),
+              ),
         )?.attachmentPointNumber as number,
     );
 

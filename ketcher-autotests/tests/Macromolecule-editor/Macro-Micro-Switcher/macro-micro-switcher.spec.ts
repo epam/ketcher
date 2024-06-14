@@ -1562,6 +1562,56 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that it is not possible to change bond type between monomer and micromolecule in micro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: 
+      it is not possible to change bond type between monomer and micromolecule in micro mode
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await turnOnMicromoleculesEditor(page);
+    await selectDropdownTool(page, 'bonds', 'bond-double');
+    await page.mouse.click(690, 350);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: 
+      AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
+    */
+    await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(645, 318);
+    await takeEditorScreenshot(page);
+  });
+
   test('Connect molecule to monomer', async ({ page }) => {
     /*
     Github ticket: https://github.com/epam/ketcher/issues/4532
@@ -1619,6 +1669,66 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Validate that we can save bond between micro and macro structures to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: We can save bond between micro and macro structures to KET.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chem-connected-to-micro-structure.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/chem-connected-to-micro-structure-expected.ket',
+      expectedFile,
+    );
+
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/KET/chem-connected-to-micro-structure-expected.ket',
+    });
+
+    const hasConnectionTypeSingle = expectedFile.includes(
+      '"connectionType": "single"',
+    );
+    expect(hasConnectionTypeSingle).toBe(true);
+  });
+
+  test('Validate that we can save bond between micro and macro structures to Mol V3000 format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: We can save bond between micro and macro structures to Mol V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chem-connected-to-micro-structure.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({

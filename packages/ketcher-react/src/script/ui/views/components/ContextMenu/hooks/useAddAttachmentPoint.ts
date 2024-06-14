@@ -80,6 +80,7 @@ const useAddAttachmentPoint = () => {
 
       editor.update(action);
       editor.selection(null);
+      editor.focusCliparea();
     },
     [getKetcherInstance],
   );

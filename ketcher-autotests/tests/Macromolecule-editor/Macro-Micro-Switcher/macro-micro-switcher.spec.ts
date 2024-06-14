@@ -1006,8 +1006,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
-    Working not a proper way because we have bug https://github.com/epam/ketcher/issues/4784
-    After fix we need update snapshot.
     */
     await openFileAndAddToCanvas(
       'KET/chain-with-eight-attachment-points.ket',

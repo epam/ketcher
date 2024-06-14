@@ -76,6 +76,10 @@ for (const bondToolKey of Object.keys(BondTool)) {
   let point: { x: number; y: number };
   const DELTA = 150;
   test.describe(`${bondToolKey} bond tool`, () => {
+    // Making these tests serial since they use Clipboard that is shared between threads
+    // and that causes problems in case of multithreads
+    test.describe.configure({ mode: 'serial' });
+
     let page: Page;
 
     test.beforeAll(async ({ browser }) => {

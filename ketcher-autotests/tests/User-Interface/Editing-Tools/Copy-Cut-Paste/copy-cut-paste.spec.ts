@@ -32,6 +32,10 @@ const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
 
 test.describe('Copy/Cut/Paste Actions', () => {
+  // Making these tests serial since they use Clipboard that is shared between threads
+  // and that causes problems in case of multithreads
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -286,7 +290,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.skip('Copy and paste the Bond from reaction', async ({ page }) => {
+  test('Copy and paste the Bond from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.

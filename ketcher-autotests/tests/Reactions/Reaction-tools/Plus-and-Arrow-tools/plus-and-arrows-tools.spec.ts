@@ -180,6 +180,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET - 1791
      * Description: Plus sign - Manipulations with different Tools
      */
+    // Making these tests serial since they use Clipboard that is shared between threads
+    // and that causes problems in case of multithreads
+    test.describe.configure({ mode: 'serial' });
+
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
@@ -216,7 +220,7 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test.skip('Select plus sign, cut and paste it onto the canvas', async ({
+    test('Select plus sign, cut and paste it onto the canvas', async ({
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
@@ -323,6 +327,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2250
      *Description: Non-default Reaction Arrow Tool - Manipulations with different tools
      */
+    // Making these tests serial since they use Clipboard that is shared between threads
+    // and that causes problems in case of multithreads
+    test.describe.configure({ mode: 'serial' });
+
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(
@@ -376,7 +384,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, 0, -100);
     });
 
-    test.skip('Select reaction arrow, copy and paste it onto the canvas', async ({
+    test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
       await waitForRender(page, async () => {

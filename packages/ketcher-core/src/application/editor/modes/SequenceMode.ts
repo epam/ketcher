@@ -356,22 +356,12 @@ export class SequenceMode extends BaseMode {
       .monomer as BaseMonomer;
 
     modelChanges.merge(
-      editor.drawingEntitiesManager.createPolymerBond(
-        previousMonomer,
-        additionalPhosphate,
-        AttachmentPointName.R2,
-        AttachmentPointName.R1,
-      ),
+      this.tryToCreatePolymerBond(previousMonomer, additionalPhosphate),
     );
 
     if (nextMonomer) {
       modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          additionalPhosphate,
-          nextMonomer,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
-        ),
+        this.tryToCreatePolymerBond(additionalPhosphate, nextMonomer),
       );
     }
 
@@ -430,24 +420,26 @@ export class SequenceMode extends BaseMode {
   }
 
   private connectNodes(
-    node: SubChainNode | undefined,
-    nextNode: SubChainNode | undefined,
+    firstNodeToConnect: SubChainNode | undefined,
+    secondNodeToConnect: SubChainNode | undefined,
     modelChanges: Command,
     newNodePosition: Vec2,
+    nextNodeInSameChain?: SubChainNode,
   ) {
     if (
-      !node ||
-      node instanceof EmptySequenceNode ||
-      !nextNode ||
-      nextNode instanceof EmptySequenceNode
+      !firstNodeToConnect ||
+      firstNodeToConnect instanceof EmptySequenceNode ||
+      !secondNodeToConnect ||
+      secondNodeToConnect instanceof EmptySequenceNode
     ) {
       return;
     }
 
     const editor = CoreEditor.provideEditorInstance();
-    const nodeR2Bond = node.lastMonomerInNode.attachmentPointsToBonds?.R2;
+    const nodeR2Bond =
+      firstNodeToConnect.lastMonomerInNode.attachmentPointsToBonds?.R2;
     const nextNodeR1Bond =
-      nextNode?.firstMonomerInNode?.attachmentPointsToBonds.R1;
+      secondNodeToConnect?.firstMonomerInNode?.attachmentPointsToBonds.R1;
 
     if (nodeR2Bond || nextNodeR1Bond) {
       editor.events.error.dispatch(
@@ -458,23 +450,23 @@ export class SequenceMode extends BaseMode {
     }
 
     if (
-      node instanceof Nucleoside &&
-      (nextNode instanceof Nucleotide || nextNode instanceof Nucleoside)
+      nextNodeInSameChain instanceof EmptySequenceNode &&
+      firstNodeToConnect instanceof Nucleoside &&
+      (secondNodeToConnect instanceof Nucleotide ||
+        secondNodeToConnect instanceof Nucleoside)
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
           newNodePosition,
-          node.lastMonomerInNode,
-          nextNode.firstMonomerInNode,
+          firstNodeToConnect.lastMonomerInNode,
+          secondNodeToConnect.firstMonomerInNode,
         ),
       );
     } else {
       modelChanges.merge(
-        editor.drawingEntitiesManager.createPolymerBond(
-          node.lastMonomerInNode,
-          nextNode.firstMonomerInNode,
-          AttachmentPointName.R2,
-          AttachmentPointName.R1,
+        this.tryToCreatePolymerBond(
+          firstNodeToConnect.lastMonomerInNode,
+          secondNodeToConnect.firstMonomerInNode,
         ),
       );
     }
@@ -517,6 +509,27 @@ export class SequenceMode extends BaseMode {
     SequenceRenderer.resetLastUserDefinedCaretPosition();
   }
 
+  private tryToCreatePolymerBond(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    const isConnectionPossible = this.areR1R2Free(secondMonomer, firstMonomer);
+
+    if (!isConnectionPossible) {
+      this.showMergeWarningModal();
+      return new Command();
+    }
+
+    return editor.drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
+      secondMonomer,
+      AttachmentPointName.R2,
+      AttachmentPointName.R1,
+    );
+  }
+
   private handleNodesDeletion(selections: NodesSelection) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
@@ -531,6 +544,8 @@ export class SequenceMode extends BaseMode {
       const nodeAfterSelection = SequenceRenderer.getNextNode(selectionEndNode);
       const nodeInSameChainBeforeSelection =
         SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
+      const nodeInSameChainAfterSelection =
+        SequenceRenderer.getNextNodeInSameChain(selectionEndNode);
 
       if (
         !nodeInSameChainBeforeSelection &&
@@ -553,9 +568,10 @@ export class SequenceMode extends BaseMode {
       }
 
       if (
+        nodeBeforeSelection === nodeInSameChainBeforeSelection &&
         nodeBeforeSelection instanceof Nucleotide &&
-        !(nodeAfterSelection instanceof Nucleotide) &&
-        !(nodeAfterSelection instanceof Nucleoside)
+        !(nodeInSameChainAfterSelection instanceof Nucleotide) &&
+        !(nodeInSameChainAfterSelection instanceof Nucleoside)
       ) {
         // delete phosphate from last nucleotide
         modelChanges.merge(
@@ -569,15 +585,17 @@ export class SequenceMode extends BaseMode {
 
       if (
         !nodeAfterSelection ||
-        nodeAfterSelection instanceof EmptySequenceNode
+        nodeAfterSelection instanceof EmptySequenceNode ||
+        (!this.isEditMode &&
+          (nodeAfterSelection !== nodeInSameChainAfterSelection ||
+            nodeBeforeSelection !== nodeInSameChainBeforeSelection))
       ) {
         return;
       }
 
       if (
         nodeBeforeSelection instanceof Nucleoside &&
-        (nodeAfterSelection instanceof Nucleotide ||
-          nodeAfterSelection instanceof Nucleoside)
+        nodeAfterSelection instanceof Nucleotide
       ) {
         modelChanges.merge(
           this.bondNodesThroughNewPhosphate(
@@ -588,13 +606,11 @@ export class SequenceMode extends BaseMode {
         );
       } else {
         modelChanges.merge(
-          editor.drawingEntitiesManager.createPolymerBond(
+          this.tryToCreatePolymerBond(
             isPhosphateAdditionalyDeleted
               ? nodeBeforeSelection.firstMonomerInNode
               : nodeBeforeSelection.lastMonomerInNode,
             nodeAfterSelection.firstMonomerInNode,
-            AttachmentPointName.R2,
-            AttachmentPointName.R1,
           ),
         );
       }
@@ -821,6 +837,56 @@ export class SequenceMode extends BaseMode {
     return true;
   }
 
+  private isR1Free(entity: SubChainNode | BaseMonomer): boolean {
+    if (entity instanceof BaseMonomer) {
+      return entity.attachmentPointsToBonds.R1 === null;
+    }
+
+    return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
+  }
+
+  private isR2Free(entity: SubChainNode | BaseMonomer): boolean {
+    if (entity instanceof BaseMonomer) {
+      return entity.attachmentPointsToBonds.R2 === null;
+    }
+
+    return entity?.lastMonomerInNode?.attachmentPointsToBonds?.R2 === null;
+  }
+
+  private areR1R2Free(
+    firstEntity: SubChainNode | BaseMonomer,
+    lastEntity: SubChainNode | BaseMonomer,
+  ): boolean {
+    return this.isR1Free(firstEntity) && this.isR2Free(lastEntity);
+  }
+
+  isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
+    if (!this.isEditMode) {
+      return true;
+    }
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...drawingEntitiesManager.monomers.values(),
+    ]);
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const lastNodeOfNewFragment = chainsCollection.lastNode;
+    const firstNodeOfNewFragment = chainsCollection.firstNode;
+    const isPasteInEnd =
+      currentNode instanceof EmptySequenceNode || !currentNode;
+    const isPasteInStart = !previousNodeInSameChain;
+    if (isPasteInEnd && !previousNodeInSameChain) return true;
+    if (isPasteInEnd) {
+      return (
+        this.isR1Free(firstNodeOfNewFragment) &&
+        this.isR2Free(previousNodeInSameChain)
+      );
+    }
+    if (isPasteInStart) {
+      return this.isR2Free(lastNodeOfNewFragment) && this.isR1Free(currentNode);
+    }
+    return this.areR1R2Free(firstNodeOfNewFragment, lastNodeOfNewFragment);
+  }
+
   applyAdditionalPasteOperations(
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
@@ -867,7 +933,31 @@ export class SequenceMode extends BaseMode {
     const currentNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
 
+    if (
+      currentNode instanceof MonomerSequenceNode &&
+      currentNode.monomer instanceof Phosphate
+    ) {
+      return;
+    }
+
+    if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
+      if (!this.isR2Free(previousNodeInSameChain)) {
+        this.showMergeWarningModal();
+        return;
+      }
+    }
+    if (
+      !previousNodeInSameChain &&
+      !(currentNode instanceof EmptySequenceNode) &&
+      currentNode
+    ) {
+      if (!this.isR1Free(currentNode)) {
+        this.showMergeWarningModal();
+        return;
+      }
+    }
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
       modelChanges = this.handlePeptideNodeAddition(
         enteredSymbol,
@@ -881,6 +971,16 @@ export class SequenceMode extends BaseMode {
       );
     }
     return modelChanges;
+  }
+
+  private showMergeWarningModal() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    editor.events.openErrorModal.dispatch({
+      errorTitle: 'Error Message',
+      errorMessage:
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+    });
   }
 
   private insertNewSequenceFragment(
@@ -906,6 +1006,7 @@ export class SequenceMode extends BaseMode {
       firstNodeOfNewFragment,
       modelChanges,
       newNodePosition,
+      currentNode,
     );
 
     this.connectNodes(

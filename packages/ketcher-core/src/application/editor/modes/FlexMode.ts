@@ -33,5 +33,9 @@ export class FlexMode extends BaseMode {
     return true;
   }
 
+  isPasteAvailable(): boolean {
+    return true;
+  }
+
   scrollForView(): void {}
 }

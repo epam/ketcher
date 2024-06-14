@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot } from '@utils';
 import { gotoRNA } from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Macromolecules delete RNA presets', () => {
@@ -11,7 +11,7 @@ test.describe('Macromolecules delete RNA presets', () => {
 
   test('Should not delete default RNA preset', async ({ page }) => {
     await page.getByTestId('A_A_R_P').click({ button: 'right' });
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Delete copy RNA preset', async ({ page }) => {

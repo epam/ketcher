@@ -40,7 +40,7 @@ interface ScrollBar {
 const AUTO_SCROLL_OFFSET_X = 10;
 const AUTO_SCROLL_OFFSET_Y = 10;
 
-class ZoomTool implements BaseTool {
+export class ZoomTool implements BaseTool {
   public canvas: D3SvgElementSelection<SVGSVGElement, void>;
   public canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
@@ -110,7 +110,6 @@ class ZoomTool implements BaseTool {
         this.mouseWheeled(event);
       }
     });
-    this.initMenuZoom();
   }
 
   setZoom(zoomLevel: number) {
@@ -329,18 +328,6 @@ class ZoomTool implements BaseTool {
 
   public resetZoom() {
     this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
-  }
-
-  initMenuZoom() {
-    select('.zoom-in').on('click', () => {
-      this.zoomIn();
-    });
-    select('.zoom-out').on('click', () => {
-      this.zoomOut();
-    });
-    select('.zoom-reset').on('click', () => {
-      this.resetZoom();
-    });
   }
 
   observeCanvasResize = () => {

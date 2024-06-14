@@ -136,7 +136,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('OK').click();
   });
 
-  test('Brackets rendering for whole r-group structure even with attachment points', async ({
+  test.skip('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);

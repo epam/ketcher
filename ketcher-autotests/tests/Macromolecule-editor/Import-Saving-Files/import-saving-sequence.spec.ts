@@ -38,15 +38,16 @@ test.describe('Import-Saving .seq Files', () => {
     });
   }
 
-  test('Import incorrect data', async ({ page }) => {
-    const randomText = 'asjfnsalkfl';
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(randomText);
-    await chooseFileFormat(page, 'Sequence');
-    await page.getByTestId('add-to-canvas-button').click();
-    await takeEditorScreenshot(page);
-  });
+  // Fail while performance issue on Indigo side
+  // test('Import incorrect data', async ({ page }) => {
+  //   const randomText = 'asjfnsalkfl';
+  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await page.getByTestId('paste-from-clipboard-button').click();
+  //   await page.getByTestId('open-structure-textarea').fill(randomText);
+  //   await chooseFileFormat(page, 'Sequence');
+  //   await page.getByTestId('add-to-canvas-button').click();
+  //   await takeEditorScreenshot(page);
+  // });
 
   test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
     page,
@@ -134,6 +135,7 @@ test.describe('Import-Saving .seq Files', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

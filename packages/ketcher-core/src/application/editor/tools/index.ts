@@ -31,3 +31,4 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
 };
 
 export * from './Tool';
+export * from './Zoom';

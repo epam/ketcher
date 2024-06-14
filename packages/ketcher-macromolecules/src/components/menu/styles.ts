@@ -16,34 +16,47 @@
 
 import styled from '@emotion/styled';
 
-export const MenuLayout = styled.div`
-  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
-  border-radius: 4px;
-`;
+export const MenuLayout = styled.div<{ isHorizontal?: boolean }>(
+  ({ theme, isHorizontal }) => ({
+    backgroundColor: theme.ketcher.color.background.primary,
+    borderRadius: '4px',
+    display: 'flex',
+    flexDirection: isHorizontal ? 'row' : 'column',
+  }),
+);
 
-export const Divider = styled.span`
-  display: block;
-  height: 8px;
-  width: 32px;
-  border-top: 1px solid;
+export const Divider = styled.hr`
+  width: 18px;
+  margin: 6px 0;
+  align-self: center;
+  border-width: thin 0px 0px 0px;
+  border-style: solid;
   border-color: ${({ theme }) => theme.ketcher.color.divider};
 `;
 
-export const StyledGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: center;
-  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
-  border-radius: 2px;
-  width: 32px;
-  margin-bottom: 8px;
-
-  > * {
-    margin-bottom: 8px;
-  }
-
-  > :last-child {
-    margin-bottom: 0;
-  }
+export const VerticalDivider = styled.hr`
+  height: 18px;
+  margin: 0px 6px;
+  align-self: center;
+  border-width: 0px thin 0px 0px;
+  border-style: solid;
+  border-color: ${({ theme }) => theme.ketcher.color.divider};
 `;
+
+export const StyledGroup = styled.div<{ isHorizontal?: boolean }>(
+  ({ theme, isHorizontal }) => ({
+    display: 'flex',
+    flexDirection: isHorizontal ? 'row' : 'column',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    backgroundColor: theme.ketcher.color.background.primary,
+    borderRadius: '2px',
+    width: isHorizontal ? undefined : '32px',
+    marginBottom: isHorizontal ? undefined : '8px',
+    '> :last-child': isHorizontal
+      ? undefined
+      : {
+          marginBottom: 0,
+        },
+  }),
+);

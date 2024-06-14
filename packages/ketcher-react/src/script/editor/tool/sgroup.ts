@@ -33,6 +33,7 @@ import { isEqual } from 'lodash/fp';
 import { selMerge } from './select';
 import Editor, { Selection } from '../Editor';
 import { Tool } from './Tool';
+import { filterNotPartOfSuperatomWithoutLabel } from './helper/filterNotInCollapsedSGroup';
 
 const searchMaps = [
   'atoms',
@@ -55,12 +56,27 @@ class SGroupTool implements Tool {
   }
 
   checkSelection() {
-    const selection = this.editor.selection() || {};
+    let selection = this.editor.selection() || {};
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const filteredAtomsAndBonds = filterNotPartOfSuperatomWithoutLabel(
+      { atoms: selection.atoms, bonds: selection.bonds },
+      molecule,
+    );
+
+    selection = {
+      ...selection,
+      atoms: filteredAtomsAndBonds.atoms,
+      bonds: filteredAtomsAndBonds.bonds,
+    };
+
+    selection = this.editor.selection(selection) || {};
+    this.editor.rotateController.rerender();
+    this.editor.update(true);
 
     if (selection.atoms && selection.bonds) {
       const selectedAtoms = this.editor.selection()?.atoms;
-      const struct = this.editor.render.ctab;
-      const molecule = struct.molecule;
+
       const sgroups: Pool<SGroup> = molecule.sgroups;
       const newSelected: { atoms: Array<any>; bonds: Array<any> } = {
         atoms: [],
@@ -356,7 +372,12 @@ class SGroupTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id,
-        ) as number;
+        );
+
+        if (fgId === null) {
+          return;
+        }
+
         const sgroupAtoms = SGroup.getAtoms(
           molecule,
           struct.sgroups.get(fgId)?.item,
@@ -371,7 +392,12 @@ class SGroupTool implements Tool {
           molecule,
           functionalGroups,
           id,
-        ) as number;
+        );
+
+        if (fgId === null) {
+          return;
+        }
+
         const sgroupBonds = SGroup.getBonds(
           molecule,
           struct.sgroups.get(fgId)?.item,
@@ -426,6 +452,18 @@ class SGroupTool implements Tool {
         newSelected.atoms.length > 0
           ? selMerge(this.lassoHelper.end(event), newSelected, false)
           : this.lassoHelper.end(event);
+
+      const filteredAtomsAndBonds = filterNotPartOfSuperatomWithoutLabel(
+        { atoms: selection.atoms, bonds: selection.bonds },
+        molecule,
+      );
+
+      selection = {
+        ...selection,
+        atoms: filteredAtomsAndBonds.atoms,
+        bonds: filteredAtomsAndBonds.bonds,
+      };
+
       this.editor.selection(selection);
     } else {
       if (!ci) {

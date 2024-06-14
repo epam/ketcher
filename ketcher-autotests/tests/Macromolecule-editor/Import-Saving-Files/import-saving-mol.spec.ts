@@ -222,11 +222,13 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
 
     const numberOfPressZoomOut = 6;
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -489,11 +491,13 @@ test.describe('Import modified .mol files from external editor', () => {
       test(`for ${fileName}`, async () => {
         await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
         const numberOfPressZoomOut = 4;
+        await page.getByTestId('zoom-selector').click();
         for (let i = 0; i < numberOfPressZoomOut; i++) {
           await waitForRender(page, async () => {
             await page.getByTestId('zoom-out-button').click();
           });
         }
+        await clickInTheMiddleOfTheScreen(page);
       });
     }
   }

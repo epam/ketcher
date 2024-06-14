@@ -17,6 +17,7 @@ import {
   SequenceType,
   takeLayoutSwitcherScreenshot,
   takePageScreenshot,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import {
   enterSequence,
@@ -130,6 +131,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -227,6 +229,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -456,18 +459,22 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 3; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'ac');
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 2; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'g');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);

@@ -259,9 +259,15 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup, 'id', source.id);
       source.attachmentPoints?.forEach(
-        (sourceAttachmentPoint: KetAttachmentPoint) => {
+        (
+          sourceAttachmentPoint: KetAttachmentPoint,
+          sourceAttachmentPointIndex: number,
+        ) => {
           sgroup.addAttachmentPoint(
-            sgroupAttachmentPointToStruct(sourceAttachmentPoint),
+            sgroupAttachmentPointToStruct(
+              sourceAttachmentPoint,
+              sourceAttachmentPointIndex + 1,
+            ),
           );
         },
       );
@@ -283,9 +289,15 @@ export function sgroupToStruct(source) {
 
 function sgroupAttachmentPointToStruct(
   source: KetAttachmentPoint,
+  attachmentPointNumber?: number,
 ): SGroupAttachmentPoint {
   const atomId = source.attachmentAtom;
   const leavingAtomId = source.leavingAtom;
   const attachmentId = source.attachmentId;
-  return new SGroupAttachmentPoint(atomId, leavingAtomId, attachmentId);
+  return new SGroupAttachmentPoint(
+    atomId,
+    leavingAtomId,
+    attachmentId,
+    attachmentId ? Number(attachmentId) : attachmentPointNumber,
+  );
 }

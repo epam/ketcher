@@ -2,21 +2,21 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer0"
+                "$ref": "monomer3"
             },
             {
-                "$ref": "monomer1"
+                "$ref": "monomer4"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer0",
+                    "monomerId": "monomer3",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer1",
+                    "monomerId": "monomer4",
                     "attachmentPointId": "R1"
                 }
             }
@@ -27,12 +27,12 @@
             }
         ]
     },
-    "monomer0": {
+    "monomer3": {
         "type": "monomer",
-        "id": "0",
+        "id": "3",
         "position": {
-            "x": 10.675,
-            "y": 6.75
+            "x": 9.55,
+            "y": -10.149999999999999
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -82,25 +82,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.5903092126145781,
                     0.20573302003705518,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.8232336838376932,
                     0.07071340035455183,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -149,9 +143,10 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "A___Alanine",
+        "fullName": "A",
         "alias": "A",
         "attachmentPoints": [
             {
@@ -168,14 +163,15 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
-    "monomer1": {
+    "monomer4": {
         "type": "monomer",
-        "id": "1",
+        "id": "4",
         "position": {
-            "x": 15.375,
-            "y": 10.4
+            "x": 14.25,
+            "y": -6.499999999999998
         },
         "alias": "A",
         "templateId": "A___Alanine"

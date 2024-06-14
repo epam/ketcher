@@ -37,6 +37,7 @@ import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
 
 export type Neighbor = {
   aid: number;
@@ -183,12 +184,16 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
+  getFragment(
+    fid: number | number[],
+    copyNonFragmentObjects = true,
+    aidMap?: Map<number, number>,
+  ): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,
       true,
-      undefined,
+      aidMap,
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
@@ -366,6 +371,11 @@ export class Struct {
     for (let i = 0; i < atom.neighbors.length; ++i) {
       const hb = this.halfBonds.get(atom.neighbors[i])!;
       const bond = this.bonds.get(hb.bid)!;
+
+      if (Bond.isBondToHiddenLeavingGroup(this, bond)) {
+        continue;
+      }
+
       switch (bond.type) {
         case Bond.PATTERN.TYPE.SINGLE:
           conn += 1;
@@ -975,6 +985,10 @@ export class Struct {
   }
 
   calcImplicitHydrogen(aid: number) {
+    if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
+      return;
+    }
+
     const atom = this.atoms.get(aid)!;
     const charge = atom.charge || 0;
     const [conn, isAromatic] = this.calcConn(atom);
@@ -1160,6 +1174,16 @@ export class Struct {
       }
     }
     return null;
+  }
+
+  getGroupFromBondId(atomId: number): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromBondId(atomId);
+
+    if (!isNumber(sgroupId)) {
+      return;
+    }
+
+    return this.sgroups?.get(sgroupId as number);
   }
 
   getGroupsIdsFromBondId(bondId: number): number[] {

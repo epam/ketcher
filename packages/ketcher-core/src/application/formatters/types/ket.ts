@@ -18,11 +18,19 @@ export interface IKetGroupNode {
 
 export type KetNode = IKetMonomerNode | IKetGroupNode;
 
-export interface IKetConnectionEndPoint {
-  monomerId?: string;
+export interface IKetConnectionMonomerEndPoint {
+  monomerId: string;
   attachmentPointId?: string;
   groupId?: string;
 }
+
+export interface IKetConnectionMoleculeEndPoint {
+  moleculeId: string;
+  atomId: string;
+}
+
+export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
+  IKetConnectionMoleculeEndPoint;
 
 export enum KetConnectionType {
   SINGLE = 'single',

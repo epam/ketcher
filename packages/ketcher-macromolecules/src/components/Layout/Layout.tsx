@@ -67,11 +67,11 @@ const Left = styled(BaseLeftRightStyle)``;
 const Right = styled(BaseLeftRightStyle)``;
 
 const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
-  height: 'fit-content',
+  height: '36px',
   width: shortened ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})` : '100%',
   marginBottom: '6px',
   display: 'flex',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
   alignItems: 'center',
   backgroundColor: '#FFFFFF',
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',

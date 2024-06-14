@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { defaultBondThickness } from 'application/editor';
+import { defaultBondThickness, CoreEditor } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -193,13 +193,18 @@ export class RemoteStructService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
+    const monomerLibrary = JSON.stringify(
+      CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+    );
+    const expandedOptions = { monomerLibrary, ...options };
+
     return indigoCall(
       'POST',
       'indigo/convert',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, expandedOptions);
   }
 
   layout(

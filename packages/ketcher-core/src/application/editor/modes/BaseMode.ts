@@ -30,21 +30,21 @@ export abstract class BaseMode {
     public previousMode: LayoutMode = 'flex-layout-mode',
   ) {}
 
-  private changeMode(editor: CoreEditor, modeName: LayoutMode) {
+  private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
     editor.events.layoutModeChange.dispatch(modeName);
     const ModeConstructor = modesMap[modeName];
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize();
+    editor.mode.initialize(true, isUndo);
   }
 
-  public initialize(needRemoveSelection = true) {
+  public initialize(needRemoveSelection = true, _isUndo = false) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 
     command.addOperation(
       new SelectLayoutModeOperation(
         this.changeMode.bind(this, editor, this.modeName),
-        this.changeMode.bind(this, editor, this.previousMode),
+        this.changeMode.bind(this, editor, this.previousMode, true),
         this.modeName,
         this.previousMode,
       ),
@@ -83,6 +83,10 @@ export abstract class BaseMode {
   ): Command;
 
   abstract isPasteAllowedByMode(
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ): boolean;
+
+  abstract isPasteAvailable(
     drawingEntitiesManager: DrawingEntitiesManager,
   ): boolean;
 
@@ -191,15 +195,11 @@ export abstract class BaseMode {
           break;
       }
 
-      if (inputFormat) {
-        modelChanges = await this.pasteWithIndigoConversion(
-          pastedStr,
-          inputFormat,
-          isSequenceOrFasta,
-        );
-      } else {
-        editor.events.error.dispatch('Pasted format could not be recognized.');
-      }
+      modelChanges = await this.pasteWithIndigoConversion(
+        pastedStr,
+        inputFormat,
+        isSequenceOrFasta,
+      );
     }
 
     if (!modelChanges || modelChanges.operations.length === 0) {
@@ -219,12 +219,22 @@ export abstract class BaseMode {
       throw new Error('Error during parsing file');
     }
     const drawingEntitiesManager = deserialisedKet?.drawingEntitiesManager;
+
     if (
       !drawingEntitiesManager ||
       !this.isPasteAllowedByMode(drawingEntitiesManager)
     ) {
       return;
     }
+    if (!this.isPasteAvailable(drawingEntitiesManager)) {
+      editor.events.openErrorModal.dispatch({
+        errorTitle: 'Error Message',
+        errorMessage:
+          'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      });
+      return;
+    }
+
     this.updateMonomersPosition(drawingEntitiesManager);
     const { command: modelChanges, mergedDrawingEntities } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);

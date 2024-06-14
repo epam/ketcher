@@ -20,6 +20,7 @@ const useDelete = () => {
       editor.update(action);
 
       editor.selection(null);
+      editor.focusCliparea();
     },
     [getKetcherInstance],
   );

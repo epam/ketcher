@@ -51,7 +51,7 @@ export class Chain {
 
     if (monomer instanceof Sugar) {
       if (isValidNucleoside(monomer, this.firstMonomer)) {
-        this.lastSubChain.add(Nucleoside.fromSugar(monomer));
+        this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
         return;
       }
       if (isValidNucleotide(monomer, this.firstMonomer)) {
@@ -60,7 +60,7 @@ export class Chain {
       }
     }
     if (monomer instanceof Peptide) {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer, false));
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
       return;
     }
     const nextMonomer = getNextMonomerInChain(monomer);

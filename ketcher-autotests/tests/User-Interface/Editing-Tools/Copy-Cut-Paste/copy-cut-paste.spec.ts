@@ -26,16 +26,13 @@ import {
   resetCurrentTool,
   pressButton,
   clickAfterItemsToMergeInitialization,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
 
 test.describe('Copy/Cut/Paste Actions', () => {
-  // Making these tests serial since they use Clipboard that is shared between threads
-  // and that causes problems in case of multithreads
-  test.describe.configure({ mode: 'serial' });
-
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -189,7 +186,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+x');
+    // await page.keyboard.press('Control+x');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press('Control+x'),
+    );
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -231,7 +232,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press('Control+c'),
+    );
   });
 
   test('Copy and Paste structure and edit', async ({ page }) => {
@@ -302,8 +306,17 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    // await page.keyboard.press('Control+c');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press('Control+c'),
+    );
+
+    // await page.keyboard.press('Control+v');
+    await waitForSpinnerFinishedWork(page, async () =>
+      page.keyboard.press('Control+v'),
+    );
+
     await page.mouse.click(x, y);
   });
 
@@ -336,7 +349,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
-    await page.keyboard.press('Control+v');
+    // await page.keyboard.press('Control+v');
+    await waitForSpinnerFinishedWork(page, async () =>
+      page.keyboard.press('Control+v'),
+    );
     await page.mouse.click(x2, y2);
   });
 

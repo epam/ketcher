@@ -39,6 +39,7 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -72,35 +73,35 @@ const buttonIdToTitle: {
   'bond-crossed': 'Double Cis/Trans Bond (2)',
 };
 
-for (const bondToolKey of Object.keys(BondTool)) {
-  let point: { x: number; y: number };
-  const DELTA = 150;
-  test.describe(`${bondToolKey} bond tool`, () => {
-    // Making these tests serial since they use Clipboard that is shared between threads
-    // and that causes problems in case of multithreads
-    test.describe.configure({ mode: 'serial' });
+test.describe(`Bond tool:`, () => {
+  // Making these tests serial since they use Clipboard that is shared between threads
+  // and that causes problems in case of multithreads
+  test.describe.configure({ mode: 'serial' });
+  let page: Page;
 
-    let page: Page;
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
+  });
 
-    test.beforeAll(async ({ browser }) => {
-      page = await browser.newPage();
-      await page.goto('', { waitUntil: 'domcontentloaded' });
-      await waitForKetcherInit(page);
-      await waitForIndigoToLoad(page);
-    });
+  test.beforeEach(async () => {
+    await selectAction(TopPanelButton.Clear, page);
+  });
 
-    test.beforeEach(async () => {
-      await selectAction(TopPanelButton.Clear, page);
-    });
+  test.afterEach(async () => {
+    await takeEditorScreenshot(page);
+    await selectAction(TopPanelButton.Clear, page);
+  });
 
-    test.afterEach(async () => {
-      await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
-    });
+  test.afterAll(async () => {
+    await page.close();
+  });
 
-    test.afterAll(async () => {
-      await page.close();
-    });
+  for (const bondToolKey of Object.keys(BondTool)) {
+    let point: { x: number; y: number };
+    const DELTA = 150;
 
     test(`placing ${bondToolKey} on canvas`, async () => {
       /**
@@ -297,8 +298,16 @@ for (const bondToolKey of Object.keys(BondTool)) {
 
         await page.mouse.click(point.x, point.y);
 
-        await page.keyboard.press('Control+C');
-        await page.keyboard.press('Control+V');
+        // await page.keyboard.press('Control+C');
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press('Control+C'),
+        );
+        // await page.keyboard.press('Control+V');
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press('Control+V'),
+        );
 
         await waitForRender(page, async () => {
           await page.mouse.click(point.x + DELTA_X, point.y);
@@ -308,8 +317,16 @@ for (const bondToolKey of Object.keys(BondTool)) {
         });
 
         await clickInTheMiddleOfTheScreen(page);
-        await page.keyboard.press('Control+X');
-        await page.keyboard.press('Control+V');
+        // await page.keyboard.press('Control+X');
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press('Control+X'),
+        );
+        // await page.keyboard.press('Control+V');
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press('Control+V'),
+        );
         await page.mouse.click(point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
           await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -353,7 +370,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
        *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
        */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondToolKey}-bond.mol`;
-      test(`Save to file`, async () => {
+      test(`${bondToolKey}: Save to file`, async () => {
         await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
@@ -361,7 +378,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
         await page.getByRole('button', { name: 'Save', exact: true }).click();
       });
 
-      test(`Open and edit`, async () => {
+      test(`${bondToolKey}: Open and edit`, async () => {
         await openFileAndAddToCanvas(fileName, page);
         await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
         await clickOnTheCanvas(page, 200, 0);
@@ -376,8 +393,8 @@ for (const bondToolKey of Object.keys(BondTool)) {
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
     });
-  });
-}
+  }
+});
 
 test.describe('Bond Tool', () => {
   const toolsForTest: DropdownToolIds[] = [

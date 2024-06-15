@@ -180,10 +180,6 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET - 1791
      * Description: Plus sign - Manipulations with different Tools
      */
-    // Making these tests serial since they use Clipboard that is shared between threads
-    // and that causes problems in case of multithreads
-    test.describe.configure({ mode: 'serial' });
-
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
@@ -224,8 +220,18 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+
+      // await page.keyboard.press(`${modifier}+KeyX`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyX`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
+
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -233,8 +239,17 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      // await page.keyboard.press(`${modifier}+KeyC`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyC`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
+
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -289,8 +304,17 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      // await page.keyboard.press(`${modifier}+KeyX`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyX`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
+
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -303,8 +327,17 @@ test.describe('Plus and Arrows tools ', () => {
         await waitForRender(page, async () => {
           await page.mouse.click(point.x + 60, point.y);
         });
-        await page.keyboard.press(`${modifier}+KeyC`);
-        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        // await page.keyboard.press(`${modifier}+KeyC`);
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press(`${modifier}+KeyC`),
+        );
+
+        // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await waitForSpinnerFinishedWork(page, async () =>
+          page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+        );
+
         await clickOnTheCanvas(page, 0, -100);
       },
     );
@@ -327,10 +360,6 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2250
      *Description: Non-default Reaction Arrow Tool - Manipulations with different tools
      */
-    // Making these tests serial since they use Clipboard that is shared between threads
-    // and that causes problems in case of multithreads
-    test.describe.configure({ mode: 'serial' });
-
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas(
@@ -369,8 +398,17 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+
+      // await page.keyboard.press(`${modifier}+KeyX`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyX`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -379,8 +417,18 @@ test.describe('Plus and Arrows tools ', () => {
     }) => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+
+      // await page.keyboard.press(`${modifier}+KeyX`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyX`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
+
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -390,8 +438,17 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      // await page.keyboard.press(`${modifier}+KeyC`);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await page.keyboard.press(`${modifier}+KeyC`),
+      );
+
+      // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+      );
+
       await clickOnTheCanvas(page, 0, -100);
       await screenshotBetweenUndoRedo(page);
     });
@@ -633,8 +690,17 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press(`${modifier}+KeyC`);
-    await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+    // await page.keyboard.press(`${modifier}+KeyC`);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await page.keyboard.press(`${modifier}+KeyC`),
+    );
+
+    // await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+    await waitForSpinnerFinishedWork(page, async () =>
+      page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
+    );
+
     await selectTopPanelButton(TopPanelButton.Clear, page);
   });
 

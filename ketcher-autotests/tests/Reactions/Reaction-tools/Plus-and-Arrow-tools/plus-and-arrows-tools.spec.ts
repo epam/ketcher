@@ -25,6 +25,7 @@ import {
   waitForRender,
   openDropdown,
   waitForSpinnerFinishedWork,
+  delay,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -216,22 +217,27 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test('Select plus sign, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
+    test(
+      'Select plus sign, cut and paste it onto the canvas',
+      {
+        tag: ['@FlackyTest', '@TestWithExperimentalDelay'],
+      },
+      async ({ page }) => {
+        await page.mouse.click(point.x - 150, point.y - 10);
 
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyX`),
-      );
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press(`Control+x`),
+        );
+        // Experimental delay, consider delete after experiment
+        delay(2);
+        await waitForSpinnerFinishedWork(page, async () =>
+          page.keyboard.press(`Control+v`),
+        );
 
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
-
-      await clickOnTheCanvas(page, 0, -100);
-    });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
     test('Select plus sign, copy and paste it onto the canvas', async ({
       page,

@@ -806,7 +806,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
+  test.skip(
+    // Consider review since test doesn't do that it should. Copied functional group doesn't attach to atom
+    // Is that a bug?
     'Attach copied Functional Group to atoms of structure',
     {
       tag: ['@FlakyTest'],

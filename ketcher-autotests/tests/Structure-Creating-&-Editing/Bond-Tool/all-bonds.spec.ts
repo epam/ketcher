@@ -74,9 +74,6 @@ const buttonIdToTitle: {
 };
 
 test.describe(`Bond tool:`, () => {
-  // Making these tests serial since they use Clipboard that is shared between threads
-  // and that causes problems in case of multithreads
-  test.describe.configure({ mode: 'serial' });
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {
@@ -298,12 +295,10 @@ test.describe(`Bond tool:`, () => {
 
         await page.mouse.click(point.x, point.y);
 
-        // await page.keyboard.press('Control+C');
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press('Control+C'),
         );
-        // await page.keyboard.press('Control+V');
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press('Control+V'),
@@ -317,12 +312,10 @@ test.describe(`Bond tool:`, () => {
         });
 
         await clickInTheMiddleOfTheScreen(page);
-        // await page.keyboard.press('Control+X');
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press('Control+X'),
         );
-        // await page.keyboard.press('Control+V');
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press('Control+V'),

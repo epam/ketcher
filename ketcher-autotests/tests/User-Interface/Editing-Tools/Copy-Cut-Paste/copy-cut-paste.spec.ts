@@ -186,7 +186,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
-    // await page.keyboard.press('Control+x');
     await waitForSpinnerFinishedWork(
       page,
       async () => await page.keyboard.press('Control+x'),
@@ -306,13 +305,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
-    // await page.keyboard.press('Control+c');
     await waitForSpinnerFinishedWork(
       page,
       async () => await page.keyboard.press('Control+c'),
     );
 
-    // await page.keyboard.press('Control+v');
     await waitForSpinnerFinishedWork(page, async () =>
       page.keyboard.press('Control+v'),
     );
@@ -349,7 +346,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
-    // await page.keyboard.press('Control+v');
     await waitForSpinnerFinishedWork(page, async () =>
       page.keyboard.press('Control+v'),
     );

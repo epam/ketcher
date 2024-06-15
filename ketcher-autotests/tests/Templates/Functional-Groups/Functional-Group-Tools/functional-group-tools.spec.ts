@@ -26,6 +26,7 @@ import {
   selectFunctionalGroups,
   moveOnAtom,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -821,7 +822,9 @@ test.describe('Templates - Functional Group Tools3', () => {
         page,
       );
       await page.getByText('Boc').click();
-      await page.keyboard.press('Control+c');
+      await waitForSpinnerFinishedWork(page, async () =>
+        page.keyboard.press('Control+c'),
+      );
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+v');
       });

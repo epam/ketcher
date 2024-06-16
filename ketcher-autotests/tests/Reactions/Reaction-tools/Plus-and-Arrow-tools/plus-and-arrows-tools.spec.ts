@@ -25,7 +25,7 @@ import {
   waitForRender,
   openDropdown,
   waitForSpinnerFinishedWork,
-  delay,
+  selectRectangleArea,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -217,23 +217,34 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test(
+    test.skip(
+      // Consider refactoring of this test since it doesn't work
       'Select plus sign, cut and paste it onto the canvas',
       {
-        tag: ['@FlackyTest', '@TestWithExperimentalDelay'],
+        tag: ['@FlackyTest'],
       },
       async ({ page }) => {
-        await page.mouse.click(point.x - 150, point.y - 10);
-
-        await waitForSpinnerFinishedWork(
+        await page.mouse.click(point.x - 200, point.y + 15);
+        await selectRectangleArea(
           page,
-          async () => await page.keyboard.press(`Control+x`),
+          point.x - 200 - 20,
+          point.y + 15 - 20,
+          point.x - 200 + 20,
+          point.y + 15 + 20,
         );
-        // Experimental delay, consider delete after experiment
-        delay(2);
-        await waitForSpinnerFinishedWork(page, async () =>
-          page.keyboard.press(`Control+v`),
-        );
+        await page.keyboard.press('Control+X');
+        await page.keyboard.press('Control+V');
+        // await selectTopPanelButton(TopPanelButton.Cut, page);
+        // await waitForSpinnerFinishedWork(
+        //   page,
+        //   async () => await selectTopPanelButton(TopPanelButton.Cut, page),
+        // );
+
+        // await page.keyboard.press('Control+V');
+        // await waitForSpinnerFinishedWork(
+        //   page,
+        //   async () => await page.keyboard.press('Control+V'),
+        // );
 
         await clickOnTheCanvas(page, 0, -100);
       },

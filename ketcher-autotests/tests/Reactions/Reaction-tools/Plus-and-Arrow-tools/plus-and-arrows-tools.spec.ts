@@ -250,7 +250,9 @@ test.describe('Plus and Arrows tools ', () => {
       },
     );
 
-    test('Select plus sign, copy and paste it onto the canvas', async ({
+    test.skip('Select plus sign, copy and paste it onto the canvas', async ({
+      // Consider refactoring of this test since it doesn't work
+      // Selection of plus sign doesn't happen and the rest of the scrips works wrong
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);

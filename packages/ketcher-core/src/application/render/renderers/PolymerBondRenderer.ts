@@ -11,6 +11,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor/internal';
+import { isNumber, isObject } from 'lodash';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
@@ -31,10 +32,6 @@ export class PolymerBondRenderer extends BaseRenderer {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
-  }
-
-  get attachmentPointsForSnakeBond() {
-    return ['R1', 'R2'];
   }
 
   private isSnakeBondAvailableForMonomer(monomer?: BaseMonomer) {
@@ -58,34 +55,9 @@ export class PolymerBondRenderer extends BaseRenderer {
     ) {
       return false;
     }
-    const firstMonomerAttachmentPoint =
-      this.polymerBond.firstMonomer.getAttachmentPointByBond(this.polymerBond);
-    const secondMonomerAttachmentPoint =
-      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
-        this.polymerBond,
-      );
-    const firstMonomerPotentialAttachmentPoint =
-      this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        this.polymerBond,
-      );
-    const isAttachmentPointsEnabledForSnakeBond =
-      (this.attachmentPointsForSnakeBond.includes(
-        firstMonomerAttachmentPoint as string,
-      ) &&
-        this.attachmentPointsForSnakeBond.includes(
-          secondMonomerAttachmentPoint as string,
-        )) ||
-      this.attachmentPointsForSnakeBond.includes(
-        firstMonomerPotentialAttachmentPoint as string,
-      );
-    const isSameAttachmentPoints =
-      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint;
+
     const editor = CoreEditor.provideEditorInstance();
-    return (
-      editor?.mode instanceof SnakeMode &&
-      isAttachmentPointsEnabledForSnakeBond &&
-      !isSameAttachmentPoints
-    );
+    return editor?.mode instanceof SnakeMode;
   }
 
   public get rootBBox() {
@@ -137,10 +109,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(rootElement) {
-    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
+    if (!this.isSnake || this.isMonomersOnSameHorizontalLine()) {
+      this.appendBondGraph(rootElement);
+    } else if (this.polymerBond.isBackBoneChainConnection) {
       this.appendSnakeBond(rootElement);
     } else {
-      this.appendBondGraph(rootElement);
+      this.appendSideConnectionBond(rootElement);
     }
     return this.bodyElement;
   }
@@ -158,6 +132,59 @@ export class PolymerBondRenderer extends BaseRenderer {
       .attr('d', this.path)
       .attr('fill-opacity', 0)
       .attr('pointer-events', 'stroke');
+    return this.bodyElement;
+  }
+
+  public appendSideConnectionBond(rootElement) {
+    const editor = CoreEditor.provideEditorInstance();
+    const matrix = editor.drawingEntitiesManager.canvasMatrix;
+    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
+    const BOND_END_LENGTH = 20;
+    const CELL_WIDTH = 50;
+    const CELL_HEIGHT = 50;
+    let dAttributeForPath = `M ${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y} `;
+    dAttributeForPath += `L ${this.scaledPosition.startPosition.x},${
+      this.scaledPosition.startPosition.y + BOND_END_LENGTH
+    } `;
+
+    cells.forEach((cell) => {
+      const cellConnection = cell.connections.find((connection) => {
+        return connection.polymerBond === this.polymerBond;
+      });
+      // last cell
+      if (isObject(cellConnection.direction)) {
+        const xOffset =
+          (CELL_WIDTH / 2) *
+          Math.cos((cellConnection.direction.x * Math.PI) / 180);
+        const yOffset =
+          (CELL_HEIGHT / 2) *
+          Math.sin((cellConnection.direction.y * Math.PI) / 180);
+
+        dAttributeForPath += `V ${
+          this.scaledPosition.endPosition.y - CELL_WIDTH / 2
+        }`;
+        dAttributeForPath += `H ${this.scaledPosition.endPosition.x}`;
+        return;
+      }
+      // other cells
+      const xOffset =
+        CELL_WIDTH * Math.cos((cellConnection.direction * Math.PI) / 180);
+      const yOffset =
+        CELL_HEIGHT * Math.sin((cellConnection.direction * Math.PI) / 180);
+
+      dAttributeForPath += `l ${xOffset},${yOffset} `;
+    });
+
+    dAttributeForPath += `L ${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y} `;
+
+    this.bodyElement = rootElement
+      .append('path')
+      .attr('stroke', 'red')
+      .attr('stroke-width', 1)
+      .attr('d', dAttributeForPath)
+      .attr('fill', 'none')
+      .attr('pointer-events', 'stroke');
+
     return this.bodyElement;
   }
 

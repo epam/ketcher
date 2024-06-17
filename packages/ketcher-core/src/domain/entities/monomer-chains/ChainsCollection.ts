@@ -6,6 +6,7 @@ import {
   Peptide,
   Phosphate,
   RNABase,
+  SubChainNode,
   Sugar,
 } from 'domain/entities';
 import {
@@ -13,6 +14,7 @@ import {
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
 } from 'domain/helpers/monomers';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -29,6 +31,18 @@ export class ChainsCollection {
     });
 
     return monomerToChain;
+  }
+
+  private get monomerToNode() {
+    const monomerToNode = new Map<BaseMonomer, SubChainNode>();
+
+    this.forEachNode(({ node }) => {
+      node.monomers.forEach((monomer) => {
+        monomerToNode.set(monomer, node);
+      });
+    });
+
+    return monomerToNode;
   }
 
   public rearrange() {
@@ -218,5 +232,36 @@ export class ChainsCollection {
 
   public get length() {
     return this.chains.reduce((length, chain) => length + chain.length, 0);
+  }
+
+  public forEachNode(
+    forEachCallback: (params: {
+      chainIndex: number;
+      subChainIndex: number;
+      nodeIndex: number;
+      nodeIndexOverall: number;
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      chain: Chain;
+    }) => void,
+  ) {
+    let nodeIndexOverall = 0;
+
+    this.chains.forEach((chain, chainIndex) => {
+      chain.subChains.forEach((subChain, subChainIndex) => {
+        subChain.nodes.forEach((node, nodeIndex) => {
+          forEachCallback({
+            chainIndex,
+            subChainIndex,
+            nodeIndex,
+            nodeIndexOverall,
+            node,
+            subChain,
+            chain,
+          });
+          nodeIndexOverall++;
+        });
+      });
+    });
   }
 }

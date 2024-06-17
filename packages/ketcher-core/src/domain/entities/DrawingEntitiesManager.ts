@@ -52,6 +52,7 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { SequenceMode } from 'application/editor';
+import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
@@ -80,6 +81,7 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
+  public canvasMatrix?: CanvasMatrix;
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -1152,7 +1154,9 @@ export class DrawingEntitiesManager {
     needRedrawBonds = true,
   ) {
     const command = new Command();
-
+    this.canvasMatrix = new CanvasMatrix(
+      ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
+    );
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({

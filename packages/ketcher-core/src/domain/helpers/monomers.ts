@@ -86,13 +86,16 @@ export function isMonomerBeginningOfChain(
   );
 }
 
-export function isValidNucleotide(sugar: Sugar): boolean {
+export function isValidNucleotide(
+  sugar: Sugar,
+  firstMonomerInCyclicChain?: BaseMonomer,
+): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
     return false;
   }
 
   const phosphate = getPhosphateFromSugar(sugar);
-  if (!phosphate) {
+  if (!phosphate || phosphate === firstMonomerInCyclicChain) {
     return false;
   }
 
@@ -100,13 +103,16 @@ export function isValidNucleotide(sugar: Sugar): boolean {
   return !!nextMonomerAfterPhosphate;
 }
 
-export function isValidNucleoside(sugar: Sugar): boolean {
+export function isValidNucleoside(
+  sugar: Sugar,
+  firstMonomerInCyclicChain?: BaseMonomer,
+): boolean {
   if (!getRnaBaseFromSugar(sugar)) {
     return false;
   }
 
   const phosphate = getPhosphateFromSugar(sugar);
-  if (!phosphate) {
+  if (!phosphate || phosphate === firstMonomerInCyclicChain) {
     return true;
   }
 

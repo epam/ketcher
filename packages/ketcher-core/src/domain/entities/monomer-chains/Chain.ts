@@ -20,13 +20,11 @@ import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
-  public firstMonomer: BaseMonomer | null;
+  public firstMonomer?: BaseMonomer;
 
   public isCyclic = false;
 
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
-    this.firstMonomer = null;
-
     if (firstMonomer) {
       this.firstMonomer = firstMonomer;
 
@@ -52,12 +50,12 @@ export class Chain {
     this.createSubChainIfNeed(monomer);
 
     if (monomer instanceof Sugar) {
-      if (isValidNucleoside(monomer)) {
-        this.lastSubChain.add(Nucleoside.fromSugar(monomer));
+      if (isValidNucleoside(monomer, this.firstMonomer)) {
+        this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
         return;
       }
-      if (isValidNucleotide(monomer)) {
-        this.lastSubChain.add(Nucleotide.fromSugar(monomer));
+      if (isValidNucleotide(monomer, this.firstMonomer)) {
+        this.lastSubChain.add(Nucleotide.fromSugar(monomer, false));
         return;
       }
     }

@@ -12,6 +12,9 @@ import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor/internal';
 import { isNumber, isObject } from 'lodash';
+import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
+import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { Connection } from 'domain/entities/canvas-matrix/Connection';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
@@ -109,7 +112,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(rootElement) {
-    if (!this.isSnake || this.isMonomersOnSameHorizontalLine()) {
+    if (
+      !this.isSnake ||
+      (this.isMonomersOnSameHorizontalLine() &&
+        !this.polymerBond.isSideChainConnection) ||
+      !this.polymerBond.finished
+    ) {
       this.appendBondGraph(rootElement);
     } else if (this.polymerBond.isBackBoneChainConnection) {
       this.appendSnakeBond(rootElement);
@@ -135,30 +143,109 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
+  private getBondPartIntersections(
+    matrix: CanvasMatrix,
+    connectionCells: Cell[],
+    polymerBond: PolymerBond,
+    directionsToCheck: number[] = [0, 180],
+    handledConnections: Set<Connection> = new Set(),
+  ) {
+    return connectionCells.reduce((offset, cell) => {
+      const connectionsStartedOnHorizontalPart = cell.connections.reduce(
+        (intersectionsAmount, connection) => {
+          let newIntersectionsAmount = intersectionsAmount;
+          const connectionCells = matrix?.polymerBondToCells.get(
+            connection.polymerBond,
+          );
+          if (
+            connection.polymerBond !== polymerBond &&
+            directionsToCheck.includes(connection.direction) &&
+            connectionCells[0] === cell &&
+            !handledConnections.has(connection)
+          ) {
+            newIntersectionsAmount += this.getBondPartIntersections(
+              matrix,
+              connectionCells,
+              connection.polymerBond,
+              directionsToCheck,
+              handledConnections,
+            );
+            if (!handledConnections.has(connection)) {
+              handledConnections.add(connection);
+              newIntersectionsAmount++;
+            }
+          }
+          return newIntersectionsAmount;
+        },
+        0,
+      );
+
+      return offset + connectionsStartedOnHorizontalPart;
+    }, 0);
+  }
+
   public appendSideConnectionBond(rootElement) {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
-    const BOND_END_LENGTH = 20;
+    const BOND_END_LENGTH = 15;
     const CELL_WIDTH = 60;
     const CELL_HEIGHT = 40;
     const SMOOTH_CORNER_SIZE = 5;
-    let dAttributeForPath = `M ${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y} `;
-    dAttributeForPath += `L ${this.scaledPosition.startPosition.x},${
-      this.scaledPosition.startPosition.y + BOND_END_LENGTH
-    } `;
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find((connection) => {
       return connection.polymerBond === this.polymerBond;
     });
-    const cos = Math.cos((firstCellConnection.direction * Math.PI) / 180);
+    const isFirstMonomerOfBondInFirstCell = firstCell.node.monomers.includes(
+      this.polymerBond.firstMonomer,
+    );
+    const startPosition = isFirstMonomerOfBondInFirstCell
+      ? this.scaledPosition.startPosition
+      : this.scaledPosition.endPosition;
+    const endPosition = isFirstMonomerOfBondInFirstCell
+      ? this.scaledPosition.endPosition
+      : this.scaledPosition.startPosition;
+    let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
 
-    dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
-      SMOOTH_CORNER_SIZE * cos
-    },${SMOOTH_CORNER_SIZE} `;
+    console.log(firstCellConnection);
+    const cos = Math.cos((firstCellConnection.direction * Math.PI) / 180);
 
     let previousConnection;
     let previousCell;
+
+    const horizontalPartIntersectionsOffset = this.getBondPartIntersections(
+      matrix,
+      cells,
+      this.polymerBond,
+    );
+
+    const verticalPartIntersectionsOffset = this.getBondPartIntersections(
+      matrix,
+      cells,
+      this.polymerBond,
+      [90, 270],
+    );
+    const areCellsOnSameRow = cells.every((cell) => {
+      return cell.y === firstCell.y;
+    });
+
+    if (areCellsOnSameRow) {
+      dAttributeForPath += `L ${startPosition.x},${
+        startPosition.y -
+        BOND_END_LENGTH -
+        horizontalPartIntersectionsOffset * 3
+      } `;
+      dAttributeForPath += `q 0,-${SMOOTH_CORNER_SIZE}, ${SMOOTH_CORNER_SIZE},-${SMOOTH_CORNER_SIZE} `;
+    } else {
+      dAttributeForPath += `L ${startPosition.x},${
+        startPosition.y +
+        BOND_END_LENGTH +
+        horizontalPartIntersectionsOffset * 3
+      } `;
+      dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
+        SMOOTH_CORNER_SIZE * cos
+      },${SMOOTH_CORNER_SIZE} `;
+    }
 
     cells.forEach((cell) => {
       const cellConnection = cell.connections.find((connection) => {
@@ -169,17 +256,15 @@ export class PolymerBondRenderer extends BaseRenderer {
         const sin = Math.sin((cellConnection.direction.y * Math.PI) / 180);
         const cos = Math.cos((cellConnection.direction.x * Math.PI) / 180);
 
-        dAttributeForPath += `V ${
-          this.scaledPosition.endPosition.y -
-          CELL_HEIGHT / 2 -
-          SMOOTH_CORNER_SIZE
-        } `;
-        dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE * sin} ${
-          SMOOTH_CORNER_SIZE * cos
-        },${SMOOTH_CORNER_SIZE} `;
-        dAttributeForPath += `H ${
-          this.scaledPosition.endPosition.x - SMOOTH_CORNER_SIZE * cos
-        } `;
+        if (!areCellsOnSameRow) {
+          dAttributeForPath += `V ${
+            endPosition.y - CELL_HEIGHT / 2 - SMOOTH_CORNER_SIZE
+          } `;
+          dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE * sin} ${
+            SMOOTH_CORNER_SIZE * cos
+          },${SMOOTH_CORNER_SIZE} `;
+        }
+        dAttributeForPath += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
         dAttributeForPath += `q ${SMOOTH_CORNER_SIZE * cos},0 ${
           SMOOTH_CORNER_SIZE * cos
         },${SMOOTH_CORNER_SIZE} `;
@@ -200,7 +285,8 @@ export class PolymerBondRenderer extends BaseRenderer {
         const endOfPathPart = isHorizontal
           ? cell.node.monomer.renderer?.scaledMonomerPosition.x +
             cell.node.monomer.renderer?.monomerSize.width / 2 +
-            xOffset
+            xOffset +
+            horizontalPartIntersectionsOffset * 3
           : cell.node.monomer.renderer?.scaledMonomerPosition.y +
             cell.node.monomer.renderer?.monomerSize.height / 2 +
             yOffset;
@@ -217,7 +303,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       previousConnection = cellConnection;
     });
 
-    dAttributeForPath += `L ${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y} `;
+    dAttributeForPath += `L ${endPosition.x},${endPosition.y} `;
 
     this.bodyElement = rootElement
       .append('path')
@@ -269,7 +355,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     const verticalLineLength = isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH
-      : VERTICAL_LINE_LENGTH;
+      : VERTICAL_LINE_LENGTH + 5;
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       if (
@@ -607,7 +693,11 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveEnd() {
-    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
+    if (
+      this.isSnake &&
+      !this.isMonomersOnSameHorizontalLine() &&
+      this.polymerBond.finished
+    ) {
       this.moveSnakeBondEnd();
     } else {
       this.moveGraphBondEnd();

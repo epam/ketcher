@@ -110,12 +110,6 @@ export class CoreEditor {
     "root": {
         "nodes": [
             {
-                "$ref": "monomer241"
-            },
-            {
-                "$ref": "monomer242"
-            },
-            {
                 "$ref": "monomer243"
             },
             {
@@ -468,31 +462,15 @@ export class CoreEditor {
             },
             {
                 "$ref": "monomer360"
+            },
+            {
+                "$ref": "monomer361"
+            },
+            {
+                "$ref": "monomer362"
             }
         ],
         "connections": [
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer241",
-                    "attachmentPointId": "R2"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer242",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer242",
-                    "attachmentPointId": "R2"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer243",
-                    "attachmentPointId": "R1"
-                }
-            },
             {
                 "connectionType": "single",
                 "endpoint1": {
@@ -1123,22 +1101,22 @@ export class CoreEditor {
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer301",
+                    "monomerId": "monomer300",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer302",
+                    "monomerId": "monomer301",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer302",
+                    "monomerId": "monomer301",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer303",
+                    "monomerId": "monomer302",
                     "attachmentPointId": "R1"
                 }
             },
@@ -1772,44 +1750,88 @@ export class CoreEditor {
             {
                 "connectionType": "single",
                 "endpoint1": {
+                    "monomerId": "monomer360",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer361",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer361",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer362",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer270",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer309",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
                     "monomerId": "monomer268",
                     "attachmentPointId": "R3"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer307",
+                    "monomerId": "monomer325",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer266",
+                    "monomerId": "monomer254",
                     "attachmentPointId": "R3"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer323",
+                    "monomerId": "monomer294",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer252",
+                    "monomerId": "monomer247",
                     "attachmentPointId": "R3"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer292",
+                    "monomerId": "monomer280",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer245",
+                    "monomerId": "monomer271",
                     "attachmentPointId": "R3"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer278",
+                    "monomerId": "monomer328",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer272",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer346",
                     "attachmentPointId": "R3"
                 }
             }
@@ -1820,9 +1842,9 @@ export class CoreEditor {
             }
         ]
     },
-    "monomer241": {
+    "monomer243": {
         "type": "monomer",
-        "id": "241",
+        "id": "243",
         "position": {
             "x": 1.25,
             "y": -1.25
@@ -2002,31 +2024,11 @@ export class CoreEditor {
         ],
         "naturalAnalogShort": "C"
     },
-    "monomer242": {
-        "type": "monomer",
-        "id": "242",
-        "position": {
-            "x": 2.75,
-            "y": -1.25
-        },
-        "alias": "C",
-        "templateId": "C___Cysteine"
-    },
-    "monomer243": {
-        "type": "monomer",
-        "id": "243",
-        "position": {
-            "x": 4.25,
-            "y": -1.25
-        },
-        "alias": "C",
-        "templateId": "C___Cysteine"
-    },
     "monomer244": {
         "type": "monomer",
         "id": "244",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2036,7 +2038,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "245",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2046,7 +2048,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "246",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2056,7 +2058,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "247",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2066,7 +2068,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "248",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2076,7 +2078,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "249",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2086,7 +2088,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "250",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2096,7 +2098,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "251",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2106,7 +2108,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "252",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2116,7 +2118,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "253",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2126,7 +2128,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "254",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2136,7 +2138,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "255",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2146,7 +2148,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "256",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2156,7 +2158,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "257",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -1.25
         },
         "alias": "C",
@@ -2166,7 +2168,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "258",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -1.25
         },
         "alias": "C",
@@ -2176,8 +2178,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "259",
         "position": {
-            "x": 1.25,
-            "y": -2.7625
+            "x": 25.25,
+            "y": -1.25
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2186,8 +2188,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "260",
         "position": {
-            "x": 2.75,
-            "y": -2.7625
+            "x": 26.75,
+            "y": -1.25
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2196,7 +2198,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "261",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2206,7 +2208,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "262",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2216,7 +2218,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "263",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2226,7 +2228,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "264",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2236,7 +2238,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "265",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2246,7 +2248,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "266",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2256,7 +2258,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "267",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2266,7 +2268,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "268",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2276,7 +2278,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "269",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2286,7 +2288,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "270",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2296,7 +2298,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "271",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2306,7 +2308,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "272",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2316,7 +2318,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "273",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2326,7 +2328,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "274",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2336,7 +2338,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "275",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -2.7625
         },
         "alias": "C",
@@ -2346,7 +2348,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "276",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -2.7625
         },
         "alias": "C",
@@ -2356,8 +2358,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "277",
         "position": {
-            "x": 1.25,
-            "y": -4.275
+            "x": 25.25,
+            "y": -2.7625
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2366,8 +2368,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "278",
         "position": {
-            "x": 2.75,
-            "y": -4.275
+            "x": 26.75,
+            "y": -2.7625
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2376,7 +2378,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "279",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2386,7 +2388,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "280",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2396,7 +2398,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "281",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2406,7 +2408,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "282",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2416,7 +2418,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "283",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2426,7 +2428,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "284",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2436,7 +2438,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "285",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2446,7 +2448,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "286",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2456,7 +2458,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "287",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2466,7 +2468,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "288",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2476,7 +2478,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "289",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2486,7 +2488,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "290",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2496,7 +2498,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "291",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2506,7 +2508,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "292",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2516,7 +2518,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "293",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -4.275
         },
         "alias": "C",
@@ -2526,7 +2528,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "294",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -4.275
         },
         "alias": "C",
@@ -2536,8 +2538,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "295",
         "position": {
-            "x": 1.25,
-            "y": -5.7875000000000005
+            "x": 25.25,
+            "y": -4.275
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2546,8 +2548,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "296",
         "position": {
-            "x": 2.75,
-            "y": -5.7875000000000005
+            "x": 26.75,
+            "y": -4.275
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2556,7 +2558,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "297",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -5.7875000000000005
         },
         "alias": "C",
@@ -2566,7 +2568,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "298",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -5.7875000000000005
         },
         "alias": "C",
@@ -2576,7 +2578,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "299",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -5.7875000000000005
         },
         "alias": "C",
@@ -2586,7 +2588,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "300",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -5.7875000000000005
         },
         "alias": "C",
@@ -2596,8 +2598,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "301",
         "position": {
-            "x": 1.25,
-            "y": -7.300000000000001
+            "x": 7.25,
+            "y": -5.7875000000000005
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2606,8 +2608,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "302",
         "position": {
-            "x": 2.75,
-            "y": -7.300000000000001
+            "x": 8.75,
+            "y": -5.7875000000000005
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2616,7 +2618,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "303",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2626,7 +2628,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "304",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2636,7 +2638,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "305",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2646,7 +2648,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "306",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2656,7 +2658,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "307",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2666,7 +2668,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "308",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2676,7 +2678,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "309",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2686,7 +2688,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "310",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2696,7 +2698,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "311",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2706,7 +2708,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "312",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2716,7 +2718,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "313",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2726,7 +2728,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "314",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2736,7 +2738,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "315",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2746,7 +2748,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "316",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2756,7 +2758,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "317",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2766,7 +2768,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "318",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -7.300000000000001
         },
         "alias": "C",
@@ -2776,8 +2778,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "319",
         "position": {
-            "x": 1.25,
-            "y": -8.8125
+            "x": 25.25,
+            "y": -7.300000000000001
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2786,8 +2788,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "320",
         "position": {
-            "x": 2.75,
-            "y": -8.8125
+            "x": 26.75,
+            "y": -7.300000000000001
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2796,7 +2798,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "321",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2806,7 +2808,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "322",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2816,7 +2818,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "323",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2826,7 +2828,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "324",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2836,7 +2838,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "325",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2846,7 +2848,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "326",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2856,7 +2858,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "327",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2866,7 +2868,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "328",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2876,7 +2878,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "329",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2886,7 +2888,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "330",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2896,7 +2898,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "331",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2906,7 +2908,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "332",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2916,7 +2918,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "333",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2926,7 +2928,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "334",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2936,7 +2938,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "335",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -8.8125
         },
         "alias": "C",
@@ -2946,7 +2948,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "336",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -8.8125
         },
         "alias": "C",
@@ -2956,8 +2958,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "337",
         "position": {
-            "x": 1.25,
-            "y": -10.325000000000001
+            "x": 25.25,
+            "y": -8.8125
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2966,8 +2968,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "338",
         "position": {
-            "x": 2.75,
-            "y": -10.325000000000001
+            "x": 26.75,
+            "y": -8.8125
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -2976,7 +2978,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "339",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -2986,7 +2988,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "340",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -2996,7 +2998,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "341",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3006,7 +3008,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "342",
         "position": {
-            "x": 8.75,
+            "x": 5.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3016,7 +3018,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "343",
         "position": {
-            "x": 10.25,
+            "x": 7.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3026,7 +3028,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "344",
         "position": {
-            "x": 11.75,
+            "x": 8.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3036,7 +3038,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "345",
         "position": {
-            "x": 13.25,
+            "x": 10.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3046,7 +3048,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "346",
         "position": {
-            "x": 14.75,
+            "x": 11.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3056,7 +3058,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "347",
         "position": {
-            "x": 16.25,
+            "x": 13.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3066,7 +3068,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "348",
         "position": {
-            "x": 17.75,
+            "x": 14.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3076,7 +3078,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "349",
         "position": {
-            "x": 19.25,
+            "x": 16.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3086,7 +3088,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "350",
         "position": {
-            "x": 20.75,
+            "x": 17.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3096,7 +3098,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "351",
         "position": {
-            "x": 22.25,
+            "x": 19.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3106,7 +3108,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "352",
         "position": {
-            "x": 23.75,
+            "x": 20.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3116,7 +3118,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "353",
         "position": {
-            "x": 25.25,
+            "x": 22.25,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3126,7 +3128,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "354",
         "position": {
-            "x": 26.75,
+            "x": 23.75,
             "y": -10.325000000000001
         },
         "alias": "C",
@@ -3136,8 +3138,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "355",
         "position": {
-            "x": 1.25,
-            "y": -11.8375
+            "x": 25.25,
+            "y": -10.325000000000001
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -3146,8 +3148,8 @@ export class CoreEditor {
         "type": "monomer",
         "id": "356",
         "position": {
-            "x": 2.75,
-            "y": -11.8375
+            "x": 26.75,
+            "y": -10.325000000000001
         },
         "alias": "C",
         "templateId": "C___Cysteine"
@@ -3156,7 +3158,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "357",
         "position": {
-            "x": 4.25,
+            "x": 1.25,
             "y": -11.8375
         },
         "alias": "C",
@@ -3166,7 +3168,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "358",
         "position": {
-            "x": 5.75,
+            "x": 2.75,
             "y": -11.8375
         },
         "alias": "C",
@@ -3176,7 +3178,7 @@ export class CoreEditor {
         "type": "monomer",
         "id": "359",
         "position": {
-            "x": 7.25,
+            "x": 4.25,
             "y": -11.8375
         },
         "alias": "C",
@@ -3185,6 +3187,26 @@ export class CoreEditor {
     "monomer360": {
         "type": "monomer",
         "id": "360",
+        "position": {
+            "x": 5.75,
+            "y": -11.8375
+        },
+        "alias": "C",
+        "templateId": "C___Cysteine"
+    },
+    "monomer361": {
+        "type": "monomer",
+        "id": "361",
+        "position": {
+            "x": 7.25,
+            "y": -11.8375
+        },
+        "alias": "C",
+        "templateId": "C___Cysteine"
+    },
+    "monomer362": {
+        "type": "monomer",
+        "id": "362",
         "position": {
             "x": 8.75,
             "y": -11.8375

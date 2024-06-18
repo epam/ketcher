@@ -638,6 +638,7 @@ export class DrawingEntitiesManager {
     polymerBond.secondMonomer.turnOffHover();
     polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
     polymerBond.turnOffHover();
+    this.recalculateCanvasMatrix();
 
     return polymerBond;
   }
@@ -1148,15 +1149,20 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
+  public recalculateCanvasMatrix() {
+    this.canvasMatrix = new CanvasMatrix(
+      ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
+    );
+  }
+
   public reArrangeChains(
     canvasWidth: number,
     isSnakeMode: boolean,
     needRedrawBonds = true,
   ) {
     const command = new Command();
-    this.canvasMatrix = new CanvasMatrix(
-      ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
-    );
+
+    this.recalculateCanvasMatrix();
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({

@@ -252,6 +252,7 @@ import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { matrix } from 'svgpath';
 
 interface MatrixConfig {
   cellsInRow: number;
@@ -327,12 +328,16 @@ export class CanvasMatrix {
             const yDirection = yDistance > 0 ? 90 : 270;
             let xDistanceAbsolute = Math.abs(xDistance);
             let yDistanceAbsolute = Math.abs(yDistance);
-
+            console.log(xDistance, yDistance);
             // fill start cell by connection with direction
             cell.connections.push({
               polymerBond,
               connectedNode,
-              direction: xDirection,
+              direction:
+                yDistance !== 0 &&
+                this.matrix.get(cell.y + 1, cell.x)?.node === null
+                  ? 90
+                  : xDirection,
             });
             this.polymerBondToCells.set(polymerBond, [cell]);
 
@@ -370,11 +375,13 @@ export class CanvasMatrix {
             // fill last cell by connection
             nextCellX += Math.sign(xDistance);
             nextCellY += Math.sign(yDistance);
+
             const lastCellToHandle = this.matrix.get(nextCellY, nextCellX);
+
             lastCellToHandle.connections.push({
               polymerBond,
               connectedNode,
-              direction: { x: xDirection, y: yDirection },
+              direction: { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
             });
             this.polymerBondToCells.get(polymerBond).push(lastCellToHandle);
 

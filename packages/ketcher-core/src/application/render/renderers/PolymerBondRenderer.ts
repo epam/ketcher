@@ -140,12 +140,25 @@ export class PolymerBondRenderer extends BaseRenderer {
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
     const BOND_END_LENGTH = 20;
-    const CELL_WIDTH = 50;
-    const CELL_HEIGHT = 50;
+    const CELL_WIDTH = 60;
+    const CELL_HEIGHT = 40;
+    const SMOOTH_CORNER_SIZE = 5;
     let dAttributeForPath = `M ${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y} `;
     dAttributeForPath += `L ${this.scaledPosition.startPosition.x},${
       this.scaledPosition.startPosition.y + BOND_END_LENGTH
     } `;
+    const firstCell = cells[0];
+    const firstCellConnection = firstCell.connections.find((connection) => {
+      return connection.polymerBond === this.polymerBond;
+    });
+    const cos = Math.cos((firstCellConnection.direction * Math.PI) / 180);
+
+    dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
+      SMOOTH_CORNER_SIZE * cos
+    },${SMOOTH_CORNER_SIZE} `;
+
+    let previousConnection;
+    let previousCell;
 
     cells.forEach((cell) => {
       const cellConnection = cell.connections.find((connection) => {
@@ -153,26 +166,55 @@ export class PolymerBondRenderer extends BaseRenderer {
       });
       // last cell
       if (isObject(cellConnection.direction)) {
-        const xOffset =
-          (CELL_WIDTH / 2) *
-          Math.cos((cellConnection.direction.x * Math.PI) / 180);
-        const yOffset =
-          (CELL_HEIGHT / 2) *
-          Math.sin((cellConnection.direction.y * Math.PI) / 180);
+        const sin = Math.sin((cellConnection.direction.y * Math.PI) / 180);
+        const cos = Math.cos((cellConnection.direction.x * Math.PI) / 180);
 
         dAttributeForPath += `V ${
-          this.scaledPosition.endPosition.y - CELL_WIDTH / 2
-        }`;
-        dAttributeForPath += `H ${this.scaledPosition.endPosition.x}`;
+          this.scaledPosition.endPosition.y -
+          CELL_HEIGHT / 2 -
+          SMOOTH_CORNER_SIZE
+        } `;
+        dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE * sin} ${
+          SMOOTH_CORNER_SIZE * cos
+        },${SMOOTH_CORNER_SIZE} `;
+        dAttributeForPath += `H ${
+          this.scaledPosition.endPosition.x - SMOOTH_CORNER_SIZE * cos
+        } `;
+        dAttributeForPath += `q ${SMOOTH_CORNER_SIZE * cos},0 ${
+          SMOOTH_CORNER_SIZE * cos
+        },${SMOOTH_CORNER_SIZE} `;
         return;
       }
       // other cells
-      const xOffset =
-        CELL_WIDTH * Math.cos((cellConnection.direction * Math.PI) / 180);
-      const yOffset =
-        CELL_HEIGHT * Math.sin((cellConnection.direction * Math.PI) / 180);
+      if (
+        previousConnection &&
+        previousConnection.direction !== cellConnection.direction
+      ) {
+        const sin = Math.sin((previousConnection.direction * Math.PI) / 180);
+        const cos = Math.cos((previousConnection.direction * Math.PI) / 180);
+        const xOffset = (CELL_WIDTH / 2 - SMOOTH_CORNER_SIZE) * cos;
+        const yOffset = (CELL_HEIGHT / 2) * sin;
+        const isHorizontal =
+          previousConnection.direction === 0 ||
+          previousConnection.direction === 180;
+        const endOfPathPart = isHorizontal
+          ? cell.node.monomer.renderer?.scaledMonomerPosition.x +
+            cell.node.monomer.renderer?.monomerSize.width / 2 +
+            xOffset
+          : cell.node.monomer.renderer?.scaledMonomerPosition.y +
+            cell.node.monomer.renderer?.monomerSize.height / 2 +
+            yOffset;
 
-      dAttributeForPath += `l ${xOffset},${yOffset} `;
+        let pathPart = isHorizontal ? 'H ' : 'V ';
+        pathPart += `${endOfPathPart} `;
+        pathPart += `q ${SMOOTH_CORNER_SIZE * cos},${
+          SMOOTH_CORNER_SIZE * sin
+        } ${SMOOTH_CORNER_SIZE * cos},${SMOOTH_CORNER_SIZE} `;
+
+        dAttributeForPath += pathPart;
+      }
+      previousCell = cell;
+      previousConnection = cellConnection;
     });
 
     dAttributeForPath += `L ${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y} `;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
@@ -51,13 +51,9 @@ const MonomerLibrary = React.memo((props: MonomerLibraryProps) => {
   const isDisabledTabsPanels =
     isSequenceMode && !isSequenceEditInRNABuilderMode;
 
-  const [firstRender, setFirstRender] = useState(true);
   useEffect(() => {
-    if (firstRender) {
-      setFirstRender(false);
-      dispatch(setSearchFilter(''));
-    }
-  }, [dispatch, firstRender]);
+    dispatch(setSearchFilter(''));
+  }, [dispatch]);
 
   useAppSelector(selectAllPresets, (presets) => {
     presetsRef.current = presets;

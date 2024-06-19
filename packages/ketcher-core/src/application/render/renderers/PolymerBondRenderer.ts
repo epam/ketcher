@@ -148,7 +148,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     connectionCells: Cell[],
     polymerBond: PolymerBond,
     directionsToCheck: number[] = [0, 180],
-    handledConnections: Set<Connection> = new Set(),
+    handledConnections: Set<PolymerBond> = new Set(),
   ) {
     return connectionCells.reduce((offset, cell) => {
       const connectionsStartedOnHorizontalPart = cell.connections.reduce(
@@ -161,8 +161,10 @@ export class PolymerBondRenderer extends BaseRenderer {
             connection.polymerBond !== polymerBond &&
             directionsToCheck.includes(connection.direction) &&
             connectionCells[0] === cell &&
-            !handledConnections.has(connection)
+            !handledConnections.has(polymerBond)
           ) {
+            handledConnections.add(polymerBond);
+            newIntersectionsAmount++;
             newIntersectionsAmount += this.getBondPartIntersections(
               matrix,
               connectionCells,
@@ -170,10 +172,6 @@ export class PolymerBondRenderer extends BaseRenderer {
               directionsToCheck,
               handledConnections,
             );
-            if (!handledConnections.has(connection)) {
-              handledConnections.add(connection);
-              newIntersectionsAmount++;
-            }
           }
           return newIntersectionsAmount;
         },

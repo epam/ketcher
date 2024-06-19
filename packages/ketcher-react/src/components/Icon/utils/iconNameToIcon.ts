@@ -223,6 +223,7 @@ import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
+import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 
 export const iconNameToIcon = {
   α,
@@ -437,6 +438,7 @@ export const iconNameToIcon = {
   base: Base,
   phosphate: Phosphate,
   preset: Preset,
+  nucleotide: Nucleotide,
   'edit-filled': EditFilled,
   'vertical-dots': VerticalDots,
   expand: ExpandIcon,

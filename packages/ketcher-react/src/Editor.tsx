@@ -29,7 +29,7 @@ import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
 import {
-  KETCHER_INIT_EVENT_NAME,
+  ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import { createRoot } from 'react-dom/client';
@@ -49,7 +49,6 @@ function Editor(props: EditorProps) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef,
   });
-  const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {
     const appRoot = createRoot(rootElRef.current as HTMLDivElement);
@@ -57,12 +56,21 @@ function Editor(props: EditorProps) {
       ...props,
       element: rootElRef.current,
       appRoot,
-    }).then((ketcher: Ketcher | undefined) => {
-      if (typeof onInit === 'function' && ketcher) {
-        onInit(ketcher);
-        window.dispatchEvent(ketcherInitEvent);
-      }
-    });
+    }).then(
+      ({
+        ketcher,
+        ketcherId,
+      }: {
+        ketcher: Ketcher | undefined;
+        ketcherId: string;
+      }) => {
+        if (typeof onInit === 'function' && ketcher) {
+          onInit(ketcher);
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
+          window.dispatchEvent(ketcherInitEvent);
+        }
+      },
+    );
     return () => {
       // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
       setTimeout(() => {

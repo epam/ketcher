@@ -23,6 +23,7 @@ import { Ketcher, StructService } from 'ketcher-core';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
+import { uniqueId } from 'lodash';
 import { Root } from 'react-dom/client';
 import createStore from '../state';
 import { initKeydownListener } from '../state/hotkeys';
@@ -35,9 +36,21 @@ function initApp(
   staticResourcesUrl: string,
   options: any,
   server: StructService,
-  setEditor: (editor: any) => void,
+  resolve: (args: {
+    editor: any;
+    setKetcher: (ketcher: Ketcher) => void;
+    ketcherId: string;
+  }) => void,
   togglerComponent?: JSX.Element,
 ) {
+  let ketcherRef: Ketcher | null = null;
+  const setKetcher = (ketcher: Ketcher) => {
+    ketcherRef = ketcher;
+  };
+  const ketcherId = uniqueId();
+  const setEditor = (editor) => {
+    resolve({ editor, setKetcher, ketcherId });
+  };
   const store = createStore(options, server, setEditor);
   store.dispatch(initKeydownListener(element));
   store.dispatch(initMouseListener(element));
@@ -49,7 +62,9 @@ function initApp(
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
             value={{
-              getKetcherInstance: () => (window as any).ketcher as Ketcher,
+              // Expected this is set before load
+              getKetcherInstance: () => ketcherRef as unknown as Ketcher,
+              ketcherId,
             }}
           >
             <App togglerComponent={togglerComponent} />

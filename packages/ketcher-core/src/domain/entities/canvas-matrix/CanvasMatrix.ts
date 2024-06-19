@@ -334,8 +334,9 @@ export class CanvasMatrix {
               polymerBond,
               connectedNode,
               direction:
-                yDistance !== 0 &&
-                this.matrix.get(cell.y + 1, cell.x)?.node === null
+                (yDistance !== 0 &&
+                  this.matrix.get(cell.y + 1, cell.x)?.node === null) ||
+                yDistance === 1
                   ? 90
                   : xDirection,
             });

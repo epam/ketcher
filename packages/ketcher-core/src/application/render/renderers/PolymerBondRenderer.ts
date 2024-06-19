@@ -226,6 +226,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
+    // const
 
     if (areCellsOnSameRow) {
       dAttributeForPath += `L ${startPosition.x},${
@@ -240,6 +241,9 @@ export class PolymerBondRenderer extends BaseRenderer {
         BOND_END_LENGTH +
         horizontalPartIntersectionsOffset * 3
       } `;
+      // if () {
+
+      // }
       dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
         SMOOTH_CORNER_SIZE * cos
       },${SMOOTH_CORNER_SIZE} `;
@@ -271,7 +275,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       // other cells
       if (
         previousConnection &&
-        previousConnection.direction !== cellConnection.direction
+        previousConnection.direction !== cellConnection.direction &&
+        cell.node !== null
       ) {
         const sin = Math.sin((previousConnection.direction * Math.PI) / 180);
         const cos = Math.cos((previousConnection.direction * Math.PI) / 180);
@@ -820,7 +825,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   public removeHover() {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
-    this.bodyElement.attr('stroke', '#333333').attr('pointer-events', 'stroke');
+    this.bodyElement
+      .attr(
+        'stroke',
+        this.polymerBond.isSideChainConnection ? 'red' : '#333333',
+      )
+      .attr('pointer-events', 'stroke');
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
   }

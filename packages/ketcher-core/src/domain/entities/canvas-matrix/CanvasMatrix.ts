@@ -328,17 +328,12 @@ export class CanvasMatrix {
             const yDirection = yDistance > 0 ? 90 : 270;
             let xDistanceAbsolute = Math.abs(xDistance);
             let yDistanceAbsolute = Math.abs(yDistance);
-            console.log(xDistance, yDistance);
+
             // fill start cell by connection with direction
             cell.connections.push({
               polymerBond,
               connectedNode,
-              direction:
-                (yDistance !== 0 &&
-                  this.matrix.get(cell.y + 1, cell.x)?.node === null) ||
-                yDistance === 1
-                  ? 90
-                  : xDirection,
+              direction: yDistance === 1 ? 90 : xDirection,
             });
             this.polymerBondToCells.set(polymerBond, [cell]);
 

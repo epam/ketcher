@@ -226,7 +226,12 @@ export class PolymerBondRenderer extends BaseRenderer {
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
-    // const
+    const isSecondCellEmpty = cells[1].node === null;
+    const isStraightVerticalConnection =
+      cells.every((cell) => {
+        return cell.x === firstCell.x;
+      }) &&
+      (cells.length === 2 || (cells.length === 3 && isSecondCellEmpty));
 
     if (areCellsOnSameRow) {
       dAttributeForPath += `L ${startPosition.x},${
@@ -241,12 +246,11 @@ export class PolymerBondRenderer extends BaseRenderer {
         BOND_END_LENGTH +
         horizontalPartIntersectionsOffset * 3
       } `;
-      // if () {
-
-      // }
-      dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
-        SMOOTH_CORNER_SIZE * cos
-      },${SMOOTH_CORNER_SIZE} `;
+      if (!isStraightVerticalConnection && !isSecondCellEmpty) {
+        dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
+          SMOOTH_CORNER_SIZE * cos
+        },${SMOOTH_CORNER_SIZE} `;
+      }
     }
 
     cells.forEach((cell) => {
@@ -257,6 +261,9 @@ export class PolymerBondRenderer extends BaseRenderer {
       if (isObject(cellConnection.direction)) {
         const sin = Math.sin((cellConnection.direction.y * Math.PI) / 180);
         const cos = Math.cos((cellConnection.direction.x * Math.PI) / 180);
+        if (isStraightVerticalConnection) {
+          return;
+        }
 
         if (!areCellsOnSameRow) {
           dAttributeForPath += `V ${
@@ -272,11 +279,15 @@ export class PolymerBondRenderer extends BaseRenderer {
         },${SMOOTH_CORNER_SIZE} `;
         return;
       }
+      // empty cells
+      if (cell.node === null) {
+        return;
+      }
+
       // other cells
       if (
         previousConnection &&
-        previousConnection.direction !== cellConnection.direction &&
-        cell.node !== null
+        previousConnection.direction !== cellConnection.direction
       ) {
         const sin = Math.sin((previousConnection.direction * Math.PI) / 180);
         const cos = Math.cos((previousConnection.direction * Math.PI) / 180);

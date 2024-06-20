@@ -680,25 +680,30 @@ test.describe('11. Fold/unfold hydrogens for', () => {
 
   const fileNames = [
     'All Custom Query Bonds with S-Group - Multiple group.ket',
-    // ^-- https://github.com/epam/Indigo/issues/1626
+    // ^-- IMPORTANT: Result of execution is incorrect because of  https://github.com/epam/Indigo/issues/1626 issue.
   ];
 
   for (const fileName of fileNames) {
-    test(`by ${fileName}`, async ({ page }) => {
-      test.setTimeout(120000);
-      await openFileAndAddToCanvasAsNewProject(
-        `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
-        page,
-      );
-      await page.mouse.click(20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
+    test(
+      `by ${fileName}`,
+      {
+        tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+      },
+      async ({ page }) => {
+        test.slow();
+        await openFileAndAddToCanvasAsNewProject(
+          `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
           page,
         );
-      });
-      await takeEditorScreenshot(page);
-      /*
+        await page.mouse.click(20, 20);
+        await waitForSpinnerFinishedWork(page, async () => {
+          await selectTopPanelButton(
+            TopPanelButton.toggleExplicitHydrogens,
+            page,
+          );
+        });
+        await takeEditorScreenshot(page);
+        /*
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -707,7 +712,8 @@ test.describe('11. Fold/unfold hydrogens for', () => {
       });
       await takeEditorScreenshot(page);
       */
-    });
+      },
+    );
   }
 });
 

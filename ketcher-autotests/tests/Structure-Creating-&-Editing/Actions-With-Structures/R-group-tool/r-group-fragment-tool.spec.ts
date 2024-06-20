@@ -62,16 +62,13 @@ test.describe('Open Ketcher', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('R-Fragment-Group dialog opening', async ({ page }) => {
     /* Test case: EPMLSOPKET-1582 and EPMLSOPKET-1610
     Description:  R-Fragment-Group dialog opening
     */
     await openRGroupModalForTopAtom(page);
     await selectRGroup(page, 'R5');
+    await takeEditorScreenshot(page);
   });
 
   test('R-Fragment-Group UI Verification', async ({ page }) => {
@@ -79,6 +76,7 @@ test.describe('Open Ketcher', () => {
       Description: R-Fragment-Group UI Verification
     */
     await openRGroupModalForTopAtom(page);
+    await takeEditorScreenshot(page);
   });
 
   test('R-Fragment-Group dialog cancelling', async ({ page }) => {
@@ -88,6 +86,7 @@ test.describe('Open Ketcher', () => {
     await openRGroupModalForTopAtom(page);
     await selectRGroup(page, 'R5');
     await page.getByTestId('Cancel').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Create Single R-Fragment-Group member', async ({ page }) => {
@@ -97,6 +96,7 @@ test.describe('Open Ketcher', () => {
     await openRGroupModalForTopAtom(page);
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Change R-Group definition for single R-Group member', async ({
@@ -112,6 +112,7 @@ test.describe('Open Ketcher', () => {
     await page.mouse.click(x, y);
     await selectRGroup(page, rGroupFromFile);
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add attachment point to the R-Group member', async ({ page }) => {
@@ -126,6 +127,7 @@ test.describe('Open Ketcher', () => {
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
@@ -134,9 +136,10 @@ test.describe('Open Ketcher', () => {
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
-  test.skip('Brackets rendering for whole r-group structure even with attachment points', async ({
+  test('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
@@ -148,6 +151,7 @@ test.describe('Open Ketcher', () => {
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Remove R-Group member from R-Group', async ({ page }) => {
@@ -160,6 +164,7 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R5']);
+    await takeEditorScreenshot(page);
   });
 
   test('Change R-Group definition for multiple R-Group members', async ({
@@ -174,6 +179,7 @@ test.describe('Open Ketcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R7']);
+    await takeEditorScreenshot(page);
   });
 
   test('Create several R-Group members', async ({ page }) => {
@@ -191,6 +197,7 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R14').click();
     await selectRGroup(page, 'R15');
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Define a structure with attachment points as R-Group member', async ({
@@ -214,6 +221,7 @@ test.describe('Open Ketcher', () => {
     await page.mouse.click(x, y);
     await selectRGroup(page, 'R5');
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('R-Group definition is not deleted when root structure was deleted', async ({
@@ -228,6 +236,7 @@ test.describe('Open Ketcher', () => {
     );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Delete R-Group member', async ({ page }) => {
@@ -258,6 +267,7 @@ test.describe('Open Ketcher', () => {
 
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action to the distorted structure with R-Group Label', async ({
@@ -272,6 +282,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -287,6 +298,7 @@ test.describe('Open Ketcher', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -302,6 +314,7 @@ test.describe('Open Ketcher', () => {
     );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 });
 

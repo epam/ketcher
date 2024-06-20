@@ -39,6 +39,9 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
+  cutToClipboardByKeyboard,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -72,31 +75,32 @@ const buttonIdToTitle: {
   'bond-crossed': 'Double Cis/Trans Bond (2)',
 };
 
-for (const bondToolKey of Object.keys(BondTool)) {
-  let point: { x: number; y: number };
-  const DELTA = 150;
-  test.describe(`${bondToolKey} bond tool`, () => {
-    let page: Page;
+test.describe(`Bond tool:`, () => {
+  let page: Page;
 
-    test.beforeAll(async ({ browser }) => {
-      page = await browser.newPage();
-      await page.goto('', { waitUntil: 'domcontentloaded' });
-      await waitForKetcherInit(page);
-      await waitForIndigoToLoad(page);
-    });
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
+  });
 
-    test.beforeEach(async () => {
-      await selectAction(TopPanelButton.Clear, page);
-    });
+  test.beforeEach(async () => {
+    await selectAction(TopPanelButton.Clear, page);
+  });
 
-    test.afterEach(async () => {
-      await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
-    });
+  test.afterEach(async () => {
+    await takeEditorScreenshot(page);
+    await selectAction(TopPanelButton.Clear, page);
+  });
 
-    test.afterAll(async () => {
-      await page.close();
-    });
+  test.afterAll(async () => {
+    await page.close();
+  });
+
+  for (const bondToolKey of Object.keys(BondTool)) {
+    let point: { x: number; y: number };
+    const DELTA = 150;
 
     test(`placing ${bondToolKey} on canvas`, async () => {
       /**
@@ -261,72 +265,80 @@ for (const bondToolKey of Object.keys(BondTool)) {
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
     });
 
-    // TODO: These tests are flaky as they depend on copy/paste functionality, which is not stable
-    test.skip(`Manipulations with ${bondToolKey}`, async () => {
-      /**
-       * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
-       */
-      const DELTA_X = 100;
-      point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    // TODO:
+    test(
+      `Manipulations with ${bondToolKey}`,
+      {
+        tag: ['@FlakyTest'],
+      },
+      async () => {
+        /**
+         * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
+         */
+        const DELTA_X = 100;
+        point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-      await selectNestedTool(page, BondTool[bondToolKey]);
-      await clickInTheMiddleOfTheScreen(page);
+        await selectNestedTool(page, BondTool[bondToolKey]);
+        await clickInTheMiddleOfTheScreen(page);
 
-      await selectRectangleSelection(page);
+        await selectRectangleSelection(page);
 
-      await moveMouseToTheMiddleOfTheScreen(page);
-      await dragMouseTo(point.x + DELTA_X, point.y, page);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await moveMouseToTheMiddleOfTheScreen(page);
+        await dragMouseTo(point.x + DELTA_X, point.y, page);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await selectSelection(SelectionType.Rectangle, page);
+        await selectSelection(SelectionType.Rectangle, page);
 
-      point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+        point = await getLeftBondByAttributes(page, {
+          reactingCenterStatus: 0,
+        });
 
-      await page.mouse.click(point.x, point.y);
+        await page.mouse.click(point.x, point.y);
 
-      await page.keyboard.press('Control+C');
-      await page.keyboard.press('Control+V');
+        await copyToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
 
-      await waitForRender(page, async () => {
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x + DELTA_X, point.y);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await clickInTheMiddleOfTheScreen(page);
+        await cutToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
         await page.mouse.click(point.x + DELTA_X, point.y);
-      });
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await clickInTheMiddleOfTheScreen(page);
-      await page.keyboard.press('Control+X');
-      await page.keyboard.press('Control+V');
-      await page.mouse.click(point.x + DELTA_X, point.y);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await selectTool(LeftPanelButton.Erase, page);
+        await clickInTheMiddleOfTheScreen(page);
 
-      await selectTool(LeftPanelButton.Erase, page);
-      await clickInTheMiddleOfTheScreen(page);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
+        await selectAtom(AtomButton.Oxygen, page);
+        point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
-      await selectAtom(AtomButton.Oxygen, page);
-      point = await getCoordinatesTopAtomOfBenzeneRing(page);
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
 
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x, point.y);
-        await selectTopPanelButton(TopPanelButton.Undo, page);
-      });
-
-      await selectRing(RingButton.Cyclohexane, page);
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x, point.y);
-      });
-    });
+        await selectRing(RingButton.Cyclohexane, page);
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+        });
+      },
+    );
 
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
       /**
@@ -341,7 +353,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
        *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
        */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondToolKey}-bond.mol`;
-      test(`Save to file`, async () => {
+      test(`${bondToolKey}: Save to file`, async () => {
         await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
@@ -349,7 +361,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
         await page.getByRole('button', { name: 'Save', exact: true }).click();
       });
 
-      test(`Open and edit`, async () => {
+      test(`${bondToolKey}: Open and edit`, async () => {
         await openFileAndAddToCanvas(fileName, page);
         await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
         await clickOnTheCanvas(page, 200, 0);
@@ -364,8 +376,8 @@ for (const bondToolKey of Object.keys(BondTool)) {
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
     });
-  });
-}
+  }
+});
 
 test.describe('Bond Tool', () => {
   const toolsForTest: DropdownToolIds[] = [

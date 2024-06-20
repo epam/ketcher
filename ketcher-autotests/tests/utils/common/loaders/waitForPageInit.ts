@@ -5,5 +5,7 @@ import { waitForIndigoToLoad } from './waitForIndigoToLoad';
 export const waitForPageInit = async (page: Page) => {
   await page.goto('');
   await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  if (process.env.ENABLE_POLYMER_EDITOR !== 'true') {
+    await waitForIndigoToLoad(page);
+  }
 };

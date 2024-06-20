@@ -344,7 +344,7 @@ test.describe('1. User can expand hydrogens for ', () => {
         test.skip();
       }
 
-      test.setTimeout(120000);
+      test.setTimeout(180000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
       await openFileAndAddToCanvasAsNewProject(
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,

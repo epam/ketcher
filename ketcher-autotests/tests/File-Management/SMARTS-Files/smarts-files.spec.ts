@@ -4,6 +4,7 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 
 test.describe('Loading SMARTS files', () => {
@@ -21,8 +22,7 @@ test.describe('Loading SMARTS files', () => {
     Description: [!#6,!#7,!#8] should be loaded as custom query without any error
     */
     const smartsStringToPaste = '[!#6,!#7,!#8]';
-    await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste, false);
-    await clickInTheMiddleOfTheScreen(page);
+    await pasteFromClipboardAndOpenAsNewProject(page, smartsStringToPaste);
   });
 
   test('Loading SMARTS with aromatic atom list', async ({ page }) => {

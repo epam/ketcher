@@ -73,15 +73,21 @@ test.describe('Open Ketcher', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Toolbar: hiding items', async ({ page }) => {
-    /*
+  test(
+    'Toolbar: hiding items',
+    {
+      tag: ['@FlakyTest'],
+    },
+    async ({ page }) => {
+      /*
         Test case: Test case: EPMLSOPKET-3946
         Description: Hiding item from the toolbar
         */
 
-    await page.goto('/?hiddenControls=clear');
-    await takeTopToolbarScreenshot(page);
-  });
+      await page.goto('/?hiddenControls=clear');
+      await takeTopToolbarScreenshot(page);
+    },
+  );
 
   test('Toolbars on the right and bottom: visible when zoomed in', async ({
     page,

@@ -39,7 +39,9 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
-  waitForSpinnerFinishedWork,
+  cutToClipboardByKeyboard,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -295,14 +297,8 @@ test.describe(`Bond tool:`, () => {
 
         await page.mouse.click(point.x, point.y);
 
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await page.keyboard.press('Control+C'),
-        );
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await page.keyboard.press('Control+V'),
-        );
+        await copyToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
 
         await waitForRender(page, async () => {
           await page.mouse.click(point.x + DELTA_X, point.y);
@@ -312,14 +308,8 @@ test.describe(`Bond tool:`, () => {
         });
 
         await clickInTheMiddleOfTheScreen(page);
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await page.keyboard.press('Control+X'),
-        );
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await page.keyboard.press('Control+V'),
-        );
+        await cutToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
         await page.mouse.click(point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
           await selectTopPanelButton(TopPanelButton.Undo, page);

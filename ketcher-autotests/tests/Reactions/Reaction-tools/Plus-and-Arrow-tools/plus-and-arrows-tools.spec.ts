@@ -26,6 +26,9 @@ import {
   openDropdown,
   waitForSpinnerFinishedWork,
   selectRectangleArea,
+  copyToClipboardByKeyboard,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -256,14 +259,8 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await page.mouse.click(point.x - 150, point.y - 10);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyC`),
-      );
-
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
 
       await clickOnTheCanvas(page, 0, -100);
     });
@@ -319,14 +316,8 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyX`),
-      );
-
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
 
       await clickOnTheCanvas(page, 0, -100);
     });
@@ -340,14 +331,8 @@ test.describe('Plus and Arrows tools ', () => {
         await waitForRender(page, async () => {
           await page.mouse.click(point.x + 60, point.y);
         });
-        await waitForSpinnerFinishedWork(
-          page,
-          async () => await page.keyboard.press(`${modifier}+KeyC`),
-        );
-
-        await waitForSpinnerFinishedWork(page, async () =>
-          page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-        );
+        await copyToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
         await clickOnTheCanvas(page, 0, -100);
       },
@@ -409,15 +394,8 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyX`),
-      );
-
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -427,14 +405,8 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
 
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyX`),
-      );
-
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
       await clickOnTheCanvas(page, 0, -100);
     });
@@ -445,14 +417,9 @@ test.describe('Plus and Arrows tools ', () => {
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + 60, point.y);
       });
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await page.keyboard.press(`${modifier}+KeyC`),
-      );
 
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-      );
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
       await clickOnTheCanvas(page, 0, -100);
       await screenshotBetweenUndoRedo(page);
@@ -695,14 +662,8 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await page.keyboard.press(`${modifier}+KeyC`),
-    );
-
-    await waitForSpinnerFinishedWork(page, async () =>
-      page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY }),
-    );
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
     await selectTopPanelButton(TopPanelButton.Clear, page);
   });

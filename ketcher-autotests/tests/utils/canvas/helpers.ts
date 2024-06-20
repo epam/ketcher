@@ -22,6 +22,8 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
   selectRing,
+  waitForSpinnerFinishedWork,
+  getControlModifier,
 } from '..';
 import {
   selectAtomInToolbar,
@@ -397,4 +399,49 @@ export async function addChemOnCanvas(page: Page, chemId: string) {
   await page.getByTestId('CHEM-TAB').click();
   await page.getByTestId(chemId).click();
   await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function copyToClipboardByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await page.keyboard.press(`${modifier}+KeyC`, options),
+  );
+}
+
+export async function cutToClipboardByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await page.keyboard.press(`${modifier}+KeyX`, options),
+  );
+}
+
+export async function pasteFromClipboardByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await page.keyboard.press(`${modifier}+KeyV`, options),
+  );
 }

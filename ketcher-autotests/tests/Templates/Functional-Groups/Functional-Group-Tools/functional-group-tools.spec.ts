@@ -26,7 +26,9 @@ import {
   selectFunctionalGroups,
   moveOnAtom,
   waitForRender,
-  waitForSpinnerFinishedWork,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -824,12 +826,8 @@ test.describe('Templates - Functional Group Tools3', () => {
         page,
       );
       await page.getByText('Boc').click();
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press('Control+c'),
-      );
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+v');
-      });
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
       await waitForRender(page, async () => {
         await clickOnAtom(page, 'C', anyAtom);
       });
@@ -854,12 +852,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     await waitForRender(page, async () => {
       await page.getByText('Boc').click();
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await cutToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });

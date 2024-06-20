@@ -45,6 +45,9 @@ import {
   selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForSpinnerFinishedWork,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -620,12 +623,8 @@ test.describe('Open Ketcher', () => {
       await takePageScreenshot(page);
       await page.getByTestId('select-rectangle').click();
       await page.keyboard.press('Control+a');
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press('Control+x'),
-      );
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press('Control+v'),
-      );
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
       await clickInTheMiddleOfTheScreen(page);
       await page.getByTestId('template-0').click();
       await page.getByTestId('canvas').click();
@@ -655,12 +654,8 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
     await page.getByTestId('select-rectangle').click();
     await page.keyboard.press('Control+a');
-    await waitForSpinnerFinishedWork(page, async () =>
-      page.keyboard.press('Control+c'),
-    );
-    await waitForSpinnerFinishedWork(page, async () =>
-      page.keyboard.press('Control+v'),
-    );
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page);
   });

@@ -51,6 +51,9 @@ import {
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -88,11 +91,48 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [newPreset, setNewPreset] = useState(activePreset);
 
+  useEffect(() => {
+    setNewPreset(activePreset);
+  }, [activePreset]);
+
+  const dispatch = useDispatch();
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
-    } else setExpandedAccordion(rnaBuilderItem);
+    } else {
+      dispatch(setActiveRnaBuilderItem(rnaBuilderItem));
+      setExpandedAccordion(rnaBuilderItem);
+      const sugarValidaions: string[] = [];
+      const phosphateValidaions: string[] = [];
+      const baseValidaions: string[] = [];
+
+      if (newPreset.phosphate) {
+        sugarValidaions.push('R2');
+      }
+      if (newPreset.base) {
+        sugarValidaions.push('R3');
+      }
+      baseValidaions.push('R1');
+      if (
+        newPreset?.sugar?.props?.MonomerCaps &&
+        !('R3' in newPreset.sugar.props.MonomerCaps)
+      ) {
+        baseValidaions.push('DISABLED');
+      }
+      phosphateValidaions.push('R1');
+      if (
+        newPreset?.sugar?.props?.MonomerCaps &&
+        !('R2' in newPreset.sugar.props.MonomerCaps)
+      ) {
+        phosphateValidaions.push('DISABLED');
+      }
+
+      dispatch(setSugarValidations(sugarValidaions));
+      dispatch(setPhosphateValidations(phosphateValidaions));
+      dispatch(setBaseValidations(baseValidaions));
+    }
   };
 
   const groupsData: IGroupsDataItem[] = [
@@ -129,13 +169,19 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
       ),
     },
   ];
-  const dispatch = useDispatch();
+
   const selectItem = (monomer, groupName) => {
     if (!isSequenceEditInRNABuilderMode) {
       editor.events.selectMonomer.dispatch(monomer);
     }
     if (!isEditMode) return;
 
+    const monomerClass = monomer.props.MonomerClass.toLowerCase();
+    const currentPreset = {
+      ...newPreset,
+      [monomerClass]: monomer,
+    };
+    setNewPreset(currentPreset);
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
     dispatch(setActiveRnaBuilderItem(groupName));
   };

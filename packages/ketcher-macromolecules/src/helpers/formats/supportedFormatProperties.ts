@@ -21,6 +21,7 @@ export enum ChemicalMimeType {
   Fasta = 'chemical/x-fasta',
   Sequence = 'chemical/x-sequence',
   Idt = 'chemical/x-idt',
+  HELM = 'chemincal/x-helm',
   Svg = 'image/svg+xml',
 }
 

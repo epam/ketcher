@@ -48,3 +48,6 @@ export * from './Nucleoside';
 export * from './Nucleotide';
 export * from './monomer-chains/types';
 export * from './MonomerSequenceNode';
+export * from './EmptySequenceNode';
+export * from './LinkerSequenceNode';
+export * from './UnresolvedMonomer';

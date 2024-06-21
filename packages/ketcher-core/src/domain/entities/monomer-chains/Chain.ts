@@ -49,7 +49,9 @@ export class Chain {
   public add(monomer: BaseMonomer) {
     this.createSubChainIfNeed(monomer);
 
-    if (monomer instanceof Sugar) {
+    if (monomer.monomerItem.props.unresolved) {
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+    } else if (monomer instanceof Sugar) {
       if (isValidNucleoside(monomer, this.firstMonomer)) {
         this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
         return;

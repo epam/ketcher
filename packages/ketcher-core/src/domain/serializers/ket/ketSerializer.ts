@@ -325,6 +325,10 @@ export class KetSerializer implements Serializer<Struct> {
     template: IKetMonomerTemplate,
     monomerItem: MonomerItemType,
   ) {
+    if (monomerItem.props.unresolved) {
+      return;
+    }
+
     const { attachmentPointsList } =
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
         template.attachmentPoints || [],

@@ -17,6 +17,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     MonomerClass: template.class,
     MonomerCaps: {},
     idtAliases: template.idtAliases,
+    unresolved: template.unresolved,
   };
 }
 

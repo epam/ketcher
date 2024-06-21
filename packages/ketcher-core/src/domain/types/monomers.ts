@@ -38,6 +38,7 @@ export type MonomerItemType = {
     MonomerClass?: string;
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
+    unresolved?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;

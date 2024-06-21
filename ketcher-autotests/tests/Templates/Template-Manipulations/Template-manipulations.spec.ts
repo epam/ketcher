@@ -44,7 +44,6 @@ import {
   openDropdown,
   selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
-  waitForSpinnerFinishedWork,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -184,9 +183,7 @@ test.describe('Template Manupulations', () => {
       await takeEditorScreenshot(page);
       await page.keyboard.press('Control+a');
       await page.keyboard.press('Control+a');
-      await waitForSpinnerFinishedWork(page, async () =>
-        page.keyboard.press('Control+x'),
-      );
+      await cutToClipboardByKeyboard(page);
       await page.keyboard.press('Control+z');
     },
   );

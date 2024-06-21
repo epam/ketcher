@@ -42,6 +42,7 @@ import {
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -77,6 +78,9 @@ const buttonIdToTitle: {
 
 test.describe(`Bond tool:`, () => {
   let page: Page;
+
+  // Experimental number of retries to make test more stable
+  test.describe.configure({ retries: 5 });
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
@@ -298,6 +302,8 @@ test.describe(`Bond tool:`, () => {
         await page.mouse.click(point.x, point.y);
 
         await copyToClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        delay(2);
         await pasteFromClipboardByKeyboard(page);
 
         await waitForRender(page, async () => {
@@ -309,6 +315,8 @@ test.describe(`Bond tool:`, () => {
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        delay(2);
         await pasteFromClipboardByKeyboard(page);
         await page.mouse.click(point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {

@@ -21,7 +21,6 @@ import {
   selectSnakeLayoutModeTool,
   turnOnMicromoleculesEditor,
   selectClearCanvasTool,
-  waitForLoad,
   delay,
 } from '@utils';
 import {

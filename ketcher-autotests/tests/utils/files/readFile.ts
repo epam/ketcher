@@ -183,6 +183,22 @@ export async function pasteFromClipboardAndAddToCanvas(
     await pressButton(page, 'Add to Canvas');
   }
 }
+export async function pasteFromClipboardAndOpenAsNewProject(
+  page: Page,
+  fillStructure: string,
+  needToWait = true,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  if (needToWait) {
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
+  } else {
+    await pressButton(page, 'Open as New Project');
+  }
+}
 
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,

@@ -26,6 +26,9 @@ import {
   selectFunctionalGroups,
   moveOnAtom,
   waitForRender,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -805,28 +808,32 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.skip('Attach copied Functional Group to atoms of structure', async ({
-    page,
-  }) => {
-    /*
+  test.skip(
+    // Consider review since test doesn't do that it should. Copied functional group doesn't attach to atom
+    // Is that a bug?
+    'Attach copied Functional Group to atoms of structure',
+    {
+      tag: ['@FlakyTest'],
+    },
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-16925
     Description: Can attach copied Functional Group to atoms of structure
    */
-    const anyAtom = 4;
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/functional-group-and-benzene.mol',
-      page,
-    );
-    await page.getByText('Boc').click();
-    await page.keyboard.press('Control+c');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
-    await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
-    });
-    await takeEditorScreenshot(page);
-  });
+      const anyAtom = 4;
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/functional-group-and-benzene.mol',
+        page,
+      );
+      await page.getByText('Boc').click();
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
+      await waitForRender(page, async () => {
+        await clickOnAtom(page, 'C', anyAtom);
+      });
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Attach cutted Functional Group to atoms of structure', async ({
     page,
@@ -845,12 +852,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     await waitForRender(page, async () => {
       await page.getByText('Boc').click();
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await cutToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });

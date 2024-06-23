@@ -49,6 +49,7 @@ import {
   copyToClipboardByKeyboard,
   delay,
   waitForRender,
+  selectRingButton,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -614,25 +615,20 @@ test.describe('Open Ketcher', () => {
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
       const xOffsetFromCenter = 40;
-      await page.getByTestId('template-0').hover();
-      await page.getByTestId('template-0').click();
-      await moveMouseToTheMiddleOfTheScreen(page);
+      await selectRingButton(RingButton.Benzene, page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await page.getByTestId('select-rectangle').click();
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       await takePageScreenshot(page);
-      await page.getByTestId('select-rectangle').click();
+
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+a');
       });
       await cutToClipboardByKeyboard(page);
-      // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-      const experimantalDelay = 2;
-      await delay(experimantalDelay);
       await pasteFromClipboardByKeyboard(page);
+      await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+      await selectRingButton(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
-      await page.getByTestId('template-0').click();
-      await page.getByTestId('canvas').click();
-      await page.getByTestId('template-0').click();
+      await selectRingButton(RingButton.Benzene, page);
       await takePageScreenshot(page);
     },
   );

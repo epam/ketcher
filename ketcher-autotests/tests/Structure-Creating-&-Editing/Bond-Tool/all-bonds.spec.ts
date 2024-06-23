@@ -364,11 +364,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
 
         await copyToClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        // await delay(2);
         await pasteFromClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        // await delay(2);
 
         await waitForRender(page, async () => {
           await page.mouse.click(point.x + DELTA_X, point.y);
@@ -379,11 +375,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        // await delay(2);
         await pasteFromClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        // await delay(2);
         await page.mouse.click(point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
           await selectTopPanelButton(TopPanelButton.Undo, page);

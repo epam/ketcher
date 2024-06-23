@@ -48,6 +48,7 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   delay,
+  waitForRender,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -620,11 +621,13 @@ test.describe('Open Ketcher', () => {
       await page.getByTestId('select-rectangle').click();
       await takePageScreenshot(page);
       await page.getByTestId('select-rectangle').click();
-      await page.keyboard.press('Control+a');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+a');
+      });
       await cutToClipboardByKeyboard(page);
       // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
       const experimantalDelay = 2;
-      delay(experimantalDelay);
+      await delay(experimantalDelay);
       await pasteFromClipboardByKeyboard(page);
       await clickInTheMiddleOfTheScreen(page);
       await page.getByTestId('template-0').click();

@@ -42,7 +42,6 @@ import {
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -269,85 +268,6 @@ test.describe(`Bond tool:`, () => {
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
     });
 
-    // TODO:
-    test(
-      `Manipulations with ${bondToolKey}`,
-      {
-        tag: ['@FlakyTest'],
-      },
-      async () => {
-        /**
-         * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
-         */
-        const DELTA_X = 100;
-        point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-
-        await selectNestedTool(page, BondTool[bondToolKey]);
-        await clickInTheMiddleOfTheScreen(page);
-
-        await selectRectangleSelection(page);
-
-        await moveMouseToTheMiddleOfTheScreen(page);
-        await dragMouseTo(point.x + DELTA_X, point.y, page);
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-
-        await selectSelection(SelectionType.Rectangle, page);
-
-        point = await getLeftBondByAttributes(page, {
-          reactingCenterStatus: 0,
-        });
-
-        await page.mouse.click(point.x, point.y);
-
-        await copyToClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        delay(2);
-        await pasteFromClipboardByKeyboard(page);
-
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x + DELTA_X, point.y);
-        });
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-
-        await clickInTheMiddleOfTheScreen(page);
-        await cutToClipboardByKeyboard(page);
-        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-        delay(2);
-        await pasteFromClipboardByKeyboard(page);
-        await page.mouse.click(point.x + DELTA_X, point.y);
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-
-        await selectTool(LeftPanelButton.Erase, page);
-        await clickInTheMiddleOfTheScreen(page);
-
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-
-        await selectAtom(AtomButton.Oxygen, page);
-        point = await getCoordinatesTopAtomOfBenzeneRing(page);
-
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-
-        await selectRing(RingButton.Cyclohexane, page);
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-        });
-      },
-    );
-
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
       /**
        *  Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
@@ -384,6 +304,117 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
     });
+  }
+});
+
+test.describe(`Bond tool (copy-paste):`, () => {
+  test.describe.configure({ mode: 'serial' });
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    page = await browser.newPage();
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
+  });
+
+  test.beforeEach(async () => {
+    await selectAction(TopPanelButton.Clear, page);
+  });
+
+  test.afterAll(async () => {
+    await page.close();
+  });
+
+  for (const bondToolKey of Object.keys(BondTool)) {
+    let point: { x: number; y: number };
+
+    // TODO:
+    test(
+      `Manipulations with ${bondToolKey}`,
+      {
+        tag: ['@FlakyTest'],
+      },
+      async () => {
+        /**
+         * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
+         */
+        const DELTA_X = 100;
+        point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+
+        await selectNestedTool(page, BondTool[bondToolKey]);
+        await clickInTheMiddleOfTheScreen(page);
+
+        await selectRectangleSelection(page);
+
+        await moveMouseToTheMiddleOfTheScreen(page);
+        await dragMouseTo(point.x + DELTA_X, point.y, page);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await selectSelection(SelectionType.Rectangle, page);
+
+        point = await getLeftBondByAttributes(page, {
+          reactingCenterStatus: 0,
+        });
+
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+        });
+
+        await copyToClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        // await delay(2);
+        await pasteFromClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        // await delay(2);
+
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x + DELTA_X, point.y);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await clickInTheMiddleOfTheScreen(page);
+        await cutToClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        // await delay(2);
+        await pasteFromClipboardByKeyboard(page);
+        // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
+        // await delay(2);
+        await page.mouse.click(point.x + DELTA_X, point.y);
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await selectTool(LeftPanelButton.Erase, page);
+        await clickInTheMiddleOfTheScreen(page);
+
+        await waitForRender(page, async () => {
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await selectAtom(AtomButton.Oxygen, page);
+        point = await getCoordinatesTopAtomOfBenzeneRing(page);
+
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+          await selectTopPanelButton(TopPanelButton.Undo, page);
+        });
+
+        await selectRing(RingButton.Cyclohexane, page);
+        await waitForRender(page, async () => {
+          await page.mouse.click(point.x, point.y);
+        });
+
+        await takeEditorScreenshot(page);
+      },
+    );
   }
 });
 

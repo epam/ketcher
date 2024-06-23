@@ -336,7 +336,7 @@ test.describe('Import-Saving .mol Files', () => {
     await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
     // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-    delay(2);
+    await delay(2);
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end

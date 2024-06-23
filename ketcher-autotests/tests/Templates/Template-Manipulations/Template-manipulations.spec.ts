@@ -47,7 +47,6 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  delay,
   waitForRender,
   selectRingButton,
 } from '@utils';

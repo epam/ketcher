@@ -87,8 +87,10 @@ class RGroupFragmentTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(

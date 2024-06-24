@@ -56,6 +56,7 @@ import {
   getCml,
   clickOnFileFormatDropdown,
   takeTopToolbarScreenshot,
+  setAttachmentPoints,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -2206,8 +2207,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: It is NOT possible to attach old AP to new AP label.
-    We have bug https://github.com/epam/ketcher/issues/4776
-    After fix need to be updated.
     */
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -2216,19 +2215,21 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
-    await clickOnAtom(page, 'C', 2);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
     await takeEditorScreenshot(page);
   });
 
-  test('Check it is NOT possible to wrap AP labed to R-group (by fragment tool)', async ({
+  test('Check it is possible to wrap AP labed to R-group (by fragment tool)', async ({
     page,
   }) => {
     /*
     Test case: Macro-Micro-Switcher/#4530
-    Description: It is NOT possible to wrap AP labed to R-group (by fragment tool).
-    We have bug https://github.com/epam/ketcher/issues/4775
-    After fix need to be updated.
+    Description: It is possible to wrap AP labed to R-group (by fragment tool).
     */
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -2236,9 +2237,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
     await page.getByText('R1').locator('..').click();
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
-    await clickOnAtom(page, 'C', 2);
+    await page.getByText('R18').click();
+    await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
 
@@ -2248,8 +2248,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: It is NOT possible to attach R-Group to AP label.
-    We have bug https://github.com/epam/ketcher/issues/4774
-    After fix need to be updated.
     */
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -2258,8 +2256,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
     await clickOnAtom(page, 'C', 2);
+    await page.getByText('R8').click();
+    await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
 
@@ -2269,8 +2268,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: It is NOT possible to change charge of AP label (select it and use A+/A- buttons).
-    We have bug https://github.com/epam/ketcher/issues/4779
-    After fix need to be updated.
     */
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -2279,14 +2276,11 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
     await clickOnAtom(page, 'C', 2);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
     await clickOnAtom(page, 'C', 2);
     await takeEditorScreenshot(page);
   });
@@ -2297,8 +2291,6 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
     Description: It is NOT possible to attach bond to AP label.
-    Test not working in proper way because we have bug https://github.com/epam/ketcher/issues/4782
-    Bond joins the attachment point even though he shouldn't. After fixing the bug, screenshots need to be updated
     */
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
@@ -2306,6 +2298,17 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check we can attach AP to single atom', async ({ page }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: AP attached to single atom.
+    */
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await addSuperatomAttachmentPoint(page, 'O', 0);
     await takeEditorScreenshot(page);
   });
 });

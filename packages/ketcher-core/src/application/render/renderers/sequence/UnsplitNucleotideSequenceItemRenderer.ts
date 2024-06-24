@@ -1,4 +1,4 @@
-import { BaseSequenceItemRenderer } from 'application/render';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class UnsplitNucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {

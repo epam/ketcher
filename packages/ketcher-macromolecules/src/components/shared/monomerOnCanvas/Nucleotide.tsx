@@ -16,11 +16,11 @@
 
 export const NucleotideAvatar = () => (
   <>
-    <symbol id="nucleotide" viewBox="0 0 84 84" width="40" height="40">
+    <symbol id="nucleotide" viewBox="0 0 84 84" width="42" height="42">
       <path
         className="monomer-body"
-        data-actual-width="40"
-        data-actual-height="40"
+        data-actual-width="42"
+        data-actual-height="42"
         d="M43.0152 71.4019C42.3887 71.771 41.6113 71.771 40.9848 71.4019L9.25584 52.7093C8.50744 52.2684 8.1292 51.3948 8.31974 50.5473L16.6358 13.5613C16.841 12.6485 17.6516 12 18.5871 12L65.4129 12C66.3484 12 67.159 12.6485 67.3642 13.5613L75.6803 50.5473C75.8708 51.3948 75.4926 52.2684 74.7442 52.7093L43.0152 71.4019Z"
         transform="rotate(180, 42, 42)"
       />
@@ -28,12 +28,22 @@ export const NucleotideAvatar = () => (
     <symbol
       id="nucleotide-selection"
       viewBox="0 0 84 84"
-      width="40"
-      height="40"
+      width="42"
+      height="42"
     >
       <path
-        data-actual-width="40"
-        data-actual-height="40"
+        data-actual-width="42"
+        data-actual-height="42"
+        d="M43.0152 71.4019C42.3887 71.771 41.6113 71.771 40.9848 71.4019L9.25584 52.7093C8.50744 52.2684 8.1292 51.3948 8.31974 50.5473L16.6358 13.5613C16.841 12.6485 17.6516 12 18.5871 12L65.4129 12C66.3484 12 67.159 12.6485 67.3642 13.5613L75.6803 50.5473C75.8708 51.3948 75.4926 52.2684 74.7442 52.7093L43.0152 71.4019Z"
+        transform="rotate(180, 42, 42)"
+        fill="none"
+        stroke="#0097A8"
+      />
+    </symbol>
+    <symbol id="nucleotide-hover" viewBox="0 0 84 84" width="42" height="42">
+      <path
+        data-actual-width="42"
+        data-actual-height="42"
         d="M43.0152 71.4019C42.3887 71.771 41.6113 71.771 40.9848 71.4019L9.25584 52.7093C8.50744 52.2684 8.1292 51.3948 8.31974 50.5473L16.6358 13.5613C16.841 12.6485 17.6516 12 18.5871 12L65.4129 12C66.3484 12 67.159 12.6485 67.3642 13.5613L75.6803 50.5473C75.8708 51.3948 75.4926 52.2684 74.7442 52.7093L43.0152 71.4019Z"
         transform="rotate(180, 42, 42)"
         fill="none"

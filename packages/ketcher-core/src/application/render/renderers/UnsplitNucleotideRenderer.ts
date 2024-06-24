@@ -1,16 +1,17 @@
 import { Selection } from 'd3';
-import { BaseMonomerRenderer } from 'application/render';
-import { Phosphate } from 'domain/entities';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { UnsplitNucleotide } from 'domain/entities';
 
 const NUCLEOTIDE_SELECTED_ELEMENT_ID = '#nucleotide-selection';
+const NUCLEOTIDE_HOVERED_ELEMENT_ID = '#nucleotide-hover';
 const NUCLEOTIDE_SYMBOL_ELEMENT_ID = '#nucleotide';
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
-  constructor(public monomer: Phosphate, scale?: number) {
+  constructor(public monomer: UnsplitNucleotide, scale?: number) {
     super(
       monomer,
       NUCLEOTIDE_SELECTED_ELEMENT_ID,
-      NUCLEOTIDE_SELECTED_ELEMENT_ID,
+      NUCLEOTIDE_HOVERED_ELEMENT_ID,
       NUCLEOTIDE_SYMBOL_ELEMENT_ID,
       scale,
     );

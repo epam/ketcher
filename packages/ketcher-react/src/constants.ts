@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init';
+export const ketcherInitEventName = (ketcherId?: string) =>
+  ketcherId ? `ketcher-init-${ketcherId}` : 'ketcher-init';
 
 export const MODES = {
   FG: 'fg',

@@ -127,16 +127,15 @@ export abstract class BaseMode {
       }
     });
     const ketSerializer = new KetSerializer();
-    const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
+    const serializedKet = ketSerializer.serialize(
       new Struct(),
       drawingEntitiesManager,
     );
-    const clipboardItemString = JSON.stringify(serializedMacromolecules);
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(clipboardItemString);
+      navigator.clipboard.writeText(serializedKet);
     } else {
       legacyCopy(event.clipboardData, {
-        'text/plain': clipboardItemString,
+        'text/plain': serializedKet,
       });
       event.preventDefault();
     }
@@ -289,7 +288,7 @@ export abstract class BaseMode {
           ? new Vec2(monomer.position).add(offset)
           : new Vec2(monomer.position);
       }
-      monomer.moveAbsolute(position);
+      drawingEntitiesManager.moveMonomer(monomer, position);
       index++;
     });
   }

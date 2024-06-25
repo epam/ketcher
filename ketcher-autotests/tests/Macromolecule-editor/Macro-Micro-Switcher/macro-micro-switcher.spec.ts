@@ -2311,4 +2311,25 @@ test.describe('Macro-Micro-Switcher', () => {
     await addSuperatomAttachmentPoint(page, 'O', 0);
     await takeEditorScreenshot(page);
   });
+
+  test('Connection one molecule to another one by drugging one over another - result indicate existence of AP label and it remain back after delete connection', async ({
+    page,
+  }) => {
+    /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description: We can connect molecule to attachment point and when delete bond attachment point remains.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-with-oxygen.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('canvas').getByText('O').click();
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
 });

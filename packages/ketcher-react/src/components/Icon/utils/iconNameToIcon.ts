@@ -222,6 +222,7 @@ import ExplicitHydrogensIcon from '../../../assets/icons/files/explicit-hydrogen
 import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
+import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 
 export const iconNameToIcon = {
   α,
@@ -444,4 +445,5 @@ export const iconNameToIcon = {
   'flex-layout-mode': FlexLayoutIcon,
   'snake-layout-mode': SnakeLayoutIcon,
   'sequence-layout-mode': SequenceLayoutIcon,
+  questionMark: QuestionMark,
 } as const;

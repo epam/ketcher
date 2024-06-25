@@ -6,4 +6,5 @@ export { RNABaseRenderer } from './RNABaseRenderer';
 export { BaseRenderer } from './BaseRenderer';
 export { BaseMonomerRenderer } from './BaseMonomerRenderer';
 export { PolymerBondRenderer } from './PolymerBondRenderer';
+export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 export * from './sequence';

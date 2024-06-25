@@ -7,6 +7,7 @@ import {
   Phosphate,
   RNABase,
   Sugar,
+  UnresolvedMonomer,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
@@ -102,7 +103,8 @@ export class ChainsCollection {
       | typeof Phosphate
       | typeof Sugar
       | typeof RNABase
-    > = [Peptide, Chem, Phosphate, Sugar, RNABase],
+      | typeof UnresolvedMonomer
+    > = [Peptide, Chem, Phosphate, Sugar, RNABase, UnresolvedMonomer],
   ) {
     const monomersList = monomers.filter((monomer) =>
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),

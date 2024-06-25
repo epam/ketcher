@@ -32,7 +32,6 @@ export class UnresolvedMonomerRenderer extends BaseMonomerRenderer {
 
   show(theme) {
     super.show(theme);
-    this.appendEnumeration();
   }
 
   protected get enumerationElementPosition() {

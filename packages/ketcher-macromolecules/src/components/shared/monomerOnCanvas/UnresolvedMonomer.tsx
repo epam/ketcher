@@ -59,7 +59,7 @@ export const UnresolvedMonomerAvatar = () => (
         rx="1.5"
         fill="none"
         stroke="#0097A8"
-        strokeWidth="2"
+        strokeWidth="1.5"
       />
     </symbol>
   </>

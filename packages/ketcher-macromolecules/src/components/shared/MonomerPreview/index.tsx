@@ -20,6 +20,7 @@ import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
+import UnresolvedMonomerPreview from 'components/shared/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
@@ -39,20 +40,26 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
         data-testid="polymer-library-preview"
       >
         <MonomerName>{preview.monomer.struct.name}</MonomerName>
-        <StyledStructRender
-          struct={preview.monomer.struct}
-          options={{ needCache: false }}
-        />
+        {preview.monomer.props?.unresolved ? (
+          <UnresolvedMonomerPreview />
+        ) : (
+          <StyledStructRender
+            struct={preview.monomer.struct}
+            options={{ needCache: false }}
+          />
+        )}
       </ContainerDynamic>
     )
   );
 };
 
-const StyledPreview = styled(MonomerPreview)`
+const StyledPreview = styled(MonomerPreview)<IPreviewProps>`
   z-index: 5;
   position: absolute;
-  width: ${preview.width}px;
-  height: ${preview.height}px;
+  width: ${(props) =>
+    props.unresolvedMonomer ? 'auto' : preview.width + 'px'};
+  height: ${(props) =>
+    props.unresolvedMonomer ? 'auto' : preview.height + 'px'};
   transform: translate(-50%, 0);
 `;
 

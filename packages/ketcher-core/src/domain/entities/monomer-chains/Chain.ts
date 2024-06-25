@@ -5,6 +5,7 @@ import {
   Phosphate,
   SubChainNode,
   Sugar,
+  UnresolvedMonomer,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
@@ -49,9 +50,12 @@ export class Chain {
   public add(monomer: BaseMonomer) {
     this.createSubChainIfNeed(monomer);
 
-    if (monomer.monomerItem.props.unresolved) {
+    if (monomer instanceof UnresolvedMonomer) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
-    } else if (monomer instanceof Sugar) {
+      return;
+    }
+
+    if (monomer instanceof Sugar) {
       if (isValidNucleoside(monomer, this.firstMonomer)) {
         this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
         return;
@@ -61,10 +65,12 @@ export class Chain {
         return;
       }
     }
+
     if (monomer instanceof Peptide) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
       return;
     }
+
     const nextMonomer = getNextMonomerInChain(monomer);
     const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
       const isNucleosideOrNucleotide =

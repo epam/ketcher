@@ -138,6 +138,11 @@ test.describe('Connection rules for Base monomers: ', () => {
     },
   };
 
+  async function hoverOverConnectionLine(page: Page) {
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.hover();
+  }
+
   async function loadTwoMonomers(
     page: Page,
     leftMonomers: IMonomer,
@@ -285,10 +290,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
                 await zoomWithMouseWheel(page, -800);
 
-                const bondLine = page
-                  .locator('g[pointer-events="stroke"]')
-                  .first();
-                await bondLine.hover();
+                await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page);
               });
@@ -464,10 +466,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                 );
 
                 await zoomWithMouseWheel(page, -600);
-                const bondLine = page
-                  .locator('g[pointer-events="stroke"]')
-                  .first();
-                await bondLine.hover();
+                await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page);
               });
@@ -643,10 +642,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                 );
 
                 await zoomWithMouseWheel(page, -600);
-                const bondLine = page
-                  .locator('g[pointer-events="stroke"]')
-                  .first();
-                await bondLine.hover();
+                await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page);
               });
@@ -677,8 +673,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         await bondTwoMonomersByCenterToCenter(page, leftBase, rightPeptide);
 
         await zoomWithMouseWheel(page, -600);
-        const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        await bondLine.hover();
+        await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page);
       });
@@ -705,11 +700,192 @@ test.describe('Connection rules for Base monomers: ', () => {
         await bondTwoMonomersByCenterToCenter(page, leftBase, rightCHEM);
 
         await zoomWithMouseWheel(page, -600);
-        const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        await bondLine.hover();
+        await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page);
       });
+    });
+  });
+
+  const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+      },
+    },
+    '(R2) - Right only': {
+      fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R2: 'R2',
+      },
+    },
+    '(R3) - Side only': {
+      fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R3: 'R3',
+      },
+    },
+    '(R1,R2) - R3 gap': {
+      fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R3: 'R3',
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: 'F1',
+      connectionPoints: {
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R3,R4)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R1,R3,R4)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    //   fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: 'F1',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+  };
+
+  let ordinaryMoleculeName: string;
+
+  Object.values(baseMonomers).forEach((leftBase) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOM) => {
+      Object.values(leftBase.connectionPoints).forEach(
+        (leftBaseConnectionPoint) => {
+          Object.values(rightOM.connectionPoints).forEach(
+            (rightOMConnectionPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 4
+               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Base - Ordinary Molecule )
+               * For each %chemType% from the library (baseMonomers)
+               *   For each %OMType% from the library (ordinaryMoleculeMonomers)
+               *      For each %ConnectionPoint% (avaliable connections of %chemType%)
+               *         For each %ConnectionPoint2% (avaliable connections of %OMType%) do:
+               *  1. Clear canvas
+               *  2. Load %chemType% and %OMType% and put them on the canvas
+               *  3. Establish connection between %chemType%(%ConnectionPoint%) and %OMType%(%ConnectionPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              ordinaryMoleculeName = rightOM.fileName.substring(
+                rightOM.fileName.indexOf(' - '),
+                rightOM.fileName.lastIndexOf('.ket'),
+              );
+              test(`Test case8: Connect ${leftBaseConnectionPoint} to ${rightOMConnectionPoint} of Base(${leftBase.alias}) and OM(${ordinaryMoleculeName})`, async () => {
+                test.setTimeout(20000);
+
+                await loadTwoMonomers(page, leftBase, rightOM);
+
+                await bondTwoMonomersByPointToPoint(
+                  page,
+                  leftBase,
+                  rightOM,
+                  leftBaseConnectionPoint,
+                  rightOMConnectionPoint,
+                );
+
+                await zoomWithMouseWheel(page, -600);
+                await hoverOverConnectionLine(page);
+
+                await takeEditorScreenshot(page);
+              });
+            },
+          );
+        },
+      );
     });
   });
 });

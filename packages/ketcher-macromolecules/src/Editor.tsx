@@ -71,6 +71,7 @@ import {
   SugarAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  UnresolvedMonomerAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { ErrorModal } from 'components/modal/Error';
@@ -372,6 +373,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SugarAvatar />
               <PhosphateAvatar />
               <RNABaseAvatar />
+              <UnresolvedMonomerAvatar />
               <SequenceStartArrow />
             </defs>
             <g className="drawn-structures"></g>

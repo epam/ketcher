@@ -5,13 +5,17 @@ import {
   RNABaseRenderer,
   SugarRenderer,
   PhosphateRenderer,
+  UnresolvedMonomerRenderer,
 } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
-import { Peptide } from 'domain/entities/Peptide';
-import { Chem } from 'domain/entities/Chem';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
+import {
+  Peptide,
+  Chem,
+  Sugar,
+  Phosphate,
+  RNABase,
+  UnresolvedMonomer,
+} from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
@@ -47,7 +51,11 @@ export const monomerFactory = (
   let MonomerRenderer;
   let ketMonomerClass: KetMonomerClass;
 
-  if (
+  if (monomer.props.unresolved) {
+    Monomer = UnresolvedMonomer;
+    MonomerRenderer = UnresolvedMonomerRenderer;
+    ketMonomerClass = KetMonomerClass.CHEM;
+  } else if (
     monomer.props.MonomerType === MONOMER_CONST.CHEM ||
     (monomer.props.MonomerType === MONOMER_CONST.RNA &&
       (monomer.props.MonomerClass === MONOMER_CONST.MODDNA ||

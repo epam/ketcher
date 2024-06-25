@@ -38,5 +38,10 @@ export const Preview = () => {
     return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
   }
 
-  return <MonomerPreview className="polymer-library-preview" />;
+  return (
+    <MonomerPreview
+      className="polymer-library-preview"
+      unresolvedMonomer={preview?.monomer?.props?.unresolved}
+    />
+  );
 };

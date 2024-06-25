@@ -122,6 +122,7 @@ export interface IKetMonomerTemplate {
   classHELM?: string;
   name?: string;
   idtAliases?: IKetIdtAliases;
+  unresolved?: boolean;
 }
 
 export interface IKetMonomerTemplateRef {

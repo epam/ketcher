@@ -98,7 +98,7 @@ export async function switchSequenceEnteringType(
 
 export async function selectFlexLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const flexModeButton = page.getByTestId('flex-layout-mode');
+  const flexModeButton = page.getByTestId('flex-layout-mode').first();
 
   await flexModeButton.waitFor({ state: 'visible' });
   await flexModeButton.click();

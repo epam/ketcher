@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Item, Submenu } from 'react-contexify';
+import { HandlerParamsEvent, Item, Submenu } from 'react-contexify';
 import tools from 'src/script/ui/action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
@@ -15,13 +15,20 @@ const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useBondEdit();
-  const [handleTypeChange] = useBondTypeChange();
+  const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
   const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
-
+  const isDisabled =
+    props.propsFromTrigger && props.triggerEvent
+      ? disabled({
+          id: props.propsFromTrigger?.id,
+          props: props.propsFromTrigger,
+          triggerEvent: props.triggerEvent as unknown as HandlerParamsEvent,
+        })
+      : true;
   return (
     <>
       <Item {...props} onClick={handleEdit}>
@@ -43,6 +50,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
             id={name}
             onClick={handleTypeChange}
             key={name}
+            disabled={isDisabled}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
@@ -59,6 +67,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
               id={name}
               onClick={handleTypeChange}
               key={name}
+              disabled={isDisabled}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>

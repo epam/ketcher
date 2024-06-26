@@ -96,6 +96,7 @@ const options: Array<Option> = [
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
+  { id: 'helm', label: 'HELM' },
 ];
 
 const additionalOptions: Array<Option> = [

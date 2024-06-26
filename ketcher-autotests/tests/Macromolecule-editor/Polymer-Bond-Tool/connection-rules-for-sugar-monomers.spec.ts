@@ -934,4 +934,36 @@ test.describe('Connection rules for sugars: ', () => {
       );
     });
   });
+
+  Object.values(sugarMonomers).forEach((leftSugar) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 8
+       *  Description: User can connect any Sugar to any OrdinaryMolecule using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 10: Connect Center to Center of Sugar(${leftSugar.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftSugar,
+          rightOrdinaryMolecule,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

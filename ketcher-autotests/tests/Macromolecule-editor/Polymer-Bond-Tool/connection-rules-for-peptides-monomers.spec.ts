@@ -491,33 +491,53 @@ test.describe('Connection rules for peptides: ', () => {
 
   async function bondTwoMonomersByCenterToCenter(
     page: Page,
-    leftPeptide: IMonomer,
-    rightPeptide: IMonomer,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
   ) {
-    const leftPeptideLocator = await page
-      .getByText(leftPeptide.alias, { exact: true })
+    const leftMonomerLocator = await page
+      .getByText(leftMonomer.alias, { exact: true })
       .locator('..')
       .first();
 
-    const rightPeptideLocator =
-      (await page.getByText(rightPeptide.alias, { exact: true }).count()) > 1
+    const rightMonomerLocator =
+      (await page.getByText(rightMonomer.alias, { exact: true }).count()) > 1
         ? page
-            .getByText(rightPeptide.alias, { exact: true })
+            .getByText(rightMonomer.alias, { exact: true })
             .nth(1)
             .locator('..')
             .first()
         : page
-            .getByText(rightPeptide.alias, { exact: true })
+            .getByText(rightMonomer.alias, { exact: true })
             .locator('..')
             .first();
 
     await bondTwoMonomersPointToPoint(
       page,
-      leftPeptideLocator,
-      rightPeptideLocator,
+      leftMonomerLocator,
+      rightMonomerLocator,
       undefined,
       undefined,
     );
+
+    if (await page.getByRole('dialog').isVisible()) {
+      const firstConnectionPointKeyForLeftMonomer = Object.keys(
+        leftMonomer.connectionPoints,
+      )[0];
+      const leftMonomerConnectionPoint =
+        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
+      await page.getByTitle(leftMonomerConnectionPoint).first().click();
+
+      const firstConnectionPointKeyForRightMonomer = Object.keys(
+        rightMonomer.connectionPoints,
+      )[0];
+      const rightMonomerConnectionPoint =
+        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
+      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
+        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
+        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
+
+      await page.getByTitle('Connect').first().click();
+    }
   }
 
   // test(`temporary test for debug purposes`, async () => {
@@ -1086,6 +1106,38 @@ test.describe('Connection rules for peptides: ', () => {
           );
         },
       );
+    });
+  });
+
+  Object.values(peptideMonomers).forEach((leftPeptide) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 7
+       *  Description: User can connect any Peptide to any OrdinaryMolecule using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 10: Connect Center to Center of Peptide(${leftPeptide.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftPeptide,
+          rightOrdinaryMolecule,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
     });
   });
 });

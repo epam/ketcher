@@ -918,7 +918,7 @@ test.describe('Connection rules for chems: ', () => {
 
         await hoverOverConnectionLine(page);
 
-        // await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page);
       });
     });
   });
@@ -1102,6 +1102,38 @@ test.describe('Connection rules for chems: ', () => {
           );
         },
       );
+    });
+  });
+
+  Object.values(chemMonomers).forEach((leftCHEM) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 6
+       *  Description: User can connect any CHEM to any OrdinaryMolecule using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftCHEM,
+          rightOrdinaryMolecule,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
     });
   });
 });

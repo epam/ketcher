@@ -967,4 +967,36 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
     });
   });
+
+  Object.values(phosphateMonomers).forEach((leftPhosphate) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 10
+       *  Description: User can connect any Phosphate to any OrdinaryMolecule using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      ordnryMlcleName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 10: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and OrdinaryMolecule(${ordnryMlcleName})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftPhosphate, rightOrdinaryMolecule);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftPhosphate,
+          rightOrdinaryMolecule,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

@@ -888,4 +888,36 @@ test.describe('Connection rules for Base monomers: ', () => {
       );
     });
   });
+
+  Object.values(baseMonomers).forEach((leftBase) => {
+    Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 9
+       *  Description: User can connect any Base to any OrdinaryMolecule using center-to-center way.
+       *               Select Connection Points dialog opened.
+       */
+      ordinaryMoleculeName = rightOrdinaryMolecule.fileName.substring(
+        rightOrdinaryMolecule.fileName.indexOf(' - '),
+        rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
+      );
+
+      test(`Case 9: Connect Center to Center of Base(${leftBase.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftBase, rightOrdinaryMolecule);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftBase,
+          rightOrdinaryMolecule,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

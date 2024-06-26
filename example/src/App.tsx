@@ -27,8 +27,10 @@ let structServiceProvider: StructServiceProvider =
     process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
 if (process.env.MODE === 'standalone') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { StandaloneStructServiceProvider } = require('ketcher-standalone');
+  const {
+    StandaloneStructServiceProvider,
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+  } = require('ketcher-standalone/dist/binaryWasm');
   structServiceProvider =
     new StandaloneStructServiceProvider() as StructServiceProvider;
 }

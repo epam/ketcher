@@ -29,7 +29,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
 import {
-  GroupContainer,
+  GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import { selectEditor, selectShowPreview, showPreview } from 'state/common';
@@ -163,7 +163,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     };
 
   return (
-    <GroupContainer data-testid="rna-preset-group">
+    <GroupContainerRow data-testid="rna-preset-group">
       <ItemsContainer>
         {presets.map((preset: IRnaPreset, index: number): ReactElement => {
           return (
@@ -180,6 +180,6 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
         })}
       </ItemsContainer>
       <RNAContextMenu />
-    </GroupContainer>
+    </GroupContainerRow>
   );
 };

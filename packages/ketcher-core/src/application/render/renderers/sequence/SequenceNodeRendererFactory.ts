@@ -8,6 +8,7 @@ import {
   EmptySequenceNode,
   LinkerSequenceNode,
   UnresolvedMonomer,
+  UnsplitNucleotide,
 } from 'domain/entities';
 import {
   PeptideSequenceItemRenderer,
@@ -19,6 +20,7 @@ import {
   BaseSequenceItemRenderer,
   NucleosideSequenceItemRenderer,
   UnresolvedMonomerSequenceItemRenderer,
+  UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
@@ -61,6 +63,9 @@ export class SequenceNodeRendererFactory {
             break;
           case UnresolvedMonomer:
             RendererClass = UnresolvedMonomerSequenceItemRenderer;
+            break;
+          case UnsplitNucleotide:
+            RendererClass = UnsplitNucleotideSequenceItemRenderer;
             break;
           default:
             RendererClass = ChemSequenceItemRenderer;

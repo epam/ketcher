@@ -7,4 +7,5 @@ export { BaseRenderer } from './BaseRenderer';
 export { BaseMonomerRenderer } from './BaseMonomerRenderer';
 export { PolymerBondRenderer } from './PolymerBondRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
+export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export * from './sequence';

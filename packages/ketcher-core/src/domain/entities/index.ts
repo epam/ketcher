@@ -51,3 +51,4 @@ export * from './MonomerSequenceNode';
 export * from './EmptySequenceNode';
 export * from './LinkerSequenceNode';
 export * from './UnresolvedMonomer';
+export * from './UnsplitNucleotide';

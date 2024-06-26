@@ -28,6 +28,7 @@ import {
   selectFilteredMonomers,
   selectMonomerGroups,
   selectMonomersInCategory,
+  selectUnsplitNucleotides,
 } from 'state/library';
 import {
   DetailsContainer,
@@ -80,6 +81,8 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
   const presets = useAppSelector(selectFilteredPresets);
+  const nucleotideItems = selectUnsplitNucleotides(monomers);
+  const nucleotideGroups = selectMonomerGroups(nucleotideItems);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
   const isActivePresetNewAndEmpty = useAppSelector(
@@ -167,6 +170,11 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
           MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
           MonomerGroups.PHOSPHATES,
       ),
+    },
+    {
+      groupName: 'Nucleotides',
+      iconName: 'nucleotide',
+      groups: nucleotideGroups,
     },
   ];
 

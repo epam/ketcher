@@ -12,3 +12,4 @@ export * from './PolymerBondSequenceRenderer';
 export * from './RNASequenceItemRenderer';
 export * from './SequenceNodeRendererFactory';
 export * from './UnresolvedMonomerSequenceItemRenderer';
+export * from './UnsplitNucleotideSequenceItemRenderer';

@@ -6,6 +6,7 @@ import {
   SugarRenderer,
   PhosphateRenderer,
   UnresolvedMonomerRenderer,
+  UnsplitNucleotideRenderer,
 } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import {
@@ -15,6 +16,7 @@ import {
   Phosphate,
   RNABase,
   UnresolvedMonomer,
+  UnsplitNucleotide,
 } from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 
@@ -64,6 +66,13 @@ export const monomerFactory = (
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;
     ketMonomerClass = KetMonomerClass.CHEM;
+  } else if (
+    monomer.props.MonomerClass === MONOMER_CONST.RNA ||
+    monomer.props.MonomerClass === MONOMER_CONST.DNA
+  ) {
+    Monomer = UnsplitNucleotide;
+    MonomerRenderer = UnsplitNucleotideRenderer;
+    ketMonomerClass = KetMonomerClass.RNA;
   } else if (monomer.props.MonomerType === MONOMER_CONST.PEPTIDE) {
     Monomer = Peptide;
     MonomerRenderer = PeptideRenderer;

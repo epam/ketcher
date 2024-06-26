@@ -32,6 +32,8 @@ export const Preview = () => {
     KetMonomerClass.CHEM,
     KetMonomerClass.Phosphate,
     KetMonomerClass.Sugar,
+    KetMonomerClass.RNA,
+    KetMonomerClass.DNA,
   ]);
   const monomerClass = preview?.monomer?.props.MonomerClass;
   if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {

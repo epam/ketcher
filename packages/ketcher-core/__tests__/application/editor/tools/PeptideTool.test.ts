@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { peptideMonomerItem, polymerEditorTheme } from '../../../mock-data';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
@@ -9,6 +9,7 @@ describe('PeptideTool', () => {
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: polymerEditorTheme,
+      mode: new FlexMode(),
     });
     const onShow = jest.fn();
     jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
@@ -22,6 +23,7 @@ describe('PeptideTool', () => {
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: polymerEditorTheme,
+      mode: new FlexMode(),
     });
     const onShow = jest.fn();
     jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);

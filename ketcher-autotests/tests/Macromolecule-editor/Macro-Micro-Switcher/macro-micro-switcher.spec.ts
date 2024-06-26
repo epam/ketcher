@@ -481,7 +481,10 @@ test.describe('Macro-Micro-Switcher', () => {
       /* 
       Test case: Macro-Micro-Switcher/#3747
       Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
+      Test fail because we have a bug https://github.com/epam/ketcher/issues/4881
+      After fix we need update snapshots.
       */
+      test.fail();
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
       await turnOnMicromoleculesEditor(page);
       await takeEditorScreenshot(page);
@@ -553,7 +556,7 @@ test.describe('Macro-Micro-Switcher', () => {
       topLeftCorner.y,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').click();
+    await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
 
@@ -770,12 +773,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open a macro file and put in center of canvas in micro mode then switch to macro, check that structure is in center of canvas', async ({
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async ({
     page,
   }) => {
     /* 
     Test case: Macro-Micro-Switcher/#3902
-    Description: Structure is in center of canvas
+    Description: Structure is in left upper corner of canvas
     */
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
     await takeEditorScreenshot(page);

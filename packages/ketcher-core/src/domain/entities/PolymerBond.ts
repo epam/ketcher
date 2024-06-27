@@ -4,7 +4,6 @@ import { BackBoneBondSequenceRenderer } from 'application/render/renderers/seque
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities/vec2';
@@ -80,50 +79,36 @@ export class PolymerBond extends DrawingEntity {
 
   public get isBackboneChainConnection(): boolean {
     // Variants:
-    // • Sugar [R2] — [R1] Phosphate
-    // • Sugar [R1] — [R2] Phosphate
-    // • Phosphate [R2] — [R1] Sugar
-    // • Phosphate [R1] — [R2] Sugar
+    // • Not RNA base [R2] — [R1] Not RNA base
     // • Sugar [R3] — [R1] RNA base
-    // • RNA base [R1] — [R3] Sugar
     if (!this.secondMonomer) {
       return true;
     }
 
-    let sugarMonomer: Sugar;
-    let anotherMonomer: BaseMonomer;
-    if (this.firstMonomer instanceof Sugar) {
-      sugarMonomer = this.firstMonomer;
-      anotherMonomer = this.secondMonomer;
-    } else if (this.secondMonomer instanceof Sugar) {
-      sugarMonomer = this.secondMonomer;
-      anotherMonomer = this.firstMonomer;
-    } else {
-      return false;
-    }
-
-    const sugarMonomerAttachmentPoint =
-      sugarMonomer.getAttachmentPointByBond(this);
-    const anotherMonomerAttachmentPoint =
-      anotherMonomer.getAttachmentPointByBond(this);
-    if (!sugarMonomerAttachmentPoint || !anotherMonomerAttachmentPoint) {
+    const firstMonomer = this.firstMonomer;
+    const secondMonomer = this.secondMonomer;
+    const firstMonomerAttachmentPoint =
+      firstMonomer.getAttachmentPointByBond(this);
+    const secondMonomerAttachmentPoint =
+      secondMonomer.getAttachmentPointByBond(this);
+    if (!firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint) {
       return true;
     }
 
-    const thereArePhosphateAndSugar = anotherMonomer instanceof Phosphate;
-    const thereAreR1AndR2 =
-      (sugarMonomerAttachmentPoint === AttachmentPointName.R2 &&
-        anotherMonomerAttachmentPoint === AttachmentPointName.R1) ||
-      (sugarMonomerAttachmentPoint === AttachmentPointName.R1 &&
-        anotherMonomerAttachmentPoint === AttachmentPointName.R2);
-    if (thereArePhosphateAndSugar && thereAreR1AndR2) {
+    if (
+      firstMonomerAttachmentPoint === AttachmentPointName.R2 &&
+      secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
+      !(firstMonomer instanceof RNABase) &&
+      !(secondMonomer instanceof RNABase)
+    ) {
       return true;
     }
 
     return (
-      sugarMonomerAttachmentPoint === AttachmentPointName.R3 &&
-      anotherMonomer instanceof RNABase &&
-      anotherMonomerAttachmentPoint === AttachmentPointName.R1
+      firstMonomer instanceof Sugar &&
+      firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
+      secondMonomer instanceof RNABase &&
+      secondMonomerAttachmentPoint === AttachmentPointName.R1
     );
   }
 

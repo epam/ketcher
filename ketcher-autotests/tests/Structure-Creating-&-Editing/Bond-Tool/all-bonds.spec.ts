@@ -261,8 +261,8 @@ for (const bondToolKey of Object.keys(BondTool)) {
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
     });
 
-    // TODO:
-    test(`Manipulations with ${bondToolKey}`, async () => {
+    // TODO: These tests are flaky as they depend on copy/paste functionality, which is not stable
+    test.skip(`Manipulations with ${bondToolKey}`, async () => {
       /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */

@@ -370,6 +370,21 @@ export class Ketcher {
     }, this.eventBus);
   }
 
+  async setHelm(helmStr: string): Promise<void | undefined> {
+    runAsyncAction<void>(async () => {
+      assert(typeof helmStr === 'string');
+      const struct: Struct = await prepareStructToRender(
+        helmStr,
+        this.#structService,
+        this,
+      );
+      struct.rescale();
+      this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
+    }, this.eventBus);
+  }
+
   async addFragment(structStr: string): Promise<void | undefined> {
     if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
       return;

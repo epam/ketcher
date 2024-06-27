@@ -53,6 +53,7 @@ const options: Array<Option> = [
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'svg', label: 'SVG Document' },
+  { id: 'helm', label: 'HELM' },
 ];
 
 const formatDetector = {
@@ -60,6 +61,7 @@ const formatDetector = {
   fasta: ChemicalMimeType.FASTA,
   sequence: ChemicalMimeType.SEQUENCE,
   idt: ChemicalMimeType.IDT,
+  helm: ChemicalMimeType.HELM,
 };
 
 const StyledModal = styled(Modal)({

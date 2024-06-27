@@ -29,4 +29,26 @@ export class Matrix<T> {
       }
     }
   }
+
+  forEachRightToLeft(callback: (value: T, x: number, y: number) => void): void {
+    for (let x = this.matrix.length - 1; x >= 0; x--) {
+      for (let y = this.matrix[x].length - 1; y >= 0; y--) {
+        const value = this.matrix[x][y];
+        if (value) {
+          callback(value, x, y);
+        }
+      }
+    }
+  }
+
+  forEachTopToBottom(callback: (value: T, x: number, y: number) => void): void {
+    for (let y = 0; y < this.matrix[0].length; y++) {
+      for (let x = 0; x < this.matrix.length; x++) {
+        const value = this.matrix[x][y];
+        if (value) {
+          callback(value, x, y);
+        }
+      }
+    }
+  }
 }

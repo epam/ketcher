@@ -638,7 +638,6 @@ export class DrawingEntitiesManager {
     polymerBond.secondMonomer.turnOffHover();
     polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
     polymerBond.turnOffHover();
-    this.recalculateCanvasMatrix();
 
     return polymerBond;
   }
@@ -665,6 +664,7 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
+    command.merge(this.recalculateCanvasMatrix());
 
     return command;
   }
@@ -1153,6 +1153,7 @@ export class DrawingEntitiesManager {
     this.canvasMatrix = new CanvasMatrix(
       ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
     );
+    return this.redrawBonds();
   }
 
   public reArrangeChains(

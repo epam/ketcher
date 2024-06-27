@@ -161,9 +161,9 @@ export class PolymerBondRenderer extends BaseRenderer {
             connection.polymerBond !== polymerBond &&
             directionsToCheck.includes(connection.direction) &&
             connectionCells[0] === cell &&
-            !handledConnections.has(polymerBond)
+            !handledConnections.has(connection.polymerBond)
           ) {
-            handledConnections.add(polymerBond);
+            handledConnections.add(connection.polymerBond);
             newIntersectionsAmount++;
             newIntersectionsAmount += this.getBondPartIntersections(
               matrix,
@@ -186,6 +186,11 @@ export class PolymerBondRenderer extends BaseRenderer {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
+
+    if (!cells) {
+      return;
+    }
+
     const BOND_END_LENGTH = 15;
     const CELL_WIDTH = 60;
     const CELL_HEIGHT = 40;
@@ -205,24 +210,13 @@ export class PolymerBondRenderer extends BaseRenderer {
       : this.scaledPosition.startPosition;
     let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
 
-    console.log(firstCellConnection);
     const cos = Math.cos((firstCellConnection.direction * Math.PI) / 180);
 
     let previousConnection;
     let previousCell;
 
-    const horizontalPartIntersectionsOffset = this.getBondPartIntersections(
-      matrix,
-      cells,
-      this.polymerBond,
-    );
+    const horizontalPartIntersectionsOffset = firstCellConnection.offset;
 
-    const verticalPartIntersectionsOffset = this.getBondPartIntersections(
-      matrix,
-      cells,
-      this.polymerBond,
-      [90, 270],
-    );
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
@@ -300,7 +294,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           ? cell.node.monomer.renderer?.scaledMonomerPosition.x +
             cell.node.monomer.renderer?.monomerSize.width / 2 +
             xOffset +
-            horizontalPartIntersectionsOffset * 3
+            (horizontalPartIntersectionsOffset / 2) * 3
           : cell.node.monomer.renderer?.scaledMonomerPosition.y +
             cell.node.monomer.renderer?.monomerSize.height / 2 +
             yOffset;

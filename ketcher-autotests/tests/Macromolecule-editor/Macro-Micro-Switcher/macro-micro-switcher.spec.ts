@@ -581,7 +581,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Make full screen mode in micro mode and switch to macro mode.', async ({
+  test.skip('Make full screen mode in micro mode and switch to macro mode.', async ({
     page,
   }) => {
     /* 

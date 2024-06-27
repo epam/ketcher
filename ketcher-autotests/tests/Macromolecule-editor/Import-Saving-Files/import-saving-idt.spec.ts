@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   TopPanelButton,
   openFileAndAddToCanvasMacro,
@@ -14,8 +14,40 @@ import {
   readFileContents,
   moveMouseAway,
   getIdt,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  waitForLoad,
+  pressButton,
+  selectMacromoleculesPanelButton,
+  MacromoleculesTopPanelButton,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
+async function pasteFromClipboardAndAddToMacromoleculesCanvas(
+  page: Page,
+  structureFormat: string,
+  fillStructure: string,
+  needToWait = true,
+) {
+  await selectMacromoleculesPanelButton(
+    MacromoleculesTopPanelButton.Open,
+    page,
+  );
+  await page.getByText('Paste from clipboard').click();
+  if (!(structureFormat === 'Ket')) {
+    await page.getByRole('combobox').click();
+    await page.getByText(structureFormat).click();
+  }
+
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  if (needToWait) {
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+  } else {
+    await pressButton(page, 'Add to Canvas');
+  }
+}
 
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
@@ -122,4 +154,58 @@ test.describe('Import-Saving .idt Files', () => {
     );
     expect(valueInTextarea).toBe(expectedData);
   });
+
+  const fileNames = [
+    'DNA-All-PS',
+    '2-MOE-DNA-chimera-All-PS',
+    'Affinity-Plus-DNA-chimera-All-PS',
+    '2-OMe-DNA-chimera-All-PS',
+    'Gapmer-with-5-Methylcytosine',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`Verify import of ${fileName} sequence with modifications from IDT format using Open file (Sequence mode/Flex/Snake) `, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/4310
+    Description: Structure is opening
+    */
+      await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
+      await takeEditorScreenshot(page);
+      await selectSequenceLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const fileNames1 = [
+    'A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T',
+    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
+    '+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C',
+    'mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU',
+    '/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/',
+  ];
+
+  for (const fileName of fileNames1) {
+    test(`Verify import of ${fileName} sequence with modifications from IDT format using Paste from Clipboard (Sequence mode/Flex/Snake) `, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/4310
+    Description: Structure is opening
+    */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        'IDT',
+        `${fileName}`,
+      );
+      await takeEditorScreenshot(page);
+      await selectSequenceLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+    });
+  }
 });

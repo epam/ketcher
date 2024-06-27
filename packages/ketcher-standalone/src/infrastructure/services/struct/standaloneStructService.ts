@@ -142,6 +142,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.IDT;
       break;
     }
+    case ChemicalMimeType.HELM: {
+      format = SupportedFormat.HELM;
+      break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');

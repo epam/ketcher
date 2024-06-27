@@ -138,6 +138,12 @@ const formatProperties: FormatPropertiesMap = {
     ['.idt'],
     false,
   ),
+  helm: new SupportedFormatProperties(
+    'HELM',
+    ChemicalMimeType.HELM,
+    ['.helm'],
+    true,
+  ),
   sequence: new SupportedFormatProperties(
     'SEQUENCE',
     ChemicalMimeType.SEQUENCE,

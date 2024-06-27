@@ -1,0 +1,252 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    16.009849152128567,
+                    -9.500074417174607,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.740150847871433,
+                    -9.499589229177204,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.87663750949124,
+                    -8.999966888850187,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.740150847871433,
+                    -10.500532067822148,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.009849152128567,
+                    -10.505020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.878820855479557,
+                    -11.000033111149811,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    16.877247169357567,
+                    -7.999967074692781,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    18.60640895057588,
+                    -8.999992492299459,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    18.60665682524083,
+                    -10.999698764611011,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    16.88267857968565,
+                    -12.000025670104101,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    15.145275269918834,
+                    -11.007525780348416,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    15.143895794491593,
+                    -8.999949650344117,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    11
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    2,
+                    0,
+                    4,
+                    5,
+                    3,
+                    1,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11
+                ],
+                "name": "",
+                "expanded": true,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 2,
+                        "leavingAtom": 6,
+                        "attachmentId": "1"
+                    },
+                    {
+                        "attachmentAtom": 1,
+                        "leavingAtom": 7,
+                        "attachmentId": "2"
+                    },
+                    {
+                        "attachmentAtom": 3,
+                        "leavingAtom": 8,
+                        "attachmentId": "3"
+                    },
+                    {
+                        "attachmentAtom": 5,
+                        "leavingAtom": 9,
+                        "attachmentId": "4"
+                    },
+                    {
+                        "attachmentAtom": 4,
+                        "leavingAtom": 10,
+                        "attachmentId": "5"
+                    },
+                    {
+                        "attachmentAtom": 0,
+                        "leavingAtom": 11,
+                        "attachmentId": "6"
+                    }
+                ]
+            }
+        ]
+    }
+}

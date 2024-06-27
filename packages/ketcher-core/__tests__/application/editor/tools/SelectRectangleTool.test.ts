@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, FlexMode } from 'application/editor';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import {
   getFinishedPolymerBond,
@@ -104,6 +104,7 @@ describe('Select Rectangle Tool', () => {
       new CoreEditor({
         theme: polymerEditorTheme,
         canvas: createPolymerEditorCanvas(),
+        mode: new FlexMode(),
       }),
     );
 
@@ -114,9 +115,11 @@ describe('Select Rectangle Tool', () => {
 
   it('should initiate the render of peptide mousedown', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const mode = new FlexMode();
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: polymerEditorTheme,
+      mode,
     });
     const onShow = jest.fn();
     jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
@@ -127,9 +130,11 @@ describe('Select Rectangle Tool', () => {
 
   it('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const mode = new FlexMode();
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
+      mode,
     });
     const onMove = jest.fn();
 

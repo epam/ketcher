@@ -80,7 +80,9 @@ export class PolymerBond extends DrawingEntity {
   public get isBackboneChainConnection(): boolean {
     // Variants:
     // • Not RNA base [R2] — [R1] Not RNA base
+    // • Not RNA base [R1] — [R2] Not RNA base
     // • Sugar [R3] — [R1] RNA base
+    // • [R1] RNA base — Sugar [R3]
     if (!this.secondMonomer) {
       return true;
     }
@@ -95,21 +97,28 @@ export class PolymerBond extends DrawingEntity {
       return true;
     }
 
-    if (
-      firstMonomerAttachmentPoint === AttachmentPointName.R2 &&
-      secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
-      !(firstMonomer instanceof RNABase) &&
-      !(secondMonomer instanceof RNABase)
-    ) {
+    const thereAreR1AndR2 =
+      (firstMonomerAttachmentPoint === AttachmentPointName.R2 &&
+        secondMonomerAttachmentPoint === AttachmentPointName.R1) ||
+      (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
+        secondMonomerAttachmentPoint === AttachmentPointName.R2);
+    const thereAreNotRNABase =
+      !(firstMonomer instanceof RNABase) || !(secondMonomer instanceof RNABase);
+    if (thereAreR1AndR2 && thereAreNotRNABase) {
       return true;
     }
 
-    return (
+    let thereAreSugarWithR3AndRNABaseWithR1 =
       firstMonomer instanceof Sugar &&
       firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
       secondMonomer instanceof RNABase &&
-      secondMonomerAttachmentPoint === AttachmentPointName.R1
-    );
+      secondMonomerAttachmentPoint === AttachmentPointName.R1;
+    thereAreSugarWithR3AndRNABaseWithR1 ||=
+      secondMonomer instanceof Sugar &&
+      secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
+      firstMonomer instanceof RNABase &&
+      firstMonomerAttachmentPoint === AttachmentPointName.R1;
+    return thereAreSugarWithR3AndRNABaseWithR1;
   }
 
   public get isSideChainConnection(): boolean {

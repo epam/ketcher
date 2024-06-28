@@ -565,7 +565,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test fail because we have a bug https://github.com/epam/ketcher/issues/4881
       After fix we need update snapshots.
       */
-      test.fail();
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
       await turnOnMicromoleculesEditor(page);
       await takeEditorScreenshot(page);
@@ -1483,47 +1482,45 @@ test.describe('Macro-Micro-Switcher', () => {
   ];
 
   for (const data of testData4) {
-    test.fail(
-      `Delete macro structure ${data.description} in micro mode and Undo deletion`,
-      async ({ page }) => {
-        /*
+    test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
+      page,
+    }) => {
+      /*
       Test case: Macro-Micro-Switcher/#4530
-      Description: The test does not work properly because we have a bug https://github.com/epam/ketcher/issues/4734
-      After fix we need add snapshots and remove test.fail()
+      Description: Macro structure deleted.
       */
-        const x = 750;
-        const y = 370;
-        const firstMonomer = await page.getByText('F1').locator('..');
-        const secondMonomer = await page
-          .getByText(data.monomer)
-          .locator('..')
-          .first();
-        await openFileAndAddToCanvas(
-          'KET/one-attachment-point-added-in-micro-mode.ket',
-          page,
-        );
-        await turnOnMacromoleculesEditor(page);
-        await page.getByTestId('RNA-TAB').click();
-        await page.getByTestId(data.summaryTestId).click();
-        await page.getByTestId(data.monomerTestId).click();
-        await page.mouse.click(x, y);
-        await bondTwoMonomersPointToPoint(
-          page,
-          firstMonomer,
-          secondMonomer,
-          data.bondEndpoints.first,
-          data.bondEndpoints.second,
-        );
-        await turnOnMicromoleculesEditor(page);
-        await selectEraseTool(page);
-        await page.getByText(data.monomer).locator('..').click();
-        await takeEditorScreenshot(page);
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
-        });
-        await takeEditorScreenshot(page);
-      },
-    );
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      await turnOnMicromoleculesEditor(page);
+      await selectEraseTool(page);
+      await page.getByText(data.monomer).click();
+      await takeEditorScreenshot(page);
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
+      await takeEditorScreenshot(page);
+    });
   }
 
   test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
@@ -1558,7 +1555,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await selectEraseTool(page);
-    await page.mouse.click(690, 350);
+    await page.mouse.click(675, 330);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
@@ -1596,7 +1593,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await selectDropdownTool(page, 'bonds', 'bond-double');
-    await page.mouse.click(690, 350);
+    await page.mouse.click(675, 330);
     await takeEditorScreenshot(page);
   });
 

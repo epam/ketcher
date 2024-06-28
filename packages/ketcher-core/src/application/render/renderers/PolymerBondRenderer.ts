@@ -216,11 +216,13 @@ export class PolymerBondRenderer extends BaseRenderer {
     let previousCell;
 
     const horizontalPartIntersectionsOffset = firstCellConnection.offset;
+    const verticalPartIntersectionsOffset = firstCellConnection.yOffset || 0;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
     const isSecondCellEmpty = cells[1].node === null;
+    const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
       cells.every((cell) => {
         return cell.x === firstCell.x;
@@ -290,11 +292,24 @@ export class PolymerBondRenderer extends BaseRenderer {
         const isHorizontal =
           previousConnection.direction === 0 ||
           previousConnection.direction === 180;
+        const maxXOffset = cell.connections.reduce((max, connection) => {
+          return max > connection.offset ? max : connection.offset;
+        }, 0);
+        const maxYOffset = cell.connections.reduce((max, connection) => {
+          return max > connection.isVertical && (connection.yOffset || 0)
+            ? max
+            : connection.yOffset || 0;
+        }, 0);
+        if (maxXOffset || maxYOffset) {
+          console.log('maxXOffset', maxXOffset, 'maxYOffset', maxYOffset);
+        }
         const endOfPathPart = isHorizontal
           ? cell.node.monomer.renderer?.scaledMonomerPosition.x +
             cell.node.monomer.renderer?.monomerSize.width / 2 +
             xOffset +
-            (horizontalPartIntersectionsOffset / 2) * 3
+            (isVerticalConnection
+              ? -verticalPartIntersectionsOffset * 3 + (maxXOffset + 1) * 3
+              : horizontalPartIntersectionsOffset * 3 - maxYOffset * 3)
           : cell.node.monomer.renderer?.scaledMonomerPosition.y +
             cell.node.monomer.renderer?.monomerSize.height / 2 +
             yOffset;

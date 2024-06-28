@@ -41,9 +41,9 @@ export class Matrix<T> {
     }
   }
 
-  forEachTopToBottom(callback: (value: T, x: number, y: number) => void): void {
-    for (let y = 0; y < this.matrix[0].length; y++) {
-      for (let x = 0; x < this.matrix.length; x++) {
+  forEachBottomToTop(callback: (value: T, x: number, y: number) => void): void {
+    for (let y = this.matrix[0].length - 1; y >= 0; y--) {
+      for (let x = this.matrix.length - 1; x >= 0; x--) {
         const value = this.matrix[x][y];
         if (value) {
           callback(value, x, y);

@@ -21,7 +21,10 @@ import {
   selectMacromoleculesPanelButton,
   MacromoleculesTopPanelButton,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  enterSequence,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
 async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
@@ -208,4 +211,105 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Verify error handling for invalid sequences with modifications during import from Paste from Clipboard', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: Error appears
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*
+      A*T*A*C*G*C*G*C*C*T`,
+      false,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that sequences with modifications can be edited after import', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: Sequences with modifications can be edited after import
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await enterSequence(page, 'ttt');
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify export of sequences with modifications from IDT format using API (getIdt)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: Sequences are exported by getIdt
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    const expectedFile = await getIdt(page);
+    await saveToFile('IDT/idt-expected.idt', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: idtFileExpected, file: idtFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/IDT/idt-expected.idt',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(idtFile).toEqual(idtFileExpected);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify export of sequences with modifications from IDT format using Save file(Flex mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: IDT appears in save preview
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify export of sequences with modifications from IDT format using Save file(Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: IDT appears in save preview
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
 });

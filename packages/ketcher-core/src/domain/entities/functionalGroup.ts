@@ -68,7 +68,9 @@ export class FunctionalGroup {
       return null;
     }
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atom)) return atom;
+      const isFunctionalGroup = this.isFunctionalGroup(fg.relatedSGroup);
+      if (isFunctionalGroup && fg.relatedSGroup.atoms.includes(atom))
+        return atom;
     }
     return null;
   }

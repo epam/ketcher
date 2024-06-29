@@ -151,7 +151,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private drawPartOfSideConnection(isHorizontal, connection, cell, direction) {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (CELL_WIDTH / 2 - SMOOTH_CORNER_SIZE) * cos;
+    const xOffset = (CELL_WIDTH / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce((max, connection) => {
       return max > connection.offset ? max : connection.offset;
@@ -162,19 +162,22 @@ export class PolymerBondRenderer extends BaseRenderer {
     }, 0);
     const isVerticalConnection = connection.isVertical;
     const endOfPathPart = isHorizontal
-      ? cell.node.monomer.renderer?.scaledMonomerPosition.x +
-        cell.node.monomer.renderer?.monomerSize.width / 2 +
-        xOffset +
-        -(connection.yOffset || 0) * 3 +
-        cos * -connection.offset * 3 +
-        cos * (maxXOffset + 1) * 1.5 +
-        (maxYOffset + 1) * 1.5
+      ? this.sideConnectionBondTurnPoint ||
+        cell.node.monomer.renderer?.scaledMonomerPosition.x +
+          cell.node.monomer.renderer?.monomerSize.width / 2 +
+          xOffset +
+          -(connection.yOffset || 0) * 3 +
+          cos * -connection.offset * 3 +
+          cos * (maxXOffset + 1) * 1.5 +
+          (maxYOffset + 1) * 1.5
       : cell.node.monomer.renderer?.scaledMonomerPosition.y +
         cell.node.monomer.renderer?.monomerSize.height / 2 +
         yOffset;
 
+    this.sideConnectionBondTurnPoint = endOfPathPart;
+
     let pathPart = isHorizontal ? 'H ' : 'V ';
-    pathPart += `${endOfPathPart} `;
+    pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
     pathPart += `q ${SMOOTH_CORNER_SIZE * cos},${SMOOTH_CORNER_SIZE * sin} ${
       SMOOTH_CORNER_SIZE * cos
     },${SMOOTH_CORNER_SIZE} `;
@@ -207,11 +210,19 @@ export class PolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
+    const initialXDirection = Math.cos(
+      (firstCellConnection.direction * Math.PI) / 180,
+    );
+    const xDirection =
+      startPosition.x > endPosition.x - (CELL_WIDTH / 2) * initialXDirection
+        ? 180
+        : 0;
+    const isXDirectionChangedManually =
+      xDirection !== firstCellConnection.direction;
     let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
 
     const cos = Math.cos(
-      ((isVerticalConnection ? 180 : firstCellConnection.direction) * Math.PI) /
-        180,
+      ((isVerticalConnection ? 180 : xDirection) * Math.PI) / 180,
     );
 
     let previousConnection;
@@ -259,11 +270,15 @@ export class PolymerBondRenderer extends BaseRenderer {
         return connection.polymerBond === this.polymerBond;
       });
       const isLastCell = cellIndex === cells.length - 1;
-      const xDirection = isVerticalConnection ? 0 : cellConnection.direction.x;
+      const _xDirection = isVerticalConnection
+        ? 0
+        : endPosition.x < this.sideConnectionBondTurnPoint
+        ? 180
+        : 0;
       const yDirection = isVerticalConnection ? 90 : cellConnection.direction.y;
       if (isLastCell) {
         const sin = Math.sin((yDirection * Math.PI) / 180);
-        const cos = Math.cos((xDirection * Math.PI) / 180);
+        const cos = Math.cos((_xDirection * Math.PI) / 180);
         if (isStraightVerticalConnection) {
           return;
         }
@@ -300,7 +315,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           isHorizontal,
           previousConnection,
           previousCell,
-          previousConnection.direction,
+          isHorizontal ? xDirection : previousConnection.direction,
         );
       }
       previousCell = cell;
@@ -316,7 +331,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
       .attr('pointer-events', 'stroke');
-    console.log(dAttributeForPath);
+
     return this.bodyElement;
   }
 

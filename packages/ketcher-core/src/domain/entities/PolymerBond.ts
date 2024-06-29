@@ -79,10 +79,10 @@ export class PolymerBond extends DrawingEntity {
 
   public get isBackboneChainConnection(): boolean {
     // Variants:
-    // • Not RNA base [R2] — [R1] Not RNA base
-    // • Not RNA base [R1] — [R2] Not RNA base
-    // • Sugar [R3] — [R1] RNA base
-    // • [R1] RNA base — Sugar [R3]
+    // • Not RNA base (R2) — (R1) Not RNA base
+    // • Not RNA base (R1) — (R2) Not RNA base
+    // • Sugar (R3) — (R1) RNA base
+    // • RNA base (R1) — (R3) Sugar
     if (!this.secondMonomer) {
       return true;
     }
@@ -103,7 +103,7 @@ export class PolymerBond extends DrawingEntity {
       (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
         secondMonomerAttachmentPoint === AttachmentPointName.R2);
     const thereAreNotRNABase =
-      !(firstMonomer instanceof RNABase) || !(secondMonomer instanceof RNABase);
+      !(firstMonomer instanceof RNABase) && !(secondMonomer instanceof RNABase);
     if (thereAreR1AndR2 && thereAreNotRNABase) {
       return true;
     }

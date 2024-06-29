@@ -204,6 +204,9 @@ export class PolymerBondRenderer extends BaseRenderer {
     const isFirstMonomerOfBondInFirstCell = firstCell.node.monomers.includes(
       this.polymerBond.firstMonomer,
     );
+    const isTwoNeighborRowsConnection = cells.every(
+      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
+    );
     const startPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.startPosition
       : this.scaledPosition.endPosition;
@@ -214,22 +217,19 @@ export class PolymerBondRenderer extends BaseRenderer {
       (firstCellConnection.direction * Math.PI) / 180,
     );
     const xDirection =
-      startPosition.x > endPosition.x - (CELL_WIDTH / 2) * initialXDirection
+      startPosition.x >
+      (this.sideConnectionBondTurnPoint ||
+        endPosition.x - (CELL_WIDTH / 2) * initialXDirection)
         ? 180
         : 0;
-    const isXDirectionChangedManually =
-      xDirection !== firstCellConnection.direction;
     let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
 
-    const cos = Math.cos(
-      ((isVerticalConnection ? 180 : xDirection) * Math.PI) / 180,
-    );
+    const cos = Math.cos((xDirection * Math.PI) / 180);
 
     let previousConnection;
     let previousCell;
 
     const horizontalPartIntersectionsOffset = firstCellConnection.offset;
-    const verticalPartIntersectionsOffset = firstCellConnection.yOffset || 0;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
@@ -242,14 +242,20 @@ export class PolymerBondRenderer extends BaseRenderer {
         BOND_END_LENGTH -
         horizontalPartIntersectionsOffset * 3
       } `;
-      dAttributeForPath += `q 0,-${SMOOTH_CORNER_SIZE}, ${SMOOTH_CORNER_SIZE},-${SMOOTH_CORNER_SIZE} `;
+      dAttributeForPath += `q 0,-${SMOOTH_CORNER_SIZE}, ${
+        SMOOTH_CORNER_SIZE * cos
+      },-${SMOOTH_CORNER_SIZE} `;
     } else {
       dAttributeForPath += `L ${startPosition.x},${
         startPosition.y +
         BOND_END_LENGTH +
         horizontalPartIntersectionsOffset * 3
       } `;
-      if (!isStraightVerticalConnection && !isSecondCellEmpty) {
+      if (
+        !isStraightVerticalConnection &&
+        !isSecondCellEmpty &&
+        !isTwoNeighborRowsConnection
+      ) {
         dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
           SMOOTH_CORNER_SIZE * cos
         },${SMOOTH_CORNER_SIZE} `;
@@ -261,7 +267,10 @@ export class PolymerBondRenderer extends BaseRenderer {
         true,
         firstCellConnection,
         firstCell,
-        180,
+        this.sideConnectionBondTurnPoint &&
+          startPosition.x < this.sideConnectionBondTurnPoint
+          ? 0
+          : 180,
       );
     }
 
@@ -270,11 +279,11 @@ export class PolymerBondRenderer extends BaseRenderer {
         return connection.polymerBond === this.polymerBond;
       });
       const isLastCell = cellIndex === cells.length - 1;
-      const _xDirection = isVerticalConnection
-        ? 0
-        : endPosition.x < this.sideConnectionBondTurnPoint
-        ? 180
-        : 0;
+      const _xDirection = this.sideConnectionBondTurnPoint
+        ? endPosition.x < this.sideConnectionBondTurnPoint
+          ? 180
+          : 0
+        : xDirection;
       const yDirection = isVerticalConnection ? 90 : cellConnection.direction.y;
       if (isLastCell) {
         const sin = Math.sin((yDirection * Math.PI) / 180);

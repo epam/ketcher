@@ -1150,6 +1150,9 @@ export class DrawingEntitiesManager {
   }
 
   public recalculateCanvasMatrix() {
+    const editor = CoreEditor.provideEditorInstance();
+    const AVERAGE_SNAKE_LAYOUT_CELL_WIDTH = 65;
+
     this.canvasMatrix = new CanvasMatrix(
       ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
     );

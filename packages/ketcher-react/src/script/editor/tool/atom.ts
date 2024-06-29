@@ -64,7 +64,11 @@ class AtomTool implements Tool {
         const updatedAtoms = editorSelection?.atoms?.filter(
           (selectAtomId) =>
             !deletedAtomsInSGroups?.includes(selectAtomId) &&
-            struct.atoms.has(selectAtomId),
+            struct.atoms.has(selectAtomId) &&
+            !Atom.isSuperatomLeavingGroupAtom(
+              this.editor.render.ctab.molecule,
+              selectAtomId,
+            ),
         );
         action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
         editor.update(action);

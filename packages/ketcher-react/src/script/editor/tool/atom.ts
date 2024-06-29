@@ -280,8 +280,11 @@ class AtomTool implements Tool {
           if (
             !isAttachmentPointLabel &&
             dragCtx.action === undefined &&
-            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ===
-              null
+            FunctionalGroup.atomsInFunctionalGroup(
+              functionalGroups,
+              atomId,
+              true,
+            ) === null
           ) {
             action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
           }

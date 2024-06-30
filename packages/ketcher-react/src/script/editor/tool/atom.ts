@@ -56,6 +56,17 @@ class AtomTool implements Tool {
         const selectedSGroupsId =
           editorSelection &&
           getGroupIdsFromItemArrays(struct.molecule, editorSelection);
+        const sgroups = struct.molecule.functionalGroups;
+        const atomsInFunctionalGroup = editorSelection.atoms.map((atom) => {
+          return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
+        });
+        if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
+          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          this.editor.hoverIcon.hide();
+          this.isNotActiveTool = true;
+          return;
+        }
+
         const deletedAtomsInSGroups = deleteFunctionalGroups(
           selectedSGroupsId,
           struct,

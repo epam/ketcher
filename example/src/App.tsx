@@ -66,10 +66,6 @@ const App = () => {
     />
   ) : undefined;
 
-  setTimeout(() => {
-    togglePolymerEditor(true);
-  }, 1000);
-
   return showPolymerEditor ? (
     <>
       <PolymerEditor togglerComponent={togglerComponent} />

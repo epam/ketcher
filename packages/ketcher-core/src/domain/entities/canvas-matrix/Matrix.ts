@@ -21,7 +21,7 @@ export class Matrix<T> {
 
   forEach(callback: (value: T, x: number, y: number) => void): void {
     for (let x = 0; x < this.matrix.length; x++) {
-      for (let y = 0; y < this.matrix[x].length; y++) {
+      for (let y = 0; y < this.matrix[x]?.length; y++) {
         const value = this.matrix[x][y];
         if (value) {
           callback(value, x, y);
@@ -32,7 +32,7 @@ export class Matrix<T> {
 
   forEachRightToLeft(callback: (value: T, x: number, y: number) => void): void {
     for (let x = this.matrix.length - 1; x >= 0; x--) {
-      for (let y = this.matrix[x].length - 1; y >= 0; y--) {
+      for (let y = this.matrix[x]?.length - 1; y >= 0; y--) {
         const value = this.matrix[x][y];
         if (value) {
           callback(value, x, y);
@@ -42,7 +42,7 @@ export class Matrix<T> {
   }
 
   forEachBottomToTop(callback: (value: T, x: number, y: number) => void): void {
-    for (let y = this.matrix[0].length - 1; y >= 0; y--) {
+    for (let y = this.matrix[0]?.length - 1; y >= 0; y--) {
       for (let x = this.matrix.length - 1; x >= 0; x--) {
         const value = this.matrix[x][y];
         if (value) {

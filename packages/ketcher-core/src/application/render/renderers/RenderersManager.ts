@@ -393,4 +393,15 @@ export class RenderersManager {
       height: bottom - top,
     };
   }
+
+  public rerenderSideConnectionPolymerBonds() {
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      if (!polymerBondRenderer.polymerBond.isSideChainConnection) {
+        return;
+      }
+
+      polymerBondRenderer.remove();
+      polymerBondRenderer.show();
+    });
+  }
 }

@@ -33,7 +33,7 @@ export class ChainsCollection {
     return monomerToChain;
   }
 
-  private get monomerToNode() {
+  public get monomerToNode() {
     const monomerToNode = new Map<BaseMonomer, SubChainNode>();
 
     this.forEachNode(({ node }) => {

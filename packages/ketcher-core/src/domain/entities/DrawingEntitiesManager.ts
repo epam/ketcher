@@ -53,13 +53,13 @@ import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import { SequenceMode } from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
+import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 
-const HORIZONTAL_DISTANCE_FROM_MONOMER = 25;
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
-const DISTANCE_BETWEEN_MONOMERS = 15;
 const MONOMER_START_X_POSITION = 50;
 const MONOMER_START_Y_POSITION = 50;
+export const SNAKE_LAYOUT_CELL_WIDTH = 60;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -971,7 +971,6 @@ export class DrawingEntitiesManager {
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
-    const monomerWidth = monomer.renderer?.monomerSize?.width ?? 0;
     const monomerHeight = monomer.renderer?.monomerSize?.height ?? 0;
     const heightMonomerWithBond =
       monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
@@ -993,7 +992,6 @@ export class DrawingEntitiesManager {
     const nextPositionAndVerticalDistance =
       this.getNextMonomerPositionForSnakeLayout(
         monomer,
-        monomerWidth,
         lastPosition,
         canvasWidth,
         rearrangedMonomersSet,
@@ -1021,7 +1019,7 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
     const nucleotideSize = this.getNucleotideSize(nucleotide);
-    const { height, width } = nucleotideSize;
+    const { height } = nucleotideSize;
     const heightWithBond = height + VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
     nucleotide.sugar.isMonomerInRnaChainRow = true;
@@ -1052,10 +1050,7 @@ export class DrawingEntitiesManager {
     if (nucleotide.phosphate) {
       nucleotide.phosphate.isMonomerInRnaChainRow = true;
       const phosphatePosition = new Vec2(
-        lastPosition.x +
-          (nucleotide.sugar.renderer?.monomerSize?.width ?? 0) / 2 +
-          (nucleotide.phosphate?.renderer?.monomerSize?.width ?? 0) / 2 +
-          RNA_MONOMER_DISTANCE,
+        lastPosition.x + SNAKE_LAYOUT_CELL_WIDTH,
         lastPosition.y,
       );
       this.addRnaOperations(
@@ -1074,11 +1069,13 @@ export class DrawingEntitiesManager {
     const nextMonomerPositionAndVerticalDistance =
       this.getNextMonomerPositionForSnakeLayout(
         lastMonomerInNucleotide,
-        width,
         lastPosition,
         canvasWidth,
         rearrangedMonomersSet,
         maxVerticalDistance,
+        nucleotide.phosphate
+          ? SNAKE_LAYOUT_CELL_WIDTH * 2
+          : SNAKE_LAYOUT_CELL_WIDTH,
       );
 
     const nextMonomer = getNextMonomerInChain(
@@ -1099,11 +1096,11 @@ export class DrawingEntitiesManager {
 
   private getNextMonomerPositionForSnakeLayout(
     monomer: BaseMonomer,
-    width: number,
     lastPosition: Vec2,
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
     maxVerticalDistance: number,
+    width?: number,
   ) {
     let nextPositionAndDistance;
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
@@ -1120,9 +1117,9 @@ export class DrawingEntitiesManager {
       ) {
         nextPositionAndDistance = this.getNextPositionAndDistance(
           lastPosition,
-          width,
           maxVerticalDistance,
           canvasWidth,
+          width,
         );
       }
     }
@@ -1149,14 +1146,33 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
-  public recalculateCanvasMatrix() {
+  private recalculateCanvasMatrixModelChange() {
     const editor = CoreEditor.provideEditorInstance();
-    const AVERAGE_SNAKE_LAYOUT_CELL_WIDTH = 65;
-
-    this.canvasMatrix = new CanvasMatrix(
-      ChainsCollection.fromMonomers(Array.from(this.monomers.values())),
+    const chainsCollection = ChainsCollection.fromMonomers(
+      Array.from(this.monomers.values()),
     );
+    chainsCollection.rearrange();
+
+    this.canvasMatrix = new CanvasMatrix(chainsCollection, {
+      cellsInRow: Math.round(
+        (editor.canvas.width.baseVal.value -
+          MONOMER_START_X_POSITION -
+          DISTANCE_FROM_RIGHT) /
+          SNAKE_LAYOUT_CELL_WIDTH,
+      ),
+    });
     return this.redrawBonds();
+  }
+
+  public recalculateCanvasMatrix() {
+    const command = new Command();
+    command.addOperation(
+      new RecalculateCanvasMatrixOperation(
+        this.recalculateCanvasMatrixModelChange.bind(this),
+      ),
+    );
+
+    return command;
   }
 
   public reArrangeChains(
@@ -1166,7 +1182,7 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    this.recalculateCanvasMatrix();
+    command.merge(this.recalculateCanvasMatrix());
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
@@ -1266,17 +1282,12 @@ export class DrawingEntitiesManager {
 
   public getNextPositionAndDistance(
     lastPosition: Vec2,
-    width: number,
     height: number,
     canvasWidth: number,
+    width = SNAKE_LAYOUT_CELL_WIDTH,
   ) {
     const isMonomerFitCanvas =
-      lastPosition.x +
-        width +
-        DISTANCE_BETWEEN_MONOMERS +
-        HORIZONTAL_DISTANCE_FROM_MONOMER +
-        DISTANCE_FROM_RIGHT <
-      canvasWidth;
+      lastPosition.x + width + DISTANCE_FROM_RIGHT < canvasWidth;
 
     if (!isMonomerFitCanvas) {
       return {
@@ -1288,7 +1299,7 @@ export class DrawingEntitiesManager {
     return {
       maxVerticalDistance: height,
       lastPosition: new Vec2({
-        x: lastPosition.x + width + HORIZONTAL_DISTANCE_FROM_MONOMER,
+        x: lastPosition.x + width,
         y: lastPosition.y,
       }),
     };
@@ -1469,6 +1480,15 @@ export class DrawingEntitiesManager {
     SequenceRenderer.removeEmptyNodes();
 
     return command;
+  }
+
+  public rerenderPolymerBonds() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.polymerBonds.forEach((polymerBond) => {
+      editor.renderersContainer.deletePolymerBond(polymerBond);
+      editor.renderersContainer.addPolymerBond(polymerBond);
+    });
   }
 
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {

@@ -7,8 +7,6 @@ import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {

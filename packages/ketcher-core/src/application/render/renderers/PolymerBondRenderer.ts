@@ -11,9 +11,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor/internal';
-import { isNumber, isObject } from 'lodash';
-import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
@@ -23,7 +21,6 @@ const CORNER_LENGTH = 4;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 
 const BOND_END_LENGTH = 15;
-const CELL_WIDTH = 60;
 const CELL_HEIGHT = 40;
 const SMOOTH_CORNER_SIZE = 5;
 enum LINE_DIRECTION {
@@ -36,6 +33,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private selectionElement;
   private path = '';
   private previousStateOfIsMonomersOnSameHorisontalLine = false;
+  private sideConnectionBondTurnPoint?: number;
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
@@ -52,6 +50,10 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   get isSnake() {
+    if (this.polymerBond.isSideChainConnection) {
+      return false;
+    }
+
     if (
       !this.isSnakeBondAvailableForMonomer(this.polymerBond.firstMonomer) ||
       (this.polymerBond.secondMonomer &&
@@ -117,18 +119,23 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(rootElement) {
+    const editor = CoreEditor.provideEditorInstance();
+
     if (
-      !this.isSnake ||
-      (this.isMonomersOnSameHorizontalLine() &&
-        !this.polymerBond.isSideChainConnection) ||
-      !this.polymerBond.finished
+      editor.mode instanceof SnakeMode &&
+      this.polymerBond.isSideChainConnection
     ) {
-      this.appendBondGraph(rootElement);
-    } else if (this.polymerBond.isBackBoneChainConnection) {
+      this.appendSideConnectionBond(rootElement);
+    } else if (
+      this.isSnake &&
+      this.polymerBond.finished &&
+      !this.isMonomersOnSameHorizontalLine()
+    ) {
       this.appendSnakeBond(rootElement);
     } else {
-      this.appendSideConnectionBond(rootElement);
+      this.appendBondGraph(rootElement);
     }
+
     return this.bodyElement;
   }
 
@@ -151,7 +158,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private drawPartOfSideConnection(isHorizontal, connection, cell, direction) {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (CELL_WIDTH / 2) * cos;
+    const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce((max, connection) => {
       return max > connection.offset ? max : connection.offset;
@@ -160,22 +167,26 @@ export class PolymerBondRenderer extends BaseRenderer {
       const connectionYOffset = connection.yOffset || 0;
       return max > connectionYOffset ? max : connectionYOffset;
     }, 0);
-    const isVerticalConnection = connection.isVertical;
-    const endOfPathPart = isHorizontal
+
+    let endOfPathPart = isHorizontal
       ? this.sideConnectionBondTurnPoint ||
         cell.node.monomer.renderer?.scaledMonomerPosition.x +
           cell.node.monomer.renderer?.monomerSize.width / 2 +
-          xOffset +
-          -(connection.yOffset || 0) * 3 +
-          cos * -connection.offset * 3 +
-          cos * (maxXOffset + 1) * 1.5 +
-          (maxYOffset + 1) * 1.5
+          xOffset
       : cell.node.monomer.renderer?.scaledMonomerPosition.y +
         cell.node.monomer.renderer?.monomerSize.height / 2 +
         yOffset;
 
     this.sideConnectionBondTurnPoint = endOfPathPart;
 
+    if (isHorizontal) {
+      endOfPathPart +=
+        -(connection.yOffset || 0) * 3 +
+        cos * -connection.offset * 3 +
+        cos * (maxXOffset + 1) * 3 +
+        (maxYOffset + 1) * 3;
+    }
+    console.log(endOfPathPart);
     let pathPart = isHorizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
     pathPart += `q ${SMOOTH_CORNER_SIZE * cos},${SMOOTH_CORNER_SIZE * sin} ${
@@ -197,11 +208,11 @@ export class PolymerBondRenderer extends BaseRenderer {
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find((connection) => {
       return connection.polymerBond === this.polymerBond;
-    });
+    }) as Connection;
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
       cells.length === 2 && isVerticalConnection;
-    const isFirstMonomerOfBondInFirstCell = firstCell.node.monomers.includes(
+    const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
     const isTwoNeighborRowsConnection = cells.every(
@@ -213,13 +224,8 @@ export class PolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
-    const initialXDirection = Math.cos(
-      (firstCellConnection.direction * Math.PI) / 180,
-    );
     const xDirection =
-      startPosition.x >
-      (this.sideConnectionBondTurnPoint ||
-        endPosition.x - (CELL_WIDTH / 2) * initialXDirection)
+      startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
     let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
@@ -277,20 +283,25 @@ export class PolymerBondRenderer extends BaseRenderer {
     cells.forEach((cell, cellIndex) => {
       const cellConnection = cell.connections.find((connection) => {
         return connection.polymerBond === this.polymerBond;
-      });
+      }) as Connection;
       const isLastCell = cellIndex === cells.length - 1;
       const _xDirection = this.sideConnectionBondTurnPoint
         ? endPosition.x < this.sideConnectionBondTurnPoint
           ? 180
           : 0
         : xDirection;
-      const yDirection = isVerticalConnection ? 90 : cellConnection.direction.y;
       if (isLastCell) {
-        const sin = Math.sin((yDirection * Math.PI) / 180);
-        const cos = Math.cos((_xDirection * Math.PI) / 180);
         if (isStraightVerticalConnection) {
           return;
         }
+
+        const directionObject = cellConnection.direction as {
+          x: number;
+          y: number;
+        };
+        const yDirection = isVerticalConnection ? 90 : directionObject.y;
+        const sin = Math.sin((yDirection * Math.PI) / 180);
+        const cos = Math.cos((_xDirection * Math.PI) / 180);
 
         if (!areCellsOnSameRow) {
           dAttributeForPath += `V ${

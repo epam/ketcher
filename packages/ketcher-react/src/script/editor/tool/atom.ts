@@ -276,10 +276,19 @@ class AtomTool implements Tool {
         } else if (ci.map === 'atoms') {
           const atomId = ci.id;
 
+          const isAttachmentPointLabel = Atom.isSuperatomLeavingGroupAtom(
+            editor.render.ctab.molecule,
+            atomId,
+          );
+
           if (
+            !isAttachmentPointLabel &&
             dragCtx.action === undefined &&
-            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ===
-              null
+            FunctionalGroup.atomsInFunctionalGroup(
+              functionalGroups,
+              atomId,
+              true,
+            ) === null
           ) {
             action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
           }

@@ -111,6 +111,15 @@ export const Save = ({
 
     try {
       setIsLoading(true);
+      if (fileFormat === 'sequence') {
+        const isValid =
+          editor.drawingEntitiesManager.validateIfApplicableForFasta();
+        if (!isValid) {
+          throw new Error(
+            'Error during sequence type recognition(RNA, DNA or Peptide)',
+          );
+        }
+      }
       const result = await indigo.convert({
         struct: serializedKet,
         output_format: formatDetector[fileFormat],

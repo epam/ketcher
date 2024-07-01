@@ -96,6 +96,19 @@ export function prepareStructForKet(struct: Struct) {
     });
   });
 
+  struct.rasterImages.forEach((image) => {
+    const center: Vec2 = Vec2.centre(image.position[0], image.position[1]);
+    ketNodes.push({
+      type: 'rasterImage',
+      center,
+      data: {
+        bitmap: image.bitmap,
+        position: image.position,
+      },
+      selected: image.getInitiallySelected(),
+    });
+  });
+
   ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());

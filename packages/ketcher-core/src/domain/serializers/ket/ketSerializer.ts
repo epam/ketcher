@@ -70,6 +70,8 @@ import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmen
 import { isNumber } from 'lodash';
 import { MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { rasterImageToKet } from 'domain/serializers/ket/toKet/rasterImageToKet';
+import { rasterImageToStruct } from 'domain/serializers/ket/fromKet/rasterImageToStruct';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -102,6 +104,10 @@ function parseNode(node: any, struct: any) {
     }
     case 'text': {
       textToStruct(node, struct);
+      break;
+    }
+    case 'rasterImage': {
+      rasterImageToStruct(node, struct);
       break;
     }
     default:
@@ -172,6 +178,10 @@ export class KetSerializer implements Serializer<Struct> {
         }
         case 'text': {
           result.root.nodes.push(textToKet(item));
+          break;
+        }
+        case 'rasterImage': {
+          result.root.nodes.push(rasterImageToKet(item));
           break;
         }
         default:

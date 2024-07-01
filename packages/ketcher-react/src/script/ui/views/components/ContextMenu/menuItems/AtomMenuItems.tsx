@@ -171,6 +171,14 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
       ),
   );
 
+  if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
+    return (
+      <Item {...props} onClick={handleDelete}>
+        Delete
+      </Item>
+    );
+  }
+
   return (
     <>
       <Item {...props} onClick={handleEdit}>

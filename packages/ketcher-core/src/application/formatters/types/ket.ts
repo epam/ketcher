@@ -72,6 +72,8 @@ export enum KetMonomerClass {
   Linker = 'Linker',
   Unknown = 'Unknown',
   CHEM = 'CHEM',
+  RNA = 'RNA',
+  DNA = 'DNA',
 }
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
@@ -122,6 +124,7 @@ export interface IKetMonomerTemplate {
   classHELM?: string;
   name?: string;
   idtAliases?: IKetIdtAliases;
+  unresolved?: boolean;
 }
 
 export interface IKetMonomerTemplateRef {

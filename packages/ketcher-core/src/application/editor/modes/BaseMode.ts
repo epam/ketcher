@@ -1,7 +1,11 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { CoreEditor, EditorHistory } from '../internal';
-import { LayoutMode, modesMap } from 'application/editor/modes';
+import {
+  DEFAULT_LAYOUT_MODE,
+  LayoutMode,
+  modesMap,
+} from 'application/editor/modes';
 import {
   getStructStringFromClipboardData,
   initHotKeys,
@@ -27,7 +31,7 @@ export abstract class BaseMode {
 
   protected constructor(
     public modeName: LayoutMode,
-    public previousMode: LayoutMode = 'flex-layout-mode',
+    public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
   private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {
@@ -127,16 +131,15 @@ export abstract class BaseMode {
       }
     });
     const ketSerializer = new KetSerializer();
-    const { serializedMacromolecules } = ketSerializer.serializeMacromolecules(
+    const serializedKet = ketSerializer.serialize(
       new Struct(),
       drawingEntitiesManager,
     );
-    const clipboardItemString = JSON.stringify(serializedMacromolecules);
     if (isClipboardAPIAvailable()) {
-      navigator.clipboard.writeText(clipboardItemString);
+      navigator.clipboard.writeText(serializedKet);
     } else {
       legacyCopy(event.clipboardData, {
-        'text/plain': clipboardItemString,
+        'text/plain': serializedKet,
       });
       event.preventDefault();
     }
@@ -289,7 +292,7 @@ export abstract class BaseMode {
           ? new Vec2(monomer.position).add(offset)
           : new Vec2(monomer.position);
       }
-      monomer.moveAbsolute(position);
+      drawingEntitiesManager.moveMonomer(monomer, position);
       index++;
     });
   }

@@ -63,12 +63,20 @@ export class FunctionalGroup {
     );
   }
 
-  static atomsInFunctionalGroup(functionalGroups, atom): number | null {
+  static atomsInFunctionalGroup(
+    functionalGroups,
+    atom,
+    isNeedCheckForGroups = false,
+  ): number | null {
     if (functionalGroups.size === 0) {
       return null;
     }
     for (const fg of functionalGroups.values()) {
-      if (fg.relatedSGroup.atoms.includes(atom)) return atom;
+      const isFunctionalGroup = isNeedCheckForGroups
+        ? this.isFunctionalGroup(fg.relatedSGroup)
+        : true;
+      if (isFunctionalGroup && fg.relatedSGroup.atoms.includes(atom))
+        return atom;
     }
     return null;
   }

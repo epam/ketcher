@@ -52,6 +52,7 @@ export enum SupportedFormat {
   fasta = 'fasta',
   sequence = 'sequence',
   idt = 'idt',
+  helm = 'helm',
   unknown = 'unknown',
 }
 

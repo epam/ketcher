@@ -697,6 +697,11 @@ class Editor implements KetcherEditor {
   clearMacromoleculeConvertionError() {
     this.macromoleculeConvertionError = null;
   }
+
+  focusCliparea() {
+    const cliparea: HTMLElement | null = document.querySelector('.cliparea');
+    cliparea?.focus();
+  }
 }
 
 /**

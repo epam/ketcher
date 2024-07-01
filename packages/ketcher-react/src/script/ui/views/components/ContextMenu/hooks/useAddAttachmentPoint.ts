@@ -61,8 +61,24 @@ const useAddAttachmentPoint = () => {
         );
       } else {
         const sgroupAttachmentPoints = sgroup?.getAttachmentPoints() || [];
-        const lastAttachmentPoint =
-          sgroupAttachmentPoints[sgroupAttachmentPoints.length - 1];
+        const allPointsNumbers = sgroupAttachmentPoints
+          .map((point) => point.attachmentPointNumber || 0)
+          .sort();
+        let lastMinimalPointNumber =
+          allPointsNumbers[allPointsNumbers.length - 1];
+        const hasFirstNumber = allPointsNumbers.includes(1);
+        if (!hasFirstNumber) {
+          lastMinimalPointNumber = 0;
+        } else {
+          for (let i = 1; i < allPointsNumbers.length; i++) {
+            const prevNumber = allPointsNumbers[i - 1];
+            const currentNumber = allPointsNumbers[i];
+            if (currentNumber > prevNumber + 1) {
+              lastMinimalPointNumber = prevNumber;
+              break;
+            }
+          }
+        }
 
         action.mergeWith(
           fromSgroupAttachmentPointAddition(
@@ -72,7 +88,7 @@ const useAddAttachmentPoint = () => {
               atomId,
               addedLeavingGroupAtomId,
               undefined,
-              (lastAttachmentPoint.attachmentPointNumber || 0) + 1,
+              lastMinimalPointNumber + 1,
             ),
           ),
         );
@@ -80,6 +96,7 @@ const useAddAttachmentPoint = () => {
 
       editor.update(action);
       editor.selection(null);
+      editor.focusCliparea();
     },
     [getKetcherInstance],
   );

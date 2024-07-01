@@ -944,7 +944,12 @@ export class DrawingEntitiesManager {
     return { command, monomers };
   }
 
-  private rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {
+  public rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {
+    if (monomer.monomerItem.props.isMicromoleculeFragment) {
+      const offset = newPosition.sub(monomer.position);
+      this.moveChemAtomsPoint(monomer, offset);
+    }
+
     monomer.moveAbsolute(newPosition);
 
     return monomer;
@@ -1403,7 +1408,7 @@ export class DrawingEntitiesManager {
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
     this.monomers.forEach((monomer: BaseMonomer) => {
-      monomer.moveAbsolute(new Vec2(monomer.position).add(offset));
+      this.moveMonomer(monomer, new Vec2(monomer.position).add(offset));
     });
     this.polymerBonds.forEach((bond: PolymerBond) => {
       const { x: startX, y: startY } = new Vec2(bond.position).add(offset);

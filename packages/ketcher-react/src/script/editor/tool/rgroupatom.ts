@@ -61,7 +61,13 @@ class RGroupAtomTool implements Tool {
         functionalGroups,
         ci.id,
       );
-
+      const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+        molecule,
+        ci.id,
+      );
+      if (isAtomSuperatomLeavingGroup) {
+        return;
+      }
       if (atomId !== null) {
         atomResult.push(atomId);
       }
@@ -78,8 +84,10 @@ class RGroupAtomTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length > 0) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
     if (!ci) {

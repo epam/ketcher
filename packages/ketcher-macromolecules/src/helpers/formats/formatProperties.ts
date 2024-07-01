@@ -25,6 +25,7 @@ export type SupportedFormats =
   | 'fasta'
   | 'sequence'
   | 'idt'
+  | 'helm'
   | 'svg';
 
 type FormatProperties = {
@@ -67,6 +68,7 @@ const formatProperties: FormatProperties = {
     false,
     {},
   ),
+  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.HELM, ['.helm']),
   svg: new SupportedFormatProperties('SVG Document', ChemicalMimeType.Svg, [
     '.svg',
   ]),

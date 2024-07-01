@@ -581,6 +581,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

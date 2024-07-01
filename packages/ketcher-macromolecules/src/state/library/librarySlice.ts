@@ -23,8 +23,13 @@ import {
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { MonomerItemType, SdfItem } from 'ketcher-core';
-import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
+import { KetMonomerClass, MonomerItemType, SdfItem } from 'ketcher-core';
+import {
+  LibraryNameType,
+  FAVORITE_ITEMS_UNIQUE_KEYS,
+  NoNaturalAnalogueGroupTitle,
+  NoNaturalAnalogueGroupCode,
+} from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
 
@@ -146,6 +151,13 @@ export const selectMonomersInCategory = (
   category: LibraryNameType,
 ) => items.filter((item) => item.props?.MonomerType === category);
 
+export const selectUnsplitNucleotides = (items: MonomerItemType[]) =>
+  items.filter(
+    (item) =>
+      item.props?.MonomerClass === KetMonomerClass.RNA ||
+      item.props?.MonomerClass === KetMonomerClass.DNA,
+  );
+
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
@@ -182,7 +194,9 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
     (result, monomerItem) => {
       // separate monomers by NaturalAnalogCode
-      const code = monomerItem.props.MonomerNaturalAnalogCode;
+      const code =
+        monomerItem.props.MonomerNaturalAnalogCode ||
+        NoNaturalAnalogueGroupCode;
       if (!result[code]) {
         result[code] = [];
       }
@@ -216,10 +230,13 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   // generate list of monomer groups
   const preparedGroups: Group[] = [];
   return Object.keys(sortedPreparedData)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .reduce((result, code) => {
       const group: Group = {
-        groupTitle: code,
+        groupTitle:
+          code === NoNaturalAnalogueGroupCode
+            ? NoNaturalAnalogueGroupTitle
+            : code,
         groupItems: [],
       };
       sortedPreparedData[code].forEach((item: MonomerItemType) => {

@@ -25,6 +25,7 @@ import {
   fromOneBondDeletion,
   Struct,
   vectorUtils,
+  Atom,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -333,12 +334,18 @@ class BondTool implements Tool {
         this.editor.update(bondAddition[0]);
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
-        this.editor.update(
-          fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
-            label: 'C',
-          })[0],
+        const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+          struct,
+          dragCtx.item.id,
         );
-        delete this.dragCtx.existedBond;
+        if (!isAtomSuperatomLeavingGroup) {
+          this.editor.update(
+            fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
+              label: 'C',
+            })[0],
+          );
+          delete this.dragCtx.existedBond;
+        }
       } else if (dragCtx.item.map === 'bonds') {
         const bondProps = Object.assign({}, this.bondProps);
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;

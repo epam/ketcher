@@ -23,6 +23,7 @@ const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 const BOND_END_LENGTH = 15;
 const CELL_HEIGHT = 40;
 const SMOOTH_CORNER_SIZE = 5;
+const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 enum LINE_DIRECTION {
   Horizontal = 'Horizontal',
   Vertical = 'Vertical',
@@ -186,7 +187,6 @@ export class PolymerBondRenderer extends BaseRenderer {
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;
     }
-    console.log(endOfPathPart);
     let pathPart = isHorizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
     pathPart += `q ${SMOOTH_CORNER_SIZE * cos},${SMOOTH_CORNER_SIZE * sin} ${
@@ -346,11 +346,14 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     this.bodyElement = rootElement
       .append('path')
-      .attr('stroke', 'red')
+      .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
+      .attr('stroke', '#43B5C0')
       .attr('stroke-width', 1)
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
       .attr('pointer-events', 'stroke');
+
+    this.path = dAttributeForPath;
 
     return this.bodyElement;
   }
@@ -698,7 +701,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     >;
   }
 
-  public show() {
+  public show(_theme?, force = false) {
+    if (force) {
+      this.sideConnectionBondTurnPoint = undefined;
+    }
     this.rootElement = this.rootElement || this.appendRootElement();
     this.appendBond(this.rootElement);
     this.appendHoverAreaElement();
@@ -707,12 +713,18 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   public drawSelection() {
     if (this.polymerBond.selected) {
+      const editor = CoreEditor.provideEditorInstance();
+
       this.selectionElement?.remove();
-      if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
+      if (
+        (this.isSnake && !this.isMonomersOnSameHorizontalLine()) ||
+        (editor.mode instanceof SnakeMode &&
+          this.polymerBond.isSideChainConnection)
+      ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
           .attr('stroke', '#57FF8F')
-          .attr('stroke-width', 10)
+          .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
           .attr('d', this.path);
       } else {
@@ -814,7 +826,13 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement() {
-    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (
+      (this.isSnake && !this.isMonomersOnSameHorizontalLine()) ||
+      (editor.mode instanceof SnakeMode &&
+        this.polymerBond.isSideChainConnection)
+    ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
         this.hoverAreaElement
       )) = this.rootElement
@@ -822,7 +840,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         .attr('stroke', 'transparent')
         .attr('d', this.path)
         .attr('fill-opacity', 0)
-        .attr('stroke-width', '10');
+        .attr('stroke-width', '5');
     } else {
       (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
         this.hoverAreaElement
@@ -850,23 +868,67 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   public appendHover() {
     assert(this.bodyElement);
+
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (
+      editor.mode instanceof SnakeMode &&
+      this.polymerBond.isSideChainConnection
+    ) {
+      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+      );
+
+      Array.from(allSideConnectionBondsBodyElements).forEach(
+        (bondBodyElement) => {
+          bondBodyElement.setAttribute('stroke', '#C0E2E6');
+        },
+      );
+    }
+
     this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
-    if (this.polymerBond.selected) {
-      assert(this.hoverAreaElement);
-      this.hoverAreaElement.attr('stroke', '#CCFFDD');
+    if (this.polymerBond.selected && this.selectionElement) {
+      this.selectionElement.attr('stroke', '#CCFFDD');
     }
   }
 
   public removeHover() {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
+
+    const editor = CoreEditor.provideEditorInstance();
+
+    if (
+      editor.mode instanceof SnakeMode &&
+      this.polymerBond.isSideChainConnection
+    ) {
+      const allSideConnectionBondsBodyElements = editor.canvas.querySelectorAll(
+        `.${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`,
+      );
+
+      Array.from(allSideConnectionBondsBodyElements).forEach(
+        (bondBodyElement) => {
+          const renderer = bondBodyElement.__data__ as PolymerBondRenderer;
+
+          bondBodyElement.setAttribute(
+            'stroke',
+            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+          );
+        },
+      );
+    }
+
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection ? 'red' : '#333333',
+        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
       )
       .attr('pointer-events', 'stroke');
+
+    if (this.polymerBond.selected && this.selectionElement) {
+      this.selectionElement.attr('stroke', '#57FF8F');
+    }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
   }

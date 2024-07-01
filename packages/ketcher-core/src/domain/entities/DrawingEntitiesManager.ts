@@ -1146,29 +1146,35 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
   }
 
-  private recalculateCanvasMatrixModelChange() {
+  private recalculateCanvasMatrixModelChange(
+    _chainsCollection?: ChainsCollection,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
-    const chainsCollection = ChainsCollection.fromMonomers(
-      Array.from(this.monomers.values()),
-    );
-    chainsCollection.rearrange();
+    const chainsCollection =
+      _chainsCollection ||
+      ChainsCollection.fromMonomers(Array.from(this.monomers.values()));
+
+    if (!_chainsCollection) {
+      chainsCollection.rearrange();
+    }
 
     this.canvasMatrix = new CanvasMatrix(chainsCollection, {
-      cellsInRow: Math.round(
+      cellsInRow: Math.ceil(
         (editor.canvas.width.baseVal.value -
           MONOMER_START_X_POSITION -
           DISTANCE_FROM_RIGHT) /
           SNAKE_LAYOUT_CELL_WIDTH,
       ),
     });
+
     return this.redrawBonds();
   }
 
-  public recalculateCanvasMatrix() {
+  public recalculateCanvasMatrix(chainsCollection?: ChainsCollection) {
     const command = new Command();
     command.addOperation(
       new RecalculateCanvasMatrixOperation(
-        this.recalculateCanvasMatrixModelChange.bind(this),
+        this.recalculateCanvasMatrixModelChange.bind(this, chainsCollection),
       ),
     );
 
@@ -1181,8 +1187,8 @@ export class DrawingEntitiesManager {
     needRedrawBonds = true,
   ) {
     const command = new Command();
+    let chainsCollection;
 
-    command.merge(this.recalculateCanvasMatrix());
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
@@ -1190,7 +1196,7 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
       let maxVerticalDistance = 0;
-      const chainsCollection = ChainsCollection.fromMonomers([
+      chainsCollection = ChainsCollection.fromMonomers([
         ...this.monomers.values(),
       ]);
       chainsCollection.rearrange();
@@ -1239,6 +1245,9 @@ export class DrawingEntitiesManager {
         maxVerticalDistance = 0;
       });
     }
+
+    command.merge(this.recalculateCanvasMatrix(chainsCollection));
+
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());
     }

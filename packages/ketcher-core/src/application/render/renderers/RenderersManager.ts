@@ -75,9 +75,9 @@ export class RenderersManager {
     monomer.renderer?.drawSelection();
   }
 
-  public redrawDrawingEntity(drawingEntity: DrawingEntity) {
+  public redrawDrawingEntity(drawingEntity: DrawingEntity, force = false) {
     drawingEntity.baseRenderer?.remove();
-    drawingEntity.baseRenderer?.show(this.theme);
+    drawingEntity.baseRenderer?.show(this.theme, force);
   }
 
   public deleteAllDrawingEntities() {

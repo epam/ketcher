@@ -20,6 +20,7 @@ import {
   pressButton,
   selectMacromoleculesPanelButton,
   MacromoleculesTopPanelButton,
+  selectSingleBondTool,
 } from '@utils';
 import {
   enterSequence,
@@ -310,6 +311,194 @@ test.describe('Import-Saving .idt Files', () => {
     await selectSequenceLayoutModeTool(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Test performance impact of importing large sequences with multiple modifications via Paste from Clipboard', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: Sequences are opened.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T
+      
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+
+      +G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C
+
+      mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
+
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      `,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify export of multiple sequences with modifications from IDT format using Save file(Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4310
+    Description: Sequences are appears at save preview window.
+    We have bug https://github.com/epam/Indigo/issues/2043 
+    When it fixed we should update snapshot.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T
+      
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+
+      +G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C
+
+      mA*mC*mG*mC*mG*C*G*A*C*T*A*T*A*C*G*mC*mG*mC*mC*mU
+
+      /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
+      `,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify bonds establishment between monomers from R2 to R1 attachment points', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/1899
+    Description: Bonds establishment between monomers from R2 to R1 attachment points.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/32MOErT/`,
+    );
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await selectSingleBondTool(page);
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify import of sequences with /5Phos/ and /3Phos/ modifications', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/1899
+    Description: Sequences with /5Phos/ and /3Phos/ modifications imported.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/5Phos/ACG/3Phos/`,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify export of known modified monomers with IDT alias and structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/1900
+    Description: Sequences are appears at save preview window.
+    We have bug https://github.com/epam/Indigo/issues/2043 
+    When it fixed we should update snapshot.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify error message when export of nucleotides split to submonomers with no IDT alias', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/1900/1985
+    Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
+    We have bug https://github.com/epam/Indigo/issues/1985 
+    When it fixed we should update snapshot.
+    */
+    await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that if * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/1900
+    Description: If * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P).
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/32MOErT/
+      
+      /5Phos/ACG/3Phos/
+      `,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open some expected IDT', async ({ page }) => {
+    /*
+    Test case: Import/Saving files/https://github.com/epam/Indigo/issues/1982
+    Description: Sequences are opened.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/
+       /i2MOErA/
+       /52MOErA//i2MOErA/
+       /52MOErA/*/i2MOErA/
+       /i2MOErA//32MOErA/
+       /i2MOErA/*/32MOErA/
+      `,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open some expected IDT (Part2)', async ({ page }) => {
+    /*
+    Test case: Import/Saving files/https://github.com/epam/Indigo/issues/1982
+    Description: Sequences are opened.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/32MOErA/
+       /52MOErA/*/32MOErC/
+       /52MOErA//32MOErC/
+       /52MOErA//i2MOErC//32MOErT/ 
+       /52MOErA/*/i2MOErC/*/32MOErT/ 
+       /52MOErA/*/i2MOErC/*/i2MOErG/*G*+A*mT*A*T*rA*G*/i2MOErG/*/32MOErT/ 
+      `,
+    );
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
 });

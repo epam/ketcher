@@ -123,7 +123,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     const editor = CoreEditor.provideEditorInstance();
 
     if (
-      editor.mode instanceof SnakeMode &&
+      editor?.mode instanceof SnakeMode &&
       this.polymerBond.isSideChainConnection
     ) {
       this.appendSideConnectionBond(rootElement);
@@ -830,7 +830,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     if (
       (this.isSnake && !this.isMonomersOnSameHorizontalLine()) ||
-      (editor.mode instanceof SnakeMode &&
+      (editor?.mode instanceof SnakeMode &&
         this.polymerBond.isSideChainConnection)
     ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(

@@ -169978,6 +169978,9 @@
     "alias": "5AmdA",
     "naturalAnalogShort": "A",
     "class": "RNA",
+    "idtAliases": {
+      "base": "5AmdA"
+    },
     "atoms": [
       {
         "label": "N",
@@ -170390,6 +170393,9 @@
     "alias": "55HydMe-dC",
     "naturalAnalogShort": "C",
     "class": "RNA",
+    "idtAliases": {
+      "base": "55HydMe-dC"
+    },
     "atoms": [
       {
         "label": "C",
@@ -170780,6 +170786,9 @@
     "alias": "5Super-dG",
     "naturalAnalogShort": "G",
     "class": "RNA",
+    "idtAliases": {
+      "base": "5Super-dG"
+    },
     "atoms": [
       {
         "label": "N",
@@ -171192,6 +171201,9 @@
     "alias": "5Super-dT",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "idtAliases": {
+      "base": "5Super-dT"
+    },
     "atoms": [
       {
         "label": "N",
@@ -171627,6 +171639,9 @@
     "alias": "55Br-dU",
     "naturalAnalogShort": "U",
     "class": "RNA",
+    "idtAliases": {
+      "base": "55Br-dU"
+    },
     "atoms": [
       {
         "label": "C",
@@ -172002,6 +172017,9 @@
     "alias": "55NitInd",
     "naturalAnalogShort": "X",
     "class": "RNA",
+    "idtAliases": {
+      "base": "55NitInd"
+    },
     "atoms": [
       {
         "label": "C",
@@ -172431,6 +172449,9 @@
     "alias": "iAmMC6T",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "idtAliases": {
+      "base": "iAmMC6T"
+    },
     "atoms": [
       {
         "label": "O",

@@ -1315,7 +1315,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      const bondLine = page.locator('g path').first();
       await bondLine.hover();
       await takeEditorScreenshot(page);
     });
@@ -1351,7 +1351,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'R1',
       'R3',
     );
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = page.locator('g path').first();
     await bondLine.hover();
     await takeEditorScreenshot(page);
   });

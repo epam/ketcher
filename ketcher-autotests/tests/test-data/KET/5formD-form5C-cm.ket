@@ -1,0 +1,583 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer130"
+            },
+            {
+                "$ref": "monomer131"
+            },
+            {
+                "$ref": "monomer133"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer130",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer131",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer131",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer133",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-form5C___5-Formylcytosine"
+            },
+            {
+                "$ref": "monomerTemplate-5formD___5-Formyl-2-deoxyribose"
+            },
+            {
+                "$ref": "monomerTemplate-cm___Carbonylmethyl"
+            }
+        ]
+    },
+    "monomer130": {
+        "type": "monomer",
+        "id": "130",
+        "position": {
+            "x": 12.25,
+            "y": -9.3
+        },
+        "alias": "form5C",
+        "templateId": "form5C___5-Formylcytosine"
+    },
+    "monomerTemplate-form5C___5-Formylcytosine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    4.8481,
+                    2.7991,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    4.0981,
+                    1.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.8481,
+                    0.201,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.3481,
+                    2.7991,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0981,
+                    1.5,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    6.3481,
+                    0.201,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    8.5981,
+                    1.5,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0958,
+                    4.1004,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.344,
+                    5.3983,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    4.0981,
+                    -1.0981,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    2.5981,
+                    1.5,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    10
+                ]
+            }
+        ],
+        "class": "Base",
+        "classHELM": "RNA",
+        "id": "form5C___5-Formylcytosine",
+        "fullName": "5-Formylcytosine",
+        "alias": "form5C",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "naturalAnalogShort": "C"
+    },
+    "monomer131": {
+        "type": "monomer",
+        "id": "131",
+        "position": {
+            "x": 12.25,
+            "y": -8.025
+        },
+        "alias": "5formD",
+        "templateId": "5formD___5-Formyl-2-deoxyribose"
+    },
+    "monomerTemplate-5formD___5-Formyl-2-deoxyribose": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -0.6576,
+                    0.167,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.8424,
+                    0.167,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3059,
+                    -1.2595,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.0924,
+                    -2.1412,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.1212,
+                    -1.2595,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5358,
+                    1.381,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.7205,
+                    1.381,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    3.2127,
+                    1.2282,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.0924,
+                    -3.6412,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.0278,
+                    1.2268,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.9237,
+                    2.7504,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    6
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    8
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    10
+                ]
+            }
+        ],
+        "class": "Sugar",
+        "classHELM": "RNA",
+        "id": "5formD___5-Formyl-2-deoxyribose",
+        "fullName": "5-Formyl-2-deoxyribose",
+        "alias": "5formD",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "R"
+    },
+    "monomer133": {
+        "type": "monomer",
+        "id": "133",
+        "position": {
+            "x": 13.525,
+            "y": -8.025
+        },
+        "alias": "cm",
+        "templateId": "cm___Carbonylmethyl"
+    },
+    "monomerTemplate-cm___Carbonylmethyl": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -1.2,
+                    1.0394,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.4504,
+                    -0.2599,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.2013,
+                    -1.5584,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0504,
+                    -0.2599,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.8013,
+                    1.0387,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "cm___Carbonylmethyl",
+        "fullName": "Carbonylmethyl",
+        "alias": "cm",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    }
+}

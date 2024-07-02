@@ -937,6 +937,34 @@ test.describe('RNA Library', () => {
     await takePageScreenshot(page);
   });
 
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/3816
+    Description: It is not possible to create preset if Sugar is without R3 connection point.
+    */
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await page.getByTestId(`12ddR___1',2'-Di-Deoxy-Ribose`).click();
+    await page.getByTestId('rna-builder-slot--base').click();
+    await takePresetsScreenshot(page);
+  });
+
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Base is selected and we select Sugar)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/3816
+    Description: It is not possible to create preset if Sugar is without R3 connection point.
+    */
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('rna-builder-slot--base').click();
+    await page.getByTestId(`baA___N-benzyl-adenine`).click();
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await takePresetsScreenshot(page);
+  });
+
   test('It is possible to add/remove RNA presets into the Favourite library', async ({
     page,
   }) => {

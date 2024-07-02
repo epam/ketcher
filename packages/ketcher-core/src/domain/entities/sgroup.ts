@@ -112,7 +112,7 @@ export class SGroup {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
-      subscript: 'n',
+      subscript: '',
       expanded: undefined,
       // data s-group fields
       attached: false,

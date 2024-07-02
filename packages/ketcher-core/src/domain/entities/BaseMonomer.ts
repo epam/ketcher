@@ -399,7 +399,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         },
       );
 
-      if (bondsToLeavingGroupAtom.size !== 1) {
+      if (bondsToLeavingGroupAtom.size > 1) {
         return;
       }
 
@@ -456,7 +456,7 @@ export abstract class BaseMonomer extends DrawingEntity {
         },
       );
 
-      if (bondsToLeavingGroupAtom.size !== 1) {
+      if (bondsToLeavingGroupAtom.size > 1) {
         return;
       }
 

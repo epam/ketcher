@@ -19,7 +19,7 @@
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
             <n id="21" NodeType="Fragment">
-                <fragment id="22">
+                <fragment id="23">
                     <n id="5" p="55.981895 60.749989"/>
                     <n id="6" Element="1" p="30.000000 75.749931">
                         <t p="30.000000 75.749931" LabelJustification="Left">
@@ -44,7 +44,7 @@
                     <s>formic acid</s>
                 </t>
             </n>
-            <n id="23" NodeType="Fragment">
+            <n id="22" NodeType="Fragment">
                 <fragment id="24">
                     <n id="9" Element="16" NumHydrogens="0" p="247.981857 60.000000">
                         <t p="247.981857 60.000000" LabelJustification="Left">

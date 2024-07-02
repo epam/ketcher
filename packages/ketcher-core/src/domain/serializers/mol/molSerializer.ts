@@ -19,6 +19,7 @@ import { Molfile } from './molfile';
 import { Serializer } from '../serializers.types';
 import { Struct } from 'domain/entities';
 import { KetcherLogger } from 'utilities';
+import { KetSerializer } from 'domain/serializers';
 
 export class MolSerializer implements Serializer<Struct> {
   static DefaultOptions: MolSerializerOptions = {
@@ -75,7 +76,9 @@ export class MolSerializer implements Serializer<Struct> {
     }
   }
 
-  serialize(struct: Struct): string {
+  serialize(_struct: Struct): string {
+    const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
+
     return new Molfile().saveMolecule(
       struct,
       this.options.ignoreErrors,

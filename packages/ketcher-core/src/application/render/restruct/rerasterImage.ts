@@ -1,4 +1,4 @@
-import { ReObject, ReStruct } from 'application/render';
+import { ReObject, ReStruct } from 'application/render/restruct';
 import { RasterImage } from 'domain/entities/rasterImage';
 import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';

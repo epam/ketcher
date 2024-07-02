@@ -82,9 +82,9 @@ export class RenderersManager {
     monomer.renderer?.drawSelection();
   }
 
-  public redrawDrawingEntity(drawingEntity: DrawingEntity) {
+  public redrawDrawingEntity(drawingEntity: DrawingEntity, force = false) {
     drawingEntity.baseRenderer?.remove();
-    drawingEntity.baseRenderer?.show(this.theme);
+    drawingEntity.baseRenderer?.show(this.theme, force);
   }
 
   public deleteAllDrawingEntities() {
@@ -415,5 +415,16 @@ export class RenderersManager {
       width: right - left,
       height: bottom - top,
     };
+  }
+
+  public rerenderSideConnectionPolymerBonds() {
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      if (!polymerBondRenderer.polymerBond.isSideChainConnection) {
+        return;
+      }
+
+      polymerBondRenderer.remove();
+      polymerBondRenderer.show();
+    });
   }
 }

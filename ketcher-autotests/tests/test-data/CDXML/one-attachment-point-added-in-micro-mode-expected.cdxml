@@ -18,31 +18,24 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="19" NodeType="Fragment">
-                <fragment id="20">
-                    <n id="7" p="56.003639 59.999985"/>
-                    <n id="5" p="30.000000 75.003220"/>
-                    <n id="9" p="30.000000 105.151588"/>
-                    <n id="10" p="56.069153 120.001991"/>
-                    <n id="8" p="81.909058 105.016953"/>
-                    <n id="6" p="81.909058 74.988655"/>
-                    <n id="11" Element="1" p="56.021950 30.000000">
-                        <t p="56.021950 30.000000" LabelJustification="Left">
-                            <s font="3" size="10" face="96">H</s>
-                        </t>
-                    </n>
-                    <b id="12" B="7" E="5" Order="2"/>
-                    <b id="13" B="5" E="9"/>
-                    <b id="14" B="9" E="10" Order="2"/>
-                    <b id="15" B="10" E="8"/>
-                    <b id="16" B="8" E="6" Order="2"/>
-                    <b id="17" B="6" E="7"/>
-                    <b id="18" B="7" E="11"/>
-                </fragment>
-                <t LabelJustification="Left" LabelAlignment="Above">
-                    <s></s>
+            <n id="5" p="30.000000 75.003220"/>
+            <n id="6" p="81.909058 74.988655"/>
+            <n id="7" p="56.003639 59.999985"/>
+            <n id="8" p="81.909058 105.016953"/>
+            <n id="9" p="30.000000 105.151588"/>
+            <n id="10" p="56.069153 120.001991"/>
+            <n id="11" Element="1" p="56.021950 30.000000">
+                <t p="56.021950 30.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">H</s>
                 </t>
             </n>
+            <b id="12" B="7" E="5" Order="2"/>
+            <b id="13" B="5" E="9"/>
+            <b id="14" B="9" E="10" Order="2"/>
+            <b id="15" B="10" E="8"/>
+            <b id="16" B="8" E="6" Order="2"/>
+            <b id="17" B="6" E="7"/>
+            <b id="18" B="7" E="11"/>
         </fragment>
     </page>
 </CDXML>

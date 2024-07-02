@@ -16,6 +16,7 @@ import {
   getRnaPartLibraryItem,
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class Nucleoside {
   constructor(public sugar: Sugar, public rnaBase: RNABase) {}
@@ -81,7 +82,7 @@ export class Nucleoside {
     return this.sugar;
   }
 
-  public get monomers() {
+  public get monomers(): BaseMonomer[] {
     return [this.sugar, this.rnaBase];
   }
 

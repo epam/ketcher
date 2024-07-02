@@ -57,9 +57,13 @@ class AtomTool implements Tool {
           editorSelection &&
           getGroupIdsFromItemArrays(struct.molecule, editorSelection);
         const sgroups = struct.molecule.functionalGroups;
-        const atomsInFunctionalGroup = editorSelection.atoms.map((atom) => {
-          return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
-        });
+        const atomsInFunctionalGroup = editorSelection.atoms
+          .filter((atomId) => {
+            return !Atom.isSuperatomLeavingGroupAtom(struct.molecule, atomId);
+          })
+          .map((atom) => {
+            return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
+          });
         if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
           editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
           this.editor.hoverIcon.hide();

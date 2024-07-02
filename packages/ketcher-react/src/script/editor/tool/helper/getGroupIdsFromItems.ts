@@ -1,4 +1,4 @@
-import { mergeMapOfItemsToSet, Struct } from 'ketcher-core';
+import { Atom, mergeMapOfItemsToSet, Struct } from 'ketcher-core';
 
 type Items = {
   atoms?: number[];
@@ -9,12 +9,16 @@ function getGroupIdsFromItemArrays(struct: Struct, items?: Items): number[] {
   if (!struct.sgroups.size) return [];
 
   const groupsIds = new Set<number>();
-
-  items?.atoms?.forEach((atomId) => {
-    const groupId = struct.getGroupIdFromAtomId(atomId);
-    if (groupId !== null) groupsIds.add(groupId);
-  });
-
+  if (items?.atoms) {
+    items.atoms
+      .filter((atomId) => {
+        return !Atom.isSuperatomLeavingGroupAtom(struct, atomId);
+      })
+      .forEach((atomId) => {
+        const groupId = struct.getGroupIdFromAtomId(atomId);
+        if (groupId !== null) groupsIds.add(groupId);
+      });
+  }
   items?.bonds?.forEach((bondId) => {
     const groupId = struct.getGroupIdFromBondId(bondId);
     if (groupId !== null) groupsIds.add(groupId);

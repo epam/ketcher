@@ -29,7 +29,6 @@ export class CanvasMatrix {
   ) {
     this.matrix = new Matrix<Cell>();
     this.fillCells();
-    console.log(this);
   }
 
   private get chains() {

@@ -357,7 +357,9 @@ export class SGroup {
   cloneAttachmentPoints(
     atomIdMap: Map<number, number>,
   ): ReadonlyArray<SGroupAttachmentPoint> {
-    return this.attachmentPoints.map((point) => point.clone(atomIdMap));
+    return this.attachmentPoints
+      .filter((point) => atomIdMap.has(point.atomId))
+      .map((point) => point.clone(atomIdMap));
   }
 
   public get isSuperatomWithoutLabel() {
@@ -425,14 +427,18 @@ export class SGroup {
     sg.atoms = SGroup.removeNegative(SGroup.filterAtoms(sg.atoms, atomMap));
   }
 
-  static clone(sgroup: SGroup, aidMap: Map<number, number>): SGroup {
+  static clone(
+    sgroup: SGroup,
+    aidMap: Map<number, number>,
+    atomsInSet?: number[],
+  ): SGroup {
     const cp = new SGroup(sgroup.type);
 
     Object.keys(sgroup.data).forEach((field) => {
       cp.data[field] = sgroup.data[field];
     });
-
-    cp.atoms = sgroup.atoms.map((elem) => aidMap.get(elem));
+    const sgroupAtoms = atomsInSet || sgroup.atoms;
+    cp.atoms = sgroupAtoms.map((elem) => aidMap.get(elem));
     cp.pp = sgroup.pp;
     cp.bracketBox = sgroup.bracketBox;
     cp.patoms = null;

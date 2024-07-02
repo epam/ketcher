@@ -288,14 +288,15 @@ export class Struct {
 
     const sgroupIdMap = {};
     this.sgroups.forEach((sg, sgroupId) => {
-      if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
+      const notInGroup = sg.atoms.some((aid) => !atomSet!.has(aid));
+      const atomsInSet = sg.atoms.filter((aid) => atomSet!.has(aid));
+      if (!atomsInSet.length && notInGroup) return;
       const oldSgroup = sg;
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
           ? MonomerMicromolecule.clone(oldSgroup)
-          : SGroup.clone(sg, aidMap!);
-
+          : SGroup.clone(sg, aidMap!, atomsInSet);
       const id = cp.sgroups.add(sg);
       sg.id = id;
 

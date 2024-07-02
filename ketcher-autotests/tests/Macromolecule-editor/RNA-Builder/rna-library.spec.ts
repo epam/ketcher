@@ -29,7 +29,6 @@ import {
   delay,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
-  RnaPartDropDown,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {

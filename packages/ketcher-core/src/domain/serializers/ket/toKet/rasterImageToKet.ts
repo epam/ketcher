@@ -14,23 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './atom';
-export * from './bond';
-export * from './CanvasLoad';
-export * from './descriptors';
-export * from './EnhancedFlagMove';
-export * from './ifThen';
-export * from './fragment';
-export * from './fragmentStereoAtom';
-export * from './FragmentStereoFlag';
-export * from './calcimplicitH';
-export * from './LoopMove';
-export * from './OperationType';
-export * from './rasterImage';
-export * from './rgroup';
-export * from './rgroupAttachmentPoint';
-export * from './rxn';
-export * from './simpleObject';
-export * from './sgroup';
-export * from './Text';
-export * from './monomer/monomerFactory';
+import { getNodeWithInvertedYCoord } from '../helpers';
+
+export function rasterImageToKet(rasterImageNode) {
+  return {
+    type: 'rasterImage',
+    data: getNodeWithInvertedYCoord(rasterImageNode.data),
+    selected: rasterImageNode.selected,
+  };
+}

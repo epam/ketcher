@@ -38,6 +38,7 @@ import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
+import { RasterImage } from './rasterImage';
 
 export type Neighbor = {
   aid: number;
@@ -73,6 +74,7 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
+  rasterImages: Pool<RasterImage>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
@@ -96,6 +98,7 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+    this.rasterImages = new Pool<RasterImage>();
   }
 
   hasRxnProps(): boolean {
@@ -211,12 +214,15 @@ export class Struct {
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
+    rasterImagesSet?: Pile<number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
+    rasterImagesSet =
+      rasterImagesSet || new Pile<number>(this.rasterImages.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -327,6 +333,10 @@ export class Struct {
 
     textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
+    });
+
+    rasterImagesSet.forEach((id) => {
+      cp.rasterImages.add(this.rasterImages.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -826,6 +836,8 @@ export class Struct {
     this.simpleObjects.forEach((simpleObjects) => {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
+
+    this.rasterImages.forEach((rasterImage) => rasterImage.scaled(scale));
   }
 
   rescale() {

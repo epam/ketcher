@@ -28,6 +28,7 @@ import {
   SGroupDataMove,
   SimpleObjectMove,
   TextMove,
+  RasterImageMove,
 } from '../operations';
 import { Pile, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
@@ -124,6 +125,12 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists.texts) {
     lists.texts.forEach((text) => {
       action.addOp(new TextMove(text, d, true));
+    });
+  }
+
+  if (lists.rasterImages) {
+    lists.rasterImages.forEach((rasterImage) => {
+      action.addOp(new RasterImageMove(rasterImage, d));
     });
   }
 

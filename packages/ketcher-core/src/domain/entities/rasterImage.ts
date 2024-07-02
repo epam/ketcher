@@ -14,23 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './atom';
-export * from './bond';
-export * from './CanvasLoad';
-export * from './descriptors';
-export * from './EnhancedFlagMove';
-export * from './ifThen';
-export * from './fragment';
-export * from './fragmentStereoAtom';
-export * from './FragmentStereoFlag';
-export * from './calcimplicitH';
-export * from './LoopMove';
-export * from './OperationType';
-export * from './rasterImage';
-export * from './rgroup';
-export * from './rgroupAttachmentPoint';
-export * from './rxn';
-export * from './simpleObject';
-export * from './sgroup';
-export * from './Text';
-export * from './monomer/monomerFactory';
+import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
+import { Vec2 } from 'domain/entities/vec2';
+
+type Position = [Vec2, Vec2];
+
+export class RasterImage extends BaseMicromoleculeEntity {
+  constructor(public bitmap: string, public position: [Vec2, Vec2]) {
+    super();
+  }
+
+  clone(): RasterImage {
+    return new RasterImage(this.bitmap, this.position);
+  }
+
+  addPositionOffset(offset: Vec2) {
+    this.position = this.position.map((item) => item.add(offset)) as Position;
+  }
+
+  scaled(scale: number): void {
+    this.position = this.position.map((item) => item.scaled(scale)) as Position;
+  }
+}

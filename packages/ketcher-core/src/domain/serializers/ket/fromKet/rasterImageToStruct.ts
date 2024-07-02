@@ -14,23 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './atom';
-export * from './bond';
-export * from './CanvasLoad';
-export * from './descriptors';
-export * from './EnhancedFlagMove';
-export * from './ifThen';
-export * from './fragment';
-export * from './fragmentStereoAtom';
-export * from './FragmentStereoFlag';
-export * from './calcimplicitH';
-export * from './LoopMove';
-export * from './OperationType';
-export * from './rasterImage';
-export * from './rgroup';
-export * from './rgroupAttachmentPoint';
-export * from './rxn';
-export * from './simpleObject';
-export * from './sgroup';
-export * from './Text';
-export * from './monomer/monomerFactory';
+import { Point, Struct, Vec2 } from 'domain/entities';
+import { getNodeWithInvertedYCoord } from '../helpers';
+import { RasterImage } from 'domain/entities/rasterImage';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function rasterImageToStruct(ketItem: any, struct: Struct): Struct {
+  const { bitmap, position } = getNodeWithInvertedYCoord(ketItem.data);
+  const vectorPosition = position.map((item: Point) => new Vec2(item));
+  const rasterImage = new RasterImage(bitmap, vectorPosition);
+  rasterImage.setInitiallySelected(ketItem.selected);
+  struct.rasterImages.add(rasterImage);
+  return struct;
+}

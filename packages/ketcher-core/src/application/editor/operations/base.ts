@@ -127,16 +127,16 @@ class BaseOperation {
 
   protected static invalidateItem(
     restruct: ReStruct,
-    map,
+    mapName: keyof typeof ReStruct.maps,
     id: number,
     level?: any,
   ) {
-    if (map === 'atoms') {
+    if (mapName === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level);
       return;
     }
 
-    if (map === 'bonds') {
+    if (mapName === 'bonds') {
       BaseOperation.invalidateBond(restruct, id);
 
       if (level > 0) {
@@ -145,7 +145,7 @@ class BaseOperation {
       return;
     }
 
-    restruct.markItem(map, id, level);
+    restruct.markItem(mapName, id, level);
   }
 
   protected static invalidateEnhancedFlag(

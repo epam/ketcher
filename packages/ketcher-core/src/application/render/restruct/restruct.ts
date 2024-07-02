@@ -41,9 +41,10 @@ import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
+import { ReRasterImage } from 'application/render/restruct/rerasterImage';
 
 class ReStruct {
-  public static maps = {
+  public static readonly maps = {
     atoms: ReAtom,
     bonds: ReBond,
     rxnPluses: ReRxnPlus,
@@ -57,6 +58,7 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
+    rasterImages: ReRasterImage,
   } as const;
 
   public render: Render;
@@ -74,6 +76,7 @@ class ReStruct {
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   private simpleObjects: Map<number, ReSimpleObject> = new Map();
+  public rasterImages: Map<number, ReRasterImage> = new Map();
   public texts: Map<number, ReText> = new Map();
   private initialized = false;
   private layers: Array<any> = [];
@@ -81,6 +84,7 @@ class ReStruct {
   private ccFragmentType: Pool = new Pool();
   private structChanged = false;
 
+  // TWIMC, Those maps are accessed via dynamic names, using static maps field + 'Changed' string
   private atomsChanged: Map<number, 1> = new Map();
   private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map();
   private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map();
@@ -88,6 +92,7 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
+  private rasterImagesChanged: Map<number, ReRasterImage> = new Map();
   private snappingBonds: number[] = [];
 
   constructor(
@@ -154,6 +159,9 @@ class ReStruct {
       if (item.type === 'DAT' && !item.data.attached) {
         this.sgroupData.set(id, new ReDataSGroupData(item));
       }
+    });
+    molecule.rasterImages.forEach((item, id) => {
+      this.rasterImages.set(id, new ReRasterImage(item));
     });
   }
 
@@ -514,6 +522,7 @@ class ReStruct {
     this.showEnhancedFlags();
     this.showSimpleObjects();
     this.showTexts();
+    this.showImages();
     this.clearMarks();
 
     return true;
@@ -708,6 +717,16 @@ class ReStruct {
       const bond = this.bonds.get(bid);
       if (bond) {
         bond.show(this, bid, options);
+      }
+    });
+  }
+
+  showImages() {
+    const options = this.render.options;
+    this.rasterImagesChanged.forEach((_, id) => {
+      const image = this.rasterImages.get(id);
+      if (image) {
+        image.show(this, options);
       }
     });
   }

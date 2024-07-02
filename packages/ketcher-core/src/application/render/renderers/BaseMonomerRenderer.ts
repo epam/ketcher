@@ -283,7 +283,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
-  private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+  protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const fontSize = 6;
     const textElement = rootElement
       .append('text')

@@ -38,7 +38,11 @@ const useBondSGroupAttach = () => {
 
       const bond = struct.bonds.get(bondIds[0])!;
       const attachedSGroups = bond.b.getAttachedSGroups(struct.molecule);
-
+      const [sgGroupId] = attachedSGroups;
+      const sgroup = struct.sgroups.get(sgGroupId)?.item;
+      if (sgroup?.isSuperatomWithoutLabel) {
+        return false;
+      }
       return attachedSGroups.size > 0;
     },
     [getKetcherInstance],

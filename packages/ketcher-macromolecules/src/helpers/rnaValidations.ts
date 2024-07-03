@@ -7,9 +7,9 @@ export const getValidations = (
   phosphateValidations: string[];
   baseValidations: string[];
 } => {
-  const sugarValidations = [];
-  const phosphateValidations = [];
-  const baseValidations = [];
+  const sugarValidations: string[] = [];
+  const phosphateValidations: string[] = [];
+  const baseValidations: string[] = [];
 
   if (newPreset.phosphate) {
     sugarValidations.push('R2');

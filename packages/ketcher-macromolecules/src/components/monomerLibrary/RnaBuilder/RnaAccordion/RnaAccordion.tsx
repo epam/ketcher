@@ -64,6 +64,7 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
+import { getValidations } from 'helpers/rnaValidations';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -96,45 +97,18 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
   const [newPreset, setNewPreset] = useState(activePreset);
 
-  useEffect(() => {
-    setNewPreset(activePreset);
-  }, [activePreset]);
-
   const dispatch = useDispatch();
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
     } else {
-      dispatch(setActiveRnaBuilderItem(rnaBuilderItem));
       setExpandedAccordion(rnaBuilderItem);
-      const sugarValidaions: string[] = [];
-      const phosphateValidaions: string[] = [];
-      const baseValidaions: string[] = [];
+      const { sugarValidations, phosphateValidations, baseValidations } =
+        getValidations(newPreset);
 
-      if (newPreset.phosphate) {
-        sugarValidaions.push('R2');
-      }
-      if (newPreset.base) {
-        sugarValidaions.push('R3');
-      }
-      baseValidaions.push('R1');
-      if (
-        newPreset?.sugar?.props?.MonomerCaps &&
-        !('R3' in newPreset.sugar.props.MonomerCaps)
-      ) {
-        baseValidaions.push('DISABLED');
-      }
-      phosphateValidaions.push('R1');
-      if (
-        newPreset?.sugar?.props?.MonomerCaps &&
-        !('R2' in newPreset.sugar.props.MonomerCaps)
-      ) {
-        phosphateValidaions.push('DISABLED');
-      }
-
-      dispatch(setSugarValidations(sugarValidaions));
-      dispatch(setPhosphateValidations(phosphateValidaions));
-      dispatch(setBaseValidations(baseValidaions));
+      dispatch(setSugarValidations(sugarValidations));
+      dispatch(setPhosphateValidations(phosphateValidations));
+      dispatch(setBaseValidations(baseValidations));
     }
   };
 

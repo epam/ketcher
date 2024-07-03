@@ -30,13 +30,18 @@ export class MonomerMicromolecule extends SGroup {
     return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }
 
-  public static clone(monomerMicromolecule: MonomerMicromolecule) {
+  public static clone(
+    monomerMicromolecule: MonomerMicromolecule,
+    atomIdMap?: Map<number, number>,
+  ) {
     const monomerMicromoleculeClone = new MonomerMicromolecule(
       monomerMicromolecule.type,
       monomerMicromolecule.monomer,
     );
     monomerMicromoleculeClone.pp = monomerMicromolecule.pp;
-    monomerMicromoleculeClone.atoms = monomerMicromolecule.atoms;
+    monomerMicromoleculeClone.atoms = atomIdMap
+      ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
+      : monomerMicromolecule.atoms;
 
     return monomerMicromoleculeClone;
   }

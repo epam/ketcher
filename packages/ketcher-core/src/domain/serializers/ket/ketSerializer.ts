@@ -644,6 +644,10 @@ export class KetSerializer implements Serializer<Struct> {
 
     struct.sgroups.forEach((sgroup) => {
       const attachmentPoints = sgroup.getAttachmentPoints();
+      const attachmentPointsToReplace: Map<
+        SGroupAttachmentPoint,
+        SGroupAttachmentPoint
+      > = new Map();
       attachmentPoints.forEach((attachmentPoint) => {
         if (
           isNumber(attachmentPoint.leaveAtomId) &&
@@ -655,14 +659,19 @@ export class KetSerializer implements Serializer<Struct> {
             attachmentPoint.attachmentId,
             attachmentPoint.attachmentPointNumber,
           );
-          sgroup.removeAttachmentPoint(attachmentPoint);
-          sgroup.addAttachmentPoint(attachmentPointClone);
+          attachmentPointsToReplace.set(attachmentPoint, attachmentPointClone);
           sgroup.atoms.splice(
             sgroup.atoms.indexOf(attachmentPoint.leaveAtomId),
             1,
           );
         }
       });
+      attachmentPointsToReplace.forEach(
+        (attachmentPointToAdd, attachmentPointToDelete) => {
+          sgroup.removeAttachmentPoint(attachmentPointToDelete);
+          sgroup.addAttachmentPoint(attachmentPointToAdd);
+        },
+      );
     });
 
     return struct;

@@ -15,10 +15,11 @@
  ***************************************************************************/
 
 import { getNodeWithInvertedYCoord } from '../helpers';
+import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
 
 export function rasterImageToKet(rasterImageNode) {
   return {
-    type: 'rasterImage',
+    type: RASTER_IMAGE_KEY,
     data: getNodeWithInvertedYCoord(rasterImageNode.data),
     selected: rasterImageNode.selected,
   };

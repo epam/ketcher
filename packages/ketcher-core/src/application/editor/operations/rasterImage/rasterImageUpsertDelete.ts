@@ -32,7 +32,7 @@ export class RasterImageUpsert extends BaseOperation {
     if (!this.id) {
       this.id = struct.rasterImages.newId();
     }
-    const id = this.id!;
+    const id = this.id;
     const item = this.rasterImage.clone();
     struct.rasterImages.set(id, item);
     reStruct.rasterImages.set(id, new ReRasterImage(item));

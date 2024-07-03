@@ -5,7 +5,7 @@ import { ReStruct } from 'application/render';
 import { Scale } from 'domain/helpers';
 
 export class RasterImageMove extends BaseOperation {
-  constructor(private id: number, private difference: Vec2) {
+  constructor(private id: number, private offset: Vec2) {
     super(OperationType.RASTER_IMAGE_MOVE);
   }
 
@@ -16,16 +16,16 @@ export class RasterImageMove extends BaseOperation {
     if (!item || !renderItem) {
       return;
     }
-    const differenceScaled = Scale.modelToCanvas(
-      this.difference,
+    const scaledOffset = Scale.modelToCanvas(
+      this.offset,
       reStruct.render.options,
     );
 
-    renderItem.move(differenceScaled);
-    item.addPositionOffset(this.difference);
+    renderItem.move(scaledOffset);
+    item.addPositionOffset(this.offset);
   }
 
   invert(): BaseOperation {
-    return new RasterImageMove(this.id, this.difference.negated());
+    return new RasterImageMove(this.id, this.offset.negated());
   }
 }

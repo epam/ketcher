@@ -18,7 +18,7 @@ export class ReRasterImage extends ReObject {
 
   show(restruct: ReStruct, options: RenderOptions) {
     if (this.element) {
-      return;
+      this.remove();
     }
 
     const render = restruct.render;

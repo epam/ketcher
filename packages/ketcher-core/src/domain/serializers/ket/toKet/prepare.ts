@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
+import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
 
 type KetNode = {
   type: string;
@@ -99,7 +100,7 @@ export function prepareStructForKet(struct: Struct) {
   struct.rasterImages.forEach((image) => {
     const center: Vec2 = Vec2.centre(image.position[0], image.position[1]);
     ketNodes.push({
-      type: 'rasterImage',
+      type: RASTER_IMAGE_KEY,
       center,
       data: {
         bitmap: image.bitmap,

@@ -837,7 +837,9 @@ export class Struct {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
 
-    this.rasterImages.forEach((rasterImage) => rasterImage.scaled(scale));
+    this.rasterImages.forEach((rasterImage) =>
+      rasterImage.rescalePosition(scale),
+    );
   }
 
   rescale() {

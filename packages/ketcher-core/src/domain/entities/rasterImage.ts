@@ -19,20 +19,25 @@ import { Vec2 } from 'domain/entities/vec2';
 
 type Position = [Vec2, Vec2];
 
+export const RASTER_IMAGE_KEY = 'rasterImage';
+
 export class RasterImage extends BaseMicromoleculeEntity {
   constructor(public bitmap: string, public position: [Vec2, Vec2]) {
     super();
   }
 
   clone(): RasterImage {
-    return new RasterImage(this.bitmap, this.position);
+    return new RasterImage(
+      this.bitmap,
+      this.position.map((item) => item) as Position,
+    );
   }
 
   addPositionOffset(offset: Vec2) {
     this.position = this.position.map((item) => item.add(offset)) as Position;
   }
 
-  scaled(scale: number): void {
+  rescalePosition(scale: number): void {
     this.position = this.position.map((item) => item.scaled(scale)) as Position;
   }
 }

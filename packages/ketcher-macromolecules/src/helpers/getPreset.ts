@@ -61,7 +61,7 @@ export const getPresets = (
       const monomers = [ribose, rnaBase, phosphate];
 
       for (const monomer of monomers) {
-        const monomerClass = monomer?.props?.MonomerClass?.toLocaleLowerCase();
+        const monomerClass = monomer?.props?.MonomerClass?.toLowerCase();
         if (!monomerClass) continue;
         result[monomerClass] = {
           ...monomer,

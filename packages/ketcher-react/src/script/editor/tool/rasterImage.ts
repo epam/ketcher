@@ -74,12 +74,11 @@ export class RasterImageTool implements Tool {
 
   private getElement(): HTMLInputElement {
     const element = document.getElementById(RasterImageTool.INPUT_ID);
-    if (element) {
-      if (element instanceof HTMLInputElement) {
-        return element;
-      }
-      element.remove();
+
+    if (element instanceof HTMLInputElement) {
+      return element;
     }
+    element?.remove();
     return this.createElement();
   }
 }

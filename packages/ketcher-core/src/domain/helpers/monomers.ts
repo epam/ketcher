@@ -78,9 +78,8 @@ export function isMonomerBeginningOfChain(
     previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
 
   return (
-    ((monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
-      !monomer.hasAttachmentPoint(AttachmentPointName.R1)) &&
-      monomer.hasBonds) ||
+    monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+    !monomer.hasAttachmentPoint(AttachmentPointName.R1) ||
     previousConnectionNotR2 ||
     isPreviousMonomerPartOfChain
   );

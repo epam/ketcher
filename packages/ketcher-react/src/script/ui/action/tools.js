@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrowMode, SimpleObjectMode, findStereoAtoms } from 'ketcher-core';
+import {
+  RxnArrowMode,
+  SimpleObjectMode,
+  findStereoAtoms,
+  RASTER_IMAGE_KEY,
+} from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
 import isHidden from './isHidden';
@@ -314,6 +319,11 @@ const toolActions = {
   },
   bonds: {
     hidden: (options) => isHidden(options, 'bonds'),
+  },
+  [RASTER_IMAGE_KEY]: {
+    title: 'Add image',
+    action: { tool: RASTER_IMAGE_KEY },
+    hidden: (options) => isHidden(options, RASTER_IMAGE_KEY),
   },
 };
 

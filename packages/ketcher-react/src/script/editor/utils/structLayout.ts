@@ -7,7 +7,8 @@ export function getSelectionMap(structure: ReStruct) {
   }, {});
 }
 
-export function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {});
+export function getStructCenter(reStruct: ReStruct, selection?) {
+  const bb = reStruct.getVBoxObj(selection || {});
+  console.info(bb);
   return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }

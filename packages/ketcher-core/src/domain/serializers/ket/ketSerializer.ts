@@ -107,7 +107,7 @@ function parseNode(node: any, struct: any) {
       textToStruct(node, struct);
       break;
     }
-    case [RASTER_IMAGE_KEY]: {
+    case RASTER_IMAGE_KEY: {
       rasterImageToStruct(node, struct);
       break;
     }

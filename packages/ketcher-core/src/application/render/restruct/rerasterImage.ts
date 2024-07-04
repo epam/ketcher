@@ -1,9 +1,9 @@
 import { ReObject, ReStruct } from 'application/render/restruct';
-import { RasterImage } from 'domain/entities/rasterImage';
+import { RASTER_IMAGE_KEY, RasterImage } from 'domain/entities/rasterImage';
 import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
 import { RaphaelElement } from 'raphael';
-import { Vec2 } from 'domain/entities';
+import { Box2Abs, Vec2 } from 'domain/entities';
 
 export class ReRasterImage extends ReObject {
   private element?: RaphaelElement;
@@ -13,29 +13,54 @@ export class ReRasterImage extends ReObject {
   }
 
   constructor(private item: RasterImage) {
-    super('image');
+    super(RASTER_IMAGE_KEY);
   }
 
-  show(restruct: ReStruct, options: RenderOptions) {
+  private getScaledPointWithOffset(
+    originalPoint: Vec2,
+    renderOptions: RenderOptions,
+  ): Vec2 {
+    const scaledPoint: Vec2 = Scale.modelToCanvas(originalPoint, renderOptions);
+    return scaledPoint.add(renderOptions.offset);
+  }
+
+  private getDimensions(renderOptions: RenderOptions): Vec2 {
+    return Vec2.diff(
+      this.getScaledPointWithOffset(
+        this.item.getTopLeftPosition(),
+        renderOptions,
+      ),
+      this.getScaledPointWithOffset(
+        this.item.getBottomRightPosition(),
+        renderOptions,
+      ),
+    );
+  }
+
+  show(restruct: ReStruct, renderOptions: RenderOptions) {
     if (this.element) {
       this.remove();
     }
 
-    const render = restruct.render;
-    const [topLeft, bottomRight] = this.item.position;
-    const scaledTopLeft = Scale.modelToCanvas(topLeft, options);
-    const scaledBottomRight = Scale.modelToCanvas(bottomRight, options);
-    const topLeftWithOffset = scaledTopLeft.add(options.offset);
+    const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
+      this.item.getTopLeftPosition(),
+      renderOptions,
+    );
+    const dimensions = this.getDimensions(renderOptions);
 
-    const width = scaledBottomRight.x - scaledTopLeft.x;
-    const height = scaledBottomRight.y - scaledTopLeft.y;
-
-    this.element = render.paper.image(
+    this.element = restruct.render.paper.image(
       this.item.bitmap,
-      topLeftWithOffset.x,
-      topLeftWithOffset.y,
-      width,
-      height,
+      scaledTopLeftWithOffset.x,
+      scaledTopLeftWithOffset.y,
+      dimensions.x,
+      dimensions.y,
+    );
+  }
+
+  getVBoxObj(): Box2Abs | null {
+    return new Box2Abs(
+      this.item.getTopLeftPosition(),
+      this.item.getBottomRightPosition(),
     );
   }
 

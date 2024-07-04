@@ -26,6 +26,14 @@ export class RasterImage extends BaseMicromoleculeEntity {
     super();
   }
 
+  getTopLeftPosition(): Vec2 {
+    return this.position[0];
+  }
+
+  getBottomRightPosition(): Vec2 {
+    return this.position[1];
+  }
+
   clone(): RasterImage {
     return new RasterImage(
       this.bitmap,
@@ -39,5 +47,9 @@ export class RasterImage extends BaseMicromoleculeEntity {
 
   rescalePosition(scale: number): void {
     this.position = this.position.map((item) => item.scaled(scale)) as Position;
+  }
+
+  center(): Vec2 {
+    return Vec2.centre(this.position[0], this.position[1]);
   }
 }

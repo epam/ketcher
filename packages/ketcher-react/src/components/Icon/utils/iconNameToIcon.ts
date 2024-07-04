@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import AboutIcon from '../../../assets/icons/files/about.svg';
+import AddImageIcon from '../../../assets/icons/files/add-image.svg';
 import AnalyseIcon from '../../../assets/icons/files/analyse.svg';
 import AromIcon from '../../../assets/icons/files/arom.svg';
 import ArrowUpwardIcon from '../../../assets/icons/files/arrow-upward.svg';
@@ -222,6 +223,7 @@ import ExplicitHydrogensIcon from '../../../assets/icons/files/explicit-hydrogen
 import FlexLayoutIcon from '../../../assets/icons/files/flex-layout-mode.svg';
 import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
+import { RASTER_IMAGE_KEY } from 'ketcher-core';
 
 export const iconNameToIcon = {
   α,
@@ -387,6 +389,7 @@ export const iconNameToIcon = {
   'template-lib': TemplateLibIcon,
   'snake-mode': SnakeModeIcon,
   text: TextIcon,
+  [RASTER_IMAGE_KEY]: AddImageIcon,
   'text-bold': TextBold,
   'text-italic': TextItalic,
   'text-subscript': TextSubscript,

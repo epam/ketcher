@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -134,7 +135,9 @@ type LeftToolbarItemVariant =
   | 'shape-rectangle'
   | 'shape-line'
   // text group
-  | 'text';
+  | 'text'
+  // image group
+  | typeof RASTER_IMAGE_KEY;
 
 type BottomToolbarItemVariant =
   | 'template-common'

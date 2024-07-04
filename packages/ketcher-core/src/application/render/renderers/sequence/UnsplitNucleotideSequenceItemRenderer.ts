@@ -1,8 +1,14 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { NO_NATURAL_ANALOGUE } from 'domain/constants/monomers';
 
 export class UnsplitNucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
-    return this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode || '@';
+    const naturalAnalogue =
+      this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+
+    return naturalAnalogue && naturalAnalogue !== NO_NATURAL_ANALOGUE
+      ? naturalAnalogue
+      : '@';
   }
 
   protected drawModification(): void {

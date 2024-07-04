@@ -274,6 +274,7 @@ export const preset = {
 
 const phosphate = {
   props: {
+    MonomerClass: 'Phosphate',
     MonomerName: 'P',
     Name: 'Phosphate',
     MonomerNaturalAnalogCode: 'P',
@@ -287,6 +288,7 @@ const phosphate = {
 };
 const ribose = {
   props: {
+    MonomerClass: 'Sugar',
     MonomerName: 'R',
     Name: 'Ribose',
     MonomerNaturalAnalogCode: 'R',
@@ -300,6 +302,7 @@ const ribose = {
 };
 const thymine = {
   props: {
+    MonomerClass: 'Base',
     MonomerName: 'T',
     Name: 'Thymine',
     MonomerNaturalAnalogCode: 'T',
@@ -313,6 +316,7 @@ const thymine = {
 };
 const cytosine = {
   props: {
+    MonomerClass: 'Base',
     MonomerName: 'C',
     Name: 'Cytosine',
     MonomerNaturalAnalogCode: 'C',
@@ -326,6 +330,7 @@ const cytosine = {
 };
 const uracil = {
   props: {
+    MonomerClass: 'Base',
     MonomerName: 'U',
     Name: 'Uracil',
     MonomerNaturalAnalogCode: 'U',
@@ -339,6 +344,7 @@ const uracil = {
 };
 const adenine = {
   props: {
+    MonomerClass: 'Base',
     MonomerName: 'A',
     Name: 'Adenine',
     MonomerNaturalAnalogCode: 'A',
@@ -352,6 +358,7 @@ const adenine = {
 };
 const guanine = {
   props: {
+    MonomerClass: 'Base',
     MonomerName: 'G',
     Name: 'Guanine',
     MonomerNaturalAnalogCode: 'G',

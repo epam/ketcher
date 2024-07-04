@@ -53,13 +53,21 @@ export const getPresets = (
       ) as MonomerItemType;
 
       const result: IRnaPreset = {
-        base: { ...rnaBase, label: rnaBase.props.MonomerName },
         name: rnaPresetsTemplate.name,
-        phosphate: { ...phosphate, label: phosphate.props.MonomerName },
-        sugar: { ...ribose, label: ribose.props.MonomerName },
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };
+
+      const monomers = [ribose, rnaBase, phosphate];
+
+      for (const monomer of monomers) {
+        const monomerClass = monomer?.props?.MonomerClass?.toLocaleLowerCase();
+        if (!monomerClass) continue;
+        result[monomerClass] = {
+          ...monomer,
+          label: monomer.props.MonomerName,
+        };
+      }
 
       if (!rnaPresetsTemplate.idtAliases) {
         return result;

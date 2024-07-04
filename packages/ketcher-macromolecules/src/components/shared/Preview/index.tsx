@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+import MoleculeOrStructurePreview from 'components/shared/MoleculeOrStructurePreview';
 import MonomerPreview from 'components/shared/MonomerPreview';
 import MonomerWithIDTAliasesPreview from 'components/shared/MonomerWithIDTAliasesPreview';
 import PresetPreview from 'components/shared/PresetPreview';
@@ -38,6 +40,10 @@ export const Preview = () => {
   const monomerClass = preview?.monomer?.props.MonomerClass;
   if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {
     return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
+  }
+
+  if (preview?.monomer?.props.isMicromoleculeFragment) {
+    return <MoleculeOrStructurePreview className="polymer-library-preview" />;
   }
 
   return (

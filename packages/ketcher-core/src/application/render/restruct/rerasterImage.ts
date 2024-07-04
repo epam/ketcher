@@ -27,11 +27,11 @@ export class ReRasterImage extends ReObject {
   private getDimensions(renderOptions: RenderOptions): Vec2 {
     return Vec2.diff(
       this.getScaledPointWithOffset(
-        this.item.getTopLeftPosition(),
+        this.item.getBottomRightPosition(),
         renderOptions,
       ),
       this.getScaledPointWithOffset(
-        this.item.getBottomRightPosition(),
+        this.item.getTopLeftPosition(),
         renderOptions,
       ),
     );

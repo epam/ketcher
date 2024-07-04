@@ -2,7 +2,10 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 
 export class UnsplitNucleotideSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
-    return this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode || '@';
+    const naturalAnalogue =
+      this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+
+    return naturalAnalogue && naturalAnalogue !== 'X' ? naturalAnalogue : '@';
   }
 
   protected drawModification(): void {

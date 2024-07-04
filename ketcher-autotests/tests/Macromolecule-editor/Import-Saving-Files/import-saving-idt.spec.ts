@@ -21,6 +21,8 @@ import {
   selectMacromoleculesPanelButton,
   MacromoleculesTopPanelButton,
   selectSingleBondTool,
+  waitForRender,
+  takePolymerEditorScreenshot,
 } from '@utils';
 import {
   enterSequence,
@@ -125,6 +127,30 @@ test.describe('Import-Saving .idt Files', () => {
     await openFile('IDT/idt-empty.idt', page);
     await page.getByText('Add to Canvas').isDisabled();
   });
+
+  const rnaMonomers = [
+    'MOE(G)P_G_MOE_P',
+    'MOE(A)P_A_MOE_P',
+    'MOE(5meC)P_5meC_MOE_P',
+    'MOE(T)P_T_MOE_P',
+    'dR(U)P_U_dR_P',
+  ];
+
+  for (const monomer of rnaMonomers) {
+    test(`Check IDT aliases, where defined in the preview window for RNA monomer ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Import/Saving files/#4380
+      Description: IDT aliases, where defined in the preview window for RNA monomers in library.
+      */
+      await page.getByTestId('RNA-TAB').click();
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).hover();
+      });
+      await takePolymerEditorScreenshot(page);
+    });
+  }
 
   // Fail while performance issue on Indigo side
   // test('Check that system does not let uploading corrupted .idt file', async ({
@@ -499,6 +525,37 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verifiy it is not possible to load IDT data that have ' * ' if it is not between nucleotides or nucleosides and error should occure`, async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/https://github.com/epam/Indigo/issues/1978
+    Description: Error appears
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErG/*/i2MOErG/*/3Phos/`,
+      false,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify it is possible to load IDT data from clipboard having trailing spaces at the end of the IDT string', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/https://github.com/epam/Indigo/issues/1979
+    Description: Sequences are opened.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*G*+A*mT*A*T*rA*G*/i2MOErG/*/32MOErT/ `,
+    );
     await takeEditorScreenshot(page);
   });
 });

@@ -36,13 +36,23 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
 
   protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const fontSize = 6;
+    const Y_OFFSET_FROM_MIDDLE = -2;
+
     rootElement
       .append('foreignObject')
       .attr('width', this.width)
-      .attr('height', this.height)
+      .attr('height', this.height - this.height / 3)
       .html(
         `
-        <div style="padding: 0 4px; text-align: center; color: ${this.textColor}">
+        <div style="
+            padding: 0 4px;
+            text-align: center;
+            color: ${this.textColor};
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+        ">
           ${this.monomer.label}
         </div>
       `,
@@ -54,7 +64,7 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .style('user-select', 'none')
       .attr('pointer-events', 'none')
       .attr('x', '4px')
-      .attr('y', this.height / 2);
+      .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
   }
 
   protected get enumerationElementPosition() {

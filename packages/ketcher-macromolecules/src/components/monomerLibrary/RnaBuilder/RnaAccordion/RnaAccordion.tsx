@@ -52,6 +52,9 @@ import {
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -61,6 +64,7 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
+import { getValidations } from 'helpers/rnaValidations';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -91,11 +95,21 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [newPreset, setNewPreset] = useState(activePreset);
 
+  const dispatch = useDispatch();
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
-    } else setExpandedAccordion(rnaBuilderItem);
+    } else {
+      setExpandedAccordion(rnaBuilderItem);
+      const { sugarValidations, phosphateValidations, baseValidations } =
+        getValidations(newPreset);
+
+      dispatch(setSugarValidations(sugarValidations));
+      dispatch(setPhosphateValidations(phosphateValidations));
+      dispatch(setBaseValidations(baseValidations));
+    }
   };
 
   const groupsData: IGroupsDataItem[] = [
@@ -138,14 +152,18 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     },
   ];
 
-  const dispatch = useDispatch();
-
   const selectItem = (monomer, groupName) => {
     if (!isSequenceEditInRNABuilderMode) {
       editor.events.selectMonomer.dispatch(monomer);
     }
     if (!isEditMode) return;
 
+    const monomerClass = monomer.props.MonomerClass.toLowerCase();
+    const currentPreset = {
+      ...newPreset,
+      [monomerClass]: monomer,
+    };
+    setNewPreset(currentPreset);
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
     dispatch(setActiveRnaBuilderItem(groupName));
   };

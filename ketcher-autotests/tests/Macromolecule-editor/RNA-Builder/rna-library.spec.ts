@@ -519,11 +519,11 @@ test.describe('RNA Library', () => {
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await pressAddToPresetsButton(page);
-    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('deletepreset').click();
@@ -1030,15 +1030,13 @@ test.describe('RNA Library', () => {
      *    Check that can delete preset from Presets section
      */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await pressAddToPresetsButton(page);
     await expandCollapseRnaBuilder(page);
 
-    const customPreset = page.getByTestId(
-      '12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph',
-    );
+    const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await customPreset.hover();
     await customPreset.click({ button: 'right' });
     await page.getByText('Delete Preset').click();

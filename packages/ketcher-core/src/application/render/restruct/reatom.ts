@@ -398,7 +398,9 @@ class ReAtom extends ReObject {
           );
         }
       }
-
+      if (this.a.charge === 0) {
+        this.a.charge = null;
+      }
       if (this.a.charge && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;

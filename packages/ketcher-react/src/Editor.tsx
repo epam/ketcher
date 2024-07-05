@@ -32,7 +32,7 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -43,38 +43,43 @@ interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 
+// This is the biggest crutch in the wild west
 function Editor(props: EditorProps) {
+  const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
+  const appRootRef = useRef<Root | null>(null);
+
   const rootElRef = useRef<HTMLDivElement>(null);
-  const { onInit } = props;
+
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef,
   });
 
-  useEffect(() => {
-    const appRoot = createRoot(rootElRef.current as HTMLDivElement);
-    init({
+  const initKetcher = () => {
+    appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
+
+    initPromiseRef.current = init({
       ...props,
       element: rootElRef.current,
-      appRoot,
-    }).then(
-      ({
-        ketcher,
-        ketcherId,
-      }: {
-        ketcher: Ketcher | undefined;
-        ketcherId: string;
-      }) => {
-        if (typeof onInit === 'function' && ketcher) {
-          onInit(ketcher);
-          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
-          window.dispatchEvent(ketcherInitEvent);
-        }
-      },
-    );
+      appRoot: appRootRef.current,
+    });
+    initPromiseRef.current?.then(({ ketcher, ketcherId }) => {
+      if (typeof props.onInit === 'function' && ketcher) {
+        props.onInit(ketcher);
+        const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
+        window.dispatchEvent(ketcherInitEvent);
+      }
+    });
+  };
+  useEffect(() => {
+    if (initPromiseRef.current === null) {
+      initKetcher();
+    } else {
+      initPromiseRef.current?.finally(() => initKetcher());
+    }
+
     return () => {
-      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
-      setTimeout(() => {
-        appRoot.unmount();
+      initPromiseRef.current?.then(() => {
+        appRootRef.current?.unmount();
       });
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function

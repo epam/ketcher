@@ -8,7 +8,6 @@ import {
   StructServiceProvider,
 } from 'ketcher-core';
 import { ModeControl } from './ModeControl';
-import { StandaloneStructServiceProvider } from 'ketcher-standalone/dist/binaryWasm';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

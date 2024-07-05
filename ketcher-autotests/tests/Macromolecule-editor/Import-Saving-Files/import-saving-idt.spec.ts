@@ -23,11 +23,17 @@ import {
   selectSingleBondTool,
   waitForRender,
   takePolymerEditorScreenshot,
+  openStructurePasteFromClipboard,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import {
+  toggleNucleotidesAccordion,
+  togglePhosphatesAccordion,
+} from '@utils/macromolecules/rnaBuilder';
 
 async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
@@ -67,6 +73,76 @@ test.describe('Import-Saving .idt Files', () => {
   test(`Import .idt file`, async ({ page }) => {
     await openFileAndAddToCanvasMacro('IDT/idt-a.idt', page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/#4495
+    Description: Option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist.
+    */
+    await openStructurePasteFromClipboard(page);
+
+    const fileFormatComboBox = page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox');
+
+    await fileFormatComboBox.click();
+
+    const options = page.getByRole('option');
+    const values = await options.allTextContents();
+
+    const expectedValues = ['IDT'];
+    for (const value of expectedValues) {
+      expect(values).toContain(value);
+    }
+  });
+
+  test('Check option "IDT" to dropdown File format of modal window Save Structure is exist', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/#4495
+    Description: Option "IDT" to dropdown File format of modal window Save Structure is exist.
+    */
+    await selectTopPanelButton(TopPanelButton.Save, page);
+
+    const fileFormatComboBox = page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox');
+
+    await fileFormatComboBox.click();
+
+    const options = page.getByRole('option');
+    const values = await options.allTextContents();
+
+    const expectedValues = [
+      'Ket',
+      'MDL Molfile V3000',
+      'Sequence',
+      'FASTA',
+      'IDT',
+      'SVG Document',
+      'HELM',
+    ];
+    for (const value of expectedValues) {
+      expect(values).toContain(value);
+    }
+  });
+
+  test('Check that in case of peptide monomers are on canvas, error "Peptide monomers are not supported in IDT" appear', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/#4495
+    Description: In case of peptide monomers are on canvas, error "Peptide monomers are not supported in IDT" appear.
+    */
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
   });
 
@@ -127,6 +203,48 @@ test.describe('Import-Saving .idt Files', () => {
     await openFile('IDT/idt-empty.idt', page);
     await page.getByText('Add to Canvas').isDisabled();
   });
+
+  test('Check IDT aliases, where defined in the preview window for Phosphates section', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/#4380
+    Description: IDT aliases, where defined in the preview window for Phosphates.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await togglePhosphatesAccordion(page);
+    await waitForRender(page, async () => {
+      await page.getByTestId('P___Phosphate').hover();
+    });
+    await takePolymerEditorScreenshot(page);
+  });
+
+  const rnaNucleotides = [
+    `5AmdA___5' 2, 6-Diaminopurine`,
+    `55HydMe-dC___5' 5-Hydroxymethyl dC`,
+    `5Super-dG___5' Super G`,
+    `5Super-dT___5' Super T`,
+    `iAmMC6T___Int Amino Modifier C6 dT`,
+    `55Br-dU___5' 5-Bromo dU`,
+    `55NitInd___5' 5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides) {
+    test(`Check IDT aliases, where defined in the preview window for RNA Nucleotides monomer ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Import/Saving files/#4380
+      Description: IDT aliases, where defined in the preview window for RNA monomers in library.
+      */
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).hover();
+      });
+      await takePolymerEditorScreenshot(page);
+    });
+  }
 
   const rnaMonomers = [
     'MOE(G)P_G_MOE_P',

@@ -8,6 +8,9 @@ import {
   StructServiceProvider,
 } from 'ketcher-core';
 import { ModeControl } from './ModeControl';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone/dist/binaryWasm';
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -27,17 +30,26 @@ let structServiceProvider: StructServiceProvider =
     process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
 if (process.env.MODE === 'standalone') {
-  // It is possible to use just 'ketcher-standalone' instead of ketcher-standalone/dist/binaryWasm
-  // however, it will increase the size of the bundle more than two times because wasm will be
-  // included in ketcher bundle as base64 string.
-  // In case of usage ketcher-standalone/dist/binaryWasm additional build configuration required
-  // to copy .wasm files in build folder. Please check /example/config/webpack.config.js.
-  const {
-    StandaloneStructServiceProvider,
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-  } = require('ketcher-standalone/dist/binaryWasm');
-  structServiceProvider =
-    new StandaloneStructServiceProvider() as StructServiceProvider;
+  if (isProduction) {
+    // It is possible to use just 'ketcher-standalone' instead of ketcher-standalone/dist/binaryWasm
+    // however, it will increase the size of the bundle more than two times because wasm will be
+    // included in ketcher bundle as base64 string.
+    // In case of usage ketcher-standalone/dist/binaryWasm additional build configuration required
+    // to copy .wasm files in build folder. Please check /example/config/webpack.config.js.
+    const {
+      StandaloneStructServiceProvider,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+    } = require('ketcher-standalone/dist/binaryWasm');
+    structServiceProvider =
+      new StandaloneStructServiceProvider() as StructServiceProvider;
+  } else {
+    const {
+      StandaloneStructServiceProvider,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+    } = require('ketcher-standalone');
+    structServiceProvider =
+      new StandaloneStructServiceProvider() as StructServiceProvider;
+  }
 }
 
 const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';

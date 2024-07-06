@@ -1,5 +1,11 @@
 import assert from 'assert';
-import { Bond, MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
+import {
+  Bond,
+  MonomerMicromolecule,
+  SGroup,
+  Struct,
+  UnresolvedMonomer,
+} from 'ketcher-core';
 import Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -112,6 +118,13 @@ function hideTooltip(editor: Editor) {
 
 function showTooltip(editor: Editor, infoPanelData: InfoPanelData | null) {
   hideTooltip(editor);
+
+  if (
+    infoPanelData?.sGroup instanceof MonomerMicromolecule &&
+    infoPanelData.sGroup.monomer instanceof UnresolvedMonomer
+  ) {
+    return;
+  }
 
   showTooltipTimer = setTimeout(() => {
     editor.event.showInfo.dispatch(infoPanelData);

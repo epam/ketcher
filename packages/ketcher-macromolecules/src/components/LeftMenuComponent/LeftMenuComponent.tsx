@@ -17,7 +17,11 @@
 import { Menu } from 'components/menu';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import { selectEditor, selectEditorActiveTool } from 'state/common';
-import { generateMenuShortcuts, hotkeysConfiguration } from 'ketcher-core';
+import {
+  ModeTypes,
+  generateMenuShortcuts,
+  hotkeysConfiguration,
+} from 'ketcher-core';
 
 const shortcuts =
   generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
@@ -25,7 +29,7 @@ const shortcuts =
 export function LeftMenuComponent() {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const editor = useAppSelector(selectEditor);
-  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
+  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {

@@ -187,7 +187,8 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: After zoom in on created long snake chain of peptides you can use scroll with Shift
     */
-    const wheelDelta = 200;
+    const wheelYDelta = -400;
+    const wheelXDelta = -400;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
@@ -199,8 +200,9 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.keyboard.down('Shift');
-    await page.mouse.wheel(0, wheelDelta);
+    await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
+    await page.mouse.wheel(0, wheelYDelta);
     await takeEditorScreenshot(page);
   });
 

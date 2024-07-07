@@ -715,7 +715,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = await page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);
@@ -765,7 +765,7 @@ test.describe('RNA Library', () => {
     Test case: Bond tool
     Description: Bond deleted.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = await page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await selectEraseTool(page);
     await bondLine.click();

@@ -275,8 +275,8 @@ test.describe('Connection rules for peptides: ', () => {
     },
   };
 
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
+  async function hoverOverConnectionLine(page: Page, bondNumber = 0) {
+    const bondLine = page.locator('g[pointer-events="stroke"]').nth(bondNumber);
     await bondLine.hover();
   }
 
@@ -654,7 +654,7 @@ test.describe('Connection rules for peptides: ', () => {
               );
               await zoomWithMouseWheel(page, -600);
 
-              await hoverOverConnectionLine(page);
+              await hoverOverConnectionLine(page, 1);
 
               await takeEditorScreenshot(page);
             });

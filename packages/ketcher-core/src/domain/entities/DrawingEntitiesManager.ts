@@ -1168,8 +1168,16 @@ export class DrawingEntitiesManager {
     const zoomedMatrixCellSize = Zoom.instance.zoomValue(
       SNAKE_LAYOUT_CELL_WIDTH,
     );
+    // TODO calculate cells here and during snake layout in same way
+    const AVERAGE_MONOMERS_WIDTH_DIFFERENCE = 10;
+
     this.canvasMatrix = new CanvasMatrix(chainsCollection, {
-      cellsInRow: Math.floor(drawnElementsSize.width / zoomedMatrixCellSize),
+      cellsInRow: Math.floor(
+        (drawnElementsSize.width +
+          AVERAGE_MONOMERS_WIDTH_DIFFERENCE +
+          SNAKE_LAYOUT_CELL_WIDTH / 2) /
+          zoomedMatrixCellSize,
+      ),
     });
 
     return this.redrawBonds();

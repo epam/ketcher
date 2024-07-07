@@ -13,7 +13,6 @@ import {
   clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
-  selectSingleBondTool,
   waitForRender,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
@@ -204,7 +203,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select a nucleotide or a group of nucleotides, then switch to another tool (excluding Erase). Confirm that selection is cleared.', async ({
+  test('Select a nucleotide or a group of nucleotides, then click in the middle of the screen. Confirm that selection is cleared.', async ({
     page,
   }) => {
     /*
@@ -215,7 +214,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await selectSingleBondTool(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

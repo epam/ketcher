@@ -27,7 +27,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
 
     await bondTwoMonomers(page, firstRsp, sugar);
 
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
 
     bondLine.hover();
 

@@ -54,6 +54,7 @@ import { Nucleotide } from './Nucleotide';
 import { SequenceMode } from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
+import Zoom from 'application/editor/tools/Zoom';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1162,14 +1163,13 @@ export class DrawingEntitiesManager {
     if (!_chainsCollection) {
       chainsCollection.rearrange();
     }
-
+    const drawnElementsSize =
+      editor.drawnStructuresWrapperElement.getBoundingClientRect();
+    const zoomedMatrixCellSize = Zoom.instance.zoomValue(
+      SNAKE_LAYOUT_CELL_WIDTH,
+    );
     this.canvasMatrix = new CanvasMatrix(chainsCollection, {
-      cellsInRow: Math.ceil(
-        (editor.canvas.width.baseVal.value -
-          MONOMER_START_X_POSITION -
-          DISTANCE_FROM_RIGHT) /
-          SNAKE_LAYOUT_CELL_WIDTH,
-      ),
+      cellsInRow: Math.floor(drawnElementsSize.width / zoomedMatrixCellSize),
     });
 
     return this.redrawBonds();
@@ -1251,11 +1251,11 @@ export class DrawingEntitiesManager {
       });
     }
 
-    command.merge(this.recalculateCanvasMatrix(chainsCollection));
-
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());
     }
+
+    command.merge(this.recalculateCanvasMatrix(chainsCollection));
 
     return command;
   }

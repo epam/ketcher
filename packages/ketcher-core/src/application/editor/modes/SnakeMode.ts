@@ -16,6 +16,9 @@ export class SnakeMode extends BaseMode {
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
     const command = super.initialize();
     const editor = CoreEditor.provideEditorInstance();
+
+    editor.drawingEntitiesManager.applyFlexLayoutMode();
+
     // Prevent layout to be called if turn on snake mode by undo operation
     // because during undo to flex mode if monomers were not moved
     // we need just redraw canvas to apply new bond view style (straight instead of curved)
@@ -25,7 +28,6 @@ export class SnakeMode extends BaseMode {
           editor.canvas.width.baseVal.value,
           true,
         );
-    editor.drawingEntitiesManager.applyFlexLayoutMode();
 
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);

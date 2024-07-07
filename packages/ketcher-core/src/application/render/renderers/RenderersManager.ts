@@ -424,7 +424,7 @@ export class RenderersManager {
       }
 
       polymerBondRenderer.remove();
-      polymerBondRenderer.show();
+      polymerBondRenderer.show(undefined, true);
     });
   }
 }

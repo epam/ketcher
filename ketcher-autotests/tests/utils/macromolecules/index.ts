@@ -46,6 +46,11 @@ export async function scrollDown(page: Page, scrollDelta: number) {
   await page.mouse.wheel(0, scrollDelta);
 }
 
+export async function scrollUp(page: Page, scrollDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.wheel(0, -scrollDelta);
+}
+
 export async function chooseFileFormat(
   page: Page,
   fileFomat:

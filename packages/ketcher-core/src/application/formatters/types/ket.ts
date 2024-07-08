@@ -125,6 +125,8 @@ export interface IKetMonomerTemplate {
   name?: string;
   idtAliases?: IKetIdtAliases;
   unresolved?: boolean;
+  atoms: [];
+  bonds: [];
 }
 
 export interface IKetMonomerTemplateRef {

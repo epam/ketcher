@@ -18,6 +18,7 @@ import {
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   scrollDown,
+  scrollUp,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -601,14 +602,15 @@ test.describe('Snake Bond Tool', () => {
     */
     const x = 500;
     const y = 300;
-    const x1 = 100;
-    const y1 = 100;
+    const x1 = 300;
+    const y1 = 300;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
     await takeEditorScreenshot(page);
     await page.getByText('meE').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.mouse.click(x1, y1);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -680,8 +682,9 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
       page,
     );
+    scrollUp(page, 200);
     await takeEditorScreenshot(page);
-    await page.getByText('DHis1B').locator('..').first().hover();
+    await page.getByText('meS').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.mouse.click(x2, y2);
     await takeEditorScreenshot(page);

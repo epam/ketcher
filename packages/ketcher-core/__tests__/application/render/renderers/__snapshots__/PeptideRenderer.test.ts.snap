@@ -19,6 +19,7 @@ exports[`PeptideRenderer should render peptide 1`] = `
     class="drawn-structures"
   >
     <g
+      class="monomer"
       transform="translate(0, 0) scale(1)"
       transition="transform 0.2s"
     >

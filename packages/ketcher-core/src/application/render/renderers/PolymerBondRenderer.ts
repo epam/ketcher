@@ -140,7 +140,12 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  private drawPartOfSideConnection(isHorizontal, connection, cell, direction) {
+  private drawPartOfSideConnection(
+    isHorizontal: boolean,
+    connection,
+    cell,
+    direction,
+  ): string {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;
@@ -512,7 +517,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         ),
       );
 
-      this.addLineFromRightToUp();
+      this.addLineFromRightToTop();
       this.addLine(
         LINE_DIRECTION.Vertical,
         endPosition.y - startPosition.y - this.getMonomerHeight(),
@@ -551,7 +556,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         ),
       );
 
-      this.addLineFromRightToUp();
+      this.addLineFromRightToTop();
       this.addLine(LINE_DIRECTION.Vertical, -this.getMonomerHeight());
       this.addLineFromBottomToRight();
       this.addLine(
@@ -563,7 +568,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     }
   }
 
-  private isSecondMonomerTopRight(startPosition, endPosition): boolean {
+  private isSecondMonomerTopRight(
+    startPosition: Vec2,
+    endPosition: Vec2,
+  ): boolean {
     return (
       startPosition.y - endPosition.y > DOUBLE_CORNER_LENGTH &&
       endPosition.x - startPosition.x >
@@ -571,7 +579,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private isSecondMonomerBottomRight(startPosition, endPosition): boolean {
+  private isSecondMonomerBottomRight(
+    startPosition: Vec2,
+    endPosition: Vec2,
+  ): boolean {
     return (
       endPosition.y - startPosition.y > DOUBLE_CORNER_LENGTH &&
       endPosition.x - startPosition.x >
@@ -591,7 +602,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private isSecondMonomerTopLeft(startPosition, endPosition): boolean {
+  private isSecondMonomerTopLeft(
+    startPosition: Vec2,
+    endPosition: Vec2,
+  ): boolean {
     return (
       startPosition.y - endPosition.y > 0 &&
       endPosition.x - startPosition.x <=
@@ -609,31 +623,31 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private addLineFromTopToRight() {
+  private addLineFromTopToRight(): void {
     this.path = `${this.path} c 0,4.418 3.582,${CORNER_LENGTH} ${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
-  private addLineFromLeftToTop() {
+  private addLineFromLeftToTop(): void {
     this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},-3.582 ${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
-  private addLineFromBottomToRight() {
+  private addLineFromBottomToRight(): void {
     this.path = `${this.path} c 0,-4.418 3.582,-${CORNER_LENGTH} ${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
-  private addLineFromLeftToBottom() {
+  private addLineFromLeftToBottom(): void {
     this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},3.582 ${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
-  private addLineFromTopToLeft() {
+  private addLineFromTopToLeft(): void {
     this.path = `${this.path} c 0,4.418 -3.582,${CORNER_LENGTH} -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
-  private addLineFromRightToUp() {
+  private addLineFromRightToTop(): void {
     this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},-3.582 -${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
-  private addLineFromRightToBottom() {
+  private addLineFromRightToBottom(): void {
     this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},3.582 -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 

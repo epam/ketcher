@@ -490,8 +490,6 @@ test.describe('Import-Saving .idt Files', () => {
     /*
     Test case: Import/Saving files/4310
     Description: Sequences are appears at save preview window.
-    We have bug https://github.com/epam/Indigo/issues/2043 
-    When it fixed we should update snapshot.
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -554,8 +552,6 @@ test.describe('Import-Saving .idt Files', () => {
     /*
     Test case: Import/Saving files/1900
     Description: Sequences are appears at save preview window.
-    We have bug https://github.com/epam/Indigo/issues/2043 
-    When it fixed we should update snapshot.
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

@@ -19,6 +19,7 @@ import {
   Bond,
   SGroupAttachmentPoint,
   Struct,
+  UnresolvedMonomer,
   Vec2,
 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
@@ -298,7 +299,22 @@ export class KetSerializer implements Serializer<Struct> {
     return fileContentForMicromolecules;
   }
 
+  public static getTemplateAttachmentPoints(template: IKetMonomerTemplate) {
+    return template.unresolved
+      ? template.attachmentPoints?.map((_, index) => {
+          return {
+            attachmentAtom: index,
+            leavingGroup: {
+              atoms: [],
+            },
+          };
+        })
+      : template.attachmentPoints;
+  }
+
   public convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
+    const attachmentPoints = template.attachmentPoints || [];
+
     return this.fillStruct({
       root: {
         nodes: [{ $ref: 'mol0' }],
@@ -306,6 +322,30 @@ export class KetSerializer implements Serializer<Struct> {
       mol0: {
         ...template,
         type: 'molecule',
+        atoms: template.unresolved
+          ? attachmentPoints?.map((_, index) => {
+              return {
+                label: 'C',
+                location: [index, index, index],
+              };
+            })
+          : template.atoms,
+        bonds: template.unresolved
+          ? attachmentPoints?.map((_, index) => {
+              if (index === attachmentPoints.length - 1) {
+                return {
+                  type: 1,
+                  atoms: [0, attachmentPoints.length - 1],
+                };
+              }
+
+              return {
+                type: 1,
+                atoms: [index, index + 1],
+              };
+            })
+          : template.bonds,
+        attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       },
       header: {
         moleculeName: template.fullName,
@@ -320,7 +360,7 @@ export class KetSerializer implements Serializer<Struct> {
       label: template.alias || template.id,
       struct: this.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
-      attachmentPoints: template.attachmentPoints,
+      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
     };
     this.fillStructRgLabelsByMonomerTemplate(template, monomerLibraryItem);
 
@@ -582,6 +622,7 @@ export class KetSerializer implements Serializer<Struct> {
             alias: monomer.monomerItem.label,
             attachmentPoints: monomer.monomerItem.attachmentPoints,
             idtAliases: monomer.monomerItem.props.idtAliases,
+            unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
           };
           // CHEMs do not have natural analog
           if (monomer.monomerItem.props.MonomerType !== 'CHEM') {

@@ -58,7 +58,7 @@ import {
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
-import { MonomerItemType } from 'ketcher-core';
+import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
@@ -130,11 +130,20 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     {
       groupName: MonomerGroups.BASES,
       iconName: 'base',
-      groups: groups.filter(
-        (group) =>
-          MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
-          MonomerGroups.BASES,
-      ),
+      groups: groups
+        .filter(
+          (group) =>
+            MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
+            MonomerGroups.BASES,
+        )
+        .map((group) => {
+          return {
+            ...group,
+            groupItems: group.groupItems.filter(
+              (item) => item.props?.MonomerClass !== KetMonomerClass.RNA,
+            ),
+          };
+        }),
     },
     {
       groupName: MonomerGroups.PHOSPHATES,

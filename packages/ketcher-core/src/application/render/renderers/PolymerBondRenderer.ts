@@ -173,9 +173,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     }
     let pathPart = isHorizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
-    pathPart += `q ${SMOOTH_CORNER_SIZE * cos},${SMOOTH_CORNER_SIZE * sin} ${
-      SMOOTH_CORNER_SIZE * cos
-    },${SMOOTH_CORNER_SIZE} `;
+    pathPart += generateBend(cos, sin, cos, 1);
 
     return pathPart;
   }
@@ -232,9 +230,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         BOND_END_LENGTH -
         horizontalPartIntersectionsOffset * 3
       } `;
-      dAttributeForPath += `q 0,-${SMOOTH_CORNER_SIZE}, ${
-        SMOOTH_CORNER_SIZE * cos
-      },-${SMOOTH_CORNER_SIZE} `;
+      dAttributeForPath += generateBend(0, -1, cos, -1);
     } else {
       dAttributeForPath += `L ${startPosition.x},${
         startPosition.y +
@@ -246,9 +242,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE} ${
-          SMOOTH_CORNER_SIZE * cos
-        },${SMOOTH_CORNER_SIZE} `;
+        dAttributeForPath += generateBend(0, 1, cos, 1);
       }
     }
 
@@ -309,14 +303,10 @@ export class PolymerBondRenderer extends BaseRenderer {
               : cellConnection.offset) *
               3
           } `;
-          dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE * sin} ${
-            SMOOTH_CORNER_SIZE * cos
-          },${SMOOTH_CORNER_SIZE} `;
+          dAttributeForPath += generateBend(0, sin, cos, 1);
         }
         dAttributeForPath += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
-        dAttributeForPath += `q ${SMOOTH_CORNER_SIZE * cos},0 ${
-          SMOOTH_CORNER_SIZE * cos
-        },${SMOOTH_CORNER_SIZE} `;
+        dAttributeForPath += generateBend(cos, 0, cos, 1);
         return;
       }
       // empty cells
@@ -940,4 +930,15 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
   }
+}
+
+function generateBend(
+  dx1: number,
+  dy1: number,
+  dx: number,
+  dy: number,
+): string {
+  return `q ${SMOOTH_CORNER_SIZE * dx1},${SMOOTH_CORNER_SIZE * dy1} ${
+    SMOOTH_CORNER_SIZE * dx
+  },${SMOOTH_CORNER_SIZE * dy} `;
 }

@@ -30,7 +30,7 @@ import {
   TextMove,
   RasterImageMove,
 } from '../operations';
-import { Pile, RGroup, Vec2 } from 'domain/entities';
+import { Pile, RASTER_IMAGE_KEY, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
@@ -128,8 +128,8 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
-  if (lists.rasterImages) {
-    lists.rasterImages.forEach((rasterImage) => {
+  if (lists[RASTER_IMAGE_KEY]) {
+    lists[RASTER_IMAGE_KEY].forEach((rasterImage) => {
       action.addOp(new RasterImageMove(rasterImage, d));
     });
   }

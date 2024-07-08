@@ -75,7 +75,7 @@ class ReStruct {
   public sgroups: Map<number, ReSGroup> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
-  private simpleObjects: Map<number, ReSimpleObject> = new Map();
+  public simpleObjects: Map<number, ReSimpleObject> = new Map();
   public rasterImages: Map<number, ReRasterImage> = new Map();
   public texts: Map<number, ReText> = new Map();
   private initialized = false;

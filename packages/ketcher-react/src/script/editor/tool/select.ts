@@ -33,6 +33,7 @@ import {
   vectorUtils,
   KetcherLogger,
   CoordinateTransformation,
+  RASTER_IMAGE_KEY,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -688,6 +689,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'enhancedFlags',
     'simpleObjects',
     'texts',
+    RASTER_IMAGE_KEY,
     ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }

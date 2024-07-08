@@ -6,10 +6,11 @@ import { RasterImage } from 'domain/entities/rasterImage';
 export function fromRasterImageCreation(
   reStruct: ReStruct,
   bitmap: string,
-  position: [Vec2, Vec2],
+  center: Vec2,
+  halfSize: Vec2,
 ) {
   const action = new Action();
-  const rasterImage = new RasterImage(bitmap, position);
+  const rasterImage = new RasterImage(bitmap, center, halfSize);
   action.addOp(new RasterImageUpsert(rasterImage));
   return action.perform(reStruct);
 }

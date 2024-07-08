@@ -17,11 +17,14 @@
 import {
   FunctionalGroup,
   MonomerMicromolecule,
+  RASTER_IMAGE_KEY,
   Struct,
   Vec2,
 } from 'ketcher-core';
+import { ReRasterImage } from 'application/render/restruct/rerasterImage';
+import { ReStruct } from 'application/render';
 
-function getElementsInRectangle(restruct, p0, p1) {
+function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
   const sGroups = restruct.sgroups;
@@ -33,15 +36,22 @@ function getElementsInRectangle(restruct, p0, p1) {
   const y0 = Math.min(p0.y, p1.y);
   const y1 = Math.max(p0.y, p1.y);
 
+  const topLeftPosition = new Vec2(x0, y0);
+  const topRightPosition = new Vec2(x1, y0);
+  const bottomRightPosition = new Vec2(x1, y1);
+  const bottomLeftPosition = new Vec2(x0, y1);
+
   restruct.bonds.forEach((bond, bid) => {
     if (struct.isBondFromMacromolecule(bid)) {
       return;
     }
 
     const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      restruct.atoms.get(bond.b.begin)!.a.pp,
       0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      restruct.atoms.get(bond.b.end)!.a.pp,
       0.5,
     );
     if (
@@ -64,7 +74,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       functionalGroups,
       aid,
     );
-    const reSGroup = restruct.sgroups.get(relatedFGId);
+    const reSGroup = restruct.sgroups.get(relatedFGId as number);
     if (
       !(reSGroup?.item instanceof MonomerMicromolecule) &&
       atom.a.pp.x > x0 &&
@@ -77,7 +87,8 @@ function getElementsInRectangle(restruct, p0, p1) {
         functionalGroups,
         true,
       ) ||
-        aid === reSGroup.item.atoms[0])
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        aid === reSGroup!.item!.atoms[0])
     ) {
       atomList.push(aid);
     }
@@ -87,7 +98,8 @@ function getElementsInRectangle(restruct, p0, p1) {
   const rxnPlusesList: Array<number> = [];
   const simpleObjectsList: Array<number> = [];
 
-  restruct.rxnArrows.forEach((item, id) => {
+  // ReRxnArrow item doesn't have center method according to types but somehow it works
+  restruct.rxnArrows.forEach((item: any, id) => {
     if (
       item.item.center().x > x0 &&
       item.item.center().x < x1 &&
@@ -120,7 +132,8 @@ function getElementsInRectangle(restruct, p0, p1) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item, id) => {
+  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
+  restruct.enhancedFlags.forEach((item: any, id) => {
     if (!item.pp) return;
     if (item.pp.x > x0 && item.pp.x < x1 && item.pp.y > y0 && item.pp.y < y1) {
       enhancedFlagList.push(id);
@@ -163,6 +176,27 @@ function getElementsInRectangle(restruct, p0, p1) {
     }
   });
 
+  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
+    (acc: Array<number>, item: ReRasterImage, id): Array<number> => {
+      if (
+        item.rasterImage
+          .getCornerPositions()
+          .some((point) =>
+            point.isInsidePolygon([
+              topLeftPosition,
+              topRightPosition,
+              bottomRightPosition,
+              bottomLeftPosition,
+            ]),
+          )
+      ) {
+        return acc.concat(id);
+      }
+      return acc;
+    },
+    [],
+  );
+
   return {
     atoms: atomList,
     bonds: bondList,
@@ -173,10 +207,11 @@ function getElementsInRectangle(restruct, p0, p1) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
+    [RASTER_IMAGE_KEY]: rerasterImages,
   };
 }
 
-function getElementsInPolygon(restruct, rr) {
+function getElementsInPolygon(restruct: ReStruct, rr) {
   // eslint-disable-line max-statements
   const bondList: Array<number> = [];
   const atomList: Array<number> = [];
@@ -198,9 +233,11 @@ function getElementsInPolygon(restruct, rr) {
     }
 
     const centre = Vec2.lc2(
-      restruct.atoms.get(bond.b.begin).a.pp,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      restruct.atoms.get(bond.b.begin)!.a.pp,
       0.5,
-      restruct.atoms.get(bond.b.end).a.pp,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      restruct.atoms.get(bond.b.end)!.a.pp,
       0.5,
     );
     if (
@@ -220,7 +257,7 @@ function getElementsInPolygon(restruct, rr) {
       functionalGroups,
       aid,
     );
-    const reSGroup = restruct.sgroups.get(relatedFGId);
+    const reSGroup = restruct.sgroups.get(relatedFGId as number);
     if (
       !(reSGroup?.item instanceof MonomerMicromolecule) &&
       isPointInPolygon(r, atom.a.pp) &&
@@ -230,7 +267,8 @@ function getElementsInPolygon(restruct, rr) {
         functionalGroups,
         true,
       ) ||
-        aid === reSGroup.item.atoms[0])
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        aid === reSGroup!.item!.atoms[0])
     ) {
       atomList.push(aid);
     }
@@ -242,7 +280,7 @@ function getElementsInPolygon(restruct, rr) {
   const textsList: Array<number> = [];
 
   restruct.rxnArrows.forEach((item, id) => {
-    const referencePoints = item.getReferencePoints(true);
+    const referencePoints = item.getReferencePoints();
     const referencePointInPolygon = referencePoints.find((point) =>
       isPointInPolygon(r, point),
     );
@@ -279,7 +317,8 @@ function getElementsInPolygon(restruct, rr) {
   });
 
   const enhancedFlagList: Array<number> = [];
-  restruct.enhancedFlags.forEach((item, id) => {
+  // ReEnhancedFlag doesn't have pp item according to types but somehow it works
+  restruct.enhancedFlags.forEach((item: any, id) => {
     if (item.pp && isPointInPolygon(r, item.pp)) {
       enhancedFlagList.push(id);
     }
@@ -299,6 +338,20 @@ function getElementsInPolygon(restruct, rr) {
     }
   });
 
+  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
+    (acc: Array<number>, item: ReRasterImage, id) => {
+      if (
+        item.rasterImage
+          .getCornerPositions()
+          .some((point) => isPointInPolygon(r, point))
+      ) {
+        return acc.concat(id);
+      }
+      return acc;
+    },
+    [],
+  );
+
   return {
     atoms: atomList,
     bonds: bondList,
@@ -309,6 +362,7 @@ function getElementsInPolygon(restruct, rr) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
+    [RASTER_IMAGE_KEY]: rerasterImages,
   };
 }
 

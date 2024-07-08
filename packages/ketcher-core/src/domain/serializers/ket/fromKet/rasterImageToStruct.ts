@@ -14,16 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Point, Struct, Vec2 } from 'domain/entities';
-import { getNodeWithInvertedYCoord } from '../helpers';
+import { Struct } from 'domain/entities';
 import { RasterImage } from 'domain/entities/rasterImage';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function rasterImageToStruct(ketItem: any, struct: Struct): Struct {
-  const { bitmap, position } = getNodeWithInvertedYCoord(ketItem.data);
-  const vectorPosition = position.map((item: Point) => new Vec2(item));
-  const rasterImage = new RasterImage(bitmap, vectorPosition);
-  rasterImage.setInitiallySelected(ketItem.selected);
-  struct.rasterImages.add(rasterImage);
+  struct.rasterImages.add(RasterImage.fromKetNode(ketItem));
   return struct;
 }

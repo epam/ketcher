@@ -27,6 +27,7 @@ import {
   fromMultipleMove,
   fromNewCanvas,
   provideEditorSettings,
+  RASTER_IMAGE_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -65,6 +66,7 @@ const structObjects = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  RASTER_IMAGE_KEY,
 ];
 
 const highlightTargets = [

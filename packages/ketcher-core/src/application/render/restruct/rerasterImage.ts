@@ -12,7 +12,7 @@ export class ReRasterImage extends ReObject {
     return true;
   }
 
-  constructor(private item: RasterImage) {
+  constructor(public rasterImage: RasterImage) {
     super(RASTER_IMAGE_KEY);
   }
 
@@ -27,11 +27,11 @@ export class ReRasterImage extends ReObject {
   private getDimensions(renderOptions: RenderOptions): Vec2 {
     return Vec2.diff(
       this.getScaledPointWithOffset(
-        this.item.getBottomRightPosition(),
+        this.rasterImage.getBottomRightPosition(),
         renderOptions,
       ),
       this.getScaledPointWithOffset(
-        this.item.getTopLeftPosition(),
+        this.rasterImage.getTopLeftPosition(),
         renderOptions,
       ),
     );
@@ -43,13 +43,13 @@ export class ReRasterImage extends ReObject {
     }
 
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
-      this.item.getTopLeftPosition(),
+      this.rasterImage.getTopLeftPosition(),
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
 
     this.element = restruct.render.paper.image(
-      this.item.bitmap,
+      this.rasterImage.bitmap,
       scaledTopLeftWithOffset.x,
       scaledTopLeftWithOffset.y,
       dimensions.x,
@@ -59,8 +59,8 @@ export class ReRasterImage extends ReObject {
 
   getVBoxObj(): Box2Abs | null {
     return new Box2Abs(
-      this.item.getTopLeftPosition(),
-      this.item.getBottomRightPosition(),
+      this.rasterImage.getTopLeftPosition(),
+      this.rasterImage.getBottomRightPosition(),
     );
   }
 

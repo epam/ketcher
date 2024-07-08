@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getNodeWithInvertedYCoord } from '../helpers';
 import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
 
 export function rasterImageToKet(rasterImageNode) {
   return {
     type: RASTER_IMAGE_KEY,
-    data: getNodeWithInvertedYCoord(rasterImageNode.data),
+    center: rasterImageNode.center,
+    data: rasterImageNode.data,
     selected: rasterImageNode.selected,
   };
 }

@@ -58,6 +58,18 @@
   },
   "additionalProperties": false,
   "definitions": {
+    "2dCoordinates": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
     "header": {
       "type": "object",
       "properties": {
@@ -788,26 +800,19 @@
         "type": {
           "const": "rasterImage"
         },
+        "center": {
+          "$ref": "#/definitions/2dCoordinates"
+        },
         "data": {
           "type": "object",
-          "required": ["bitmap", "position"],
+          "required": ["bitmap", "halfSize"],
           "properties": {
             "bitmap": {
-              "type": "string"
+              "type": "string",
+              "minLength": 1
             },
-            "position": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  }
-                }
-              }
+            "halfSize": {
+              "$ref": "#/definitions/2dCoordinates"
             }
           }
         }

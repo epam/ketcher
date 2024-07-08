@@ -40,21 +40,18 @@ export class RasterImageTool implements Tool {
       });
 
       image.onload = () => {
-        const centerOffset = new Vec2(image.width / 2, image.height / 2);
-        const startOffset = Scale.canvasToModel(
-          centerOffset.negated(),
-          this.editor.render.options,
-        );
-        const endOffset = Scale.canvasToModel(
-          centerOffset,
+        const halfSize = Scale.canvasToModel(
+          new Vec2(image.width / 2, image.height / 2),
           this.editor.render.options,
         );
 
         this.editor.update(
-          fromRasterImageCreation(this.editor.render.ctab, image.src, [
-            clickPosition.add(startOffset),
-            clickPosition.add(endOffset),
-          ]),
+          fromRasterImageCreation(
+            this.editor.render.ctab,
+            image.src,
+            clickPosition,
+            halfSize,
+          ),
         );
       };
 

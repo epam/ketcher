@@ -931,7 +931,10 @@ export class PolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+            editor.mode instanceof SnakeMode &&
+              renderer.polymerBond.isSideChainConnection
+              ? '#43B5C0'
+              : '#333333',
           );
         },
       );
@@ -940,7 +943,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+        editor.mode instanceof SnakeMode &&
+          this.polymerBond.isSideChainConnection
+          ? '#43B5C0'
+          : '#333333',
       )
       .attr('pointer-events', 'stroke');
 

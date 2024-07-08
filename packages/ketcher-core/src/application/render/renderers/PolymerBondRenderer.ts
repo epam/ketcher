@@ -171,11 +171,11 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     let endOfPathPart = isHorizontal
       ? this.sideConnectionBondTurnPoint ||
-        cell.node.monomer.renderer?.scaledMonomerPosition.x +
-          cell.node.monomer.renderer?.monomerSize.width / 2 +
+        cell.monomer.renderer?.scaledMonomerPosition.x +
+          cell.monomer.renderer?.monomerSize.width / 2 +
           xOffset
-      : cell.node.monomer.renderer?.scaledMonomerPosition.y +
-        cell.node.monomer.renderer?.monomerSize.height / 2 +
+      : cell.monomer.renderer?.scaledMonomerPosition.y +
+        cell.monomer.renderer?.monomerSize.height / 2 +
         yOffset;
 
     this.sideConnectionBondTurnPoint = endOfPathPart;

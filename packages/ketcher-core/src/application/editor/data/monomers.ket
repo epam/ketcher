@@ -169978,6 +169978,7 @@
     "alias": "2-Amino-dA",
     "naturalAnalogShort": "A",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "AmdA",
       "modifications": {
@@ -170398,6 +170399,7 @@
     "alias": "5HydMe-dC",
     "naturalAnalogShort": "C",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "5HydMe-dC"
     },
@@ -170791,6 +170793,7 @@
     "alias": "Super G",
     "naturalAnalogShort": "G",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "Super-dG"
     },
@@ -171206,6 +171209,7 @@
     "alias": "Super T",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "Super-dT"
     },
@@ -171644,6 +171648,7 @@
     "alias": "5-Bromo dU",
     "naturalAnalogShort": "U",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "5Br-dU",
       "modifications":  {
@@ -172026,6 +172031,7 @@
     "alias": "5NitInd",
     "naturalAnalogShort": "X",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "5NitInd"
     },
@@ -172458,6 +172464,7 @@
     "alias": "AmMC6T",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "classHELM": "RNA",
     "idtAliases": {
       "base": "AmMC6T"
     },

@@ -220,13 +220,13 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   const rnaNucleotides = [
-    `5AmdA___5' 2, 6-Diaminopurine`,
-    `55HydMe-dC___5' 5-Hydroxymethyl dC`,
-    `5Super-dG___5' Super G`,
-    `5Super-dT___5' Super T`,
-    `iAmMC6T___Int Amino Modifier C6 dT`,
-    `55Br-dU___5' 5-Bromo dU`,
-    `55NitInd___5' 5-Nitroindole`,
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
   ];
 
   for (const monomer of rnaNucleotides) {

@@ -443,6 +443,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '500')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
@@ -468,6 +469,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '700')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(this.beginning);

@@ -469,8 +469,8 @@ test.describe('Connection rules for chems: ', () => {
     }
   }
 
-  async function hoverOverConnectionLine(page: Page, bondIndex = 0) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').nth(bondIndex);
+  async function hoverOverConnectionLine(page: Page) {
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await bondLine.hover();
   }
 
@@ -556,7 +556,7 @@ test.describe('Connection rules for chems: ', () => {
               );
               await zoomWithMouseWheel(page, -600);
 
-              await hoverOverConnectionLine(page, 1);
+              await hoverOverConnectionLine(page);
 
               await takeEditorScreenshot(page);
             });

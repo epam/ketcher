@@ -53,6 +53,7 @@ export class RasterImageTool implements Tool {
             halfSize,
           ),
         );
+        this.resetElementValue();
       };
 
       reader.readAsDataURL(this.element.files[0]);
@@ -77,5 +78,9 @@ export class RasterImageTool implements Tool {
     }
     element?.remove();
     return this.createElement();
+  }
+
+  private resetElementValue(): void {
+    this.getElement().value = '';
   }
 }

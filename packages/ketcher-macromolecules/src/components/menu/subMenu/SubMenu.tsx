@@ -31,6 +31,7 @@ type SubMenuProps = {
   disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
   testId?: string;
+  layoutModeButton: boolean;
 };
 
 const SubMenu = ({
@@ -39,6 +40,7 @@ const SubMenu = ({
   disabled = false,
   needOpenByMenuItemClick = false,
   testId,
+  layoutModeButton = false,
 }: React.PropsWithChildren<SubMenuProps>) => {
   const [open, setOpen] = useState(false);
   const { isActive } = useMenuContext();
@@ -98,7 +100,10 @@ const SubMenu = ({
         onClick={hideCollapse}
       >
         <ClickAwayListener onClickAway={hideCollapse}>
-          <OptionsContainer isVertical={vertical}>
+          <OptionsContainer
+            isVertical={vertical}
+            islayoutModeButton={layoutModeButton}
+          >
             {subComponents.map((component) => component)}
           </OptionsContainer>
         </ClickAwayListener>

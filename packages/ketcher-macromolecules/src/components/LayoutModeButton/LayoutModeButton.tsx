@@ -55,6 +55,7 @@ export const LayoutModeButton = () => {
         vertical={true}
         disabled={!!isSequenceEditInRNABuilderMode}
         needOpenByMenuItemClick={true}
+        layoutModeButton={true}
       >
         <Menu.Item
           itemId="sequence-layout-mode"

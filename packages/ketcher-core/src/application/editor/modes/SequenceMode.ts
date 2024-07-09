@@ -97,7 +97,6 @@ export class SequenceMode extends BaseMode {
     }
 
     modelChanges.merge(command);
-    modelChanges.merge(editor.drawingEntitiesManager.recalculateCanvasMatrix());
 
     return modelChanges;
   }

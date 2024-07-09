@@ -2,7 +2,10 @@ import { Operation } from 'domain/entities/Operation';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 export class RecalculateCanvasMatrixOperation implements Operation {
-  constructor(private recalculateCanvasMatrixModelChange: () => void) {}
+  constructor(
+    private recalculateCanvasMatrixModelChange: () => void,
+    private invertRecalculateCanvasMatrixModelChange: () => void,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
     this.recalculateCanvasMatrixModelChange();
@@ -10,7 +13,7 @@ export class RecalculateCanvasMatrixOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    this.recalculateCanvasMatrixModelChange();
+    this.invertRecalculateCanvasMatrixModelChange();
     renderersManager.rerenderSideConnectionPolymerBonds();
   }
 }

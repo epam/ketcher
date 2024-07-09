@@ -1,5 +1,6 @@
 import {
   BaseMonomer,
+  Nucleoside,
   Nucleotide,
   RNABase,
   SubChainNode,
@@ -12,11 +13,12 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
 
 interface MatrixConfig {
-  cellsInRow: number;
+  initialMatrix: Matrix<Cell>;
 }
 
 export class CanvasMatrix {
   private matrix: Matrix<Cell>;
+  private initialMatrixWidth: number;
   private monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
@@ -24,10 +26,11 @@ export class CanvasMatrix {
   constructor(
     private chainsCollection: ChainsCollection,
     private matrixConfig: MatrixConfig = {
-      cellsInRow: 18,
+      initialMatrix: new Matrix<Cell>(),
     },
   ) {
     this.matrix = new Matrix<Cell>();
+    this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
   }
 
@@ -170,36 +173,86 @@ export class CanvasMatrix {
     // iterate over each chain and fill matrix with cells
     let rowNumber = 0;
     let columnNumber = 0;
+    let rowsWithRnaBases = 0;
+    let wereBasesInRow = false;
     this.chains.forEach((chain) => {
       chain.forEachNode(({ node }) => {
         node.monomers.forEach((monomer) => {
-          if (node instanceof Nucleotide && monomer instanceof RNABase) {
+          if (
+            (node instanceof Nucleotide || node instanceof Nucleoside) &&
+            monomer instanceof RNABase
+          ) {
+            const cell = new Cell(
+              node,
+              [],
+              columnNumber - 1,
+              rowNumber + rowsWithRnaBases + 1,
+              monomer,
+            );
+            this.matrix.set(
+              rowNumber + rowsWithRnaBases + 1,
+              columnNumber - 1,
+              cell,
+            );
+            this.monomerToCell.set(monomer, cell);
+            wereBasesInRow = true;
+
             return;
           }
 
-          if (columnNumber / this.matrixConfig.cellsInRow >= 1) {
+          const initialMatrixRowLength =
+            this.matrixConfig.initialMatrix.getRow(rowNumber).length;
+
+          if (columnNumber >= initialMatrixRowLength) {
+            let emptyCellsAmount = this.initialMatrixWidth - columnNumber;
+            while (emptyCellsAmount > 0) {
+              this.matrix.set(
+                rowNumber + rowsWithRnaBases,
+                columnNumber,
+                new Cell(null, [], columnNumber, rowNumber + rowsWithRnaBases),
+              );
+              columnNumber++;
+              emptyCellsAmount--;
+            }
+
+            if (wereBasesInRow) {
+              rowsWithRnaBases++;
+              wereBasesInRow = false;
+              let index = 0;
+              while (index < this.initialMatrixWidth - 1) {
+                const cellWithPotentialRnaBase = this.matrix.get(
+                  rowNumber + rowsWithRnaBases,
+                  index,
+                );
+                if (cellWithPotentialRnaBase) {
+                  index++;
+                  continue;
+                }
+                this.matrix.set(
+                  rowNumber + rowsWithRnaBases,
+                  index,
+                  new Cell(null, [], index, rowNumber + rowsWithRnaBases + 1),
+                );
+                index++;
+              }
+            }
+
             rowNumber++;
             columnNumber = 0;
           }
 
-          const cell = new Cell(node, [], columnNumber, rowNumber, monomer);
-          this.matrix.set(rowNumber, columnNumber, cell);
+          const cell = new Cell(
+            node,
+            [],
+            columnNumber,
+            rowNumber + rowsWithRnaBases,
+            monomer,
+          );
+          this.matrix.set(rowNumber + rowsWithRnaBases, columnNumber, cell);
           this.monomerToCell.set(monomer, cell);
           columnNumber++;
         });
       });
-      let emptyCellsAmount = this.matrixConfig.cellsInRow - columnNumber;
-      while (emptyCellsAmount > 0) {
-        this.matrix.set(
-          rowNumber,
-          columnNumber,
-          new Cell(null, [], columnNumber, rowNumber),
-        );
-        columnNumber++;
-        emptyCellsAmount--;
-      }
-      rowNumber++;
-      columnNumber = 0;
     });
 
     const monomerToNode = this.chainsCollection.monomerToNode;

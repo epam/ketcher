@@ -21,6 +21,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
+export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -274,6 +275,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return canvas
       .append('g')
       .data([this])
+      .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',

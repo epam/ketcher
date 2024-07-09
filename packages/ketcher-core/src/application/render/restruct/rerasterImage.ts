@@ -75,4 +75,13 @@ export class ReRasterImage extends ReObject {
       this.element.translate(diff.x, diff.y);
     }
   }
+
+  // Workaround to always display images on top
+  moveToBottomOfParentNode() {
+    if (this.element && this.element.node && this.element.node.parentNode) {
+      const node = this.element.node;
+      const parentNode: HTMLElement = node.parentNode;
+      parentNode?.appendChild(node);
+    }
+  }
 }

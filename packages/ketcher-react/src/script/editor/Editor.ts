@@ -27,7 +27,7 @@ import {
   fromMultipleMove,
   fromNewCanvas,
   provideEditorSettings,
-  RASTER_IMAGE_KEY,
+  ReStruct,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -54,7 +54,7 @@ import { getSelectionMap, getStructCenter } from './utils/structLayout';
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
 
-const structObjects = [
+const structObjects: Array<keyof typeof ReStruct.maps> = [
   'atoms',
   'bonds',
   'frags',
@@ -66,7 +66,7 @@ const structObjects = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
-  RASTER_IMAGE_KEY,
+  'rasterImages',
 ];
 
 const highlightTargets = [

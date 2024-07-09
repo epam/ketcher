@@ -321,7 +321,7 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'bonds'),
   },
   [RASTER_IMAGE_KEY]: {
-    title: 'Add image',
+    title: 'Add Image',
     action: { tool: RASTER_IMAGE_KEY },
     hidden: (options) => isHidden(options, RASTER_IMAGE_KEY),
   },

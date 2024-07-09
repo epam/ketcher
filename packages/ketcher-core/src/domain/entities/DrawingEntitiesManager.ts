@@ -54,7 +54,8 @@ import { Nucleotide } from './Nucleotide';
 import { SequenceMode } from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
-import Zoom from 'application/editor/tools/Zoom';
+import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
+import { Cell } from 'domain/entities/canvas-matrix/Cell';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -83,6 +84,7 @@ export class DrawingEntitiesManager {
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
+  public snakeLayoutMatrix?: Matrix<Cell>;
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -974,6 +976,7 @@ export class DrawingEntitiesManager {
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
     maxVerticalDistance: number,
+    snakeLayoutMatrix: Matrix<Cell>,
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
@@ -984,6 +987,7 @@ export class DrawingEntitiesManager {
     monomer.isMonomerInRnaChainRow =
       maxVerticalDistance > heightMonomerWithBond;
     const oldMonomerPosition = monomer.position;
+    const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
     const operation = new MonomerMoveOperation(
       this.rearrangeChainModelChange.bind(
         this,
@@ -994,6 +998,19 @@ export class DrawingEntitiesManager {
     );
     command.addOperation(operation);
     rearrangedMonomersSet.add(monomer.id);
+
+    const matrixX = isNewRow
+      ? snakeLayoutMatrix.height
+      : snakeLayoutMatrix.height - 1;
+    const matrixY = isNewRow
+      ? 0
+      : snakeLayoutMatrix.getRow(matrixX)?.length ?? 0;
+
+    snakeLayoutMatrix.set(
+      matrixX,
+      matrixY,
+      new Cell(null, [], matrixX, matrixY, monomer),
+    );
 
     const nextPositionAndVerticalDistance =
       this.getNextMonomerPositionForSnakeLayout(
@@ -1021,12 +1038,14 @@ export class DrawingEntitiesManager {
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
     maxVerticalDistance: number,
+    snakeLayoutMatrix: Matrix<Cell>,
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
     const nucleotideSize = this.getNucleotideSize(nucleotide);
     const { height } = nucleotideSize;
     const heightWithBond = height + VERTICAL_DISTANCE_FROM_MONOMER;
+    const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
     nucleotide.sugar.isMonomerInRnaChainRow = true;
     nucleotide.rnaBase.isMonomerInRnaChainRow = true;
@@ -1053,6 +1072,19 @@ export class DrawingEntitiesManager {
     rearrangedMonomersSet.add(nucleotide.sugar.id);
     rearrangedMonomersSet.add(nucleotide.rnaBase?.id);
 
+    const matrixX = isNewRow
+      ? snakeLayoutMatrix.height
+      : snakeLayoutMatrix.height - 1;
+    const matrixY = isNewRow
+      ? 0
+      : snakeLayoutMatrix.getRow(matrixX)?.length ?? 0;
+
+    snakeLayoutMatrix.set(
+      matrixX,
+      matrixY,
+      new Cell(null, [], matrixX, matrixY, nucleotide.sugar),
+    );
+
     if (nucleotide.phosphate) {
       nucleotide.phosphate.isMonomerInRnaChainRow = true;
       const phosphatePosition = new Vec2(
@@ -1066,6 +1098,11 @@ export class DrawingEntitiesManager {
         nucleotide.phosphate,
       );
       rearrangedMonomersSet.add(nucleotide.phosphate?.id);
+      snakeLayoutMatrix.set(
+        matrixX,
+        matrixY + 1,
+        new Cell(null, [], matrixX, matrixY, nucleotide.sugar),
+      );
     }
     const lastMonomerInNucleotide =
       nucleotide.baseMonomer === nucleotide.sugar && nucleotide.phosphate
@@ -1153,9 +1190,13 @@ export class DrawingEntitiesManager {
   }
 
   private recalculateCanvasMatrixModelChange(
+    snakeLayoutMatrix?: Matrix<Cell>,
     _chainsCollection?: ChainsCollection,
   ) {
-    const editor = CoreEditor.provideEditorInstance();
+    if (!snakeLayoutMatrix || snakeLayoutMatrix.height === 0) {
+      return;
+    }
+
     const chainsCollection =
       _chainsCollection ||
       ChainsCollection.fromMonomers(Array.from(this.monomers.values()));
@@ -1163,31 +1204,32 @@ export class DrawingEntitiesManager {
     if (!_chainsCollection) {
       chainsCollection.rearrange();
     }
-    const drawnElementsSize =
-      editor.drawnStructuresWrapperElement.getBoundingClientRect();
-    const zoomedMatrixCellSize = Zoom.instance.zoomValue(
-      SNAKE_LAYOUT_CELL_WIDTH,
-    );
-    // TODO calculate cells here and during snake layout in same way
-    const AVERAGE_MONOMERS_WIDTH_DIFFERENCE = 10;
 
     this.canvasMatrix = new CanvasMatrix(chainsCollection, {
-      cellsInRow: Math.floor(
-        (drawnElementsSize.width +
-          AVERAGE_MONOMERS_WIDTH_DIFFERENCE +
-          SNAKE_LAYOUT_CELL_WIDTH / 2) /
-          zoomedMatrixCellSize,
-      ),
+      initialMatrix: snakeLayoutMatrix,
     });
 
     return this.redrawBonds();
   }
 
-  public recalculateCanvasMatrix(chainsCollection?: ChainsCollection) {
+  public recalculateCanvasMatrix(
+    chainsCollection?: ChainsCollection,
+    previousSnakeLayoutMatrix?: Matrix<Cell>,
+  ) {
     const command = new Command();
+
     command.addOperation(
       new RecalculateCanvasMatrixOperation(
-        this.recalculateCanvasMatrixModelChange.bind(this, chainsCollection),
+        this.recalculateCanvasMatrixModelChange.bind(
+          this,
+          this.snakeLayoutMatrix,
+          chainsCollection,
+        ),
+        this.recalculateCanvasMatrixModelChange.bind(
+          this,
+          previousSnakeLayoutMatrix,
+          chainsCollection,
+        ),
       ),
     );
 
@@ -1199,6 +1241,8 @@ export class DrawingEntitiesManager {
     isSnakeMode: boolean,
     needRedrawBonds = true,
   ) {
+    const snakeLayoutMatrix = new Matrix<Cell>();
+    const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
     let chainsCollection;
 
@@ -1235,6 +1279,7 @@ export class DrawingEntitiesManager {
               canvasWidth,
               rearrangedMonomersSet,
               maxVerticalDistance,
+              snakeLayoutMatrix,
             );
             lastPosition = rearrangeResult.lastPosition;
             maxVerticalDistance = rearrangeResult.maxVerticalDistance;
@@ -1247,6 +1292,7 @@ export class DrawingEntitiesManager {
                 canvasWidth,
                 rearrangedMonomersSet,
                 maxVerticalDistance,
+                snakeLayoutMatrix,
               );
               lastPosition = rearrangeResult.lastPosition;
               maxVerticalDistance = rearrangeResult.maxVerticalDistance;
@@ -1263,7 +1309,11 @@ export class DrawingEntitiesManager {
       command.merge(this.redrawBonds());
     }
 
-    command.merge(this.recalculateCanvasMatrix(chainsCollection));
+    this.snakeLayoutMatrix = snakeLayoutMatrix;
+
+    command.merge(
+      this.recalculateCanvasMatrix(chainsCollection, previousSnakeLayoutMatrix),
+    );
 
     return command;
   }

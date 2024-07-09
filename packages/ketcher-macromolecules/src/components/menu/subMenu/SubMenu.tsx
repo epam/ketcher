@@ -31,7 +31,7 @@ type SubMenuProps = {
   disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
   testId?: string;
-  layoutModeButton: boolean;
+  layoutModeButton?: boolean;
 };
 
 const SubMenu = ({

@@ -28,6 +28,7 @@ import {
   FragmentSetProperties,
   BondAttr,
   AtomAttr,
+  RasterImageUpsert,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -36,6 +37,7 @@ import { SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { RasterImage } from 'domain/entities/rasterImage';
 
 export function fromPaste(
   restruct,
@@ -186,6 +188,13 @@ export function fromPaste(
         text.pos.map((p) => p.add(offset)),
       ).perform(restruct),
     );
+  });
+
+  pstruct.rasterImages.forEach((rasterImage: RasterImage) => {
+    const clonedImage = rasterImage.clone();
+    clonedImage.addPositionOffset(offset);
+
+    action.addOp(new RasterImageUpsert(clonedImage).perform(restruct));
   });
 
   pstruct.rgroups.forEach((rg, rgid) => {

@@ -19,7 +19,7 @@ exports[`Test Rna Accordion component should render 1`] = `
           data-testid="summary-Presets"
         >
           <svg
-            class="css-1qr96ji"
+            class="css-x2ejol"
             fill="none"
             height="16"
             viewBox="0 0 16 16"
@@ -89,7 +89,7 @@ exports[`Test Rna Accordion component should render 1`] = `
             data-testid="rna-preset-group"
           >
             <div
-              class="css-14bnc38"
+              class="css-1yj2br2"
             />
           </div>
         </div>
@@ -107,7 +107,7 @@ exports[`Test Rna Accordion component should render 1`] = `
         data-testid="summary-Sugars"
       >
         <svg
-          class="css-1qr96ji"
+          class="css-x2ejol"
           fill="none"
           height="20"
           stroke-width="2"
@@ -167,7 +167,7 @@ exports[`Test Rna Accordion component should render 1`] = `
         data-testid="summary-Bases"
       >
         <svg
-          class="css-1qr96ji"
+          class="css-x2ejol"
           fill="none"
           height="25"
           stroke-width="2"
@@ -238,7 +238,7 @@ exports[`Test Rna Accordion component should render 1`] = `
         data-testid="summary-Phosphates"
       >
         <svg
-          class="css-1qr96ji"
+          class="css-x2ejol"
           fill="none"
           height="24"
           stroke-width="2"
@@ -290,6 +290,61 @@ exports[`Test Rna Accordion component should render 1`] = `
     <div
       class="css-4wpvad"
       data-testid="rna-accordion-details-Phosphates"
+    >
+      <div
+        class="css-9bccu"
+      />
+    </div>
+  </div>
+  <div
+    class="css-1svedvx"
+  >
+    <div
+      class="css-s4s9u"
+    >
+      <div
+        class="css-75ynye"
+        data-testid="summary-Nucleotides"
+      >
+        <svg
+          class="css-x2ejol"
+          fill="none"
+          height="15"
+          viewBox="0 0 16 15"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.412 1.21a1 1 0 011.176 0l6.824 4.958a1 1 0 01.363 1.118L13.17 15.31a1 1 0 01-.951.691H3.782a1 1 0 01-.95-.691L.224 7.286a1 1 0 01.363-1.118L7.412 1.21z"
+            fill="currentColor"
+          />
+        </svg>
+        <span
+          class="css-lqq9ua"
+        >
+          Nucleotides
+           (
+          0
+          )
+        </span>
+        <svg
+          class="css-x2ejol"
+          fill="none"
+          height="48"
+          viewBox="0 0 48 48"
+          width="48"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M24 33.23L9.782 19.012l2.828-2.828L24 27.574l11.388-11.39 2.83 2.828L24 33.23z"
+            fill="#231F20"
+          />
+        </svg>
+      </div>
+    </div>
+    <div
+      class="css-4wpvad"
+      data-testid="rna-accordion-details-Nucleotides"
     >
       <div
         class="css-9bccu"

@@ -303,7 +303,7 @@ export class Struct {
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup)
+          ? MonomerMicromolecule.clone(oldSgroup, aidMap!)
           : SGroup.clone(sg, aidMap!);
 
       const id = cp.sgroups.add(sg);

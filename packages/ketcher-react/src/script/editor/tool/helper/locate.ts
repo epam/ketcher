@@ -20,9 +20,9 @@ import {
   RASTER_IMAGE_KEY,
   Struct,
   Vec2,
+  ReRasterImage,
+  ReStruct,
 } from 'ketcher-core';
-import { ReRasterImage } from 'application/render/restruct/rerasterImage';
-import { ReStruct } from 'application/render';
 
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const bondList: Array<number> = [];

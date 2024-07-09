@@ -27,3 +27,5 @@ export const peptideNaturalAnalogues = [
   'W',
   'Y',
 ];
+
+export const NO_NATURAL_ANALOGUE = 'X';

@@ -27,6 +27,8 @@ import {
   EditorHistory,
   SequenceMode,
   macromoleculesFilesInputFormats,
+  ModeTypes,
+  SnakeMode,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -96,6 +98,7 @@ const options: Array<Option> = [
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
+  { id: 'helm', label: 'HELM' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -136,6 +139,7 @@ const addToCanvas = ({
     );
   const editorHistory = new EditorHistory(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
+  const isSnakeMode = editor.mode instanceof SnakeMode;
 
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);
@@ -143,7 +147,15 @@ const addToCanvas = ({
   if (isSequenceMode) {
     modelChanges.setUndoOperationReverse();
     editor.events.selectMode.dispatch({
-      mode: 'sequence-layout-mode',
+      mode: ModeTypes.sequence,
+      mergeWithLatestHistoryCommand: true,
+    });
+  }
+
+  if (isSnakeMode) {
+    modelChanges.setUndoOperationReverse();
+    editor.events.selectMode.dispatch({
+      mode: ModeTypes.snake,
       mergeWithLatestHistoryCommand: true,
     });
   }

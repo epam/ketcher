@@ -37,5 +37,5 @@ export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
   height: '16px',
   color: props.theme.ketcher.color.icon.grey,
   transition: props.theme.ketcher.transition.regular,
-  transform: props.expanded ? 'none' : 'rotate(180deg)',
+  transform: props.expanded ? 'rotate(180deg)' : 'none',
 }));

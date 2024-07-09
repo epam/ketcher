@@ -21,14 +21,14 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { LayoutMode } from 'ketcher-core';
+import { LayoutMode, DEFAULT_LAYOUT_MODE } from 'ketcher-core';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useLayoutMode() {
   const editor = useAppSelector(selectEditor);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>('flex-layout-mode');
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(DEFAULT_LAYOUT_MODE);
 
   const onLayoutModeChange = useCallback(
     (newLayoutMode: LayoutMode) => {

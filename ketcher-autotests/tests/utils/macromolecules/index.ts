@@ -3,9 +3,11 @@ import {
   MACROMOLECULES_MODE,
   MOLECULES_MODE,
   POLYMER_TOGGLER,
+  LAYOUT_TOGGLER,
 } from '@constants/testIdConstants';
 import {
   moveMouseToTheMiddleOfTheScreen,
+  selectFlexLayoutModeTool,
   waitForSpinnerFinishedWork,
 } from '@utils';
 
@@ -14,6 +16,8 @@ export async function turnOnMacromoleculesEditor(page: Page) {
   await page.getByTestId(POLYMER_TOGGLER).click();
   await expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
   await page.getByTestId(MACROMOLECULES_MODE).click();
+  await expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
+  await selectFlexLayoutModeTool(page);
 }
 
 export async function turnOnMicromoleculesEditor(page: Page) {
@@ -40,6 +44,11 @@ export async function zoomWithMouseWheel(page: Page, zoomLevelDelta: number) {
 export async function scrollDown(page: Page, scrollDelta: number) {
   await moveMouseToTheMiddleOfTheScreen(page);
   await page.mouse.wheel(0, scrollDelta);
+}
+
+export async function scrollUp(page: Page, scrollDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.wheel(0, -scrollDelta);
 }
 
 export async function chooseFileFormat(

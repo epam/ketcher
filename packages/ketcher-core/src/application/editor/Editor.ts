@@ -28,12 +28,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { initHotKeys, keyNorm } from 'utilities';
-import {
-  FlexMode,
-  LayoutMode,
-  modesMap,
-  SequenceMode,
-} from 'application/editor/modes/';
+import { LayoutMode, modesMap, SequenceMode } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -50,6 +45,7 @@ import monomersDataRaw from './data/monomers.ket';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
+  mode?: BaseMode;
 }
 
 function isMouseMainButtonPressed(event: MouseEvent) {
@@ -76,7 +72,7 @@ export class CoreEditor {
     return this.tool;
   }
 
-  public mode: BaseMode = new FlexMode();
+  public mode: BaseMode;
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: unknown) => void = () => {};
@@ -84,9 +80,10 @@ export class CoreEditor {
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
-  constructor({ theme, canvas }: ICoreEditorConstructorParams) {
+  constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -105,6 +102,7 @@ export class CoreEditor {
     const ketcher = ketcherProvider.getKetcher();
     this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
+    this.rerenderSequenceMode();
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -553,5 +551,18 @@ export class CoreEditor {
       );
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
+  }
+
+  private rerenderSequenceMode() {
+    if (this.mode instanceof SequenceMode) {
+      const modelChanges = this.drawingEntitiesManager.reArrangeChains(
+        this.canvas.width.baseVal.value,
+        true,
+        false,
+      );
+      this.drawingEntitiesManager.clearCanvas();
+      this.renderersContainer.update(modelChanges);
+      this.drawingEntitiesManager.applyMonomersSequenceLayout();
+    }
   }
 }

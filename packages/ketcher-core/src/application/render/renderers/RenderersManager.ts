@@ -12,9 +12,16 @@ import {
   PhosphateRenderer,
   RNABaseRenderer,
   SugarRenderer,
+  UnsplitNucleotideRenderer,
 } from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
-import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
+import {
+  Peptide,
+  Sugar,
+  RNABase,
+  Phosphate,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
@@ -75,9 +82,9 @@ export class RenderersManager {
     monomer.renderer?.drawSelection();
   }
 
-  public redrawDrawingEntity(drawingEntity: DrawingEntity) {
+  public redrawDrawingEntity(drawingEntity: DrawingEntity, force = false) {
     drawingEntity.baseRenderer?.remove();
-    drawingEntity.baseRenderer?.show(this.theme);
+    drawingEntity.baseRenderer?.show(this.theme, force);
   }
 
   public deleteAllDrawingEntities() {
@@ -200,11 +207,18 @@ export class RenderersManager {
         }
       }
 
+      if (monomerRenderer instanceof UnsplitNucleotideRenderer) {
+        monomerRenderer.setEnumeration(currentEnumeration);
+        monomerRenderer.redrawEnumeration();
+        currentEnumeration++;
+      }
+
       const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
 
       if (
         !(nextMonomer instanceof Sugar) &&
-        !(nextMonomer instanceof Phosphate)
+        !(nextMonomer instanceof Phosphate) &&
+        !(nextMonomer instanceof UnsplitNucleotide)
       ) {
         return;
       }
@@ -233,7 +247,9 @@ export class RenderersManager {
       peptideRenderer.redrawEnumeration();
     }
 
-    if (!isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide])) return;
+    if (!isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide])) {
+      return;
+    }
 
     this.recalculatePeptideChainEnumeration(peptideRenderer);
   }
@@ -243,9 +259,12 @@ export class RenderersManager {
       !isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
         Phosphate,
         Sugar,
+        UnsplitNucleotide,
       ])
-    )
+    ) {
       return;
+    }
+
     this.recalculateRnaChainEnumeration(rnaComponentRenderer);
   }
 
@@ -254,12 +273,15 @@ export class RenderersManager {
       if (monomerRenderer instanceof PeptideRenderer) {
         this.recalculatePeptideEnumeration(monomerRenderer as PeptideRenderer);
       }
+
       if (
+        monomerRenderer instanceof UnsplitNucleotideRenderer ||
         monomerRenderer instanceof PhosphateRenderer ||
         monomerRenderer instanceof SugarRenderer
       ) {
         this.recalculateRnaEnumeration(monomerRenderer as BaseMonomerRenderer);
       }
+
       if (
         monomerRenderer instanceof RNABaseRenderer &&
         !monomerRenderer.monomer.isAttachmentPointUsed(AttachmentPointName.R1)
@@ -268,6 +290,7 @@ export class RenderersManager {
         monomerRenderer.redrawEnumeration();
       }
     });
+
     this.needRecalculateMonomersEnumeration = false;
   }
 
@@ -392,5 +415,16 @@ export class RenderersManager {
       width: right - left,
       height: bottom - top,
     };
+  }
+
+  public rerenderSideConnectionPolymerBonds() {
+    this.polymerBonds.forEach((polymerBondRenderer) => {
+      if (!polymerBondRenderer.polymerBond.isSideChainConnection) {
+        return;
+      }
+
+      polymerBondRenderer.remove();
+      polymerBondRenderer.show();
+    });
   }
 }

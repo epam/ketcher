@@ -7,6 +7,7 @@ const {
 const webpack = require('webpack');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 const applicationVersion = gitRevisionPlugin.version().split('-')[0];
@@ -34,6 +35,16 @@ module.exports = override(
         replacement: applicationVersion,
       },
     ]),
+  ),
+  addWebpackPlugin(
+    new CopyPlugin({
+      patterns: [
+        {
+          from: '../node_modules/ketcher-standalone/**/*.wasm',
+          to: '[name][ext]',
+        },
+      ],
+    }),
   ),
 );
 

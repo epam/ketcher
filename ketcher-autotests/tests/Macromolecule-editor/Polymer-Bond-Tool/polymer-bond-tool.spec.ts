@@ -1,21 +1,17 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
-  pressButton,
 } from '@utils';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
-import {
-  bondTwoMonomers,
-  bondTwoMonomersPointToPoint,
-} from '@utils/macromolecules/polymerBond';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {

@@ -615,6 +615,29 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.locator('.css-1kbfai8').click();
   });
+
+  test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4173
+    Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await page.locator('.css-1kbfai8').click();
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await takeEditorScreenshot(page);
+    await page.getByTitle('Close window').click();
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {

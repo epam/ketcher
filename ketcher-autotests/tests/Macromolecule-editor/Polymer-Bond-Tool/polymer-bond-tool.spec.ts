@@ -1,15 +1,21 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
+  clickInTheMiddleOfTheScreen,
+  pressButton,
 } from '@utils';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
+import {
+  bondTwoMonomers,
+  bondTwoMonomersPointToPoint,
+} from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
@@ -150,5 +156,71 @@ test.describe('Signle Bond Tool', () => {
     const errorMessage =
       "There can't be more than 1 bond between the first and the second monomer";
     expect(errorTooltip).toEqual(errorMessage);
+  });
+
+  test('Check in full-screen mode it is possible to add a bond between a Peptide monomers if this bond is pulled not from a specific attachment point R', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4149
+    Description: In full-screen mode it is possible to add a bond between 
+    a Peptide monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
+    */
+    const x = 800;
+    const y = 350;
+    await page.locator('.css-1kbfai8').click();
+    await page.getByTestId('Bal___beta-Alanine').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await page.mouse.click(x, y);
+    await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check in full-screen mode it is possible to add a bond between a RNA monomers if this bond is pulled not from a specific attachment point R', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4149
+    Description: In full-screen mode it is possible to add a bond between 
+    a RNA monomers if this bond is pulled not from a specific attachment point R (connect it from center to center).
+    */
+    const x = 800;
+    const y = 350;
+    await page.locator('.css-1kbfai8').click();
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('MOE(A)P_A_MOE_P').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('dR(U)P_U_dR_P').click();
+    await page.mouse.click(x, y);
+    await connectMonomersWithBonds(page, ['P', 'dR']);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check in full-screen mode it is possible to add a bond between a CHEM monomers if this bond is pulled not from a specific attachment point R', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4149
+    Description: In full-screen mode it is possible to add a bond between 
+    a CHEM monomers if this bond is pulled not from a specific attachment point R.
+    */
+    const x = 800;
+    const y = 350;
+    await page.locator('.css-1kbfai8').click();
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('A6OH___6-amino-hexanol').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
+    await page
+      .locator('div')
+      .filter({ hasText: /^R2H$/ })
+      .getByRole('button')
+      .click();
+    await page.getByRole('button', { name: 'R1' }).nth(1).click();
+    await page.getByRole('button', { name: 'Connect' }).click();
+    await takeEditorScreenshot(page);
   });
 });

@@ -672,4 +672,18 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Validate 80 char formating for IDT export', async ({ page }) => {
+    /*
+    Test case: Import/Saving files/https://github.com/epam/Indigo/issues/1986
+    Description: It is possible save 80 char formating for IDT.
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/idt-line-longer-than-80-chars.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+  });
 });

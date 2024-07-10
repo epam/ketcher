@@ -29,10 +29,8 @@ export class CanvasMatrix {
       initialMatrix: new Matrix<Cell>(),
     },
   ) {
-    console.log(this.matrixConfig);
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
-    console.log(this);
     this.fillCells();
   }
 

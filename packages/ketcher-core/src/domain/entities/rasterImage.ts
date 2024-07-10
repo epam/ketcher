@@ -23,7 +23,9 @@ interface KetFileNodeContent {
   halfSize: Point;
 }
 
-export const RASTER_IMAGE_KEY = 'rasterImage';
+// Having the key as plural guarantees that restruct map
+export const RASTER_IMAGE_KEY = 'rasterImages';
+export const RASTER_IMAGE_SERIALIZE_KEY = 'rasterImage';
 
 export class RasterImage extends BaseMicromoleculeEntity {
   constructor(
@@ -63,6 +65,29 @@ export class RasterImage extends BaseMicromoleculeEntity {
       this.getBottomRightPosition(),
       this.getBottomLeftPosition(),
     ];
+  }
+
+  getReferencePositions() {
+    const [
+      topLeftPosition,
+      topRightPosition,
+      bottomRightPosition,
+      bottomLeftPosition,
+    ] = this.getCornerPositions();
+    return {
+      topLeftPosition,
+      topMiddlePosition: Vec2.centre(topLeftPosition, topRightPosition),
+      topRightPosition,
+      rightMiddlePosition: Vec2.centre(topRightPosition, bottomRightPosition),
+      bottomRightPosition,
+      bottomMiddlePosition: Vec2.centre(
+        bottomLeftPosition,
+        bottomRightPosition,
+      ),
+      bottomLeftPosition,
+      leftMiddlePosition: Vec2.centre(topLeftPosition, bottomLeftPosition),
+      centre: this.center(),
+    };
   }
 
   clone(): RasterImage {
@@ -110,7 +135,7 @@ export class RasterImage extends BaseMicromoleculeEntity {
 
   toKetNode(): KetFileNode<KetFileNodeContent> {
     return {
-      type: RASTER_IMAGE_KEY,
+      type: RASTER_IMAGE_SERIALIZE_KEY,
       center: getNodeWithInvertedYCoord(this._center),
       data: {
         bitmap: this.bitmap,

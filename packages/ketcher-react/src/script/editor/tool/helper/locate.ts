@@ -179,16 +179,14 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
     (acc: Array<number>, item: ReRasterImage, id): Array<number> => {
       if (
-        item.rasterImage
-          .getCornerPositions()
-          .some((point) =>
-            point.isInsidePolygon([
-              topLeftPosition,
-              topRightPosition,
-              bottomRightPosition,
-              bottomLeftPosition,
-            ]),
-          )
+        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+          point.isInsidePolygon([
+            topLeftPosition,
+            topRightPosition,
+            bottomRightPosition,
+            bottomLeftPosition,
+          ]),
+        )
       ) {
         return acc.concat(id);
       }
@@ -341,9 +339,9 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
   const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
     (acc: Array<number>, item: ReRasterImage, id) => {
       if (
-        item.rasterImage
-          .getCornerPositions()
-          .some((point) => isPointInPolygon(r, point))
+        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+          isPointInPolygon(r, point),
+        )
       ) {
         return acc.concat(id);
       }

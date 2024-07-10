@@ -58,6 +58,8 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
+    // We cannot use const RASTER_IMAGE_KEY here because this is being executed before initializing the variable
+    // But it must contain the same value otherwise the code will stop working
     rasterImages: ReRasterImage,
   } as const;
 

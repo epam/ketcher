@@ -4,6 +4,7 @@ import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
 import { RaphaelElement } from 'raphael';
 import { Box2Abs, Vec2 } from 'domain/entities';
+import draw from 'application/render/draw';
 
 export class ReRasterImage extends ReObject {
   private element?: RaphaelElement;
@@ -39,6 +40,7 @@ export class ReRasterImage extends ReObject {
 
   show(restruct: ReStruct, renderOptions: RenderOptions) {
     if (this.element) {
+      restruct.clearVisel(this.visel);
       this.remove();
     }
 
@@ -57,6 +59,27 @@ export class ReRasterImage extends ReObject {
     );
   }
 
+  drawHover() {
+    // TODO implement in the following task
+  }
+
+  makeSelectionPlate(
+    _restruct: ReStruct,
+    paper: ReStruct['render']['paper'],
+    options: RenderOptions,
+  ) {
+    const selectionSet = paper.set();
+    const cornerPositions = this.rasterImage
+      .getCornerPositions()
+      .map((item) => Scale.modelToCanvas(item, options));
+    selectionSet.push(
+      draw
+        .selectionPolygon(paper, cornerPositions, options)
+        .attr(options.selectionStyleSimpleObject),
+    );
+    return selectionSet;
+  }
+
   getVBoxObj(): Box2Abs | null {
     return new Box2Abs(
       this.rasterImage.getTopLeftPosition(),
@@ -70,7 +93,8 @@ export class ReRasterImage extends ReObject {
     }
   }
 
-  move(diff: Vec2) {
+  move(reStruct: ReStruct, diff: Vec2) {
+    reStruct.clearVisel(this.visel);
     if (this.element) {
       this.element.translate(diff.x, diff.y);
     }

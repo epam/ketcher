@@ -28,6 +28,7 @@ import {
   fromNewCanvas,
   provideEditorSettings,
   ReStruct,
+  RASTER_IMAGE_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -66,7 +67,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
-  'rasterImages',
+  RASTER_IMAGE_KEY,
 ];
 
 const highlightTargets = [

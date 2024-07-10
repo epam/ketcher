@@ -21,7 +21,7 @@ export class RasterImageMove extends BaseOperation {
       reStruct.render.options,
     );
 
-    renderItem.move(scaledOffset);
+    renderItem.move(reStruct, scaledOffset);
     item.addPositionOffset(this.offset);
   }
 

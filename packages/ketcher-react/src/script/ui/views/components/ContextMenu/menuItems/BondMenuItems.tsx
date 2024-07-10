@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { HandlerParamsEvent, Item, Submenu } from 'react-contexify';
+import { Item, Submenu } from 'react-contexify';
 import tools from 'src/script/ui/action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
@@ -8,7 +8,7 @@ import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils';
-import { MenuItemsProps } from '../contextMenu.types';
+import { ItemEventParams, MenuItemsProps } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 
 const nonQueryBondNames = getNonQueryBondNames(tools);
@@ -21,14 +21,9 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
     useBondSGroupEdit();
   const handleDelete = useDelete();
   const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
-  const isDisabled =
-    props.propsFromTrigger && props.triggerEvent
-      ? disabled({
-          id: props.propsFromTrigger?.id,
-          props: props.propsFromTrigger,
-          triggerEvent: props.triggerEvent as unknown as HandlerParamsEvent,
-        })
-      : true;
+  const isDisabled = disabled({
+    props: props.propsFromTrigger,
+  } as ItemEventParams);
   return (
     <>
       <Item {...props} onClick={handleEdit}>

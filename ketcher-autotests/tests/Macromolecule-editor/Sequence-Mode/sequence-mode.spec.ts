@@ -170,7 +170,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -178,7 +178,7 @@ test.describe('Sequence Mode', () => {
     page,
   }) => {
     /*
-    Test case: #3648W
+    Test case: #3648
     Description: After press 'Undo' button layout returns to unarranged state.
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);

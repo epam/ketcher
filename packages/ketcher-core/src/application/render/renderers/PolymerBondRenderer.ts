@@ -4,15 +4,13 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Phosphate, Sugar, Vec2 } from 'domain/entities';
-import { Peptide } from 'domain/entities/Peptide';
-import { Chem } from 'domain/entities/Chem';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Vec2 } from 'domain/entities';
 import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor/internal';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
+import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
@@ -41,28 +39,14 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
-  private isSnakeBondAvailableForMonomer(monomer?: BaseMonomer) {
-    return (
-      monomer instanceof Peptide ||
-      monomer instanceof Chem ||
-      monomer instanceof Sugar ||
-      monomer instanceof Phosphate
-    );
-  }
-
   get isSnake() {
     if (this.polymerBond.isSideChainConnection) {
       return false;
     }
 
     if (
-      !this.isSnakeBondAvailableForMonomer(this.polymerBond.firstMonomer) ||
-      (this.polymerBond.secondMonomer &&
-        !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer)) ||
-      (this.polymerBond.secondMonomer &&
-        this.polymerBond.firstMonomer.isMonomerTypeDifferentForChaining(
-          this.polymerBond.secondMonomer,
-        ))
+      getSugarFromRnaBase(this.polymerBond.firstMonomer) ||
+      getSugarFromRnaBase(this.polymerBond.secondMonomer)
     ) {
       return false;
     }

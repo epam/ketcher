@@ -8,6 +8,7 @@ import { BackBoneBondSequenceRenderer } from 'application/render/renderers/seque
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
+import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
@@ -104,6 +105,10 @@ export class PolymerBond extends DrawingEntity {
           secondMonomerAttachmentPoint,
         )
       ) ||
+        (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
+          this.secondMonomer instanceof RNABase) ||
+        (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
+          this.firstMonomer instanceof RNABase) ||
         firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
       !(
         (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&

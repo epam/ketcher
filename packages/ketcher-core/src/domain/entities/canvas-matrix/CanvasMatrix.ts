@@ -29,8 +29,10 @@ export class CanvasMatrix {
       initialMatrix: new Matrix<Cell>(),
     },
   ) {
+    console.log(this.matrixConfig);
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
+    console.log(this);
     this.fillCells();
   }
 
@@ -219,7 +221,7 @@ export class CanvasMatrix {
               rowsWithRnaBases++;
               wereBasesInRow = false;
               let index = 0;
-              while (index < this.initialMatrixWidth - 1) {
+              while (index < this.initialMatrixWidth) {
                 const cellWithPotentialRnaBase = this.matrix.get(
                   rowNumber + rowsWithRnaBases,
                   index,

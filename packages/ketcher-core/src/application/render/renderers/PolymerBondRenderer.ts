@@ -280,6 +280,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     }
 
+    let maxHorizontalOffset = 0;
+
     cells.forEach((cell, cellIndex) => {
       const cellConnection = cell.connections.find((connection) => {
         return connection.polymerBond === this.polymerBond;
@@ -290,6 +292,15 @@ export class PolymerBondRenderer extends BaseRenderer {
           ? 180
           : 0
         : xDirection;
+      const maxXOffset = cell.connections.reduce((max, connection) => {
+        return connection.isVertical || max > connection.offset
+          ? max
+          : connection.offset;
+      }, 0);
+
+      maxHorizontalOffset =
+        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
+
       if (isLastCell) {
         if (isStraightVerticalConnection) {
           return;
@@ -305,7 +316,14 @@ export class PolymerBondRenderer extends BaseRenderer {
 
         if (!areCellsOnSameRow) {
           dAttributeForPath += `V ${
-            endPosition.y - CELL_HEIGHT / 2 - SMOOTH_CORNER_SIZE
+            endPosition.y -
+            CELL_HEIGHT / 2 -
+            SMOOTH_CORNER_SIZE -
+            sin * (cellConnection.yOffset || 0) * 3 -
+            (isTwoNeighborRowsConnection
+              ? maxHorizontalOffset - cellConnection.offset
+              : cellConnection.offset) *
+              3
           } `;
           dAttributeForPath += `q 0,${SMOOTH_CORNER_SIZE * sin} ${
             SMOOTH_CORNER_SIZE * cos
@@ -685,7 +703,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private appendRootElement() {
     return this.canvas
-      .insert('g', `:first-child`)
+      .insert('g', `.monomer`)
       .data([this])
       .on('mouseover', (event) => {
         this.editorEvents.mouseOverPolymerBond.dispatch(event);
@@ -913,7 +931,10 @@ export class PolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+            editor.mode instanceof SnakeMode &&
+              renderer.polymerBond.isSideChainConnection
+              ? '#43B5C0'
+              : '#333333',
           );
         },
       );
@@ -922,7 +943,10 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+        editor.mode instanceof SnakeMode &&
+          this.polymerBond.isSideChainConnection
+          ? '#43B5C0'
+          : '#333333',
       )
       .attr('pointer-events', 'stroke');
 

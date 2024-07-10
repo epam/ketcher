@@ -27,6 +27,9 @@
                 "$ref": "#/definitions/plus"
               },
               {
+                "$ref": "#/definitions/rasterImage"
+              },
+              {
                 "type": "object",
                 "required": ["$ref"],
                 "properties": {
@@ -775,6 +778,38 @@
         },
         "selected": {
           "type": "boolean"
+        }
+      }
+    },
+    "rasterImage": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "rasterImage"
+        },
+        "data": {
+          "type": "object",
+          "required": ["bitmap", "position"],
+          "properties": {
+            "bitmap": {
+              "type": "string"
+            },
+            "position": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

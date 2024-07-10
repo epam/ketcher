@@ -51,7 +51,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode } from 'application/editor';
+import { SequenceMode, SnakeMode } from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
@@ -652,6 +652,7 @@ export class DrawingEntitiesManager {
     secondMonomerAttachmentPoint: string,
   ) {
     const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
 
     const firstMonomer = polymerBond.firstMonomer;
     this.polymerBonds.delete(polymerBond.id);
@@ -667,7 +668,10 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
-    command.merge(this.recalculateCanvasMatrix());
+
+    if (editor.mode instanceof SnakeMode) {
+      command.merge(this.recalculateCanvasMatrix());
+    }
 
     return command;
   }
@@ -980,14 +984,15 @@ export class DrawingEntitiesManager {
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
-    const monomerHeight = monomer.renderer?.monomerSize?.height ?? 0;
     const heightMonomerWithBond =
-      monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
-    maxVerticalDistance = Math.max(maxVerticalDistance, heightMonomerWithBond);
+      SNAKE_LAYOUT_CELL_WIDTH / 2 + VERTICAL_DISTANCE_FROM_MONOMER;
+    const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
+    maxVerticalDistance = isNewRow
+      ? heightMonomerWithBond
+      : Math.max(maxVerticalDistance, heightMonomerWithBond);
     monomer.isMonomerInRnaChainRow =
       maxVerticalDistance > heightMonomerWithBond;
     const oldMonomerPosition = monomer.position;
-    const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
     const operation = new MonomerMoveOperation(
       this.rearrangeChainModelChange.bind(
         this,

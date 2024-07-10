@@ -562,13 +562,12 @@ test.describe('Macro-Micro-Switcher', () => {
       /* 
       Test case: Macro-Micro-Switcher/#3747
       Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
-      Test fail because we have a bug https://github.com/epam/ketcher/issues/4881
-      After fix we need update snapshots.
       */
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
       await turnOnMicromoleculesEditor(page);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
+      await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);
     });
   }

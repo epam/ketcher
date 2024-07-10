@@ -360,6 +360,10 @@ export class ZoomTool implements BaseTool {
     return value / this.zoomLevel;
   }
 
+  zoomValue(value: number) {
+    return value * this.zoomLevel;
+  }
+
   destroy() {
     this.scrollBars.horizontal?.bar?.remove();
     this.scrollBars.vertical?.bar?.remove();

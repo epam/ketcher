@@ -191,6 +191,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -564,6 +565,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

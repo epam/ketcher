@@ -569,6 +569,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await turnOnMicromoleculesEditor(page);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
+      await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     });
   }

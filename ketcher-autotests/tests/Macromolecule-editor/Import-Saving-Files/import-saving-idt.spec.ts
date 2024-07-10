@@ -122,4 +122,25 @@ test.describe('Import-Saving .idt Files', () => {
     );
     expect(valueInTextarea).toBe(expectedData);
   });
+
+  test('Check import of .ket file with unresolved monomers and save in .idt format ', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    const expectedFile = await getIdt(page);
+    await saveToFile('IDT/unresolved-monomers.idt', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: idtFileExpected, file: idtFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/IDT/unresolved-monomers.idt',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(idtFile).toEqual(idtFileExpected);
+
+    await takeEditorScreenshot(page);
+  });
 });

@@ -17,7 +17,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
-import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
+import {
+  GroupContainerColumn,
+  GroupContainerRow,
+  GroupTitle,
+  ItemsContainer,
+} from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
@@ -32,6 +37,7 @@ import {
   selectActiveRnaBuilderItem,
   selectGroupItemValidations,
 } from 'state/rna-builder';
+import { NoNaturalAnalogueGroupTitle } from '../../../constants';
 
 const MonomerGroup = ({
   items,
@@ -120,14 +126,15 @@ const MonomerGroup = ({
       : selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
+  const groupWithNoNaturalAnalogue = title === NoNaturalAnalogueGroupTitle;
+  const StyledGroupContainer = groupWithNoNaturalAnalogue
+    ? GroupContainerColumn
+    : GroupContainerRow;
+
   return (
-    <GroupContainer>
-      {title && (
-        <GroupTitle>
-          <span>{title}</span>
-        </GroupTitle>
-      )}
-      <ItemsContainer>
+    <StyledGroupContainer>
+      {title && <GroupTitle>{title}</GroupTitle>}
+      <ItemsContainer useLeftMargin={groupWithNoNaturalAnalogue}>
         {items.map((monomer) => {
           const key = monomer.props
             ? `${monomer.props.MonomerName + monomer.props.Name}`
@@ -146,7 +153,7 @@ const MonomerGroup = ({
           );
         })}
       </ItemsContainer>
-    </GroupContainer>
+    </StyledGroupContainer>
   );
 };
 export { MonomerGroup };

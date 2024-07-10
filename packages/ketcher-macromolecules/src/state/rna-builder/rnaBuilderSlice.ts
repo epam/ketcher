@@ -35,7 +35,12 @@ export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
 }
 
-export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
+export type RnaBuilderNucleotidesItem = 'Nucleotides';
+
+export type RnaBuilderItem =
+  | RnaBuilderPresetsItem
+  | MonomerGroups
+  | RnaBuilderNucleotidesItem;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;

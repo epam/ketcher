@@ -69,7 +69,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return this.rootBBox?.y || 0;
   }
 
-  public abstract show(theme): void;
+  public abstract show(theme, force?: boolean): void;
   public abstract drawSelection(): void;
   public abstract moveSelection(): void;
   protected abstract appendHover(

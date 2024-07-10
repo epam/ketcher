@@ -5,17 +5,19 @@ import {
   Phosphate,
   SubChainNode,
   Sugar,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+  Nucleoside,
+  Nucleotide,
+  MonomerSequenceNode,
+  EmptySequenceNode,
+  LinkerSequenceNode,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { Nucleoside } from 'domain/entities/Nucleoside';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { LinkerSequenceNode } from 'domain/entities/LinkerSequenceNode';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
@@ -49,6 +51,15 @@ export class Chain {
   public add(monomer: BaseMonomer) {
     this.createSubChainIfNeed(monomer);
 
+    if (
+      monomer instanceof Peptide ||
+      monomer instanceof UnsplitNucleotide ||
+      monomer instanceof UnresolvedMonomer
+    ) {
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      return;
+    }
+
     if (monomer instanceof Sugar) {
       if (isValidNucleoside(monomer, this.firstMonomer)) {
         this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
@@ -59,10 +70,7 @@ export class Chain {
         return;
       }
     }
-    if (monomer instanceof Peptide) {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer));
-      return;
-    }
+
     const nextMonomer = getNextMonomerInChain(monomer);
     const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
       const isNucleosideOrNucleotide =

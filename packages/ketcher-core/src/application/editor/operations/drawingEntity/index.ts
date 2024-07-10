@@ -66,11 +66,11 @@ export class DrawingEntityRedrawOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     const drawingEntity = this.drawingEntityRedrawModelChange();
-    renderersManager.redrawDrawingEntity(drawingEntity);
+    renderersManager.redrawDrawingEntity(drawingEntity, true);
   }
 
   public invert(renderersManager: RenderersManager) {
     const drawingEntity = this.invertDrawingEntityRedrawModelChange();
-    renderersManager.redrawDrawingEntity(drawingEntity);
+    renderersManager.redrawDrawingEntity(drawingEntity, true);
   }
 }

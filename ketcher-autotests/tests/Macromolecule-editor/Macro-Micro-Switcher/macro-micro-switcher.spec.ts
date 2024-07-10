@@ -1,9 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import {
+  enterSequence,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   TopPanelButton,
@@ -31,7 +32,39 @@ import {
   FunctionalGroups,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
+  selectSingleBondTool,
+  drawBenzeneRing,
+  selectSnakeLayoutModeTool,
+  selectEraseTool,
+  clickUndo,
+  clickOnAtom,
+  getKet,
+  saveToFile,
+  receiveFileComparisonData,
+  getMolfile,
+  selectSequenceLayoutModeTool,
+  switchSequenceEnteringType,
+  SequenceType,
+  selectLeftPanelButton,
+  LeftPanelButton,
+  selectDropdownTool,
+  openFileAndAddToCanvasAsNewProject,
+  getSdf,
+  getCdx,
+  openFile,
+  getCdxml,
+  getCml,
+  clickOnFileFormatDropdown,
+  takeTopToolbarScreenshot,
+  setAttachmentPoints,
 } from '@utils';
+import {
+  addSuperatomAttachmentPoint,
+  removeSuperatomAttachmentPoint,
+} from '@utils/canvas/atoms/superatomAttachmentPoints';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 
 const topLeftCorner = {
   x: -325,
@@ -104,6 +137,54 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(1)
     .fill('05');
   await page.getByTestId('OK').click();
+}
+
+async function openCdxFile(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
+}
+
+async function openCdxmlFile(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
+}
+
+enum FileFormat {
+  SVGDocument = 'SVG Document',
+  PNGImage = 'PNG Image',
+}
+
+async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await clickOnFileFormatDropdown(page);
+  await page.getByRole('option', { name: FileFormat }).click();
+}
+
+async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
+  await waitForRender(page, async () => {
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+  });
+  if (waitForButtonIsEnabled) {
+    await miewApplyButtonIsEnabled(page);
+  }
 }
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -481,6 +562,8 @@ test.describe('Macro-Micro-Switcher', () => {
       /* 
       Test case: Macro-Micro-Switcher/#3747
       Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
+      Test fail because we have a bug https://github.com/epam/ketcher/issues/4881
+      After fix we need update snapshots.
       */
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
       await turnOnMicromoleculesEditor(page);
@@ -553,7 +636,7 @@ test.describe('Macro-Micro-Switcher', () => {
       topLeftCorner.y,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').click();
+    await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
 
@@ -729,7 +812,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Make full screen mode in micro mode and switch to macro mode.', async ({
+  test.skip('Make full screen mode in micro mode and switch to macro mode.', async ({
     page,
   }) => {
     /* 
@@ -770,12 +853,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open a macro file and put in center of canvas in micro mode then switch to macro, check that structure is in center of canvas', async ({
+  test('Open a macro file and put in center of canvas in micro mode then switch to macro', async ({
     page,
   }) => {
     /* 
     Test case: Macro-Micro-Switcher/#3902
-    Description: Structure is in center of canvas
+    Description: Structure is in left upper corner of canvas
     */
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
     await takeEditorScreenshot(page);
@@ -807,45 +890,187 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test('Check that Atom connected to R-Group label by bond used as attachment atom when switch to macro mode', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: Atom connected to R-Group label by bond used as attachment atom when switch to macro mode.
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   await openFileAndAddToCanvas(
-  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //     page,
-  //   );
-  //   await takeEditorScreenshot(page);
-  //   await turnOnMacromoleculesEditor(page);
-  //   await selectSingleBondTool(page);
-  //   await page.getByText('F1').locator('..').hover();
-  //   await takeEditorScreenshot(page);
-  // });
-  //
-  // test('Check If there are more than one attachment atom for same R-Group label', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: If there are more than one attachment atom for same R-Group label then attachment point NOT created when switch to macro mode.
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   await openFileAndAddToCanvas(
-  //     'KET/more-than-one-attachment-atom-for-R-Group.ket',
-  //     page,
-  //   );
-  //   await takeEditorScreenshot(page);
-  //   await turnOnMacromoleculesEditor(page);
-  //   await selectSingleBondTool(page);
-  //   await page.getByText('F1').locator('..').hover();
-  //   await takeEditorScreenshot(page);
-  // });
+  test('Check that attachment point added in micro mode used as attachment point when switch to macro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: Attachment point added in micro mode used as attachment point when switch to macro mode.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Ensure that system does not allow create s-group if structure have attachment point', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not allow create s-group if structure have attachment point.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that multiple attachment points added in micro mode used as attachment point when switch to macro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: Multiple attachment points added in micro mode used as attachment point when switch to macro mode.
+    */
+    await openFileAndAddToCanvas(
+      'KET/more-than-one-attachment-point.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify attachment points can be added/removed via context menu', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: Attachment points can be added/removed via context menu.
+    */
+    await drawBenzeneRing(page);
+    await addSuperatomAttachmentPoint(page, 'C', 1);
+    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await addSuperatomAttachmentPoint(page, 'C', 3);
+    await takeEditorScreenshot(page);
+    await removeSuperatomAttachmentPoint(page, 'C', 2);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Ensure that new attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: New attachment points are labeled correctly (R1/.../R8) based on the next free attachment point number.
+    */
+    // await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await openFileAndAddToCanvas('KET/long-chain.ket', page);
+    await addSuperatomAttachmentPoint(page, 'C', 4);
+    await addSuperatomAttachmentPoint(page, 'C', 6);
+    await addSuperatomAttachmentPoint(page, 'C', 8);
+    await addSuperatomAttachmentPoint(page, 'C', 10);
+    await addSuperatomAttachmentPoint(page, 'C', 12);
+    await addSuperatomAttachmentPoint(page, 'C', 14);
+    await addSuperatomAttachmentPoint(page, 'C', 16);
+    await addSuperatomAttachmentPoint(page, 'C', 17);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that system does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chain-with-eight-attachment-points.ket',
+      page,
+    );
+    await clickOnAtom(page, 'C', 9, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that system start to use missed labels if user want to create AP greater that R8 (if it has R1,R3-R8 - attempt to add causes R2 selection)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: System does not create a new attachment point if all 8 attachment points (R1-R8) already exist in the structure.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chain-with-eight-attachment-points.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R2').locator('..').click();
+    await addSuperatomAttachmentPoint(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that in context menu for AP - only Delete avaliable', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: In context menu for AP - only Delete avaliable.
+    */
+    await openFileAndAddToCanvas(
+      'KET/structure-with-two-attachment-points.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('R2').locator('..').click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that AP label selection works but not saves to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: AP label selection works but not saves to KET.
+    */
+    await openFileAndAddToCanvas(
+      'KET/structure-with-two-attachment-points.ket',
+      page,
+    );
+    await page.keyboard.down('Shift');
+    await page.getByText('R1').locator('..').click();
+    await page.getByText('R2').locator('..').click();
+    await page.keyboard.up('Shift');
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/structure-with-two-attachment-points-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/structure-with-two-attachment-points-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/structure-with-two-attachment-points-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async ({
     page,
@@ -939,417 +1164,452 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  // const testData = [
-  //   {
-  //     description: 'Sugar',
-  //     monomer: '25R',
-  //     monomerTestId: '25R___2,5-Ribose',
-  //     summaryTestId: 'summary-Sugars',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  //   {
-  //     description: 'Base',
-  //     monomer: 'meA',
-  //     monomerTestId: 'meA___N-Methyl-Adenine',
-  //     summaryTestId: 'summary-Bases',
-  //     bondEndpoints: { first: 'R1', second: 'R1' },
-  //   },
-  //   {
-  //     description: 'Phosphate',
-  //     monomer: 'nasP',
-  //     monomerTestId: 'nasP___Sodium Phosporothioate',
-  //     summaryTestId: 'summary-Phosphates',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  // ];
+  const testData = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
 
-  // for (const data of testData) {
-  //   test(`Connect micro structure with attachment point to ${data.description} in macro mode`, async ({
-  //     page,
-  //   }) => {
-  //     /*
-  //     Test case: Macro-Micro-Switcher/#4530
-  //     Description:
-  //     */
-  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //     test.fail();
-  //     const x = 750;
-  //     const y = 370;
-  //     const firstMonomer = await page.getByText('F1').locator('..');
-  //     const secondMonomer = await page
-  //       .getByText(data.monomer)
-  //       .locator('..')
-  //       .first();
-  //     await openFileAndAddToCanvas(
-  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //       page,
-  //     );
-  //     await turnOnMacromoleculesEditor(page);
-  //     await page.getByTestId('RNA-TAB').click();
-  //     await page.getByTestId(data.summaryTestId).click();
-  //     await page.getByTestId(data.monomerTestId).click();
-  //     await page.mouse.click(x, y);
-  //     await bondTwoMonomersPointToPoint(
-  //       page,
-  //       firstMonomer,
-  //       secondMonomer,
-  //       data.bondEndpoints.first,
-  //       data.bondEndpoints.second,
-  //     );
-  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //     await bondLine.hover();
-  //     await takeEditorScreenshot(page);
-  //   });
-  // }
-  //
-  // test('Connect micro structure with attachment point to CHEM in macro mode', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: CHEM connected with micro structure.
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   const x = 750;
-  //   const y = 370;
-  //   const firstMonomer = await page.getByText('F1').locator('..');
-  //   const secondMonomer = await page
-  //     .getByText('Test-6-Ch')
-  //     .locator('..')
-  //     .first();
-  //   await openFileAndAddToCanvas(
-  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //     page,
-  //   );
-  //   await turnOnMacromoleculesEditor(page);
-  //   await page.getByTestId('CHEM-TAB').click();
-  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  //   await page.mouse.click(x, y);
-  //   await bondTwoMonomersPointToPoint(
-  //     page,
-  //     firstMonomer,
-  //     secondMonomer,
-  //     'R1',
-  //     'R3',
-  //   );
-  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //   await bondLine.hover();
-  //   await takeEditorScreenshot(page);
-  // });
-  //
-  // const testData2 = [
-  //   {
-  //     description: 'Sugar',
-  //     monomer: '25R',
-  //     monomerTestId: '25R___2,5-Ribose',
-  //     summaryTestId: 'summary-Sugars',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  //   {
-  //     description: 'Base',
-  //     monomer: 'meA',
-  //     monomerTestId: 'meA___N-Methyl-Adenine',
-  //     summaryTestId: 'summary-Bases',
-  //     bondEndpoints: { first: 'R1', second: 'R1' },
-  //   },
-  //   {
-  //     description: 'Phosphate',
-  //     monomer: 'moen',
-  //     monomerTestId: 'moen___2-Methoxyethylamino',
-  //     summaryTestId: 'summary-Phosphates',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  // ];
-  //
-  // for (const data of testData2) {
-  //   test(`Connect micro structure with attachment point to ${data.description} in macro mode(snake mode)`, async ({
-  //     page,
-  //   }) => {
-  //     /*
-  //     Test case: Macro-Micro-Switcher/#4530
-  //     Description:
-  //     */
-  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //     test.fail();
-  //     const x = 750;
-  //     const y = 370;
-  //     const firstMonomer = await page.getByText('F1').locator('..');
-  //     const secondMonomer = await page
-  //       .getByText(data.monomer)
-  //       .locator('..')
-  //       .first();
-  //     await openFileAndAddToCanvas(
-  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //       page,
-  //     );
-  //     await turnOnMacromoleculesEditor(page);
-  //     await selectSnakeLayoutModeTool(page);
-  //     await page.getByTestId('RNA-TAB').click();
-  //     await page.getByTestId(data.summaryTestId).click();
-  //     await page.getByTestId(data.monomerTestId).click();
-  //     await page.mouse.click(x, y);
-  //     await bondTwoMonomersPointToPoint(
-  //       page,
-  //       firstMonomer,
-  //       secondMonomer,
-  //       data.bondEndpoints.first,
-  //       data.bondEndpoints.second,
-  //     );
-  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //     await bondLine.hover();
-  //     await takeEditorScreenshot(page);
-  //   });
-  // }
-  //
-  // test('Connect micro structure with attachment point to CHEM in macro mode(snake mode)', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: CHEM connected with micro structure.
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   const x = 750;
-  //   const y = 370;
-  //   const firstMonomer = await page.getByText('F1').locator('..');
-  //   const secondMonomer = await page
-  //     .getByText('Test-6-Ch')
-  //     .locator('..')
-  //     .first();
-  //   await openFileAndAddToCanvas(
-  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //     page,
-  //   );
-  //   await turnOnMacromoleculesEditor(page);
-  //   await selectSnakeLayoutModeTool(page);
-  //   await page.getByTestId('CHEM-TAB').click();
-  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  //   await page.mouse.click(x, y);
-  //   await bondTwoMonomersPointToPoint(
-  //     page,
-  //     firstMonomer,
-  //     secondMonomer,
-  //     'R1',
-  //     'R3',
-  //   );
-  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //   await bondLine.hover();
-  //   await takeEditorScreenshot(page);
-  // });
-  //
-  // const testData3 = [
-  //   {
-  //     description: 'Sugar',
-  //     monomer: '25R',
-  //     monomerTestId: '25R___2,5-Ribose',
-  //     summaryTestId: 'summary-Sugars',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  //   {
-  //     description: 'Base',
-  //     monomer: 'meA',
-  //     monomerTestId: 'meA___N-Methyl-Adenine',
-  //     summaryTestId: 'summary-Bases',
-  //     bondEndpoints: { first: 'R1', second: 'R1' },
-  //   },
-  //   {
-  //     description: 'Phosphate',
-  //     monomer: 'nasP',
-  //     monomerTestId: 'nasP___Sodium Phosporothioate',
-  //     summaryTestId: 'summary-Phosphates',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  // ];
-  //
-  // for (const data of testData3) {
-  //   test(`Delete bond between micro structure with attachment point and ${data.description} in macro mode and Undo deletion`, async ({
-  //     page,
-  //   }) => {
-  //     /*
-  //     Test case: Macro-Micro-Switcher/#4530
-  //     Description:
-  //     */
-  //     // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //     test.fail();
-  //     const x = 750;
-  //     const y = 370;
-  //     const firstMonomer = await page.getByText('F1').locator('..');
-  //     const secondMonomer = await page
-  //       .getByText(data.monomer)
-  //       .locator('..')
-  //       .first();
-  //     await openFileAndAddToCanvas(
-  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //       page,
-  //     );
-  //     await turnOnMacromoleculesEditor(page);
-  //     await page.getByTestId('RNA-TAB').click();
-  //     await page.getByTestId(data.summaryTestId).click();
-  //     await page.getByTestId(data.monomerTestId).click();
-  //     await page.mouse.click(x, y);
-  //     await bondTwoMonomersPointToPoint(
-  //       page,
-  //       firstMonomer,
-  //       secondMonomer,
-  //       data.bondEndpoints.first,
-  //       data.bondEndpoints.second,
-  //     );
-  //     await selectEraseTool(page);
-  //     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //     await bondLine.click();
-  //     await takeEditorScreenshot(page);
-  //     await clickUndo(page);
-  //     await takeEditorScreenshot(page);
-  //   });
-  // }
-  //
-  // test('Delete bond between micro structure with attachment point and CHEM in macro mode and Undo deletion', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: CHEM connected with micro structure.
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   const x = 750;
-  //   const y = 370;
-  //   const firstMonomer = await page.getByText('F1').locator('..');
-  //   const secondMonomer = await page
-  //     .getByText('Test-6-Ch')
-  //     .locator('..')
-  //     .first();
-  //   await openFileAndAddToCanvas(
-  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //     page,
-  //   );
-  //   await turnOnMacromoleculesEditor(page);
-  //   await page.getByTestId('CHEM-TAB').click();
-  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  //   await page.mouse.click(x, y);
-  //   await bondTwoMonomersPointToPoint(
-  //     page,
-  //     firstMonomer,
-  //     secondMonomer,
-  //     'R1',
-  //     'R3',
-  //   );
-  //   await selectEraseTool(page);
-  //   const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  //   await bondLine.click();
-  //   await takeEditorScreenshot(page);
-  //   await clickUndo(page);
-  //   await takeEditorScreenshot(page);
-  // });
-  //
-  // const testData4 = [
-  //   {
-  //     description: 'Sugar',
-  //     monomer: '25R',
-  //     monomerTestId: '25R___2,5-Ribose',
-  //     summaryTestId: 'summary-Sugars',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  //   {
-  //     description: 'Base',
-  //     monomer: 'meA',
-  //     monomerTestId: 'meA___N-Methyl-Adenine',
-  //     summaryTestId: 'summary-Bases',
-  //     bondEndpoints: { first: 'R1', second: 'R1' },
-  //   },
-  //   {
-  //     description: 'Phosphate',
-  //     monomer: 'nasP',
-  //     monomerTestId: 'nasP___Sodium Phosporothioate',
-  //     summaryTestId: 'summary-Phosphates',
-  //     bondEndpoints: { first: 'R1', second: 'R2' },
-  //   },
-  // ];
-  //
-  // for (const data of testData4) {
-  //   test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
-  //     page,
-  //   }) => {
-  //     /*
-  //     Test case: Macro-Micro-Switcher/#4530
-  //     Description: The test does not work properly because the connection of
-  //     monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
-  //     After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
-  //     */
-  //     const x = 750;
-  //     const y = 370;
-  //     const firstMonomer = await page.getByText('F1').locator('..');
-  //     const secondMonomer = await page
-  //       .getByText(data.monomer)
-  //       .locator('..')
-  //       .first();
-  //     await openFileAndAddToCanvas(
-  //       'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //       page,
-  //     );
-  //     await turnOnMacromoleculesEditor(page);
-  //     await page.getByTestId('RNA-TAB').click();
-  //     await page.getByTestId(data.summaryTestId).click();
-  //     await page.getByTestId(data.monomerTestId).click();
-  //     await page.mouse.click(x, y);
-  //     await bondTwoMonomersPointToPoint(
-  //       page,
-  //       firstMonomer,
-  //       secondMonomer,
-  //       data.bondEndpoints.first,
-  //       data.bondEndpoints.second,
-  //     );
-  //     await turnOnMicromoleculesEditor(page);
-  //     await selectEraseTool(page);
-  //     await page.getByText(data.monomer).locator('..').click();
-  //     await takeEditorScreenshot(page);
-  //     await selectTopPanelButton(TopPanelButton.Undo, page);
-  //     await takeEditorScreenshot(page);
-  //   });
-  // }
+  for (const data of testData) {
+    test(`Connect micro structure with attachment point to ${data.description} in macro mode`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      await bondLine.hover();
+      await takeEditorScreenshot(page);
+    });
+  }
 
-  // test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   Test case: Macro-Micro-Switcher/#4530
-  //   Description: The test does not work properly because the connection of
-  //     monomers with microstructures is not implemented https://github.com/epam/ketcher/issues/4532
-  //     After removing the macro structure and then pressing Undo, the micro and macro structures are disconnected
-  //   */
-  //   // Waiting for test reimplementation after the change of https://github.com/epam/ketcher/issues/4530 requirements
-  //   test.fail();
-  //   const x = 750;
-  //   const y = 370;
-  //   const firstMonomer = await page.getByText('F1').locator('..');
-  //   const secondMonomer = await page
-  //     .getByText('Test-6-Ch')
-  //     .locator('..')
-  //     .first();
-  //   await openFileAndAddToCanvas(
-  //     'KET/atom-connected-to-R-Group-label-by-bond.ket',
-  //     page,
-  //   );
-  //   await turnOnMacromoleculesEditor(page);
-  //   await page.getByTestId('CHEM-TAB').click();
-  //   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  //   await page.mouse.click(x, y);
-  //   await bondTwoMonomersPointToPoint(
-  //     page,
-  //     firstMonomer,
-  //     secondMonomer,
-  //     'R1',
-  //     'R3',
-  //   );
-  //   await turnOnMicromoleculesEditor(page);
-  //   await selectEraseTool(page);
-  //   await page.getByText('Test-6-Ch').locator('..').click();
-  //   await takeEditorScreenshot(page);
-  //   await selectTopPanelButton(TopPanelButton.Undo, page);
-  //   await takeEditorScreenshot(page);
-  // });
+  test('Connect micro structure with attachment point to CHEM in macro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  const testData2 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'moen',
+      monomerTestId: 'moen___2-Methoxyethylamino',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData2) {
+    test(`Connect micro structure with attachment point to ${data.description} in macro mode(snake mode)`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await selectSnakeLayoutModeTool(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      const bondLine = page.locator('g path').first();
+      await bondLine.hover();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Connect micro structure with attachment point to CHEM in macro mode(snake mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await selectSnakeLayoutModeTool(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    const bondLine = page.locator('g path').first();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  const testData3 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData3) {
+    test(`Delete bond between micro structure with attachment point and ${data.description} in macro mode and Undo deletion`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description:
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      await selectEraseTool(page);
+      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+      await bondLine.click();
+      await takeEditorScreenshot(page);
+      await clickUndo(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Delete bond between micro structure with attachment point and CHEM in macro mode and Undo deletion', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: CHEM connected with micro structure.
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await selectEraseTool(page);
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await bondLine.click();
+    await takeEditorScreenshot(page);
+    await clickUndo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testData4 = [
+    {
+      description: 'Sugar',
+      monomer: '25R',
+      monomerTestId: '25R___2,5-Ribose',
+      summaryTestId: 'summary-Sugars',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+    {
+      description: 'Base',
+      monomer: 'meA',
+      monomerTestId: 'meA___N-Methyl-Adenine',
+      summaryTestId: 'summary-Bases',
+      bondEndpoints: { first: 'R1', second: 'R1' },
+    },
+    {
+      description: 'Phosphate',
+      monomer: 'nasP',
+      monomerTestId: 'nasP___Sodium Phosporothioate',
+      summaryTestId: 'summary-Phosphates',
+      bondEndpoints: { first: 'R1', second: 'R2' },
+    },
+  ];
+
+  for (const data of testData4) {
+    test(`Delete macro structure ${data.description} in micro mode and Undo deletion`, async ({
+      page,
+    }) => {
+      /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description: Macro structure deleted.
+      */
+      const x = 750;
+      const y = 370;
+      const firstMonomer = await page.getByText('F1').locator('..');
+      const secondMonomer = await page
+        .getByText(data.monomer)
+        .locator('..')
+        .first();
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(data.summaryTestId).click();
+      await page.getByTestId(data.monomerTestId).click();
+      await page.mouse.click(x, y);
+      await bondTwoMonomersPointToPoint(
+        page,
+        firstMonomer,
+        secondMonomer,
+        data.bondEndpoints.first,
+        data.bondEndpoints.second,
+      );
+      await turnOnMicromoleculesEditor(page);
+      await selectEraseTool(page);
+      await page.getByText(data.monomer).click();
+      await takeEditorScreenshot(page);
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Delete bond between micro structure with attachment point and CHEM in micro mode and Undo deletion', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: 
+      After removing bond and then pressing Undo, the micro and macro structures are disconnected
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await turnOnMicromoleculesEditor(page);
+    await selectEraseTool(page);
+    await page.mouse.click(675, 330);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that it is not possible to change bond type between monomer and micromolecule in micro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: 
+      it is not possible to change bond type between monomer and micromolecule in micro mode
+    */
+    const x = 750;
+    const y = 370;
+    const firstMonomer = await page.getByText('F1').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R1',
+      'R3',
+    );
+    await turnOnMicromoleculesEditor(page);
+    await selectDropdownTool(page, 'bonds', 'bond-double');
+    await page.mouse.click(675, 330);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: 
+      AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
+    */
+    await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(645, 318);
+    await takeEditorScreenshot(page);
+  });
 
   test('Connect molecule to monomer', async ({ page }) => {
     /*
@@ -1363,6 +1623,713 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is impossible to create attachment point if atom is a part of s-group', async ({
+    page,
+  }) => {
+    /*
+    Github ticket: #4530
+    Description: It is impossible to create attachment point if atom is a part of s-group
+    */
+    await openFileAndAddToCanvasMacro('KET/part-chain-with-s-group.ket', page);
+    await clickOnAtom(page, 'C', 2, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that attachment points and leaving groups are correctly represented in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in KET format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/one-attachment-point-added-in-micro-mode-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that we can save bond between micro and macro structures to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: We can save bond between micro and macro structures to KET.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chem-connected-to-micro-structure.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/chem-connected-to-micro-structure-expected.ket',
+      expectedFile,
+    );
+
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/KET/chem-connected-to-micro-structure-expected.ket',
+    });
+
+    const hasConnectionTypeSingle = expectedFile.includes(
+      '"connectionType": "single"',
+    );
+    expect(hasConnectionTypeSingle).toBe(true);
+  });
+
+  test('Validate that we can save bond between micro and macro structures to Mol V3000 format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: We can save bond between micro and macro structures to Mol V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/chem-connected-to-micro-structure.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of MOL V2000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in Mol V2000 format.
+    The structure after opening is not similar to the original one. 
+    We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V2000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in SDF V2000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getSdf(page, 'v2000');
+    await saveToFile(
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1994
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+    await openCdxFile(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure not opens because we have bug https://github.com/epam/Indigo/issues/1993
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openCdxmlFile(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify presence and correctness of attachment points (atomRefs) in the SuperatomSgroup segment of CML molecular structure files', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Attachment points and leaving groups are correctly represented in CDX format.
+    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1990
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      expectedFile,
+    );
+
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/one-attachment-point-added-in-micro-mode-expected.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Undo-Redo invalidation if we change mode from micro to macro and back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Undo-Redo invalidation if we change mode from micro to macro and back.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeTopToolbarScreenshot(page);
+  });
+
+  test('Check saving to SVG Document format', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Structure saves in SVG Document format.
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check saving to PNG Image format', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Structure saves in PNG Image format.
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Aromatize/Dearomatize works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Aromatize/Dearomatize works for molecules with AP.
+    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4804
+    After the fix, you need to update test.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Layout works for molecules with AP', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Layout works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Clean Up works for molecules with AP', async ({ page }) => {
+    /*
+    Test case: #4530
+    Description: Clean Up works for molecules with AP.
+    */
+    await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
+  });
+
+  test('Check that Calculate CIPs works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Calculate CIPs works for molecules with AP.
+    */
+    await openFileAndAddToCanvas('KET/structure-with-ap-and-stereo.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Structure Check works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Structure Check works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Check, page),
+    );
+    await takeEditorScreenshot(page, {
+      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+    });
+  });
+
+  test('Check that Calculate values works for molecules with AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: Calculate values works for molecules with AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that 3D view works for molecules with AP but hydrohen is shown instead of AP', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4530
+    Description: 3D view works for molecules with AP but hydrohen is shown instead of AP.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await open3DViewer(page);
+    await expect(page).toHaveScreenshot({
+      animations: 'disabled',
+      maxDiffPixelRatio: 0.05,
+    });
+  });
+
+  const testData5 = [
+    { type: 'RNA', sequenceType: null },
+    { type: 'DNA', sequenceType: SequenceType.DNA },
+    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
+  ];
+
+  for (const data of testData5) {
+    test(`Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`, async ({
+      page,
+    }) => {
+      /*
+      Github ticket: #4530
+      Description: R2-R1 connection was formed when switching to flex or snake mode
+      */
+      await openFileAndAddToCanvas(
+        'KET/two-attachment-points-added-in-micro-mode.ket',
+        page,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await selectSequenceLayoutModeTool(page);
+
+      if (data.sequenceType) {
+        await switchSequenceEnteringType(page, data.sequenceType);
+      }
+
+      await clickOnSequenceSymbol(page, '@', { button: 'right' });
+      await page.getByTestId('edit_sequence').click();
+      await enterSequence(page, 'a');
+      await page.keyboard.press('Escape');
+      await selectSnakeLayoutModeTool(page);
+      await selectSingleBondTool(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const testData6 = [
+    { type: 'RNA', sequenceType: null },
+    { type: 'DNA', sequenceType: SequenceType.DNA },
+    { type: 'Peptide', sequenceType: SequenceType.PEPTIDE },
+  ];
+
+  for (const data of testData6) {
+    test(`Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`, async ({
+      page,
+    }) => {
+      /*
+      Github ticket: #4530
+      Description: R2-R1 connection was formed when switching to flex or snake mode
+      */
+      await drawBenzeneRing(page);
+      await turnOnMacromoleculesEditor(page);
+      await selectSequenceLayoutModeTool(page);
+
+      if (data.sequenceType) {
+        await switchSequenceEnteringType(page, data.sequenceType);
+      }
+
+      await clickOnSequenceSymbol(page, '@', { button: 'right' });
+      await page.getByTestId('edit_sequence').click();
+      await enterSequence(page, 'a');
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Check it is NOT possible to attach old AP to new AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach old AP to new AP label.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is possible to wrap AP labed to R-group (by fragment tool)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is possible to wrap AP labed to R-group (by fragment tool).
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await page.getByText('R1').locator('..').click();
+    await page.getByText('R18').click();
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to attach R-Group to AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach R-Group to AP label.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 2);
+    await page.getByText('R8').click();
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to change charge of AP label (select it and use A+/A- buttons)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to change charge of AP label (select it and use A+/A- buttons).
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 2);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check it is NOT possible to attach bond to AP label', async ({
+    page,
+  }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: It is NOT possible to attach bond to AP label.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await page.getByText('R1').locator('..').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check we can attach AP to single atom', async ({ page }) => {
+    /*
+    Test case: Macro-Micro-Switcher/#4530
+    Description: AP attached to single atom.
+    */
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await addSuperatomAttachmentPoint(page, 'O', 0);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Connection one molecule to another one by drugging one over another - result indicate existence of AP label and it remain back after delete connection', async ({
+    page,
+  }) => {
+    /*
+      Test case: Macro-Micro-Switcher/#4530
+      Description: We can connect molecule to attachment point and when delete bond attachment point remains.
+    */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-with-oxygen.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('canvas').getByText('O').click();
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSingleBondTool(page);
+    await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
 });

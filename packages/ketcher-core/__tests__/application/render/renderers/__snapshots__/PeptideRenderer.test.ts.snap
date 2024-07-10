@@ -19,6 +19,7 @@ exports[`PeptideRenderer should render peptide 1`] = `
     class="drawn-structures"
   >
     <g
+      class="monomer"
       transform="translate(0, 0) scale(1)"
       transition="transform 0.2s"
     >
@@ -44,6 +45,7 @@ exports[`PeptideRenderer should render peptide 1`] = `
         font-size="6px"
         font-weight="500"
         line-height="7px"
+        style="user-select: none;"
         text-align="right"
         x="10"
         y="-1"
@@ -54,6 +56,7 @@ exports[`PeptideRenderer should render peptide 1`] = `
         font-size="6px"
         font-weight="700"
         line-height="7px"
+        style="user-select: none;"
         text-align="right"
         x="-6"
         y="10"

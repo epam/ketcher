@@ -1,7 +1,11 @@
 import { Command } from 'domain/entities/Command';
 import { SelectLayoutModeOperation } from '../operations/polymerBond';
 import { CoreEditor, EditorHistory } from '../internal';
-import { LayoutMode, modesMap } from 'application/editor/modes';
+import {
+  DEFAULT_LAYOUT_MODE,
+  LayoutMode,
+  modesMap,
+} from 'application/editor/modes';
 import {
   getStructStringFromClipboardData,
   initHotKeys,
@@ -27,7 +31,7 @@ export abstract class BaseMode {
 
   protected constructor(
     public modeName: LayoutMode,
-    public previousMode: LayoutMode = 'flex-layout-mode',
+    public previousMode: LayoutMode = DEFAULT_LAYOUT_MODE,
   ) {}
 
   private changeMode(editor: CoreEditor, modeName: LayoutMode, isUndo = false) {

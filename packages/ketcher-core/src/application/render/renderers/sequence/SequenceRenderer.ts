@@ -273,24 +273,7 @@ export class SequenceRenderer {
       chain: Chain;
     }) => void,
   ) {
-    let nodeIndexOverall = 0;
-
-    this.chainsCollection.chains.forEach((chain, chainIndex) => {
-      chain.subChains.forEach((subChain, subChainIndex) => {
-        subChain.nodes.forEach((node, nodeIndex) => {
-          forEachCallback({
-            chainIndex,
-            subChainIndex,
-            nodeIndex,
-            nodeIndexOverall,
-            node,
-            subChain,
-            chain,
-          });
-          nodeIndexOverall++;
-        });
-      });
-    });
+    this.chainsCollection.forEachNode(forEachCallback);
   }
 
   public static setCaretPositionBySequenceItemRenderer(

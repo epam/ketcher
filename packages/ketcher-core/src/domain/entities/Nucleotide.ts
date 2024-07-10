@@ -16,6 +16,7 @@ import {
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class Nucleotide {
   constructor(
@@ -88,7 +89,7 @@ export class Nucleotide {
     return this.sugar;
   }
 
-  public get monomers() {
+  public get monomers(): BaseMonomer[] {
     return [this.sugar, this.rnaBase, this.phosphate];
   }
 

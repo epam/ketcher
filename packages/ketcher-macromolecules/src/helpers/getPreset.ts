@@ -53,10 +53,16 @@ export const getPresets = (
       ) as MonomerItemType;
 
       const result: IRnaPreset = {
-        base: { ...rnaBase, label: rnaBase.props.MonomerName },
+        base: rnaBase
+          ? { ...rnaBase, label: rnaBase.props.MonomerName }
+          : undefined,
         name: rnaPresetsTemplate.name,
-        phosphate: { ...phosphate, label: phosphate.props.MonomerName },
-        sugar: { ...ribose, label: ribose.props.MonomerName },
+        phosphate: phosphate
+          ? { ...phosphate, label: phosphate.props.MonomerName }
+          : undefined,
+        sugar: ribose
+          ? { ...ribose, label: ribose.props.MonomerName }
+          : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };

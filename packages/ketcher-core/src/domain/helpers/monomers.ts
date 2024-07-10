@@ -4,6 +4,7 @@ import {
   Phosphate,
   RNABase,
   Sugar,
+  UnsplitNucleotide,
 } from 'domain/entities';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 
@@ -66,7 +67,9 @@ export function getPhosphateFromSugar(monomer?: BaseMonomer) {
 
 export function isMonomerBeginningOfChain(
   monomer: BaseMonomer,
-  MonomerTypes: Array<typeof Peptide | typeof Phosphate | typeof Sugar>,
+  MonomerTypes: Array<
+    typeof Peptide | typeof Phosphate | typeof Sugar | typeof UnsplitNucleotide
+  >,
 ) {
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const previousMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
@@ -77,10 +80,12 @@ export function isMonomerBeginningOfChain(
     r1PolymerBond &&
     previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
 
+  // For single monomers we check that monomer has bonds, but for UnsplitNucleotide we don't
+  // to be consistent with rna triplets (we show enumeration for single triplet)
   return (
     ((monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
       !monomer.hasAttachmentPoint(AttachmentPointName.R1)) &&
-      monomer.hasBonds) ||
+      (monomer.hasBonds || monomer instanceof UnsplitNucleotide)) ||
     previousConnectionNotR2 ||
     isPreviousMonomerPartOfChain
   );

@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "2.22.0-rc.2",
+  "version": "2.23.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -29,7 +29,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
+    "build": "cross-env NODE_ENV=production rollup -c -m true && cross-env NODE_ENV=production BINARY_WASM=true rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "indigo-ketcher": "1.21.0-rc.1",
+    "indigo-ketcher": "1.22.0-rc.1",
     "ketcher-core": "*"
   },
   "devDependencies": {
@@ -50,9 +50,10 @@
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
+    "@rollup/plugin-alias": "^3.1.9",
     "@rollup/plugin-babel": "^5.2.1",
     "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-strip": "^2.0.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
@@ -74,5 +75,15 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.modern.js",
+      "require": "./dist/index.js"
+    },
+    "./dist/binaryWasm": {
+      "import": "./dist/binaryWasm/index.modern.js",
+      "require": "./dist/binaryWasm/index.js"
+    }
+  }
 }

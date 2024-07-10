@@ -32,11 +32,18 @@ export const Preview = () => {
     KetMonomerClass.CHEM,
     KetMonomerClass.Phosphate,
     KetMonomerClass.Sugar,
+    KetMonomerClass.RNA,
+    KetMonomerClass.DNA,
   ]);
   const monomerClass = preview?.monomer?.props.MonomerClass;
   if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {
     return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
   }
 
-  return <MonomerPreview className="polymer-library-preview" />;
+  return (
+    <MonomerPreview
+      className="polymer-library-preview"
+      unresolvedMonomer={preview?.monomer?.props?.unresolved}
+    />
+  );
 };

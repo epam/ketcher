@@ -9,8 +9,6 @@ import {
 } from 'ketcher-core';
 import { ModeControl } from './ModeControl';
 
-const isProduction = process.env.NODE_ENV === 'production';
-
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
   const hiddenButtons = searchParams.get('hiddenControls');
@@ -29,7 +27,7 @@ let structServiceProvider: StructServiceProvider =
     process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
 if (process.env.MODE === 'standalone') {
-  if (isProduction) {
+  if (process.env.USE_SEPARATE_INDIGO_WASM === 'true') {
     // It is possible to use just 'ketcher-standalone' instead of ketcher-standalone/dist/binaryWasm
     // however, it will increase the size of the bundle more than two times because wasm will be
     // included in ketcher bundle as base64 string.

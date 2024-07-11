@@ -33,7 +33,6 @@ import {
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import { createRoot, Root } from 'react-dom/client';
-import { removeKeydownListener } from './script/ui/state/hotkeys';
 
 const mediaSizes = {
   smallWidth: 1040,

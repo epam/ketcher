@@ -49,11 +49,30 @@ import {
 import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
+function keydownEventListener(dispatch, getState, hotKeys, event) {
+  keyHandle(dispatch, getState, hotKeys, event);
+}
+
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys(actions);
-    element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState, hotKeys, event),
+    console.log('add listener');
+    element.addEventListener(
+      'keydown',
+      keydownEventListener.bind(null, dispatch, getState, hotKeys),
+      false,
+    );
+  };
+}
+
+export function removeKeydownListener(element) {
+  return function (dispatch, getState) {
+    const hotKeys = initHotKeys(actions);
+    console.log('remove listener');
+    element.removeEventListener(
+      'keydown',
+      keydownEventListener.bind(null, dispatch, getState, hotKeys),
+      false,
     );
   };
 }

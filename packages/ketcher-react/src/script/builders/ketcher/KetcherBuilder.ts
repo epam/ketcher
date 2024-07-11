@@ -62,15 +62,20 @@ class KetcherBuilder {
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
     togglerComponent?: JSX.Element,
-  ): Promise<{ setKetcher: (ketcher: Ketcher) => void; ketcherId: string }> {
+  ): Promise<{
+    setKetcher: (ketcher: Ketcher) => void;
+    ketcherId: string;
+    removeKeydown: ReturnType<typeof initApp> | null;
+  }> {
     const { structService } = this;
+    let removeKeydown: ReturnType<typeof initApp> | null = null;
 
     const { editor, setKetcher, ketcherId } = await new Promise<{
       editor: Editor;
       setKetcher: (ketcher: Ketcher) => void;
       ketcherId: string;
     }>((resolve) => {
-      initApp(
+      removeKeydown = initApp(
         element,
         appRoot,
         staticResourcesUrl,
@@ -94,7 +99,8 @@ class KetcherBuilder {
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
           () => {};
     this.formatterFactory = new FormatterFactory(structService!);
-    return { setKetcher, ketcherId };
+
+    return { setKetcher, ketcherId, removeKeydown };
   }
 
   build() {

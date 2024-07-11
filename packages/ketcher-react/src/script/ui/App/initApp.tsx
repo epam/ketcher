@@ -26,7 +26,7 @@ import { Provider } from 'react-redux';
 import { uniqueId } from 'lodash';
 import { Root } from 'react-dom/client';
 import createStore from '../state';
-import { initKeydownListener } from '../state/hotkeys';
+import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
 import { initMouseListener } from '../state/mouse';
 
@@ -52,6 +52,7 @@ function initApp(
     resolve({ editor, setKetcher, ketcherId });
   };
   const store = createStore(options, server, setEditor);
+
   store.dispatch(initKeydownListener(element));
   store.dispatch(initMouseListener(element));
   store.dispatch(initResize());
@@ -73,6 +74,8 @@ function initApp(
       </SettingsContext.Provider>
     </Provider>,
   );
+
+  return () => store.dispatch(removeKeydownListener(element));
 }
 
 export { initApp };

@@ -33,6 +33,7 @@ import {
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
 import { createRoot, Root } from 'react-dom/client';
+import { removeKeydownListener } from './script/ui/state/hotkeys';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -47,6 +48,7 @@ interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
 function Editor(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
+  const removeKeydownRef = useRef<(() => unknown) | null>(null);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +64,10 @@ function Editor(props: EditorProps) {
       element: rootElRef.current,
       appRoot: appRootRef.current,
     });
-    initPromiseRef.current?.then(({ ketcher, ketcherId }) => {
+
+    initPromiseRef.current?.then(({ ketcher, ketcherId, removeKeydown }) => {
+      removeKeydownRef.current = removeKeydown;
+
       if (typeof props.onInit === 'function' && ketcher) {
         props.onInit(ketcher);
         const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
@@ -74,11 +79,14 @@ function Editor(props: EditorProps) {
     if (initPromiseRef.current === null) {
       initKetcher();
     } else {
-      initPromiseRef.current?.finally(() => initKetcher());
+      initPromiseRef.current?.finally(() => {
+        initKetcher();
+      });
     }
 
     return () => {
       initPromiseRef.current?.then(() => {
+        removeKeydownRef.current?.();
         appRootRef.current?.unmount();
       });
     };

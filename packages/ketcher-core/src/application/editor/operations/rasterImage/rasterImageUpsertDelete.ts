@@ -58,6 +58,7 @@ export class RasterImageDelete extends BaseOperation {
       return;
     }
 
+    reStruct.clearVisel(reRasterImage.visel);
     reRasterImage.remove();
     reStruct.markItemRemoved();
     reStruct.rasterImages.delete(this.id);

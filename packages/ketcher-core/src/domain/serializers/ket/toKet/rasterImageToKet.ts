@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
+import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 export function rasterImageToKet(rasterImageNode) {
   return {
-    type: RASTER_IMAGE_KEY,
+    type: RASTER_IMAGE_SERIALIZE_KEY,
     center: rasterImageNode.center,
     data: rasterImageNode.data,
     selected: rasterImageNode.selected,

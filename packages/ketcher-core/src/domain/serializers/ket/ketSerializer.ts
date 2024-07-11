@@ -17,7 +17,6 @@
 import {
   Atom,
   Bond,
-  RASTER_IMAGE_SERIALIZE_KEY,
   SGroupAttachmentPoint,
   Struct,
   UnresolvedMonomer,
@@ -80,6 +79,7 @@ import { MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { rasterImageToKet } from 'domain/serializers/ket/toKet/rasterImageToKet';
 import { rasterImageToStruct } from 'domain/serializers/ket/fromKet/rasterImageToStruct';
+import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;

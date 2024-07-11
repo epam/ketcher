@@ -1,10 +1,11 @@
 import { ReObject, ReStruct } from 'application/render/restruct';
-import { RASTER_IMAGE_KEY, RasterImage } from 'domain/entities/rasterImage';
+import { RasterImage } from 'domain/entities/rasterImage';
 import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
 import { RaphaelElement } from 'raphael';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import draw from 'application/render/draw';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 export class ReRasterImage extends ReObject {
   private element?: RaphaelElement;

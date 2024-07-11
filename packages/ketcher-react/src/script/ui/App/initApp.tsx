@@ -28,7 +28,7 @@ import { Root } from 'react-dom/client';
 import createStore from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
-import { initMouseListener } from '../state/mouse';
+import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
@@ -75,7 +75,10 @@ function initApp(
     </Provider>,
   );
 
-  return () => store.dispatch(removeKeydownListener(element));
+  return () => {
+    store.dispatch(removeKeydownListener(element));
+    store.dispatch(removeMouseListeners(element));
+  };
 }
 
 export { initApp };

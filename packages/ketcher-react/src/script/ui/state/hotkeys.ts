@@ -49,31 +49,22 @@ import {
 import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
-function keydownEventListener(dispatch, getState, hotKeys, event) {
-  keyHandle(dispatch, getState, hotKeys, event);
-}
+let keydownListener: ((event: KeyboardEvent) => void) | null = null;
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys(actions);
-    console.log('add listener');
-    element.addEventListener(
-      'keydown',
-      keydownEventListener.bind(null, dispatch, getState, hotKeys),
-      false,
-    );
+
+    keydownListener = (event) => keyHandle(dispatch, getState, hotKeys, event);
+    element.addEventListener('keydown', keydownListener);
   };
 }
 
 export function removeKeydownListener(element) {
-  return function (dispatch, getState) {
-    const hotKeys = initHotKeys(actions);
-    console.log('remove listener');
-    element.removeEventListener(
-      'keydown',
-      keydownEventListener.bind(null, dispatch, getState, hotKeys),
-      false,
-    );
+  return function () {
+    if (keydownListener) {
+      element.removeEventListener('keydown', keydownListener);
+    }
   };
 }
 

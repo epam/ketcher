@@ -47,7 +47,7 @@ interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
 function Editor(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
-  const removeKeydownRef = useRef<(() => unknown) | null>(null);
+  const cleanupRef = useRef<(() => unknown) | null>(null);
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -64,8 +64,8 @@ function Editor(props: EditorProps) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(({ ketcher, ketcherId, removeKeydown }) => {
-      removeKeydownRef.current = removeKeydown;
+    initPromiseRef.current?.then(({ ketcher, ketcherId, cleanup }) => {
+      cleanupRef.current = cleanup;
 
       if (typeof props.onInit === 'function' && ketcher) {
         props.onInit(ketcher);
@@ -85,7 +85,7 @@ function Editor(props: EditorProps) {
 
     return () => {
       initPromiseRef.current?.then(() => {
-        removeKeydownRef.current?.();
+        cleanupRef.current?.();
         appRootRef.current?.unmount();
       });
     };

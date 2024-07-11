@@ -65,17 +65,17 @@ class KetcherBuilder {
   ): Promise<{
     setKetcher: (ketcher: Ketcher) => void;
     ketcherId: string;
-    removeKeydown: ReturnType<typeof initApp> | null;
+    cleanup: ReturnType<typeof initApp> | null;
   }> {
     const { structService } = this;
-    let removeKeydown: ReturnType<typeof initApp> | null = null;
+    let cleanup: ReturnType<typeof initApp> | null = null;
 
     const { editor, setKetcher, ketcherId } = await new Promise<{
       editor: Editor;
       setKetcher: (ketcher: Ketcher) => void;
       ketcherId: string;
     }>((resolve) => {
-      removeKeydown = initApp(
+      cleanup = initApp(
         element,
         appRoot,
         staticResourcesUrl,
@@ -100,7 +100,7 @@ class KetcherBuilder {
           () => {};
     this.formatterFactory = new FormatterFactory(structService!);
 
-    return { setKetcher, ketcherId, removeKeydown };
+    return { setKetcher, ketcherId, cleanup };
   }
 
   build() {

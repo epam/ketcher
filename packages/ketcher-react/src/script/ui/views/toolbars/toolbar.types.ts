@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 

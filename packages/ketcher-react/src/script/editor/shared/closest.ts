@@ -705,8 +705,8 @@ function findClosestRasterImage(
   reStruct: ReStruct,
   cursorPosition: Vec2,
 ): ClosestReturnType {
-  return Array.from(reStruct.rasterImages.values()).reduce(
-    (acc: ClosestReturnType, item, id) => {
+  return Array.from(reStruct.rasterImages.entries()).reduce(
+    (acc: ClosestReturnType, [id, item]) => {
       const distanceToPoint =
         item.rasterImage.calculateDistanceToPoint(cursorPosition);
       if (distanceToPoint < SELECTION_DISTANCE_COEFFICIENT) {

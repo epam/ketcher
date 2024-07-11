@@ -18,6 +18,7 @@ import {
   AtomDelete,
   BondDelete,
   CalcImplicitH,
+  RasterImageDelete,
   RGroupAttachmentPointRemove,
   RxnArrowDelete,
   RxnPlusDelete,
@@ -39,6 +40,7 @@ import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
@@ -214,6 +216,10 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.texts.forEach((id) => {
     action.addOp(new TextDelete(id));
+  });
+
+  selection[RASTER_IMAGE_KEY].forEach((id) => {
+    action.addOp(new RasterImageDelete(id));
   });
 
   const actionToDeleteRGroupAttachmentPoints = new Action();

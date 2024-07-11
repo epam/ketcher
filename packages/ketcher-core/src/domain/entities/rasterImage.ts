@@ -17,15 +17,12 @@
 import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
 import { Point, Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
+import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 interface KetFileNodeContent {
   bitmap: string;
   halfSize: Point;
 }
-
-// Having the key as plural guarantees that restruct map
-export const RASTER_IMAGE_KEY = 'rasterImages';
-export const RASTER_IMAGE_SERIALIZE_KEY = 'rasterImage';
 
 export class RasterImage extends BaseMicromoleculeEntity {
   constructor(

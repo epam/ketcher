@@ -20,7 +20,6 @@ import {
   RASTER_IMAGE_KEY,
   Struct,
   Vec2,
-  ReRasterImage,
   ReStruct,
 } from 'ketcher-core';
 
@@ -176,8 +175,8 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
-    (acc: Array<number>, item: ReRasterImage, id): Array<number> => {
+  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+    (acc: Array<number>, [id, item]): Array<number> => {
       if (
         Object.values(item.rasterImage.getReferencePositions()).some((point) =>
           point.isInsidePolygon([
@@ -336,8 +335,8 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
-    (acc: Array<number>, item: ReRasterImage, id) => {
+  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+    (acc: Array<number>, [id, item]) => {
       if (
         Object.values(item.rasterImage.getReferencePositions()).some((point) =>
           isPointInPolygon(r, point),

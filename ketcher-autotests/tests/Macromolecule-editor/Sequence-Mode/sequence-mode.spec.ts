@@ -61,9 +61,11 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

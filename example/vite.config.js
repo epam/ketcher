@@ -84,7 +84,6 @@ logger.warn = (msg, options) => {
 export default defineConfig({
   server: {
     open: true,
-    host: '0.0.0.0',
   },
   esbuild: {
     tsconfigRaw: {

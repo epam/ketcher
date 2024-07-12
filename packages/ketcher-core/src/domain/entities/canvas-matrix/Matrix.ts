@@ -12,11 +12,23 @@ export class Matrix<T> {
     return this.matrix[x][y];
   }
 
+  getRow(x: number) {
+    return this.matrix[x];
+  }
+
   set(x: number, y: number, value: T) {
     if (!this.matrix[x]) {
       this.matrix[x] = [];
     }
     this.matrix[x][y] = value;
+  }
+
+  public get height() {
+    return this.matrix.length;
+  }
+
+  public get width() {
+    return this.matrix.reduce((max, row) => Math.max(max, row.length), 0);
   }
 
   forEach(callback: (value: T, x: number, y: number) => void): void {

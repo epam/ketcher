@@ -713,7 +713,13 @@ function findClosestRasterImage(
         if (acc && acc.dist < distanceToPoint) {
           return acc;
         }
-        return { id, dist: distanceToPoint };
+        // We would like to grab items under the images and those items should have higher priority then images
+        // So we wanna make sure that those items can be grabbed without pixel-perfect pixel-hunting
+        const dist = Math.min(
+          distanceToPoint,
+          SELECTION_DISTANCE_COEFFICIENT / 3,
+        );
+        return { id, dist };
       }
       return acc;
     },

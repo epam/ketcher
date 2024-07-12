@@ -198,10 +198,10 @@ export class SequenceRenderer {
 
             // If side connection comes from rna base then take connected sugar and draw side connection from it
             // because for rna we display only one letter instead of three
-            if (anotherMonomer instanceof RNABase) {
-              const connectedSugar = getSugarFromRnaBase(anotherMonomer);
+            const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
+            if (anotherMonomer instanceof RNABase && connectedSugarToBase) {
               bondRenderer = new PolymerBondSequenceRenderer(
-                new PolymerBond(node.monomer, connectedSugar),
+                new PolymerBond(node.monomer, connectedSugarToBase),
               );
             } else {
               bondRenderer = new PolymerBondSequenceRenderer(polymerBond);

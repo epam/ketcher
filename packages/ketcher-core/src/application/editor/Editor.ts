@@ -41,6 +41,7 @@ import {
 } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import monomersDataRaw from './data/monomers.ket';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -63,6 +64,7 @@ export class CoreEditor {
   private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
+  public drawnStructuresWrapperElement: SVGGElement;
   public canvasOffset: DOMRect;
   public theme;
   public zoomTool: ZoomTool;
@@ -83,6 +85,9 @@ export class CoreEditor {
   constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    this.drawnStructuresWrapperElement = canvas.querySelector(
+      drawnStructuresSelector,
+    ) as SVGGElement;
     this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;

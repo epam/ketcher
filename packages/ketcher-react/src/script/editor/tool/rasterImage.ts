@@ -9,7 +9,7 @@ import {
 import { Tool } from './Tool';
 
 const TAG = 'tool/rasterImage.ts';
-const allowList = /image\/(png|jpeg|bmp|webp|x-icon|svg\+xml)/;
+const allowList = /^image\/(png|jpeg|gif|bmp|webp|x-icon|svg\+xml)$/;
 const MIN_DIMENSION_SIZE = 16;
 
 export class RasterImageTool implements Tool {

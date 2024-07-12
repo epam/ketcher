@@ -43,7 +43,6 @@ interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 
-// This is the biggest crutch in the wild west
 function Editor(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);

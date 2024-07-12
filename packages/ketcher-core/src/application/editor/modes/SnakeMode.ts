@@ -33,6 +33,16 @@ export class SnakeMode extends BaseMode {
     editor.renderersContainer.update(modelChanges);
     command.setUndoOperationReverse();
 
+    const drawnEntitiesBoundingBox =
+      RenderersManager.getRenderedStructuresBbox();
+    const zoom = ZoomTool.instance;
+
+    zoom.scrollTo(
+      new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
+      false,
+      2,
+    );
+
     return command;
   }
 

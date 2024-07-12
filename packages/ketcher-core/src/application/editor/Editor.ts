@@ -222,9 +222,10 @@ export class CoreEditor {
     this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
-      this.events[eventName].add((event) =>
-        this.useToolIfNeeded(eventName, event),
-      );
+      this.events[eventName].add((event) => {
+        this.useModeIfNeeded(eventName, event);
+        this.useToolIfNeeded(eventName, event);
+      });
     });
     this.events.editSequence.add(
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>

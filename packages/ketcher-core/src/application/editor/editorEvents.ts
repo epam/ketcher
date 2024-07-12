@@ -43,6 +43,10 @@ export function resetEditorEvents() {
     changeSequenceTypeEnterMode: new Subscription(),
     toggleSequenceEditMode: new Subscription(),
     toggleSequenceEditInRNABuilderMode: new Subscription(),
+    clickOnSequenceItem: new Subscription(),
+    mousedownBetweenSequenceItems: new Subscription(),
+    mouseDownOnSequenceItem: new Subscription(),
+    doubleClickOnSequenceItem: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -72,6 +76,10 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'changeSequenceTypeEnterMode',
   'toggleSequenceEditMode',
   'toggleSequenceEditInRNABuilderMode',
+  'clickOnSequenceItem',
+  'mousedownBetweenSequenceItems',
+  'mouseDownOnSequenceItem',
+  'doubleClickOnSequenceItem',
 ];
 
 export const hotkeysConfiguration = {

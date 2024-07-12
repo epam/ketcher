@@ -51,6 +51,7 @@ export class SequenceMode extends BaseMode {
   private _isEditInRNABuilderMode = false;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
+  private mousemoveCounter = 0;
 
   constructor(previousMode?: LayoutMode) {
     super('sequence-layout-mode', previousMode);
@@ -101,16 +102,18 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  public turnOnEditMode(sequenceItemRenderer?: BaseSequenceItemRenderer) {
+  public turnOnEditMode(
+    sequenceItemRenderer?: BaseSequenceItemRenderer,
+    needToRemoveSelection = true,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = true;
-    this.initialize(false);
+    this.initialize(false, needToRemoveSelection);
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionByMonomer(
         sequenceItemRenderer.node.monomer,
       );
-      SequenceRenderer.moveCaretForward();
     }
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
@@ -277,13 +280,48 @@ export class SequenceMode extends BaseMode {
     }
   }
 
+  public doubleClickOnSequenceItem(event: MouseEvent) {
+    if (this.isEditInRNABuilderMode) {
+      return;
+    }
+
+    const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
+
+    this.turnOnEditMode(eventData, false);
+  }
+
+  public mousedownBetweenSequenceItems(event: MouseEvent) {
+    if (this.isEditInRNABuilderMode) {
+      return;
+    }
+
+    event.stopPropagation();
+
+    const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
+
+    this.turnOnEditMode(eventData);
+    SequenceRenderer.moveCaretForward();
+  }
+
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
+
     if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
+      const sequenceItemBoundingBox = eventData.rootBoundingClientRect;
+      const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
+        ? event.clientX >
+          sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
+        : false;
+
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
       );
+
+      if (isRightSideOfSequenceItemClicked) {
+        SequenceRenderer.moveCaretForward();
+      }
+
       this.unselectAllEntities();
       this.selectionStarted = true;
       this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
@@ -293,7 +331,14 @@ export class SequenceMode extends BaseMode {
   public mousemove(event: MouseEvent) {
     const eventData = event.target?.__data__;
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
-    if (this.isEditMode && isEventOnSequenceItem && this.selectionStarted) {
+    // this.mousemoveCounter > 1 used here to prevent selection of single monomer
+    // when user just clicked on it during the mousemove event
+    if (
+      this.isEditMode &&
+      isEventOnSequenceItem &&
+      this.selectionStarted &&
+      this.mousemoveCounter > 1
+    ) {
       const editor = CoreEditor.provideEditorInstance();
       SequenceRenderer.setCaretPositionBySequenceItemRenderer(
         eventData as BaseSequenceItemRenderer,
@@ -321,6 +366,10 @@ export class SequenceMode extends BaseMode {
       modelChanges.addOperation(moveCaretOperation);
       editor.renderersContainer.update(modelChanges);
     }
+
+    if (this.selectionStarted) {
+      this.mousemoveCounter++;
+    }
   }
 
   mouseup() {
@@ -331,6 +380,7 @@ export class SequenceMode extends BaseMode {
     if (this.isEditMode) {
       SequenceRenderer.resetLastUserDefinedCaretPosition();
     }
+    this.mousemoveCounter = 0;
   }
 
   private bondNodesThroughNewPhosphate(

@@ -25,11 +25,13 @@ import {
   takePolymerEditorScreenshot,
   openStructurePasteFromClipboard,
   clickInTheMiddleOfTheScreen,
+  selectEraseTool,
 } from '@utils';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
@@ -708,4 +710,216 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
     },
   );
+
+  test('Verify import of unresolved IDT monomers as "black box" in flex/snake modes and ? in sequence', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Unresolved IDT monomers imported as a "black box" in flex/snake modes and ? in sequence.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify hover preview contains IDT alias only for unresolved IDT monomers', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Hover preview contains IDT alias only for unresolved IDT monomers.
+    Screenshot for snake mode not correct because we have a bug https://github.com/epam/ketcher/issues/4947
+    After fix need to be updated.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await page.getByText('iMe').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await page.getByText('?').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers.
+    Screenshot for snake mode not correct because we have a bug https://github.com/epam/ketcher/issues/4947
+    After fix need to be updated.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('iMe').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Connect unresolved IDT monomer to known monomers through R2/R1 connections', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
+    */
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R2',
+      'R1',
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('iMe').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Connect unresolved IDT monomer to known monomers through R3/R4 connections', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Connect unresolved IDT monomer to known monomers through R3/R4 connections.
+    */
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R3',
+      'R4',
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('iMe').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Bond deleted and after pressing Undo appears.
+    */
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R2',
+      'R1',
+    );
+    await selectEraseTool(page);
+    await bondLine.click();
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Delete bond between unresolved and known monomers connected through R3/R4 and Undo', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Bond deleted and after pressing Undo appears.
+    */
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page
+      .getByText('Test-6-Ch')
+      .locator('..')
+      .first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R3',
+      'R4',
+    );
+    await selectEraseTool(page);
+    await bondLine.click();
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Copy/Paste sequence with unresolved IDT monomers', async ({ page }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Sequence with unresolved IDT monomers copied/pasted.
+    */
+    const x = 0;
+    const y = 600;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+    );
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.mouse.move(x, y);
+    await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+  });
 });

@@ -710,6 +710,9 @@ function findClosestRasterImage(
       const distanceToPoint =
         item.rasterImage.calculateDistanceToPoint(cursorPosition);
       if (distanceToPoint < SELECTION_DISTANCE_COEFFICIENT) {
+        if (acc && acc.dist < distanceToPoint) {
+          return acc;
+        }
         return { id, dist: distanceToPoint };
       }
       return acc;

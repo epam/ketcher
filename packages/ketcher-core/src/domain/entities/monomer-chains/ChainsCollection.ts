@@ -168,11 +168,6 @@ export class ChainsCollection {
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 
-      console.log(
-        monomer,
-        isFirstMonomerWithR2R1connection,
-        isMonomerConnectedToR2RnaBase(monomer),
-      );
       return (
         (isFirstMonomerWithR2R1connection ||
           isMonomerConnectedToR2RnaBase(monomer)) &&

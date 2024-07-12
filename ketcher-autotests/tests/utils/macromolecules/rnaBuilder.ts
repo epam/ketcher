@@ -30,7 +30,11 @@ export async function togglePhosphatesAccordion(page: Page) {
 }
 
 export async function togglePresetsAccordion(page: Page) {
-  await page.getByTestId('summary-Phosphates').click();
+  await page.getByTestId('summary-Presets').click();
+}
+
+export async function toggleNucleotidesAccordion(page: Page) {
+  await page.getByTestId('summary-Nucleotides').click();
 }
 
 export async function pressNewPresetButton(page: Page) {

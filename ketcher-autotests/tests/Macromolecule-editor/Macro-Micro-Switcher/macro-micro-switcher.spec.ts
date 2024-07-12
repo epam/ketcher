@@ -614,6 +614,29 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.locator('.css-1kbfai8').click();
   });
+
+  test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher/#4173
+    Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
+    */
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        test.fail(
+          msg.type() === 'error',
+          `There is error in console: ${msg.text}`,
+        );
+      }
+    });
+    await page.locator('.css-1kbfai8').click();
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await takeEditorScreenshot(page);
+    await page.getByTitle('Close window').click();
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -2329,6 +2352,164 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectSingleBondTool(page);
     await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test.fail(
+    'Validate that it is possible to save micro-macro connection to ket file',
+    async ({ page }) => {
+      /*
+    Test case: #4532
+    Description: It is possible to save micro-macro connection to ket file.
+    */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/micro-macro-structure.ket',
+        page,
+      );
+      const expectedFile = await getKet(page);
+      await saveToFile('KET/micro-macro-structure-expected.ket', expectedFile);
+
+      const { fileExpected: ketFileExpected, file: ketFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/KET/micro-macro-structure-expected.ket',
+        });
+
+      expect(ketFile).toEqual(ketFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/micro-macro-structure-expected.ket',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test('Validate that it is possible to save micro-macro connection to mol v3000 file', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4532
+    Description: It is possible to save micro-macro connection to mol v3000 file.
+    */
+    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/micro-macro-structure-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/micro-macro-structure-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/micro-macro-structure-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that it is possible to save micro-macro connection to mol v2000 file', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4532
+    Description: It is possible to save micro-macro connection to mol v2000 file.
+    The structure after opening is not similar to the original one. 
+    We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
+    */
+    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/micro-macro-structure-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/micro-macro-structure-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/micro-macro-structure-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that it is possible to save micro-macro connection to sdf v2000 file', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4532
+    Description: It is possible to save micro-macro connection to sdf v2000 file.
+    */
+    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    const expectedFile = await getSdf(page, 'v2000');
+    await saveToFile('SDF/micro-macro-structure-expected.sdf', expectedFile);
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/micro-macro-structure-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/micro-macro-structure-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that it is possible to save micro-macro connection to sdf v3000 file', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4532
+    Description: It is possible to save micro-macro connection to sdf v3000 file.
+    */
+    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile('SDF/micro-macro-structure-expected.sdf', expectedFile);
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/micro-macro-structure-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/micro-macro-structure-expected.sdf',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

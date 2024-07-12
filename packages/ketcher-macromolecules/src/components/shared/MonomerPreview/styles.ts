@@ -20,7 +20,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: start;
-  padding: 10px;
+  gap: 8px;
   background: ${(props) => props.theme.ketcher.color.background.primary};
   border: ${(props) => props.theme.ketcher.border.regular};
   border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
@@ -28,15 +28,25 @@ export const Container = styled.div`
 `;
 
 export const MonomerName = styled.p`
+  width: calc(100% - 16px);
+  padding: 8px;
   color: ${(props) => props.theme.ketcher.color.text.primary};
+  background-color: #cceaee;
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 700;
   word-break: break-all;
-  text-align: center;
-  margin: 0 0 5px 0;
+  text-align: left;
+  margin: 0;
 `;
 
 export const StyledStructRender = styled(StructRender)`
   height: 100%;
   width: 100%;
+  padding: 0 8px;
+`;
+
+export const InfoBlock = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 0 8px 4px;
 `;

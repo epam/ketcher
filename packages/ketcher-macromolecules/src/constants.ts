@@ -27,7 +27,7 @@ export type LibraryNameType =
 
 export const preview = {
   width: 230,
-  height: 230,
+  height: 240,
   gap: 5,
   topPadding: 16,
   heightForNucleotide: 105,

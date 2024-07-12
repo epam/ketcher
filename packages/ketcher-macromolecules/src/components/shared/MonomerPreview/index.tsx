@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { useMemo } from 'react';
-import { MonomerName, Container, StyledStructRender } from './styles';
+import {
+  MonomerName,
+  Container,
+  StyledStructRender,
+  InfoBlock,
+} from './styles';
 import { IPreviewProps } from './types';
 import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
 import UnresolvedMonomerPreview from 'components/shared/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import { useAttachmentPoints } from '../../../hooks/useAttachmentPoints';
+import { AttachmentPoints } from 'components/shared/AttachmentPoints/AttachmentPoints';
+import { MonomerItemType } from 'ketcher-core';
+import { IDTAliases } from 'components/shared/IDTAliases';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
@@ -36,6 +46,15 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
       right: ${preview?.style?.right || ''};
     `;
   }, [preview]);
+
+  const idtAliases = (preview.monomer as MonomerItemType).props.idtAliases;
+
+  const { preparedAttachmentPointsData, connectedAttachmentPoints } =
+    useAttachmentPoints({
+      monomer: preview.monomer,
+      attachmentPointsToBonds: preview.attachmentPointsToBonds,
+    });
+
   return (
     preview?.monomer && (
       <ContainerDynamic
@@ -52,9 +71,19 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
         ) : (
           <StyledStructRender
             struct={preview.monomer?.struct}
-            options={{ needCache: false }}
+            options={{
+              connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+              labelInPreview: true,
+              needCache: false,
+            }}
           />
         )}
+        <InfoBlock>
+          <AttachmentPoints
+            preparedAttachmentPointsData={preparedAttachmentPointsData}
+          />
+          {idtAliases && <IDTAliases aliases={idtAliases} />}
+        </InfoBlock>
       </ContainerDynamic>
     )
   );

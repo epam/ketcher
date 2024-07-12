@@ -18,7 +18,7 @@ import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
-import React, { ReactElement, useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -108,8 +108,8 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatch],
   );
 
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useCallback(
+    debounce((p) => dispatchShowPreview(p), 1000),
     [dispatchShowPreview],
   );
 
@@ -123,9 +123,11 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     e: React.MouseEvent,
   ): void => {
     handleItemMouseLeave();
+
     if (preview.preset || !e.currentTarget) {
       return;
     }
+
     const monomers: ReadonlyArray<MonomerItemType | undefined> = [
       preset.sugar,
       preset.base,
@@ -137,8 +139,10 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
       transform: 'translate(-100%, 0)',
     };
+
     debouncedShowPreview({
       preset: {
+        name: preset.name,
         idtAliases: preset.idtAliases,
         monomers,
       },

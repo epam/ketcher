@@ -15,13 +15,22 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { CoreEditor, IKetIdtAliases, MonomerItemType } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  CoreEditor,
+  IKetIdtAliases,
+  MonomerItemType,
+  PolymerBond,
+} from 'ketcher-core';
 import { RootState } from 'state';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 
 interface MonomerPreviewState {
   readonly monomer: MonomerItemType | undefined;
+  readonly attachmentPointsToBonds?: Partial<
+    Record<AttachmentPointName, PolymerBond | null>
+  >;
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
@@ -29,6 +38,7 @@ export interface PresetPreviewState {
   readonly preset: {
     readonly idtAliases?: IKetIdtAliases;
     readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
+    readonly name?: string;
   };
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }

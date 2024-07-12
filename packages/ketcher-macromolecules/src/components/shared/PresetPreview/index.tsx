@@ -57,7 +57,7 @@ const PresetPreview = ({ className }: IPreviewProps) => {
   const { preset } = preview as PresetPreviewState;
   const { idtAliases } = preset;
   const [, baseMonomer] = preset.monomers;
-  const presetName = baseMonomer?.props.Name;
+  const presetName = preset?.name ?? baseMonomer?.props.Name;
 
   return (
     preview.preset && (
@@ -77,7 +77,7 @@ const PresetPreview = ({ className }: IPreviewProps) => {
               </PresetMonomerRow>
             ),
         )}
-        {idtAliases && <IDTAliases aliases={idtAliases}></IDTAliases>}
+        {idtAliases && <IDTAliases aliases={idtAliases} preset />}
       </ContainerDynamic>
     )
   );

@@ -15,9 +15,20 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 
-export const IDTAliasesContainer = styled.span`
+export const IDTAliasesContainer = styled.span<{ preset?: boolean }>`
+  max-width: ${({ preset }) => (preset ? '100%' : '33%')};
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 500;
   line-height: normal;
   color: ${(props) => props.theme.ketcher.color.text.lightgrey};
+  padding-left: ${({ preset }) => (preset ? '0' : '8px')};
+  border-left: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
+`;
+
+export const IDTTitle = styled.span`
+  color: #7c7c7c;
+`;
+
+export const IDTAliasesList = styled.span`
+  color: #585858;
 `;

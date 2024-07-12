@@ -2,151 +2,132 @@
     "root": {
         "nodes": [
             {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
-            },
-            {
-                "type": "arrow",
-                "data": {
-                    "mode": "open-angle",
-                    "pos": [
-                        {
-                            "x": 10.606249999999996,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        },
-                        {
-                            "x": 15.981613359811128,
-                            "y": -5.906249999999985,
-                            "z": 0
-                        }
-                    ]
-                }
+                "$ref": "monomer1"
             }
         ],
         "connections": [],
-        "templates": []
+        "templates": [
+            {
+                "$ref": "monomerTemplate-unknown_monomer_with_idt_alias_i2AmPr"
+            }
+        ]
+    },
+    "monomer1": {
+        "type": "monomer",
+        "id": "1",
+        "position": {
+            "x": 11.9,
+            "y": -8.325000000000001
+        },
+        "alias": "i2AmPr",
+        "templateId": "unknown_monomer_with_idt_alias_i2AmPr",
+        "seqid": 0
+    },
+    "monomerTemplate-unknown_monomer_with_idt_alias_i2AmPr": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2,
+                    2,
+                    2
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3,
+                    3,
+                    3
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "class": "Chem",
+        "classHELM": "CHEM",
+        "id": "unknown_monomer_with_idt_alias_i2AmPr",
+        "fullName": "i2AmPr",
+        "alias": "i2AmPr",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            }
+        ],
+        "idtAliases": {
+            "base": "i2AmPr",
+            "modifications": {
+                "endpoint5": "i2AmPr",
+                "internal": "i2AmPr",
+                "endpoint3": "i2AmPr"
+            }
+        },
+        "unresolved": true
     }
 }

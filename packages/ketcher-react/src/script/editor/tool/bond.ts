@@ -171,7 +171,8 @@ class BondTool implements Tool {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id;
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item);
-          const closestSGroup = editor.findItem(event, ['functionalGroups']);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const closestSGroup = editor.findItem(event, ['functionalGroups'])!;
           const sgroup = molecule.sgroups.get(closestSGroup?.id);
 
           if (sgroup) {

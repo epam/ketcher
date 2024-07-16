@@ -17,7 +17,21 @@ import { ClosestItemWithMap } from '../shared/closest.types';
 import { handleMovingPosibilityCursor } from '../utils';
 
 const TAG = 'tool/rasterImage.ts';
-const allowList = /^image\/(png|jpeg|gif|bmp|webp|x-icon|svg\+xml)$/;
+const supportedMimes = [
+  'png',
+  'jpeg',
+  'gif',
+  'bmp',
+  'webp',
+  'x-icon',
+  'svg+xml',
+];
+
+const supportedMimesForRegex = supportedMimes
+  .map((item) => item.replace('+', '\\+'))
+  .join('|');
+
+const allowList = new RegExp(`^image/(${supportedMimesForRegex})$`);
 const MIN_DIMENSION_SIZE = 16;
 
 interface DragContext {
@@ -68,7 +82,6 @@ export class RasterImageTool implements Tool {
     this.element.click();
   }
 
-  // We need to create empty function otherwise there will be errors in the console.
   mousemove(event: PointerEvent) {
     const render = this.editor.render;
     if (this.dragCtx) {
@@ -128,11 +141,11 @@ export class RasterImageTool implements Tool {
       const image = new Image();
       const reader = new FileReader();
 
-      if (!file.type.match(allowList)) {
-        const errorMesssage = `Wrong mime type: ${file.type}`;
-        KetcherLogger.error(`${TAG}:onFileUpload`, errorMesssage);
+      if (!file.type || !file.type.match(allowList)) {
+        const errorMessage = `Unsupported image type`;
+        KetcherLogger.error(`${TAG}:onFileUpload`, errorMessage);
         if (errorHandler) {
-          errorHandler(errorMesssage);
+          errorHandler(errorMessage);
         }
 
         this.resetElementValue();
@@ -149,8 +162,7 @@ export class RasterImageTool implements Tool {
           image.width < MIN_DIMENSION_SIZE ||
           image.height < MIN_DIMENSION_SIZE
         ) {
-          const errorMessage =
-            'Image should have be at least 16px wide and 16px tall';
+          const errorMessage = 'Image should be at least 16x16 pixels';
           KetcherLogger.error(`${TAG}:onLoad`, errorMessage);
           if (errorHandler) {
             errorHandler(errorMessage);
@@ -191,7 +203,7 @@ export class RasterImageTool implements Tool {
     uploader.style.display = 'none';
     uploader.id = RasterImageTool.INPUT_ID;
     uploader.type = 'file';
-    uploader.accept = 'image/*';
+    uploader.accept = supportedMimes.map((item) => `image/${item}`).join(',');
     document.body.appendChild(uploader);
     return uploader;
   }

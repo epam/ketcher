@@ -54,7 +54,10 @@ function renderWithMockStore(component) {
       },
       selection: jest.fn(),
       struct: () => {
-        return { atoms: { keys: () => new Set() } };
+        return {
+          atoms: { keys: () => new Set() },
+          sgroups: { keys: () => new Set() },
+        };
       },
       render: { ctab: {} },
       zoom: jest.fn(),

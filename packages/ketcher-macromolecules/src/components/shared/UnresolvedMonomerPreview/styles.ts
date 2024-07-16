@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 
 export const StyledContent = styled.div`
-  width: 70px;
-  height: 77px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -11,4 +9,6 @@ export const StyledContent = styled.div`
   padding: 8px;
   color: #7c7c7f;
   border: 1px solid #cad3dd;
+  width: 100%;
+  height: 100%;
 `;

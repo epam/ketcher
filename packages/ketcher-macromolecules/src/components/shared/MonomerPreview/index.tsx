@@ -24,27 +24,30 @@ import UnresolvedMonomerPreview from 'components/shared/UnresolvedMonomerPreview
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-  const ContainerDynamic = useMemo(
-    () => styled(Container)`
+
+  const ContainerDynamic = useMemo(() => {
+    if (!preview?.style) {
+      return styled(Container)``;
+    }
+
+    return styled(Container)`
       top: ${preview?.style?.top || ''};
       left: ${preview?.style?.left || ''};
       right: ${preview?.style?.right || ''};
-    `,
-    [preview],
-  );
-
+    `;
+  }, [preview]);
   return (
     preview?.monomer && (
       <ContainerDynamic
         className={className}
         data-testid="polymer-library-preview"
       >
-        <MonomerName>{preview.monomer.struct.name}</MonomerName>
+        <MonomerName>{preview.monomer.label}</MonomerName>
         {preview.monomer.props?.unresolved ? (
           <UnresolvedMonomerPreview />
         ) : (
           <StyledStructRender
-            struct={preview.monomer.struct}
+            struct={preview.monomer?.struct}
             options={{ needCache: false }}
           />
         )}
@@ -56,11 +59,12 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
 const StyledPreview = styled(MonomerPreview)<IPreviewProps>`
   z-index: 5;
   position: absolute;
-  width: ${(props) =>
-    props.unresolvedMonomer ? 'auto' : preview.width + 'px'};
-  height: ${(props) =>
-    props.unresolvedMonomer ? 'auto' : preview.height + 'px'};
+  width: ${preview.width + 'px'};
+  height: ${preview.height + 'px'};
   transform: translate(-50%, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export default StyledPreview;

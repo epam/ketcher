@@ -26,10 +26,13 @@ import {
   openStructurePasteFromClipboard,
   clickInTheMiddleOfTheScreen,
   selectEraseTool,
+  getKet,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
@@ -920,6 +923,220 @@ test.describe('Import-Saving .idt Files', () => {
     await page.keyboard.press('Control+c');
     await page.mouse.move(x, y);
     await page.keyboard.press('Control+v');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify modal window for AP selection when establishing bonds with unresolved monomers(Peptide)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
+    Test working not correct because we have a bug https://github.com/epam/ketcher/issues/4948 System establishes connection R2-R1.
+    After fix we need update snapshots.
+    */
+    const x = 650;
+    const y = 400;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await page.getByText('1Nal').locator('..').first().click();
+    await page.mouse.down();
+    await page.getByText('iMe-dC').locator('..').first().hover();
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify bonds establishment for unresolved IDT monomers in snake mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Connection established.
+    */
+    const x = 650;
+    const y = 400;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await selectSnakeLayoutModeTool(page);
+    await selectSingleBondTool(page);
+    await page.getByText('1Nal').locator('..').first().click();
+    await page.mouse.down();
+    await page.getByText('iMe-dC').locator('..').first().hover();
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify modal window for AP selection when establishing bonds with unresolved monomers(CHEM)', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
+    Test working not correct because we have a bug https://github.com/epam/ketcher/issues/4949 Preview not blank but not like in mockup.
+    After fix we need update snapshots.
+    */
+    const x = 650;
+    const y = 400;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await page.getByText('iMe-dC').locator('..').click();
+    await page.mouse.down();
+    await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
+
+  const testFormats: Array<'FASTA' | 'Sequence'> = ['FASTA', 'Sequence'];
+
+  for (const format of testFormats) {
+    test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format}`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4431
+    Description: Error message appears when saving macromolecules with unresolved monomers to non-IDT/KET formats.
+    */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        'IDT',
+        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+      );
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, format as 'FASTA' | 'Sequence');
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Verify saving of unresolved IDT monomers in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4531
+    Description: Unresolved IDT monomers saved in KET format.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/sequence-with-unresolved-idt-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/sequence-with-unresolved-idt-monomers-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify opening of unresolved IDT monomers saved in KET format in Micro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4531
+    Description: Unresolved IDT monomers saved in KET format opened in Micro mode.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify display of unresolved IDT monomers when switching from Macro mode to Micro mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4531
+    Description: Unresolved IDT monomers are displayed as abbreviation.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify saving of unresolved IDT monomers in IDT format', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Unresolved IDT monomers saved and opened in IDT format
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
+    );
+    const expectedFile = await getIdt(page);
+    await saveToFile(
+      'IDT/idt-with-unresolved-monomer-expected.idt',
+      expectedFile,
+    );
+
+    const { fileExpected: idtFileExpected, file: idtFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/IDT/idt-with-unresolved-monomer-expected.idt',
+      });
+
+    expect(idtFile).toEqual(idtFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/idt-with-unresolved-monomer-expected.idt',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify deletion of unresolved IDT monomers from canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files/4431
+    Description: Unresolved IDT monomers deleted from canvas.
+    */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await takeEditorScreenshot(page);
+    await selectEraseTool(page);
+    await page.getByText('iMe-dC').locator('..').click();
     await takeEditorScreenshot(page);
   });
 });

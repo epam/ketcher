@@ -24,6 +24,24 @@ interface KetFileNodeContent {
   halfSize: Point;
 }
 
+export interface RasterImageReferencePositions {
+  topLeftPosition: Vec2;
+  topMiddlePosition: Vec2;
+  topRightPosition: Vec2;
+  rightMiddlePosition: Vec2;
+  bottomRightPosition: Vec2;
+  bottomMiddlePosition: Vec2;
+  bottomLeftPosition: Vec2;
+  leftMiddlePosition: Vec2;
+}
+
+export type RasterImageReferenceName = keyof RasterImageReferencePositions;
+
+export interface RasterImageReferencePositionInfo {
+  name: RasterImageReferenceName;
+  offset: Vec2;
+}
+
 export class RasterImage extends BaseMicromoleculeEntity {
   constructor(
     public bitmap: string,
@@ -64,7 +82,7 @@ export class RasterImage extends BaseMicromoleculeEntity {
     ];
   }
 
-  getReferencePositions() {
+  getReferencePositions(): RasterImageReferencePositions {
     const [
       topLeftPosition,
       topRightPosition,
@@ -83,7 +101,6 @@ export class RasterImage extends BaseMicromoleculeEntity {
       ),
       bottomLeftPosition,
       leftMiddlePosition: Vec2.centre(topLeftPosition, bottomLeftPosition),
-      centre: this.center(),
     };
   }
 
@@ -99,35 +116,20 @@ export class RasterImage extends BaseMicromoleculeEntity {
     this._center = this._center.add(offset);
   }
 
+  resize(topLeftPosition: Vec2, bottomRightPosition: Vec2) {
+    this._center = Vec2.centre(topLeftPosition, bottomRightPosition);
+    const halfSize = Vec2.diff(bottomRightPosition, topLeftPosition).scaled(
+      0.5,
+    );
+    this.halfSize = new Vec2(Math.abs(halfSize.x), Math.abs(halfSize.y));
+  }
+
   rescaleSize(scale: number): void {
     this.halfSize = this.halfSize.scaled(scale);
   }
 
   center(): Vec2 {
     return this._center;
-  }
-
-  isPointInsidePolygon(point: Vec2): boolean {
-    return point.isInsidePolygon(this.getCornerPositions());
-  }
-
-  calculateDistanceToPoint(point: Vec2): number {
-    if (this.isPointInsidePolygon(point)) {
-      return 0;
-    }
-    const [
-      topLeftPosition,
-      topRightPosition,
-      bottomRightPosition,
-      bottomLeftPosition,
-    ] = this.getCornerPositions();
-
-    return Math.min(
-      point.calculateDistanceToLine([topLeftPosition, topRightPosition]),
-      point.calculateDistanceToLine([topRightPosition, bottomLeftPosition]),
-      point.calculateDistanceToLine([bottomRightPosition, bottomLeftPosition]),
-      point.calculateDistanceToLine([bottomLeftPosition, topLeftPosition]),
-    );
   }
 
   toKetNode(): KetFileNode<KetFileNodeContent> {

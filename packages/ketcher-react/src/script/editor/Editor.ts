@@ -85,6 +85,7 @@ const highlightTargets = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  RASTER_IMAGE_KEY,
 ];
 
 function selectStereoFlagsIfNecessary(
@@ -668,6 +669,8 @@ class Editor implements KetcherEditor {
       null,
       new Pile(selection.simpleObjects),
       new Pile(selection.texts),
+      null,
+      new Pile(selection.rasterImages),
     );
 
     // Copy by its own as Struct.clone doesn't support

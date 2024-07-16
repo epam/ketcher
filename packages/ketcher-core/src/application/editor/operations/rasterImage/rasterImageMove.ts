@@ -22,6 +22,7 @@ export class RasterImageMove extends BaseOperation {
     );
 
     renderItem.move(reStruct, scaledOffset);
+    renderItem.visel.translate(scaledOffset);
     item.addPositionOffset(this.offset);
   }
 

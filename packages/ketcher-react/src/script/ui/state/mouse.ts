@@ -17,11 +17,16 @@
 import { updateCursorPosition } from './common';
 import { throttle } from 'lodash';
 
+type mouseListener = ((event: MouseEvent) => void) | null;
+
 const MOUSE_MOVE_THROTTLE_TIMEOUT = 300;
 
 const handleMouseMove = (dispatch, event: MouseEvent) => {
   dispatch(updateCursorPosition(event.clientX, event.clientY));
 };
+
+let pointerMoveListener: mouseListener = null;
+let mouseDownListener: mouseListener = null;
 
 export function initMouseListener(element) {
   return function (dispatch, getState) {
@@ -30,19 +35,29 @@ export function initMouseListener(element) {
       MOUSE_MOVE_THROTTLE_TIMEOUT,
     );
 
-    element.addEventListener('pointermove', (event: MouseEvent) =>
-      throttledHandleMouseMove(dispatch, event),
-    );
-    element.addEventListener(
-      'mousedown',
-      function (event: MouseEvent) {
-        const areBothLeftAndRightButtonsClicked = event.buttons === 3;
-        if (areBothLeftAndRightButtonsClicked) {
-          handleRightClick(getState);
-        }
-      },
-      true,
-    );
+    pointerMoveListener = (event: MouseEvent) =>
+      throttledHandleMouseMove(dispatch, event);
+    mouseDownListener = (event: MouseEvent) => {
+      const areBothLeftAndRightButtonsClicked = event.buttons === 3;
+      if (areBothLeftAndRightButtonsClicked) {
+        handleRightClick(getState);
+      }
+    };
+
+    element.addEventListener('pointermove', pointerMoveListener);
+    element.addEventListener('mousedown', mouseDownListener, true);
+  };
+}
+
+export function removeMouseListeners(element) {
+  return function () {
+    if (pointerMoveListener) {
+      element.removeEventListener('pointermove', pointerMoveListener);
+    }
+
+    if (mouseDownListener) {
+      element.addEventListener('mousedown', mouseDownListener, true);
+    }
   };
 }
 

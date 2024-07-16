@@ -60,7 +60,8 @@ export class ReRasterImage extends ReObject {
   private getSelectionReferencePositions(
     renderOptions: RenderOptions,
   ): GetReferencePositions {
-    const scale = this.getScale(renderOptions) * 2;
+    // We need just one additional pixel for selection dots to not overlap with image
+    const scale = this.getScale(renderOptions) + 1;
     const [
       topLeftPosition,
       topRightPosition,
@@ -132,6 +133,7 @@ export class ReRasterImage extends ReObject {
     selectionSet.push(
       draw.selectionPolygon(paper, polygon, renderOptions).attr({
         ...renderOptions.selectionStyleSimpleObject,
+        'stroke-linecap': 'square',
         'stroke-width': strokeWidth,
       }),
     );
@@ -146,15 +148,19 @@ export class ReRasterImage extends ReObject {
     this.selectionPointsSet = paper.set();
     const scale = this.getScale(renderOptions);
     const strokeWidth = scale * REFERENCE_POINT_LINE_WIDTH_MULTIPLIER;
-    const selectionReferencePositions = Object.values(
+    const selectionReferencePositions = Object.entries(
       this.getSelectionReferencePositions(renderOptions),
     );
-    selectionReferencePositions.forEach((rp) => {
-      this.selectionPointsSet.push(
-        paper
-          .circle(rp.x, rp.y, scale)
-          .attr({ fill: 'none', 'stroke-width': strokeWidth }),
-      );
+    selectionReferencePositions.forEach(([key, { x, y }]) => {
+      const element = paper.circle(x, y, scale).attr({
+        fill: 'none',
+        'stroke-width': strokeWidth,
+      });
+      if (element.node && element.node.setAttribute) {
+        element.node.setAttribute('data-testid', `rasterImageResize-${key}`);
+      }
+
+      this.selectionPointsSet.push(element);
     });
     reStruct.addReObjectPath(
       LayerMap.selectionPlate,

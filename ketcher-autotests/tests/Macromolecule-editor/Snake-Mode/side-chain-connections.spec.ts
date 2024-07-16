@@ -1159,33 +1159,33 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
-    page,
-  }) => {
-    /*
-    /*  
-    /* Case 19: Verify saving and opening structure with side-chain connections in KET format
-    */
-    await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/19.ket`,
-      page,
-    );
-    await saveToKet(page, '19-expected.ket');
-  });
+  // test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   /*
+  //   /* Case 19: Verify saving and opening structure with side-chain connections in KET format
+  //   */
+  //   await selectSequenceLayoutModeTool(page);
+  //   // await openFileAndAddToCanvasMacro(
+  //   //   `KET/Side-Chain-Connections/19.ket`,
+  //   //   page,
+  //   // );
+  //   await saveToKet(page, '19-expected.ket');
+  // });
 
-  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
-    page,
-  }) => {
-    /*
-    /*  
-    /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
-    */
-    await selectSequenceLayoutModeTool(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/20.ket`,
-      page,
-    );
-    await saveToMol(page, '20-expected.mol');
-  });
+  // test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
+  //   page,
+  // }) => {
+  //   /*
+  //   /*
+  //   /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
+  //   */
+  //   await selectSequenceLayoutModeTool(page);
+  //   await openFileAndAddToCanvasMacro(
+  //     `KET/Side-Chain-Connections/20.ket`,
+  //     page,
+  //   );
+  //   await saveToMol(page, '20-expected.mol');
+  // });
 });

@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -13,10 +13,10 @@ import {
   waitForRender,
   selectTopPanelButton,
   TopPanelButton,
-  // getKet,
-  // saveToFile,
-  // receiveFileComparisonData,
-  // getMolfile,
+  getKet,
+  saveToFile,
+  receiveFileComparisonData,
+  getMolfile,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -46,34 +46,34 @@ async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
   await page.getByRole('option', { name: FileFormat }).click();
 }
 
-// async function saveToKet(page: Page, fileName: string) {
-//   const expectedKetFile = await getKet(page);
-//   await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedKetFile);
+async function saveToKet(page: Page, fileName: string) {
+  const expectedKetFile = await getKet(page);
+  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedKetFile);
 
-//   const { fileExpected: ketFileExpected, file: ketFile } =
-//     await receiveFileComparisonData({
-//       page,
-//       expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
-//     });
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+    });
 
-//   expect(ketFile).toEqual(ketFileExpected);
-// }
+  expect(ketFile).toEqual(ketFileExpected);
+}
 
-// async function saveToMol(page: Page, fileName: string) {
-//   const ignoredLineIndigo = 1;
-//   const expectedMolFile = await getMolfile(page, 'v3000');
-//   await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedMolFile);
+async function saveToMol(page: Page, fileName: string) {
+  const ignoredLineIndigo = 1;
+  const expectedMolFile = await getMolfile(page, 'v3000');
+  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedMolFile);
 
-//   const { fileExpected: molFileExpected, file: molFile } =
-//     await receiveFileComparisonData({
-//       page,
-//       expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
-//       metaDataIndexes: [ignoredLineIndigo],
-//       fileFormat: 'v3000',
-//     });
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+      metaDataIndexes: [ignoredLineIndigo],
+      fileFormat: 'v3000',
+    });
 
-//   expect(molFile).toEqual(molFileExpected);
-// }
+  expect(molFile).toEqual(molFileExpected);
+}
 
 test.describe('Side chain connections', () => {
   test.beforeEach(async ({ page }) => {
@@ -1159,33 +1159,33 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   /*
-  //   /* Case 19: Verify saving and opening structure with side-chain connections in KET format
-  //   */
-  //   await selectSequenceLayoutModeTool(page);
-  //   // await openFileAndAddToCanvasMacro(
-  //   //   `KET/Side-Chain-Connections/19.ket`,
-  //   //   page,
-  //   // );
-  //   await saveToKet(page, '19-expected.ket');
-  // });
+  test('19. Verify saving and opening structure with side-chain connections in KET format', async ({
+    page,
+  }) => {
+    /*
+    /*
+    /* Case 19: Verify saving and opening structure with side-chain connections in KET format
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      `KET/Side-Chain-Connections/19.ket`,
+      page,
+    );
+    await saveToKet(page, '19-expected.ket');
+  });
 
-  // test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
-  //   page,
-  // }) => {
-  //   /*
-  //   /*
-  //   /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
-  //   */
-  //   await selectSequenceLayoutModeTool(page);
-  //   await openFileAndAddToCanvasMacro(
-  //     `KET/Side-Chain-Connections/20.ket`,
-  //     page,
-  //   );
-  //   await saveToMol(page, '20-expected.mol');
-  // });
+  test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async ({
+    page,
+  }) => {
+    /*
+    /*
+    /* Case 20: Verify saving and opening structure with side-chain connections in MOL V3000 format
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      `KET/Side-Chain-Connections/20.ket`,
+      page,
+    );
+    await saveToMol(page, '20-expected.mol');
+  });
 });

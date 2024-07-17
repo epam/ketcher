@@ -87,7 +87,7 @@ test('Validate that unsplit nucleotides connected with another nucleotides could
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-nucleotides.sdf',
+    'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
     expectedFile,
   );
 
@@ -97,14 +97,14 @@ test('Validate that unsplit nucleotides connected with another nucleotides could
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-nucleotides.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-nucleotides.sdf',
+    'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
     page,
   );
   await takeEditorScreenshot(page);
@@ -125,7 +125,7 @@ test('Validate that unsplit nucleotides connected with chems could be saved to s
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-chems.sdf',
+    'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
     expectedFile,
   );
 
@@ -135,14 +135,14 @@ test('Validate that unsplit nucleotides connected with chems could be saved to s
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-chems.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-chems.sdf',
+    'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
     page,
   );
   await takeEditorScreenshot(page);
@@ -163,7 +163,7 @@ test('Validate that unsplit nucleotides connected with sugars could be saved to 
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-sugars.sdf',
+    'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
     expectedFile,
   );
 
@@ -173,14 +173,14 @@ test('Validate that unsplit nucleotides connected with sugars could be saved to 
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-sugars.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-sugars.sdf',
+    'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
     page,
   );
   await takeEditorScreenshot(page);
@@ -201,7 +201,7 @@ test('Validate that unsplit nucleotides connected with bases could be saved to s
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-bases.sdf',
+    'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
     expectedFile,
   );
 
@@ -211,14 +211,14 @@ test('Validate that unsplit nucleotides connected with bases could be saved to s
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-bases.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-bases.sdf',
+    'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
     page,
   );
   await takeEditorScreenshot(page);
@@ -239,7 +239,7 @@ test('Validate that unsplit nucleotides connected with phosphates could be saved
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-phosphates.sdf',
+    'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
     expectedFile,
   );
 
@@ -249,14 +249,14 @@ test('Validate that unsplit nucleotides connected with phosphates could be saved
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-phosphates.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-phosphates.sdf',
+    'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
     page,
   );
   await takeEditorScreenshot(page);
@@ -277,7 +277,7 @@ test('Validate that unsplit nucleotides connected with peptides could be saved t
   );
   const expectedFile = await getSdf(page, 'v3000');
   await saveToFile(
-    'SDF/unsplit-nucleotides-connected-with-peptides.sdf',
+    'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
     expectedFile,
   );
 
@@ -287,14 +287,242 @@ test('Validate that unsplit nucleotides connected with peptides could be saved t
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/SDF/unsplit-nucleotides-connected-with-peptides.sdf',
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
   await openFileAndAddToCanvasAsNewProject(
-    'SDF/unsplit-nucleotides-connected-with-peptides.sdf',
+    'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with another nucleotides could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with chems could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with chems could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-chems.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with sugars could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with sugars could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-sugars.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with bases could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with bases could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-bases.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with phosphates could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with phosphates could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('Validate that unsplit nucleotides connected with peptides could be saved to sdf 2000 file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: #4382
+  Description: Validate that unsplit nucleotides connected with peptides could be saved to sdf 2000 file and loaded back
+  */
+  await waitForPageInit(page);
+
+  await openFileAndAddToCanvas(
+    'KET/unsplit-nucleotides-connected-with-peptides.ket',
+    page,
+  );
+  const expectedFile = await getSdf(page, 'v2000');
+  await saveToFile(
+    'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
+    expectedFile,
+  );
+
+  const METADATA_STRINGS_INDEXES = [1];
+
+  const { fileExpected: sdfFileExpected, file: sdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v2000',
+    });
+
+  expect(sdfFile).toEqual(sdfFileExpected);
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
     page,
   );
   await takeEditorScreenshot(page);

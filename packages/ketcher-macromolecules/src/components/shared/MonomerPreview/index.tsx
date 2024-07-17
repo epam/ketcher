@@ -42,7 +42,11 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
         className={className}
         data-testid="polymer-library-preview"
       >
-        <MonomerName>{preview.monomer.label}</MonomerName>
+        <MonomerName>
+          {preview.monomer.props?.unresolved
+            ? preview.monomer.label
+            : preview.monomer.struct.name}
+        </MonomerName>
         {preview.monomer.props?.unresolved ? (
           <UnresolvedMonomerPreview />
         ) : (

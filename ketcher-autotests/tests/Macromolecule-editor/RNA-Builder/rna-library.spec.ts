@@ -36,6 +36,7 @@ import {
   gotoRNA,
   pressNewPresetButton,
   toggleBasesAccordion,
+  toggleNucleotidesAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
@@ -950,6 +951,44 @@ test.describe('RNA Library', () => {
     await page.getByTestId('rna-builder-slot--base').click();
     await takePresetsScreenshot(page);
   });
+
+  const rnaNucleotides = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides) {
+    test(`Validate that you can put unsplit nucleotide ${monomer} on the canvas from library, select it and move it, delete it`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
+    */
+      const x = 200;
+      const y = 200;
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await toggleNucleotidesAccordion(page);
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+      await dragMouseTo(x, y, page);
+      await takeEditorScreenshot(page);
+      await selectEraseTool(page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+    });
+  }
 
   test('Validate it is not possible to create preset if Sugar is without R3 connection point (Base is selected and we select Sugar)', async ({
     page,

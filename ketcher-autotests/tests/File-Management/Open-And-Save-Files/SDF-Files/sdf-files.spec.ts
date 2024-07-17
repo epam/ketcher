@@ -306,6 +306,8 @@ test('Validate that unsplit nucleotides connected with another nucleotides could
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 
@@ -344,6 +346,8 @@ test('Validate that unsplit nucleotides connected with chems could be saved to s
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with chems could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 
@@ -382,6 +386,8 @@ test('Validate that unsplit nucleotides connected with sugars could be saved to 
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with sugars could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 
@@ -420,6 +426,8 @@ test('Validate that unsplit nucleotides connected with bases could be saved to s
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with bases could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 
@@ -458,6 +466,8 @@ test('Validate that unsplit nucleotides connected with phosphates could be saved
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with phosphates could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 
@@ -496,6 +506,8 @@ test('Validate that unsplit nucleotides connected with peptides could be saved t
   /*
   Test case: #4382
   Description: Validate that unsplit nucleotides connected with peptides could be saved to sdf 2000 file and loaded back
+  Test working not a proper way becase we have a bug https://github.com/epam/ketcher/issues/5123
+  After fix we need update expected file for this test
   */
   await waitForPageInit(page);
 

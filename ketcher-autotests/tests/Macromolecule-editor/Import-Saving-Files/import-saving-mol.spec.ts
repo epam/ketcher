@@ -22,6 +22,7 @@ import {
   turnOnMicromoleculesEditor,
   selectClearCanvasTool,
   delay,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import {
   chooseFileFormat,
@@ -444,6 +445,216 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/three-chems-connected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with sugars could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async () => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
       page,
     );
     await takeEditorScreenshot(page);

@@ -66,9 +66,6 @@ const StyledPreview = styled(MonomerPreview)<IPreviewProps>`
   width: ${preview.width + 'px'};
   height: ${preview.height + 'px'};
   transform: translate(-50%, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export default StyledPreview;

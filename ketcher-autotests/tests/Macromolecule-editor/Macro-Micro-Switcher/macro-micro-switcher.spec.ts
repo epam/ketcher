@@ -2459,25 +2459,30 @@ test.describe('Macro-Micro-Switcher', () => {
     /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to sdf v2000 file.
+    Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5123
+    After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
     await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
     const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile('SDF/micro-macro-structure-expected.sdf', expectedFile);
+    await saveToFile(
+      'SDF/micro-macro-structure-v2000-expected.sdf',
+      expectedFile,
+    );
 
     const METADATA_STRINGS_INDEXES = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
+    const { fileExpected: sdfFileExpected, file: sdfFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SDF/micro-macro-structure-expected.sdf',
+          'tests/test-data/SDF/micro-macro-structure-v2000-expected.sdf',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
-    expect(molFile).toEqual(molFileExpected);
+    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/micro-macro-structure-expected.sdf',
+      'SDF/micro-macro-structure-v2000-expected.sdf',
       page,
     );
     await takeEditorScreenshot(page);
@@ -2492,22 +2497,25 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
     const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile('SDF/micro-macro-structure-expected.sdf', expectedFile);
+    await saveToFile(
+      'SDF/micro-macro-structure-v3000-expected.sdf',
+      expectedFile,
+    );
 
     const METADATA_STRINGS_INDEXES = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
+    const { fileExpected: sdfFileExpected, file: sdfFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SDF/micro-macro-structure-expected.sdf',
+          'tests/test-data/SDF/micro-macro-structure-v3000-expected.sdf',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v3000',
       });
 
-    expect(molFile).toEqual(molFileExpected);
+    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
-      'SDF/micro-macro-structure-expected.sdf',
+      'SDF/micro-macro-structure-v3000-expected.sdf',
       page,
     );
     await takeEditorScreenshot(page);

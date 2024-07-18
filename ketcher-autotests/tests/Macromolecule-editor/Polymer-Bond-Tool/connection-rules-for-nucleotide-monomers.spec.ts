@@ -399,7 +399,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
           Object.values(rightNucleotide.connectionPoints).forEach(
             (rightNucleotideConnectionPoint) => {
               /*
-               *  Test case: https://github.com/epam/ketcher/issues/3808 - Case 2
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 2
                *  Description: User can connect any nucleotide to any nucleotide using point-to-point way
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %nucleotideType2% from the library (nucleotideMonomers)
@@ -591,8 +591,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
           Object.values(rightPeptide.connectionPoints).forEach(
             (rightPeptideConnectionPoint) => {
               /*
-               *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 3 (Nucleotide - Peptide)
-               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - Peptides )
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 3 (Nucleotide - Peptide)
+               *  Description: Validate that unsplit nucleotide could be connected with peptide (with every attachment point of unsplit nucleotide)
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %peptideType% from the library (peptideMonomers)
                *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)

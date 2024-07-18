@@ -1,16 +1,16 @@
-import { BaseRenderer } from './BaseRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import assert from 'assert';
-import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Vec2 } from 'domain/entities';
+import { CoreEditor } from 'application/editor/internal';
 import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor } from 'application/editor/internal';
-import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
+import { D3SvgElementSelection } from 'application/render/types';
+import assert from 'assert';
+import { Vec2 } from 'domain/entities';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
+import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
+import { BaseRenderer } from './BaseRenderer';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;

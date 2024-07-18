@@ -1,6 +1,6 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
-import { SnakeMode } from 'application/editor/modes/';
+import { SnakeMode } from 'application/editor/modes';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -10,7 +10,7 @@ import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager'
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
-import { BaseRenderer } from './BaseRenderer';
+import { BaseRenderer } from '../BaseRenderer';
 
 enum LineDirection {
   Horizontal = 'Horizontal',

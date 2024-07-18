@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';

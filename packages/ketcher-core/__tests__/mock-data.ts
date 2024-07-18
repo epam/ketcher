@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 
 import {
   Box2Abs,
@@ -14,7 +15,6 @@ import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 const mockAtoms = [
   {

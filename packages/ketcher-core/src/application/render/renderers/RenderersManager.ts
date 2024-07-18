@@ -1,4 +1,4 @@
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import { Command } from 'domain/entities/Command';
 import assert from 'assert';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';

@@ -1,6 +1,6 @@
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 describe('Polymer Bond Renderer', () => {
   it('should render bond', () => {

@@ -1,5 +1,5 @@
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';

@@ -859,7 +859,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(chemMonomers).forEach((rightCHEM) => {
       /*
-       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 3 (Nucleotide - CHEM)
+       *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 6 (Nucleotide - CHEM)
        *  Description: User can connect any Nucleotide to any CHEM using center-to-center way.
        * For each %nucleotideType% from the library (nucleotideMonomers)
        *   For each %CHEMType% from the library (CHEMMonomers)

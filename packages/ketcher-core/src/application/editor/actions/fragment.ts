@@ -30,12 +30,13 @@ import {
   TextMove,
   RasterImageMove,
 } from '../operations';
-import { Pile, RASTER_IMAGE_KEY, RGroup, Vec2 } from 'domain/entities';
+import { Pile, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);

@@ -24,7 +24,9 @@ import {
   Atom,
   Bond,
   RASTER_IMAGE_KEY,
+  RasterImageReferencePositionInfo,
 } from 'ketcher-core';
+import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
@@ -46,13 +48,7 @@ const findMaps = {
   [RASTER_IMAGE_KEY]: findClosestRasterImage,
 };
 
-interface Closest {
-  id: number;
-  dist: number;
-  ref?: Vec2 | null;
-}
-
-type ClosestReturnType = Closest | null;
+type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
 type RefPoint = Vec2 | null;
 
 function rectangleContainsPoint(startX, startY, width, height, x, y) {
@@ -542,7 +538,13 @@ function findClosestFG(restruct: ReStruct, pos: Vec2, skip) {
   return null;
 }
 
-function findClosestItem(restruct: ReStruct, pos: Vec2, maps, skip, options) {
+function findClosestItem(
+  restruct: ReStruct,
+  pos: Vec2,
+  maps,
+  skip,
+  options,
+): ClosestItemWithMap | null {
   // eslint-disable-line max-params
   maps = maps || Object.keys(findMaps);
 
@@ -701,16 +703,37 @@ function mergeAtomToFunctionalGroup(
   return false;
 }
 
-function findClosestRasterImage(
-  reStruct: ReStruct,
-  cursorPosition: Vec2,
-): ClosestReturnType {
-  return Array.from(reStruct.rasterImages.values()).reduce(
-    (acc: ClosestReturnType, item, id) => {
-      const distanceToPoint =
-        item.rasterImage.calculateDistanceToPoint(cursorPosition);
-      if (distanceToPoint < SELECTION_DISTANCE_COEFFICIENT) {
-        return { id, dist: distanceToPoint };
+function findClosestRasterImage(reStruct: ReStruct, cursorPosition: Vec2) {
+  const renderOptions = reStruct.render.options;
+  const canvasScaledPosition = Scale.modelToCanvas(
+    cursorPosition,
+    renderOptions,
+  );
+  const maxDistance =
+    renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
+  return Array.from(reStruct.rasterImages.entries()).reduce(
+    (acc: ClosestReturnType<RasterImageReferencePositionInfo>, [id, item]) => {
+      const distanceToPoint = item.calculateDistanceToPoint(
+        canvasScaledPosition,
+        renderOptions,
+      );
+      if (distanceToPoint <= maxDistance) {
+        if (acc && acc.dist < distanceToPoint) {
+          return acc;
+        }
+        // We would like to grab items under the images and those items should have higher priority then images
+        // So we wanna make sure that those items can be grabbed without pixel-perfect pixel-hunting
+        const dist = Math.max(distanceToPoint, maxDistance / 3);
+        const closestPosition = item.calculateClosestReferencePosition(
+          canvasScaledPosition,
+          renderOptions,
+        );
+        const includeRef = closestPosition.distance < maxDistance;
+        return {
+          id,
+          dist: dist / renderOptions.microModeScale,
+          ref: includeRef ? closestPosition.ref : null,
+        };
       }
       return acc;
     },

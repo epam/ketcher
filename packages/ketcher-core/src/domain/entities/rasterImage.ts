@@ -17,13 +17,30 @@
 import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
 import { Point, Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
+import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 interface KetFileNodeContent {
   bitmap: string;
   halfSize: Point;
 }
 
-export const RASTER_IMAGE_KEY = 'rasterImage';
+export interface RasterImageReferencePositions {
+  topLeftPosition: Vec2;
+  topMiddlePosition: Vec2;
+  topRightPosition: Vec2;
+  rightMiddlePosition: Vec2;
+  bottomRightPosition: Vec2;
+  bottomMiddlePosition: Vec2;
+  bottomLeftPosition: Vec2;
+  leftMiddlePosition: Vec2;
+}
+
+export type RasterImageReferenceName = keyof RasterImageReferencePositions;
+
+export interface RasterImageReferencePositionInfo {
+  name: RasterImageReferenceName;
+  offset: Vec2;
+}
 
 export class RasterImage extends BaseMicromoleculeEntity {
   constructor(
@@ -65,6 +82,28 @@ export class RasterImage extends BaseMicromoleculeEntity {
     ];
   }
 
+  getReferencePositions(): RasterImageReferencePositions {
+    const [
+      topLeftPosition,
+      topRightPosition,
+      bottomRightPosition,
+      bottomLeftPosition,
+    ] = this.getCornerPositions();
+    return {
+      topLeftPosition,
+      topMiddlePosition: Vec2.centre(topLeftPosition, topRightPosition),
+      topRightPosition,
+      rightMiddlePosition: Vec2.centre(topRightPosition, bottomRightPosition),
+      bottomRightPosition,
+      bottomMiddlePosition: Vec2.centre(
+        bottomLeftPosition,
+        bottomRightPosition,
+      ),
+      bottomLeftPosition,
+      leftMiddlePosition: Vec2.centre(topLeftPosition, bottomLeftPosition),
+    };
+  }
+
   clone(): RasterImage {
     return new RasterImage(
       this.bitmap,
@@ -77,6 +116,14 @@ export class RasterImage extends BaseMicromoleculeEntity {
     this._center = this._center.add(offset);
   }
 
+  resize(topLeftPosition: Vec2, bottomRightPosition: Vec2) {
+    this._center = Vec2.centre(topLeftPosition, bottomRightPosition);
+    const halfSize = Vec2.diff(bottomRightPosition, topLeftPosition).scaled(
+      0.5,
+    );
+    this.halfSize = new Vec2(Math.abs(halfSize.x), Math.abs(halfSize.y));
+  }
+
   rescaleSize(scale: number): void {
     this.halfSize = this.halfSize.scaled(scale);
   }
@@ -85,32 +132,9 @@ export class RasterImage extends BaseMicromoleculeEntity {
     return this._center;
   }
 
-  isPointInsidePolygon(point: Vec2): boolean {
-    return point.isInsidePolygon(this.getCornerPositions());
-  }
-
-  calculateDistanceToPoint(point: Vec2): number {
-    if (this.isPointInsidePolygon(point)) {
-      return 0;
-    }
-    const [
-      topLeftPosition,
-      topRightPosition,
-      bottomRightPosition,
-      bottomLeftPosition,
-    ] = this.getCornerPositions();
-
-    return Math.min(
-      point.calculateDistanceToLine([topLeftPosition, topRightPosition]),
-      point.calculateDistanceToLine([topRightPosition, bottomLeftPosition]),
-      point.calculateDistanceToLine([bottomRightPosition, bottomLeftPosition]),
-      point.calculateDistanceToLine([bottomLeftPosition, topLeftPosition]),
-    );
-  }
-
   toKetNode(): KetFileNode<KetFileNodeContent> {
     return {
-      type: RASTER_IMAGE_KEY,
+      type: RASTER_IMAGE_SERIALIZE_KEY,
       center: getNodeWithInvertedYCoord(this._center),
       data: {
         bitmap: this.bitmap,

@@ -34,6 +34,9 @@ import {
   KetcherLogger,
   CoordinateTransformation,
   RASTER_IMAGE_KEY,
+  rasterImageReferencePositionToCursor,
+  RasterImageReferencePositionInfo,
+  fromRasterImageResize,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -196,6 +199,21 @@ class SelectTool implements Tool {
       }
       /* end */
 
+      /* handle raster image resize */
+      if (dragCtx.item.map === RASTER_IMAGE_KEY && dragCtx.item.ref) {
+        if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
+        const position = CoordinateTransformation.pageToModel(event, rnd);
+        dragCtx.action = fromRasterImageResize(
+          rnd.ctab,
+          dragCtx.item.id,
+          position,
+          dragCtx.item.ref,
+        );
+        editor.update(dragCtx.action, true);
+        return true;
+      }
+      /* end + fullstop */
+
       /* handle simpleObjects */
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
         if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
@@ -260,12 +278,22 @@ class SelectTool implements Tool {
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
-
-    handleMovingPosibilityCursor(
-      item,
-      this.editor.render.paper.canvas,
-      this.editor.render.options.movingStyle.cursor as string,
-    );
+    if (item?.map === RASTER_IMAGE_KEY && item.ref) {
+      const referencePositionInfo =
+        item.ref as RasterImageReferencePositionInfo;
+      handleMovingPosibilityCursor(
+        item,
+        this.editor.render.paper.canvas,
+        // Casting is safe because we've checked for item map
+        rasterImageReferencePositionToCursor[referencePositionInfo.name],
+      );
+    } else {
+      handleMovingPosibilityCursor(
+        item,
+        this.editor.render.paper.canvas,
+        this.editor.render.options.movingStyle.cursor as string,
+      );
+    }
 
     return true;
   }

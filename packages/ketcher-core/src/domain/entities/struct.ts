@@ -1285,7 +1285,7 @@ export class Struct {
     return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
   }
 
-  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+  isTargetFromMacromolecule(target?: { id: number; map: string } | null) {
     return (
       target &&
       ((target.map === 'functionalGroups' &&

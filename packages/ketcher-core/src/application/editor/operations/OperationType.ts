@@ -85,6 +85,7 @@ export const OperationType = Object.freeze({
   RASTER_IMAGE_UPSERT: 'Upsert raster image',
   RASTER_IMAGE_DELETE: 'Delete raster image',
   RASTER_IMAGE_MOVE: 'Move raster image',
+  RASTER_IMAGE_RESIZE: 'Resize raster image',
 });
 
 export enum OperationPriority {

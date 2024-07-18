@@ -109,7 +109,8 @@ class PasteTool implements Tool {
       this.action?.perform(this.restruct);
     }
 
-    const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])!;
     const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id);
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)

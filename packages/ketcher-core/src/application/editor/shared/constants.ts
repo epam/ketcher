@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { RASTER_IMAGE_KEY } from 'domain/constants';
+
 export const SgContexts = {
   Fragment: 'Fragment',
   Multifragment: 'Multifragment',
@@ -33,6 +35,7 @@ export const selectionKeys = [
   'rxnPluses',
   'simpleObjects',
   'texts',
+  RASTER_IMAGE_KEY,
 ] as const;
 
 export const defaultBondThickness = 2;

@@ -79,7 +79,7 @@ import { MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { rasterImageToKet } from 'domain/serializers/ket/toKet/rasterImageToKet';
 import { rasterImageToStruct } from 'domain/serializers/ket/fromKet/rasterImageToStruct';
-import { RASTER_IMAGE_KEY } from 'domain/entities/rasterImage';
+import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -114,7 +114,7 @@ function parseNode(node: any, struct: any) {
       textToStruct(node, struct);
       break;
     }
-    case RASTER_IMAGE_KEY: {
+    case RASTER_IMAGE_SERIALIZE_KEY: {
       rasterImageToStruct(node, struct);
       break;
     }
@@ -188,7 +188,7 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(textToKet(item));
           break;
         }
-        case RASTER_IMAGE_KEY: {
+        case RASTER_IMAGE_SERIALIZE_KEY: {
           result.root.nodes.push(rasterImageToKet(item));
           break;
         }

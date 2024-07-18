@@ -20,7 +20,6 @@ import {
   RASTER_IMAGE_KEY,
   Struct,
   Vec2,
-  ReRasterImage,
   ReStruct,
 } from 'ketcher-core';
 
@@ -176,19 +175,17 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
-    (acc: Array<number>, item: ReRasterImage, id): Array<number> => {
+  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+    (acc: Array<number>, [id, item]): Array<number> => {
       if (
-        item.rasterImage
-          .getCornerPositions()
-          .some((point) =>
-            point.isInsidePolygon([
-              topLeftPosition,
-              topRightPosition,
-              bottomRightPosition,
-              bottomLeftPosition,
-            ]),
-          )
+        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+          point.isInsidePolygon([
+            topLeftPosition,
+            topRightPosition,
+            bottomRightPosition,
+            bottomLeftPosition,
+          ]),
+        )
       ) {
         return acc.concat(id);
       }
@@ -338,12 +335,12 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.values()).reduce(
-    (acc: Array<number>, item: ReRasterImage, id) => {
+  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+    (acc: Array<number>, [id, item]) => {
       if (
-        item.rasterImage
-          .getCornerPositions()
-          .some((point) => isPointInPolygon(r, point))
+        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+          isPointInPolygon(r, point),
+        )
       ) {
         return acc.concat(id);
       }

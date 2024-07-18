@@ -70,6 +70,11 @@
         }
       }
     },
+    "imageFile": {
+      "type": "string",
+      "pattern": "^data:image/(png|jpeg|gif|bmp|webp|x-icon|svg\\+xml);base64,",
+      "minLength": 160
+    },
     "header": {
       "type": "object",
       "properties": {
@@ -808,11 +813,21 @@
           "required": ["bitmap", "halfSize"],
           "properties": {
             "bitmap": {
-              "type": "string",
-              "minLength": 1
+              "$ref": "#/definitions/imageFile"
             },
             "halfSize": {
-              "$ref": "#/definitions/2dCoordinates"
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "y": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
             }
           }
         }

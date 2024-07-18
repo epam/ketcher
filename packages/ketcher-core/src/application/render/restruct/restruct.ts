@@ -42,6 +42,7 @@ import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReRasterImage } from 'application/render/restruct/rerasterImage';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 class ReStruct {
   public static readonly maps = {
@@ -58,7 +59,7 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
-    rasterImages: ReRasterImage,
+    [RASTER_IMAGE_KEY]: ReRasterImage,
   } as const;
 
   public render: Render;

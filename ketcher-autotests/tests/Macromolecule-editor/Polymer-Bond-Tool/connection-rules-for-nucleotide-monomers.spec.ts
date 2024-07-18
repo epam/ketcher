@@ -309,25 +309,32 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .locator('..')
-      .first();
+    const leftMonomerLocator =
+      leftMonomer.monomerType === 'nucleotide'
+        ? page.getByText(leftMonomer.alias).locator('..').locator('..').first()
+        : page.getByText(leftMonomer.alias).locator('..').first();
 
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page
-            .getByText(rightMonomer.alias)
-            .nth(1)
-            .locator('..')
-            .locator('..')
-            .first()
-        : page
-            .getByText(rightMonomer.alias)
-            .locator('..')
-            .locator('..')
-            .first();
+    let rightMonomerLocator;
+    if (rightMonomer.monomerType === 'nucleotide') {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page
+              .getByText(rightMonomer.alias)
+              .nth(1)
+              .locator('..')
+              .locator('..')
+              .first()
+          : page
+              .getByText(rightMonomer.alias)
+              .locator('..')
+              .locator('..')
+              .first();
+    } else {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
+          : page.getByText(rightMonomer.alias).locator('..').first();
+    }
 
     await bondTwoMonomersPointToPoint(
       page,
@@ -821,8 +828,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       /*
-       *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 3 (Nucleotide - Peptide)
-       *  Description: User can connect any Nucleotide to any Peptide using center-to-center way.
+       *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 5 (Nucleotide - Peptide)
+       *  Description: Validate that unsplit nucleotide could be connected with peptide (center-to-center way)
        * For each %nucleotideType% from the library (nucleotideMonomers)
        *   For each %peptideType% from the library (peptideMonomers)
        *  1. Clear canvas
@@ -830,7 +837,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  3. Establish connection between %snucleotideType%(center) and %peptideType%(center)
        *  4. Validate canvas (connection should appear)
        */
-      test(`Case5: Cnnct Center to Center of Ph(${leftNucleotide.alias}) and Peptide(${rightPeptide.alias})`, async () => {
+      test(`Case5: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Peptide(${rightPeptide.alias})`, async () => {
         test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftNucleotide, rightPeptide);
@@ -861,7 +868,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  3. Establish connection between %snucleotideType%(center) and %CHEMType%(center)
        *  4. Validate canvas (connection should appear)
        */
-      test(`Case6: Cnnct Center to Center of Ph(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+      test(`Case6: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
         test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftNucleotide, rightCHEM);

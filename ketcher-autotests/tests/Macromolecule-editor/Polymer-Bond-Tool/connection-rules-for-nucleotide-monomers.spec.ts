@@ -1040,7 +1040,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
           Object.values(rightOM.connectionPoints).forEach(
             (rightOMConnectionPoint) => {
               /*
-               *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 7
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 7
                *  Description: Validate that unsplit nucleotide could be connected with micromolecule (with every attachment point of unsplit nucleotide)
                * For each %chemType% from the library (nucleotideMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
@@ -1083,8 +1083,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(ordinaryMoleculeMonomers).forEach((rightOrdinaryMolecule) => {
       /*
-       *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 10
-       *  Description: User can connect any Nucleotide to any OrdinaryMolecule using center-to-center way.
+       *  Test case: https://github.com/epam/ketcher/issues/5211 - Case 8
+       *  Description: Validate that unsplit nucleotide could be connected with micromolecule (center-to-center way)
        *               Select Connection Points dialog opened.
        */
       ordnryMlcleName = rightOrdinaryMolecule.fileName.substring(
@@ -1092,7 +1092,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         rightOrdinaryMolecule.fileName.lastIndexOf('.ket'),
       );
 
-      test(`Case 10: Connect Center to Center of Nucleotide(${leftNucleotide.alias}) and OrdinaryMolecule(${ordnryMlcleName})`, async () => {
+      test(`Case 8: Connect Center to Center of Nucleotide(${leftNucleotide.alias}) and OrdinaryMolecule(${ordnryMlcleName})`, async () => {
         test.setTimeout(20000);
 
         await loadTwoMonomers(page, leftNucleotide, rightOrdinaryMolecule);

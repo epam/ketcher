@@ -17,15 +17,7 @@ import { ClosestItemWithMap } from '../shared/closest.types';
 import { handleMovingPosibilityCursor } from '../utils';
 
 const TAG = 'tool/rasterImage.ts';
-const supportedMimes = [
-  'png',
-  'jpeg',
-  'gif',
-  'bmp',
-  'webp',
-  'x-icon',
-  'svg+xml',
-];
+const supportedMimes = ['png', 'svg+xml'];
 
 const supportedMimesForRegex = supportedMimes
   .map((item) => item.replace('+', '\\+'))

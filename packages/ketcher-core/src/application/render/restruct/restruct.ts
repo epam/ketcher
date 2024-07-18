@@ -724,11 +724,10 @@ class ReStruct {
 
   showImages() {
     const options = this.render.options;
-    this.rasterImages.forEach((rasterImage, id) => {
-      if (this.rasterImagesChanged.has(id)) {
-        rasterImage.show(this, options);
-      } else {
-        rasterImage.moveToBottomOfParentNode();
+    this.rasterImagesChanged.forEach((_, id) => {
+      const image = this.rasterImages.get(id);
+      if (image) {
+        image.show(this, options);
       }
     });
   }

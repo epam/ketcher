@@ -72,7 +72,7 @@
     },
     "imageFile": {
       "type": "string",
-      "pattern": "^data:image/(png|jpeg|gif|bmp|webp|x-icon|svg\\+xml);base64,",
+      "pattern": "^data:image/(png|svg\\+xml);base64,",
       "minLength": 160
     },
     "header": {

@@ -782,7 +782,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
           Object.values(rightCHEM.connectionPoints).forEach(
             (rightCHEMConnectionPoint) => {
               /*
-               *  Test case: https://github.com/epam/ketcher/issues/4572 - Case 4 (Nucleotide - CHEM)
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 4 (Nucleotide - CHEM)
                *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - Peptides )
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %CHEMType% from the library (CHEMMonomers)
@@ -793,7 +793,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %CHEMType%(%ConnectionPoint2%)
                *  4. Validate canvas (connection should appear)
                */
-              test(`Case4: Cnnct ${leftNucleotideConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
+              test(`Case4: Cnnct ${leftNucleotideConnectionPoint} to ${rightCHEMConnectionPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
                 test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftNucleotide, rightCHEM);

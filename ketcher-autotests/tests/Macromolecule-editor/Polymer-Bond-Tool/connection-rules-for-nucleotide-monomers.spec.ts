@@ -1551,4 +1551,222 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       });
     });
   });
+
+  const sugarMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      connectionPoints: {
+        R1: 'R1',
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      connectionPoints: {
+        R2: 'R2',
+      },
+    },
+    '(R3) - Side only': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
+      alias: '(R3)_-_Side_only',
+      connectionPoints: {
+        R3: 'R3',
+      },
+    },
+    '(R1,R2) - R3 gap': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: '(R1,R3)_-_R2_gap',
+      connectionPoints: {
+        R1: 'R1',
+        R3: 'R3',
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: '(R2,R3)_-_R1_gap',
+      connectionPoints: {
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R3,R4)': {
+    //        monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: 'sugar',
+      fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
+      alias: '(R1,R2,R3)',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R1,R3,R4)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    // monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+  };
+
+  Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
+    Object.values(sugarMonomers).forEach((rightSugar) => {
+      Object.values(leftNucleotide.connectionPoints).forEach(
+        (leftNucleotideConnectionPoint) => {
+          Object.values(rightSugar.connectionPoints).forEach(
+            (rightSugarConnectionPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 13 (Nucleotide - Sugar)
+               *  Description: Validate that unsplit nucleotide could be connected with sugar (with every attachment point of unsplit nucleotide)
+               * For each %nucleotideType% from the library (nucleotideMonomers)
+               *   For each %sugarType% from the library (sugarMonomers)
+               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
+               *         For each %ConnectionPoint2% (avaliable connections of %sugarType%) do:
+               *  1. Clear canvas
+               *  2. Load %nucleotideType% and %sugarType% and put them on the canvas
+               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %sugarType%(%ConnectionPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              test(`Case13: Cnnct ${leftNucleotideConnectionPoint} to ${rightSugarConnectionPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
+                test.setTimeout(20000);
+
+                await loadTwoMonomers(page, leftNucleotide, rightSugar);
+
+                await bondTwoMonomersByPointToPoint(
+                  page,
+                  leftNucleotide,
+                  rightSugar,
+                  leftNucleotideConnectionPoint,
+                  rightSugarConnectionPoint,
+                );
+
+                await zoomWithMouseWheel(page, -600);
+                await hoverOverConnectionLine(page);
+
+                await takeEditorScreenshot(page);
+              });
+            },
+          );
+        },
+      );
+    });
+  });
+
+  Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
+    Object.values(sugarMonomers).forEach((rightSugar) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 14 (Nucleotide - Sugar)
+       *  Description: Validate that unsplit nucleotide could be connected with sugar (center-to-center way)
+       * For each %nucleotideType% from the library (nucleotideMonomers)
+       *   For each %sugarType% from the library (sugarMonomers)
+       *  1. Clear canvas
+       *  2. Load %nucleotideType% and %sugarType% and put them on the canvas
+       *  3. Establish connection between %snucleotideType%(center) and %sugarType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case14: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Sugar(${rightSugar.alias})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftNucleotide, rightSugar);
+
+        await bondTwoMonomersByCenterToCenter(page, leftNucleotide, rightSugar);
+
+        await zoomWithMouseWheel(page, -600);
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

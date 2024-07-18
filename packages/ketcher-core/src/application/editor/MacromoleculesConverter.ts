@@ -344,10 +344,12 @@ export class MacromoleculesConverter {
         fragmentStruct,
         drawingEntitiesManager,
       );
-      fragmentIdToMonomer.set(
-        _fragment[0] as number,
-        monomerAddCommand.operations[0].monomer as BaseMonomer,
-      );
+      _fragment.forEach((_fid) => {
+        fragmentIdToMonomer.set(
+          _fragment[_fid] as number,
+          monomerAddCommand.operations[0].monomer as BaseMonomer,
+        );
+      });
       command.merge(monomerAddCommand);
       fragmentNumber++;
     });

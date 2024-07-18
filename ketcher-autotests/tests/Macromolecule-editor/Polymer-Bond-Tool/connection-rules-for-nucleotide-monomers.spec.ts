@@ -1111,4 +1111,226 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       });
     });
   });
+
+  const phosphateMonomers: { [monomerName: string]: IMonomer } = {
+    '(R1) - Left only': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
+      alias: '(R1)_-_Left_only',
+      connectionPoints: {
+        R1: 'R1',
+      },
+    },
+    '(R2) - Right only': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
+      alias: '(R2)_-_Right_only',
+      connectionPoints: {
+        R2: 'R2',
+      },
+    },
+    '(R3) - Side only': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
+      alias: '(R3)_-_Side_only',
+      connectionPoints: {
+        R3: 'R3',
+      },
+    },
+    '(R1,R2) - R3 gap': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
+      alias: '(R1,R2)_-_R3_gap',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    '(R1,R3) - R2 gap': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
+      alias: '(R1,R3)_-_R2_gap',
+      connectionPoints: {
+        R1: 'R1',
+        R3: 'R3',
+      },
+    },
+    '(R2,R3) - R1 gap': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
+      alias: '(R2,R3)_-_R1_gap',
+      connectionPoints: {
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R3,R4)': {
+    //        monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
+    //   alias: '(R3,R4)',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    '(R1,R2,R3)': {
+      monomerType: 'phosphate',
+      fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
+      alias: '(R1,R2,R3)',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+      },
+    },
+    // '(R1,R3,R4)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
+    //   alias: '(R1,R3,R4)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R2,R3,R4)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
+    //   alias: '(R2,R3,R4)',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R3,R4,R5)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
+    //   alias: '(R3,R4,R5)',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
+    //   alias: '(R1,R2,R3,R4)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //   },
+    // },
+    // '(R1,R3,R4,R5)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
+    //   alias: '(R1,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R2,R3,R4,R5)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
+    //   alias: '(R2,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+    // '(R1,R2,R3,R4,R5)': {
+    // monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
+    //   alias: '(R1,R2,R3,R4,R5)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //     R4: 'R4',
+    //     R5: 'R5',
+    //   },
+    // },
+  };
+
+  Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
+    Object.values(phosphateMonomers).forEach((rightPhosphate) => {
+      Object.values(leftNucleotide.connectionPoints).forEach(
+        (leftNucleotideConnectionPoint) => {
+          Object.values(rightPhosphate.connectionPoints).forEach(
+            (rightPhosphateConnectionPoint) => {
+              /*
+               *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 9 (Nucleotide - Phosphate)
+               *  Description: Validate that unsplit nucleotide could be connected with phosphate (with every attachment point of unsplit nucleotide)
+               * For each %nucleotideType% from the library (nucleotideMonomers)
+               *   For each %phosphateType% from the library (phosphateMonomers)
+               *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
+               *         For each %ConnectionPoint2% (avaliable connections of %phosphateType%) do:
+               *  1. Clear canvas
+               *  2. Load %nucleotideType% and %phosphateType% and put them on the canvas
+               *  3. Establish connection between %snucleotideType%(%ConnectionPoint%) and %phosphateType%(%ConnectionPoint2%)
+               *  4. Validate canvas (connection should appear)
+               */
+              test(`Case9: Cnct ${leftNucleotideConnectionPoint} to ${rightPhosphateConnectionPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
+                test.setTimeout(20000);
+
+                await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
+
+                await bondTwoMonomersByPointToPoint(
+                  page,
+                  leftNucleotide,
+                  rightPhosphate,
+                  leftNucleotideConnectionPoint,
+                  rightPhosphateConnectionPoint,
+                );
+
+                await zoomWithMouseWheel(page, -600);
+                await hoverOverConnectionLine(page);
+
+                await takeEditorScreenshot(page);
+              });
+            },
+          );
+        },
+      );
+    });
+  });
+
+  Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
+    Object.values(phosphateMonomers).forEach((rightPhosphate) => {
+      /*
+       *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 10 (Nucleotide - Phosphate)
+       *  Description: Validate that unsplit nucleotide could be connected with phosphate (center-to-center way)
+       * For each %nucleotideType% from the library (nucleotideMonomers)
+       *   For each %phosphateType% from the library (phosphateMonomers)
+       *  1. Clear canvas
+       *  2. Load %nucleotideType% and %phosphateType% and put them on the canvas
+       *  3. Establish connection between %snucleotideType%(center) and %phosphateType%(center)
+       *  4. Validate canvas (connection should appear)
+       */
+      test(`Case10: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
+        test.setTimeout(20000);
+
+        await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
+
+        await bondTwoMonomersByCenterToCenter(
+          page,
+          leftNucleotide,
+          rightPhosphate,
+        );
+
+        await zoomWithMouseWheel(page, -600);
+        await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page);
+      });
+    });
+  });
 });

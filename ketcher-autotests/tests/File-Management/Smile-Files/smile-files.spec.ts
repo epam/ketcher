@@ -12,6 +12,9 @@ import {
   waitForPageInit,
   nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
+  saveToFile,
+  receiveFileComparisonData,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { clickOnFileFormatDropdown, getSmiles } from '@utils/formats';
 
@@ -361,6 +364,198 @@ test.describe('SMILES files', () => {
     */
     await openFileAndAddToCanvas(
       'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-chems.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-chems.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-bases.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-bases.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-sugars.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-peptides.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       page,
     );
   });

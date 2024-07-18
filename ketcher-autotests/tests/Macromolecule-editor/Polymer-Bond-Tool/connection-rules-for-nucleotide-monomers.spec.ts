@@ -1040,8 +1040,8 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
           Object.values(rightOM.connectionPoints).forEach(
             (rightOMConnectionPoint) => {
               /*
-               *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 2
-               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - Ordinary Molecule )
+               *  Test case: https://github.com/epam/ketcher/issues/4882 - Case 7
+               *  Description: Validate that unsplit nucleotide could be connected with micromolecule (with every attachment point of unsplit nucleotide)
                * For each %chemType% from the library (nucleotideMonomers)
                *   For each %OMType% from the library (ordinaryMoleculeMonomers)
                *      For each %ConnectionPoint% (avaliable connections of %chemType%)
@@ -1055,7 +1055,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 rightOM.fileName.indexOf(' - '),
                 rightOM.fileName.lastIndexOf('.ket'),
               );
-              test(`Test case9: Cnct ${leftNucleotideConnectionPoint} to ${rightOMConnectionPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
+              test(`Test case7: Cnct ${leftNucleotideConnectionPoint} to ${rightOMConnectionPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
                 test.setTimeout(20000);
 
                 await loadTwoMonomers(page, leftNucleotide, rightOM);

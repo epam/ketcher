@@ -373,7 +373,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -405,7 +405,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -437,7 +437,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -469,7 +469,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -501,7 +501,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -533,7 +533,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: #4382
-    Description: Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back
     */
 
     await openFileAndAddToCanvas(
@@ -556,6 +556,38 @@ test.describe('SMILES files', () => {
 
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to Extended SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to extended SMILE and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       page,
     );
   });

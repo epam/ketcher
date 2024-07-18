@@ -227,25 +227,34 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     const leftMonomerLocator =
       leftMonomer.monomerType === 'nucleotide'
         ? page.getByText(leftMonomer.alias).locator('..').locator('..').first()
-        : page.getByText(leftMonomer.alias).locator('..').locator('..').first();
+        : page.getByText(leftMonomer.alias).locator('..').first();
     await leftMonomerLocator.hover();
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page
-            .getByText(rightMonomer.alias)
-            .nth(1)
-            .locator('..')
-            .locator('..')
-            .first()
-        : page
-            .getByText(rightMonomer.alias)
-            .locator('..')
-            .locator('..')
-            .first();
+    let rightMonomerLocator;
+    if (rightMonomer.monomerType === 'nucleotide') {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page
+              .getByText(rightMonomer.alias)
+              .nth(1)
+              .locator('..')
+              .locator('..')
+              .first()
+          : page
+              .getByText(rightMonomer.alias)
+              .locator('..')
+              .locator('..')
+              .first();
+    } else {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
+          : page.getByText(rightMonomer.alias).locator('..').first();
+    }
+
     await rightMonomerLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
     await dragMouseTo(600, 371, page);
@@ -259,15 +268,32 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     leftMonomerConnectionPoint?: string,
     rightMonomerConnectionPoint?: string,
   ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
+    const leftMonomerLocator =
+      leftMonomer.monomerType === 'nucleotide'
+        ? page.getByText(leftMonomer.alias).locator('..').locator('..').first()
+        : page.getByText(leftMonomer.alias).locator('..').first();
 
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
+    let rightMonomerLocator;
+    if (rightMonomer.monomerType === 'nucleotide') {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page
+              .getByText(rightMonomer.alias)
+              .nth(1)
+              .locator('..')
+              .locator('..')
+              .first()
+          : page
+              .getByText(rightMonomer.alias)
+              .locator('..')
+              .locator('..')
+              .first();
+    } else {
+      rightMonomerLocator =
+        (await page.getByText(leftMonomer.alias).count()) > 1
+          ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
+          : page.getByText(rightMonomer.alias).locator('..').first();
+    }
 
     await bondTwoMonomersPointToPoint(
       page,

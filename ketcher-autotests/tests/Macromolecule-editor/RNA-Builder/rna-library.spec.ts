@@ -29,6 +29,10 @@ import {
   delay,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
@@ -986,6 +990,111 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
       await selectEraseTool(page);
       await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Validate that chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: Chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: Unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  const rnaNucleotides1 = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides1) {
+    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
+    */
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const rnaNucleotides2 = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides2) {
+    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Undo/redo tool works correct with unsplit nucleotide.
+    */
+      const x = 200;
+      const y = 200;
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await clickInTheMiddleOfTheScreen(page);
+      await dragMouseTo(x, y, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectEraseTool(page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
     });
   }

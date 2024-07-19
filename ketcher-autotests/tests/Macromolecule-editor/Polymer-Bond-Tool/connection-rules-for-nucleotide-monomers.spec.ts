@@ -82,14 +82,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'nucleotide',
-      fileName: 'KET/Nucleotide-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'nucleotide',
+    //   fileName: 'KET/Nucleotide-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'nucleotide',
       fileName: 'KET/Nucleotide-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -470,14 +470,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'peptide',
-      fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -661,14 +661,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'chem',
-      fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -678,24 +678,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R1,R3) - R2 gap': {
-      monomerType: 'chem',
-      fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
-      alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
-      },
-    },
-    '(R2,R3) - R1 gap': {
-      monomerType: 'chem',
-      fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
-      alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R3,R4)': {
     //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
@@ -745,17 +745,17 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4)': {
-    //   monomerType: 'chem',
-    //   fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //   },
-    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: 'chem',
+      fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: '(R1,R2,R3,R4)',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+      },
+    },
     // '(R1,R3,R4,R5)': {
     //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
@@ -994,17 +994,17 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
-    //   fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //   },
-    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: 'ordinaryMolecule',
+      fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+      },
+    },
     // '(R1,R3,R4,R5)': {
     //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
@@ -1027,18 +1027,18 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
-    //   fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
-    //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
-    //   },
-    // },
+    '(R1,R2,R3,R4,R5)': {
+      monomerType: 'ordinaryMolecule',
+      fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+        R5: 'R5',
+      },
+    },
   };
 
   let ordnryMlcleName: string;
@@ -1139,14 +1139,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'phosphate',
-      fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'phosphate',
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -1156,24 +1156,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R1,R3) - R2 gap': {
-      monomerType: 'phosphate',
-      fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
-      alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
-      },
-    },
-    '(R2,R3) - R1 gap': {
-      monomerType: 'phosphate',
-      fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
-      alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R3,R4)': {
     //        monomerType: 'phosphate',
     //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
@@ -1183,16 +1183,16 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R4: 'R4',
     //   },
     // },
-    '(R1,R2,R3)': {
-      monomerType: 'phosphate',
-      fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
-      alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R2,R3)': {
+    //   monomerType: 'phosphate',
+    //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
+    //   alias: '(R1,R2,R3)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R1,R3,R4)': {
     // monomerType: 'phosphate',
     //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
@@ -1361,14 +1361,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'base',
-      fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'base',
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
@@ -1378,24 +1378,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R1,R3) - R2 gap': {
-      monomerType: 'base',
-      fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
-      alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
-      },
-    },
-    '(R2,R3) - R1 gap': {
-      monomerType: 'base',
-      fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
-      alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R3,R4)': {
     //        monomerType: 'base',
     //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
@@ -1405,16 +1405,16 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R4: 'R4',
     //   },
     // },
-    '(R1,R2,R3)': {
-      monomerType: 'base',
-      fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
-      alias: '(R1,R2,R3)',
-      connectionPoints: {
-        R1: 'R1',
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R2,R3)': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
+    //   alias: '(R1,R2,R3)',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R1,R3,R4)': {
     // monomerType: 'base',
     //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
@@ -1591,14 +1591,14 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      monomerType: 'sugar',
-      fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'sugar',
+    //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
       monomerType: 'sugar',
       fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',

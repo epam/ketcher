@@ -16,7 +16,11 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
-import { clickOnFileFormatDropdown, getSmiles } from '@utils/formats';
+import {
+  clickOnFileFormatDropdown,
+  getExtendedSmiles,
+  getSmiles,
+} from '@utils/formats';
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -567,27 +571,106 @@ test.describe('SMILES files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to extended SMILE and loaded back
     */
+    test.fail();
+    // function await getExtendedSmiles but get JSON instead cxsmi file
+    // after fixing need to update the screenshot
 
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
+    const expectedFile = await getExtendedSmiles(page);
     await saveToFile(
       'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       expectedFile,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
-      });
+    const {
+      fileExpected: extendedsmilesFileExpected,
+      file: extendedsmilesFile,
+    } = await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+    });
 
-    expect(smilesFile).toEqual(smilesFileExpected);
+    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with other nucleotides could be saved to Extended SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with other nucleotides could be saved to extended SMILE and loaded back
+    */
+    test.fail();
+    // function await getExtendedSmiles but get JSON instead cxsmi file
+    // after fixing need to update the screenshot
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getExtendedSmiles(page);
+    await saveToFile(
+      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
+      expectedFile,
+    );
+    const {
+      fileExpected: extendedsmilesFileExpected,
+      file: extendedsmilesFile,
+    } = await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
+    });
+
+    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
+      page,
+    );
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to Extended SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to extended SMILE and loaded back
+    */
+    test.fail();
+    // function await getExtendedSmiles but get JSON instead cxsmi file
+    // after fixing need to update the screenshot
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const expectedFile = await getExtendedSmiles(page);
+    await saveToFile(
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
+      expectedFile,
+    );
+    const {
+      fileExpected: extendedsmilesFileExpected,
+      file: extendedsmilesFile,
+    } = await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
+    });
+
+    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,
     );
   });

@@ -6,7 +6,7 @@ import {
 } from 'domain/entities/rasterImage';
 import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
-import { RaphaelElement, RaphaelSet, RaphaelPaper } from 'raphael';
+import { RaphaelPaper, RaphaelSet } from 'raphael';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import draw from 'application/render/draw';
 import { RASTER_IMAGE_KEY } from 'domain/constants';
@@ -21,7 +21,6 @@ interface ClosestReferencePosition {
 }
 
 export class ReRasterImage extends ReObject {
-  private element?: RaphaelElement;
   private selectionPointsSet: RaphaelSet;
 
   static isSelectable(): boolean {
@@ -170,23 +169,22 @@ export class ReRasterImage extends ReObject {
   }
 
   show(restruct: ReStruct, renderOptions: RenderOptions) {
-    if (this.element) {
-      restruct.clearVisel(this.visel);
-      this.remove();
-    }
-
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.rasterImage.getTopLeftPosition(),
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
 
-    this.element = restruct.render.paper.image(
-      this.rasterImage.bitmap,
-      scaledTopLeftWithOffset.x,
-      scaledTopLeftWithOffset.y,
-      dimensions.x,
-      dimensions.y,
+    restruct.addReObjectPath(
+      LayerMap.rasterImages,
+      this.visel,
+      restruct.render.paper.image(
+        this.rasterImage.bitmap,
+        scaledTopLeftWithOffset.x,
+        scaledTopLeftWithOffset.y,
+        dimensions.x,
+        dimensions.y,
+      ),
     );
   }
 
@@ -224,28 +222,6 @@ export class ReRasterImage extends ReObject {
       this.rasterImage.getTopLeftPosition(),
       this.rasterImage.getBottomRightPosition(),
     );
-  }
-
-  remove() {
-    if (this.element) {
-      this.element.remove();
-    }
-  }
-
-  move(reStruct: ReStruct, diff: Vec2) {
-    reStruct.clearVisel(this.visel);
-    if (this.element) {
-      this.element.translate(diff.x, diff.y);
-    }
-  }
-
-  // Workaround to always display images on top
-  moveToBottomOfParentNode() {
-    if (this.element && this.element.node && this.element.node.parentNode) {
-      const node = this.element.node;
-      const parentNode: HTMLElement = node.parentNode;
-      parentNode?.appendChild(node);
-    }
   }
 
   togglePoints(displayFlag: boolean) {

@@ -64,6 +64,7 @@ export class RasterImageResize extends BaseOperation {
     }
 
     item.resize(topLeftPosition, bottomRightPosition);
+    reStruct.clearVisel(renderItem.visel);
     renderItem.show(reStruct, reStruct.render.options);
   }
 

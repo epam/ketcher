@@ -346,7 +346,7 @@ export class MacromoleculesConverter {
       );
       _fragment.forEach((_fid) => {
         fragmentIdToMonomer.set(
-          _fragment[_fid] as number,
+          _fid as number,
           monomerAddCommand.operations[0].monomer as BaseMonomer,
         );
       });

@@ -20,8 +20,8 @@
         <fragment id="4">
             <n id="587" NodeType="Fragment">
                 <fragment id="647">
-                    <n id="104" Element="1" p="643.912781 261.411163">
-                        <t p="643.912781 261.411163" LabelJustification="Left">
+                    <n id="104" Element="1" p="690.893921 332.628723">
+                        <t p="690.893921 332.628723" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -34,8 +34,8 @@
             </n>
             <n id="588" NodeType="Fragment">
                 <fragment id="651">
-                    <n id="39" Element="1" p="511.064484 354.621521">
-                        <t p="511.064484 354.621521" LabelJustification="Left">
+                    <n id="39" Element="1" p="512.295593 353.839050">
+                        <t p="512.295593 353.839050" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -48,8 +48,8 @@
             </n>
             <n id="589" NodeType="Fragment">
                 <fragment id="655">
-                    <n id="37" Element="7" NumHydrogens="2" p="718.404541 356.472809">
-                        <t p="718.404541 356.472809" LabelJustification="Left">
+                    <n id="37" Element="7" NumHydrogens="2" p="719.635620 355.690369">
+                        <t p="719.635620 355.690369" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -63,8 +63,8 @@
             </n>
             <n id="590" NodeType="Fragment">
                 <fragment id="659">
-                    <n id="36" Element="7" NumHydrogens="2" p="745.089539 256.883057">
-                        <t p="745.089539 256.883057" LabelJustification="Left">
+                    <n id="36" Element="7" NumHydrogens="2" p="746.320618 256.100647">
+                        <t p="746.320618 256.100647" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -78,8 +78,8 @@
             </n>
             <n id="591" NodeType="Fragment">
                 <fragment id="663">
-                    <n id="35" Element="8" NumHydrogens="1" p="523.129333 378.769287">
-                        <t p="523.129333 378.769287" LabelJustification="Left">
+                    <n id="35" Element="8" NumHydrogens="1" p="524.360474 377.986816">
+                        <t p="524.360474 377.986816" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -92,63 +92,63 @@
             </n>
             <n id="592" NodeType="Fragment" BondOrdering="661 657 671 665 653">
                 <fragment id="667" ConnectionOrder="668 669 670 672 673">
-                    <n id="16" Element="7" NumHydrogens="0" p="731.747009 306.677917">
-                        <t p="731.747009 306.677917" LabelJustification="Left">
+                    <n id="16" Element="7" NumHydrogens="0" p="732.978149 305.895477">
+                        <t p="732.978149 305.895477" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="17" p="695.294678 270.225555"/>
-                    <n id="18" p="724.043701 277.928864"/>
+                    <n id="17" p="696.525757 269.443115"/>
+                    <n id="18" p="725.274780 277.146393"/>
                     <n id="668" NodeType="ExternalConnectionPoint"/>
-                    <n id="19" p="674.248840 291.271362"/>
-                    <n id="20" p="710.701233 327.723724"/>
+                    <n id="19" p="675.479980 290.488892"/>
+                    <n id="20" p="711.932373 326.941284"/>
                     <n id="669" NodeType="ExternalConnectionPoint"/>
-                    <n id="21" Element="7" NumHydrogens="0" p="681.952148 320.020477">
-                        <t p="681.952148 320.020477" LabelJustification="Left">
+                    <n id="21" Element="7" NumHydrogens="0" p="683.183350 319.238007">
+                        <t p="683.183350 319.238007" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="22" Element="7" NumHydrogens="0" p="681.782471 243.706345">
-                        <t p="681.782471 243.706345" LabelJustification="Left">
+                    <n id="22" Element="7" NumHydrogens="0" p="683.013611 242.923874">
+                        <t p="683.013611 242.923874" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="23" Element="7" NumHydrogens="0" p="647.729614 277.759094">
-                        <t p="647.729614 277.759094" LabelJustification="Left">
+                    <n id="23" Element="7" NumHydrogens="0" p="648.960815 276.976654">
+                        <t p="648.960815 276.976654" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="24" p="652.385620 248.362305"/>
-                    <n id="25" p="621.210388 291.271301" Geometry="Tetrahedral" BondOrdering="23 29 26 5" EnhancedStereoType="Absolute"/>
-                    <n id="26" Element="8" NumHydrogens="0" p="594.691162 277.759033">
-                        <t p="594.691162 277.759033" LabelJustification="Left">
+                    <n id="24" p="653.616699 247.579849"/>
+                    <n id="25" p="622.441528 290.488861" Geometry="Tetrahedral" BondOrdering="23 29 26 5" EnhancedStereoType="Absolute"/>
+                    <n id="26" Element="8" NumHydrogens="0" p="595.922241 276.976593">
+                        <t p="595.922241 276.976593" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="27" p="573.645325 298.804840" Geometry="Tetrahedral" BondOrdering="26 28 30 5" EnhancedStereoType="Absolute"/>
-                    <n id="28" p="587.157532 325.324127" Geometry="Tetrahedral" BondOrdering="27 32 29 5" EnhancedStereoType="Absolute"/>
-                    <n id="29" p="616.554321 320.668152"/>
-                    <n id="30" p="544.248535 294.148804"/>
-                    <n id="31" Element="8" NumHydrogens="0" p="533.582336 266.362427">
-                        <t p="533.582336 266.362427" LabelJustification="Left">
+                    <n id="27" p="574.876465 298.022400" Geometry="Tetrahedral" BondOrdering="26 28 30 5" EnhancedStereoType="Absolute"/>
+                    <n id="28" p="588.388733 324.541656" Geometry="Tetrahedral" BondOrdering="27 32 29 5" EnhancedStereoType="Absolute"/>
+                    <n id="29" p="617.785522 319.885681"/>
+                    <n id="30" p="545.479675 293.366364"/>
+                    <n id="31" Element="8" NumHydrogens="0" p="534.813416 265.580017">
+                        <t p="534.813416 265.580017" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="670" NodeType="ExternalConnectionPoint"/>
-                    <n id="32" Element="8" NumHydrogens="0" p="573.645264 351.843323">
-                        <t p="573.645264 351.843323" LabelJustification="Left">
+                    <n id="32" Element="8" NumHydrogens="0" p="574.876465 351.060883">
+                        <t p="574.876465 351.060883" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="33" Element="15" NumHydrogens="0" p="543.922791 353.401001">
-                        <t p="543.922791 353.401001" LabelJustification="Left">
+                    <n id="33" Element="15" NumHydrogens="0" p="545.153931 352.618561">
+                        <t p="545.153931 352.618561" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="672" NodeType="ExternalConnectionPoint"/>
                     <n id="673" NodeType="ExternalConnectionPoint"/>
-                    <n id="34" Element="8" NumHydrogens="0" p="560.133057 378.362549">
-                        <t p="560.133057 378.362549" LabelJustification="Left">
+                    <n id="34" Element="8" NumHydrogens="0" p="561.364197 377.580109">
+                        <t p="561.364197 377.580109" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -185,8 +185,8 @@
             </n>
             <n id="593" NodeType="Fragment">
                 <fragment id="679">
-                    <n id="61" Element="1" p="560.669861 353.839081">
-                        <t p="560.669861 353.839081" LabelJustification="Left">
+                    <n id="61" Element="1" p="637.650940 354.556610">
+                        <t p="637.650940 354.556610" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -199,8 +199,8 @@
             </n>
             <n id="594" NodeType="Fragment">
                 <fragment id="683">
-                    <n id="59" Element="7" NumHydrogens="2" p="768.009888 355.690369">
-                        <t p="768.009888 355.690369" LabelJustification="Left">
+                    <n id="59" Element="7" NumHydrogens="2" p="844.990967 356.407928">
+                        <t p="844.990967 356.407928" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -214,8 +214,8 @@
             </n>
             <n id="595" NodeType="Fragment">
                 <fragment id="687">
-                    <n id="58" Element="7" NumHydrogens="2" p="794.694885 256.100647">
-                        <t p="794.694885 256.100647" LabelJustification="Left">
+                    <n id="58" Element="7" NumHydrogens="2" p="871.675964 256.818176">
+                        <t p="871.675964 256.818176" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -229,8 +229,8 @@
             </n>
             <n id="596" NodeType="Fragment">
                 <fragment id="691">
-                    <n id="57" Element="8" NumHydrogens="1" p="572.734741 377.986847">
-                        <t p="572.734741 377.986847" LabelJustification="Left">
+                    <n id="57" Element="8" NumHydrogens="1" p="649.715881 378.704407">
+                        <t p="649.715881 378.704407" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -243,63 +243,63 @@
             </n>
             <n id="597" NodeType="Fragment" BondOrdering="689 685 671 693 681">
                 <fragment id="695" ConnectionOrder="696 697 698 699 700">
-                    <n id="5" Element="7" NumHydrogens="0" p="781.352417 305.895477">
-                        <t p="781.352417 305.895477" LabelJustification="Left">
+                    <n id="5" Element="7" NumHydrogens="0" p="858.333557 306.613037">
+                        <t p="858.333557 306.613037" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="38" p="744.900024 269.443115"/>
-                    <n id="40" p="773.649109 277.146393"/>
+                    <n id="38" p="821.881165 270.160675"/>
+                    <n id="40" p="850.630188 277.863983"/>
                     <n id="696" NodeType="ExternalConnectionPoint"/>
-                    <n id="41" p="723.854248 290.488892"/>
-                    <n id="42" p="760.306580 326.941284"/>
+                    <n id="41" p="800.835327 291.206482"/>
+                    <n id="42" p="837.287720 327.658813"/>
                     <n id="697" NodeType="ExternalConnectionPoint"/>
-                    <n id="43" Element="7" NumHydrogens="0" p="731.557556 319.238037">
-                        <t p="731.557556 319.238037" LabelJustification="Left">
+                    <n id="43" Element="7" NumHydrogens="0" p="808.538696 319.955566">
+                        <t p="808.538696 319.955566" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="44" Element="7" NumHydrogens="0" p="731.387817 242.923874">
-                        <t p="731.387817 242.923874" LabelJustification="Left">
+                    <n id="44" Element="7" NumHydrogens="0" p="808.369019 243.641449">
+                        <t p="808.369019 243.641449" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="45" Element="7" NumHydrogens="0" p="697.335022 276.976654">
-                        <t p="697.335022 276.976654" LabelJustification="Left">
+                    <n id="45" Element="7" NumHydrogens="0" p="774.316162 277.694214">
+                        <t p="774.316162 277.694214" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="46" p="701.991028 247.579849"/>
-                    <n id="47" p="670.815735 290.488861" Geometry="Tetrahedral" BondOrdering="45 51 48 5" EnhancedStereoType="Absolute"/>
-                    <n id="48" Element="8" NumHydrogens="0" p="644.296509 276.976593">
-                        <t p="644.296509 276.976593" LabelJustification="Left">
+                    <n id="46" p="778.972107 248.297424"/>
+                    <n id="47" p="747.796875 291.206421" Geometry="Tetrahedral" BondOrdering="45 51 48 5" EnhancedStereoType="Absolute"/>
+                    <n id="48" Element="8" NumHydrogens="0" p="721.277588 277.694153">
+                        <t p="721.277588 277.694153" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="49" p="623.250732 298.022400" Geometry="Tetrahedral" BondOrdering="48 50 52 5" EnhancedStereoType="Absolute"/>
-                    <n id="50" p="636.762939 324.541687" Geometry="Tetrahedral" BondOrdering="49 54 51 5" EnhancedStereoType="Absolute"/>
-                    <n id="51" p="666.159729 319.885712"/>
-                    <n id="52" p="593.853882 293.366364"/>
-                    <n id="53" Element="8" NumHydrogens="0" p="583.187744 265.580017">
-                        <t p="583.187744 265.580017" LabelJustification="Left">
+                    <n id="49" p="700.231812 298.739960" Geometry="Tetrahedral" BondOrdering="48 50 52 5" EnhancedStereoType="Absolute"/>
+                    <n id="50" p="713.744080 325.259216" Geometry="Tetrahedral" BondOrdering="49 54 51 5" EnhancedStereoType="Absolute"/>
+                    <n id="51" p="743.140869 320.603271"/>
+                    <n id="52" p="670.835022 294.083923"/>
+                    <n id="53" Element="8" NumHydrogens="0" p="660.168823 266.297546">
+                        <t p="660.168823 266.297546" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="698" NodeType="ExternalConnectionPoint"/>
-                    <n id="54" Element="8" NumHydrogens="0" p="623.250671 351.060913">
-                        <t p="623.250671 351.060913" LabelJustification="Left">
+                    <n id="54" Element="8" NumHydrogens="0" p="700.231812 351.778442">
+                        <t p="700.231812 351.778442" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="55" Element="15" NumHydrogens="0" p="593.528198 352.618561">
-                        <t p="593.528198 352.618561" LabelJustification="Left">
+                    <n id="55" Element="15" NumHydrogens="0" p="670.509338 353.336121">
+                        <t p="670.509338 353.336121" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="699" NodeType="ExternalConnectionPoint"/>
                     <n id="700" NodeType="ExternalConnectionPoint"/>
-                    <n id="56" Element="8" NumHydrogens="0" p="609.738464 377.580139">
-                        <t p="609.738464 377.580139" LabelJustification="Left">
+                    <n id="56" Element="8" NumHydrogens="0" p="686.719543 378.297668">
+                        <t p="686.719543 378.297668" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -336,8 +336,8 @@
             </n>
             <n id="598" NodeType="Fragment">
                 <fragment id="706">
-                    <n id="83" Element="1" p="607.922913 354.326202">
-                        <t p="607.922913 354.326202" LabelJustification="Left">
+                    <n id="83" Element="1" p="576.154053 426.293732">
+                        <t p="576.154053 426.293732" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -350,8 +350,8 @@
             </n>
             <n id="599" NodeType="Fragment">
                 <fragment id="710">
-                    <n id="81" Element="7" NumHydrogens="2" p="815.262939 356.177551">
-                        <t p="815.262939 356.177551" LabelJustification="Left">
+                    <n id="81" Element="7" NumHydrogens="2" p="783.494141 428.145111">
+                        <t p="783.494141 428.145111" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -365,8 +365,8 @@
             </n>
             <n id="600" NodeType="Fragment">
                 <fragment id="714">
-                    <n id="80" Element="7" NumHydrogens="2" p="841.947937 256.587769">
-                        <t p="841.947937 256.587769" LabelJustification="Left">
+                    <n id="80" Element="7" NumHydrogens="2" p="810.179077 328.555328">
+                        <t p="810.179077 328.555328" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -380,8 +380,8 @@
             </n>
             <n id="601" NodeType="Fragment">
                 <fragment id="718">
-                    <n id="79" Element="8" NumHydrogens="1" p="619.987793 378.473969">
-                        <t p="619.987793 378.473969" LabelJustification="Left">
+                    <n id="79" Element="8" NumHydrogens="1" p="588.218933 450.441528">
+                        <t p="588.218933 450.441528" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -394,63 +394,63 @@
             </n>
             <n id="602" NodeType="Fragment" BondOrdering="716 712 726 720 708">
                 <fragment id="722" ConnectionOrder="723 724 725 727 728">
-                    <n id="6" Element="7" NumHydrogens="0" p="828.605469 306.382629">
-                        <t p="828.605469 306.382629" LabelJustification="Left">
+                    <n id="6" Element="7" NumHydrogens="0" p="796.836548 378.350189">
+                        <t p="796.836548 378.350189" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="60" p="792.153137 269.930267"/>
-                    <n id="62" p="820.902161 277.633545"/>
+                    <n id="60" p="760.384277 341.897858"/>
+                    <n id="62" p="789.133301 349.601105"/>
                     <n id="723" NodeType="ExternalConnectionPoint"/>
-                    <n id="63" p="771.107300 290.976044"/>
-                    <n id="64" p="807.559692 327.428467"/>
+                    <n id="63" p="739.338440 362.943604"/>
+                    <n id="64" p="775.790771 399.395996"/>
                     <n id="724" NodeType="ExternalConnectionPoint"/>
-                    <n id="65" Element="7" NumHydrogens="0" p="778.810608 319.725159">
-                        <t p="778.810608 319.725159" LabelJustification="Left">
+                    <n id="65" Element="7" NumHydrogens="0" p="747.041748 391.692688">
+                        <t p="747.041748 391.692688" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="66" Element="7" NumHydrogens="0" p="778.640869 243.411026">
-                        <t p="778.640869 243.411026" LabelJustification="Left">
+                    <n id="66" Element="7" NumHydrogens="0" p="746.872070 315.378571">
+                        <t p="746.872070 315.378571" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="67" Element="7" NumHydrogens="0" p="744.588074 277.463806">
-                        <t p="744.588074 277.463806" LabelJustification="Left">
+                    <n id="67" Element="7" NumHydrogens="0" p="712.819214 349.431396">
+                        <t p="712.819214 349.431396" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="68" p="749.244080 248.067001"/>
-                    <n id="69" p="718.068787 290.976013" Geometry="Tetrahedral" BondOrdering="67 73 70 5" EnhancedStereoType="Absolute"/>
-                    <n id="70" Element="8" NumHydrogens="0" p="691.549561 277.463745">
-                        <t p="691.549561 277.463745" LabelJustification="Left">
+                    <n id="68" p="717.475220 320.034546"/>
+                    <n id="69" p="686.299927 362.943604" Geometry="Tetrahedral" BondOrdering="67 73 70 5" EnhancedStereoType="Absolute"/>
+                    <n id="70" Element="8" NumHydrogens="0" p="659.780762 349.431335">
+                        <t p="659.780762 349.431335" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="71" p="670.503784 298.509552" Geometry="Tetrahedral" BondOrdering="70 72 74 5" EnhancedStereoType="Absolute"/>
-                    <n id="72" p="684.015991 325.028809" Geometry="Tetrahedral" BondOrdering="71 76 73 5" EnhancedStereoType="Absolute"/>
-                    <n id="73" p="713.412781 320.372833"/>
-                    <n id="74" p="641.106934 293.853516"/>
-                    <n id="75" Element="8" NumHydrogens="0" p="630.440796 266.067139">
-                        <t p="630.440796 266.067139" LabelJustification="Left">
+                    <n id="71" p="638.734924 370.477112" Geometry="Tetrahedral" BondOrdering="70 72 74 5" EnhancedStereoType="Absolute"/>
+                    <n id="72" p="652.247131 396.996338" Geometry="Tetrahedral" BondOrdering="71 76 73 5" EnhancedStereoType="Absolute"/>
+                    <n id="73" p="681.643921 392.340363"/>
+                    <n id="74" p="609.338074 365.821106"/>
+                    <n id="75" Element="8" NumHydrogens="0" p="598.671936 338.034729">
+                        <t p="598.671936 338.034729" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="725" NodeType="ExternalConnectionPoint"/>
-                    <n id="76" Element="8" NumHydrogens="0" p="670.503723 351.548035">
-                        <t p="670.503723 351.548035" LabelJustification="Left">
+                    <n id="76" Element="8" NumHydrogens="0" p="638.734863 423.515564">
+                        <t p="638.734863 423.515564" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="77" Element="15" NumHydrogens="0" p="640.781250 353.105743">
-                        <t p="640.781250 353.105743" LabelJustification="Left">
+                    <n id="77" Element="15" NumHydrogens="0" p="609.012390 425.073273">
+                        <t p="609.012390 425.073273" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="727" NodeType="ExternalConnectionPoint"/>
                     <n id="728" NodeType="ExternalConnectionPoint"/>
-                    <n id="78" Element="8" NumHydrogens="0" p="656.991516 378.067261">
-                        <t p="656.991516 378.067261" LabelJustification="Left">
+                    <n id="78" Element="8" NumHydrogens="0" p="625.222656 450.034790">
+                        <t p="625.222656 450.034790" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -487,8 +487,8 @@
             </n>
             <n id="603" NodeType="Fragment">
                 <fragment id="734">
-                    <n id="148" Element="1" p="739.309814 261.602997">
-                        <t p="739.309814 261.602997" LabelJustification="Left">
+                    <n id="148" Element="1" p="630.290894 398.820526">
+                        <t p="630.290894 398.820526" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -501,8 +501,8 @@
             </n>
             <n id="604" NodeType="Fragment">
                 <fragment id="738">
-                    <n id="103" Element="7" NumHydrogens="2" p="858.131714 356.177551">
-                        <t p="858.131714 356.177551" LabelJustification="Left">
+                    <n id="103" Element="7" NumHydrogens="2" p="905.112854 427.395081">
+                        <t p="905.112854 427.395081" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -516,8 +516,8 @@
             </n>
             <n id="605" NodeType="Fragment">
                 <fragment id="742">
-                    <n id="102" Element="7" NumHydrogens="2" p="884.816711 256.587769">
-                        <t p="884.816711 256.587769" LabelJustification="Left">
+                    <n id="102" Element="7" NumHydrogens="2" p="931.797852 327.805298">
+                        <t p="931.797852 327.805298" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -531,8 +531,8 @@
             </n>
             <n id="606" NodeType="Fragment">
                 <fragment id="746">
-                    <n id="101" Element="8" NumHydrogens="1" p="662.856567 378.473969">
-                        <t p="662.856567 378.473969" LabelJustification="Left">
+                    <n id="101" Element="8" NumHydrogens="1" p="709.837708 449.691528">
+                        <t p="709.837708 449.691528" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -545,63 +545,63 @@
             </n>
             <n id="607" NodeType="Fragment" BondOrdering="744 740 649 748 726">
                 <fragment id="750" ConnectionOrder="751 752 753 754 755">
-                    <n id="7" Element="7" NumHydrogens="0" p="871.474243 306.382629">
-                        <t p="871.474243 306.382629" LabelJustification="Left">
+                    <n id="7" Element="7" NumHydrogens="0" p="918.455322 377.600189">
+                        <t p="918.455322 377.600189" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="82" p="835.021851 269.930267"/>
-                    <n id="84" p="863.770935 277.633545"/>
+                    <n id="82" p="882.003052 341.147827"/>
+                    <n id="84" p="910.752075 348.851105"/>
                     <n id="751" NodeType="ExternalConnectionPoint"/>
-                    <n id="85" p="813.976074 290.976044"/>
-                    <n id="86" p="850.428406 327.428467"/>
+                    <n id="85" p="860.957214 362.193604"/>
+                    <n id="86" p="897.409546 398.645996"/>
                     <n id="752" NodeType="ExternalConnectionPoint"/>
-                    <n id="87" Element="7" NumHydrogens="0" p="821.679382 319.725159">
-                        <t p="821.679382 319.725159" LabelJustification="Left">
+                    <n id="87" Element="7" NumHydrogens="0" p="868.660461 390.942719">
+                        <t p="868.660461 390.942719" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="88" Element="7" NumHydrogens="0" p="821.509644 243.411026">
-                        <t p="821.509644 243.411026" LabelJustification="Left">
+                    <n id="88" Element="7" NumHydrogens="0" p="868.490723 314.628571">
+                        <t p="868.490723 314.628571" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="89" Element="7" NumHydrogens="0" p="787.456848 277.463806">
-                        <t p="787.456848 277.463806" LabelJustification="Left">
+                    <n id="89" Element="7" NumHydrogens="0" p="834.437927 348.681366">
+                        <t p="834.437927 348.681366" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="90" p="792.112854 248.067001"/>
-                    <n id="91" p="760.937561 290.976013" Geometry="Tetrahedral" BondOrdering="89 95 92 5" EnhancedStereoType="Absolute"/>
-                    <n id="92" Element="8" NumHydrogens="0" p="734.418335 277.463745">
-                        <t p="734.418335 277.463745" LabelJustification="Left">
+                    <n id="90" p="839.093994 319.284546"/>
+                    <n id="91" p="807.918640 362.193573" Geometry="Tetrahedral" BondOrdering="89 95 92 5" EnhancedStereoType="Absolute"/>
+                    <n id="92" Element="8" NumHydrogens="0" p="781.399475 348.681305">
+                        <t p="781.399475 348.681305" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="93" p="713.372559 298.509552" Geometry="Tetrahedral" BondOrdering="92 94 96 5" EnhancedStereoType="Absolute"/>
-                    <n id="94" p="726.884766 325.028809" Geometry="Tetrahedral" BondOrdering="93 98 95 5" EnhancedStereoType="Absolute"/>
-                    <n id="95" p="756.281555 320.372833"/>
-                    <n id="96" p="683.975708 293.853516"/>
-                    <n id="97" Element="8" NumHydrogens="0" p="673.309509 266.067139">
-                        <t p="673.309509 266.067139" LabelJustification="Left">
+                    <n id="93" p="760.353699 369.727112" Geometry="Tetrahedral" BondOrdering="92 94 96 5" EnhancedStereoType="Absolute"/>
+                    <n id="94" p="773.865845 396.246368" Geometry="Tetrahedral" BondOrdering="93 98 95 5" EnhancedStereoType="Absolute"/>
+                    <n id="95" p="803.262634 391.590393"/>
+                    <n id="96" p="730.956848 365.071075"/>
+                    <n id="97" Element="8" NumHydrogens="0" p="720.290649 337.284698">
+                        <t p="720.290649 337.284698" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="753" NodeType="ExternalConnectionPoint"/>
-                    <n id="98" Element="8" NumHydrogens="0" p="713.372498 351.548035">
-                        <t p="713.372498 351.548035" LabelJustification="Left">
+                    <n id="98" Element="8" NumHydrogens="0" p="760.353638 422.765564">
+                        <t p="760.353638 422.765564" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="99" Element="15" NumHydrogens="0" p="683.650024 353.105743">
-                        <t p="683.650024 353.105743" LabelJustification="Left">
+                    <n id="99" Element="15" NumHydrogens="0" p="730.631165 424.323273">
+                        <t p="730.631165 424.323273" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="754" NodeType="ExternalConnectionPoint"/>
                     <n id="755" NodeType="ExternalConnectionPoint"/>
-                    <n id="100" Element="8" NumHydrogens="0" p="699.860291 378.067261">
-                        <t p="699.860291 378.067261" LabelJustification="Left">
+                    <n id="100" Element="8" NumHydrogens="0" p="746.841431 449.284790">
+                        <t p="746.841431 449.284790" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -638,8 +638,8 @@
             </n>
             <n id="608" NodeType="Fragment">
                 <fragment id="761">
-                    <n id="127" Element="1" p="696.583313 355.300476">
-                        <t p="696.583313 355.300476" LabelJustification="Left">
+                    <n id="127" Element="1" p="511.064484 491.768005">
+                        <t p="511.064484 491.768005" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -652,8 +652,8 @@
             </n>
             <n id="609" NodeType="Fragment">
                 <fragment id="765">
-                    <n id="125" Element="7" NumHydrogens="2" p="903.923401 357.151794">
-                        <t p="903.923401 357.151794" LabelJustification="Left">
+                    <n id="125" Element="7" NumHydrogens="2" p="718.404541 493.619385">
+                        <t p="718.404541 493.619385" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -667,8 +667,8 @@
             </n>
             <n id="610" NodeType="Fragment">
                 <fragment id="769">
-                    <n id="124" Element="7" NumHydrogens="2" p="930.608398 257.562042">
-                        <t p="930.608398 257.562042" LabelJustification="Left">
+                    <n id="124" Element="7" NumHydrogens="2" p="745.089539 394.029633">
+                        <t p="745.089539 394.029633" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -682,8 +682,8 @@
             </n>
             <n id="611" NodeType="Fragment">
                 <fragment id="773">
-                    <n id="123" Element="8" NumHydrogens="1" p="708.648193 379.448273">
-                        <t p="708.648193 379.448273" LabelJustification="Left">
+                    <n id="123" Element="8" NumHydrogens="1" p="523.129333 515.915771">
+                        <t p="523.129333 515.915771" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -696,63 +696,63 @@
             </n>
             <n id="612" NodeType="Fragment" BondOrdering="771 767 781 775 763">
                 <fragment id="777" ConnectionOrder="778 779 780 782 783">
-                    <n id="8" Element="7" NumHydrogens="0" p="917.265869 307.356934">
-                        <t p="917.265869 307.356934" LabelJustification="Left">
+                    <n id="8" Element="7" NumHydrogens="0" p="731.747009 443.824493">
+                        <t p="731.747009 443.824493" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="105" p="880.813538 270.904572"/>
-                    <n id="106" p="909.562561 278.607849"/>
+                    <n id="105" p="695.294678 407.372131"/>
+                    <n id="106" p="724.043701 415.075378"/>
                     <n id="778" NodeType="ExternalConnectionPoint"/>
-                    <n id="107" p="859.767700 291.950348"/>
-                    <n id="108" p="896.220093 328.402679"/>
+                    <n id="107" p="674.248840 428.417877"/>
+                    <n id="108" p="710.701233 464.870270"/>
                     <n id="779" NodeType="ExternalConnectionPoint"/>
-                    <n id="109" Element="7" NumHydrogens="0" p="867.471008 320.699432">
-                        <t p="867.471008 320.699432" LabelJustification="Left">
+                    <n id="109" Element="7" NumHydrogens="0" p="681.952148 457.166992">
+                        <t p="681.952148 457.166992" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="110" Element="7" NumHydrogens="0" p="867.301331 244.385315">
-                        <t p="867.301331 244.385315" LabelJustification="Left">
+                    <n id="110" Element="7" NumHydrogens="0" p="681.782471 380.852844">
+                        <t p="681.782471 380.852844" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="111" Element="7" NumHydrogens="0" p="833.248474 278.438110">
-                        <t p="833.248474 278.438110" LabelJustification="Left">
+                    <n id="111" Element="7" NumHydrogens="0" p="647.729614 414.905670">
+                        <t p="647.729614 414.905670" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="112" p="837.904480 249.041290"/>
-                    <n id="113" p="806.729248 291.950317" Geometry="Tetrahedral" BondOrdering="111 117 114 5" EnhancedStereoType="Absolute"/>
-                    <n id="114" Element="8" NumHydrogens="0" p="780.210022 278.438049">
-                        <t p="780.210022 278.438049" LabelJustification="Left">
+                    <n id="112" p="652.385620 385.508820"/>
+                    <n id="113" p="621.210388 428.417877" Geometry="Tetrahedral" BondOrdering="111 117 114 5" EnhancedStereoType="Absolute"/>
+                    <n id="114" Element="8" NumHydrogens="0" p="594.691162 414.905609">
+                        <t p="594.691162 414.905609" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="115" p="759.164185 299.483856" Geometry="Tetrahedral" BondOrdering="114 116 118 5" EnhancedStereoType="Absolute"/>
-                    <n id="116" p="772.676392 326.003082" Geometry="Tetrahedral" BondOrdering="115 120 117 5" EnhancedStereoType="Absolute"/>
-                    <n id="117" p="802.073181 321.347107"/>
-                    <n id="118" p="729.767334 294.827820"/>
-                    <n id="119" Element="8" NumHydrogens="0" p="719.101196 267.041443">
-                        <t p="719.101196 267.041443" LabelJustification="Left">
+                    <n id="115" p="573.645325 435.951416" Geometry="Tetrahedral" BondOrdering="114 116 118 5" EnhancedStereoType="Absolute"/>
+                    <n id="116" p="587.157532 462.470642" Geometry="Tetrahedral" BondOrdering="115 120 117 5" EnhancedStereoType="Absolute"/>
+                    <n id="117" p="616.554321 457.814667"/>
+                    <n id="118" p="544.248535 431.295380"/>
+                    <n id="119" Element="8" NumHydrogens="0" p="533.582336 403.509003">
+                        <t p="533.582336 403.509003" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="780" NodeType="ExternalConnectionPoint"/>
-                    <n id="120" Element="8" NumHydrogens="0" p="759.164124 352.522308">
-                        <t p="759.164124 352.522308" LabelJustification="Left">
+                    <n id="120" Element="8" NumHydrogens="0" p="573.645264 488.989838">
+                        <t p="573.645264 488.989838" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="121" Element="15" NumHydrogens="0" p="729.441650 354.079956">
-                        <t p="729.441650 354.079956" LabelJustification="Left">
+                    <n id="121" Element="15" NumHydrogens="0" p="543.922791 490.547546">
+                        <t p="543.922791 490.547546" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="782" NodeType="ExternalConnectionPoint"/>
                     <n id="783" NodeType="ExternalConnectionPoint"/>
-                    <n id="122" Element="8" NumHydrogens="0" p="745.651917 379.041534">
-                        <t p="745.651917 379.041534" LabelJustification="Left">
+                    <n id="122" Element="8" NumHydrogens="0" p="560.133057 515.509094">
+                        <t p="560.133057 515.509094" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -789,8 +789,8 @@
             </n>
             <n id="613" NodeType="Fragment">
                 <fragment id="789">
-                    <n id="149" Element="1" p="746.188721 354.518066">
-                        <t p="746.188721 354.518066" LabelJustification="Left">
+                    <n id="149" Element="1" p="637.169861 491.735626">
+                        <t p="637.169861 491.735626" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -803,8 +803,8 @@
             </n>
             <n id="614" NodeType="Fragment">
                 <fragment id="793">
-                    <n id="170" Element="1" p="786.562866 262.090118">
-                        <t p="786.562866 262.090118" LabelJustification="Left">
+                    <n id="170" Element="1" p="577.794006 459.307709">
+                        <t p="577.794006 459.307709" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -817,8 +817,8 @@
             </n>
             <n id="615" NodeType="Fragment">
                 <fragment id="797">
-                    <n id="146" Element="7" NumHydrogens="2" p="980.213684 256.779602">
-                        <t p="980.213684 256.779602" LabelJustification="Left">
+                    <n id="146" Element="7" NumHydrogens="2" p="871.194885 393.997192">
+                        <t p="871.194885 393.997192" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -832,8 +832,8 @@
             </n>
             <n id="616" NodeType="Fragment">
                 <fragment id="801">
-                    <n id="145" Element="8" NumHydrogens="1" p="758.253601 378.665833">
-                        <t p="758.253601 378.665833" LabelJustification="Left">
+                    <n id="145" Element="8" NumHydrogens="1" p="649.234741 515.883423">
+                        <t p="649.234741 515.883423" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -846,63 +846,63 @@
             </n>
             <n id="617" NodeType="Fragment" BondOrdering="799 781 736 803 791">
                 <fragment id="805" ConnectionOrder="806 807 808 809 810">
-                    <n id="9" Element="7" NumHydrogens="0" p="966.871277 306.574463">
-                        <t p="966.871277 306.574463" LabelJustification="Left">
+                    <n id="9" Element="7" NumHydrogens="0" p="857.852417 443.792053">
+                        <t p="857.852417 443.792053" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="126" p="930.418884 270.122101"/>
-                    <n id="128" p="959.167969 277.825409"/>
+                    <n id="126" p="821.400024 407.339691"/>
+                    <n id="128" p="850.149048 415.042969"/>
                     <n id="806" NodeType="ExternalConnectionPoint"/>
-                    <n id="129" p="909.373108 291.167908"/>
-                    <n id="130" p="945.825439 327.620270"/>
-                    <n id="131" Element="7" NumHydrogens="0" p="917.076416 319.917023">
-                        <t p="917.076416 319.917023" LabelJustification="Left">
+                    <n id="129" p="800.354248 428.385468"/>
+                    <n id="130" p="836.806641 464.837830"/>
+                    <n id="131" Element="7" NumHydrogens="0" p="808.057617 457.134552">
+                        <t p="808.057617 457.134552" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="132" Element="7" NumHydrogens="0" p="916.906677 243.602890">
-                        <t p="916.906677 243.602890" LabelJustification="Left">
+                    <n id="132" Element="7" NumHydrogens="0" p="807.887878 380.820435">
+                        <t p="807.887878 380.820435" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="133" Element="7" NumHydrogens="0" p="882.853882 277.655640">
-                        <t p="882.853882 277.655640" LabelJustification="Left">
+                    <n id="133" Element="7" NumHydrogens="0" p="773.835083 414.873230">
+                        <t p="773.835083 414.873230" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="134" p="887.509888 248.258850"/>
-                    <n id="135" p="856.334595 291.167847" Geometry="Tetrahedral" BondOrdering="133 139 136 5" EnhancedStereoType="Absolute"/>
-                    <n id="136" Element="8" NumHydrogens="0" p="829.815369 277.655579">
-                        <t p="829.815369 277.655579" LabelJustification="Left">
+                    <n id="134" p="778.490967 385.476410"/>
+                    <n id="135" p="747.315796 428.385437" Geometry="Tetrahedral" BondOrdering="133 139 136 5" EnhancedStereoType="Absolute"/>
+                    <n id="136" Element="8" NumHydrogens="0" p="720.796509 414.873169">
+                        <t p="720.796509 414.873169" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="137" p="808.769592 298.701385" Geometry="Tetrahedral" BondOrdering="136 138 140 5" EnhancedStereoType="Absolute"/>
-                    <n id="138" p="822.281799 325.220673" Geometry="Tetrahedral" BondOrdering="137 142 139 5" EnhancedStereoType="Absolute"/>
-                    <n id="139" p="851.678589 320.564697"/>
+                    <n id="137" p="699.750732 435.918945" Geometry="Tetrahedral" BondOrdering="136 138 140 5" EnhancedStereoType="Absolute"/>
+                    <n id="138" p="713.263000 462.438202" Geometry="Tetrahedral" BondOrdering="137 142 139 5" EnhancedStereoType="Absolute"/>
+                    <n id="139" p="742.659790 457.782227"/>
                     <n id="807" NodeType="ExternalConnectionPoint"/>
-                    <n id="140" p="779.372742 294.045349"/>
-                    <n id="141" Element="8" NumHydrogens="0" p="768.706543 266.258972">
-                        <t p="768.706543 266.258972" LabelJustification="Left">
+                    <n id="140" p="670.353943 431.262939"/>
+                    <n id="141" Element="8" NumHydrogens="0" p="659.687683 403.476562">
+                        <t p="659.687683 403.476562" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="808" NodeType="ExternalConnectionPoint"/>
-                    <n id="142" Element="8" NumHydrogens="0" p="808.769531 351.739868">
-                        <t p="808.769531 351.739868" LabelJustification="Left">
+                    <n id="142" Element="8" NumHydrogens="0" p="699.750732 488.957458">
+                        <t p="699.750732 488.957458" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="143" Element="15" NumHydrogens="0" p="779.047058 353.297546">
-                        <t p="779.047058 353.297546" LabelJustification="Left">
+                    <n id="143" Element="15" NumHydrogens="0" p="670.028198 490.515106">
+                        <t p="670.028198 490.515106" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="809" NodeType="ExternalConnectionPoint"/>
                     <n id="810" NodeType="ExternalConnectionPoint"/>
-                    <n id="144" Element="8" NumHydrogens="0" p="795.257324 378.259094">
-                        <t p="795.257324 378.259094" LabelJustification="Left">
+                    <n id="144" Element="8" NumHydrogens="0" p="686.238464 515.476685">
+                        <t p="686.238464 515.476685" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -939,8 +939,8 @@
             </n>
             <n id="618" NodeType="Fragment">
                 <fragment id="816">
-                    <n id="192" Element="1" p="829.431641 262.090118">
-                        <t p="829.431641 262.090118" LabelJustification="Left">
+                    <n id="192" Element="1" p="694.162781 457.807678">
+                        <t p="694.162781 457.807678" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -953,8 +953,8 @@
             </n>
             <n id="619" NodeType="Fragment">
                 <fragment id="820">
-                    <n id="169" Element="7" NumHydrogens="2" p="1000.781799 356.856537">
-                        <t p="1000.781799 356.856537" LabelJustification="Left">
+                    <n id="169" Element="7" NumHydrogens="2" p="792.013000 554.074036">
+                        <t p="792.013000 554.074036" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -968,8 +968,8 @@
             </n>
             <n id="620" NodeType="Fragment">
                 <fragment id="824">
-                    <n id="168" Element="7" NumHydrogens="2" p="1027.466797 257.266754">
-                        <t p="1027.466797 257.266754" LabelJustification="Left">
+                    <n id="168" Element="7" NumHydrogens="2" p="818.697998 454.484314">
+                        <t p="818.697998 454.484314" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -983,8 +983,8 @@
             </n>
             <n id="621" NodeType="Fragment">
                 <fragment id="828">
-                    <n id="167" Element="8" NumHydrogens="1" p="805.506653 379.152954">
-                        <t p="805.506653 379.152954" LabelJustification="Left">
+                    <n id="167" Element="8" NumHydrogens="1" p="596.737793 576.370544">
+                        <t p="596.737793 576.370544" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -997,63 +997,63 @@
             </n>
             <n id="622" NodeType="Fragment" BondOrdering="826 822 795 830 838">
                 <fragment id="832" ConnectionOrder="833 834 835 836 837">
-                    <n id="10" Element="7" NumHydrogens="0" p="1014.124390 307.061646">
-                        <t p="1014.124390 307.061646" LabelJustification="Left">
+                    <n id="10" Element="7" NumHydrogens="0" p="805.355408 504.279144">
+                        <t p="805.355408 504.279144" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="147" p="977.671997 270.609283"/>
-                    <n id="150" p="1006.421021 278.312531"/>
+                    <n id="147" p="768.903137 467.826843"/>
+                    <n id="150" p="797.652161 475.530121"/>
                     <n id="833" NodeType="ExternalConnectionPoint"/>
-                    <n id="151" p="956.626160 291.655029"/>
-                    <n id="152" p="993.078491 328.107422"/>
+                    <n id="151" p="747.857300 488.872620"/>
+                    <n id="152" p="784.309631 525.324951"/>
                     <n id="834" NodeType="ExternalConnectionPoint"/>
-                    <n id="153" Element="7" NumHydrogens="0" p="964.329529 320.404114">
-                        <t p="964.329529 320.404114" LabelJustification="Left">
+                    <n id="153" Element="7" NumHydrogens="0" p="755.560608 517.621704">
+                        <t p="755.560608 517.621704" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="154" Element="7" NumHydrogens="0" p="964.159668 244.089996">
-                        <t p="964.159668 244.089996" LabelJustification="Left">
+                    <n id="154" Element="7" NumHydrogens="0" p="755.390930 441.307587">
+                        <t p="755.390930 441.307587" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="155" Element="7" NumHydrogens="0" p="930.106934 278.142822">
-                        <t p="930.106934 278.142822" LabelJustification="Left">
+                    <n id="155" Element="7" NumHydrogens="0" p="721.338074 475.360352">
+                        <t p="721.338074 475.360352" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="156" p="934.762939 248.745972"/>
-                    <n id="157" p="903.587646 291.655029" Geometry="Tetrahedral" BondOrdering="155 161 158 5" EnhancedStereoType="Absolute"/>
-                    <n id="158" Element="8" NumHydrogens="0" p="877.068420 278.142761">
-                        <t p="877.068420 278.142761" LabelJustification="Left">
+                    <n id="156" p="725.994080 445.963562"/>
+                    <n id="157" p="694.818848 488.872559" Geometry="Tetrahedral" BondOrdering="155 161 158 5" EnhancedStereoType="Absolute"/>
+                    <n id="158" Element="8" NumHydrogens="0" p="668.299622 475.360291">
+                        <t p="668.299622 475.360291" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="159" p="856.022644 299.188568" Geometry="Tetrahedral" BondOrdering="158 160 162 5" EnhancedStereoType="Absolute"/>
-                    <n id="160" p="869.534851 325.707764" Geometry="Tetrahedral" BondOrdering="159 164 161 5" EnhancedStereoType="Absolute"/>
-                    <n id="161" p="898.931641 321.051819"/>
-                    <n id="162" p="826.625793 294.532532"/>
-                    <n id="163" Element="8" NumHydrogens="0" p="815.959595 266.746155">
-                        <t p="815.959595 266.746155" LabelJustification="Left">
+                    <n id="159" p="647.253784 496.406067" Geometry="Tetrahedral" BondOrdering="158 160 162 5" EnhancedStereoType="Absolute"/>
+                    <n id="160" p="660.765991 522.925354" Geometry="Tetrahedral" BondOrdering="159 164 161 5" EnhancedStereoType="Absolute"/>
+                    <n id="161" p="690.162781 518.269409"/>
+                    <n id="162" p="617.856934 491.750061"/>
+                    <n id="163" Element="8" NumHydrogens="0" p="607.190796 463.963715">
+                        <t p="607.190796 463.963715" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="835" NodeType="ExternalConnectionPoint"/>
-                    <n id="164" Element="8" NumHydrogens="0" p="856.022583 352.226990">
-                        <t p="856.022583 352.226990" LabelJustification="Left">
+                    <n id="164" Element="8" NumHydrogens="0" p="647.253723 549.444580">
+                        <t p="647.253723 549.444580" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="165" Element="15" NumHydrogens="0" p="826.300110 353.784729">
-                        <t p="826.300110 353.784729" LabelJustification="Left">
+                    <n id="165" Element="15" NumHydrogens="0" p="617.531250 551.002258">
+                        <t p="617.531250 551.002258" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="836" NodeType="ExternalConnectionPoint"/>
                     <n id="837" NodeType="ExternalConnectionPoint"/>
-                    <n id="166" Element="8" NumHydrogens="0" p="842.510376 378.746216">
-                        <t p="842.510376 378.746216" LabelJustification="Left">
+                    <n id="166" Element="8" NumHydrogens="0" p="633.741516 575.963806">
+                        <t p="633.741516 575.963806" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1090,8 +1090,8 @@
             </n>
             <n id="623" NodeType="Fragment">
                 <fragment id="844">
-                    <n id="214" Element="1" p="872.383789 262.385437">
-                        <t p="872.383789 262.385437" LabelJustification="Left">
+                    <n id="214" Element="1" p="507.614929 520.353027">
+                        <t p="507.614929 520.353027" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1104,8 +1104,8 @@
             </n>
             <n id="624" NodeType="Fragment">
                 <fragment id="848">
-                    <n id="191" Element="7" NumHydrogens="2" p="1043.650635 356.856537">
-                        <t p="1043.650635 356.856537" LabelJustification="Left">
+                    <n id="191" Element="7" NumHydrogens="2" p="908.381775 552.574097">
+                        <t p="908.381775 552.574097" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1119,8 +1119,8 @@
             </n>
             <n id="625" NodeType="Fragment">
                 <fragment id="852">
-                    <n id="190" Element="7" NumHydrogens="2" p="1070.335571 257.266754">
-                        <t p="1070.335571 257.266754" LabelJustification="Left">
+                    <n id="190" Element="7" NumHydrogens="2" p="935.066772 452.984344">
+                        <t p="935.066772 452.984344" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1134,8 +1134,8 @@
             </n>
             <n id="626" NodeType="Fragment">
                 <fragment id="856">
-                    <n id="189" Element="8" NumHydrogens="1" p="848.375427 379.152954">
-                        <t p="848.375427 379.152954" LabelJustification="Left">
+                    <n id="189" Element="8" NumHydrogens="1" p="713.106567 574.870544">
+                        <t p="713.106567 574.870544" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -1148,63 +1148,63 @@
             </n>
             <n id="627" NodeType="Fragment" BondOrdering="854 850 818 858 838">
                 <fragment id="860" ConnectionOrder="861 862 863 864 865">
-                    <n id="11" Element="7" NumHydrogens="0" p="1056.993042 307.061646">
-                        <t p="1056.993042 307.061646" LabelJustification="Left">
+                    <n id="11" Element="7" NumHydrogens="0" p="921.724182 502.779175">
+                        <t p="921.724182 502.779175" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="171" p="1020.540710 270.609283"/>
-                    <n id="172" p="1049.289795 278.312531"/>
+                    <n id="171" p="885.271912 466.326843"/>
+                    <n id="172" p="914.020935 474.030121"/>
                     <n id="861" NodeType="ExternalConnectionPoint"/>
-                    <n id="173" p="999.494934 291.655029"/>
-                    <n id="174" p="1035.947388 328.107422"/>
+                    <n id="173" p="864.226135 487.372620"/>
+                    <n id="174" p="900.678406 523.824951"/>
                     <n id="862" NodeType="ExternalConnectionPoint"/>
-                    <n id="175" Element="7" NumHydrogens="0" p="1007.198181 320.404114">
-                        <t p="1007.198181 320.404114" LabelJustification="Left">
+                    <n id="175" Element="7" NumHydrogens="0" p="871.929382 516.121704">
+                        <t p="871.929382 516.121704" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="176" Element="7" NumHydrogens="0" p="1007.028564 244.089996">
-                        <t p="1007.028564 244.089996" LabelJustification="Left">
+                    <n id="176" Element="7" NumHydrogens="0" p="871.759644 439.807587">
+                        <t p="871.759644 439.807587" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="177" Element="7" NumHydrogens="0" p="972.975769 278.142822">
-                        <t p="972.975769 278.142822" LabelJustification="Left">
+                    <n id="177" Element="7" NumHydrogens="0" p="837.706848 473.860352">
+                        <t p="837.706848 473.860352" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="178" p="977.631714 248.745972"/>
-                    <n id="179" p="946.456421 291.655029" Geometry="Tetrahedral" BondOrdering="177 183 180 5" EnhancedStereoType="Absolute"/>
-                    <n id="180" Element="8" NumHydrogens="0" p="919.937195 278.142761">
-                        <t p="919.937195 278.142761" LabelJustification="Left">
+                    <n id="178" p="842.362854 444.463562"/>
+                    <n id="179" p="811.187561 487.372559" Geometry="Tetrahedral" BondOrdering="177 183 180 5" EnhancedStereoType="Absolute"/>
+                    <n id="180" Element="8" NumHydrogens="0" p="784.668396 473.860291">
+                        <t p="784.668396 473.860291" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="181" p="898.891418 299.188568" Geometry="Tetrahedral" BondOrdering="180 182 184 5" EnhancedStereoType="Absolute"/>
-                    <n id="182" p="912.403625 325.707764" Geometry="Tetrahedral" BondOrdering="181 186 183 5" EnhancedStereoType="Absolute"/>
-                    <n id="183" p="941.800415 321.051819"/>
-                    <n id="184" p="869.494568 294.532532"/>
-                    <n id="185" Element="8" NumHydrogens="0" p="858.828369 266.746155">
-                        <t p="858.828369 266.746155" LabelJustification="Left">
+                    <n id="181" p="763.622559 494.906097" Geometry="Tetrahedral" BondOrdering="180 182 184 5" EnhancedStereoType="Absolute"/>
+                    <n id="182" p="777.134766 521.425354" Geometry="Tetrahedral" BondOrdering="181 186 183 5" EnhancedStereoType="Absolute"/>
+                    <n id="183" p="806.531494 516.769409"/>
+                    <n id="184" p="734.225708 490.250061"/>
+                    <n id="185" Element="8" NumHydrogens="0" p="723.559570 462.463715">
+                        <t p="723.559570 462.463715" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="863" NodeType="ExternalConnectionPoint"/>
-                    <n id="186" Element="8" NumHydrogens="0" p="898.891357 352.226990">
-                        <t p="898.891357 352.226990" LabelJustification="Left">
+                    <n id="186" Element="8" NumHydrogens="0" p="763.622498 547.944580">
+                        <t p="763.622498 547.944580" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="187" Element="15" NumHydrogens="0" p="869.168884 353.784729">
-                        <t p="869.168884 353.784729" LabelJustification="Left">
+                    <n id="187" Element="15" NumHydrogens="0" p="733.900024 549.502258">
+                        <t p="733.900024 549.502258" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="864" NodeType="ExternalConnectionPoint"/>
                     <n id="865" NodeType="ExternalConnectionPoint"/>
-                    <n id="188" Element="8" NumHydrogens="0" p="885.379150 378.746216">
-                        <t p="885.379150 378.746216" LabelJustification="Left">
+                    <n id="188" Element="8" NumHydrogens="0" p="750.110352 574.463806">
+                        <t p="750.110352 574.463806" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1241,8 +1241,8 @@
             </n>
             <n id="628" NodeType="Fragment">
                 <fragment id="871">
-                    <n id="236" Element="1" p="921.989197 261.602997">
-                        <t p="921.989197 261.602997" LabelJustification="Left">
+                    <n id="236" Element="1" p="629.970337 520.320557">
+                        <t p="629.970337 520.320557" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1255,8 +1255,8 @@
             </n>
             <n id="629" NodeType="Fragment">
                 <fragment id="875">
-                    <n id="213" Element="7" NumHydrogens="2" p="1086.602783 357.151794">
-                        <t p="1086.602783 357.151794" LabelJustification="Left">
+                    <n id="213" Element="7" NumHydrogens="2" p="721.833923 615.119385">
+                        <t p="721.833923 615.119385" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1270,8 +1270,8 @@
             </n>
             <n id="630" NodeType="Fragment">
                 <fragment id="879">
-                    <n id="212" Element="7" NumHydrogens="2" p="1113.287720 257.562042">
-                        <t p="1113.287720 257.562042" LabelJustification="Left">
+                    <n id="212" Element="7" NumHydrogens="2" p="748.518921 515.529602">
+                        <t p="748.518921 515.529602" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1285,8 +1285,8 @@
             </n>
             <n id="631" NodeType="Fragment">
                 <fragment id="883">
-                    <n id="211" Element="8" NumHydrogens="1" p="891.327637 379.448273">
-                        <t p="891.327637 379.448273" LabelJustification="Left">
+                    <n id="211" Element="8" NumHydrogens="1" p="526.558716 637.415833">
+                        <t p="526.558716 637.415833" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -1299,63 +1299,63 @@
             </n>
             <n id="632" NodeType="Fragment" BondOrdering="881 877 846 885 893">
                 <fragment id="887" ConnectionOrder="888 889 890 891 892">
-                    <n id="12" Element="7" NumHydrogens="0" p="1099.945190 307.356934">
-                        <t p="1099.945190 307.356934" LabelJustification="Left">
+                    <n id="12" Element="7" NumHydrogens="0" p="735.176392 565.324463">
+                        <t p="735.176392 565.324463" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="193" p="1063.492920 270.904572"/>
-                    <n id="194" p="1092.241943 278.607849"/>
+                    <n id="193" p="698.724060 528.872131"/>
+                    <n id="194" p="727.473083 536.575439"/>
                     <n id="888" NodeType="ExternalConnectionPoint"/>
-                    <n id="195" p="1042.447144 291.950348"/>
-                    <n id="196" p="1078.899536 328.402679"/>
+                    <n id="195" p="677.678284 549.917908"/>
+                    <n id="196" p="714.130615 586.370239"/>
                     <n id="889" NodeType="ExternalConnectionPoint"/>
-                    <n id="197" Element="7" NumHydrogens="0" p="1050.150391 320.699432">
-                        <t p="1050.150391 320.699432" LabelJustification="Left">
+                    <n id="197" Element="7" NumHydrogens="0" p="685.381592 578.666992">
+                        <t p="685.381592 578.666992" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="198" Element="7" NumHydrogens="0" p="1049.980713 244.385315">
-                        <t p="1049.980713 244.385315" LabelJustification="Left">
+                    <n id="198" Element="7" NumHydrogens="0" p="685.211853 502.352875">
+                        <t p="685.211853 502.352875" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="199" Element="7" NumHydrogens="0" p="1015.927979 278.438110">
-                        <t p="1015.927979 278.438110" LabelJustification="Left">
+                    <n id="199" Element="7" NumHydrogens="0" p="651.159058 536.405640">
+                        <t p="651.159058 536.405640" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="200" p="1020.583862 249.041290"/>
-                    <n id="201" p="989.408569 291.950317" Geometry="Tetrahedral" BondOrdering="199 205 202 5" EnhancedStereoType="Absolute"/>
-                    <n id="202" Element="8" NumHydrogens="0" p="962.889404 278.438049">
-                        <t p="962.889404 278.438049" LabelJustification="Left">
+                    <n id="200" p="655.815002 507.008850"/>
+                    <n id="201" p="624.639771 549.917847" Geometry="Tetrahedral" BondOrdering="199 205 202 5" EnhancedStereoType="Absolute"/>
+                    <n id="202" Element="8" NumHydrogens="0" p="598.120544 536.405579">
+                        <t p="598.120544 536.405579" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="203" p="941.843628 299.483856" Geometry="Tetrahedral" BondOrdering="202 204 206 5" EnhancedStereoType="Absolute"/>
-                    <n id="204" p="955.355835 326.003082" Geometry="Tetrahedral" BondOrdering="203 208 205 5" EnhancedStereoType="Absolute"/>
-                    <n id="205" p="984.752686 321.347107"/>
-                    <n id="206" p="912.446777 294.827820"/>
-                    <n id="207" Element="8" NumHydrogens="0" p="901.780579 267.041443">
-                        <t p="901.780579 267.041443" LabelJustification="Left">
+                    <n id="203" p="577.074707 557.451355" Geometry="Tetrahedral" BondOrdering="202 204 206 5" EnhancedStereoType="Absolute"/>
+                    <n id="204" p="590.586975 583.970642" Geometry="Tetrahedral" BondOrdering="203 208 205 5" EnhancedStereoType="Absolute"/>
+                    <n id="205" p="619.983704 579.314697"/>
+                    <n id="206" p="547.677917 552.795349"/>
+                    <n id="207" Element="8" NumHydrogens="0" p="537.011719 525.008972">
+                        <t p="537.011719 525.008972" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="890" NodeType="ExternalConnectionPoint"/>
-                    <n id="208" Element="8" NumHydrogens="0" p="941.843567 352.522308">
-                        <t p="941.843567 352.522308" LabelJustification="Left">
+                    <n id="208" Element="8" NumHydrogens="0" p="577.074707 610.489868">
+                        <t p="577.074707 610.489868" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="209" Element="15" NumHydrogens="0" p="912.121094 354.079956">
-                        <t p="912.121094 354.079956" LabelJustification="Left">
+                    <n id="209" Element="15" NumHydrogens="0" p="547.352173 612.047546">
+                        <t p="547.352173 612.047546" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="891" NodeType="ExternalConnectionPoint"/>
                     <n id="892" NodeType="ExternalConnectionPoint"/>
-                    <n id="210" Element="8" NumHydrogens="0" p="928.331360 379.041534">
-                        <t p="928.331360 379.041534" LabelJustification="Left">
+                    <n id="210" Element="8" NumHydrogens="0" p="563.562500 637.009094">
+                        <t p="563.562500 637.009094" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1392,8 +1392,8 @@
             </n>
             <n id="633" NodeType="Fragment">
                 <fragment id="899">
-                    <n id="237" Element="1" p="928.868103 354.518066">
-                        <t p="928.868103 354.518066" LabelJustification="Left">
+                    <n id="237" Element="1" p="636.849304 613.235596">
+                        <t p="636.849304 613.235596" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1406,8 +1406,8 @@
             </n>
             <n id="634" NodeType="Fragment">
                 <fragment id="903">
-                    <n id="258" Element="1" p="969.242249 262.090118">
-                        <t p="969.242249 262.090118" LabelJustification="Left">
+                    <n id="258" Element="1" p="584.223389 586.807739">
+                        <t p="584.223389 586.807739" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1420,8 +1420,8 @@
             </n>
             <n id="635" NodeType="Fragment">
                 <fragment id="907">
-                    <n id="234" Element="7" NumHydrogens="2" p="1162.893188 256.779602">
-                        <t p="1162.893188 256.779602" LabelJustification="Left">
+                    <n id="234" Element="7" NumHydrogens="2" p="870.874329 515.497192">
+                        <t p="870.874329 515.497192" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1435,8 +1435,8 @@
             </n>
             <n id="636" NodeType="Fragment">
                 <fragment id="911">
-                    <n id="233" Element="8" NumHydrogens="1" p="940.932983 378.665833">
-                        <t p="940.932983 378.665833" LabelJustification="Left">
+                    <n id="233" Element="8" NumHydrogens="1" p="648.914124 637.383362">
+                        <t p="648.914124 637.383362" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -1449,63 +1449,63 @@
             </n>
             <n id="637" NodeType="Fragment" BondOrdering="909 893 873 913 901">
                 <fragment id="915" ConnectionOrder="916 917 918 919 920">
-                    <n id="13" Element="7" NumHydrogens="0" p="1149.550659 306.574463">
-                        <t p="1149.550659 306.574463" LabelJustification="Left">
+                    <n id="13" Element="7" NumHydrogens="0" p="857.531799 565.291992">
+                        <t p="857.531799 565.291992" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="215" p="1113.098389 270.122101"/>
-                    <n id="216" p="1141.847290 277.825409"/>
+                    <n id="215" p="821.079468 528.839661"/>
+                    <n id="216" p="849.828552 536.542969"/>
                     <n id="916" NodeType="ExternalConnectionPoint"/>
-                    <n id="217" p="1092.052490 291.167908"/>
-                    <n id="218" p="1128.504883 327.620270"/>
-                    <n id="219" Element="7" NumHydrogens="0" p="1099.755859 319.917023">
-                        <t p="1099.755859 319.917023" LabelJustification="Left">
+                    <n id="217" p="800.033691 549.885437"/>
+                    <n id="218" p="836.485962 586.337830"/>
+                    <n id="219" Element="7" NumHydrogens="0" p="807.736938 578.634583">
+                        <t p="807.736938 578.634583" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="220" Element="7" NumHydrogens="0" p="1099.586060 243.602890">
-                        <t p="1099.586060 243.602890" LabelJustification="Left">
+                    <n id="220" Element="7" NumHydrogens="0" p="807.567200 502.320435">
+                        <t p="807.567200 502.320435" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="221" Element="7" NumHydrogens="0" p="1065.533325 277.655640">
-                        <t p="1065.533325 277.655640" LabelJustification="Left">
+                    <n id="221" Element="7" NumHydrogens="0" p="773.514404 536.373169">
+                        <t p="773.514404 536.373169" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="222" p="1070.189209 248.258850"/>
-                    <n id="223" p="1039.014038 291.167847" Geometry="Tetrahedral" BondOrdering="221 227 224 5" EnhancedStereoType="Absolute"/>
-                    <n id="224" Element="8" NumHydrogens="0" p="1012.494751 277.655579">
-                        <t p="1012.494751 277.655579" LabelJustification="Left">
+                    <n id="222" p="778.170410 506.976410"/>
+                    <n id="223" p="746.995117 549.885376" Geometry="Tetrahedral" BondOrdering="221 227 224 5" EnhancedStereoType="Absolute"/>
+                    <n id="224" Element="8" NumHydrogens="0" p="720.475952 536.373169">
+                        <t p="720.475952 536.373169" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="225" p="991.449036 298.701385" Geometry="Tetrahedral" BondOrdering="224 226 228 5" EnhancedStereoType="Absolute"/>
-                    <n id="226" p="1004.961182 325.220673" Geometry="Tetrahedral" BondOrdering="225 230 227 5" EnhancedStereoType="Absolute"/>
-                    <n id="227" p="1034.358032 320.564697"/>
+                    <n id="225" p="699.430176 557.418945" Geometry="Tetrahedral" BondOrdering="224 226 228 5" EnhancedStereoType="Absolute"/>
+                    <n id="226" p="712.942322 583.938232" Geometry="Tetrahedral" BondOrdering="225 230 227 5" EnhancedStereoType="Absolute"/>
+                    <n id="227" p="742.339111 579.282227"/>
                     <n id="917" NodeType="ExternalConnectionPoint"/>
-                    <n id="228" p="962.052124 294.045349"/>
-                    <n id="229" Element="8" NumHydrogens="0" p="951.385986 266.258972">
-                        <t p="951.385986 266.258972" LabelJustification="Left">
+                    <n id="228" p="670.033264 552.762939"/>
+                    <n id="229" Element="8" NumHydrogens="0" p="659.367126 524.976562">
+                        <t p="659.367126 524.976562" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="918" NodeType="ExternalConnectionPoint"/>
-                    <n id="230" Element="8" NumHydrogens="0" p="991.448914 351.739868">
-                        <t p="991.448914 351.739868" LabelJustification="Left">
+                    <n id="230" Element="8" NumHydrogens="0" p="699.430054 610.457458">
+                        <t p="699.430054 610.457458" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="231" Element="15" NumHydrogens="0" p="961.726440 353.297546">
-                        <t p="961.726440 353.297546" LabelJustification="Left">
+                    <n id="231" Element="15" NumHydrogens="0" p="669.707581 612.015076">
+                        <t p="669.707581 612.015076" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="919" NodeType="ExternalConnectionPoint"/>
                     <n id="920" NodeType="ExternalConnectionPoint"/>
-                    <n id="232" Element="8" NumHydrogens="0" p="977.936768 378.259094">
-                        <t p="977.936768 378.259094" LabelJustification="Left">
+                    <n id="232" Element="8" NumHydrogens="0" p="685.917908 636.976685">
+                        <t p="685.917908 636.976685" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1542,8 +1542,8 @@
             </n>
             <n id="638" NodeType="Fragment">
                 <fragment id="926">
-                    <n id="259" Element="1" p="976.121155 355.005157">
-                        <t p="976.121155 355.005157" LabelJustification="Left">
+                    <n id="259" Element="1" p="591.102356 679.722778">
+                        <t p="591.102356 679.722778" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1556,8 +1556,8 @@
             </n>
             <n id="639" NodeType="Fragment">
                 <fragment id="930">
-                    <n id="279" Element="1" p="1012.111023 262.090118">
-                        <t p="1012.111023 262.090118" LabelJustification="Left">
+                    <n id="279" Element="1" p="699.092163 586.807739">
+                        <t p="699.092163 586.807739" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1570,8 +1570,8 @@
             </n>
             <n id="640" NodeType="Fragment">
                 <fragment id="934">
-                    <n id="256" Element="7" NumHydrogens="2" p="1210.146240 257.266754">
-                        <t p="1210.146240 257.266754" LabelJustification="Left">
+                    <n id="256" Element="7" NumHydrogens="2" p="825.127380 581.984314">
+                        <t p="825.127380 581.984314" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1585,8 +1585,8 @@
             </n>
             <n id="641" NodeType="Fragment">
                 <fragment id="938">
-                    <n id="255" Element="8" NumHydrogens="1" p="988.186096 379.152954">
-                        <t p="988.186096 379.152954" LabelJustification="Left">
+                    <n id="255" Element="8" NumHydrogens="1" p="603.167236 703.870544">
+                        <t p="603.167236 703.870544" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -1599,63 +1599,63 @@
             </n>
             <n id="642" NodeType="Fragment" BondOrdering="936 945 905 940 928">
                 <fragment id="942" ConnectionOrder="943 944 946 947 948">
-                    <n id="14" Element="7" NumHydrogens="0" p="1196.803711 307.061646">
-                        <t p="1196.803711 307.061646" LabelJustification="Left">
+                    <n id="14" Element="7" NumHydrogens="0" p="811.784790 631.779236">
+                        <t p="811.784790 631.779236" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="235" p="1160.351318 270.609283"/>
-                    <n id="238" p="1189.100464 278.312531"/>
+                    <n id="235" p="775.332520 595.326843"/>
+                    <n id="238" p="804.081543 603.030090"/>
                     <n id="943" NodeType="ExternalConnectionPoint"/>
-                    <n id="239" p="1139.305542 291.655029"/>
-                    <n id="240" p="1175.757935 328.107422"/>
-                    <n id="241" Element="7" NumHydrogens="0" p="1147.008789 320.404114">
-                        <t p="1147.008789 320.404114" LabelJustification="Left">
+                    <n id="239" p="754.286743 616.372620"/>
+                    <n id="240" p="790.739014 652.825012"/>
+                    <n id="241" Element="7" NumHydrogens="0" p="761.989990 645.121704">
+                        <t p="761.989990 645.121704" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="242" Element="7" NumHydrogens="0" p="1146.839233 244.089996">
-                        <t p="1146.839233 244.089996" LabelJustification="Left">
+                    <n id="242" Element="7" NumHydrogens="0" p="761.820251 568.807556">
+                        <t p="761.820251 568.807556" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="243" Element="7" NumHydrogens="0" p="1112.786377 278.142822">
-                        <t p="1112.786377 278.142822" LabelJustification="Left">
+                    <n id="243" Element="7" NumHydrogens="0" p="727.767517 602.860413">
+                        <t p="727.767517 602.860413" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="244" p="1117.442383 248.745972"/>
-                    <n id="245" p="1086.266968 291.655029" Geometry="Tetrahedral" BondOrdering="243 249 246 5" EnhancedStereoType="Absolute"/>
-                    <n id="246" Element="8" NumHydrogens="0" p="1059.747803 278.142761">
-                        <t p="1059.747803 278.142761" LabelJustification="Left">
+                    <n id="244" p="732.423462 573.463562"/>
+                    <n id="245" p="701.248230 616.372620" Geometry="Tetrahedral" BondOrdering="243 249 246 5" EnhancedStereoType="Absolute"/>
+                    <n id="246" Element="8" NumHydrogens="0" p="674.729004 602.860352">
+                        <t p="674.729004 602.860352" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="247" p="1038.702026 299.188568" Geometry="Tetrahedral" BondOrdering="246 248 250 5" EnhancedStereoType="Absolute"/>
-                    <n id="248" p="1052.214233 325.707764" Geometry="Tetrahedral" BondOrdering="247 252 249 5" EnhancedStereoType="Absolute"/>
-                    <n id="249" p="1081.611084 321.051819"/>
+                    <n id="247" p="653.683228 623.906128" Geometry="Tetrahedral" BondOrdering="246 248 250 5" EnhancedStereoType="Absolute"/>
+                    <n id="248" p="667.195435 650.425354" Geometry="Tetrahedral" BondOrdering="247 252 249 5" EnhancedStereoType="Absolute"/>
+                    <n id="249" p="696.592224 645.769409"/>
                     <n id="944" NodeType="ExternalConnectionPoint"/>
-                    <n id="250" p="1009.305298 294.532532"/>
-                    <n id="251" Element="8" NumHydrogens="0" p="998.639038 266.746155">
-                        <t p="998.639038 266.746155" LabelJustification="Left">
+                    <n id="250" p="624.286377 619.250122"/>
+                    <n id="251" Element="8" NumHydrogens="0" p="613.620178 591.463745">
+                        <t p="613.620178 591.463745" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="946" NodeType="ExternalConnectionPoint"/>
-                    <n id="252" Element="8" NumHydrogens="0" p="1038.701904 352.226990">
-                        <t p="1038.701904 352.226990" LabelJustification="Left">
+                    <n id="252" Element="8" NumHydrogens="0" p="653.683167 676.944580">
+                        <t p="653.683167 676.944580" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="253" Element="15" NumHydrogens="0" p="1008.979553 353.784729">
-                        <t p="1008.979553 353.784729" LabelJustification="Left">
+                    <n id="253" Element="15" NumHydrogens="0" p="623.960693 678.502319">
+                        <t p="623.960693 678.502319" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="947" NodeType="ExternalConnectionPoint"/>
                     <n id="948" NodeType="ExternalConnectionPoint"/>
-                    <n id="254" Element="8" NumHydrogens="0" p="1025.189819 378.746216">
-                        <t p="1025.189819 378.746216" LabelJustification="Left">
+                    <n id="254" Element="8" NumHydrogens="0" p="640.170959 703.463806">
+                        <t p="640.170959 703.463806" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1692,8 +1692,8 @@
             </n>
             <n id="643" NodeType="Fragment">
                 <fragment id="954">
-                    <n id="280" Element="1" p="1018.989929 355.005157">
-                        <t p="1018.989929 355.005157" LabelJustification="Left">
+                    <n id="280" Element="1" p="705.971069 679.722778">
+                        <t p="705.971069 679.722778" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
@@ -1706,8 +1706,8 @@
             </n>
             <n id="644" NodeType="Fragment">
                 <fragment id="958">
-                    <n id="278" Element="7" NumHydrogens="2" p="1253.015015 257.266754">
-                        <t p="1253.015015 257.266754" LabelJustification="Left">
+                    <n id="278" Element="7" NumHydrogens="2" p="939.996216 581.984314">
+                        <t p="939.996216 581.984314" LabelJustification="Left">
                             <s font="3" size="10" face="96">NH</s>
                             <s font="3" size="10" face="32">2</s>
                         </t>
@@ -1721,8 +1721,8 @@
             </n>
             <n id="645" NodeType="Fragment">
                 <fragment id="962">
-                    <n id="277" Element="8" NumHydrogens="1" p="1031.054810 379.152954">
-                        <t p="1031.054810 379.152954" LabelJustification="Left">
+                    <n id="277" Element="8" NumHydrogens="1" p="718.035950 703.870544">
+                        <t p="718.035950 703.870544" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -1735,63 +1735,63 @@
             </n>
             <n id="646" NodeType="Fragment" BondOrdering="960 945 932 964 956">
                 <fragment id="966" ConnectionOrder="967 968 969 970 971">
-                    <n id="15" Element="7" NumHydrogens="0" p="1239.672607 307.061646">
-                        <t p="1239.672607 307.061646" LabelJustification="Left">
+                    <n id="15" Element="7" NumHydrogens="0" p="926.653625 631.779236">
+                        <t p="926.653625 631.779236" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="257" p="1203.220093 270.609283"/>
-                    <n id="260" p="1231.969238 278.312531"/>
+                    <n id="257" p="890.201355 595.326843"/>
+                    <n id="260" p="918.950378 603.030090"/>
                     <n id="967" NodeType="ExternalConnectionPoint"/>
-                    <n id="261" p="1182.174316 291.655029"/>
-                    <n id="262" p="1218.626587 328.107422"/>
-                    <n id="263" Element="7" NumHydrogens="0" p="1189.877686 320.404114">
-                        <t p="1189.877686 320.404114" LabelJustification="Left">
+                    <n id="261" p="869.155518 616.372620"/>
+                    <n id="262" p="905.607849 652.825012"/>
+                    <n id="263" Element="7" NumHydrogens="0" p="876.858765 645.121704">
+                        <t p="876.858765 645.121704" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="264" Element="7" NumHydrogens="0" p="1189.707886 244.089996">
-                        <t p="1189.707886 244.089996" LabelJustification="Left">
+                    <n id="264" Element="7" NumHydrogens="0" p="876.689087 568.807556">
+                        <t p="876.689087 568.807556" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="265" Element="7" NumHydrogens="0" p="1155.655029 278.142822">
-                        <t p="1155.655029 278.142822" LabelJustification="Left">
+                    <n id="265" Element="7" NumHydrogens="0" p="842.636230 602.860413">
+                        <t p="842.636230 602.860413" LabelJustification="Left">
                             <s font="3" size="10" face="96">N</s>
                         </t>
                     </n>
-                    <n id="266" p="1160.311035 248.745972"/>
-                    <n id="267" p="1129.135864 291.655029" Geometry="Tetrahedral" BondOrdering="265 271 268 5" EnhancedStereoType="Absolute"/>
-                    <n id="268" Element="8" NumHydrogens="0" p="1102.616577 278.142761">
-                        <t p="1102.616577 278.142761" LabelJustification="Left">
+                    <n id="266" p="847.292297 573.463562"/>
+                    <n id="267" p="816.117004 616.372620" Geometry="Tetrahedral" BondOrdering="265 271 268 5" EnhancedStereoType="Absolute"/>
+                    <n id="268" Element="8" NumHydrogens="0" p="789.597839 602.860352">
+                        <t p="789.597839 602.860352" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="269" p="1081.570801 299.188568" Geometry="Tetrahedral" BondOrdering="268 270 272 5" EnhancedStereoType="Absolute"/>
-                    <n id="270" p="1095.083130 325.707764" Geometry="Tetrahedral" BondOrdering="269 274 271 5" EnhancedStereoType="Absolute"/>
-                    <n id="271" p="1124.479736 321.051819"/>
+                    <n id="269" p="768.552002 623.906128" Geometry="Tetrahedral" BondOrdering="268 270 272 5" EnhancedStereoType="Absolute"/>
+                    <n id="270" p="782.064148 650.425354" Geometry="Tetrahedral" BondOrdering="269 274 271 5" EnhancedStereoType="Absolute"/>
+                    <n id="271" p="811.460938 645.769409"/>
                     <n id="968" NodeType="ExternalConnectionPoint"/>
-                    <n id="272" p="1052.173950 294.532532"/>
-                    <n id="273" Element="8" NumHydrogens="0" p="1041.507812 266.746155">
-                        <t p="1041.507812 266.746155" LabelJustification="Left">
+                    <n id="272" p="739.155151 619.250122"/>
+                    <n id="273" Element="8" NumHydrogens="0" p="728.488953 591.463745">
+                        <t p="728.488953 591.463745" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
                     <n id="969" NodeType="ExternalConnectionPoint"/>
-                    <n id="274" Element="8" NumHydrogens="0" p="1081.570801 352.226990">
-                        <t p="1081.570801 352.226990" LabelJustification="Left">
+                    <n id="274" Element="8" NumHydrogens="0" p="768.551880 676.944580">
+                        <t p="768.551880 676.944580" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="275" Element="15" NumHydrogens="0" p="1051.848267 353.784729">
-                        <t p="1051.848267 353.784729" LabelJustification="Left">
+                    <n id="275" Element="15" NumHydrogens="0" p="738.829407 678.502319">
+                        <t p="738.829407 678.502319" LabelJustification="Left">
                             <s font="3" size="10" face="96">P</s>
                         </t>
                     </n>
                     <n id="970" NodeType="ExternalConnectionPoint"/>
                     <n id="971" NodeType="ExternalConnectionPoint"/>
-                    <n id="276" Element="8" NumHydrogens="0" p="1068.058594 378.746216">
-                        <t p="1068.058594 378.746216" LabelJustification="Left">
+                    <n id="276" Element="8" NumHydrogens="0" p="755.039673 703.463806">
+                        <t p="755.039673 703.463806" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -1880,8 +1880,8 @@
             <b id="956" B="646" E="643"/>
             <b id="960" B="646" E="644"/>
             <b id="964" B="646" E="645"/>
-            <graphic BoundingBox="1253.015015 242.923874 1253.015015 242.923874" GraphicType="Symbol" SymbolType="Absolute" FrameType="None">
-                <t p="1253.015015 242.923874" Justification="Center" InterpretChemically="no">
+            <graphic BoundingBox="939.996216 243.641449 939.996216 243.641449" GraphicType="Symbol" SymbolType="Absolute" FrameType="None">
+                <t p="939.996216 243.641449" Justification="Center" InterpretChemically="no">
                     <s font="3" size="10" face="96">Chiral</s>
                 </t>
             </graphic>

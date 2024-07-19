@@ -1028,6 +1028,29 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Validate that unsplit nucleotides could be deleted from sequence', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: unsplit nucleotides can be deleted from sequence
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await selectEraseTool(page);
+    await page.getByText('AmMC6T').locator('..').locator('..').first().click();
+    await page.getByText('Super G').locator('..').locator('..').first().click();
+    await page
+      .getByText('5-Bromo dU')
+      .locator('..')
+      .locator('..')
+      .first()
+      .click();
+    await takeEditorScreenshot(page);
+  });
+
   const rnaNucleotides1 = [
     `2-Amino-dA___2,6-Diaminopurine`,
     `5HydMe-dC___Hydroxymethyl dC`,

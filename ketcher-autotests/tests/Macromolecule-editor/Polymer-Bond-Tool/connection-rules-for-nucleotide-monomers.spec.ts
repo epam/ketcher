@@ -212,6 +212,16 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //   },
     // },
   };
+  async function pageReload(page: Page) {
+    /* In order to fix problem with label renderer (one pixel shift) 
+        we have to try to reload page
+    */
+    await page.reload();
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
+    await turnOnMacromoleculesEditor(page);
+  }
 
   async function hoverOverConnectionLine(page: Page) {
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
@@ -1503,6 +1513,18 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
               test(`Case11: Cnnct ${leftNucleotideConnectionPoint} to ${rightBaseConnectionPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
                 test.setTimeout(20000);
 
+                /* In order to fix problem with label renderer (one pixel shift) 
+                   we have to try to reload page
+                */
+                if (
+                  leftNucleotideConnectionPoint === 'R1' &&
+                  rightBaseConnectionPoint === 'R1' &&
+                  leftNucleotide.alias === '(R1)_-_Left_only' &&
+                  rightBase.alias === '(R1)_-_Left_only'
+                ) {
+                  await pageReload(page);
+                }
+
                 await loadTwoMonomers(page, leftNucleotide, rightBase);
 
                 await bondTwoMonomersByPointToPoint(
@@ -1720,6 +1742,18 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                */
               test(`Case13: Cnnct ${leftNucleotideConnectionPoint} to ${rightSugarConnectionPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
                 test.setTimeout(20000);
+
+                /* In order to fix problem with label renderer (one pixel shift) 
+                   we have to try to reload page
+                */
+                if (
+                  leftNucleotideConnectionPoint === 'R1' &&
+                  rightSugarConnectionPoint === 'R1' &&
+                  leftNucleotide.alias === '(R1)_-_Left_only' &&
+                  rightSugar.alias === '(R1)_-_Left_only'
+                ) {
+                  await pageReload(page);
+                }
 
                 await loadTwoMonomers(page, leftNucleotide, rightSugar);
 

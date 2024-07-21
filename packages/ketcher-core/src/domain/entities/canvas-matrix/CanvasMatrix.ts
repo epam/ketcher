@@ -201,7 +201,7 @@ export class CanvasMatrix {
           }
 
           const initialMatrixRowLength =
-            this.matrixConfig.initialMatrix.getRow(rowNumber).length;
+            this.matrixConfig.initialMatrix?.getRow(rowNumber)?.length || 0;
 
           if (columnNumber >= initialMatrixRowLength) {
             let emptyCellsAmount = this.initialMatrixWidth - columnNumber;

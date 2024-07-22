@@ -442,7 +442,7 @@ _Shape Ellipse_ (1), _Shape Rectangle_ (2), and _Shape Line_ (3).
 You can add images to the canvas. Select _Add Image_ tool <img src = images/60_add_image.png width = "42" /> in the Tools palette and click anywhere on the canvas.    
 System dialog to choose image file will be opened and upon selection of supported format image will be added to the canvas.    
 Center of the image will be at the place of the click.   
-Supported image types are: `.png`, `.jpeg`, `.jpg`, `.webp`, `.bmp`, `.ico`, `.gif`, `.svg`
+Supported image types are: `.png`, `.svg`
 
 
 # Creating text objects on the canvas

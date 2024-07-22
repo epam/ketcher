@@ -163,6 +163,7 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
@@ -180,6 +181,7 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
@@ -198,7 +200,6 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
     await enterSequence(page, 'u');
     await takeEditorScreenshot(page);
   });
@@ -214,6 +215,7 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await selectSnakeLayoutModeTool(page);

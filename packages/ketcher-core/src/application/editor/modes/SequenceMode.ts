@@ -295,8 +295,6 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    event.stopPropagation();
-
     const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
 
     this.turnOnEditMode(eventData);
@@ -308,15 +306,22 @@ export class SequenceMode extends BaseMode {
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
 
     if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
-      const sequenceItemBoundingBox = eventData.rootBoundingClientRect;
+      let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
+
+      // Case when user clicks between symbols. In this case renderer stored in eventData
+      // is already destroyed during rerender in mousedownBetweenSequenceItems handler
+      if (!sequenceItemBoundingBox) {
+        sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
+          eventData.node.monomer,
+        )?.rootBoundingClientRect;
+      }
+
       const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
         ? event.clientX >
           sequenceItemBoundingBox.x + sequenceItemBoundingBox.width / 2
         : false;
 
-      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
-        eventData as BaseSequenceItemRenderer,
-      );
+      SequenceRenderer.setCaretPositionByMonomer(eventData.node.monomer);
 
       if (isRightSideOfSequenceItemClicked) {
         SequenceRenderer.moveCaretForward();

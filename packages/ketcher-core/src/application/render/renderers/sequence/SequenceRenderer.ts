@@ -851,4 +851,16 @@ export class SequenceRenderer {
       height: bottom - top,
     };
   }
+
+  public static getRendererByMonomer(monomer: BaseMonomer) {
+    let rendererToReturn;
+
+    SequenceRenderer.forEachNode(({ node }) => {
+      if (node.monomer === monomer) {
+        rendererToReturn = node.renderer;
+      }
+    });
+
+    return rendererToReturn;
+  }
 }

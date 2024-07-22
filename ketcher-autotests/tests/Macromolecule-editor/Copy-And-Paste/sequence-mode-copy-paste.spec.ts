@@ -23,6 +23,7 @@ import {
 import {
   clickOnSequenceSymbol,
   getSequenceSymbolLocator,
+  selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
 
 const ZOOM_OUT_VALUE = 400;
@@ -95,13 +96,11 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   });
 
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
-    await getSequenceSymbolLocator(page, 'G').hover();
-    await page.mouse.down();
+    const fromSymbol = await getSequenceSymbolLocator(page, 'G');
     const gNthNumber = 1;
-    await getSequenceSymbolLocator(page, 'G', gNthNumber).hover();
+    const toSymbol = await getSequenceSymbolLocator(page, 'G', gNthNumber);
 
-    await page.mouse.up();
-    await moveMouseAway(page);
+    await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+c');
@@ -114,34 +113,41 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select letters with Shift & ArrowLeft then paste ket from clipboard and undo', async ({
-    page,
-  }) => {
-    test.slow();
-    const fileContent = await readFileContents(
-      'tests/test-data/KET/single-fragment-for-paste.ket',
-    );
-    await openPasteFromClipboard(page, fileContent);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
-    await page.getByTitle('Close window').click();
+  test(
+    'Select letters with Shift & ArrowLeft then paste ket from clipboard and undo',
+    {
+      tag: ['@RefactorThatTest'],
+    },
+    async ({ page }) => {
+      test.slow();
+      const fileContent = await readFileContents(
+        'tests/test-data/KET/single-fragment-for-paste.ket',
+      );
+      await openPasteFromClipboard(page, fileContent);
+      await page.keyboard.press('Control+a');
+      await page.keyboard.press('Control+c');
+      await page.getByTitle('Close window').click();
 
-    await clickOnSequenceSymbol(page, 'G');
-    const arrowCount = 8;
-    await page.keyboard.down('Shift');
-    for (let i = 0; i < arrowCount; i++) {
-      await page.keyboard.press('ArrowLeft');
-    }
-    await page.keyboard.up('Shift');
-    await takeEditorScreenshot(page);
+      await clickOnSequenceSymbol(page, 'G');
+      await page.keyboard.press('ArrowRight');
+      await page.keyboard.press('ArrowRight');
 
-    await page.keyboard.press('Control+v');
-    await takeEditorScreenshot(page);
+      const arrowCount = 8;
+      await page.keyboard.down('Shift');
+      for (let i = 0; i < arrowCount; i++) {
+        await page.keyboard.press('ArrowLeft');
+      }
+      await page.keyboard.up('Shift');
+      await takeEditorScreenshot(page);
 
-    await clickUndo(page);
-    await clickUndo(page);
-    await takeEditorScreenshot(page);
-  });
+      await page.keyboard.press('Control+v');
+      await takeEditorScreenshot(page);
+
+      await clickUndo(page);
+      await clickUndo(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   // Fail while performance issue on Indigo side
   // test('Select letters with Shift & ArrowRight then paste sequence from clipboard and undo', async ({

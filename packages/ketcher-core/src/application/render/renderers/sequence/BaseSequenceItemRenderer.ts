@@ -295,23 +295,42 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public hoverAttachmenPoint() {}
   public updateAttachmentPoints() {}
+
+  private drawBackgroundElementHover() {
+    if (this.isSequenceEditModeTurnedOn) {
+      return;
+    }
+
+    this.backgroundElement?.attr(
+      'fill',
+      this.node.monomer.selected ? 'none' : '#E1E8E9',
+    );
+
+    if (this.node.modified) {
+      this.drawModification();
+    }
+  }
+
+  private removeBackgroundElementHover() {
+    this.backgroundElement?.attr('fill', 'none');
+
+    if (this.node.modified) {
+      this.drawModification();
+    }
+  }
+
   private appendEvents() {
     assert(this.textElement);
 
     this.textElement.on('mouseover', (event) => {
-      if (!this.isSequenceEditModeTurnedOn) {
-        this.backgroundElement?.attr(
-          'fill',
-          this.node.monomer.selected ? 'none' : '#E1E8E9',
-        );
-      }
+      this.drawBackgroundElementHover();
       this.editorEvents.mouseOverSequenceItem.dispatch(event);
     });
     this.textElement.on('mousemove', (event) => {
       this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
     });
     this.textElement.on('mouseleave', (event) => {
-      this.backgroundElement?.attr('fill', 'none');
+      this.removeBackgroundElementHover();
       this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
     });
     this.spacerElement?.on('mousedown', (event) => {
@@ -330,15 +349,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
     });
     this.backgroundElement?.on('mouseover', () => {
-      if (!this.isSequenceEditModeTurnedOn) {
-        this.backgroundElement?.attr(
-          'fill',
-          this.node.monomer.selected ? 'none' : '#E1E8E9',
-        );
-      }
+      this.drawBackgroundElementHover();
     });
     this.backgroundElement?.on('mouseleave', () => {
-      this.backgroundElement?.attr('fill', 'none');
+      this.removeBackgroundElementHover();
     });
   }
 }

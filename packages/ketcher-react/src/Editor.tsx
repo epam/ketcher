@@ -43,7 +43,7 @@ interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 
-function Editor(props: EditorProps) {
+function EditorComponent(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
@@ -101,6 +101,14 @@ function Editor(props: EditorProps) {
       })}
     />
   );
+}
+
+function Editor(props: EditorProps) {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return <EditorComponent {...props} />;
 }
 
 export { Editor };

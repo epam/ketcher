@@ -6739,7 +6739,7 @@
         "type": "monomer",
         "id": "542",
         "position": {
-            "x": 2.75,
+            "x": 4.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6749,7 +6749,7 @@
         "type": "monomer",
         "id": "543",
         "position": {
-            "x": 1.25,
+            "x": 2.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6759,7 +6759,7 @@
         "type": "monomer",
         "id": "544",
         "position": {
-            "x": 4.25,
+            "x": 5.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6769,8 +6769,8 @@
         "type": "monomer",
         "id": "545",
         "position": {
-            "x": 22.25,
-            "y": -1.25
+            "x": 1.25,
+            "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -6799,7 +6799,7 @@
         "type": "monomer",
         "id": "548",
         "position": {
-            "x": 11.75,
+            "x": 13.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6809,7 +6809,7 @@
         "type": "monomer",
         "id": "549",
         "position": {
-            "x": 10.25,
+            "x": 11.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6819,7 +6819,7 @@
         "type": "monomer",
         "id": "550",
         "position": {
-            "x": 13.25,
+            "x": 14.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6829,7 +6829,7 @@
         "type": "monomer",
         "id": "551",
         "position": {
-            "x": 8.75,
+            "x": 10.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6839,7 +6839,7 @@
         "type": "monomer",
         "id": "552",
         "position": {
-            "x": 7.25,
+            "x": 8.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6849,7 +6849,7 @@
         "type": "monomer",
         "id": "553",
         "position": {
-            "x": 5.75,
+            "x": 7.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6859,8 +6859,8 @@
         "type": "monomer",
         "id": "554",
         "position": {
-            "x": 20.75,
-            "y": -2.75
+            "x": 1.25,
+            "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -6869,7 +6869,7 @@
         "type": "monomer",
         "id": "555",
         "position": {
-            "x": 19.25,
+            "x": 20.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6879,8 +6879,8 @@
         "type": "monomer",
         "id": "556",
         "position": {
-            "x": 22.25,
-            "y": -2.75
+            "x": 2.75,
+            "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -6889,7 +6889,7 @@
         "type": "monomer",
         "id": "557",
         "position": {
-            "x": 17.75,
+            "x": 19.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6899,7 +6899,7 @@
         "type": "monomer",
         "id": "558",
         "position": {
-            "x": 16.25,
+            "x": 17.75,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6909,7 +6909,7 @@
         "type": "monomer",
         "id": "559",
         "position": {
-            "x": 14.75,
+            "x": 16.25,
             "y": -2.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6919,7 +6919,7 @@
         "type": "monomer",
         "id": "560",
         "position": {
-            "x": 7.25,
+            "x": 10.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6929,7 +6929,7 @@
         "type": "monomer",
         "id": "561",
         "position": {
-            "x": 5.75,
+            "x": 8.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6939,7 +6939,7 @@
         "type": "monomer",
         "id": "562",
         "position": {
-            "x": 8.75,
+            "x": 11.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6949,7 +6949,7 @@
         "type": "monomer",
         "id": "563",
         "position": {
-            "x": 4.25,
+            "x": 7.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6959,7 +6959,7 @@
         "type": "monomer",
         "id": "564",
         "position": {
-            "x": 2.75,
+            "x": 5.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6969,7 +6969,7 @@
         "type": "monomer",
         "id": "565",
         "position": {
-            "x": 1.25,
+            "x": 4.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6979,7 +6979,7 @@
         "type": "monomer",
         "id": "566",
         "position": {
-            "x": 14.75,
+            "x": 17.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6989,7 +6989,7 @@
         "type": "monomer",
         "id": "567",
         "position": {
-            "x": 17.75,
+            "x": 20.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -6999,7 +6999,7 @@
         "type": "monomer",
         "id": "568",
         "position": {
-            "x": 13.25,
+            "x": 16.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7009,7 +7009,7 @@
         "type": "monomer",
         "id": "569",
         "position": {
-            "x": 11.75,
+            "x": 14.75,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7019,7 +7019,7 @@
         "type": "monomer",
         "id": "570",
         "position": {
-            "x": 10.25,
+            "x": 13.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7029,7 +7029,7 @@
         "type": "monomer",
         "id": "571",
         "position": {
-            "x": 2.75,
+            "x": 7.25,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7039,7 +7039,7 @@
         "type": "monomer",
         "id": "572",
         "position": {
-            "x": 1.25,
+            "x": 5.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7049,7 +7049,7 @@
         "type": "monomer",
         "id": "573",
         "position": {
-            "x": 4.25,
+            "x": 8.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7059,8 +7059,8 @@
         "type": "monomer",
         "id": "574",
         "position": {
-            "x": 22.25,
-            "y": -4.25
+            "x": 4.25,
+            "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7069,8 +7069,8 @@
         "type": "monomer",
         "id": "575",
         "position": {
-            "x": 20.75,
-            "y": -4.25
+            "x": 2.75,
+            "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7079,8 +7079,8 @@
         "type": "monomer",
         "id": "576",
         "position": {
-            "x": 19.25,
-            "y": -4.25
+            "x": 1.25,
+            "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7089,7 +7089,7 @@
         "type": "monomer",
         "id": "577",
         "position": {
-            "x": 11.75,
+            "x": 16.25,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7099,7 +7099,7 @@
         "type": "monomer",
         "id": "578",
         "position": {
-            "x": 10.25,
+            "x": 14.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7109,7 +7109,7 @@
         "type": "monomer",
         "id": "579",
         "position": {
-            "x": 13.25,
+            "x": 17.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7119,7 +7119,7 @@
         "type": "monomer",
         "id": "580",
         "position": {
-            "x": 8.75,
+            "x": 13.25,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7129,7 +7129,7 @@
         "type": "monomer",
         "id": "581",
         "position": {
-            "x": 7.25,
+            "x": 11.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7139,7 +7139,7 @@
         "type": "monomer",
         "id": "582",
         "position": {
-            "x": 5.75,
+            "x": 10.25,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7149,8 +7149,8 @@
         "type": "monomer",
         "id": "583",
         "position": {
-            "x": 20.75,
-            "y": -5.75
+            "x": 4.25,
+            "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7159,8 +7159,8 @@
         "type": "monomer",
         "id": "584",
         "position": {
-            "x": 19.25,
-            "y": -5.75
+            "x": 2.75,
+            "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -7169,8 +7169,8 @@
         "type": "monomer",
         "id": "585",
         "position": {
-            "x": 22.25,
-            "y": -5.75
+            "x": 5.75,
+            "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7179,8 +7179,8 @@
         "type": "monomer",
         "id": "586",
         "position": {
-            "x": 17.75,
-            "y": -5.75
+            "x": 1.25,
+            "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7189,7 +7189,7 @@
         "type": "monomer",
         "id": "587",
         "position": {
-            "x": 16.25,
+            "x": 20.75,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7199,7 +7199,7 @@
         "type": "monomer",
         "id": "588",
         "position": {
-            "x": 14.75,
+            "x": 19.25,
             "y": -5.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7209,7 +7209,7 @@
         "type": "monomer",
         "id": "589",
         "position": {
-            "x": 5.75,
+            "x": 11.75,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7219,7 +7219,7 @@
         "type": "monomer",
         "id": "590",
         "position": {
-            "x": 4.25,
+            "x": 10.25,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7229,7 +7229,7 @@
         "type": "monomer",
         "id": "591",
         "position": {
-            "x": 2.75,
+            "x": 8.75,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7239,7 +7239,7 @@
         "type": "monomer",
         "id": "592",
         "position": {
-            "x": 1.25,
+            "x": 7.25,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7249,7 +7249,7 @@
         "type": "monomer",
         "id": "593",
         "position": {
-            "x": 16.25,
+            "x": 19.25,
             "y": -4.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7259,7 +7259,7 @@
         "type": "monomer",
         "id": "594",
         "position": {
-            "x": 7.25,
+            "x": 13.25,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7269,7 +7269,7 @@
         "type": "monomer",
         "id": "595",
         "position": {
-            "x": 8.75,
+            "x": 14.75,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7279,8 +7279,8 @@
         "type": "monomer",
         "id": "596",
         "position": {
-            "x": 16.25,
-            "y": -7.25
+            "x": 1.25,
+            "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7289,7 +7289,7 @@
         "type": "monomer",
         "id": "597",
         "position": {
-            "x": 14.75,
+            "x": 20.75,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7299,8 +7299,8 @@
         "type": "monomer",
         "id": "598",
         "position": {
-            "x": 17.75,
-            "y": -7.25
+            "x": 2.75,
+            "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7309,7 +7309,7 @@
         "type": "monomer",
         "id": "599",
         "position": {
-            "x": 13.25,
+            "x": 19.25,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7319,7 +7319,7 @@
         "type": "monomer",
         "id": "600",
         "position": {
-            "x": 11.75,
+            "x": 17.75,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7329,7 +7329,7 @@
         "type": "monomer",
         "id": "601",
         "position": {
-            "x": 10.25,
+            "x": 16.25,
             "y": -7.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7339,7 +7339,7 @@
         "type": "monomer",
         "id": "602",
         "position": {
-            "x": 2.75,
+            "x": 10.25,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7349,7 +7349,7 @@
         "type": "monomer",
         "id": "603",
         "position": {
-            "x": 1.25,
+            "x": 8.75,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7359,7 +7359,7 @@
         "type": "monomer",
         "id": "604",
         "position": {
-            "x": 4.25,
+            "x": 11.75,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7369,8 +7369,8 @@
         "type": "monomer",
         "id": "605",
         "position": {
-            "x": 22.25,
-            "y": -7.25
+            "x": 7.25,
+            "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7379,8 +7379,8 @@
         "type": "monomer",
         "id": "606",
         "position": {
-            "x": 20.75,
-            "y": -7.25
+            "x": 5.75,
+            "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7389,8 +7389,8 @@
         "type": "monomer",
         "id": "607",
         "position": {
-            "x": 19.25,
-            "y": -7.25
+            "x": 4.25,
+            "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7399,7 +7399,7 @@
         "type": "monomer",
         "id": "608",
         "position": {
-            "x": 11.75,
+            "x": 19.25,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7409,7 +7409,7 @@
         "type": "monomer",
         "id": "609",
         "position": {
-            "x": 10.25,
+            "x": 17.75,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7419,7 +7419,7 @@
         "type": "monomer",
         "id": "610",
         "position": {
-            "x": 13.25,
+            "x": 20.75,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7429,7 +7429,7 @@
         "type": "monomer",
         "id": "611",
         "position": {
-            "x": 8.75,
+            "x": 16.25,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7439,7 +7439,7 @@
         "type": "monomer",
         "id": "612",
         "position": {
-            "x": 7.25,
+            "x": 14.75,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7449,7 +7449,7 @@
         "type": "monomer",
         "id": "613",
         "position": {
-            "x": 5.75,
+            "x": 13.25,
             "y": -8.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7459,8 +7459,8 @@
         "type": "monomer",
         "id": "614",
         "position": {
-            "x": 20.75,
-            "y": -8.75
+            "x": 7.25,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7469,8 +7469,8 @@
         "type": "monomer",
         "id": "615",
         "position": {
-            "x": 19.25,
-            "y": -8.75
+            "x": 5.75,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -7479,8 +7479,8 @@
         "type": "monomer",
         "id": "616",
         "position": {
-            "x": 22.25,
-            "y": -8.75
+            "x": 8.75,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7489,8 +7489,8 @@
         "type": "monomer",
         "id": "617",
         "position": {
-            "x": 17.75,
-            "y": -8.75
+            "x": 4.25,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7499,8 +7499,8 @@
         "type": "monomer",
         "id": "618",
         "position": {
-            "x": 16.25,
-            "y": -8.75
+            "x": 2.75,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7509,8 +7509,8 @@
         "type": "monomer",
         "id": "619",
         "position": {
-            "x": 14.75,
-            "y": -8.75
+            "x": 1.25,
+            "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7519,7 +7519,7 @@
         "type": "monomer",
         "id": "620",
         "position": {
-            "x": 7.25,
+            "x": 16.25,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7529,7 +7529,7 @@
         "type": "monomer",
         "id": "621",
         "position": {
-            "x": 5.75,
+            "x": 14.75,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7539,7 +7539,7 @@
         "type": "monomer",
         "id": "622",
         "position": {
-            "x": 8.75,
+            "x": 17.75,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7549,7 +7549,7 @@
         "type": "monomer",
         "id": "623",
         "position": {
-            "x": 4.25,
+            "x": 13.25,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7559,7 +7559,7 @@
         "type": "monomer",
         "id": "624",
         "position": {
-            "x": 2.75,
+            "x": 11.75,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7569,7 +7569,7 @@
         "type": "monomer",
         "id": "625",
         "position": {
-            "x": 1.25,
+            "x": 10.25,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7579,8 +7579,8 @@
         "type": "monomer",
         "id": "626",
         "position": {
-            "x": 16.25,
-            "y": -10.25
+            "x": 4.25,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7589,8 +7589,8 @@
         "type": "monomer",
         "id": "627",
         "position": {
-            "x": 14.75,
-            "y": -10.25
+            "x": 2.75,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -7599,8 +7599,8 @@
         "type": "monomer",
         "id": "628",
         "position": {
-            "x": 17.75,
-            "y": -10.25
+            "x": 5.75,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7609,8 +7609,8 @@
         "type": "monomer",
         "id": "629",
         "position": {
-            "x": 13.25,
-            "y": -10.25
+            "x": 1.25,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7619,7 +7619,7 @@
         "type": "monomer",
         "id": "630",
         "position": {
-            "x": 11.75,
+            "x": 20.75,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7629,7 +7629,7 @@
         "type": "monomer",
         "id": "631",
         "position": {
-            "x": 10.25,
+            "x": 19.25,
             "y": -10.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7639,7 +7639,7 @@
         "type": "monomer",
         "id": "632",
         "position": {
-            "x": 1.25,
+            "x": 11.75,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7649,7 +7649,7 @@
         "type": "monomer",
         "id": "633",
         "position": {
-            "x": 4.25,
+            "x": 14.75,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7659,8 +7659,8 @@
         "type": "monomer",
         "id": "634",
         "position": {
-            "x": 22.25,
-            "y": -10.25
+            "x": 10.25,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7669,8 +7669,8 @@
         "type": "monomer",
         "id": "635",
         "position": {
-            "x": 20.75,
-            "y": -10.25
+            "x": 8.75,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7679,8 +7679,8 @@
         "type": "monomer",
         "id": "636",
         "position": {
-            "x": 19.25,
-            "y": -10.25
+            "x": 7.25,
+            "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7689,8 +7689,8 @@
         "type": "monomer",
         "id": "637",
         "position": {
-            "x": 11.75,
-            "y": -11.75
+            "x": 1.25,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7699,7 +7699,7 @@
         "type": "monomer",
         "id": "638",
         "position": {
-            "x": 10.25,
+            "x": 20.75,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7709,8 +7709,8 @@
         "type": "monomer",
         "id": "639",
         "position": {
-            "x": 13.25,
-            "y": -11.75
+            "x": 2.75,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7719,7 +7719,7 @@
         "type": "monomer",
         "id": "640",
         "position": {
-            "x": 8.75,
+            "x": 19.25,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7729,7 +7729,7 @@
         "type": "monomer",
         "id": "641",
         "position": {
-            "x": 7.25,
+            "x": 17.75,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7739,7 +7739,7 @@
         "type": "monomer",
         "id": "642",
         "position": {
-            "x": 5.75,
+            "x": 16.25,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7749,8 +7749,8 @@
         "type": "monomer",
         "id": "643",
         "position": {
-            "x": 20.75,
-            "y": -11.75
+            "x": 10.25,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7759,8 +7759,8 @@
         "type": "monomer",
         "id": "644",
         "position": {
-            "x": 19.25,
-            "y": -11.75
+            "x": 8.75,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -7769,8 +7769,8 @@
         "type": "monomer",
         "id": "645",
         "position": {
-            "x": 22.25,
-            "y": -11.75
+            "x": 11.75,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7779,8 +7779,8 @@
         "type": "monomer",
         "id": "646",
         "position": {
-            "x": 17.75,
-            "y": -11.75
+            "x": 7.25,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7789,8 +7789,8 @@
         "type": "monomer",
         "id": "647",
         "position": {
-            "x": 16.25,
-            "y": -11.75
+            "x": 5.75,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7799,8 +7799,8 @@
         "type": "monomer",
         "id": "648",
         "position": {
-            "x": 14.75,
-            "y": -11.75
+            "x": 4.25,
+            "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7809,7 +7809,7 @@
         "type": "monomer",
         "id": "649",
         "position": {
-            "x": 7.25,
+            "x": 19.25,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7819,7 +7819,7 @@
         "type": "monomer",
         "id": "650",
         "position": {
-            "x": 5.75,
+            "x": 17.75,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7829,7 +7829,7 @@
         "type": "monomer",
         "id": "651",
         "position": {
-            "x": 8.75,
+            "x": 20.75,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7839,7 +7839,7 @@
         "type": "monomer",
         "id": "652",
         "position": {
-            "x": 4.25,
+            "x": 16.25,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7849,7 +7849,7 @@
         "type": "monomer",
         "id": "653",
         "position": {
-            "x": 2.75,
+            "x": 14.75,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7859,7 +7859,7 @@
         "type": "monomer",
         "id": "654",
         "position": {
-            "x": 1.25,
+            "x": 13.25,
             "y": -13.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7869,8 +7869,8 @@
         "type": "monomer",
         "id": "655",
         "position": {
-            "x": 14.75,
-            "y": -13.25
+            "x": 5.75,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -7879,8 +7879,8 @@
         "type": "monomer",
         "id": "656",
         "position": {
-            "x": 13.25,
-            "y": -13.25
+            "x": 4.25,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7889,8 +7889,8 @@
         "type": "monomer",
         "id": "657",
         "position": {
-            "x": 11.75,
-            "y": -13.25
+            "x": 2.75,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7899,8 +7899,8 @@
         "type": "monomer",
         "id": "658",
         "position": {
-            "x": 10.25,
-            "y": -13.25
+            "x": 1.25,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7909,7 +7909,7 @@
         "type": "monomer",
         "id": "659",
         "position": {
-            "x": 2.75,
+            "x": 13.25,
             "y": -11.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7919,8 +7919,8 @@
         "type": "monomer",
         "id": "660",
         "position": {
-            "x": 16.25,
-            "y": -13.25
+            "x": 7.25,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -7929,8 +7929,8 @@
         "type": "monomer",
         "id": "661",
         "position": {
-            "x": 17.75,
-            "y": -13.25
+            "x": 8.75,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -7939,7 +7939,7 @@
         "type": "monomer",
         "id": "662",
         "position": {
-            "x": 2.75,
+            "x": 16.25,
             "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7949,7 +7949,7 @@
         "type": "monomer",
         "id": "663",
         "position": {
-            "x": 1.25,
+            "x": 14.75,
             "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7959,7 +7959,7 @@
         "type": "monomer",
         "id": "664",
         "position": {
-            "x": 4.25,
+            "x": 17.75,
             "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -7969,8 +7969,8 @@
         "type": "monomer",
         "id": "665",
         "position": {
-            "x": 22.25,
-            "y": -13.25
+            "x": 13.25,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -7979,8 +7979,8 @@
         "type": "monomer",
         "id": "666",
         "position": {
-            "x": 20.75,
-            "y": -13.25
+            "x": 11.75,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -7989,8 +7989,8 @@
         "type": "monomer",
         "id": "667",
         "position": {
-            "x": 19.25,
-            "y": -13.25
+            "x": 10.25,
+            "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -7999,8 +7999,8 @@
         "type": "monomer",
         "id": "668",
         "position": {
-            "x": 11.75,
-            "y": -14.75
+            "x": 4.25,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -8009,8 +8009,8 @@
         "type": "monomer",
         "id": "669",
         "position": {
-            "x": 10.25,
-            "y": -14.75
+            "x": 2.75,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -8019,8 +8019,8 @@
         "type": "monomer",
         "id": "670",
         "position": {
-            "x": 13.25,
-            "y": -14.75
+            "x": 5.75,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8029,8 +8029,8 @@
         "type": "monomer",
         "id": "671",
         "position": {
-            "x": 8.75,
-            "y": -14.75
+            "x": 1.25,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8039,7 +8039,7 @@
         "type": "monomer",
         "id": "672",
         "position": {
-            "x": 7.25,
+            "x": 20.75,
             "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8049,7 +8049,7 @@
         "type": "monomer",
         "id": "673",
         "position": {
-            "x": 5.75,
+            "x": 19.25,
             "y": -14.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8059,8 +8059,8 @@
         "type": "monomer",
         "id": "674",
         "position": {
-            "x": 20.75,
-            "y": -14.75
+            "x": 13.25,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -8069,8 +8069,8 @@
         "type": "monomer",
         "id": "675",
         "position": {
-            "x": 19.25,
-            "y": -14.75
+            "x": 11.75,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -8079,8 +8079,8 @@
         "type": "monomer",
         "id": "676",
         "position": {
-            "x": 22.25,
-            "y": -14.75
+            "x": 14.75,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8089,8 +8089,8 @@
         "type": "monomer",
         "id": "677",
         "position": {
-            "x": 17.75,
-            "y": -14.75
+            "x": 10.25,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8099,8 +8099,8 @@
         "type": "monomer",
         "id": "678",
         "position": {
-            "x": 16.25,
-            "y": -14.75
+            "x": 8.75,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -8109,8 +8109,8 @@
         "type": "monomer",
         "id": "679",
         "position": {
-            "x": 14.75,
-            "y": -14.75
+            "x": 7.25,
+            "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -8119,8 +8119,8 @@
         "type": "monomer",
         "id": "680",
         "position": {
-            "x": 7.25,
-            "y": -16.25
+            "x": 1.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -8129,7 +8129,7 @@
         "type": "monomer",
         "id": "681",
         "position": {
-            "x": 5.75,
+            "x": 20.75,
             "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8139,8 +8139,8 @@
         "type": "monomer",
         "id": "682",
         "position": {
-            "x": 8.75,
-            "y": -16.25
+            "x": 2.75,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8149,7 +8149,7 @@
         "type": "monomer",
         "id": "683",
         "position": {
-            "x": 4.25,
+            "x": 19.25,
             "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8159,7 +8159,7 @@
         "type": "monomer",
         "id": "684",
         "position": {
-            "x": 2.75,
+            "x": 17.75,
             "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8169,7 +8169,7 @@
         "type": "monomer",
         "id": "685",
         "position": {
-            "x": 1.25,
+            "x": 16.25,
             "y": -16.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8179,8 +8179,8 @@
         "type": "monomer",
         "id": "686",
         "position": {
-            "x": 16.25,
-            "y": -16.25
+            "x": 10.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -8189,8 +8189,8 @@
         "type": "monomer",
         "id": "687",
         "position": {
-            "x": 14.75,
-            "y": -16.25
+            "x": 8.75,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -8199,8 +8199,8 @@
         "type": "monomer",
         "id": "688",
         "position": {
-            "x": 17.75,
-            "y": -16.25
+            "x": 11.75,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8209,8 +8209,8 @@
         "type": "monomer",
         "id": "689",
         "position": {
-            "x": 13.25,
-            "y": -16.25
+            "x": 7.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8219,8 +8219,8 @@
         "type": "monomer",
         "id": "690",
         "position": {
-            "x": 11.75,
-            "y": -16.25
+            "x": 5.75,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -8229,8 +8229,8 @@
         "type": "monomer",
         "id": "691",
         "position": {
-            "x": 10.25,
-            "y": -16.25
+            "x": 4.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -8239,7 +8239,7 @@
         "type": "monomer",
         "id": "692",
         "position": {
-            "x": 2.75,
+            "x": 19.25,
             "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8249,7 +8249,7 @@
         "type": "monomer",
         "id": "693",
         "position": {
-            "x": 1.25,
+            "x": 17.75,
             "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8259,7 +8259,7 @@
         "type": "monomer",
         "id": "694",
         "position": {
-            "x": 4.25,
+            "x": 20.75,
             "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
@@ -8269,8 +8269,8 @@
         "type": "monomer",
         "id": "695",
         "position": {
-            "x": 22.25,
-            "y": -16.25
+            "x": 16.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8279,8 +8279,8 @@
         "type": "monomer",
         "id": "696",
         "position": {
-            "x": 20.75,
-            "y": -16.25
+            "x": 14.75,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -8289,8 +8289,8 @@
         "type": "monomer",
         "id": "697",
         "position": {
-            "x": 19.25,
-            "y": -16.25
+            "x": 13.25,
+            "y": -17.75
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -8299,8 +8299,8 @@
         "type": "monomer",
         "id": "698",
         "position": {
-            "x": 10.25,
-            "y": -17.75
+            "x": 5.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -8309,8 +8309,8 @@
         "type": "monomer",
         "id": "699",
         "position": {
-            "x": 13.25,
-            "y": -17.75
+            "x": 8.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8319,8 +8319,8 @@
         "type": "monomer",
         "id": "700",
         "position": {
-            "x": 8.75,
-            "y": -17.75
+            "x": 4.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8329,8 +8329,8 @@
         "type": "monomer",
         "id": "701",
         "position": {
-            "x": 7.25,
-            "y": -17.75
+            "x": 2.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -8339,8 +8339,8 @@
         "type": "monomer",
         "id": "702",
         "position": {
-            "x": 5.75,
-            "y": -17.75
+            "x": 1.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -8349,8 +8349,8 @@
         "type": "monomer",
         "id": "703",
         "position": {
-            "x": 20.75,
-            "y": -17.75
+            "x": 16.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"
@@ -8359,8 +8359,8 @@
         "type": "monomer",
         "id": "704",
         "position": {
-            "x": 19.25,
-            "y": -17.75
+            "x": 14.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "CHEM_R1_R2_R3_R4_R5_"
@@ -8369,8 +8369,8 @@
         "type": "monomer",
         "id": "705",
         "position": {
-            "x": 22.25,
-            "y": -17.75
+            "x": 17.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Nucleotide_R1_R2_R3_R4_R5_"
@@ -8379,8 +8379,8 @@
         "type": "monomer",
         "id": "706",
         "position": {
-            "x": 17.75,
-            "y": -17.75
+            "x": 13.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Peptide_R1_R2_R3_R4_R5_"
@@ -8389,8 +8389,8 @@
         "type": "monomer",
         "id": "707",
         "position": {
-            "x": 16.25,
-            "y": -17.75
+            "x": 11.75,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Phosphate_R1_R2_R3_R4_R5_"
@@ -8399,8 +8399,8 @@
         "type": "monomer",
         "id": "708",
         "position": {
-            "x": 14.75,
-            "y": -17.75
+            "x": 10.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Sugar_R1_R2_R3_R4_R5_"
@@ -8409,8 +8409,8 @@
         "type": "monomer",
         "id": "709",
         "position": {
-            "x": 11.75,
-            "y": -17.75
+            "x": 7.25,
+            "y": -19.25
         },
         "alias": "(R1,R2,R3,R4,R5)",
         "templateId": "Base_R1_R2_R3_R4_R5_"

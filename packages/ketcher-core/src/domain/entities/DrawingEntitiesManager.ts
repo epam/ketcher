@@ -59,9 +59,9 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
-const MONOMER_START_X_POSITION = 50;
-const MONOMER_START_Y_POSITION = 50;
 export const SNAKE_LAYOUT_CELL_WIDTH = 60;
+export const MONOMER_START_X_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
+export const MONOMER_START_Y_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -1364,7 +1364,11 @@ export class DrawingEntitiesManager {
     width = SNAKE_LAYOUT_CELL_WIDTH,
   ) {
     const isMonomerFitCanvas =
-      lastPosition.x + width + DISTANCE_FROM_RIGHT < canvasWidth;
+      lastPosition.x +
+        width +
+        DISTANCE_FROM_RIGHT +
+        SNAKE_LAYOUT_CELL_WIDTH / 2 <
+      canvasWidth;
 
     if (!isMonomerFitCanvas) {
       return {

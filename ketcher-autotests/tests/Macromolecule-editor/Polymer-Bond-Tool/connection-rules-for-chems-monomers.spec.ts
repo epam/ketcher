@@ -58,6 +58,7 @@ test.describe('Connection rules for chems: ', () => {
   });
 
   interface IMonomer {
+    monomerType: string;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -65,6 +66,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -72,20 +74,23 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2) - Right only': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -93,23 +98,26 @@ test.describe('Connection rules for chems: ', () => {
         R2: 'R2',
       },
     },
-    '(R1,R3) - R2 gap': {
-      fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
-      alias: '(R1,R3)_-_R2_gap',
-      connectionPoints: {
-        R1: 'R1',
-        R3: 'R3',
-      },
-    },
-    '(R2,R3) - R1 gap': {
-      fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
-      alias: '(R2,R3)_-_R1_gap',
-      connectionPoints: {
-        R2: 'R2',
-        R3: 'R3',
-      },
-    },
+    // '(R1,R3) - R2 gap': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
+    //   alias: '(R1,R3)_-_R2_gap',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R3: 'R3',
+    //   },
+    // },
+    // '(R2,R3) - R1 gap': {
+    //   monomerType: 'chem',
+    //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
+    //   alias: '(R2,R3)_-_R1_gap',
+    //   connectionPoints: {
+    //     R2: 'R2',
+    //     R3: 'R3',
+    //   },
+    // },
     // '(R3,R4)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -118,6 +126,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -127,6 +136,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3,R4)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -136,6 +146,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -145,6 +156,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -153,17 +165,19 @@ test.describe('Connection rules for chems: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4)': {
-    //   fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: '(R1,R2,R3,R4)',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //   },
-    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: 'chem',
+      fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: '(R1,R2,R3,R4)',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+      },
+    },
     // '(R1,R3,R4,R5)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -174,6 +188,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -184,6 +199,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
+    //   monomerType: 'chem',
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -198,6 +214,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const tmpChemMonomers: { [monomerName: string]: IMonomer } = {
     'Test-6-Ch': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/Test-6-Ch.ket',
       alias: 'Test-6-Ch',
       connectionPoints: {
@@ -209,6 +226,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-1': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-1',
       connectionPoints: {
@@ -221,6 +239,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-2': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-2',
       connectionPoints: {
@@ -233,6 +252,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-3': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-3',
       connectionPoints: {
@@ -245,6 +265,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-4': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-4',
       connectionPoints: {
@@ -257,6 +278,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-5': {
+      monomerType: 'chem',
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-5',
       connectionPoints: {
@@ -702,6 +724,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -709,20 +732,23 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2) - Right only': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
         R2: 'R2',
       },
     },
-    '(R3) - Side only': {
-      fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
-      alias: '(R3)_-_Side_only',
-      connectionPoints: {
-        R3: 'R3',
-      },
-    },
+    // '(R3) - Side only': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
+    //   alias: '(R3)_-_Side_only',
+    //   connectionPoints: {
+    //     R3: 'R3',
+    //   },
+    // },
     '(R1,R2) - R3 gap': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -731,6 +757,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -739,6 +766,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -747,6 +775,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R3,R4)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -755,6 +784,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
+      monomerType: 'peptide',
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -764,6 +794,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3,R4)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -773,6 +804,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -782,6 +814,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -791,6 +824,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -801,6 +835,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -811,6 +846,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -821,6 +857,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
+    //   monomerType: 'peptide',
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -925,6 +962,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -932,6 +970,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2) - Right only': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -939,6 +978,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R3) - Side only': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -946,6 +986,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R1,R2) - R3 gap': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -954,6 +995,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -962,6 +1004,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -970,6 +1013,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R3,R4)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -978,6 +1022,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
+      monomerType: 'ordinaryMolecule',
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
@@ -987,6 +1032,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3,R4)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -996,6 +1042,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1005,6 +1052,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1013,17 +1061,19 @@ test.describe('Connection rules for chems: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4)': {
-    //   fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
-    //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //   },
-    // },
+    '(R1,R2,R3,R4)': {
+      monomerType: 'ordinaryMolecule',
+      fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+      },
+    },
     // '(R1,R3,R4,R5)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1034,6 +1084,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
+    //   monomerType: 'ordinaryMolecule',
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1043,17 +1094,18 @@ test.describe('Connection rules for chems: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    // '(R1,R2,R3,R4,R5)': {
-    //   fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
-    //   alias: 'F1',
-    //   connectionPoints: {
-    //     R1: 'R1',
-    //     R2: 'R2',
-    //     R3: 'R3',
-    //     R4: 'R4',
-    //     R5: 'R5',
-    //   },
-    // },
+    '(R1,R2,R3,R4,R5)': {
+      monomerType: 'ordinaryMolecule',
+      fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
+      alias: 'F1',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+        R5: 'R5',
+      },
+    },
   };
 
   let ordinaryMoleculeName: string;

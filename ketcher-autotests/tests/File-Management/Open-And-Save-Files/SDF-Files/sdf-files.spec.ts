@@ -91,7 +91,8 @@ test('Validate that unsplit nucleotides connected with another nucleotides could
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [1, 107, 213, 319, 425, 531];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -129,7 +130,10 @@ test('Validate that unsplit nucleotides connected with chems could be saved to s
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 182, 363, 544, 725, 906, 1087, 1267, 1448,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -167,7 +171,10 @@ test('Validate that unsplit nucleotides connected with sugars could be saved to 
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 178, 355, 532, 709, 886, 1063, 1240, 1417,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -205,7 +212,10 @@ test('Validate that unsplit nucleotides connected with bases could be saved to s
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 186, 371, 556, 741, 926, 1111, 1296, 1481,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -243,7 +253,10 @@ test('Validate that unsplit nucleotides connected with phosphates could be saved
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 165, 329, 493, 657, 821, 985, 1149, 1313,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -281,7 +294,10 @@ test('Validate that unsplit nucleotides connected with peptides could be saved t
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -321,7 +337,8 @@ test('Validate that unsplit nucleotides connected with another nucleotides could
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [1, 107, 213, 319, 425, 531];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -361,7 +378,10 @@ test('Validate that unsplit nucleotides connected with chems could be saved to s
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 182, 363, 544, 725, 906, 1087, 1267, 1448,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -401,7 +421,10 @@ test('Validate that unsplit nucleotides connected with sugars could be saved to 
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 178, 355, 532, 709, 886, 1063, 1240, 1417,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -441,7 +464,10 @@ test('Validate that unsplit nucleotides connected with bases could be saved to s
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 186, 371, 556, 741, 926, 1111, 1296, 1481,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -481,7 +507,10 @@ test('Validate that unsplit nucleotides connected with phosphates could be saved
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 165, 329, 493, 657, 821, 985, 1149, 1313,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -521,7 +550,10 @@ test('Validate that unsplit nucleotides connected with peptides could be saved t
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [1];
+  // eslint-disable-next-line no-magic-numbers
+  const METADATA_STRINGS_INDEXES = [
+    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
+  ];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({

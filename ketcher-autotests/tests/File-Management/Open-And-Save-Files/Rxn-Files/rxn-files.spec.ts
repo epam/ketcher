@@ -26,6 +26,7 @@ import {
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
+/* eslint-disable no-magic-numbers */
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -407,11 +408,17 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
       expectedFile,
     );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 157, 307, 457, 607, 757, 907, 1057, 1207,
+    ];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
@@ -452,11 +459,18 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
       expectedFile,
     );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 179, 351, 523, 695, 867, 1039, 1211, 1383,
+    ];
+
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
@@ -497,11 +511,16 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
       expectedFile,
     );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 184, 361, 538, 715, 892];
+
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
@@ -542,11 +561,18 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
       expectedFile,
     );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
+    ];
+
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
@@ -587,11 +613,18 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
       expectedFile,
     );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 181, 355, 529, 703, 877, 1051, 1225, 1399,
+    ];
+
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 
@@ -627,6 +660,11 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
+    ];
+
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
       'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
@@ -637,6 +675,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
         page,
         expectedFileName:
           'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v2000',
       });
 

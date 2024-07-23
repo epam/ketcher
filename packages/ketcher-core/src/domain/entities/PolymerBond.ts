@@ -1,21 +1,25 @@
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities/vec2';
-import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { AttachmentPointName } from 'domain/types';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
-import { Sugar } from 'domain/entities/Sugar';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { RNABase } from 'domain/entities/RNABase';
+import { Sugar } from 'domain/entities/Sugar';
+import { Vec2 } from 'domain/entities/vec2';
 import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
+import { AttachmentPointName } from 'domain/types';
+import { BaseMonomer } from './BaseMonomer';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
   public renderer?:
-    | PolymerBondRenderer
     | BackBoneBondSequenceRenderer
-    | PolymerBondSequenceRenderer = undefined;
+    | FlexModePolymerBondRenderer
+    | PolymerBondRenderer
+    | PolymerBondSequenceRenderer
+    | SnakeModePolymerBondRenderer = undefined;
 
   public endPosition: Vec2 = new Vec2();
 
@@ -35,10 +39,12 @@ export class PolymerBond extends DrawingEntity {
 
   public setRenderer(
     renderer:
-      | PolymerBondRenderer
       | BackBoneBondSequenceRenderer
-      | PolymerBondSequenceRenderer,
-  ) {
+      | FlexModePolymerBondRenderer
+      | PolymerBondRenderer
+      | PolymerBondSequenceRenderer
+      | SnakeModePolymerBondRenderer,
+  ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

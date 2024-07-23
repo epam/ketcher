@@ -77,15 +77,12 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   public isMonomersOnSameHorizontalLine(): boolean {
-    return Boolean(
-      this.polymerBond.secondMonomer &&
-        this.polymerBond.firstMonomer.position.y -
-          this.polymerBond.secondMonomer.position.y <
-          0.5 &&
-        this.polymerBond.firstMonomer.position.y -
-          this.polymerBond.secondMonomer.position.y >
-          -0.5,
-    );
+    if (!this.polymerBond.secondMonomer) return false;
+
+    const monomer1Y = this.polymerBond.firstMonomer.position.y;
+    const monomer2Y = this.polymerBond.secondMonomer.position.y;
+    const difference = monomer1Y - monomer2Y;
+    return difference < 0.5 && difference > -0.5;
   }
 
   // TODO: Specify the types.

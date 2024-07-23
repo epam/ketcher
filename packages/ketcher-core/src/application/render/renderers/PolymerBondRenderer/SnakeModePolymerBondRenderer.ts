@@ -40,6 +40,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
+  // TODO: Delete.
+  public get isSnake(): true {
+    return true;
+  }
+
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
     if (!rootNode) return;

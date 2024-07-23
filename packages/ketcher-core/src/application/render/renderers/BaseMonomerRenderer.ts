@@ -1,8 +1,6 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor, SelectRectangle } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { PolymerBondRenderer } from 'application/render';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
@@ -76,18 +74,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     };
   }
 
-  // FIXME: BaseMonomerRenderer should not know about `isSnake`.
+  // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
   ): boolean {
     const renderer =
       this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
     if (!renderer) return false;
-    if (renderer instanceof SnakeModePolymerBondRenderer) return true;
-    if (!(renderer instanceof PolymerBondRenderer)) return false;
-    return Boolean(
-      renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine(),
-    );
+    if ('isSnake' in renderer) {
+      return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
+    }
+    return false;
   }
 
   public get center() {
@@ -251,6 +248,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
         this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle || rotation,
+      // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
 

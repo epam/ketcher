@@ -34,7 +34,7 @@ export function pseudoAtomValid(
   value: string,
   atomType: AtomType,
   isCustomQuery: boolean,
-  disableQueryElements?: string[],
+  disableQueryElements?: string[] | null,
 ) {
   const capitalizedValue = capitalize(value);
   const isDisabledQueryElement =

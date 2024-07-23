@@ -30,6 +30,7 @@ const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
+  // TODO: Specify the types.
   private selectionElement;
   private path = '';
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
@@ -130,6 +131,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
+  // TODO: Specify the types.
   public appendSnakeBond(rootElement) {
     const startPosition = this.scaledPosition.startPosition;
     const endPosition = this.scaledPosition.endPosition;
@@ -146,6 +148,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
+  // TODO: Specify the types.
   private drawPartOfSideConnection(
     isHorizontal: boolean,
     connection,
@@ -189,6 +192,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return pathPart;
   }
 
+  // TODO: Specify the types.
   private appendSideConnectionBond(rootElement) {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
@@ -225,6 +229,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
+    // TODO: Specify the types.
     let previousConnection;
     let previousCell;
 
@@ -369,7 +374,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.polymerBond.firstMonomer.renderer?.monomerSize.height ?? 0;
   }
 
-  public isMonomersOnSameHorizontalLine() {
+  public isMonomersOnSameHorizontalLine(): boolean {
     return Boolean(
       this.polymerBond.secondMonomer &&
         this.polymerBond.firstMonomer.position.y -
@@ -384,9 +389,9 @@ export class PolymerBondRenderer extends BaseRenderer {
   private updateSnakeBondPath(
     startPosition: Vec2,
     endPosition: Vec2,
-    reCheckAttachmentpoint = true,
+    reCheckAttachmentPoint = true,
   ): void {
-    const isR1TheCurrentAttachmentpointOfFirstMonomer =
+    const isR1TheCurrentAttachmentPointOfFirstMonomer =
       this.polymerBond.firstMonomer.getAttachmentPointByBond(
         this.polymerBond,
       ) === 'R1' ||
@@ -404,8 +409,8 @@ export class PolymerBondRenderer extends BaseRenderer {
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       if (
-        isR1TheCurrentAttachmentpointOfFirstMonomer &&
-        reCheckAttachmentpoint
+        isR1TheCurrentAttachmentPointOfFirstMonomer &&
+        reCheckAttachmentPoint
       ) {
         this.updateSnakeBondPath(endPosition, startPosition, false);
         return;
@@ -431,8 +436,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     } else if (this.isSecondMonomerTopRight(startPosition, endPosition)) {
       if (
-        isR1TheCurrentAttachmentpointOfFirstMonomer &&
-        reCheckAttachmentpoint
+        isR1TheCurrentAttachmentPointOfFirstMonomer &&
+        reCheckAttachmentPoint
       ) {
         this.updateSnakeBondPath(endPosition, startPosition, false);
         return;
@@ -461,8 +466,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     } else if (this.isSecondMonomerBottomLeft(startPosition, endPosition)) {
       if (
-        isR1TheCurrentAttachmentpointOfFirstMonomer &&
-        reCheckAttachmentpoint
+        isR1TheCurrentAttachmentPointOfFirstMonomer &&
+        reCheckAttachmentPoint
       ) {
         this.updateSnakeBondPath(endPosition, startPosition, false);
         return;
@@ -499,8 +504,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     } else if (this.isSecondMonomerTopLeft(startPosition, endPosition)) {
       if (
-        isR1TheCurrentAttachmentpointOfFirstMonomer &&
-        reCheckAttachmentpoint
+        isR1TheCurrentAttachmentPointOfFirstMonomer &&
+        reCheckAttachmentPoint
       ) {
         this.updateSnakeBondPath(endPosition, startPosition, false);
         return;
@@ -535,8 +540,8 @@ export class PolymerBondRenderer extends BaseRenderer {
       );
     } else if (this.isSecondMonomerLeft(startPosition, endPosition)) {
       if (
-        isR1TheCurrentAttachmentpointOfFirstMonomer &&
-        reCheckAttachmentpoint
+        isR1TheCurrentAttachmentPointOfFirstMonomer &&
+        reCheckAttachmentPoint
       ) {
         this.updateSnakeBondPath(endPosition, startPosition, false);
         return;
@@ -680,6 +685,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.path = `${start} ${line}`;
   }
 
+  // TODO: Specify the types.
   public appendBondGraph(rootElement) {
     this.bodyElement = rootElement
       .append('line')

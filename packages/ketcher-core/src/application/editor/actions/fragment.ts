@@ -143,7 +143,7 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
   if (!flag) {
     const struct = restruct.molecule;
     const frag = restruct.molecule.frags.get(frid);
-    frag.stereoAtoms.forEach((aid) => {
+    frag?.stereoAtoms.forEach((aid) => {
       if (struct.atoms.get(aid).stereoLabel === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid));
       }

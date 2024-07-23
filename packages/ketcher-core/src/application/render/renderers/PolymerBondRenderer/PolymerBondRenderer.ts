@@ -42,7 +42,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
-  private get isSnake(): boolean {
+  public get isSnake(): boolean {
     if (this.polymerBond.isSideChainConnection) {
       return false;
     }

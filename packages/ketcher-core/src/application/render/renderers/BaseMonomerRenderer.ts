@@ -76,13 +76,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
-  ) {
-    return (
-      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
-        ?.isSnake &&
-      !this.monomer.attachmentPointsToBonds[
-        attachmentPointName
-      ]?.renderer?.isMonomersOnSameHorizontalLine()
+  ): boolean {
+    const polymerBond =
+      this.monomer.attachmentPointsToBonds[attachmentPointName];
+
+    return Boolean(
+      polymerBond?.renderer?.isSnake &&
+        !polymerBond?.renderer?.isMonomersOnSameHorizontalLine(),
     );
   }
 
@@ -250,7 +250,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
         this.hoveredAttachmenPoint === attachmentPointName,
       angle: customAngle || rotation,
-      isSnake: !!this.isSnakeBondForAttachmentPoint(attachmentPointName),
+      isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
 
     const attPointInstance = new AttachmentPoint(attachmentPointParams);

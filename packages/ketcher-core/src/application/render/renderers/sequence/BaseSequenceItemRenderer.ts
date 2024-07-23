@@ -331,7 +331,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return null;
   }
 
-  public hoverAttachmenPoint() {}
+  public hoverAttachmentPoint(): void {}
   public updateAttachmentPoints() {}
 
   private drawBackgroundElementHover() {

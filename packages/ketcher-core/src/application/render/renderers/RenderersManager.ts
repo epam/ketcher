@@ -371,7 +371,7 @@ export class RenderersManager {
     attachmentPointName: AttachmentPointName,
   ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
-    monomer.renderer?.hoverAttachmenPoint(attachmentPointName);
+    monomer.renderer?.hoverAttachmentPoint(attachmentPointName);
     monomer.renderer?.updateAttachmentPoints();
   }
 

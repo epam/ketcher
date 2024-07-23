@@ -34,7 +34,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmenPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
@@ -122,8 +122,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
-  public redrawAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  public redrawAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -133,8 +133,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
-  public updateAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  public updateAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -183,20 +183,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
       const attachmentPoint = this.appendAttachmentPoint(item);
-      const angle = attachmentPoint.getAngle();
+      const angle: number = attachmentPoint.getAngle();
 
       this.attachmentPoints.push(attachmentPoint as never);
 
-      if (typeof angle === 'number') {
-        // remove this sector from list of free sectors
-        const newList = this.freeSectorsList.filter((item) => {
-          return (
-            anglesToSector[item].min > angle ||
-            anglesToSector[item].max <= angle
-          );
-        });
-        this.freeSectorsList = checkFor0and360(newList);
-      }
+      // remove this sector from list of free sectors
+      const newList = this.freeSectorsList.filter((item) => {
+        return (
+          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
+        );
+      });
+      this.freeSectorsList = checkFor0and360(newList);
     });
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
@@ -252,7 +249,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
       isPotentiallyUsed:
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
-        this.hoveredAttachmenPoint === attachmentPointName,
+        this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle || rotation,
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
@@ -269,8 +266,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmenPoint(attachmentPointName: AttachmentPointName) {
-    this.hoveredAttachmenPoint = attachmentPointName;
+  public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
+    this.hoveredAttachmentPoint = attachmentPointName;
   }
 
   private appendRootElement(

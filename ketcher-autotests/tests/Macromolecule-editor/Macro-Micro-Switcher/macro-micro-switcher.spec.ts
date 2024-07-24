@@ -2418,75 +2418,79 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that it is possible to save micro-macro connection to mol v2000 file', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Validate that it is possible to save micro-macro connection to mol v2000 file',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to mol v2000 file.
     The structure after opening is not similar to the original one. 
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/micro-macro-structure-expected.mol',
-      expectedFile,
-    );
+      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/micro-macro-structure-expected.mol',
+        expectedFile,
+      );
 
-    const METADATA_STRINGS_INDEXES = [1];
+      const METADATA_STRINGS_INDEXES = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/micro-macro-structure-expected.mol',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v2000',
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'Molfiles-V2000/micro-macro-structure-expected.mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/micro-macro-structure-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/micro-macro-structure-expected.mol',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
-
-  test('Validate that it is possible to save micro-macro connection to sdf v2000 file', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Validate that it is possible to save micro-macro connection to sdf v2000 file',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to sdf v2000 file.
     Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5123
     After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
-    await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
-      'SDF/micro-macro-structure-v2000-expected.sdf',
-      expectedFile,
-    );
+      await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
+      const expectedFile = await getSdf(page, 'v2000');
+      await saveToFile(
+        'SDF/micro-macro-structure-v2000-expected.sdf',
+        expectedFile,
+      );
 
-    const METADATA_STRINGS_INDEXES = [1];
+      const METADATA_STRINGS_INDEXES = [1];
 
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
+      const { fileExpected: sdfFileExpected, file: sdfFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/SDF/micro-macro-structure-v2000-expected.sdf',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v2000',
+        });
+
+      expect(sdfFile).toEqual(sdfFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'SDF/micro-macro-structure-v2000-expected.sdf',
         page,
-        expectedFileName:
-          'tests/test-data/SDF/micro-macro-structure-v2000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'SDF/micro-macro-structure-v2000-expected.sdf',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that it is possible to save micro-macro connection to sdf v3000 file', async ({
     page,

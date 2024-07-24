@@ -1,0 +1,881 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "rg32"
+            },
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            },
+            {
+                "$ref": "mol2"
+            },
+            {
+                "$ref": "mol3"
+            },
+            {
+                "$ref": "mol4"
+            },
+            {
+                "type": "arrow",
+                "data": {
+                    "mode": "open-angle",
+                    "pos": [
+                        {
+                            "x": 6.341451886958819,
+                            "y": -2.076151665750068,
+                            "z": 0
+                        },
+                        {
+                            "x": 10.549103353974779,
+                            "y": -2.076151665750068,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "plus",
+                "location": [
+                    12.799334405178604,
+                    -5.513850898042045,
+                    0
+                ],
+                "prop": {}
+            },
+            {
+                "type": "simpleObject",
+                "data": {
+                    "mode": "ellipse",
+                    "pos": [
+                        {
+                            "x": 6.200767165901329,
+                            "y": -0.47869934922627166,
+                            "z": 0
+                        },
+                        {
+                            "x": 9.96748711679551,
+                            "y": -3.5714941040869723,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "simpleObject",
+                "data": {
+                    "mode": "line",
+                    "pos": [
+                        {
+                            "x": 9.422901099798759,
+                            "y": -1.0527837754770122,
+                            "z": 0
+                        },
+                        {
+                            "x": 6.609206678648892,
+                            "y": -2.936143750924102,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "simpleObject",
+                "data": {
+                    "mode": "rectangle",
+                    "pos": [
+                        {
+                            "x": 9.49097435192336,
+                            "y": -2.9815259190071624,
+                            "z": 0
+                        },
+                        {
+                            "x": 6.654588846731956,
+                            "y": -0.9847105233524198,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "text",
+                "data": {
+                    "content": "{\"blocks\":[{\"key\":\"fo9b9\",\"text\":\"Test case\",\"type\":\"unstyled\",\"depth\":0,\"inlineStyleRanges\":[{\"offset\":0,\"length\":9,\"style\":\"CUSTOM_FONT_SIZE_40px\"}],\"entityRanges\":[],\"data\":{}}],\"entityMap\":{}}",
+                    "position": {
+                        "x": 10.464421857305044,
+                        "y": -0.8167965014450855,
+                        "z": 0
+                    },
+                    "pos": [
+                        {
+                            "x": 10.464421857305044,
+                            "y": -0.8167965014450855,
+                            "z": 0
+                        },
+                        {
+                            "x": 10.464421857305044,
+                            "y": -1.9167965014450856,
+                            "z": 0
+                        },
+                        {
+                            "x": 14.688641370244497,
+                            "y": -1.9167965014450856,
+                            "z": 0
+                        },
+                        {
+                            "x": 14.688641370244497,
+                            "y": -0.8167965014450855,
+                            "z": 0
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "rasterImage",
+                "center": {
+                    "x": 12.693128338715395,
+                    "y": -5.255657410270978,
+                    "z": 0
+                },
+                "data": {
+                    "bitmap": "data:image/png;base64,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",
+                    "halfSize": {
+                        "x": 5.462878482998638,
+                        "y": 5.285888027474694,
+                        "z": 0
+                    }
+                }
+            },
+            {
+                "type": "rasterImage",
+                "center": {
+                    "x": 15.68290106598813,
+                    "y": -11.437475592089157,
+                    "z": 0
+                },
+                "data": {
+                    "bitmap": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBVcGxvYWRlZCB0bzogU1ZHIFJlcG8sIHd3dy5zdmdyZXBvLmNvbSwgR2VuZXJhdG9yOiBTVkcgUmVwbyBNaXhlciBUb29scyAtLT4NCjxzdmcgZmlsbD0iIzAwMDAwMCIgaGVpZ2h0PSI4MDBweCIgd2lkdGg9IjgwMHB4IiB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiANCgkgdmlld0JveD0iMCAwIDUxMi4wMDEgNTEyLjAwMSIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8Zz4NCgkJPHBhdGggZD0iTTI2Ni4xNzQsMjQ2LjY0NmMtMTUuMTk0LTIyLjg0OS0zNi43LTM5LjkzOC02Mi4xOTItNDkuNDIxYy00Ljc0LTEuNzY1LTEwLjAxOCwwLjY1LTExLjc4Miw1LjM5Mw0KCQkJYy0xLjc2NSw0Ljc0NCwwLjY0OSwxMC4wMTksNS4zOTMsMTEuNzgzYzIxLjg0NCw4LjEyNSw0MC4yODIsMjIuNzg2LDUzLjMyMiw0Mi4zOTNjMS43NjQsMi42NTQsNC42NzMsNC4wOSw3LjYzOCw0LjA5DQoJCQljMS43NDMsMCwzLjUwNS0wLjQ5Niw1LjA2NS0xLjUzNEMyNjcuODMyLDI1Ni41NDYsMjY4Ljk3NywyNTAuODU5LDI2Ni4xNzQsMjQ2LjY0NnoiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCgk8Zz4NCgkJPHBhdGggZD0iTTE4MC44OTQsMTEwLjk0NmMtNS4wNiwwLTkuMTYzLDQuMTAyLTkuMTYzLDkuMTYzdjU3LjA3OGMwLDUuMDYsNC4xMDIsOS4xNjMsOS4xNjMsOS4xNjNjNS4wNiwwLDkuMTYzLTQuMTAyLDkuMTYzLTkuMTYzDQoJCQl2LTU3LjA3OEMxOTAuMDU3LDExNS4wNDgsMTg1Ljk1NCwxMTAuOTQ2LDE4MC44OTQsMTEwLjk0NnoiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCgk8Zz4NCgkJPHBhdGggZD0iTTUwNy4yMTcsNDE0LjgwMWwtOTUuNTIxLTE4NS4yNzR2LTc2LjU3YzE2LjE3Mi0xLjUwMSwyOC44NzYtMTUuMTQyLDI4Ljg3Ni0zMS42OThjMC0xNy41NTctMTQuMjg0LTMxLjg0MS0zMS44NDEtMzEuODQxDQoJCQlIMzAyLjIzNGMtMTcuNTU3LDAtMzEuODQxLDE0LjI4NC0zMS44NDEsMzEuODQxYzAsMTYuNTU2LDEyLjcwMywzMC4xOTUsMjguODc1LDMxLjY5N3Y3Ni41N2wtMy40NTksNi43MDcNCgkJCWMtMTcuNDEyLTI5LjAxOS00My45MzctNTIuMTQyLTc1LjIxMS02NS4yNzRWOTcuNjU0YzEzLjU5Ni0zLjYyNiwyMy42NDMtMTYuMDQyLDIzLjY0My0zMC43NjYNCgkJCWMwLTE3LjU1Ny0xNC4yODMtMzEuODQxLTMxLjg0MS0zMS44NDFIMTA1LjkwNGMtMTcuNTU3LDAtMzEuODQxLDE0LjI4NC0zMS44NDEsMzEuODQxYzAsMTQuNzI2LDEwLjA1MiwyNy4xNDYsMjMuNjUzLDMwLjc2OA0KCQkJdjczLjI5OGMtMjcuNTY0LDExLjUyNy01MS4xNzcsMzAuNDUzLTY4LjU3Miw1NS4wMzdDMTAuMDc4LDI1Mi45MzcsMCwyODQuNjg0LDAsMzE3LjgwMmMwLDg3Ljc1NSw3MS4zOTUsMTU5LjE1MSwxNTkuMTUxLDE1OS4xNTENCgkJCWMxOS4wMywwLDM3LjU2Mi0zLjMyMSw1NS4xODQtOS44NTVjNy41MjcsNi4zMDMsMTcuMDg4LDkuODUyLDI3LjI5NCw5Ljg1MmgyMjcuNzA5YzE0Ljk4NywwLDI4LjU5LTcuNjQxLDM2LjM5MS0yMC40MzgNCgkJCVM1MTQuMDg1LDQyOC4xMjEsNTA3LjIxNyw0MTQuODAxeiBNMjg4LjcxOSwxMjEuMjZjMC03LjQ1Miw2LjA2My0xMy41MTYsMTMuNTE2LTEzLjUxNmgxMDYuNDk4DQoJCQljNy40NTQsMCwxMy41MTYsNi4wNjMsMTMuNTE2LDEzLjUxNmMwLDcuNDUyLTYuMDYzLDEzLjUxNi0xMy41MTYsMTMuNTE2SDMwMi4yMzVDMjk0Ljc4MywxMzQuNzc1LDI4OC43MTksMTI4LjcxMiwyODguNzE5LDEyMS4yNg0KCQkJeiBNOTIuMzg4LDY2Ljg4OWMwLTcuNDUyLDYuMDYyLTEzLjUxNiwxMy41MTYtMTMuNTE2aDEwNi40OTljNy40NTIsMCwxMy41MTYsNi4wNjMsMTMuNTE2LDEzLjUxNnMtNi4wNjIsMTMuNTE2LTEzLjUxNiwxMy41MTYNCgkJCUgxMDUuOTA0Qzk4LjQ1LDgwLjQwNCw5Mi4zODgsNzQuMzQyLDkyLjM4OCw2Ni44ODl6IE0xNTkuMTU1LDQ1OC42MjljLTc3LjY1Ni0wLjAwMi0xNDAuODMtNjMuMTc2LTE0MC44My0xNDAuODI3DQoJCQljMC0yOS4zMDUsOC45MTMtNTcuMzkyLDI1Ljc3OC04MS4yMjRjMTYuNS0yMy4zMiwzOS4zMTMtNDAuODg2LDY1Ljk3LTUwLjgwM2MzLjU4OC0xLjMzNSw1Ljk2OC00Ljc2LDUuOTY4LTguNTg3Vjk4LjczaDg2LjIzMg0KCQkJdjc4LjQ1N2MwLDMuODI4LDIuMzc5LDcuMjUyLDUuOTY2LDguNTg3YzMzLjYzLDEyLjUxOSw2MS42MjYsMzcuOTQ3LDc3LjQzLDcwLjEzMWwtMzQuODcsNjcuNjM1DQoJCQljLTIuODQ3LTEuMjExLTUuNTQtMi41NTgtOC4zMTQtMy45NTVjLTEwLjE5Ni01LjEzMS0yMS43NTItMTAuOTQ2LTQzLjcyNC0xMC45NDZjLTIxLjk4MSwwLTMzLjUzNiw1LjgxNi00My43MjksMTAuOTUNCgkJCWMtOS41ODQsNC44MjQtMTcuODYxLDguOTkyLTM1LjQ4OSw4Ljk5MmMtMTcuNjI4LDAtMjUuOTA2LTQuMTY3LTM1LjQ4OS04Ljk5MmMtMTAuMTk0LTUuMTMyLTIxLjc0OS0xMC45NS00My43MjktMTAuOTUNCgkJCWMtNS4wNiwwLTkuMTYzLDQuMTAyLTkuMTYzLDkuMTYzYzAsNzAuNTc1LDU3LjQxNywxMjcuOTkyLDEyNy45OTIsMTI3Ljk5MmMxMy44MTcsMCwyNy4yNTctMi4xNzEsNDAuMTMxLTYuNDQ4DQoJCQljMC41MDcsNC4yMzgsMS42NDgsOC40MTUsMy40NDUsMTIuNEMxODguNzMsNDU2LjMxNCwxNzQuMTIsNDU4LjYyOSwxNTkuMTU1LDQ1OC42Mjl6IE0yMDMuNzQ4LDQxNC44MDENCgkJCWMtMC42NjYsMS4yOTEtMS4yNCwyLjYwOC0xLjc2NywzLjkzOGMtMTMuNTM5LDUuNzktMjcuOTI4LDguNzMtNDIuODMxLDguNzNjLTU3LjIyMiwwLTEwNC4zNDktNDQuMDU0LTEwOS4yNDYtMTAwLjAyNg0KCQkJYzExLjQyNywxLjIyNSwxOC4yNSw0LjY2LDI1LjkwNyw4LjUxNWMxMC4xOTQsNS4xMzIsMjEuNzQ5LDEwLjk1LDQzLjcyOSwxMC45NWMyMS45ODEsMCwzMy41MzUtNS44MTYsNDMuNzI5LTEwLjk1DQoJCQljOS41ODQtNC44MjQsMTcuODYxLTguOTkyLDM1LjQ4OS04Ljk5MmMxNy42MjIsMCwyNS45LDQuMTY2LDM1LjQ4NSw4Ljk5YzIuNjEsMS4zMTMsNS4yNjgsMi42NDYsOC4xMzQsMy45MTRMMjAzLjc0OCw0MTQuODAxeg0KCQkJIE00OTAuMDgsNDQ2Ljk3NGMtNC40NDYsNy4yOTUtMTIuMiwxMS42NDktMjAuNzQzLDExLjY0OUgyNDEuNjI4Yy04LjU0MiwwLTE2LjI5Ny00LjM1NS0yMC43NDMtMTEuNjQ5DQoJCQljLTQuNDQ2LTcuMjk0LTQuNzYzLTE2LjE4My0wLjg0OS0yMy43NzVsOTYuNTM4LTE4Ny4yNDljMC42NjktMS4yOTksMS4wMTktMi43MzgsMS4wMTktNC4xOTl2LTc4LjY1aDc1Ljc3OHY3OC42NQ0KCQkJYzAsMS40NjEsMC4zNDksMi45LDEuMDE5LDQuMTk5bDk2LjUzOSwxODcuMjQ5QzQ5NC44NDQsNDMwLjc5Miw0OTQuNTI3LDQzOS42OCw0OTAuMDgsNDQ2Ljk3NHoiLz4NCgk8L2c+DQo8L2c+DQo8Zz4NCgk8Zz4NCgkJPHBhdGggZD0iTTQwNC42OTQsMjgyLjU5N2wtMjMuNTQtNDUuNjU4VjE3NC40OGMwLTUuMDYtNC4xMDEtOS4xNjMtOS4xNjMtOS4xNjNjLTUuMDYyLDAtOS4xNjMsNC4xMDItOS4xNjMsOS4xNjN2NjQuNjgNCgkJCWMwLDEuNDYxLDAuMzQ5LDIuOSwxLjAxOSw0LjE5OWwyNC41NTgsNDcuNjM0YzEuNjI2LDMuMTU2LDQuODMxLDQuOTY2LDguMTUxLDQuOTY2YzEuNDE0LDAsMi44NDktMC4zMjksNC4xOTItMS4wMg0KCQkJQzQwNS4yNDcsMjkyLjYyMSw0MDcuMDE0LDI4Ny4wOTUsNDA0LjY5NCwyODIuNTk3eiIvPg0KCTwvZz4NCjwvZz4NCjxnPg0KCTxnPg0KCQk8cGF0aCBkPSJNNDc5LjU4MSw0MjkuMTk0Yy0wLjAxNy0wLjAzNC0wLjA0LTAuMDgxLTAuMDU5LTAuMTE1bC01OS40NzctMTE1LjM2M2MtMC45MjQtMS43OTItMi40MTQtMy4yMy00LjIzNy00LjA4OQ0KCQkJYy0xLjE1OS0wLjU0Ni0yLjI4Mi0xLjExMi0zLjQwNS0xLjY3N2MtNy4xMDEtMy41NzMtMTUuMTQ3LTcuNjIyLTMwLjUxNi03LjYyMmMtMTUuMzg1LDAtMjMuNDMzLDQuMDU0LTMwLjUzMyw3LjYzDQoJCQljLTYuMjg4LDMuMTY4LTExLjI1NSw1LjY2OS0yMi4yNzUsNS42NjljLTExLjAzMSwwLTE1Ljk5OS0yLjUtMjIuMjg5LTUuNjY1Yy0wLjczOC0wLjM3MS0xLjQ3Ny0wLjc0My0yLjIyMy0xLjExMQ0KCQkJYy00LjQ4Mi0yLjIwMS05LjkwMS0wLjQxMi0xMi4xODYsNC4wMjRsLTYwLjg4MywxMTguMTA3Yy0xLjk0NSwzLjY2My0xLjgxNCw3Ljc5MywwLjMzNSwxMS4yOTUNCgkJCWMxLjAwNywxLjY1OSwzLjk3Nyw1LjUxOCw5Ljc4OSw1LjUxOGgyMjcuNzEyYzUuODEsMCw4Ljc2OS0zLjgyNiw5Ljc5OC01LjUzMkM0ODAuMTQzLDQzOC41OTQsNDgyLjEyNSw0MzQuMjgyLDQ3OS41ODEsNDI5LjE5NHoNCgkJCSBNMjUyLjg5Niw0MjcuNDY5di0wLjAwMWw1MS42ODEtMTAwLjI1NmM1LjkwNiwyLjU2NiwxMy4yMzcsNC43MzgsMjQuNTA1LDQuNzM4YzE1LjM3NCwwLDIzLjQyLTQuMDUyLDMwLjUxOC03LjYyNw0KCQkJYzYuMjkxLTMuMTY5LDExLjI2LTUuNjcxLDIyLjI5LTUuNjcxYzExLjAxNywwLDE1Ljk4NiwyLjUwMSwyMi4yNzUsNS42NjZjMC4zMjksMC4xNjUsMC42NTYsMC4zMywwLjk4NSwwLjQ5NWw1Mi45MjUsMTAyLjY1Nw0KCQkJSDI1Mi44OTZ6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+",
+                    "halfSize": {
+                        "x": 4.70499627601149,
+                        "y": 4.542755025114556,
+                        "z": 0
+                    }
+                }
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "rg32": {
+        "rlogic": {
+            "number": 32
+        },
+        "type": "rgroup",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    12.851523898474126,
+                    -6.274002213433341,
+                    0
+                ],
+                "charge": -1
+            },
+            {
+                "label": "C",
+                "location": [
+                    13.815911678971396,
+                    -6.532409140408027,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.521892532493979,
+                    -5.826428286885444,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "mapping": 2,
+                "location": [
+                    15.486280312991251,
+                    -6.084835213860129,
+                    0
+                ]
+            },
+            {
+                "type": "rg-label",
+                "location": [
+                    16.192261166513845,
+                    -5.3788543603375425,
+                    0
+                ],
+                "$refs": [
+                    "rg-17"
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.15664894701111,
+                    -5.637261287312232,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.862629800533693,
+                    -4.931280433789644,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.82701758103097,
+                    -5.189687360764332,
+                    0
+                ],
+                "charge": 1
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    2
+                ],
+                "placement": false,
+                "display": true,
+                "context": "Atom",
+                "fieldName": "s1",
+                "fieldData": "s1"
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.778673739831648,
+                    -1.7130943210855687,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "mapping": 1,
+                "location": [
+                    15.90347470206007,
+                    -2.7614224038043087,
+                    0
+                ],
+                "attachmentPoints": 3
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    10.06052056136579,
+                    -4.39744956319871,
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    },
+    "mol2": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    9.331659502558242,
+                    -6.69158423312764,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.332757735814447,
+                    -5.690894057951705,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.361220661621388,
+                    -5.476439054831091,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.128095693145305,
+                    -4.513787686074594,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.129002948160211,
+                    -4.522473712737301,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.912950514848753,
+                    -5.490316729614036,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.946006052454365,
+                    -5.724539931346327,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.946006052454365,
+                    -6.730721272803282,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    6.912351478527188,
+                    -6.95575925093823,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.13369539934581,
+                    -7.925299537392731,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.131989429235482,
+                    -7.9109226656751455,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.350837365380912,
+                    -6.925408077312219,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    0
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    },
+    "mol3": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "S",
+                "location": [
+                    9.711077867126207,
+                    -11.336383063098946,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.711077867126207,
+                    -10.338044384046068,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.843660931128408,
+                    -9.843826881664693,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.843660931128408,
+                    -8.840657141982469,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.709024666358738,
+                    -8.341367025940293,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.5708858826328,
+                    -8.840174035919535,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.5708858826328,
+                    -9.839358150582555,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.709024666358738,
+                    -7.342303687793007,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.709658099210559,
+                    -11.336383063098946,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.712497635041855,
+                    -11.336383063098946,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    9
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9
+                ],
+                "name": "Ts",
+                "expanded": true,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 0,
+                        "attachmentId": "1"
+                    }
+                ]
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    },
+    "mol4": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    20.069557732085187,
+                    -9.489328822118306,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.204874064130045,
+                    -8.990127258754164,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    19.204874064130045,
+                    -7.9917241320258645,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    18.340323516591788,
+                    -9.489328822118306,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.475639848636632,
+                    -8.990127258754164,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.61095618068148,
+                    -9.489328822118306,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.475639848636632,
+                    -7.9917241320258645,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ],
+                "name": "diisopropyl ether",
+                "expanded": true,
+                "id": 0
+            }
+        ],
+        "stereoFlagPosition": {
+            "x": 24.096612289967386,
+            "y": -2.910442767415206,
+            "z": 0
+        }
+    }
+}

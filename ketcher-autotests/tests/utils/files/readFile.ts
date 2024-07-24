@@ -12,6 +12,7 @@ import {
   takeEditorScreenshot,
   clickOnTheCanvas,
   selectMacromoleculesPanelButton,
+  selectImageTool,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -154,6 +155,28 @@ export async function openFileAndAddToCanvasAsNewProject(
       await pressButton(page, 'Open as New');
     }
   });
+}
+
+export async function openImageAndAddToCanvas(
+  filename: string,
+  page: Page,
+  x?: number,
+  y?: number,
+) {
+  await selectImageTool(page);
+
+  if (x !== undefined && y !== undefined) {
+    await page.mouse.click(x, y);
+  } else {
+    await clickInTheMiddleOfTheScreen(page);
+  }
+
+  const inputFile = await page.$('input[type="file"]');
+  if (inputFile) {
+    await inputFile.setInputFiles(`tests/test-data/${filename}`);
+  } else {
+    throw new Error('Input file element not found');
+  }
 }
 
 export async function filteredFile(

@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState } from 'react';
+import { useState, StrictMode } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
@@ -87,7 +87,7 @@ const App = () => {
       <PolymerEditor togglerComponent={togglerComponent} />
     </>
   ) : (
-    <>
+    <StrictMode>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -121,7 +121,7 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </StrictMode>
   );
 };
 

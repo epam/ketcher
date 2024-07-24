@@ -4,10 +4,10 @@ useReviewGroups: true
 addAssignees: author
 reviewGroups:
   core:
-    - ilya-asiyuk-epam
+    - svvald
     - rrodionov91
   developers:
-    - StarlaStarla
+    - NataliaLoginova
   QA:
     - Zhirnoff
     - AlexeyGirin

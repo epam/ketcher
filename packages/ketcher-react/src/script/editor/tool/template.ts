@@ -189,7 +189,9 @@ class TemplateTool implements Tool {
   }
 
   private get isNeedToShowRemoveAbbreviationPopup(): boolean {
-    const targetId = this.findKeyOfRelatedGroupId(this.closestItem?.id);
+    const targetId = this.findKeyOfRelatedGroupId(
+      this.closestItem?.id as number,
+    );
     const functionalGroup = this.functionalGroups.get(targetId!);
 
     if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {

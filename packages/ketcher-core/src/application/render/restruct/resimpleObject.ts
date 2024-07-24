@@ -73,7 +73,7 @@ class ReSimpleObject extends ReObject {
         } else {
           // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
           // in such case distance need to be calculated as a distance between line and current point
-          dist = calculateDistanceToLine(pos, point);
+          dist = point.calculateDistanceToLine([pos[0], pos[1]]);
         }
         break;
       }
@@ -119,7 +119,7 @@ class ReSimpleObject extends ReObject {
         break;
       }
       case SimpleObjectMode.line: {
-        dist = calculateDistanceToLine(pos, point);
+        dist = point.calculateDistanceToLine([pos[0], pos[1]]);
         break;
       }
 
@@ -416,24 +416,6 @@ class ReSimpleObject extends ReObject {
 
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
-}
-function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
-  let dist: number;
-  if (
-    (point.x < Math.min(pos[0].x, pos[1].x) ||
-      point.x > Math.max(pos[0].x, pos[1].x)) &&
-    (point.y < Math.min(pos[0].y, pos[1].y) ||
-      point.y > Math.max(pos[0].y, pos[1].y))
-  ) {
-    dist = Math.min(Vec2.dist(pos[0], point), Vec2.dist(pos[1], point));
-  } else {
-    const a = Vec2.dist(pos[0], pos[1]);
-    const b = Vec2.dist(pos[0], point);
-    const c = Vec2.dist(pos[1], point);
-    const per = (a + b + c) / 2;
-    dist = (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c));
-  }
-  return dist;
 }
 
 function generatePath(mode: SimpleObjectMode, paper, pos: [Vec2, Vec2]): any {

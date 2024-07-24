@@ -58,6 +58,23 @@
   },
   "additionalProperties": false,
   "definitions": {
+    "2dCoordinates": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "imageFile": {
+      "type": "string",
+      "pattern": "^data:image/(png|svg\\+xml);base64,",
+      "minLength": 160
+    },
     "header": {
       "type": "object",
       "properties": {
@@ -788,24 +805,27 @@
         "type": {
           "const": "rasterImage"
         },
+        "center": {
+          "$ref": "#/definitions/2dCoordinates"
+        },
         "data": {
           "type": "object",
-          "required": ["bitmap", "position"],
+          "required": ["bitmap", "halfSize"],
           "properties": {
             "bitmap": {
-              "type": "string"
+              "$ref": "#/definitions/imageFile"
             },
-            "position": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  }
+            "halfSize": {
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "y": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
                 }
               }
             }

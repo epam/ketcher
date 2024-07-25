@@ -46,6 +46,10 @@ enum Direction {
   Right = 'right',
 }
 
+export interface StartNewSequenceEventData {
+  indexOfRowBefore: number;
+}
+
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
@@ -144,16 +148,16 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
-  public startNewSequence() {
+  public startNewSequence(eventData?: StartNewSequenceEventData) {
     if (!this.isEditMode) {
       this.turnOnEditMode();
     }
 
-    if (!SequenceRenderer.hasNewChain) {
-      SequenceRenderer.startNewSequence();
-    }
-
-    SequenceRenderer.moveCaretToNewChain();
+    SequenceRenderer.startNewSequence(
+      isNumber(eventData?.indexOfRowBefore)
+        ? eventData?.indexOfRowBefore
+        : SequenceRenderer.currentChainIndex,
+    );
   }
 
   public modifySequenceInRnaBuilder(
@@ -788,12 +792,24 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
+          if (
+            SequenceRenderer.chainsCollection.length === 1 &&
+            SequenceRenderer.chainsCollection.firstNode instanceof
+              EmptySequenceNode &&
+            !this.isEditMode
+          ) {
+            this.turnOnEditMode();
+            SequenceRenderer.setCaretPosition(0);
+          }
+
           if (!this.isEditMode) {
             return;
           }
+
           if (!this.deleteSelection()) {
             return;
           }
+
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
@@ -1160,5 +1176,6 @@ export class SequenceMode extends BaseMode {
 
   public destroy() {
     this.turnOffEditMode();
+    SequenceRenderer.removeNewSequenceButtons();
   }
 }

@@ -46,12 +46,12 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Single image of SVG format can be saved to KET file and load
      */
-    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/clean-svg.svg', page);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
-      'KET/image-svg-expected.ket',
-      'tests/test-data/KET/image-svg-expected.ket',
+      'KET/clean-svg-expected.ket',
+      'tests/test-data/KET/clean-svg-expected.ket',
     );
   });
 
@@ -78,7 +78,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and load
      */
-    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/clean-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(

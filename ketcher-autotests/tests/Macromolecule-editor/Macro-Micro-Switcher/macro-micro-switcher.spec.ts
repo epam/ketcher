@@ -2185,6 +2185,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });
       await page.getByTestId('edit_sequence').click();
+      await page.keyboard.press('ArrowRight');
       await enterSequence(page, 'a');
       await page.keyboard.press('Escape');
       await selectSnakeLayoutModeTool(page);
@@ -2218,6 +2219,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });
       await page.getByTestId('edit_sequence').click();
+      await page.keyboard.press('ArrowRight');
       await enterSequence(page, 'a');
       await takeEditorScreenshot(page);
     });

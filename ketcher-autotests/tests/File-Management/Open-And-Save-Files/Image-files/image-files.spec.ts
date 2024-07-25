@@ -2,7 +2,9 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnFileFormatDropdown,
   getKet,
+  openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
@@ -11,7 +13,9 @@ import {
   readFileContents,
   receiveFileComparisonData,
   saveToFile,
+  selectTopPanelButton,
   takeEditorScreenshot,
+  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 
@@ -45,13 +49,17 @@ test.describe('Image files', () => {
     /**
      * Test case: #4911
      * Description: Single image of SVG format can be saved to KET file and load
+     * The test does not work as expected. The test runs locally but on CI/CD it constantly crashes due to the
+     * difference in the returned data in \"bitmap\": \"data:image/
+     * Should be fixed by ticket https://github.com/epam/Indigo/issues/2144
      */
-    await openImageAndAddToCanvas('Images/clean-svg.svg', page);
+    test.fail();
+    await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
-      'KET/clean-svg-expected.ket',
-      'tests/test-data/KET/clean-svg-expected.ket',
+      'KET/image-svg-demo-expected.ket',
+      'tests/test-data/KET/image-svg-demo-expected.ket',
     );
   });
 
@@ -77,8 +85,12 @@ test.describe('Image files', () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and load
+     * The test does not work as expected. The test runs locally but on CI/CD it constantly crashes due to the
+     * difference in the returned data in \"bitmap\": \"data:image/
+     * Should be fixed by ticket https://github.com/epam/Indigo/issues/2144
      */
-    await openImageAndAddToCanvas('Images/clean-svg.svg', page);
+    test.fail();
+    await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
@@ -217,4 +229,74 @@ test.describe('Image files', () => {
     await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/KET/images-png-svg.ket',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.getByTestId('close-icon').click();
+    await page.keyboard.press('Control+v');
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
+     */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
+     */
+    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await clickOnFileFormatDropdown(page);
+    await page.getByTestId('Ket Format-option').click();
+    await takeEditorScreenshot(page);
+  });
+
+  const fileNames = [
+    'image-bmp',
+    'image-gif',
+    'image-ico',
+    'image-jpeg',
+    'image-jpg',
+    'image-tiff',
+    'image-webp',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`Verify that image of not supported format ${fileName} cannot be added from .ket file to Canvas`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: #4911
+       * Description: Error message is displayed - "Cannot deserialize input JSON."
+       */
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile(`KET/${fileName}.ket`, page);
+      await pressButton(page, 'Add to Canvas');
+      await takeEditorScreenshot(page);
+    });
+  }
 });

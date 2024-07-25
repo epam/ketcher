@@ -12,8 +12,11 @@ import {
   pressButton,
   readFileContents,
   receiveFileComparisonData,
+  resetCurrentTool,
   saveToFile,
+  screenshotBetweenUndoRedo,
   selectTopPanelButton,
+  setZoomInputValue,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
@@ -299,4 +302,62 @@ test.describe('Image files', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Verify that image with corrupted image data (wrong field name, wrong image type, issues with base64, empty image) cannot be added from .ket file to Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Error message is displayed - "Cannot deserialize input JSON."
+     */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile(`KET/image-svg-corrupted.ket`, page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that image cannot be loaded from .ket file if the length of bitmap is less than 160 symbols', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Error message is displayed - "Cannot deserialize input JSON."
+     */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile(`KET/image-png-159-symbols.ket`, page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Zoom In and Zoom Out work for Images
+     */
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo
+     */
+    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
 });

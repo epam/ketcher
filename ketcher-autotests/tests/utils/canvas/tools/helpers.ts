@@ -238,3 +238,9 @@ export async function typeRNADNAAlphabet(page: Page) {
 export async function typePeptideAlphabet(page: Page) {
   await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
 }
+
+export async function setZoomInputValue(page: Page, value: string) {
+  await page.getByTestId('zoom-input').click();
+  await page.getByTestId('zoom-value').fill(value);
+  await page.keyboard.press('Enter');
+}

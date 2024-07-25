@@ -2355,6 +2355,22 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that added to Canvas images together (PNG, SVG) are not presented on the Canvas after switching to Macro mode and presented after returning to Micro', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Added to Canvas images together (PNG, SVG) are not presented on the
+     * Canvas after switching to Macro mode and presented after returning to Micro
+     */
+    await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
   test.fail(
     'Validate that it is possible to save micro-macro connection to ket file',
     async ({ page }) => {

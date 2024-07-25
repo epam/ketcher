@@ -246,8 +246,7 @@ export class SequenceRenderer {
     if (oldSubChainNode) {
       assert(oldSubChainNode.renderer instanceof BaseSequenceItemRenderer);
       oldSubChainNode.renderer.isEditingSymbol = false;
-      oldSubChainNode.renderer?.remove();
-      oldSubChainNode.renderer?.show();
+      oldSubChainNode.renderer?.removeCaret();
     }
     SequenceRenderer.caretPosition = caretPosition;
     const subChainNode = SequenceRenderer.currentEdittingNode;
@@ -258,8 +257,7 @@ export class SequenceRenderer {
 
     assert(subChainNode.renderer instanceof BaseSequenceItemRenderer);
     subChainNode.renderer.isEditingSymbol = true;
-    subChainNode.renderer?.remove();
-    subChainNode.renderer?.show();
+    subChainNode.renderer?.showCaret();
   }
 
   public static forEachNode(

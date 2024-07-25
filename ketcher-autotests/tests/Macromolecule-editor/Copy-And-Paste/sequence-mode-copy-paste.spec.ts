@@ -96,9 +96,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   });
 
   test('Copy & paste selection with LClick+drag and undo', async ({ page }) => {
-    const fromSymbol = await getSequenceSymbolLocator(page, 'G');
-    const gNthNumber = 1;
-    const toSymbol = await getSequenceSymbolLocator(page, 'G', gNthNumber);
+    const fromSymbol = await getSequenceSymbolLocator(page, 'G', 2);
+    const toSymbol = await getSequenceSymbolLocator(page, 'G', 4);
 
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
@@ -128,9 +127,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await page.keyboard.press('Control+c');
       await page.getByTitle('Close window').click();
 
-      await clickOnSequenceSymbol(page, 'G');
-      await page.keyboard.press('ArrowRight');
-      await page.keyboard.press('ArrowRight');
+      await clickOnSequenceSymbol(page, 'G', { nthNumber: 2 });
 
       const arrowCount = 8;
       await page.keyboard.down('Shift');

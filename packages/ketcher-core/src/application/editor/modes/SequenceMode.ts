@@ -263,19 +263,10 @@ export class SequenceMode extends BaseMode {
 
   public click(event: MouseEvent) {
     const eventData = event.target?.__data__;
-    const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
     const isClickedOnSequenceItem =
       eventData instanceof BaseSequenceItemRenderer;
 
-    if (isClickedOnEmptyPlace) {
-      this.turnOffEditMode();
-    }
-
     if (this.isEditMode && isClickedOnSequenceItem) {
-      SequenceRenderer.setCaretPositionBySequenceItemRenderer(
-        eventData as BaseSequenceItemRenderer,
-      );
-      SequenceRenderer.resetLastUserDefinedCaretPosition();
       this.unselectAllEntities();
     }
   }
@@ -303,7 +294,14 @@ export class SequenceMode extends BaseMode {
 
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
+    const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
+
+    if (isClickedOnEmptyPlace) {
+      this.turnOffEditMode();
+
+      return;
+    }
 
     if (this.isEditMode && isEventOnSequenceItem && !event.shiftKey) {
       let sequenceItemBoundingBox = eventData.rootBoundingClientRect;
@@ -326,6 +324,8 @@ export class SequenceMode extends BaseMode {
       if (isRightSideOfSequenceItemClicked) {
         SequenceRenderer.moveCaretForward();
       }
+
+      SequenceRenderer.resetLastUserDefinedCaretPosition();
 
       this.unselectAllEntities();
       this.selectionStarted = true;

@@ -17,6 +17,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
+  public caretElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   constructor(
     public node: SubChainNode,
@@ -80,7 +81,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendRootElement() {
-    return this.canvas
+    const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('transition', 'transform 0.2s')
@@ -88,6 +89,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         'transform',
         `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    if (this.isSequenceEditModeTurnedOn) {
+      rootElement.attr('pointer-events', 'all').attr('cursor', 'text');
+    }
+
+    return rootElement;
   }
 
   private appendBackgroundElement() {
@@ -158,8 +165,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.monomerIndexInChain === 0;
   }
 
-  public appendCaretElement() {
-    this.spacerElement
+  public showCaret() {
+    this.caretElement = this.spacerElement
       ?.append('line')
       .attr('x1', -17)
       .attr('y1', -1)
@@ -167,6 +174,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y2', 21)
       .attr('stroke', '#333')
       .attr('class', 'blinking');
+  }
+
+  public removeCaret() {
+    this.caretElement?.remove();
+    this.caretElement = undefined;
   }
 
   protected redrawBackgroundElementColor() {
@@ -197,7 +209,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.backgroundElement = this.appendBackgroundElement();
 
     if (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) {
-      this.appendCaretElement();
+      this.showCaret();
     }
 
     this.textElement = this.rootElement

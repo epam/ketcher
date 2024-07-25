@@ -301,8 +301,8 @@ test.describe('Sequence-edit mode', () => {
     */
     await startNewSequence(page);
     await enterSequence(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
-    await page.keyboard.down('Shift');
     await clickOnSequenceSymbol(page, 'G');
+    await page.keyboard.down('Shift');
     for (let i = 0; i < 4; i++) {
       await page.keyboard.press('ArrowRight');
     }

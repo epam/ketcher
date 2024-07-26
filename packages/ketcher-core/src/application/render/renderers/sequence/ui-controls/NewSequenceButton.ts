@@ -40,7 +40,6 @@ export class NewSequenceButton {
           BUTTON_Y_OFFSET_FROM_ROW
         })`,
       )
-      .attr('pointer-events', 'all')
       .attr('cursor', 'pointer') as never as D3SvgElementSelection<
       SVGGElement,
       void
@@ -62,7 +61,7 @@ export class NewSequenceButton {
       .attr('x', 0)
       .attr('y', 0)
       .attr('height', '50')
-      .attr('width', '140');
+      .attr('width', '611');
 
     this.buttonElement = this.bodyElement.append<SVGElement>('xhtml:div').attr(
       'style',

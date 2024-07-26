@@ -150,15 +150,18 @@ export class SequenceMode extends BaseMode {
   }
 
   public startNewSequence(eventData?: StartNewSequenceEventData) {
+    const currentChainIndex = this.isEditMode
+      ? SequenceRenderer.currentChainIndex
+      : SequenceRenderer.chainsCollection.chains.length - 1;
+    const indexOfRowBefore = isNumber(eventData?.indexOfRowBefore)
+      ? eventData?.indexOfRowBefore
+      : currentChainIndex;
+
     if (!this.isEditMode) {
       this.turnOnEditMode();
     }
 
-    SequenceRenderer.startNewSequence(
-      isNumber(eventData?.indexOfRowBefore)
-        ? eventData?.indexOfRowBefore
-        : SequenceRenderer.currentChainIndex,
-    );
+    SequenceRenderer.startNewSequence(indexOfRowBefore);
   }
 
   public modifySequenceInRnaBuilder(
@@ -298,10 +301,12 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    const eventData = event.target?.__data__;
-    const isClickedOnEmptyPlace =
-      !(eventData instanceof BaseRenderer) &&
-      !(eventData instanceof NewSequenceButton);
+    const eventData: BaseRenderer | NewSequenceButton | undefined =
+      event.target?.__data__;
+    const isClickedOnEmptyPlace = !(
+      eventData instanceof NewSequenceButton ||
+      eventData instanceof BaseRenderer
+    );
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
 
     if (isClickedOnEmptyPlace) {

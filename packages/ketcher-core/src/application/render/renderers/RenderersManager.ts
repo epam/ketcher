@@ -1,12 +1,5 @@
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
-import { Command } from 'domain/entities/Command';
-import assert from 'assert';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { CoreEditor } from 'application/editor';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName } from 'domain/types';
 import {
   PeptideRenderer,
   PhosphateRenderer,
@@ -15,20 +8,27 @@ import {
   UnsplitNucleotideRenderer,
 } from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import assert from 'assert';
 import {
   Peptide,
-  Sugar,
-  RNABase,
   Phosphate,
+  RNABase,
+  Sugar,
   UnsplitNucleotide,
 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Command } from 'domain/entities/Command';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
-import { CoreEditor } from 'application/editor';
+import { AttachmentPointName } from 'domain/types';
 
 export class RenderersManager {
   private theme;

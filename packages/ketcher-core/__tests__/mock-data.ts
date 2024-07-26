@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
-
 import {
   Box2Abs,
   Loop,
@@ -10,11 +9,10 @@ import {
   Struct,
   Vec2,
 } from 'domain/entities';
-import { mockFn } from 'jest-mock-extended';
-import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { MonomerItemType } from 'domain/types';
+import { mockFn } from 'jest-mock-extended';
 
 const mockAtoms = [
   {

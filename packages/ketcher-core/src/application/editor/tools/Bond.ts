@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
+import { BaseTool } from 'application/editor/tools/Tool';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { BaseTool } from 'application/editor/tools/Tool';
-import { Chem } from 'domain/entities/Chem';
-import { Peptide } from 'domain/entities/Peptide';
-import { Sugar } from 'domain/entities/Sugar';
-import { RNABase } from 'domain/entities/RNABase';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { Coordinates } from '../shared/coordinates';
-import { AttachmentPointName } from 'domain/types';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { Sugar } from 'domain/entities/Sugar';
+import { AttachmentPointName } from 'domain/types';
+import { Coordinates } from '../shared/coordinates';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;

@@ -194,4 +194,8 @@ export class Chain {
 
     return { emptyChain, emptySubChain, emptySequenceNode };
   }
+
+  public get isNewSequenceChain() {
+    return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
+  }
 }

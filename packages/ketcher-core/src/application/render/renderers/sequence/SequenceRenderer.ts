@@ -78,9 +78,10 @@ export class SequenceRenderer {
   }
 
   public static removeNewSequenceButtons() {
-    this?.newSequenceButtons.forEach((newSequenceButton) =>
+    this.newSequenceButtons.forEach((newSequenceButton) =>
       newSequenceButton.remove(),
     );
+    this.newSequenceButtons = [];
   }
 
   private static showNodes(
@@ -627,6 +628,10 @@ export class SequenceRenderer {
 
   public static startNewSequence(indexOfRowBefore?: number) {
     const editor = CoreEditor.provideEditorInstance();
+    const oldNewSequenceChainIndex =
+      SequenceRenderer.chainsCollection.chains.findIndex((chain) => {
+        return chain.isNewSequenceChain;
+      });
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
@@ -634,7 +639,14 @@ export class SequenceRenderer {
 
     editor.drawingEntitiesManager.clearCanvas();
 
-    SequenceRenderer.show(chainsCollection, indexOfRowBefore);
+    SequenceRenderer.show(
+      chainsCollection,
+      oldNewSequenceChainIndex !== -1 &&
+        isNumber(indexOfRowBefore) &&
+        indexOfRowBefore > oldNewSequenceChainIndex
+        ? indexOfRowBefore - 1
+        : indexOfRowBefore,
+    );
   }
 
   public static getPreviousNodeInSameChain(nodeToCompare: SubChainNode) {

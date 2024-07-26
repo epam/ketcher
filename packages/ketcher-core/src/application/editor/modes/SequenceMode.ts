@@ -35,6 +35,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { LabeledNodesWithPositionInSequence } from 'application/editor/tools/Tool';
+import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -298,7 +299,9 @@ export class SequenceMode extends BaseMode {
 
   public mousedown(event: MouseEvent) {
     const eventData = event.target?.__data__;
-    const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
+    const isClickedOnEmptyPlace =
+      !(eventData instanceof BaseRenderer) &&
+      !(eventData instanceof NewSequenceButton);
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
 
     if (isClickedOnEmptyPlace) {

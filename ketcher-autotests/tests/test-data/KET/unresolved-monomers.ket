@@ -1,0 +1,133 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer3362"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-unknown_monomer_with_idt_alias_i2AmPr"
+            }
+        ]
+    },
+    "monomer3362": {
+        "type": "monomer",
+        "id": "3362",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "i2AmPr",
+        "templateId": "unknown_monomer_with_idt_alias_i2AmPr",
+        "seqid": 0
+    },
+    "monomerTemplate-unknown_monomer_with_idt_alias_i2AmPr": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1,
+                    1,
+                    1
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2,
+                    2,
+                    2
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3,
+                    3,
+                    3
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            }
+        ],
+        "class": "Chem",
+        "classHELM": "CHEM",
+        "id": "unknown_monomer_with_idt_alias_i2AmPr",
+        "fullName": "i2AmPr",
+        "alias": "i2AmPr",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": []
+                }
+            }
+        ],
+        "idtAliases": {
+            "base": "i2AmPr",
+            "modifications": {
+                "endpoint5": "i2AmPr",
+                "internal": "i2AmPr",
+                "endpoint3": "i2AmPr"
+            }
+        },
+        "unresolved": true
+    }
+}

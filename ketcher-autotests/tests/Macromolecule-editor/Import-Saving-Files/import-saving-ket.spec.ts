@@ -294,6 +294,26 @@ test.describe('Import-Saving .ket Files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check save and open of file with unresolved monomers in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: There should be possible to load monomers which not found in Monomer library
+    */
+    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/unresolved-monomers-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/unresolved-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
   test('Validate that unsplit nucleotides connected with another monomers could be saved to ket file and loaded back', async ({
     page,
   }) => {

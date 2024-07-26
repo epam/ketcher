@@ -53,6 +53,13 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return rootNode.getBBox();
   }
 
+  public get rootBoundingClientRect() {
+    const rootNode = this.rootElement?.node();
+    if (!rootNode) return;
+
+    return rootNode.getBoundingClientRect();
+  }
+
   public get width() {
     return this.rootBBox?.width || 0;
   }

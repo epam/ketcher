@@ -1,7 +1,6 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -17,7 +16,6 @@ export class PolymerBond extends DrawingEntity {
   public renderer?:
     | BackBoneBondSequenceRenderer
     | FlexModePolymerBondRenderer
-    | PolymerBondRenderer
     | PolymerBondSequenceRenderer
     | SnakeModePolymerBondRenderer = undefined;
 
@@ -41,7 +39,6 @@ export class PolymerBond extends DrawingEntity {
     renderer:
       | BackBoneBondSequenceRenderer
       | FlexModePolymerBondRenderer
-      | PolymerBondRenderer
       | PolymerBondSequenceRenderer
       | SnakeModePolymerBondRenderer,
   ): void {

@@ -22,7 +22,8 @@ import 'whatwg-fetch';
 import './index.less';
 
 import init, { Config } from './script';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 
 import { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
@@ -32,7 +33,6 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { createRoot, Root } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -41,6 +41,7 @@ const mediaSizes = {
 
 interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
+  ssr?: boolean;
 }
 
 function EditorComponent(props: EditorProps) {
@@ -103,12 +104,22 @@ function EditorComponent(props: EditorProps) {
   );
 }
 
-function Editor(props: EditorProps) {
-  if (typeof window === 'undefined') {
+function EditorSsr(props: EditorProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  if (!hasMounted) {
     return null;
   }
 
   return <EditorComponent {...props} />;
+}
+
+function Editor(props: EditorProps) {
+  return props.ssr ? <EditorSsr {...props} /> : <EditorComponent {...props} />;
 }
 
 export { Editor };

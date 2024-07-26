@@ -5,7 +5,6 @@ export { SugarRenderer } from './SugarRenderer';
 export { RNABaseRenderer } from './RNABaseRenderer';
 export { BaseRenderer } from './BaseRenderer';
 export { BaseMonomerRenderer } from './BaseMonomerRenderer';
-export { PolymerBondRenderer } from './PolymerBondRenderer/PolymerBondRenderer';
 export { UnresolvedMonomerRenderer } from './UnresolvedMonomerRenderer';
 export { UnsplitNucleotideRenderer } from './UnsplitNucleotideRenderer';
 export * from './sequence';

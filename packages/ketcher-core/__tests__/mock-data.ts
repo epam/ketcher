@@ -1,6 +1,6 @@
 import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import {
   Box2Abs,
   Loop,
@@ -780,8 +780,7 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);
 
-  // eslint-disable-next-line no-new
-  new PolymerBondRenderer(polymerBond);
+  PolymerBondRendererFactory.createInstance(polymerBond);
 
   return polymerBond;
 };

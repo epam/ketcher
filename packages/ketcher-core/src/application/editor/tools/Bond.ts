@@ -16,7 +16,8 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -33,8 +34,12 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 
+type FlexModeOrSnakeModePolymerBondRenderer =
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
+
 class PolymerBond implements BaseTool {
-  private bondRenderer?: PolymerBondRenderer;
+  private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
   history: EditorHistory;
 
@@ -106,8 +111,10 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseLeavePolymerBond(event) {
-    const renderer: PolymerBondRenderer = event.target.__data__;
+  // FIXME: Specify the types.
+  public mouseLeavePolymerBond(event): void {
+    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
     if (this.bondRenderer || !renderer.polymerBond) return;
 
     const modelChanges =
@@ -118,10 +125,12 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
+  // FIXME: Specify the types.
   public mouseOverPolymerBond(event) {
     if (this.bondRenderer) return;
 
-    const renderer: PolymerBondRenderer = event.target.__data__;
+    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,

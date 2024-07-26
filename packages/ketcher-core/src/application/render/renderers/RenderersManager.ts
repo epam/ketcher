@@ -9,7 +9,9 @@ import {
 } from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import assert from 'assert';
 import {
   Peptide,
@@ -30,10 +32,18 @@ import {
 } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 
+type FlexModeOrSnakeModePolymerBondRenderer =
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
+
 export class RenderersManager {
   private theme;
   public monomers: Map<number, BaseMonomerRenderer> = new Map();
-  public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
+  public polymerBonds = new Map<
+    number,
+    FlexModeOrSnakeModePolymerBondRenderer
+  >();
+
   private needRecalculateMonomersEnumeration = false;
   private needRecalculateMonomersBeginning = false;
 
@@ -103,8 +113,9 @@ export class RenderersManager {
     this.markForRecalculateBegin();
   }
 
-  public addPolymerBond(polymerBond: PolymerBond) {
-    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+  public addPolymerBond(polymerBond: PolymerBond): void {
+    const polymerBondRenderer =
+      PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
@@ -332,7 +343,8 @@ export class RenderersManager {
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
-    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+    const polymerBondRenderer =
+      PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
     this.markForRecalculateBegin();

@@ -3,7 +3,10 @@ import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnFileFormatDropdown,
+  copyAndPaste,
+  dragMouseTo,
   getKet,
+  LeftPanelButton,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -15,9 +18,11 @@ import {
   resetCurrentTool,
   saveToFile,
   screenshotBetweenUndoRedo,
+  selectLeftPanelButton,
   selectTopPanelButton,
   setZoomInputValue,
   takeEditorScreenshot,
+  takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
@@ -358,6 +363,243 @@ test.describe('Image files', () => {
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) using "Add Image" button can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Action of adding to Canvas images of allowed formats (PNG, SVG) using "Add Image" button can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that "Add Image" button is on left panel, icon can be selected and it displays with filling', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: "Add Image" button is on left panel, icon can be selected and it displays with filling, after
+     * clicking on another tool or Esc, the icon selection with filling is removed
+     */
+    await selectLeftPanelButton(LeftPanelButton.AddImage, page);
+    await takeLeftToolbarScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.AddText, page);
+    await takeLeftToolbarScreenshot(page);
+  });
+
+  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another place', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images can be added to different selected places on Canvas one by one using "Add Image" button
+     * and can be selected and moved to another place on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another image', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images can be added to different selected places on Canvas one by one using "Add Image" button
+     * and can be selected and moved to another place on Canvas with appropriate layer level (including partial overlap of elements)
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(600, 400, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together and separately to other places on Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .ket file and added to selected place on Canvas images with elements can be selected and
+     * moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 100, page);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(800, 100, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await dragMouseTo(600, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of allowed formats (PNG, SVG) can be zoomed in/out (20, 400, 100) after adding to Canvas using "Add Image" button', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4911
+     * Description: Zoom In and Zoom Out work for Images with mouse wheel
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that moving actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Moving actions of images (PNG, SVG) on Canvas can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that scaling actions of image (PNG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Scaling actions of images (PNG) on Canvas can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+
+    // Ensure the element is in view
+    const resizeHandle = page.getByTestId(
+      'rasterImageResize-bottomRightPosition',
+    );
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that scaling actions of image (SVG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Scaling actions of images (SVG) on Canvas can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    // Ensure the element is in view
+    const resizeHandle = page.getByTestId(
+      'rasterImageResize-rightMiddlePosition',
+    );
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo
+     * Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5174
+     * Snapsots need to be update after fix.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(200, 200);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that copying actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Copying actions of images (PNG, SVG) on Canvas can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
     await takeEditorScreenshot(page);
   });
 });

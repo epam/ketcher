@@ -37,18 +37,17 @@ const props: Partial<MenuProps> = {
 const ContextMenu: React.FC = () => {
   const { getKetcherInstance } = useAppContext();
 
-  const resetMenuPosition = function () {
+  const resetMenuPosition = (menuElement: HTMLElement) => {
     // This method checks that context menu is out of ketcher root element and move it
     // to not display menu out of ketcher.
     // It needs for cases when ketcher editor injected in popup
-    const contextMenuElement = document.querySelector(
-      '.contexify:last-of-type',
-    ) as HTMLDivElement | null;
+    const contextMenuElement = menuElement;
     const ketcherRootElement = document.querySelector(
       KETCHER_ROOT_NODE_CSS_SELECTOR,
     );
 
     if (!contextMenuElement || !ketcherRootElement) {
+      console.error('Context menu element or Ketcher root element not found');
       return;
     }
 
@@ -58,22 +57,31 @@ const ContextMenu: React.FC = () => {
       ketcherRootElement.getBoundingClientRect();
 
     if (!contextMenuElementBoundingBox || !ketcherRootElementBoundingBox) {
+      console.error('Bounding boxes not found');
       return;
     }
 
-    const left =
+    let left = contextMenuElementBoundingBox.x;
+    let top = contextMenuElementBoundingBox.y;
+
+    // Adjust the main menu if it goes beyond the right boundary
+    if (
       contextMenuElementBoundingBox.right > ketcherRootElementBoundingBox.right
-        ? contextMenuElementBoundingBox.x -
-          (contextMenuElementBoundingBox.right -
-            ketcherRootElementBoundingBox.right)
-        : contextMenuElementBoundingBox.x;
-    const top =
+    ) {
+      left =
+        ketcherRootElementBoundingBox.right -
+        contextMenuElementBoundingBox.width;
+    }
+
+    // Adjust the main menu if it goes beyond the bottom boundary
+    if (
       contextMenuElementBoundingBox.bottom >
       ketcherRootElementBoundingBox.bottom
-        ? contextMenuElementBoundingBox.y -
-          (contextMenuElementBoundingBox.bottom -
-            ketcherRootElementBoundingBox.bottom)
-        : contextMenuElementBoundingBox.y;
+    ) {
+      top =
+        ketcherRootElementBoundingBox.bottom -
+        contextMenuElementBoundingBox.height;
+    }
 
     contextMenuElement.style.left = `${left}px`;
     contextMenuElement.style.top = `${top}px`;
@@ -84,7 +92,12 @@ const ContextMenu: React.FC = () => {
       const editor = getKetcherInstance().editor as Editor;
       if (visible) {
         editor.hoverIcon.hide();
-        resetMenuPosition();
+        const contextMenuElement = document.querySelector(
+          '.contexify:last-of-type',
+        ) as HTMLDivElement | null;
+        if (contextMenuElement) {
+          resetMenuPosition(contextMenuElement);
+        }
       }
       editor.contextMenu[id] = visible;
     },

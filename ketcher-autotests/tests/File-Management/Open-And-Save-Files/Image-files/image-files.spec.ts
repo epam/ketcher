@@ -602,4 +602,69 @@ test.describe('Image files', () => {
     }
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG)
+     * can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Erase" (or Delete, Backspace buttons)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
+  });
 });

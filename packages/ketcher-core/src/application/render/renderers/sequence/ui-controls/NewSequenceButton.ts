@@ -33,6 +33,7 @@ export class NewSequenceButton {
     this.rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('class', 'dynamic-element')
       .attr(
         'transform',
         `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${
@@ -60,7 +61,7 @@ export class NewSequenceButton {
       .append('foreignObject')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('height', '50')
+      .attr('height', '35')
       .attr('width', '611');
 
     this.buttonElement = this.bodyElement.append<SVGElement>('xhtml:div').attr(

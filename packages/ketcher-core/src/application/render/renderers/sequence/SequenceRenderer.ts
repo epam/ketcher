@@ -104,6 +104,8 @@ export class SequenceRenderer {
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
     const isEditMode = CoreEditor.provideEditorInstance().isSequenceEditMode;
+    const isEditInRnaBuilderMode =
+      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
 
     if (isEditMode) {
       chainsCollection.chains.forEach((chain) => {
@@ -161,7 +163,9 @@ export class SequenceRenderer {
         chain,
       );
 
-      this.showNewSequenceButton(chainIndex);
+      if (!isEditInRnaBuilderMode) {
+        this.showNewSequenceButton(chainIndex);
+      }
     });
 
     if (newSequenceEmptyNode) {

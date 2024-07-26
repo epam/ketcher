@@ -27,6 +27,10 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { AttachmentPointName } from 'domain/types';
+// FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
+//  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
+//  which probably due to a circular dependency
+//  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 
 class PolymerBond implements BaseTool {

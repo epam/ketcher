@@ -17,7 +17,7 @@ import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';

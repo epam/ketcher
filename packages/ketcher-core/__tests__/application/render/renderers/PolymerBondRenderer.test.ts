@@ -1,5 +1,5 @@
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
-import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer';
+import { PolymerBondRenderer as SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { getFinishedPolymerBond } from '../../../mock-data';
 

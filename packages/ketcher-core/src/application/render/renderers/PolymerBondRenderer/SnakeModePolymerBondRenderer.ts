@@ -26,7 +26,7 @@ const CELL_HEIGHT = 40;
 const SMOOTH_CORNER_SIZE = 5;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
-export class PolymerBondRenderer extends BaseRenderer {
+export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
@@ -891,7 +891,8 @@ export class PolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          const renderer = bondBodyElement.__data__ as PolymerBondRenderer;
+          const renderer =
+            bondBodyElement.__data__ as SnakeModePolymerBondRenderer;
 
           bondBodyElement.setAttribute(
             'stroke',

@@ -74,11 +74,8 @@ function mapSelectionToProps(editor) {
   return {};
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   const editor = state.editor;
-  if (ownProps.values || ownProps.label) {
-    return {};
-  }
   const disabledQueryElements = editor.render.options.disableQueryElements;
   return { disabledQueryElements, ...mapSelectionToProps(editor) };
 };

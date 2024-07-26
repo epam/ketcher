@@ -123,11 +123,13 @@ const Atom: FC<Props> = (props: Props) => {
 
   const customValid = useMemo(() => {
     const atomType = formState.result.atomType;
+    const disableQueryElements =
+      SettingsManager.getOptions().disableQueryElements;
     return {
       label: (label: string) =>
         atomValid(label, isMultipleAtoms, atomType, isCustomQuery),
       pseudo: (value: string) =>
-        pseudoAtomValid(value, atomType, isCustomQuery),
+        pseudoAtomValid(value, atomType, isCustomQuery, disableQueryElements),
       atomList: (value: string) =>
         AtomListValid(value, atomType, isCustomQuery),
       charge: (charge) => chargeValid(charge, isMultipleAtoms, isCustomQuery),

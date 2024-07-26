@@ -64,7 +64,6 @@ const ContextMenu: React.FC = () => {
     let left = contextMenuElementBoundingBox.x;
     let top = contextMenuElementBoundingBox.y;
 
-    // Adjust the main menu if it goes beyond the right boundary
     if (
       contextMenuElementBoundingBox.right > ketcherRootElementBoundingBox.right
     ) {
@@ -73,7 +72,6 @@ const ContextMenu: React.FC = () => {
         contextMenuElementBoundingBox.width;
     }
 
-    // Adjust the main menu if it goes beyond the bottom boundary
     if (
       contextMenuElementBoundingBox.bottom >
       ketcherRootElementBoundingBox.bottom
@@ -96,7 +94,7 @@ const ContextMenu: React.FC = () => {
           '.contexify:last-of-type',
         ) as HTMLDivElement | null;
         if (contextMenuElement) {
-          resetMenuPosition(contextMenuElement);
+          setTimeout(() => resetMenuPosition(contextMenuElement), 0);
         }
       }
       editor.contextMenu[id] = visible;

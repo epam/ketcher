@@ -246,6 +246,8 @@ function getStructCenter(struct: Struct): Vec2 {
     return struct.simpleObjects.get(0)!.center();
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.texts.size > 0) return struct.texts.get(0)!.position;
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.rasterImages.size > 0) return struct.rasterImages.get(0)!.center();
 
   return new Vec2(0, 0);
 }

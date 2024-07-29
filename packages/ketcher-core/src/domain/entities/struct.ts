@@ -126,7 +126,8 @@ export class Struct {
       this.rxnArrows.size === 0 &&
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
-      this.texts.size === 0
+      this.texts.size === 0 &&
+      this.rasterImages.size === 0
     );
   }
 
@@ -144,6 +145,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    rasterImagesSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -156,6 +158,7 @@ export class Struct {
       simpleObjectsSet,
       textsSet,
       rgroupAttachmentPointSet,
+      rasterImagesSet,
       bidMap,
     );
   }
@@ -200,6 +203,7 @@ export class Struct {
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
+      copyNonFragmentObjects ? undefined : new Pile(),
     );
   }
 
@@ -213,8 +217,8 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
-    bidMapEntity?: Map<number, number> | null,
     rasterImagesSet?: Pile<number> | null,
+    bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
@@ -837,9 +841,7 @@ export class Struct {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
 
-    this.rasterImages.forEach((rasterImage) =>
-      rasterImage.rescalePosition(scale),
-    );
+    this.rasterImages.forEach((rasterImage) => rasterImage.rescaleSize(scale));
   }
 
   rescale() {
@@ -1283,7 +1285,7 @@ export class Struct {
     return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
   }
 
-  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+  isTargetFromMacromolecule(target?: { id: number; map: string } | null) {
     return (
       target &&
       ((target.map === 'functionalGroups' &&

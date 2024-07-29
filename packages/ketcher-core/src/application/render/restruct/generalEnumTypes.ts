@@ -22,6 +22,7 @@ export enum LayerMap {
   background = 'background',
   selectionPlate = 'selectionPlate',
   hovering = 'hovering',
+  rasterImages = 'rasterImages',
   atom = 'atom',
   bondSkeleton = 'bondSkeleton',
   warnings = 'warnings',

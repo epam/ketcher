@@ -1425,8 +1425,6 @@ test.describe('Atom Properties', () => {
   test('All atom properties information saved as *.rxn file', async ({
     page,
   }) => {
-    // fails while Indigo loses valence in RxnFiles
-    test.fail();
     /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.

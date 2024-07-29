@@ -8,20 +8,22 @@ import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils';
-import { MenuItemsProps } from '../contextMenu.types';
+import { ItemEventParams, MenuItemsProps } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 
 const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useBondEdit();
-  const [handleTypeChange] = useBondTypeChange();
+  const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
   const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
-
+  const isDisabled = disabled({
+    props: props.propsFromTrigger,
+  } as ItemEventParams);
   return (
     <>
       <Item {...props} onClick={handleEdit}>
@@ -43,6 +45,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
             id={name}
             onClick={handleTypeChange}
             key={name}
+            disabled={isDisabled}
           >
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
@@ -59,6 +62,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
               id={name}
               onClick={handleTypeChange}
               key={name}
+              disabled={isDisabled}
             >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>

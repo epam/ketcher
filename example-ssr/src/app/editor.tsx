@@ -17,20 +17,19 @@ export function EditorComponent() {
     <Editor
       staticResourcesUrl={process.env.PUBLIC_URL || ''}
       structServiceProvider={structServiceProvider}
+      ssr={false}
       errorHandler={(message: string) => {
         console.error(message);
       }}
       onInit={(ketcher) => {
-        if (window) {
-          window.ketcher = ketcher;
+        window.ketcher = ketcher;
 
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
-        }
+        window.parent.postMessage(
+          {
+            eventType: 'init',
+          },
+          '*',
+        );
       }}
     />
   );

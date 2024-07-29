@@ -21,6 +21,7 @@ import {
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -29,7 +30,7 @@ test.describe('Undo Redo', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     peptide1 = await addSingleMonomerToCanvas(
@@ -195,7 +196,7 @@ test.describe('Undo-Redo tests', () => {
     */
 
     const addMonomers = async (x: number, y: number) => {
-      await page.getByTestId('Bal___beta-Alanine').click();
+      await page.getByTestId(Peptides.BetaAlanine).click();
       await page.mouse.click(x, y);
     };
 
@@ -235,7 +236,7 @@ test.describe('Undo-Redo tests', () => {
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();
-      await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+      await page.getByTestId('SMPEG2___SM(PEG)2').click();
       await page.mouse.click(x, y);
     };
 

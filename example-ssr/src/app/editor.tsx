@@ -17,7 +17,6 @@ export function EditorComponent() {
     <Editor
       staticResourcesUrl={process.env.PUBLIC_URL || ''}
       structServiceProvider={structServiceProvider}
-      ssr={false}
       errorHandler={(message: string) => {
         console.error(message);
       }}

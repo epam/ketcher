@@ -12,6 +12,7 @@ import {
 } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
@@ -30,7 +31,7 @@ test.describe('Polymer Bond Tool', () => {
     Description: Polymer bond tool
     */
     // Choose peptide
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(
@@ -88,7 +89,7 @@ test.describe('Polymer Bond Tool', () => {
     */
     // Choose chems
     await page.getByText('CHEM').click();
-    await page.getByTestId('hxy___Hexynyl alcohol').click();
+    await page.getByTestId(Chems.hxy).click();
 
     // Create 2 chems on canvas
     await page.mouse.click(300, 300);
@@ -126,7 +127,7 @@ test.describe('Signle Bond Tool', () => {
       Description: The system shall unable user to create more
       than 1 bond between the first and the second monomer
       */
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
     const peptide1 = await addSingleMonomerToCanvas(
       page,
@@ -165,9 +166,9 @@ test.describe('Signle Bond Tool', () => {
     const x = 800;
     const y = 350;
     await page.locator('.css-1kbfai8').click();
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await page.getByTestId(Peptides.Ethylthiocysteine).click();
     await page.mouse.click(x, y);
     await connectMonomersWithBonds(page, ['Bal', 'Edc']);
     await takeEditorScreenshot(page);

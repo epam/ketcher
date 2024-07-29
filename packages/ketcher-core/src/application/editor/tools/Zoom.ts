@@ -19,7 +19,7 @@ import { canvasSelector, drawnStructuresSelector } from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { clamp } from 'lodash';
+import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
 
 export enum SCROLL_POSITION {
@@ -227,7 +227,9 @@ export class ZoomTool implements BaseTool {
   public scrollTo(
     position: Vec2,
     stickToBottom = false,
-    xOffset = AUTO_SCROLL_OFFSET_X,
+    xOffset?,
+    yOffset?,
+    isOffsetInPercents = true,
   ) {
     const canvasWrapperHeight =
       this.canvasWrapper.node()?.height.baseVal.value || 0;
@@ -236,9 +238,14 @@ export class ZoomTool implements BaseTool {
       this.canvasWrapper.node()?.width.baseVal.value || 0;
 
     const offset = new Vec2(
-      canvasWrapperWidth / 2 - (canvasWrapperWidth * xOffset) / 100,
+      canvasWrapperWidth / 2 -
+        (isNumber(xOffset) && !isOffsetInPercents
+          ? xOffset
+          : (canvasWrapperWidth * (xOffset || AUTO_SCROLL_OFFSET_X)) / 100),
       canvasWrapperHeight / 2 -
-        (canvasWrapperHeight * AUTO_SCROLL_OFFSET_Y) / 100,
+        (isNumber(yOffset) && !isOffsetInPercents
+          ? yOffset
+          : (canvasWrapperHeight * (yOffset || AUTO_SCROLL_OFFSET_Y)) / 100),
     );
 
     this.zoom?.translateTo(
@@ -358,6 +365,10 @@ export class ZoomTool implements BaseTool {
 
   unzoomValue(value: number) {
     return value / this.zoomLevel;
+  }
+
+  zoomValue(value: number) {
+    return value * this.zoomLevel;
   }
 
   destroy() {

@@ -6,6 +6,7 @@ import {
   Peptide,
   Phosphate,
   RNABase,
+  SubChainNode,
   Sugar,
   UnresolvedMonomer,
   UnsplitNucleotide,
@@ -13,8 +14,9 @@ import {
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
-  getSugarFromRnaBase,
+  isMonomerConnectedToR2RnaBase,
 } from 'domain/helpers/monomers';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -31,6 +33,18 @@ export class ChainsCollection {
     });
 
     return monomerToChain;
+  }
+
+  public get monomerToNode() {
+    const monomerToNode = new Map<BaseMonomer, SubChainNode>();
+
+    this.forEachNode(({ node }) => {
+      node.monomers.forEach((monomer) => {
+        monomerToNode.set(monomer, node);
+      });
+    });
+
+    return monomerToNode;
   }
 
   public rearrange() {
@@ -153,15 +167,10 @@ export class ChainsCollection {
         monomer instanceof RNABase &&
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
-      const isMonomerConnectedToR2RnaBase =
-        R1ConnectedMonomer instanceof RNABase &&
-        getSugarFromRnaBase(R1ConnectedMonomer) &&
-        R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
-          R1ConnectedMonomer,
-        ) === monomer;
 
       return (
-        (isFirstMonomerWithR2R1connection || isMonomerConnectedToR2RnaBase) &&
+        (isFirstMonomerWithR2R1connection ||
+          isMonomerConnectedToR2RnaBase(monomer)) &&
         !isRnaBaseConnectedToSugar
       );
     });
@@ -230,5 +239,36 @@ export class ChainsCollection {
 
   public get length() {
     return this.chains.reduce((length, chain) => length + chain.length, 0);
+  }
+
+  public forEachNode(
+    forEachCallback: (params: {
+      chainIndex: number;
+      subChainIndex: number;
+      nodeIndex: number;
+      nodeIndexOverall: number;
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      chain: Chain;
+    }) => void,
+  ) {
+    let nodeIndexOverall = 0;
+
+    this.chains.forEach((chain, chainIndex) => {
+      chain.subChains.forEach((subChain, subChainIndex) => {
+        subChain.nodes.forEach((node, nodeIndex) => {
+          forEachCallback({
+            chainIndex,
+            subChainIndex,
+            nodeIndex,
+            nodeIndexOverall,
+            node,
+            subChain,
+            chain,
+          });
+          nodeIndexOverall++;
+        });
+      });
+    });
   }
 }

@@ -6,6 +6,9 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { AttachmentPointName } from 'domain/types';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
+import { Sugar } from 'domain/entities/Sugar';
+import { RNABase } from 'domain/entities/RNABase';
+import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
@@ -94,14 +97,29 @@ export class PolymerBond extends DrawingEntity {
     }
 
     return (
-      !(
+      (!(
         PolymerBond.backBoneChainAttachmentPoints.includes(
           firstMonomerAttachmentPoint,
         ) &&
         PolymerBond.backBoneChainAttachmentPoints.includes(
           secondMonomerAttachmentPoint,
         )
-      ) || firstMonomerAttachmentPoint === secondMonomerAttachmentPoint
+      ) ||
+        (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
+          this.secondMonomer instanceof RNABase) ||
+        (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
+          this.firstMonomer instanceof RNABase) ||
+        firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
+      !(
+        (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
+          this.firstMonomer instanceof RNABase &&
+          secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
+          this.secondMonomer instanceof Sugar) ||
+        (firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
+          this.firstMonomer instanceof Sugar &&
+          secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
+          this.secondMonomer instanceof RNABase)
+      )
     );
   }
 }

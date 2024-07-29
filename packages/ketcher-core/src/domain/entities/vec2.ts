@@ -273,6 +273,23 @@ export class Vec2 {
     return inside;
   }
 
+  calculateDistanceToLine(line: [Vec2, Vec2]): number {
+    if (
+      (this.x < Math.min(line[0].x, line[1].x) ||
+        this.x > Math.max(line[0].x, line[1].x)) &&
+      (this.y < Math.min(line[0].y, line[1].y) ||
+        this.y > Math.max(line[0].y, line[1].y))
+    ) {
+      return Math.min(Vec2.dist(line[0], this), Vec2.dist(line[1], this));
+    } else {
+      const a = Vec2.dist(line[0], line[1]);
+      const b = Vec2.dist(line[0], this);
+      const c = Vec2.dist(line[1], this);
+      const per = (a + b + c) / 2;
+      return (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c));
+    }
+  }
+
   oxAngle(): number {
     return Math.atan2(this.y, this.x);
   }

@@ -9,16 +9,17 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  moveMouseAway,
   clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
-  selectSingleBondTool,
   waitForRender,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
+import {
+  getSequenceSymbolLocator,
+  selectSequenceRangeInEditMode,
+} from '@utils/macromolecules/sequence';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -76,12 +77,11 @@ test.describe('Sequence mode selection for edit mode', () => {
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {
-    await getSequenceSymbolLocator(page, 'G').hover();
-    await page.mouse.down();
+    const fromSymbol = await getSequenceSymbolLocator(page, 'G');
     const number = 5;
-    await getSequenceSymbolLocator(page, 'G', number).hover();
-    await page.mouse.up();
-    await moveMouseAway(page);
+    const toSymbol = await getSequenceSymbolLocator(page, 'G', number);
+
+    await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
     const blankAreaAxis = { x: 200, y: 200 };
@@ -204,7 +204,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select a nucleotide or a group of nucleotides, then switch to another tool (excluding Erase). Confirm that selection is cleared.', async ({
+  test('Select a nucleotide or a group of nucleotides, then click in the middle of the screen. Confirm that selection is cleared.', async ({
     page,
   }) => {
     /*
@@ -215,7 +215,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await selectSingleBondTool(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

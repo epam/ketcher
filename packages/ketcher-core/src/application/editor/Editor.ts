@@ -3,7 +3,6 @@ import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
-  LabeledNodesWithPositionInSequence,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
@@ -41,6 +40,7 @@ import {
 } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import monomersDataRaw from './data/monomers.ket';
+import { drawnStructuresSelector } from 'application/editor/constants';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -63,6 +63,7 @@ export class CoreEditor {
   private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
+  public drawnStructuresWrapperElement: SVGGElement;
   public canvasOffset: DOMRect;
   public theme;
   public zoomTool: ZoomTool;
@@ -83,6 +84,9 @@ export class CoreEditor {
   constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    this.drawnStructuresWrapperElement = canvas.querySelector(
+      drawnStructuresSelector,
+    ) as SVGGElement;
     this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
@@ -217,9 +221,10 @@ export class CoreEditor {
     this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
-      this.events[eventName].add((event) =>
-        this.useToolIfNeeded(eventName, event),
-      );
+      this.events[eventName].add((event) => {
+        this.useModeIfNeeded(eventName, event);
+        this.useToolIfNeeded(eventName, event);
+      });
     });
     this.events.editSequence.add(
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
@@ -232,10 +237,6 @@ export class CoreEditor {
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOffSequenceEditInRNABuilderMode(),
-    );
-    this.events.modifySequenceInRnaBuilder.add(
-      (updatedSelection: LabeledNodesWithPositionInSequence[]) =>
-        this.onModifySequenceInRnaBuilder(updatedSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -272,16 +273,6 @@ export class CoreEditor {
     }
 
     this.mode.turnOffSequenceEditInRNABuilderMode();
-  }
-
-  private onModifySequenceInRnaBuilder(
-    updatedSelection: LabeledNodesWithPositionInSequence[],
-  ) {
-    if (!(this.mode instanceof SequenceMode)) {
-      return;
-    }
-
-    this.mode.modifySequenceInRnaBuilder(updatedSelection);
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {

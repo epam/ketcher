@@ -38,6 +38,7 @@ import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
+import { RasterImage } from './rasterImage';
 
 export type Neighbor = {
   aid: number;
@@ -73,6 +74,7 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
+  rasterImages: Pool<RasterImage>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
@@ -96,6 +98,7 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+    this.rasterImages = new Pool<RasterImage>();
   }
 
   hasRxnProps(): boolean {
@@ -123,7 +126,8 @@ export class Struct {
       this.rxnArrows.size === 0 &&
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
-      this.texts.size === 0
+      this.texts.size === 0 &&
+      this.rasterImages.size === 0
     );
   }
 
@@ -141,6 +145,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    rasterImagesSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -153,6 +158,7 @@ export class Struct {
       simpleObjectsSet,
       textsSet,
       rgroupAttachmentPointSet,
+      rasterImagesSet,
       bidMap,
     );
   }
@@ -197,6 +203,7 @@ export class Struct {
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
+      copyNonFragmentObjects ? undefined : new Pile(),
     );
   }
 
@@ -210,6 +217,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    rasterImagesSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
@@ -217,6 +225,8 @@ export class Struct {
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
+    rasterImagesSet =
+      rasterImagesSet || new Pile<number>(this.rasterImages.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -295,8 +305,9 @@ export class Struct {
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup)
-          : SGroup.clone(sg, aidMap!, atomsInSet);
+          ? MonomerMicromolecule.clone(oldSgroup, aidMap!)
+          : SGroup.clone(sg, aidMap!);
+
       const id = cp.sgroups.add(sg);
       sg.id = id;
 
@@ -328,6 +339,10 @@ export class Struct {
 
     textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
+    });
+
+    rasterImagesSet.forEach((id) => {
+      cp.rasterImages.add(this.rasterImages.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -827,6 +842,8 @@ export class Struct {
     this.simpleObjects.forEach((simpleObjects) => {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
+
+    this.rasterImages.forEach((rasterImage) => rasterImage.rescaleSize(scale));
   }
 
   rescale() {
@@ -1270,7 +1287,7 @@ export class Struct {
     return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
   }
 
-  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+  isTargetFromMacromolecule(target?: { id: number; map: string } | null) {
     return (
       target &&
       ((target.map === 'functionalGroups' &&

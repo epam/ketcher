@@ -22,6 +22,7 @@ import {
   turnOnMicromoleculesEditor,
   selectClearCanvasTool,
   delay,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import {
   chooseFileFormat,
@@ -58,6 +59,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Control+0');
   await selectClearCanvasTool(page);
+  await selectFlexLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {

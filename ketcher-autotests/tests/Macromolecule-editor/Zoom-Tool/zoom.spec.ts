@@ -95,6 +95,43 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that minimum value for zoom out is 20% and maximum value for zoom in is 400%', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < 8; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    let zoomValue = await page.getByTestId('zoom-selector').textContent();
+    expect(zoomValue).toBe('20%');
+    await takePageScreenshot(page);
+
+    await page.getByTestId('zoom-selector').click();
+    await waitForRender(page, async () => {
+      await page.getByTestId('reset-zoom-button').click();
+    });
+    for (let i = 0; i < 30; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    zoomValue = await page.getByTestId('zoom-selector').textContent();
+    expect(zoomValue).toBe('400%');
+    await takePageScreenshot(page);
+  });
+
   test('Validate that mouse scrolling IN/OUT - zooms into center of current mouse position', async ({
     page,
   }) => {
@@ -187,7 +224,8 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: After zoom in on created long snake chain of peptides you can use scroll with Shift
     */
-    const wheelDelta = 200;
+    const wheelYDelta = -400;
+    const wheelXDelta = -400;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
@@ -199,8 +237,9 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.keyboard.down('Shift');
-    await page.mouse.wheel(0, wheelDelta);
+    await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
+    await page.mouse.wheel(0, wheelYDelta);
     await takeEditorScreenshot(page);
   });
 

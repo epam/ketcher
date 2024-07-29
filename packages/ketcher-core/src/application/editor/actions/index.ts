@@ -8,6 +8,7 @@ export * from './closelyFusing';
 export * from './erase';
 export * from './fragment';
 export * from './paste';
+export * from './rasterImage';
 export * from './reaction';
 export * from './rgroup';
 export * from './rgroupAttachmentPoint';

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
-import { StructRender } from 'ketcher-react';
+import { Icon, StructRender } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { useEffect, useState } from 'react';
@@ -13,6 +13,7 @@ import {
   ConnectionSymbol,
   AttachmentPointsRow,
   ModalContent,
+  UnknownStructureContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 import { BaseMonomer, LeavingGroup } from 'ketcher-core';
@@ -184,6 +185,7 @@ function AttachmentPointSelectionPanel({
   onSelectAttachmentPoint,
   expanded = false,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
+  const isUnresolvedMonomer = monomer.monomerItem.props.unresolved === true;
   const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
     () => getConnectedAttachmentPoints(bonds),
@@ -228,18 +230,25 @@ function AttachmentPointSelectionPanel({
 
   return (
     <>
-      <StyledStructRender
-        struct={monomer.monomerItem.struct}
-        options={{
-          connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-          currentlySelectedMonomerAttachmentPoint:
-            selectedAttachmentPoint ?? undefined,
-          labelInMonomerConnectionsModal: true,
-          needCache: false,
-        }}
-        update={expanded}
-        isExpanded={expanded}
-      />
+      {isUnresolvedMonomer ? (
+        <UnknownStructureContent>
+          <Icon name="questionMark" />
+          Unknown structure
+        </UnknownStructureContent>
+      ) : (
+        <StyledStructRender
+          struct={monomer.monomerItem.struct}
+          options={{
+            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+            currentlySelectedMonomerAttachmentPoint:
+              selectedAttachmentPoint ?? undefined,
+            labelInMonomerConnectionsModal: true,
+            needCache: false,
+          }}
+          update={expanded}
+          isExpanded={expanded}
+        />
+      )}
       <AttachmentPointList>
         {monomer.listOfAttachmentPoints.map((attachmentPoint) => {
           const disabled = Boolean(

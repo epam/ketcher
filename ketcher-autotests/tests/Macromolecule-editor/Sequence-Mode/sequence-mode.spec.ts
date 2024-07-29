@@ -61,9 +61,11 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -561,7 +563,6 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);

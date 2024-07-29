@@ -15,9 +15,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public textElement?: D3SvgElementSelection<SVGTextElement, void>;
   public counterElement?: D3SvgElementSelection<SVGTextElement, void>;
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
-  private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
+  public caretElement?: D3SvgElementSelection<SVGLineElement, void>;
 
   constructor(
     public node: SubChainNode,
@@ -81,7 +81,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private appendRootElement() {
-    return this.canvas
+    const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('transition', 'transform 0.2s')
@@ -89,6 +89,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         'transform',
         `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    if (this.isSequenceEditModeTurnedOn) {
+      rootElement.attr('pointer-events', 'all').attr('cursor', 'text');
+    }
+
+    return rootElement;
   }
 
   private appendBackgroundElement() {
@@ -99,12 +105,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
-      .attr('cursor', 'text');
+      .attr('cursor', this.isSequenceEditModeTurnedOn ? 'text' : 'default');
 
-    backgroundElement?.attr(
-      'fill',
-      this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',
-    );
+    backgroundElement?.attr('fill', 'transparent');
 
     return backgroundElement;
   }
@@ -118,7 +121,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       ?.append('rect')
       .attr('width', 4)
       .attr('height', 20)
-      .attr('cursor', 'text')
+      .attr(
+        'cursor',
+        this.isSequenceEditInRnaBuilderModeTurnedOn ? 'default' : 'text',
+      )
       .attr('fill', 'transparent');
 
     return spacerGroupElement;
@@ -143,6 +149,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
       .attr('font-weight', '700')
+      .attr('style', 'user-select: none')
       .attr('fill', '#7C7C7F');
   }
 
@@ -158,15 +165,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.monomerIndexInChain === 0;
   }
 
-  public appendCaretElement() {
-    this.spacerElement
+  public showCaret() {
+    this.caretElement = this.spacerElement
       ?.append('line')
-      .attr('x1', -16)
+      .attr('x1', -17)
       .attr('y1', -1)
-      .attr('x2', -16)
+      .attr('x2', -17)
       .attr('y2', 21)
       .attr('stroke', '#333')
       .attr('class', 'blinking');
+  }
+
+  public removeCaret() {
+    this.caretElement?.remove();
+    this.caretElement = undefined;
   }
 
   protected redrawBackgroundElementColor() {
@@ -197,7 +209,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.backgroundElement = this.appendBackgroundElement();
 
     if (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) {
-      this.appendCaretElement();
+      this.showCaret();
     }
 
     this.textElement = this.rootElement
@@ -209,7 +221,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr(
         'fill',
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
-      );
+      )
+      .attr('style', 'user-select: none;')
+      .attr('cursor', this.isSequenceEditModeTurnedOn ? 'text' : 'default');
 
     this.appendEvents();
     if (this.needDisplayCounter) {
@@ -247,12 +261,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.selectionRectangle ||
       this.rootElement?.insert('rect', ':first-child');
 
-    this.selectionBorder = this.rootElement
-      ?.append('use')
-      .attr('href', this.monomerIndexInChain)
-      .attr('stroke', '#57FF8F')
-      .attr('pointer-events', 'none');
-
     if (this.isSequenceEditInRnaBuilderModeTurnedOn) {
       this.selectionRectangle
         ?.attr('fill', '#99D6DC')
@@ -271,13 +279,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('height', 20)
         .attr('class', 'dynamic-element');
     }
+    this.backgroundElement?.attr('fill', 'none');
   }
 
   public removeSelection() {
     this.selectionRectangle?.remove();
-    this.selectionBorder?.remove();
     this.selectionRectangle = undefined;
-    this.selectionBorder = undefined;
   }
 
   private raiseElement() {
@@ -300,17 +307,64 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public hoverAttachmenPoint() {}
   public updateAttachmentPoints() {}
+
+  private drawBackgroundElementHover() {
+    if (this.isSequenceEditModeTurnedOn) {
+      return;
+    }
+
+    this.backgroundElement?.attr(
+      'fill',
+      this.node.monomer.selected ? 'none' : '#E1E8E9',
+    );
+
+    if (this.node.modified) {
+      this.drawModification();
+    }
+  }
+
+  private removeBackgroundElementHover() {
+    this.backgroundElement?.attr('fill', 'none');
+
+    if (this.node.modified) {
+      this.drawModification();
+    }
+  }
+
   private appendEvents() {
     assert(this.textElement);
 
     this.textElement.on('mouseover', (event) => {
+      this.drawBackgroundElementHover();
       this.editorEvents.mouseOverSequenceItem.dispatch(event);
     });
     this.textElement.on('mousemove', (event) => {
       this.editorEvents.mouseOnMoveSequenceItem.dispatch(event);
     });
     this.textElement.on('mouseleave', (event) => {
+      this.removeBackgroundElementHover();
       this.editorEvents.mouseLeaveSequenceItem.dispatch(event);
+    });
+    this.spacerElement?.on('mousedown', (event) => {
+      this.editorEvents.mousedownBetweenSequenceItems.dispatch(event);
+    });
+    this.backgroundElement?.on('click', (event) => {
+      this.editorEvents.clickOnSequenceItem.dispatch(event);
+    });
+    this.backgroundElement?.on('mousedown', (event) => {
+      this.editorEvents.mouseDownOnSequenceItem.dispatch(event);
+    });
+    this.backgroundElement?.on('dblclick', (event) => {
+      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
+    });
+    this.textElement.on('dblclick', (event) => {
+      this.editorEvents.doubleClickOnSequenceItem.dispatch(event);
+    });
+    this.backgroundElement?.on('mouseover', () => {
+      this.drawBackgroundElementHover();
+    });
+    this.backgroundElement?.on('mouseleave', () => {
+      this.removeBackgroundElementHover();
     });
   }
 }

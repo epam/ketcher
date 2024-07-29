@@ -18,8 +18,6 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
           ? this.isSequenceEditInRnaBuilderModeTurnedOn
             ? '#41A8B2'
             : '#3ACA6A'
-          : this.isSequenceEditModeTurnedOn
-          ? '#ff7a004f'
           : '#CAD3DD',
       );
     }

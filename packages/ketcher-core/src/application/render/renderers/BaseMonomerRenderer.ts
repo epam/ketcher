@@ -21,6 +21,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
+export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -274,6 +275,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return canvas
       .append('g')
       .data([this])
+      .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
@@ -283,7 +285,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
-  private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+  protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const fontSize = 6;
     const textElement = rootElement
       .append('text')
@@ -443,6 +445,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '500')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
@@ -468,6 +471,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '700')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(this.beginning);

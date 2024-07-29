@@ -5,6 +5,7 @@ import {
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import { KetSerializer } from 'domain/serializers';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -37,7 +38,7 @@ export function monomerToDrawingEntity(
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
-      attachmentPoints: template.attachmentPoints,
+      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       seqId: node.seqid,
     },
     position,

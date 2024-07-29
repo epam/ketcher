@@ -2236,25 +2236,25 @@
         "$ref": "monomerGroupTemplate-dR(U)P"
       },
       {
-        "$ref": "monomerTemplate-5AmdA___5' 2, 6-Diaminopurine"
+        "$ref": "monomerTemplate-AmdA___2, 6-Diaminopurine"
       },
       {
-        "$ref": "monomerTemplate-55HydMe-dC___5' 5-Hydroxymethyl dC"
+        "$ref": "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC"
       },
       {
-        "$ref": "monomerTemplate-5Super-dG___5' Super G"
+        "$ref": "monomerTemplate-Super-dG___Super G"
       },
       {
-        "$ref": "monomerTemplate-5Super-dT___5' Super T"
+        "$ref": "monomerTemplate-Super-dT___Super T"
       },
       {
-        "$ref": "monomerTemplate-55Br-dU___5' 5-Bromo dU"
+        "$ref": "monomerTemplate-5Br-dU___5-Bromo dU"
       },
       {
-        "$ref": "monomerTemplate-55NitInd___5' 5-Nitroindole"
+        "$ref": "monomerTemplate-5NitInd___5-Nitroindole"
       },
       {
-        "$ref": "monomerTemplate-iAmMC6T___Int Amino Modifier C6 dT"
+        "$ref": "monomerTemplate-AmMC6T___Amino Modifier C6 dT"
       },
       {
         "$ref": "monomerTemplate-4aPEGMal___4-Arm PEG-Maleimide"
@@ -169971,13 +169971,22 @@
       }
     ]
   },
-  "monomerTemplate-5AmdA___5' 2, 6-Diaminopurine": {
+  "monomerTemplate-AmdA___2, 6-Diaminopurine": {
     "type": "monomerTemplate",
-    "id": "5AmdA___5' 2, 6-Diaminopurine",
-    "fullName": "5' 2, 6-Diaminopurine",
-    "alias": "5AmdA",
+    "id": "AmdA___2, 6-Diaminopurine",
+    "fullName": "2,6-Diaminopurine",
+    "alias": "2-Amino-dA",
     "naturalAnalogShort": "A",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "AmdA",
+      "modifications": {
+        "endpoint5": "5AmdA",
+        "internal": "i6diPr",
+        "endpoint3": "3AmdA"
+      }
+    },
     "atoms": [
       {
         "label": "N",
@@ -170383,13 +170392,17 @@
       }
     ]
   },
-  "monomerTemplate-55HydMe-dC___5' 5-Hydroxymethyl dC": {
+  "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC": {
     "type": "monomerTemplate",
-    "id": "55HydMe-dC___5' 5-Hydroxymethyl dC",
-    "fullName": "5' 5-Hydroxymethyl dC",
-    "alias": "55HydMe-dC",
+    "id": "5HydMe-dC___5-Hydroxymethyl dC",
+    "fullName": "Hydroxymethyl dC",
+    "alias": "5HydMe-dC",
     "naturalAnalogShort": "C",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "5HydMe-dC"
+    },
     "atoms": [
       {
         "label": "C",
@@ -170773,13 +170786,17 @@
       }
     ]
   },
-  "monomerTemplate-5Super-dG___5' Super G": {
+  "monomerTemplate-Super-dG___Super G": {
     "type": "monomerTemplate",
-    "id": "5Super-dG___5' Super G",
-    "fullName": "5' Super G",
-    "alias": "5Super-dG",
+    "id": "Super-dG___Super G",
+    "fullName": "8-aza-7-deazaguanosine",
+    "alias": "Super G",
     "naturalAnalogShort": "G",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "Super-dG"
+    },
     "atoms": [
       {
         "label": "N",
@@ -171185,13 +171202,17 @@
       }
     ]
   },
-  "monomerTemplate-5Super-dT___5' Super T": {
+  "monomerTemplate-Super-dT___Super T": {
     "type": "monomerTemplate",
-    "id": "5Super-dT___5' Super T",
-    "fullName": "5' Super T",
-    "alias": "5Super-dT",
+    "id": "Super-dT___Super T",
+    "fullName": "5-hydroxybutynl-2’-deoxyuridine",
+    "alias": "Super T",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "Super-dT"
+    },
     "atoms": [
       {
         "label": "N",
@@ -171620,13 +171641,21 @@
       }
     ]
   },
-  "monomerTemplate-55Br-dU___5' 5-Bromo dU": {
+  "monomerTemplate-5Br-dU___5-Bromo dU": {
     "type": "monomerTemplate",
-    "id": "55Br-dU___5' 5-Bromo dU",
-    "fullName": "5' 5-Bromo dU",
-    "alias": "55Br-dU",
+    "id": "5Br-dU___5-Bromo dU",
+    "fullName": "5-Bromo-deoxyuridine",
+    "alias": "5-Bromo dU",
     "naturalAnalogShort": "U",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "5Br-dU",
+      "modifications":  {
+        "endpoint5": "55Br-dU",
+        "internal": "i5Br-dU"
+      }
+    },
     "atoms": [
       {
         "label": "C",
@@ -171995,13 +172024,17 @@
       }
     ]
   },
-  "monomerTemplate-55NitInd___5' 5-Nitroindole": {
+  "monomerTemplate-5NitInd___5-Nitroindole": {
     "type": "monomerTemplate",
-    "id": "55NitInd___5' 5-Nitroindole",
-    "fullName": "5' 5-Nitroindole",
-    "alias": "55NitInd",
+    "id": "5NitInd___5-Nitroindole",
+    "fullName": "5-Nitroindole",
+    "alias": "5NitInd",
     "naturalAnalogShort": "X",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "5NitInd"
+    },
     "atoms": [
       {
         "label": "C",
@@ -172424,13 +172457,17 @@
       }
     ]
   },
-  "monomerTemplate-iAmMC6T___Int Amino Modifier C6 dT": {
+  "monomerTemplate-AmMC6T___Amino Modifier C6 dT": {
     "type": "monomerTemplate",
-    "id": "iAmMC6T___Int Amino Modifier C6 dT",
-    "fullName": "Int Amino Modifier C6 dT",
-    "alias": "iAmMC6T",
+    "id": "AmMC6T___Amino Modifier C6 dT",
+    "fullName": "Amino Modifier C6 dT",
+    "alias": "AmMC6T",
     "naturalAnalogShort": "T",
     "class": "RNA",
+    "classHELM": "RNA",
+    "idtAliases": {
+      "base": "AmMC6T"
+    },
     "atoms": [
       {
         "label": "O",

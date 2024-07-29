@@ -5,16 +5,26 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 let id = 0;
 
+export interface DrawingEntityConfig {
+  generateId: boolean;
+}
 export abstract class DrawingEntity {
   public selected = false;
   public hovered = false;
   public id = 0;
   public baseRenderer?: BaseRenderer;
 
-  protected constructor(private _position: Vec2 = new Vec2(0, 0)) {
+  protected constructor(
+    private _position: Vec2 = new Vec2(0, 0),
+    private config: DrawingEntityConfig = {
+      generateId: true,
+    },
+  ) {
     this._position = _position || new Vec2(0, 0);
-    this.id = id;
-    id++;
+    if (this.config?.generateId === true) {
+      this.id = id;
+      id++;
+    }
   }
 
   moveRelative(position: Vec2) {

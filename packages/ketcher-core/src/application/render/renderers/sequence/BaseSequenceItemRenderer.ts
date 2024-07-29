@@ -7,6 +7,7 @@ import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { editorEvents } from 'application/editor/editorEvents';
 import assert from 'assert';
+import { SequenceRenderer } from 'application/render';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -41,6 +42,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public set isEditingSymbol(isEditingSymbol: boolean) {
     this._isEditingSymbol = isEditingSymbol;
+  }
+
+  private get isSingleEmptyNode() {
+    return (
+      SequenceRenderer.chainsCollection.length === 1 &&
+      this.node instanceof EmptySequenceNode
+    );
   }
 
   protected abstract drawModification(): void;
@@ -90,7 +98,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         `translate(${this.scaledMonomerPositionForSequence.x}, ${this.scaledMonomerPositionForSequence.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
-    if (this.isSequenceEditModeTurnedOn) {
+    if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       rootElement.attr('pointer-events', 'all').attr('cursor', 'text');
     }
 
@@ -105,7 +113,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', -16)
       .attr('x', -2)
       .attr('rx', 2)
-      .attr('cursor', this.isSequenceEditModeTurnedOn ? 'text' : 'default');
+      .attr(
+        'cursor',
+        this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
+          ? 'text'
+          : 'default',
+      );
 
     backgroundElement?.attr('fill', 'transparent');
 
@@ -184,7 +197,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   protected redrawBackgroundElementColor() {
     this.backgroundElement?.attr(
       'fill',
-      this.isSequenceEditModeTurnedOn ? '#FF7A001A' : 'transparent',
+      this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
+        ? '#FF7A001A'
+        : 'transparent',
     );
   }
 
@@ -202,13 +217,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   show(): void {
     this.rootElement = this.appendRootElement();
-    if (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) {
+    if (
+      (this.isBeginningOfChain && this.isSequenceEditModeTurnedOn) ||
+      this.isSingleEmptyNode
+    ) {
       this.appendChainStartArrow();
     }
     this.spacerElement = this.appendSpacerElement();
     this.backgroundElement = this.appendBackgroundElement();
 
-    if (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) {
+    if (
+      (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) ||
+      this.isSingleEmptyNode
+    ) {
       this.showCaret();
     }
 
@@ -223,7 +244,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         this.isSequenceEditInRnaBuilderModeTurnedOn ? '24545A' : '#333333',
       )
       .attr('style', 'user-select: none;')
-      .attr('cursor', this.isSequenceEditModeTurnedOn ? 'text' : 'default');
+      .attr(
+        'cursor',
+        this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode
+          ? 'text'
+          : 'default',
+      );
 
     this.appendEvents();
     if (this.needDisplayCounter) {
@@ -244,7 +270,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     if (!this.rootElement) {
       return;
     }
-    if (this.node.monomer.selected) {
+    if (this.node.monomer.selected && !this.isSingleEmptyNode) {
       this.appendSelection();
       this.raiseElement();
     } else {
@@ -309,7 +335,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public updateAttachmentPoints() {}
 
   private drawBackgroundElementHover() {
-    if (this.isSequenceEditModeTurnedOn) {
+    if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
       return;
     }
 

@@ -35,6 +35,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import { LabeledNodesWithPositionInSequence } from 'application/editor/tools/Tool';
+import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -44,6 +45,10 @@ const naturalAnalogues = uniq([
 enum Direction {
   Left = 'left',
   Right = 'right',
+}
+
+export interface StartNewSequenceEventData {
+  indexOfRowBefore: number;
 }
 
 export class SequenceMode extends BaseMode {
@@ -144,16 +149,19 @@ export class SequenceMode extends BaseMode {
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 
-  public startNewSequence() {
+  public startNewSequence(eventData?: StartNewSequenceEventData) {
+    const currentChainIndex = this.isEditMode
+      ? SequenceRenderer.currentChainIndex
+      : SequenceRenderer.chainsCollection.chains.length - 1;
+    const indexOfRowBefore = isNumber(eventData?.indexOfRowBefore)
+      ? eventData?.indexOfRowBefore
+      : currentChainIndex;
+
     if (!this.isEditMode) {
       this.turnOnEditMode();
     }
 
-    if (!SequenceRenderer.hasNewChain) {
-      SequenceRenderer.startNewSequence();
-    }
-
-    SequenceRenderer.moveCaretToNewChain();
+    SequenceRenderer.startNewSequence(indexOfRowBefore);
   }
 
   public modifySequenceInRnaBuilder(
@@ -293,8 +301,12 @@ export class SequenceMode extends BaseMode {
   }
 
   public mousedown(event: MouseEvent) {
-    const eventData = event.target?.__data__;
-    const isClickedOnEmptyPlace = !(eventData instanceof BaseRenderer);
+    const eventData: BaseRenderer | NewSequenceButton | undefined =
+      event.target?.__data__;
+    const isClickedOnEmptyPlace = !(
+      eventData instanceof NewSequenceButton ||
+      eventData instanceof BaseRenderer
+    );
     const isEventOnSequenceItem = eventData instanceof BaseSequenceItemRenderer;
 
     if (isClickedOnEmptyPlace) {
@@ -788,12 +800,24 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
+          if (
+            SequenceRenderer.chainsCollection.length === 1 &&
+            SequenceRenderer.chainsCollection.firstNode instanceof
+              EmptySequenceNode &&
+            !this.isEditMode
+          ) {
+            this.turnOnEditMode();
+            SequenceRenderer.setCaretPosition(0);
+          }
+
           if (!this.isEditMode) {
             return;
           }
+
           if (!this.deleteSelection()) {
             return;
           }
+
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
@@ -1160,5 +1184,6 @@ export class SequenceMode extends BaseMode {
 
   public destroy() {
     this.turnOffEditMode();
+    SequenceRenderer.removeNewSequenceButtons();
   }
 }

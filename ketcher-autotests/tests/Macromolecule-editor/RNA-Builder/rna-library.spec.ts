@@ -29,6 +29,10 @@ import {
   delay,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
+  selectSnakeLayoutModeTool,
+  selectSequenceLayoutModeTool,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
@@ -36,9 +40,11 @@ import {
   gotoRNA,
   pressNewPresetButton,
   toggleBasesAccordion,
+  toggleNucleotidesAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 async function expandCollapseRnaBuilder(page: Page) {
   await page
@@ -937,6 +943,201 @@ test.describe('RNA Library', () => {
     await takePageScreenshot(page);
   });
 
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/3816
+    Description: It is not possible to create preset if Sugar is without R3 connection point.
+    */
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await page.getByTestId(`12ddR___1',2'-Di-Deoxy-Ribose`).click();
+    await page.getByTestId('rna-builder-slot--base').click();
+    await takePresetsScreenshot(page);
+  });
+
+  const rnaNucleotides = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides) {
+    test(`Validate that you can put unsplit nucleotide ${monomer} on the canvas from library, select it and move it, delete it`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
+    */
+      const x = 200;
+      const y = 200;
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await toggleNucleotidesAccordion(page);
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+      await dragMouseTo(x, y, page);
+      await takeEditorScreenshot(page);
+      await selectEraseTool(page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Validate that chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: Chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: Unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides could be deleted from sequence', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4382
+    Description: unsplit nucleotides can be deleted from sequence
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/chain-with-unsplit-nucleotides.ket',
+      page,
+    );
+    await selectEraseTool(page);
+    await page.getByText('AmMC6T').locator('..').locator('..').first().click();
+    await page.getByText('Super G').locator('..').locator('..').first().click();
+    await page
+      .getByText('5-Bromo dU')
+      .locator('..')
+      .locator('..')
+      .first()
+      .click();
+    await takeEditorScreenshot(page);
+  });
+
+  const rnaNucleotides1 = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides1) {
+    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
+    */
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const rnaNucleotides2 = [
+    `2-Amino-dA___2,6-Diaminopurine`,
+    `5HydMe-dC___Hydroxymethyl dC`,
+    `Super G___8-aza-7-deazaguanosine`,
+    `AmMC6T___Amino Modifier C6 dT`,
+    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5NitInd___5-Nitroindole`,
+  ];
+
+  for (const monomer of rnaNucleotides2) {
+    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer}`, async ({
+      page,
+    }) => {
+      /*
+    Test case: Import/Saving files/#4382
+    Description: Undo/redo tool works correct with unsplit nucleotide.
+    */
+      const x = 200;
+      const y = 200;
+      await page.getByTestId('RNA-TAB').click();
+      await toggleNucleotidesAccordion(page);
+      await waitForRender(page, async () => {
+        await page.getByTestId(monomer).click();
+      });
+      await clickInTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Escape');
+      await clickInTheMiddleOfTheScreen(page);
+      await dragMouseTo(x, y, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectEraseTool(page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Base is selected and we select Sugar)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/3816
+    Description: It is not possible to create preset if Sugar is without R3 connection point.
+    */
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('rna-builder-slot--base').click();
+    await page.getByTestId(`baA___N-benzyl-adenine`).click();
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await takePresetsScreenshot(page);
+  });
+
   test('It is possible to add/remove RNA presets into the Favourite library', async ({
     page,
   }) => {
@@ -1149,7 +1350,7 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
 
     // Case 24
-    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').hover();
+    await page.getByTestId(Chems.SMPEG2).hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);

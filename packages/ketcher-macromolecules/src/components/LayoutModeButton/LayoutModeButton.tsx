@@ -51,23 +51,26 @@ export const LayoutModeButton = () => {
   return (
     <MenuContext.Provider value={menuContext}>
       <Menu.Submenu
+        disabled={isSequenceEditInRNABuilderMode}
         testId="layout-mode"
         vertical={true}
-        disabled={!!isSequenceEditInRNABuilderMode}
         needOpenByMenuItemClick={true}
         layoutModeButton={true}
       >
         <Menu.Item
           itemId="sequence-layout-mode"
           testId="sequence-layout-mode"
+          title="Switch to sequence layout mode"
         ></Menu.Item>
         <Menu.Item
           itemId="snake-layout-mode"
           testId="snake-layout-mode"
+          title="Switch to snake layout mode"
         ></Menu.Item>
         <Menu.Item
           itemId="flex-layout-mode"
           testId="flex-layout-mode"
+          title="Switch to flex layout mode"
         ></Menu.Item>
       </Menu.Submenu>
     </MenuContext.Provider>

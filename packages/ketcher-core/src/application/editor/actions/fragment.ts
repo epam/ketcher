@@ -36,6 +36,7 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
+import { RASTER_IMAGE_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);
@@ -128,8 +129,8 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
-  if (lists.rasterImages) {
-    lists.rasterImages.forEach((rasterImage) => {
+  if (lists[RASTER_IMAGE_KEY]) {
+    lists[RASTER_IMAGE_KEY].forEach((rasterImage) => {
       action.addOp(new RasterImageMove(rasterImage, d));
     });
   }
@@ -143,7 +144,7 @@ export function fromStereoFlagUpdate(restruct, frid, flag = null) {
   if (!flag) {
     const struct = restruct.molecule;
     const frag = restruct.molecule.frags.get(frid);
-    frag.stereoAtoms.forEach((aid) => {
+    frag?.stereoAtoms.forEach((aid) => {
       if (struct.atoms.get(aid).stereoLabel === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid));
       }

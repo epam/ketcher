@@ -22,6 +22,7 @@ import {
   dragMouseTo,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Import-Saving .ket Files', () => {
   test.beforeEach(async ({ page }) => {
@@ -124,7 +125,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file. 
     */
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     const expectedFile = await getKet(page);
     await saveToFile('KET/monomer-expected.ket', expectedFile);
@@ -196,7 +197,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms. 
     */
-    await page.getByTestId('D-2Nal___D-3-naphthylalanine').click();
+    await page.getByTestId(Peptides.D2Nal).click();
     await clickInTheMiddleOfTheScreen(page);
     const expectedFile = await getKet(page);
     await saveToFile('KET/D-2Nal-expected.ket', expectedFile);
@@ -292,6 +293,26 @@ test.describe('Import-Saving .ket Files', () => {
     */
     await openFileAndAddToCanvasMacro('KET/three-chems-connected.ket', page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Check save and open of file with unresolved monomers in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: There should be possible to load monomers which not found in Monomer library
+    */
+    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/unresolved-monomers-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/unresolved-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });
 

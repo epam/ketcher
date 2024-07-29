@@ -34,13 +34,17 @@ export function pseudoAtomValid(
   value: string,
   atomType: AtomType,
   isCustomQuery: boolean,
+  disableQueryElements?: string[] | null,
 ) {
-  genericsList.includes(capitalize(value));
-  const isGenericElement = genericsList.includes(value);
-  if (atomType !== 'pseudo' || isCustomQuery) {
-    return true;
+  const capitalizedValue = capitalize(value);
+  const isDisabledQueryElement =
+    disableQueryElements?.includes(capitalizedValue);
+
+  if (atomType === 'pseudo' && isDisabledQueryElement) {
+    return false;
   }
-  return value && isGenericElement;
+  const isGenericElement = genericsList.includes(capitalizedValue);
+  return atomType !== 'pseudo' || isCustomQuery || (value && isGenericElement);
 }
 
 export function chargeValid(

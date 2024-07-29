@@ -1,5 +1,6 @@
 import {
   BaseMonomer,
+  Nucleoside,
   Nucleotide,
   RNABase,
   SubChainNode,
@@ -12,22 +13,24 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
 
 interface MatrixConfig {
-  cellsInRow: number;
+  initialMatrix: Matrix<Cell>;
 }
 
 export class CanvasMatrix {
   private matrix: Matrix<Cell>;
-  private nodeToCell: Map<SubChainNode, Cell> = new Map();
+  private initialMatrixWidth: number;
+  private monomerToCell: Map<BaseMonomer, Cell> = new Map();
   public polymerBondToCells: Map<PolymerBond, Cell[]> = new Map();
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
 
   constructor(
     private chainsCollection: ChainsCollection,
     private matrixConfig: MatrixConfig = {
-      cellsInRow: 18,
+      initialMatrix: new Matrix<Cell>(),
     },
   ) {
     this.matrix = new Matrix<Cell>();
+    this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
   }
 
@@ -170,149 +173,199 @@ export class CanvasMatrix {
     // iterate over each chain and fill matrix with cells
     let rowNumber = 0;
     let columnNumber = 0;
+    let rowsWithRnaBases = 0;
+    let wereBasesInRow = false;
     this.chains.forEach((chain) => {
       chain.forEachNode(({ node }) => {
         node.monomers.forEach((monomer) => {
-          if (node instanceof Nucleotide && monomer instanceof RNABase) {
+          if (
+            (node instanceof Nucleotide || node instanceof Nucleoside) &&
+            monomer instanceof RNABase
+          ) {
+            const cell = new Cell(
+              node,
+              [],
+              columnNumber - 1,
+              rowNumber + rowsWithRnaBases + 1,
+              monomer,
+            );
+            this.matrix.set(
+              rowNumber + rowsWithRnaBases + 1,
+              columnNumber - 1,
+              cell,
+            );
+            this.monomerToCell.set(monomer, cell);
+            wereBasesInRow = true;
+
             return;
           }
 
-          if (columnNumber / this.matrixConfig.cellsInRow >= 1) {
+          const initialMatrixRowLength =
+            this.matrixConfig.initialMatrix?.getRow(rowNumber)?.length || 0;
+
+          if (columnNumber >= initialMatrixRowLength) {
+            let emptyCellsAmount = this.initialMatrixWidth - columnNumber;
+            while (emptyCellsAmount > 0) {
+              this.matrix.set(
+                rowNumber + rowsWithRnaBases,
+                columnNumber,
+                new Cell(null, [], columnNumber, rowNumber + rowsWithRnaBases),
+              );
+              columnNumber++;
+              emptyCellsAmount--;
+            }
+
+            if (wereBasesInRow) {
+              rowsWithRnaBases++;
+              wereBasesInRow = false;
+              let index = 0;
+              while (index < this.initialMatrixWidth) {
+                const cellWithPotentialRnaBase = this.matrix.get(
+                  rowNumber + rowsWithRnaBases,
+                  index,
+                );
+                if (cellWithPotentialRnaBase) {
+                  index++;
+                  continue;
+                }
+                this.matrix.set(
+                  rowNumber + rowsWithRnaBases,
+                  index,
+                  new Cell(null, [], index, rowNumber + rowsWithRnaBases + 1),
+                );
+                index++;
+              }
+            }
+
             rowNumber++;
             columnNumber = 0;
           }
 
-          const cell = new Cell(node, [], columnNumber, rowNumber);
-          this.matrix.set(rowNumber, columnNumber, cell);
-          this.nodeToCell.set(node, cell);
+          const cell = new Cell(
+            node,
+            [],
+            columnNumber,
+            rowNumber + rowsWithRnaBases,
+            monomer,
+          );
+          this.matrix.set(rowNumber + rowsWithRnaBases, columnNumber, cell);
+          this.monomerToCell.set(monomer, cell);
           columnNumber++;
         });
       });
-      let emptyCellsAmount = this.matrixConfig.cellsInRow - columnNumber;
-      while (emptyCellsAmount > 0) {
-        this.matrix.set(
-          rowNumber,
-          columnNumber,
-          new Cell(null, [], columnNumber, rowNumber),
-        );
-        columnNumber++;
-        emptyCellsAmount--;
-      }
-      rowNumber++;
-      columnNumber = 0;
     });
 
     const monomerToNode = this.chainsCollection.monomerToNode;
     const handledConnections = new Set<PolymerBond>();
 
     this.matrix.forEach((cell) => {
-      cell.node?.monomers.forEach((monomer) => {
-        monomer.forEachBond((polymerBond) => {
-          if (
-            polymerBond.isSideChainConnection &&
-            !handledConnections.has(polymerBond)
-          ) {
-            const anotherMonomer = polymerBond.getAnotherMonomer(
-              monomer,
-            ) as BaseMonomer;
-            const connectedNode = monomerToNode.get(
-              anotherMonomer,
-            ) as SubChainNode;
-            const connectedCell = this.nodeToCell.get(connectedNode) as Cell;
-            const xDistance = connectedCell.x - cell.x;
-            const yDistance = connectedCell.y - cell.y;
-            const xDirection = xDistance > 0 ? 0 : 180;
-            const yDirection = yDistance > 0 ? 90 : 270;
-            let xDistanceAbsolute = Math.abs(xDistance);
-            let yDistanceAbsolute = Math.abs(yDistance);
-            const isVertical = xDistanceAbsolute === 0;
+      const monomer = cell.monomer;
 
-            // fill start cell by connection with direction
-            let connection: Connection = {
-              polymerBond,
-              connectedNode,
-              direction: isVertical ? 90 : xDirection,
-              offset: 0,
-              yOffset: 0,
-              isVertical,
-            };
+      monomer?.forEachBond((polymerBond) => {
+        if (
+          polymerBond.isSideChainConnection &&
+          !handledConnections.has(polymerBond)
+        ) {
+          const anotherMonomer = polymerBond.getAnotherMonomer(
+            monomer,
+          ) as BaseMonomer;
+          const connectedNode = monomerToNode.get(
+            anotherMonomer,
+          ) as SubChainNode;
+          const connectedCell = this.monomerToCell.get(anotherMonomer) as Cell;
+          const xDistance = connectedCell.x - cell.x;
+          const yDistance = connectedCell.y - cell.y;
+          const xDirection = xDistance > 0 ? 0 : 180;
+          const yDirection = yDistance > 0 ? 90 : 270;
+          let xDistanceAbsolute = Math.abs(xDistance);
+          let yDistanceAbsolute = Math.abs(yDistance);
+          const isVertical = xDistanceAbsolute === 0;
 
-            cell.connections.push(connection);
-            this.polymerBondToCells.set(polymerBond, [cell]);
-            this.polymerBondToConnections.set(polymerBond, [connection]);
+          // fill start cell by connection with direction
+          let connection: Connection = {
+            polymerBond,
+            connectedNode,
+            direction: isVertical ? 90 : xDirection,
+            offset: 0,
+            yOffset: 0,
+            isVertical,
+          };
 
-            let nextCellX = cell.x;
-            let nextCellY = cell.y;
+          cell.connections.push(connection);
+          this.polymerBondToCells.set(polymerBond, [cell]);
+          this.polymerBondToConnections.set(polymerBond, [connection]);
 
-            // fill x cells by connection with direction
-            while (xDistanceAbsolute > 1) {
-              nextCellX += Math.sign(xDistance);
-              const nextCellToHandle = this.matrix.get(
-                nextCellY,
-                nextCellX,
-              ) as Cell;
-              connection = {
-                polymerBond,
-                connectedNode: null,
-                direction: xDirection,
-                offset: 0,
-                yOffset: 0,
-                isVertical,
-              };
-              nextCellToHandle.connections.push(connection);
-              this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
-              this.polymerBondToConnections.get(polymerBond)?.push(connection);
+          let nextCellX = cell.x;
+          let nextCellY = cell.y;
 
-              xDistanceAbsolute--;
-            }
-
-            // fill y cells by connection with direction
-            while (yDistanceAbsolute > 1) {
-              nextCellY += Math.sign(yDistance);
-              const nextCellToHandle = this.matrix.get(
-                nextCellY,
-                nextCellX,
-              ) as Cell;
-              connection = {
-                polymerBond,
-                connectedNode: null,
-                direction: yDirection,
-                offset: 0,
-                yOffset: 0,
-                isVertical,
-              };
-              nextCellToHandle.connections.push(connection);
-              this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
-              this.polymerBondToConnections.get(polymerBond)?.push(connection);
-
-              yDistanceAbsolute--;
-            }
-
-            // fill last cell by connection
+          // fill x cells by connection with direction
+          while (xDistanceAbsolute > 1) {
             nextCellX += Math.sign(xDistance);
-            nextCellY += Math.sign(yDistance);
-
-            const lastCellToHandle = this.matrix.get(
+            const nextCellToHandle = this.matrix.get(
               nextCellY,
               nextCellX,
             ) as Cell;
             connection = {
               polymerBond,
-              connectedNode,
-              direction: isVertical
-                ? yDirection
-                : { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
+              connectedNode: null,
+              direction: xDirection,
               offset: 0,
               yOffset: 0,
               isVertical,
             };
-            lastCellToHandle.connections.push(connection);
-            this.polymerBondToCells.get(polymerBond)?.push(lastCellToHandle);
+            nextCellToHandle.connections.push(connection);
+            this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
             this.polymerBondToConnections.get(polymerBond)?.push(connection);
 
-            handledConnections.add(polymerBond);
+            xDistanceAbsolute--;
           }
-        });
+
+          // fill y cells by connection with direction
+          while (yDistanceAbsolute > 1) {
+            nextCellY += Math.sign(yDistance);
+            const nextCellToHandle = this.matrix.get(
+              nextCellY,
+              nextCellX,
+            ) as Cell;
+            connection = {
+              polymerBond,
+              connectedNode: null,
+              direction: yDirection,
+              offset: 0,
+              yOffset: 0,
+              isVertical,
+            };
+            nextCellToHandle.connections.push(connection);
+            this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
+            this.polymerBondToConnections.get(polymerBond)?.push(connection);
+
+            yDistanceAbsolute--;
+          }
+
+          // fill last cell by connection
+          nextCellX += Math.sign(xDistance);
+          nextCellY += Math.sign(yDistance);
+
+          const lastCellToHandle = this.matrix.get(
+            nextCellY,
+            nextCellX,
+          ) as Cell;
+          connection = {
+            polymerBond,
+            connectedNode,
+            direction: isVertical
+              ? yDirection
+              : { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
+            offset: 0,
+            yOffset: 0,
+            isVertical,
+          };
+          lastCellToHandle.connections.push(connection);
+          this.polymerBondToCells.get(polymerBond)?.push(lastCellToHandle);
+          this.polymerBondToConnections.get(polymerBond)?.push(connection);
+
+          handledConnections.add(polymerBond);
+        }
       });
     });
 

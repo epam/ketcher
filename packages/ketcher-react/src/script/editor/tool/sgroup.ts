@@ -444,7 +444,7 @@ class SGroupTool implements Tool {
       return;
     }
 
-    let id = null; // id of an existing group, if we're editing one
+    let id: number | null = null; // id of an existing group, if we're editing one
     let selection: any = null; // atoms to include in a newly created group
 
     if (this.lassoHelper.running(event)) {

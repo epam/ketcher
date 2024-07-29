@@ -62,9 +62,25 @@ export async function openLayoutModeMenu(page: Page) {
   await modeSelectorButton.click();
 }
 
+export async function hideLibrary(page: Page) {
+  const hideLibraryLink = await page.getByText('Hide');
+  const isVisible = await hideLibraryLink.isVisible();
+  if (isVisible) {
+    await hideLibraryLink.click();
+  }
+}
+
+export async function showLibrary(page: Page) {
+  const showLibraryButton = await await page.getByText('Show Library');
+  const isVisible = await showLibraryButton.isVisible();
+  if (isVisible) {
+    await showLibraryButton.click();
+  }
+}
+
 export async function selectSnakeLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const snakeModeButton = page.getByTestId('snake-layout-mode');
+  const snakeModeButton = page.getByTestId('snake-layout-mode').first();
 
   await snakeModeButton.waitFor({ state: 'visible' });
   await snakeModeButton.click();
@@ -72,7 +88,7 @@ export async function selectSnakeLayoutModeTool(page: Page) {
 
 export async function selectSequenceLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const sequenceModeButton = page.getByTestId('sequence-layout-mode');
+  const sequenceModeButton = page.getByTestId('sequence-layout-mode').first();
 
   await sequenceModeButton.waitFor({ state: 'visible' });
   await sequenceModeButton.click();

@@ -9,6 +9,19 @@ export const AttachmentPointList = styled.div({
   gap: '7px',
 });
 
+export const UnknownStructureContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 2%;
+  color: #7c7c7f;
+  border: 1px solid #cad3dd;
+  width: 100%;
+  height: 100%;
+`;
+
 interface IStyledAttachmentPointNameProps {
   disabled?: boolean;
 }

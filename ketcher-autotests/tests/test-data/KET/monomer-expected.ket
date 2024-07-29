@@ -8,7 +8,7 @@
         "connections": [],
         "templates": [
             {
-                "$ref": "monomerTemplate-Bal___beta-Alanine"
+                "$ref": "monomerTemplate-bAla___beta-Alanine"
             }
         ]
     },
@@ -19,10 +19,10 @@
             "x": 14.75,
             "y": -7.65
         },
-        "alias": "Bal",
-        "templateId": "Bal___beta-Alanine"
+        "alias": "bAla",
+        "templateId": "bAla___beta-Alanine"
     },
-    "monomerTemplate-Bal___beta-Alanine": {
+    "monomerTemplate-bAla___beta-Alanine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -128,9 +128,9 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "id": "Bal___beta-Alanine",
+        "id": "bAla___beta-Alanine",
         "fullName": "beta-Alanine",
-        "alias": "Bal",
+        "alias": "bAla",
         "attachmentPoints": [
             {
                 "attachmentAtom": 5,

@@ -26,8 +26,9 @@ export const Card = styled.div<{
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   opacity: ${({ disabled }) => (disabled ? '0.4' : '1')};
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 5px;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   position: relative;
@@ -77,18 +78,20 @@ export const Card = styled.div<{
     position: absolute;
     bottom: ${({ selected }) => (selected ? '4px' : '6px')};
     left: ${({ selected }) => (selected ? '4px' : '6px')};
-    text-overflow: ellipsis;
-    max-width: calc(100% - 12px);
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 85%;
   }
   > .star {
     color: #e1e5ea;
     position: absolute;
     top: 12px;
-    right: 4px;
+    right: 3px;
     font-size: 15px;
     opacity: 0;
     transition: 0.2s ease;
+    flex-shrink: 0;
     &.visible {
       visibility: visible;
       opacity: 1;

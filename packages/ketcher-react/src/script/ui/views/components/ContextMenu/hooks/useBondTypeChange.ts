@@ -7,7 +7,6 @@ import { ItemEventParams } from '../contextMenu.types';
 
 const useBondTypeChange = () => {
   const { getKetcherInstance } = useAppContext();
-
   const handler = useCallback(
     ({ id, props }: ItemEventParams) => {
       const editor = getKetcherInstance().editor as Editor;
@@ -27,10 +26,14 @@ const useBondTypeChange = () => {
 
   const disabled = useCallback(({ props }: ItemEventParams) => {
     const selectedBondIds = props?.bondIds;
+    const editor = getKetcherInstance().editor;
+
     if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
+      if (editor.struct().isBondFromMacromolecule(selectedBondIds[0])) {
+        return true;
+      }
       return false;
     }
-
     return true;
   }, []);
 

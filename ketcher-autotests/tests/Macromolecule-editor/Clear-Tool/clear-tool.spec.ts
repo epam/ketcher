@@ -13,6 +13,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
@@ -29,7 +30,7 @@ test.describe('Clear Canvas Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(

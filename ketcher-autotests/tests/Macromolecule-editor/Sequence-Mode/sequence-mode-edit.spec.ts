@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   moveMouseAway,
@@ -162,6 +163,7 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
@@ -179,6 +181,7 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
@@ -197,7 +200,6 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
     await enterSequence(page, 'u');
     await takeEditorScreenshot(page);
   });
@@ -213,9 +215,49 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
     await page.getByText('G').locator('..').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await selectSnakeLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that it is not possible to add more monomers to cycled scructure', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4706 https://github.com/epam/ketcher/issues/4706
+    Description: It is not possible to add more monomers to cycled scructure. Error message appears.
+    */
+    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await page
+      .getByText('U', { exact: true })
+      .locator('..')
+      .first()
+      .click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowRight');
+    await enterSequence(page, 'a');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that it is not possible to past cycling structures to sequence', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4575 https://github.com/epam/ketcher/issues/4575
+    Description: It is not possible to add more monomers to cycled structure. Error message appears.
+    */
+    await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await startNewSequence(page);
+    await enterSequence(page, 'aaaaaaaaaa');
+
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+
+    await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
   });
 });

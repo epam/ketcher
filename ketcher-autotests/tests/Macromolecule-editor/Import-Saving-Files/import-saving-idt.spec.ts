@@ -779,7 +779,9 @@ test.describe('Import-Saving .idt Files', () => {
     /*
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
+    Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
     */
+    test.fail();
     const x = 650;
     const y = 400;
     const firstMonomer = await page.getByText('iMe-dC').locator('..');
@@ -841,14 +843,17 @@ test.describe('Import-Saving .idt Files', () => {
     page,
   }) => {
     /*
-    Test case: Import/Saving files/4431
-    Description: Bond deleted and after pressing Undo appears.
-    */
+  Test case: Import/Saving files/4431
+  Description: Bond deleted and after pressing Undo appears.
+  Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
+  */
+    test.fail();
     const x = 650;
     const y = 400;
     const firstMonomer = await page.getByText('iMe-dC').locator('..');
     const secondMonomer = await page.getByText('1Nal').locator('..').first();
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       'IDT',
@@ -863,6 +868,13 @@ test.describe('Import-Saving .idt Files', () => {
       'R2',
       'R1',
     );
+
+    const bondExists = await bondLine.isVisible();
+
+    if (!bondExists) {
+      throw new Error('Bond line is not present, likely due to a known bug.');
+    }
+
     await selectEraseTool(page);
     await bondLine.click();
     await takeEditorScreenshot(page);

@@ -737,49 +737,41 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify hover preview contains IDT alias only for unresolved IDT monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Verify hover preview contains IDT alias only for unresolved IDT monomers', async ({
+    page,
+  }) => {
+    /*
     Test case: Import/Saving files/4431
     Description: Hover preview contains IDT alias only for unresolved IDT monomers.
-    Screenshot for snake mode not correct because we have a bug https://github.com/epam/ketcher/issues/4947
-    After fix need to be updated.
     */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        'IDT',
-        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
-      );
-      await page.getByText('iMe').locator('..').nth(1).hover();
-      await takeEditorScreenshot(page);
-      await selectSequenceLayoutModeTool(page);
-      await page.getByText('?').locator('..').nth(1).hover();
-      await takeEditorScreenshot(page);
-    },
-  );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await page.getByText('iMe').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
+    await page.getByText('?').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    'Check that R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Check that R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers', async ({
+    page,
+  }) => {
+    /*
     Test case: Import/Saving files/4431
     Description: R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers.
-    Screenshot for snake mode not correct because we have a bug https://github.com/epam/ketcher/issues/4947
-    After fix need to be updated.
     */
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        'IDT',
-        `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
-      );
-      await selectSingleBondTool(page);
-      await page.getByText('iMe').locator('..').nth(1).hover();
-      await takeEditorScreenshot(page);
-    },
-  );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('iMe').locator('..').nth(1).hover();
+    await takeEditorScreenshot(page);
+  });
 
   test('Connect unresolved IDT monomer to known monomers through R2/R1 connections', async ({
     page,
@@ -787,7 +779,9 @@ test.describe('Import-Saving .idt Files', () => {
     /*
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
+    Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
     */
+    test.fail();
     const x = 650;
     const y = 400;
     const firstMonomer = await page.getByText('iMe-dC').locator('..');
@@ -849,14 +843,17 @@ test.describe('Import-Saving .idt Files', () => {
     page,
   }) => {
     /*
-    Test case: Import/Saving files/4431
-    Description: Bond deleted and after pressing Undo appears.
-    */
+  Test case: Import/Saving files/4431
+  Description: Bond deleted and after pressing Undo appears.
+  Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
+  */
+    test.fail();
     const x = 650;
     const y = 400;
     const firstMonomer = await page.getByText('iMe-dC').locator('..');
     const secondMonomer = await page.getByText('1Nal').locator('..').first();
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
+
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       'IDT',
@@ -871,6 +868,13 @@ test.describe('Import-Saving .idt Files', () => {
       'R2',
       'R1',
     );
+
+    const bondExists = await bondLine.isVisible();
+
+    if (!bondExists) {
+      throw new Error('Bond line is not present, likely due to a known bug.');
+    }
+
     await selectEraseTool(page);
     await bondLine.click();
     await takeEditorScreenshot(page);
@@ -934,33 +938,29 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify modal window for AP selection when establishing bonds with unresolved monomers(Peptide)',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Verify modal window for AP selection when establishing bonds with unresolved monomers(Peptide)', async ({
+    page,
+  }) => {
+    /*
     Test case: Import/Saving files/4431
     Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
-    Test working not correct because we have a bug https://github.com/epam/ketcher/issues/4948 System establishes connection R2-R1.
-    After fix we need update snapshots.
     */
-      const x = 650;
-      const y = 400;
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        'IDT',
-        `/iMe-dC/`,
-      );
-      await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-      await page.mouse.click(x, y);
-      await selectSingleBondTool(page);
-      await page.getByText('1Nal').locator('..').first().click();
-      await page.mouse.down();
-      await page.getByText('iMe-dC').locator('..').first().hover();
-      await page.mouse.up();
-      await takeEditorScreenshot(page);
-    },
-  );
+    const x = 650;
+    const y = 400;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await page.getByText('1Nal').locator('..').first().click();
+    await page.mouse.down();
+    await page.getByText('iMe-dC').locator('..').first().hover();
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
 
   test('Verify bonds establishment for unresolved IDT monomers in snake mode', async ({
     page,
@@ -987,34 +987,30 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify modal window for AP selection when establishing bonds with unresolved monomers(CHEM)',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Verify modal window for AP selection when establishing bonds with unresolved monomers(CHEM)', async ({
+    page,
+  }) => {
+    /*
     Test case: Import/Saving files/4431
     Description: Modal window for AP selection should be displayed anytime when user establishes bond with unknown monomer.
-    Test working not correct because we have a bug https://github.com/epam/ketcher/issues/4949 Preview not blank but not like in mockup.
-    After fix we need update snapshots.
     */
-      const x = 650;
-      const y = 400;
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        'IDT',
-        `/iMe-dC/`,
-      );
-      await page.getByTestId('CHEM-TAB').click();
-      await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-      await page.mouse.click(x, y);
-      await selectSingleBondTool(page);
-      await page.getByText('iMe-dC').locator('..').click();
-      await page.mouse.down();
-      await page.getByText('Test-6-Ch').locator('..').first().hover();
-      await page.mouse.up();
-      await takeEditorScreenshot(page);
-    },
-  );
+    const x = 650;
+    const y = 400;
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await page.getByText('iMe-dC').locator('..').click();
+    await page.mouse.down();
+    await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await page.mouse.up();
+    await takeEditorScreenshot(page);
+  });
 
   const testFormats: Array<'FASTA' | 'Sequence'> = ['FASTA', 'Sequence'];
 

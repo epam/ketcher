@@ -82,6 +82,8 @@ const MonomerConnection = ({
   isModalOpen,
   firstMonomer,
   secondMonomer,
+  polymerBond,
+  isReconnectionDialog,
 }: MonomerConnectionProps): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
 
@@ -90,9 +92,15 @@ const MonomerConnection = ({
   }
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
+    useState<string | null>(
+      polymerBond?.firstMonomerAttachmentPoint ||
+        getDefaultAttachmentPoint(firstMonomer),
+    );
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
+    useState<string | null>(
+      polymerBond?.secondMonomerAttachmentPoint ||
+        getDefaultAttachmentPoint(secondMonomer),
+    );
   const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
@@ -110,6 +118,8 @@ const MonomerConnection = ({
       secondMonomer,
       firstSelectedAttachmentPoint,
       secondSelectedAttachmentPoint,
+      polymerBond,
+      isReconnection: isReconnectionDialog,
     });
 
     onClose();
@@ -117,7 +127,11 @@ const MonomerConnection = ({
 
   return (
     <StyledModal
-      title="Select connection points"
+      title={
+        isReconnectionDialog
+          ? 'Edit Connection Points'
+          : 'Select connection points'
+      }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
       showExpandButton
@@ -161,7 +175,7 @@ const MonomerConnection = ({
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
-          label="Connect"
+          label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
           disabled={
             !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
           }

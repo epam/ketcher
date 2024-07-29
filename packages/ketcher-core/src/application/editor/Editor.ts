@@ -8,7 +8,7 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
-import { PolymerBond } from 'application/editor/tools/Bond';
+import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -27,7 +27,12 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { initHotKeys, keyNorm } from 'utilities';
-import { LayoutMode, modesMap, SequenceMode } from 'application/editor/modes/';
+import {
+  LayoutMode,
+  modesMap,
+  SequenceMode,
+  SnakeMode,
+} from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
 import assert from 'assert';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -41,6 +46,10 @@ import {
 import { KetSerializer } from 'domain/serializers';
 import monomersDataRaw from './data/monomers.ket';
 import { drawnStructuresSelector } from 'application/editor/constants';
+import { PolymerBondRenderer } from 'application/render';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Command } from 'domain/entities/Command';
+import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -192,15 +201,16 @@ export class CoreEditor {
   private setupContextMenuEvents() {
     document.addEventListener('contextmenu', (event) => {
       event.preventDefault();
-      if (!(this.mode instanceof SequenceMode) || this.mode.isEditMode) {
-        return false;
-      }
 
-      if (event.target?.__data__ instanceof BaseSequenceItemRenderer) {
+      const eventData = event.target?.__data__;
+      console.log(eventData);
+      if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch(
           event,
           SequenceRenderer.selections,
         );
+      } else if (eventData instanceof PolymerBondRenderer) {
+        this.events.rightClickPolymerBond.dispatch(event, eventData);
       } else {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -291,14 +301,43 @@ export class CoreEditor {
     secondMonomer: BaseMonomer;
     firstSelectedAttachmentPoint: string;
     secondSelectedAttachmentPoint: string;
+    polymerBond?: PolymerBond;
+    isReconnection?: boolean;
   }) {
-    if (this.tool instanceof PolymerBond) {
+    if (payload.isReconnection && payload.polymerBond) {
+      const command = new Command();
+      const history = new EditorHistory(this);
+
+      command.merge(
+        this.drawingEntitiesManager.deletePolymerBond(payload.polymerBond),
+      );
+
+      command.merge(
+        this.drawingEntitiesManager.createPolymerBond(
+          payload.firstMonomer,
+          payload.secondMonomer,
+          payload.firstSelectedAttachmentPoint,
+          payload.secondSelectedAttachmentPoint,
+        ),
+      );
+
+      if (this.mode instanceof SnakeMode) {
+        command.addOperation(new ReinitializeModeOperation());
+      }
+
+      history.update(command);
+      this.renderersContainer.update(command);
+
+      return;
+    }
+
+    if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreation(payload);
     }
   }
 
   private onCancelBondCreation(secondMonomer: BaseMonomer) {
-    if (this.tool instanceof PolymerBond) {
+    if (this.tool instanceof PolymerBondTool) {
       this.tool.handleBondCreationCancellation(secondMonomer);
     }
   }
@@ -323,6 +362,10 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  public get isSequenceMode() {
+    return this?.mode instanceof SequenceMode;
   }
 
   public get isSequenceEditMode() {

@@ -37,7 +37,7 @@ export default function ButtonGroup<T>({
           className={clsx(classes.button, {
             [classes.selected]: buttonValue === value,
           })}
-          style={{ flex: '1 0 25%', margin: '1px' }} // 25% ширины родителя на кнопку так что 4 кнопки займут полную ширину
+          style={{ flex: '1 0 25%', margin: '2px', borderRadius: '3px' }}
         >
           {label || 'none'}
         </ToggleButton>

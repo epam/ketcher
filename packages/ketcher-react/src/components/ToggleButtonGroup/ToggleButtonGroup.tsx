@@ -24,7 +24,10 @@ export default function ButtonGroup<T>({
   );
 
   return (
-    <ToggleButtonGroup exclusive>
+    <ToggleButtonGroup
+      exclusive
+      style={{ overflowX: 'hidden', flexWrap: 'wrap' }}
+    >
       {buttons.map(({ label, value: buttonValue }) => (
         <ToggleButton
           data-testid={label + '-option'}
@@ -34,6 +37,7 @@ export default function ButtonGroup<T>({
           className={clsx(classes.button, {
             [classes.selected]: buttonValue === value,
           })}
+          style={{ flex: '1 0 25%', margin: '1px' }} // 25% ширины родителя на кнопку так что 4 кнопки займут полную ширину
         >
           {label || 'none'}
         </ToggleButton>

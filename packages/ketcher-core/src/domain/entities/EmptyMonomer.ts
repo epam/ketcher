@@ -16,7 +16,7 @@ function getEmptyMonomerItem() {
 
 export class EmptyMonomer extends BaseMonomer {
   constructor() {
-    super(getEmptyMonomerItem());
+    super(getEmptyMonomerItem(), undefined, { generateId: false });
   }
 
   public getValidSourcePoint() {

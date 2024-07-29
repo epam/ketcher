@@ -231,7 +231,6 @@ export class CoreEditor {
         this.onEditSequence(sequenceItemRenderer),
     );
 
-    this.events.startNewSequence.add(() => this.onStartNewSequence());
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
@@ -249,14 +248,6 @@ export class CoreEditor {
     }
 
     this.mode.turnOnEditMode(sequenceItemRenderer);
-  }
-
-  private onStartNewSequence() {
-    if (!(this.mode instanceof SequenceMode)) {
-      return;
-    }
-
-    this.mode.startNewSequence();
   }
 
   private onTurnOnSequenceEditInRNABuilderMode() {

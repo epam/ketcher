@@ -30,6 +30,8 @@ import assert from 'assert';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
+import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
+import { isNumber } from 'lodash';
 
 export type SequencePointer = number;
 export type NumberOfSymbolsInRow = number;
@@ -51,10 +53,18 @@ export class SequenceRenderer {
   public static chainsCollection: ChainsCollection;
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
-  public static show(chainsCollection: ChainsCollection) {
+  private static newSequenceButtons: NewSequenceButton[] = [];
+  public static show(
+    chainsCollection: ChainsCollection,
+    emptyChainIndex?: number,
+  ) {
     SequenceRenderer.chainsCollection = chainsCollection;
     this.removeEmptyNodes();
-    this.showNodes(SequenceRenderer.chainsCollection);
+    this.removeNewSequenceButtons();
+    this.showNodes(
+      SequenceRenderer.chainsCollection,
+      chainsCollection.length === 0 ? 0 : emptyChainIndex,
+    );
     this.showBonds(SequenceRenderer.chainsCollection);
   }
 
@@ -67,8 +77,22 @@ export class SequenceRenderer {
     );
   }
 
-  private static showNodes(chainsCollection: ChainsCollection) {
+  public static removeNewSequenceButtons() {
+    this.newSequenceButtons.forEach((newSequenceButton) =>
+      newSequenceButton.remove(),
+    );
+    this.newSequenceButtons = [];
+  }
+
+  private static showNodes(
+    chainsCollection: ChainsCollection,
+    chainBeforeEmptyChainIndex?: number,
+  ) {
     const firstNode = chainsCollection.firstNode;
+    const emptyChainIndex = isNumber(chainBeforeEmptyChainIndex)
+      ? chainBeforeEmptyChainIndex + 1
+      : undefined;
+    let newSequenceEmptyNode;
 
     let currentChainStartPosition = firstNode
       ? BaseMonomerRenderer.getScaledMonomerPosition(
@@ -80,6 +104,8 @@ export class SequenceRenderer {
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
     const isEditMode = CoreEditor.provideEditorInstance().isSequenceEditMode;
+    const isEditInRnaBuilderMode =
+      CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
 
     if (isEditMode) {
       chainsCollection.chains.forEach((chain) => {
@@ -90,7 +116,20 @@ export class SequenceRenderer {
       });
     }
 
-    chainsCollection.chains.forEach((chain) => {
+    if (isNumber(emptyChainIndex)) {
+      const { emptyChain, emptySequenceNode } =
+        Chain.createChainWithEmptyNode();
+
+      SequenceRenderer.chainsCollection.chains.splice(
+        emptyChainIndex,
+        0,
+        emptyChain,
+      );
+
+      newSequenceEmptyNode = emptySequenceNode;
+    }
+
+    chainsCollection.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
       chain.subChains.forEach((subChain) => {
         subChain.nodes.forEach((node) => {
@@ -123,7 +162,15 @@ export class SequenceRenderer {
         currentChainStartPosition,
         chain,
       );
+
+      if (!isEditInRnaBuilderMode) {
+        this.showNewSequenceButton(chainIndex);
+      }
     });
+
+    if (newSequenceEmptyNode) {
+      SequenceRenderer.setCaretPositionByNode(newSequenceEmptyNode);
+    }
 
     if (this.caretPosition > currentMonomerIndexOverall) {
       this.setCaretPosition(currentMonomerIndexOverall);
@@ -139,7 +186,7 @@ export class SequenceRenderer {
     return new Vec2(
       currentChainStartPosition.x,
       currentChainStartPosition.y +
-        75 +
+        80 +
         47 * Math.floor((lastChain.length - 1) / 30),
     );
   }
@@ -300,6 +347,18 @@ export class SequenceRenderer {
     this.setCaretPosition(newCaretPosition);
   }
 
+  public static setCaretPositionByNode(nodeToCompare: SubChainNode) {
+    let newCaretPosition = -1;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node === nodeToCompare) {
+        newCaretPosition = nodeIndexOverall;
+      }
+    });
+
+    this.setCaretPosition(newCaretPosition);
+  }
+
   public static getMonomersByCaretPositionRange(
     startCaretPosition: SequencePointer,
     endCaretPosition,
@@ -442,19 +501,7 @@ export class SequenceRenderer {
     return operation;
   }
 
-  public static get hasNewChain() {
-    return SequenceRenderer.newChainCaretPosition !== undefined;
-  }
-
-  public static moveCaretToNewChain() {
-    this.setCaretPosition(
-      SequenceRenderer.newChainCaretPosition === undefined
-        ? -1
-        : SequenceRenderer.newChainCaretPosition,
-    );
-  }
-
-  private static get currentChainIndex() {
+  public static get currentChainIndex() {
     let currentChainIndex = -1;
 
     SequenceRenderer.forEachNode(({ nodeIndexOverall, chainIndex }) => {
@@ -464,16 +511,6 @@ export class SequenceRenderer {
     });
 
     return currentChainIndex;
-  }
-
-  public static get newChainCaretPosition(): SequencePointer | undefined {
-    const lastNodeCaretPosition = SequenceRenderer.lastNodeCaretPosition;
-    if (lastNodeCaretPosition === undefined) {
-      return undefined;
-    }
-    const lastChain = SequenceRenderer.getChainByPointer(lastNodeCaretPosition);
-
-    return lastChain.isEmpty ? lastNodeCaretPosition : undefined;
   }
 
   public static get lastNodeCaretPosition(): SequencePointer | undefined {
@@ -501,18 +538,6 @@ export class SequenceRenderer {
     });
 
     return nodeToReturn;
-  }
-
-  private static getChainByPointer(sequencePointer: SequencePointer) {
-    let chainToReturn;
-
-    SequenceRenderer.forEachNode(({ chain, nodeIndexOverall }) => {
-      if (nodeIndexOverall === sequencePointer) {
-        chainToReturn = chain;
-      }
-    });
-
-    return chainToReturn;
   }
 
   public static get currentEdittingNode() {
@@ -605,25 +630,27 @@ export class SequenceRenderer {
     ];
   }
 
-  public static startNewSequence() {
-    const chain = new Chain();
-    const emptySequenceNode = new EmptySequenceNode();
-    const emptySubChain = new EmptySubChain();
-    emptySubChain.add(emptySequenceNode);
-    chain.subChains.push(emptySubChain);
+  public static startNewSequence(indexOfRowBefore?: number) {
+    const editor = CoreEditor.provideEditorInstance();
+    const oldNewSequenceChainIndex =
+      SequenceRenderer.chainsCollection.chains.findIndex((chain) => {
+        return chain.isNewSequenceChain;
+      });
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...editor.drawingEntitiesManager.monomers.values(),
+    ]);
+    chainsCollection.rearrange();
 
-    const renderer = SequenceNodeRendererFactory.fromNode(
-      emptySequenceNode,
-      this.lastChainStartPosition,
-      0,
-      false,
-      emptySubChain,
-      true,
+    editor.drawingEntitiesManager.clearCanvas();
+
+    SequenceRenderer.show(
+      chainsCollection,
+      oldNewSequenceChainIndex !== -1 &&
+        isNumber(indexOfRowBefore) &&
+        indexOfRowBefore > oldNewSequenceChainIndex
+        ? indexOfRowBefore - 1
+        : indexOfRowBefore,
     );
-    renderer.show();
-    emptySequenceNode.setRenderer(renderer);
-    SequenceRenderer.emptySequenceItemRenderers.push(renderer);
-    SequenceRenderer.chainsCollection.chains.push(chain);
   }
 
   public static getPreviousNodeInSameChain(nodeToCompare: SubChainNode) {
@@ -860,5 +887,11 @@ export class SequenceRenderer {
     });
 
     return rendererToReturn;
+  }
+
+  public static showNewSequenceButton(indexOfRowBefore: number) {
+    const newSequenceButton = new NewSequenceButton(indexOfRowBefore);
+    newSequenceButton.show();
+    this.newSequenceButtons.push(newSequenceButton);
   }
 }

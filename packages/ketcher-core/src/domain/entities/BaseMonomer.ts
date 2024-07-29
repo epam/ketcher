@@ -1,4 +1,4 @@
-import { DrawingEntity } from './DrawingEntity';
+import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -18,6 +18,8 @@ import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubCh
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { isNumber } from 'lodash';
 
+export type BaseMonomerConfig = DrawingEntityConfig;
+
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
   public attachmentPointsToBonds: Partial<
@@ -36,8 +38,12 @@ export abstract class BaseMonomer extends DrawingEntity {
   public monomerItem: MonomerItemType;
   public isMonomerInRnaChainRow = false;
 
-  constructor(monomerItem: MonomerItemType, _position?: Vec2) {
-    super(_position);
+  constructor(
+    monomerItem: MonomerItemType,
+    _position?: Vec2,
+    config?: BaseMonomerConfig,
+  ) {
+    super(_position, config);
 
     this.monomerItem = { ...monomerItem };
     this.attachmentPointsToBonds = this.getAttachmentPointDict();

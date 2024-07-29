@@ -27,9 +27,7 @@ export class PolymerBondRendererFactory {
   public static createInstance(
     polymerBond: PolymerBond,
   ): PolymerBondRendererClass {
-    const mode = checkIfIsSnakeMode(polymerBond)
-      ? LayoutMode.Snake
-      : LayoutMode.Flex;
+    const mode = checkIfIsSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
     return PolymerBondRendererFactory.createInstanceByMode(
       mode,
       polymerBond,
@@ -50,18 +48,7 @@ export class PolymerBondRendererFactory {
   }
 }
 
-function checkIfIsSnakeMode(polymerBond: PolymerBond): boolean {
-  if (polymerBond.isSideChainConnection) {
-    return false;
-  }
-
-  if (
-    getSugarFromRnaBase(polymerBond.firstMonomer) ||
-    getSugarFromRnaBase(polymerBond.secondMonomer)
-  ) {
-    return false;
-  }
-
+function checkIfIsSnakeMode(): boolean {
   const editor = CoreEditor.provideEditorInstance();
   return editor?.mode instanceof SnakeMode;
 }

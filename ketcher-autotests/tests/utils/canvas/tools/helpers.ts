@@ -4,6 +4,7 @@ import {
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
+  waitForRender,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
@@ -243,4 +244,20 @@ export async function setZoomInputValue(page: Page, value: string) {
   await page.getByTestId('zoom-input').click();
   await page.getByTestId('zoom-value').fill(value);
   await page.keyboard.press('Enter');
+}
+
+export async function selectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const coord of coords) {
+    await page.mouse.move(coord.x, coord.y);
+  }
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
 }

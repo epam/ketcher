@@ -19,7 +19,9 @@ import {
   saveToFile,
   screenshotBetweenUndoRedo,
   selectLeftPanelButton,
+  selectRectangleSelectionTool,
   selectTopPanelButton,
+  selectWithLasso,
   setZoomInputValue,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -665,6 +667,93 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
+  });
+
+  const fileNames1 = [
+    'image-bmp.bmp',
+    'image-gif.gif',
+    'image-ico.ico',
+    'image-jpeg.jpeg',
+    'image-jpg.jpg',
+    'image-tif.tif',
+    'image-webp.webp',
+    'image-heic.heic',
+  ];
+
+  for (const fileName of fileNames1) {
+    test(`Verify that image of not supported format ${fileName} cannot be added using "Add Image" button`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: #4897
+       * Description: Error message is displayed - "Unsupported image type"
+       */
+      await openImageAndAddToCanvas(`Images/${fileName}`, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Verify that image with size less than 16 pixels cannot be added to Canvas using "Add Image" button', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Error message is displayed - "Image should be at least 16x16 pixels"
+     */
+    await openImageAndAddToCanvas('Images/image-png-15px.png', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRectangleSelectionTool(page);
+    await page.mouse.move(100, 100);
+    await dragMouseTo(800, 800, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of formats (PNG, SVG) can be selected using "Lasso Selection" in "Add Image" mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of formats (PNG, SVG) can be selected using "Lasso Selection" in "Add Image" mode
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRectangleSelectionTool(page);
+    await page.keyboard.press('Shift+Tab');
+    await selectWithLasso(page, 100, 100, [
+      { x: 800, y: 800 },
+      { x: 100, y: 800 },
+    ]);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRectangleSelectionTool(page);
+    for (let i = 0; i < 2; i++) {
+      await page.keyboard.press('Shift+Tab');
+    }
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 });

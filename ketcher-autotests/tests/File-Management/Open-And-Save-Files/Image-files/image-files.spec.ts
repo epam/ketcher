@@ -4,6 +4,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnFileFormatDropdown,
   copyAndPaste,
+  cutAndPaste,
   dragMouseTo,
   getKet,
   LeftPanelButton,
@@ -605,6 +606,23 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that cut actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Cut actions of images (PNG, SVG) on Canvas can be Undo/Redo
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await cutAndPaste(page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
     page,
   }) => {
@@ -755,5 +773,48 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Verify that if image is selected then green selection frame is displayed and image can be scaled vertically, horizontally and diagonally', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Image is selected then green selection frame is displayed and
+     * image can be scaled vertically, horizontally and diagonally.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    const resizeHandles = [
+      { id: 'rasterImageResize-rightMiddlePosition', moveX: 300, moveY: 0 },
+      { id: 'rasterImageResize-topMiddlePosition', moveX: 0, moveY: -200 },
+      { id: 'rasterImageResize-bottomLeftPosition', moveX: -200, moveY: 200 },
+    ];
+
+    for (const handle of resizeHandles) {
+      const resizeHandle = page.getByTestId(handle.id);
+      await resizeHandle.scrollIntoViewIfNeeded();
+      await resizeHandle.hover({ force: true });
+
+      const box = await resizeHandle.boundingBox();
+      if (!box) {
+        throw new Error(`${handle.id} bounding box not found`);
+      }
+
+      const startX = box.x + box.width / 2;
+      const startY = box.y + box.height / 2;
+
+      await page.mouse.move(startX, startY);
+      await page.mouse.down();
+      await page.mouse.move(startX + handle.moveX, startY + handle.moveY, {
+        steps: 10,
+      });
+      await page.mouse.up();
+
+      await takeEditorScreenshot(page);
+    }
   });
 });

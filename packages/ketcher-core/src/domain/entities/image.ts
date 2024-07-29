@@ -15,16 +15,21 @@
  ***************************************************************************/
 
 import { BaseMicromoleculeEntity } from 'domain/entities/BaseMicromoleculeEntity';
-import { Point, Vec2 } from 'domain/entities/vec2';
+import { Vec2 } from 'domain/entities/vec2';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
-import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
-interface KetFileNodeContent {
-  bitmap: string;
-  halfSize: Point;
+export interface KetFileImageNode extends KetFileNode<string> {
+  boundingBox: {
+    x: number;
+    y: number;
+    z?: number;
+    width: number;
+    height: number;
+  };
 }
 
-export interface RasterImageReferencePositions {
+export interface ImageReferencePositions {
   topLeftPosition: Vec2;
   topMiddlePosition: Vec2;
   topRightPosition: Vec2;
@@ -35,14 +40,14 @@ export interface RasterImageReferencePositions {
   leftMiddlePosition: Vec2;
 }
 
-export type RasterImageReferenceName = keyof RasterImageReferencePositions;
+export type ImageReferenceName = keyof ImageReferencePositions;
 
-export interface RasterImageReferencePositionInfo {
-  name: RasterImageReferenceName;
+export interface ImageReferencePositionInfo {
+  name: ImageReferenceName;
   offset: Vec2;
 }
 
-export class RasterImage extends BaseMicromoleculeEntity {
+export class Image extends BaseMicromoleculeEntity {
   constructor(
     public bitmap: string,
     private _center: Vec2,
@@ -82,7 +87,7 @@ export class RasterImage extends BaseMicromoleculeEntity {
     ];
   }
 
-  getReferencePositions(): RasterImageReferencePositions {
+  getReferencePositions(): ImageReferencePositions {
     const [
       topLeftPosition,
       topRightPosition,
@@ -104,8 +109,8 @@ export class RasterImage extends BaseMicromoleculeEntity {
     };
   }
 
-  clone(): RasterImage {
-    return new RasterImage(
+  clone(): Image {
+    return new Image(
       this.bitmap,
       new Vec2(this._center),
       new Vec2(this.halfSize),
@@ -132,32 +137,32 @@ export class RasterImage extends BaseMicromoleculeEntity {
     return this._center;
   }
 
-  toKetNode(): KetFileNode<KetFileNodeContent> {
+  toKetNode(): KetFileImageNode {
+    const topLeftCorner = this.getTopLeftPosition();
     return {
-      type: RASTER_IMAGE_SERIALIZE_KEY,
+      type: IMAGE_SERIALIZE_KEY,
       center: getNodeWithInvertedYCoord(this._center),
-      data: {
-        bitmap: this.bitmap,
-        halfSize: this.halfSize,
+      boundingBox: {
+        ...getNodeWithInvertedYCoord(topLeftCorner),
+        width: this.halfSize.x * 2,
+        height: this.halfSize.y * 2,
       },
+      data: this.bitmap,
+      selected: this.getInitiallySelected(),
     };
   }
 
-  static fromKetNode(
-    ketFileNode: KetFileNode<KetFileNodeContent>,
-  ): RasterImage {
-    const vectorCenter = new Vec2(
-      getNodeWithInvertedYCoord(ketFileNode.center),
+  static fromKetNode(ketFileNode: KetFileImageNode): Image {
+    const { width, height, ...point } = getNodeWithInvertedYCoord(
+      ketFileNode.boundingBox,
     );
+    const halfSize = new Vec2(width / 2, height / 2);
+    const topLeftCorner = new Vec2(point);
+    const center = topLeftCorner.add(halfSize);
+
     // Should be validated already
-    const data = ketFileNode.data as KetFileNodeContent;
-    const vectorHalfSize = new Vec2(data.halfSize);
-    const rasterImage = new RasterImage(
-      data.bitmap,
-      vectorCenter,
-      vectorHalfSize,
-    );
-    rasterImage.setInitiallySelected(ketFileNode.selected);
-    return rasterImage;
+    const image = new Image(ketFileNode.data as string, center, halfSize);
+    image.setInitiallySelected(ketFileNode.selected);
+    return image;
   }
 }

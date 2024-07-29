@@ -17,55 +17,56 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { BaseOperation } from 'application/editor/operations/base';
 import { OperationType } from 'application/editor';
-import { RasterImage } from 'domain/entities/rasterImage';
+import { Image } from 'domain/entities/image';
 import { ReStruct } from 'application/render';
-import { ReRasterImage } from 'application/render/restruct/rerasterImage';
+import { ReImage } from 'application/render/restruct/reImage';
+import { IMAGE_KEY } from 'domain/constants';
 
-export class RasterImageUpsert extends BaseOperation {
-  constructor(private readonly rasterImage: RasterImage, private id?: number) {
-    super(OperationType.RASTER_IMAGE_UPSERT);
+export class ImageUpsert extends BaseOperation {
+  constructor(private readonly image: Image, private id?: number) {
+    super(OperationType.IMAGE_UPSERT);
   }
 
   execute(reStruct: ReStruct) {
     const struct = reStruct.molecule;
 
-    if (!this.id) {
-      this.id = struct.rasterImages.newId();
+    if (this.id === undefined) {
+      this.id = struct.images.newId();
     }
     const id = this.id;
-    const item = this.rasterImage.clone();
-    struct.rasterImages.set(id, item);
-    reStruct.rasterImages.set(id, new ReRasterImage(item));
+    const item = this.image.clone();
+    struct.images.set(id, item);
+    reStruct.images.set(id, new ReImage(item));
 
-    BaseOperation.invalidateItem(reStruct, 'rasterImages', id, 1);
+    BaseOperation.invalidateItem(reStruct, IMAGE_KEY, id, 1);
   }
 
   invert(): BaseOperation {
-    return new RasterImageDelete(this.id!);
+    return new ImageDelete(this.id!);
   }
 }
 
-export class RasterImageDelete extends BaseOperation {
-  private rasterImage?: RasterImage;
+export class ImageDelete extends BaseOperation {
+  private image?: Image;
   constructor(private id: number) {
-    super(OperationType.RASTER_IMAGE_DELETE);
+    super(OperationType.IMAGE_DELETE);
   }
 
   execute(reStruct: ReStruct) {
-    const reRasterImage = reStruct.rasterImages.get(this.id);
+    const reImage = reStruct.images.get(this.id);
 
-    if (!reRasterImage) {
+    if (!reImage) {
       return;
     }
 
-    this.rasterImage = reRasterImage.rasterImage.clone();
-    reStruct.clearVisel(reRasterImage.visel);
+    this.image = reImage.image.clone();
+    reStruct.clearVisel(reImage.visel);
     reStruct.markItemRemoved();
-    reStruct.rasterImages.delete(this.id);
-    reStruct.molecule.rasterImages.delete(this.id);
+    reStruct.images.delete(this.id);
+    reStruct.molecule.images.delete(this.id);
   }
 
   invert(): BaseOperation {
-    return new RasterImageUpsert(this.rasterImage!, this.id);
+    return new ImageUpsert(this.image!, this.id);
   }
 }

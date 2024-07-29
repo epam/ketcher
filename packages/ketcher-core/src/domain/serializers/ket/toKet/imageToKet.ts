@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RASTER_IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import type { KetFileImageNode } from 'domain/entities';
 
-export function rasterImageToKet(rasterImageNode) {
+export function imageToKet(imageNode: KetFileImageNode) {
   return {
-    type: RASTER_IMAGE_SERIALIZE_KEY,
-    center: rasterImageNode.center,
-    data: rasterImageNode.data,
-    selected: rasterImageNode.selected,
+    type: IMAGE_SERIALIZE_KEY,
+    boundingBox: imageNode.boundingBox,
+    data: imageNode.data,
+    selected: imageNode.selected,
   };
 }

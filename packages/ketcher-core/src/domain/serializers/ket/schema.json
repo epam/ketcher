@@ -27,7 +27,7 @@
                 "$ref": "#/definitions/plus"
               },
               {
-                "$ref": "#/definitions/rasterImage"
+                "$ref": "#/definitions/image"
               },
               {
                 "type": "object",
@@ -798,38 +798,38 @@
         }
       }
     },
-    "rasterImage": {
+    "image": {
       "type": "object",
-      "required": ["type", "data"],
+      "required": ["type", "boundingBox", "data"],
       "properties": {
         "type": {
-          "const": "rasterImage"
+          "const": "image"
         },
-        "center": {
-          "$ref": "#/definitions/2dCoordinates"
-        },
-        "data": {
+        "boundingBox": {
           "type": "object",
-          "required": ["bitmap", "halfSize"],
+          "required": ["width", "height", "x", "y"],
           "properties": {
-            "bitmap": {
-              "$ref": "#/definitions/imageFile"
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
             },
-            "halfSize": {
-              "type": "object",
-              "required": ["x", "y"],
-              "properties": {
-                "x": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                },
-                "y": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                }
-              }
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
             }
           }
+        },
+        "data": {
+          "$ref": "#/definitions/imageFile"
         }
       }
     }

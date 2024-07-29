@@ -203,7 +203,7 @@ export class CoreEditor {
       event.preventDefault();
 
       const eventData = event.target?.__data__;
-      console.log(eventData);
+
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch(
           event,

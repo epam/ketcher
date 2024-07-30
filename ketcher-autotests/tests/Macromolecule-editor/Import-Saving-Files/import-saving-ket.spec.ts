@@ -314,6 +314,32 @@ test.describe('Import-Saving .ket Files', () => {
 
     expect(ketFile).toEqual(ketFileExpected);
   });
+
+  test('Validate that unsplit nucleotides connected with another monomers could be saved to ket file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: .ket file with macro structures is exported and imported correctly .
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
 });
 
 test.describe('Base monomers on the canvas, their connection points and preview tooltips', () => {

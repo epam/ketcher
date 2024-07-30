@@ -44,6 +44,7 @@ import {
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 async function expandCollapseRnaBuilder(page: Page) {
   await page
@@ -1349,7 +1350,7 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
 
     // Case 24
-    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').hover();
+    await page.getByTestId(Chems.SMPEG2).hover();
     await delay(1);
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);

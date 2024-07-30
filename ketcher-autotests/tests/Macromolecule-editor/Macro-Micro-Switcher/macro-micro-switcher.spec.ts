@@ -65,6 +65,7 @@ import {
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
 const topLeftCorner = {
   x: -325,
@@ -101,7 +102,7 @@ async function pasteFromClipboard(
 }
 
 async function addToFavoritesMonomers(page: Page) {
-  await page.getByTestId('Bal___beta-Alanine').getByText('★').click();
+  await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
   await page
     .getByTestId('Phe4Me___p-Methylphenylalanine')
     .getByText('★')
@@ -582,7 +583,7 @@ test.describe('Macro-Micro-Switcher', () => {
     After closing the ticket, should update the screenshots.
 
     */
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await selectRing(RingButton.Benzene, page);
@@ -608,7 +609,7 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);

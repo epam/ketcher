@@ -139,7 +139,9 @@ const ContextMenu: React.FC = () => {
           '.contexify_submenu',
         ) as NodeListOf<HTMLElement>;
         if (contextMenuElement) {
-          resetMenuPosition(contextMenuElement);
+          // Timeout is needed to ensure that the context menu is rendered by react-contexify library.
+          // Without timeout library overrides the position of the context menu which we set.
+          setTimeout(() => resetMenuPosition(contextMenuElement), 0);
         }
 
         if (submenuElements.length) {

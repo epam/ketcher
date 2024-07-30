@@ -261,3 +261,11 @@ export async function selectWithLasso(
     await page.mouse.up();
   });
 }
+
+export async function saveToTemplates(page: Page, templateName: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await page.getByPlaceholder('template').click();
+  await page.getByPlaceholder('template').fill(templateName);
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+}

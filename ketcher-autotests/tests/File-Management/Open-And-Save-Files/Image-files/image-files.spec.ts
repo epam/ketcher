@@ -17,10 +17,13 @@ import {
   readFileContents,
   receiveFileComparisonData,
   resetCurrentTool,
+  RingButton,
   saveToFile,
+  saveToTemplates,
   screenshotBetweenUndoRedo,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
+  selectRing,
   selectTopPanelButton,
   selectWithLasso,
   setZoomInputValue,
@@ -29,6 +32,7 @@ import {
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
+import { openStructureLibrary } from '@utils/templates';
 
 async function verifyFile(
   page: Page,
@@ -816,5 +820,138 @@ test.describe('Image files', () => {
 
       await takeEditorScreenshot(page);
     }
+  });
+
+  test('Verify that images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await page.getByText('Save to Templates').isDisabled();
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('mol-preview-area-text')],
+    });
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 400);
+    await saveToTemplates(page, 'My Custom Template');
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await openStructureLibrary(page);
+    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await page
+      .getByPlaceholder('Search by elements...')
+      .fill('My Custom Template');
+    await takeEditorScreenshot(page);
+    await page.getByText('My Custom Template').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after moving of them and then opened', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
+     * moving of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/image-svg-png-after-moving-expected.ket',
+      'tests/test-data/KET/image-svg-png-after-moving-expected.ket',
+    );
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
+     * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+
+    // Ensure the element is in view
+    const resizeHandle = page.getByTestId(
+      'rasterImageResize-bottomRightPosition',
+    );
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/image-svg-png-after-scaling-expected.ket',
+      'tests/test-data/KET/image-svg-png-after-scaling-expected.ket',
+    );
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
+     * deleting of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/image-svg-png-after-deleting-expected.ket',
+      'tests/test-data/KET/image-svg-png-after-deleting-expected.ket',
+    );
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after copying of them and then opened', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #4897
+     * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
+     * copying of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/image-svg-png-after-copying-expected.ket',
+      'tests/test-data/KET/image-svg-png-after-copying-expected.ket',
+    );
   });
 });

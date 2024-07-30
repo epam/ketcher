@@ -38,10 +38,16 @@ const ContextMenu: React.FC = () => {
 
   const adjustSubmenuPosition = (submenuElement: HTMLElement) => {
     const rect = submenuElement.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
+    const ketcherRootElement = document.querySelector(
+      KETCHER_ROOT_NODE_CSS_SELECTOR,
+    );
+    const ketcherRootElementRect = ketcherRootElement?.getBoundingClientRect();
+    const ketcherEditorWidth = ketcherRootElementRect?.width || 0;
+    const ketcherEditorHeight = ketcherRootElementRect?.height || 0;
+    const ketcherEditorLeft = ketcherRootElementRect?.left || 0;
+    const ketcherEditorTop = ketcherRootElementRect?.top || 0;
 
-    if (rect.right + 200 > viewportWidth) {
+    if (rect.right - ketcherEditorLeft > ketcherEditorWidth) {
       submenuElement.style.left = 'auto';
       submenuElement.style.right = '100%';
     } else {
@@ -49,7 +55,7 @@ const ContextMenu: React.FC = () => {
       submenuElement.style.right = 'auto';
     }
 
-    if (rect.bottom + 200 > viewportHeight) {
+    if (rect.bottom - ketcherEditorTop > ketcherEditorHeight) {
       submenuElement.style.top = 'auto';
       submenuElement.style.bottom = '0';
     } else {

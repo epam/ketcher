@@ -546,23 +546,25 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
   });
 
-  test('Clean Up action on part of structure with different properties', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Clean Up action on part of structure with different properties',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1826
     Description: Clean action is correct for the selected part.
     Non-selected part is invariable.
     Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
     */
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/clean-different-properties.mol',
-      page,
-    );
-    await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
-  });
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/clean-different-properties.mol',
+        page,
+      );
+      await selectPartOfMolecules(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+      );
+    },
+  );
 });

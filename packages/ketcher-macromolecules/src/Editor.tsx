@@ -32,7 +32,11 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import { createEditor, destroyEditor, selectEditor } from 'state/common';
+import {
+  createEditor,
+  destroyEditor,
+  PresetPosition,
+  selectEditor} from 'state/common';
 import {
   useAppDispatch,
   useAppSelector,
@@ -213,6 +217,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         sequenceNode instanceof Nucleoside;
 
       if (isNucleotideOrNucleoside) {
+        console.log(sequenceNode.sugar);
         const monomers =
           sequenceNode instanceof Nucleotide
             ? [
@@ -232,11 +237,21 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           });
         });
 
+        let position: PresetPosition;
+        if (sequenceNode instanceof Nucleoside) {
+          position = 'chainEnd';
+        } else if (sequenceNode.sugar.attachmentPointsToBonds.R1 === null) {
+          position = 'chainStart';
+        } else {
+          position = 'chainMiddle';
+        }
+
         debouncedShowPreview({
           preset: {
             monomers,
             name: existingPreset?.name,
             idtAliases: existingPreset?.idtAliases,
+            position,
           },
           style: {
             left,

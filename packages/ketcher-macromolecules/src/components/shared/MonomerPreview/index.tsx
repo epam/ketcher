@@ -31,6 +31,7 @@ import { useAttachmentPoints } from '../../../hooks/useAttachmentPoints';
 import { AttachmentPoints } from 'components/shared/AttachmentPoints/AttachmentPoints';
 import { MonomerItemType } from 'ketcher-core';
 import { IDTAliases } from 'components/shared/IDTAliases';
+import useIDTAliasesTextForMonomer from '../../../hooks/useIDTAliasesTextForMonomer';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
@@ -54,6 +55,11 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
       monomer: preview.monomer,
       attachmentPointsToBonds: preview.attachmentPointsToBonds,
     });
+
+  const idtAliasesText = useIDTAliasesTextForMonomer({
+    idtAliases,
+    attachmentPointsToBonds: preview.attachmentPointsToBonds,
+  });
 
   return (
     preview?.monomer && (
@@ -82,7 +88,7 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
           <AttachmentPoints
             preparedAttachmentPointsData={preparedAttachmentPointsData}
           />
-          {idtAliases && <IDTAliases aliases={idtAliases} />}
+          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
         </InfoBlock>
       </ContainerDynamic>
     )

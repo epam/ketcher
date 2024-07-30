@@ -168890,6 +168890,9 @@
     "id": "A",
     "name": "A",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rA"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168907,6 +168910,9 @@
     "id": "C",
     "name": "C",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rC"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168924,6 +168930,9 @@
     "id": "G",
     "name": "G",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rG"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168941,6 +168950,9 @@
     "id": "T",
     "name": "T",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rT"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168958,6 +168970,9 @@
     "id": "U",
     "name": "U",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rU"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168976,7 +168991,12 @@
     "name": "MOE(A)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErA"
+      "base": "2MOErA",
+      "modifications": {
+        "endpoint5": "52MOErA",
+        "internal": "i2MOErA",
+        "endpoint3": "32MOErA"
+      }
     },
     "templates": [
       {
@@ -168996,7 +169016,12 @@
     "name": "MOE(5meC)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErC"
+      "base": "2MOErC",
+      "modifications": {
+        "endpoint5": "52MOErC",
+        "internal": "i2MOErC",
+        "endpoint3": "32MOErC"
+      }
     },
     "templates": [
       {
@@ -169016,7 +169041,12 @@
     "name": "MOE(G)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErG"
+      "base": "2MOErG",
+      "modifications": {
+        "endpoint5": "52MOErG",
+        "internal": "i2MOErG",
+        "endpoint3": "32MOErG"
+      }
     },
     "templates": [
       {
@@ -169036,7 +169066,12 @@
     "name": "MOE(T)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErT"
+      "base": "2MOErT",
+      "modifications": {
+        "endpoint5": "52MOErT",
+        "internal": "i2MOErT",
+        "endpoint3": "32MOErT"
+      }
     },
     "templates": [
       {
@@ -169056,7 +169091,7 @@
     "name": "dR(U)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "deoxyU"
+      "base": "U"
     },
     "templates": [
       {

@@ -34,11 +34,18 @@ interface MonomerPreviewState {
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
+export type PresetPosition =
+  | 'library'
+  | 'chainStart'
+  | 'chainMiddle'
+  | 'chainEnd';
+
 export interface PresetPreviewState {
   readonly preset: {
-    readonly idtAliases?: IKetIdtAliases;
     readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
     readonly name?: string;
+    readonly idtAliases?: IKetIdtAliases;
+    readonly position: PresetPosition;
   };
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }

@@ -46,6 +46,7 @@ export const StyledStructRender = styled(StructRender)`
 `;
 
 export const InfoBlock = styled.div`
+  width: 100%;
   display: flex;
   gap: 8px;
   padding: 0 8px 4px;

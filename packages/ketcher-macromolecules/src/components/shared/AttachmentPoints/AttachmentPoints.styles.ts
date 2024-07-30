@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 export const AttachmentPointsList = styled.div`
   flex: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 `;
 

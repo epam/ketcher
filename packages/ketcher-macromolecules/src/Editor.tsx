@@ -217,7 +217,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         sequenceNode instanceof Nucleoside;
 
       if (isNucleotideOrNucleoside) {
-        console.log(sequenceNode.sugar);
         const monomers =
           sequenceNode instanceof Nucleotide
             ? [

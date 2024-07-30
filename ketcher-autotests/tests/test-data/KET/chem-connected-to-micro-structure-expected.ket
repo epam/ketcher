@@ -77,14 +77,6 @@
                     -9.500033018228516,
                     0
                 ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    11.436424886110105,
-                    -6.499966981771483,
-                    0
-                ]
             }
         ],
         "bonds": [
@@ -129,13 +121,6 @@
                     1,
                     2
                 ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    6
-                ]
             }
         ],
         "sgroups": [
@@ -147,8 +132,7 @@
                     4,
                     5,
                     3,
-                    1,
-                    6
+                    1
                 ],
                 "name": "",
                 "expanded": true,
@@ -156,7 +140,6 @@
                 "attachmentPoints": [
                     {
                         "attachmentAtom": 2,
-                        "leavingAtom": 6,
                         "attachmentId": "1"
                     }
                 ]

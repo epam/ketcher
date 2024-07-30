@@ -28,7 +28,7 @@ export const RNAContextMenu = () => {
     {
       name: 'edit',
       title: 'Edit...',
-      seperator: true,
+      separator: true,
       disabled: activePresetForContextMenu?.default,
     },
     {

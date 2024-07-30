@@ -217,11 +217,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
   }
 
-  public setBond(attachmentPointName: string, bond: PolymerBond) {
+  public setBond(attachmentPointName: AttachmentPointName, bond: PolymerBond) {
     this.attachmentPointsToBonds[attachmentPointName] = bond;
   }
 
-  public unsetBond(attachmentPointName: string) {
+  public unsetBond(attachmentPointName: AttachmentPointName) {
     this.attachmentPointsToBonds[attachmentPointName] = null;
   }
 

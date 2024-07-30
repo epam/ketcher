@@ -10,7 +10,7 @@ import {
 } from 'application/editor/tools/Tool';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import { toolsMap } from 'application/editor/tools';
-import { MonomerItemType } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import ZoomTool from './tools/Zoom';
@@ -26,7 +26,7 @@ import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
-import { initHotKeys, keyNorm } from 'utilities';
+import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
 import {
   LayoutMode,
   modesMap,
@@ -49,7 +49,6 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 import { PolymerBondRenderer } from 'application/render';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Command } from 'domain/entities/Command';
-import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -299,35 +298,55 @@ export class CoreEditor {
   private onCreateBond(payload: {
     firstMonomer: BaseMonomer;
     secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: string;
-    secondSelectedAttachmentPoint: string;
+    firstSelectedAttachmentPoint: AttachmentPointName;
+    secondSelectedAttachmentPoint: AttachmentPointName;
     polymerBond?: PolymerBond;
     isReconnection?: boolean;
+    initialFirstMonomerAttachmentPoint?: AttachmentPointName;
+    initialSecondMonomerAttachmentPoint?: AttachmentPointName;
   }) {
-    if (payload.isReconnection && payload.polymerBond) {
+    if (
+      payload.isReconnection &&
+      payload.polymerBond &&
+      (payload.firstSelectedAttachmentPoint !==
+        payload.initialFirstMonomerAttachmentPoint ||
+        payload.secondSelectedAttachmentPoint !==
+          payload.initialSecondMonomerAttachmentPoint)
+    ) {
       const command = new Command();
       const history = new EditorHistory(this);
 
-      command.merge(
-        this.drawingEntitiesManager.deletePolymerBond(payload.polymerBond),
-      );
+      if (
+        !payload.initialFirstMonomerAttachmentPoint ||
+        !payload.initialSecondMonomerAttachmentPoint
+      ) {
+        KetcherLogger.error('Attachment points are not found for the bond');
+
+        return;
+      }
 
       command.merge(
-        this.drawingEntitiesManager.createPolymerBond(
-          payload.firstMonomer,
-          payload.secondMonomer,
+        this.drawingEntitiesManager.reconnectPolymerBond(
+          payload.polymerBond,
           payload.firstSelectedAttachmentPoint,
           payload.secondSelectedAttachmentPoint,
+          payload.initialFirstMonomerAttachmentPoint,
+          payload.initialSecondMonomerAttachmentPoint,
         ),
       );
 
       if (this.mode instanceof SnakeMode) {
-        command.addOperation(new ReinitializeModeOperation());
+        command.merge(
+          this.drawingEntitiesManager.recalculateCanvasMatrix(
+            this.drawingEntitiesManager.canvasMatrix?.chainsCollection,
+            this.drawingEntitiesManager.snakeLayoutMatrix,
+          ),
+        );
       }
 
       history.update(command);
       this.renderersContainer.update(command);
-
+      console.log(history);
       return;
     }
 

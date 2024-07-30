@@ -138,8 +138,11 @@ export class Molfile {
   ) {
     // eslint-disable-line max-statements
     /* saver */
+
+    const null2empty = (arg: string) => arg || '';
+
     this.reaction = molecule.hasRxnArrow();
-    this.molfile = '' + molecule.name;
+    this.molfile = null2empty(molecule.name);
     if (this.reaction) {
       if (molecule.rgroups.size > 0) {
         throw new Error(
@@ -153,7 +156,7 @@ export class Molfile {
       const all = reactants.concat(products);
       this.molfile =
         '$RXN\n' +
-        molecule.name +
+        null2empty(molecule.name) +
         '\n\n\n' +
         utils.paddedNum(reactants.length, 3) +
         utils.paddedNum(products.length, 3) +
@@ -177,7 +180,9 @@ export class Molfile {
           molecule.rgroups,
         );
         this.molfile =
-          '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n';
+          '$MDL  REV  1\n$MOL\n$HDR\n' +
+          null2empty(molecule.name) +
+          '\n\n\n$END HDR\n';
         this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
         molecule.rgroups.forEach((rg, rgid) => {

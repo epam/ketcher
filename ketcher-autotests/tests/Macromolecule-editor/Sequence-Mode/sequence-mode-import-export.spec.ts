@@ -2,6 +2,7 @@
 import { Page, chromium, test, expect } from '@playwright/test';
 import {
   MacromoleculesTopPanelButton,
+  moveMouseAway,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectClearCanvasTool,
@@ -197,6 +198,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
   });

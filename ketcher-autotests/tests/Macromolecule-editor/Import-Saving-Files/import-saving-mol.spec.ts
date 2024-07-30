@@ -23,6 +23,7 @@ import {
   selectClearCanvasTool,
   delay,
   selectFlexLayoutModeTool,
+  moveMouseAway,
 } from '@utils';
 import {
   chooseFileFormat,
@@ -359,6 +360,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end

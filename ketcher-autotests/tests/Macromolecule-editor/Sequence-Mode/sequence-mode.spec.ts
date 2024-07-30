@@ -247,6 +247,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

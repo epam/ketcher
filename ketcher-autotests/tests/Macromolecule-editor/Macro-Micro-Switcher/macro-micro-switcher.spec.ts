@@ -571,6 +571,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickInTheMiddleOfTheScreen(page);
       await selectSnakeLayoutModeTool(page);
       await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }

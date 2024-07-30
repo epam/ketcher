@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   setZoom,
   moveMouseAway,
+  resetCurrentTool,
 } from '@utils';
 
 test.describe('setMode', () => {
@@ -34,6 +35,7 @@ test.describe('setMode', () => {
     await takeEditorScreenshot(page);
     await setMode(page, 'flex');
     await moveMouseAway(page);
+    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

@@ -243,4 +243,43 @@ test.describe('Saving in .svg files', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  const testData5 = [
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      description: 'unsplit-nucleotides-connected-with-nucleotides',
+    },
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-chems.ket',
+      description: 'connection nucleotides with chems',
+    },
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-bases.ket',
+      description: 'unsplit-nucleotides-connected-with-bases',
+    },
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      description: 'unsplit-nucleotides-connected-with-sugars',
+    },
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      description: 'unsplit-nucleotides-connected-with-phosphates',
+    },
+    {
+      filename: 'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      description: 'unsplit-nucleotides-connected-with-peptides',
+    },
+  ];
+
+  for (const { filename, description } of testData5) {
+    test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async ({
+      page,
+    }) => {
+      await openFileAndAddToCanvasMacro(filename, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'SVG Document');
+      await takeEditorScreenshot(page);
+    });
+  }
 });

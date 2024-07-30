@@ -28,14 +28,15 @@ import {
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
-const MONOMER_NAME_TZA = 'Tza___3-thiazolylalanine';
+const MONOMER_NAME_TZA = Peptides.Tza;
 const MONOMER_ALIAS_TZA = 'Tza';
 
 async function createBondedMonomers(page: Page) {
-  const MONOMER_NAME_DSEC = 'dSec___D-SelenoCysteine';
-  const MONOMER_ALIAS_DSEC = 'dSec';
+  const MONOMER_NAME_DSEC = 'dU___D-selenocysteine';
+  const MONOMER_ALIAS_DSEC = 'dU';
   const MONOMER_NAME_MEC = 'meC___N-Methyl-Cysteine';
   const MONOMER_ALIAS_MEC = 'meC';
 
@@ -365,8 +366,8 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('PEPTIDES-TAB').click();
     await addBondedMonomersToCanvas(
       page,
-      'Bal___beta-Alanine',
-      'Bal',
+      Peptides.BetaAlanine,
+      'bAla',
       700,
       500,
       50,
@@ -541,8 +542,8 @@ test.describe('Snake Bond Tool', () => {
 
     const [balPeptide] = await addBondedMonomersToCanvas(
       page,
-      'Bal___beta-Alanine',
-      'Bal',
+      Peptides.BetaAlanine,
+      'bAla',
       700,
       700,
       50,
@@ -551,8 +552,8 @@ test.describe('Snake Bond Tool', () => {
     );
     const balPeptide1 = await addSingleMonomerToCanvas(
       page,
-      'Bal___beta-Alanine',
-      'Bal',
+      Peptides.BetaAlanine,
+      'bAla',
       850,
       650,
       2,
@@ -577,8 +578,8 @@ test.describe('Snake Bond Tool', () => {
   test('Create snake mode for single monomer and nucleoside', async () => {
     await addSingleMonomerToCanvas(
       page,
-      'Bal___beta-Alanine',
-      'Bal',
+      Peptides.BetaAlanine,
+      'bAla',
       300,
       300,
       0,

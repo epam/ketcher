@@ -9,6 +9,7 @@ import {
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
@@ -24,7 +25,7 @@ test.describe('Check attachment point rotation', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
@@ -94,7 +95,7 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators

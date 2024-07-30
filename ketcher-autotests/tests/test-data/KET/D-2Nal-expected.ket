@@ -8,7 +8,7 @@
         "connections": [],
         "templates": [
             {
-                "$ref": "monomerTemplate-D-2Nal___D-3-naphthylalanine"
+                "$ref": "monomerTemplate-D-2Nal___D-3-(2-naphtyl)-alanine"
             }
         ]
     },
@@ -20,9 +20,9 @@
             "y": -7.65
         },
         "alias": "D-2Nal",
-        "templateId": "D-2Nal___D-3-naphthylalanine"
+        "templateId": "D-2Nal___D-3-(2-naphtyl)-alanine"
     },
-    "monomerTemplate-D-2Nal___D-3-naphthylalanine": {
+    "monomerTemplate-D-2Nal___D-3-(2-naphtyl)-alanine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -294,8 +294,8 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "id": "D-2Nal___D-3-naphthylalanine",
-        "fullName": "D-3-naphthylalanine",
+        "id": "D-2Nal___D-3-(2-naphtyl)-alanine",
+        "fullName": "D-3-(2-naphtyl)-alanine",
         "alias": "D-2Nal",
         "attachmentPoints": [
             {

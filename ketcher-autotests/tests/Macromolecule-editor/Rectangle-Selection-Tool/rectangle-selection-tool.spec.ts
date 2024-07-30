@@ -48,7 +48,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(
@@ -191,7 +191,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = 'Tza___3-(4-Thiazolyl)-alanine';
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(
@@ -385,9 +385,9 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await addPeptideOnCanvas(page, 'Nal___3-naphthylalanine');
+    await addPeptideOnCanvas(page, '2Nal___3-(2-naphthyl)-alanine');
     await selectRectangleSelectionTool(page);
-    await page.getByText('Nal').locator('..').first().hover();
+    await page.getByText('2Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);

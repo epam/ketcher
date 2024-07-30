@@ -139,7 +139,7 @@ const ContextMenu: React.FC = () => {
           '.contexify_submenu',
         ) as NodeListOf<HTMLElement>;
         if (contextMenuElement) {
-          setTimeout(() => resetMenuPosition(contextMenuElement), 0);
+          resetMenuPosition(contextMenuElement);
         }
 
         if (submenuElements.length) {

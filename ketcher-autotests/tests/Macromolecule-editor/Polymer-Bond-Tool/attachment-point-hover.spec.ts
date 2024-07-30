@@ -7,6 +7,7 @@ import {
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,7 +18,7 @@ test.describe('Check attachment point hover', () => {
   test('Move monomer bonded with another monomers and hover attachment points', async ({
     page,
   }) => {
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
     const coordinatesStart = { x: 300, y: 300 };
     const peptide1 = await addSingleMonomerToCanvas(

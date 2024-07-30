@@ -67,6 +67,14 @@ interface ToolEventHandler {
   toggleSequenceEditMode?(event: Event): void;
 
   toggleSequenceEditInRNABuilderMode?(event: Event): void;
+
+  clickOnSequenceItem?(event: Event): void;
+
+  mousedownBetweenSequenceItems?(event: Event): void;
+
+  mouseDownOnSequenceItem?(event: Event): void;
+
+  doubleClickOnSequenceItem?(event: Event): void;
 }
 
 export interface IRnaPreset {

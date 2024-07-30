@@ -3,7 +3,6 @@ import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
-  LabeledNodesWithPositionInSequence,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
@@ -222,25 +221,21 @@ export class CoreEditor {
     this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
-      this.events[eventName].add((event) =>
-        this.useToolIfNeeded(eventName, event),
-      );
+      this.events[eventName].add((event) => {
+        this.useModeIfNeeded(eventName, event);
+        this.useToolIfNeeded(eventName, event);
+      });
     });
     this.events.editSequence.add(
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
         this.onEditSequence(sequenceItemRenderer),
     );
 
-    this.events.startNewSequence.add(() => this.onStartNewSequence());
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
     this.events.turnOffSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOffSequenceEditInRNABuilderMode(),
-    );
-    this.events.modifySequenceInRnaBuilder.add(
-      (updatedSelection: LabeledNodesWithPositionInSequence[]) =>
-        this.onModifySequenceInRnaBuilder(updatedSelection),
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
@@ -253,14 +248,6 @@ export class CoreEditor {
     }
 
     this.mode.turnOnEditMode(sequenceItemRenderer);
-  }
-
-  private onStartNewSequence() {
-    if (!(this.mode instanceof SequenceMode)) {
-      return;
-    }
-
-    this.mode.startNewSequence();
   }
 
   private onTurnOnSequenceEditInRNABuilderMode() {
@@ -277,16 +264,6 @@ export class CoreEditor {
     }
 
     this.mode.turnOffSequenceEditInRNABuilderMode();
-  }
-
-  private onModifySequenceInRnaBuilder(
-    updatedSelection: LabeledNodesWithPositionInSequence[],
-  ) {
-    if (!(this.mode instanceof SequenceMode)) {
-      return;
-    }
-
-    this.mode.modifySequenceInRnaBuilder(updatedSelection);
   }
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {

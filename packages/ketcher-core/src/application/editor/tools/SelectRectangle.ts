@@ -55,7 +55,7 @@ class SelectRectangle implements BaseTool {
     const brushed = (mo) => {
       this.setSelectedEntities();
       if (mo.selection) {
-        this.brushArea.call(this.brush?.clear);
+        this.brushArea?.call(this.brush?.clear);
       }
     };
 

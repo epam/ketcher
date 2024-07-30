@@ -16,6 +16,7 @@ import {
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
+import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -299,7 +300,7 @@ test.describe('Zoom Tool', () => {
     const y = 350;
     const x1 = 650;
     const y1 = 150;
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     for (let i = 0; i < 3; i++) {
       await waitForRender(page, async () => {
@@ -308,7 +309,7 @@ test.describe('Zoom Tool', () => {
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await page.mouse.click(x, y);
-    await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+    await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+-');
@@ -328,11 +329,11 @@ test.describe('Zoom Tool', () => {
     */
     const x = 800;
     const y = 350;
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await page.mouse.click(x, y);
-    await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+    await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
@@ -356,7 +357,7 @@ test.describe('Zoom Tool', () => {
         await page.keyboard.press('Control+-');
       });
     }
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('RNA-TAB').click();
@@ -364,7 +365,7 @@ test.describe('Zoom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+    await page.getByTestId(Chems.SMPEG2).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

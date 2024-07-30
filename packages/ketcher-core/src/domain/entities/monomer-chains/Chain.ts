@@ -18,6 +18,7 @@ import {
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
+import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
@@ -181,5 +182,20 @@ export class Chain {
         callback({ node, subChain });
       });
     });
+  }
+
+  public static createChainWithEmptyNode() {
+    const emptyChain = new Chain();
+    const emptySequenceNode = new EmptySequenceNode();
+    const emptySubChain = new EmptySubChain();
+
+    emptySubChain.add(emptySequenceNode);
+    emptyChain.subChains.push(emptySubChain);
+
+    return { emptyChain, emptySubChain, emptySequenceNode };
+  }
+
+  public get isNewSequenceChain() {
+    return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
   }
 }

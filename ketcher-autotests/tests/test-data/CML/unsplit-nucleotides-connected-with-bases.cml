@@ -1,0 +1,1692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="N" x2="28.5646" y2="-6.77633"/>
+            <atom id="a1" elementType="N" x2="25.8851" y2="-8.85133"/>
+            <atom id="a2" elementType="N" x2="28.6744" y2="-11.0676"/>
+            <atom id="a3" elementType="N" x2="25.8723" y2="-13.1101"/>
+            <atom id="a4" elementType="N" x2="28.6429" y2="-15.0101"/>
+            <atom id="a5" elementType="N" x2="25.3897" y2="-16.6926"/>
+            <atom id="a6" elementType="N" x2="28.5875" y2="-18.6101"/>
+            <atom id="a7" elementType="N" x2="25.6581" y2="-20.3601"/>
+            <atom id="a8" elementType="C" x2="7.46172" y2="4.74775"/>
+            <atom id="a9" elementType="C" x2="10.9297" y2="2.63963"/>
+            <atom id="a10" elementType="C" x2="7.56646" y2="0.54839"/>
+            <atom id="a11" elementType="C" x2="10.9532" y2="-1.70161"/>
+            <atom id="a12" elementType="C" x2="7.66243" y2="-3.71785"/>
+            <atom id="a13" elementType="C" x2="10.8242" y2="-5.6529"/>
+            <atom id="a14" elementType="C" x2="7.69346" y2="-7.2529"/>
+            <atom id="a15" elementType="C" x2="10.9377" y2="-9.16166"/>
+            <atom id="a16" elementType="C" x2="7.63944" y2="-10.8954"/>
+            <atom id="a18" elementType="N" x2="25.8417" y2="-4.60881"/>
+            <atom id="a19" elementType="C" x2="24.6266" y2="-3.39373"/>
+            <atom id="a20" elementType="C" x2="25.5849" y2="-3.65051"/>
+            <atom id="a21" elementType="C" x2="23.9251" y2="-4.09526"/>
+            <atom id="a22" elementType="C" x2="25.1402" y2="-5.31034"/>
+            <atom id="a23" elementType="N" x2="24.1819" y2="-5.05356"/>
+            <atom id="a24" elementType="N" x2="24.1762" y2="-2.50976"/>
+            <atom id="a25" elementType="N" x2="23.0411" y2="-3.64485"/>
+            <atom id="a26" elementType="C" x2="23.1963" y2="-2.66496"/>
+            <atom id="a27" elementType="C" x2="22.1571" y2="-4.09526">
+                <atomParity atomRefs4="a25 a31 a28 a27">1</atomParity>
+            </atom>
+            <atom id="a28" elementType="O" x2="21.2732" y2="-3.64485"/>
+            <atom id="a29" elementType="C" x2="20.5716" y2="-4.34637">
+                <atomParity atomRefs4="a28 a30 a32 a29">1</atomParity>
+            </atom>
+            <atom id="a30" elementType="C" x2="21.022" y2="-5.23035">
+                <atomParity atomRefs4="a29 a34 a31 a30">1</atomParity>
+            </atom>
+            <atom id="a31" elementType="C" x2="22.0019" y2="-5.07515"/>
+            <atom id="a32" elementType="C" x2="19.5917" y2="-4.19117"/>
+            <atom id="a33" elementType="O" x2="19.2362" y2="-3.26496"/>
+            <atom id="a34" elementType="O" x2="20.5716" y2="-6.11432"/>
+            <atom id="a35" elementType="P" x2="19.5809" y2="-6.16625"/>
+            <atom id="a36" elementType="O" x2="20.1212" y2="-6.9983"/>
+            <atom id="a37" elementType="O" x2="18.8878" y2="-7.01185"/>
+            <atom id="a38" elementType="N" x2="26.2864" y2="-2.94898"/>
+            <atom id="a39" elementType="N" x2="25.3969" y2="-6.26864"/>
+            <atom id="a40" elementType="C" x2="27.3495" y2="-5.56125"/>
+            <atom id="a41" elementType="H" x2="18.4856" y2="-6.20693"/>
+            <atom id="a42" elementType="C" x2="28.3078" y2="-5.81803"/>
+            <atom id="a43" elementType="C" x2="26.648" y2="-6.26278"/>
+            <atom id="a44" elementType="C" x2="27.863" y2="-7.47786"/>
+            <atom id="a45" elementType="N" x2="26.9047" y2="-7.22108"/>
+            <atom id="a46" elementType="N" x2="26.8991" y2="-4.67728"/>
+            <atom id="a47" elementType="N" x2="25.764" y2="-5.81237"/>
+            <atom id="a48" elementType="C" x2="25.9192" y2="-4.83248"/>
+            <atom id="a49" elementType="C" x2="24.88" y2="-6.26278">
+                <atomParity atomRefs4="a47 a53 a50 a49">1</atomParity>
+            </atom>
+            <atom id="a50" elementType="O" x2="23.996" y2="-5.81237"/>
+            <atom id="a51" elementType="C" x2="23.2945" y2="-6.5139">
+                <atomParity atomRefs4="a50 a52 a54 a51">1</atomParity>
+            </atom>
+            <atom id="a52" elementType="C" x2="23.7449" y2="-7.39787">
+                <atomParity atomRefs4="a51 a56 a53 a52">1</atomParity>
+            </atom>
+            <atom id="a53" elementType="C" x2="24.7248" y2="-7.24267"/>
+            <atom id="a54" elementType="C" x2="22.3146" y2="-6.3587"/>
+            <atom id="a55" elementType="O" x2="21.9591" y2="-5.43248"/>
+            <atom id="a56" elementType="O" x2="23.2945" y2="-8.28185"/>
+            <atom id="a57" elementType="P" x2="22.3038" y2="-8.33377"/>
+            <atom id="a58" elementType="O" x2="22.8441" y2="-9.16582"/>
+            <atom id="a59" elementType="O" x2="21.6106" y2="-9.17938"/>
+            <atom id="a60" elementType="N" x2="29.0093" y2="-5.1165"/>
+            <atom id="a61" elementType="N" x2="28.1198" y2="-8.43616"/>
+            <atom id="a62" elementType="C" x2="24.67" y2="-7.63625"/>
+            <atom id="a63" elementType="H" x2="21.2085" y2="-8.37445"/>
+            <atom id="a64" elementType="C" x2="25.6283" y2="-7.89303"/>
+            <atom id="a65" elementType="C" x2="23.9685" y2="-8.33778"/>
+            <atom id="a66" elementType="C" x2="25.1836" y2="-9.55286"/>
+            <atom id="a67" elementType="N" x2="24.2253" y2="-9.29608"/>
+            <atom id="a68" elementType="N" x2="24.2196" y2="-6.75228"/>
+            <atom id="a69" elementType="N" x2="23.0845" y2="-7.88737"/>
+            <atom id="a70" elementType="C" x2="23.2397" y2="-6.90748"/>
+            <atom id="a71" elementType="C" x2="22.2006" y2="-8.33778">
+                <atomParity atomRefs4="a69 a75 a72 a71">1</atomParity>
+            </atom>
+            <atom id="a72" elementType="O" x2="21.3166" y2="-7.88737"/>
+            <atom id="a73" elementType="C" x2="20.615" y2="-8.5889">
+                <atomParity atomRefs4="a72 a74 a76 a73">1</atomParity>
+            </atom>
+            <atom id="a74" elementType="C" x2="21.0655" y2="-9.47287">
+                <atomParity atomRefs4="a73 a78 a75 a74">1</atomParity>
+            </atom>
+            <atom id="a75" elementType="C" x2="22.0453" y2="-9.31767"/>
+            <atom id="a76" elementType="C" x2="19.6352" y2="-8.4337"/>
+            <atom id="a77" elementType="O" x2="19.2796" y2="-7.50748"/>
+            <atom id="a78" elementType="O" x2="20.615" y2="-10.3568"/>
+            <atom id="a79" elementType="P" x2="19.6243" y2="-10.4088"/>
+            <atom id="a80" elementType="O" x2="20.1646" y2="-11.2408"/>
+            <atom id="a81" elementType="O" x2="18.9312" y2="-11.2544"/>
+            <atom id="a82" elementType="N" x2="26.3299" y2="-7.1915"/>
+            <atom id="a83" elementType="N" x2="25.4404" y2="-10.5112"/>
+            <atom id="a84" elementType="C" x2="27.4594" y2="-9.85249"/>
+            <atom id="a85" elementType="H" x2="18.529" y2="-10.4495"/>
+            <atom id="a86" elementType="C" x2="28.4177" y2="-10.1093"/>
+            <atom id="a87" elementType="C" x2="26.7578" y2="-10.554"/>
+            <atom id="a88" elementType="C" x2="27.9729" y2="-11.7691"/>
+            <atom id="a89" elementType="N" x2="27.0146" y2="-11.5123"/>
+            <atom id="a90" elementType="N" x2="27.009" y2="-8.96852"/>
+            <atom id="a91" elementType="N" x2="25.8739" y2="-10.1036"/>
+            <atom id="a92" elementType="C" x2="26.0291" y2="-9.12372"/>
+            <atom id="a93" elementType="C" x2="24.9899" y2="-10.554">
+                <atomParity atomRefs4="a91 a97 a94 a93">1</atomParity>
+            </atom>
+            <atom id="a94" elementType="O" x2="24.1059" y2="-10.1036"/>
+            <atom id="a95" elementType="C" x2="23.4044" y2="-10.8051">
+                <atomParity atomRefs4="a94 a96 a98 a95">1</atomParity>
+            </atom>
+            <atom id="a96" elementType="C" x2="23.8548" y2="-11.6891">
+                <atomParity atomRefs4="a95 a100 a97 a96">1</atomParity>
+            </atom>
+            <atom id="a97" elementType="C" x2="24.8347" y2="-11.5339"/>
+            <atom id="a98" elementType="C" x2="22.4245" y2="-10.6499"/>
+            <atom id="a99" elementType="O" x2="22.069" y2="-9.72372"/>
+            <atom id="a100" elementType="O" x2="23.4044" y2="-12.5731"/>
+            <atom id="a101" elementType="P" x2="22.4136" y2="-12.625"/>
+            <atom id="a102" elementType="O" x2="22.954" y2="-13.4571"/>
+            <atom id="a103" elementType="O" x2="21.7205" y2="-13.4706"/>
+            <atom id="a104" elementType="N" x2="29.1192" y2="-9.40774"/>
+            <atom id="a105" elementType="N" x2="28.2297" y2="-12.7274"/>
+            <atom id="a106" elementType="H" x2="21.0891" y2="-9.56852"/>
+            <atom id="a107" elementType="C" x2="24.6572" y2="-11.895"/>
+            <atom id="a108" elementType="C" x2="25.6155" y2="-12.1518"/>
+            <atom id="a109" elementType="C" x2="23.9557" y2="-12.5965"/>
+            <atom id="a110" elementType="C" x2="25.1708" y2="-13.8116"/>
+            <atom id="a111" elementType="N" x2="24.2125" y2="-13.5548"/>
+            <atom id="a112" elementType="N" x2="24.2068" y2="-11.011"/>
+            <atom id="a113" elementType="N" x2="23.0717" y2="-12.1461"/>
+            <atom id="a114" elementType="C" x2="23.2269" y2="-11.1662"/>
+            <atom id="a115" elementType="C" x2="22.1878" y2="-12.5965">
+                <atomParity atomRefs4="a113 a119 a116 a115">1</atomParity>
+            </atom>
+            <atom id="a116" elementType="O" x2="21.3038" y2="-12.1461"/>
+            <atom id="a117" elementType="C" x2="20.6023" y2="-12.8477">
+                <atomParity atomRefs4="a116 a118 a120 a117">1</atomParity>
+            </atom>
+            <atom id="a118" elementType="C" x2="21.0527" y2="-13.7316">
+                <atomParity atomRefs4="a117 a122 a119 a118">1</atomParity>
+            </atom>
+            <atom id="a119" elementType="C" x2="22.0326" y2="-13.5764"/>
+            <atom id="a120" elementType="C" x2="19.6224" y2="-12.6925"/>
+            <atom id="a121" elementType="O" x2="19.2668" y2="-11.7662"/>
+            <atom id="a122" elementType="O" x2="20.6023" y2="-14.6156"/>
+            <atom id="a123" elementType="P" x2="19.6115" y2="-14.6675"/>
+            <atom id="a124" elementType="O" x2="20.1519" y2="-15.4996"/>
+            <atom id="a125" elementType="O" x2="18.9184" y2="-15.5131"/>
+            <atom id="a126" elementType="N" x2="26.3171" y2="-11.4503"/>
+            <atom id="a127" elementType="N" x2="25.4276" y2="-14.7699"/>
+            <atom id="a128" elementType="H" x2="18.2869" y2="-11.611"/>
+            <atom id="a129" elementType="C" x2="27.4278" y2="-13.795"/>
+            <atom id="a130" elementType="C" x2="28.3861" y2="-14.0518"/>
+            <atom id="a131" elementType="C" x2="26.7263" y2="-14.4965"/>
+            <atom id="a132" elementType="C" x2="27.9413" y2="-15.7116"/>
+            <atom id="a133" elementType="N" x2="26.983" y2="-15.4548"/>
+            <atom id="a134" elementType="N" x2="26.9774" y2="-12.911"/>
+            <atom id="a135" elementType="N" x2="25.8423" y2="-14.0461"/>
+            <atom id="a136" elementType="C" x2="25.9975" y2="-13.0662"/>
+            <atom id="a137" elementType="C" x2="24.9583" y2="-14.4965">
+                <atomParity atomRefs4="a135 a141 a138 a137">1</atomParity>
+            </atom>
+            <atom id="a138" elementType="O" x2="24.0743" y2="-14.0461"/>
+            <atom id="a139" elementType="C" x2="23.3728" y2="-14.7477">
+                <atomParity atomRefs4="a138 a140 a142 a139">1</atomParity>
+            </atom>
+            <atom id="a140" elementType="C" x2="23.8232" y2="-15.6316">
+                <atomParity atomRefs4="a139 a144 a141 a140">1</atomParity>
+            </atom>
+            <atom id="a141" elementType="C" x2="24.8031" y2="-15.4764"/>
+            <atom id="a142" elementType="C" x2="22.3929" y2="-14.5925"/>
+            <atom id="a143" elementType="O" x2="22.0374" y2="-13.6662"/>
+            <atom id="a144" elementType="O" x2="23.3728" y2="-16.5156"/>
+            <atom id="a145" elementType="P" x2="22.382" y2="-16.5675"/>
+            <atom id="a146" elementType="O" x2="22.9224" y2="-17.3996"/>
+            <atom id="a147" elementType="O" x2="21.6889" y2="-17.4131"/>
+            <atom id="a148" elementType="N" x2="29.0876" y2="-13.3503"/>
+            <atom id="a149" elementType="N" x2="28.1981" y2="-16.6699"/>
+            <atom id="a150" elementType="H" x2="21.0575" y2="-13.511"/>
+            <atom id="a151" elementType="C" x2="24.1746" y2="-15.4775"/>
+            <atom id="a152" elementType="C" x2="25.1329" y2="-15.7343"/>
+            <atom id="a153" elementType="C" x2="23.4731" y2="-16.179"/>
+            <atom id="a154" elementType="C" x2="24.6882" y2="-17.3941"/>
+            <atom id="a155" elementType="N" x2="23.7299" y2="-17.1373"/>
+            <atom id="a156" elementType="N" x2="23.7242" y2="-14.5935"/>
+            <atom id="a157" elementType="N" x2="22.5891" y2="-15.7286"/>
+            <atom id="a158" elementType="C" x2="22.7443" y2="-14.7487"/>
+            <atom id="a159" elementType="C" x2="21.7051" y2="-16.179">
+                <atomParity atomRefs4="a157 a163 a160 a159">1</atomParity>
+            </atom>
+            <atom id="a160" elementType="O" x2="20.8211" y2="-15.7286"/>
+            <atom id="a161" elementType="C" x2="20.1196" y2="-16.4301">
+                <atomParity atomRefs4="a160 a162 a164 a161">1</atomParity>
+            </atom>
+            <atom id="a162" elementType="C" x2="20.57" y2="-17.3141">
+                <atomParity atomRefs4="a161 a166 a163 a162">1</atomParity>
+            </atom>
+            <atom id="a163" elementType="C" x2="21.5499" y2="-17.1589"/>
+            <atom id="a164" elementType="C" x2="19.1397" y2="-16.2749"/>
+            <atom id="a165" elementType="O" x2="18.7842" y2="-15.3487"/>
+            <atom id="a166" elementType="O" x2="20.1196" y2="-18.1981"/>
+            <atom id="a167" elementType="P" x2="19.1289" y2="-18.25"/>
+            <atom id="a168" elementType="O" x2="19.6692" y2="-19.0821"/>
+            <atom id="a169" elementType="O" x2="18.4358" y2="-19.0956"/>
+            <atom id="a170" elementType="N" x2="25.8344" y2="-15.0327"/>
+            <atom id="a171" elementType="C" x2="27.3725" y2="-17.395"/>
+            <atom id="a172" elementType="H" x2="17.8043" y2="-15.1935"/>
+            <atom id="a173" elementType="H" x2="18.0336" y2="-18.2907"/>
+            <atom id="a174" elementType="C" x2="28.3308" y2="-17.6518"/>
+            <atom id="a175" elementType="C" x2="26.6709" y2="-18.0965"/>
+            <atom id="a176" elementType="C" x2="27.886" y2="-19.3116"/>
+            <atom id="a177" elementType="N" x2="26.9277" y2="-19.0548"/>
+            <atom id="a178" elementType="N" x2="26.9221" y2="-16.511"/>
+            <atom id="a179" elementType="N" x2="25.787" y2="-17.6461"/>
+            <atom id="a180" elementType="C" x2="25.9422" y2="-16.6662"/>
+            <atom id="a181" elementType="C" x2="24.903" y2="-18.0965">
+                <atomParity atomRefs4="a179 a185 a182 a181">1</atomParity>
+            </atom>
+            <atom id="a182" elementType="O" x2="24.019" y2="-17.6461"/>
+            <atom id="a183" elementType="C" x2="23.3175" y2="-18.3477">
+                <atomParity atomRefs4="a182 a184 a186 a183">1</atomParity>
+            </atom>
+            <atom id="a184" elementType="C" x2="23.7679" y2="-19.2316">
+                <atomParity atomRefs4="a183 a188 a185 a184">1</atomParity>
+            </atom>
+            <atom id="a185" elementType="C" x2="24.7478" y2="-19.0764"/>
+            <atom id="a186" elementType="C" x2="22.3376" y2="-18.1925"/>
+            <atom id="a187" elementType="O" x2="21.9821" y2="-17.2662"/>
+            <atom id="a188" elementType="O" x2="23.3175" y2="-20.1156"/>
+            <atom id="a189" elementType="P" x2="22.3267" y2="-20.1675"/>
+            <atom id="a190" elementType="O" x2="22.8671" y2="-20.9996"/>
+            <atom id="a191" elementType="O" x2="21.6336" y2="-21.0131"/>
+            <atom id="a192" elementType="N" x2="29.0323" y2="-16.9503"/>
+            <atom id="a193" elementType="C" x2="24.443" y2="-19.145"/>
+            <atom id="a194" elementType="H" x2="21.0022" y2="-17.111"/>
+            <atom id="a195" elementType="H" x2="21.2315" y2="-20.2082"/>
+            <atom id="a196" elementType="C" x2="25.4013" y2="-19.4018"/>
+            <atom id="a197" elementType="C" x2="23.7415" y2="-19.8465"/>
+            <atom id="a198" elementType="C" x2="24.9566" y2="-21.0616"/>
+            <atom id="a199" elementType="N" x2="23.9983" y2="-20.8048"/>
+            <atom id="a200" elementType="N" x2="23.9926" y2="-18.261"/>
+            <atom id="a201" elementType="N" x2="22.8575" y2="-19.3961"/>
+            <atom id="a202" elementType="C" x2="23.0127" y2="-18.4162"/>
+            <atom id="a203" elementType="C" x2="21.9735" y2="-19.8465">
+                <atomParity atomRefs4="a201 a207 a204 a203">1</atomParity>
+            </atom>
+            <atom id="a204" elementType="O" x2="21.0896" y2="-19.3961"/>
+            <atom id="a205" elementType="C" x2="20.388" y2="-20.0977">
+                <atomParity atomRefs4="a204 a206 a208 a205">1</atomParity>
+            </atom>
+            <atom id="a206" elementType="C" x2="20.8384" y2="-20.9816">
+                <atomParity atomRefs4="a205 a210 a207 a206">1</atomParity>
+            </atom>
+            <atom id="a207" elementType="C" x2="21.8183" y2="-20.8264"/>
+            <atom id="a208" elementType="C" x2="19.4081" y2="-19.9425"/>
+            <atom id="a209" elementType="O" x2="19.0526" y2="-19.0162"/>
+            <atom id="a210" elementType="O" x2="20.388" y2="-21.8656"/>
+            <atom id="a211" elementType="P" x2="19.3973" y2="-21.9175"/>
+            <atom id="a212" elementType="O" x2="19.9376" y2="-22.7496"/>
+            <atom id="a213" elementType="O" x2="18.7042" y2="-22.7631"/>
+            <atom id="a214" elementType="N" x2="26.1028" y2="-18.7003"/>
+            <atom id="a215" elementType="C" x2="8.21799" y2="4.09312"/>
+            <atom id="a216" elementType="H" x2="18.0727" y2="-18.861"/>
+            <atom id="a217" elementType="H" x2="18.302" y2="-21.9582"/>
+            <atom id="a218" elementType="C" x2="9.16334" y2="4.42017"/>
+            <atom id="a219" elementType="C" x2="9.91961" y2="3.76554"/>
+            <atom id="a220" elementType="C" x2="10.865" y2="4.09259"/>
+            <atom id="a221" elementType="C" x2="11.6212" y2="3.43796"/>
+            <atom id="a222" elementType="N" x2="12.5666" y2="3.765"/>
+            <atom id="a223" elementType="H" x2="13.3224" y2="3.11071"/>
+            <atom id="a224" elementType="H" x2="12.7555" y2="4.74668"/>
+            <atom id="a225" elementType="C" x2="2.92584" y2="4.09379"/>
+            <atom id="a226" elementType="C" x2="3.11312" y2="5.07586"/>
+            <atom id="a227" elementType="C" x2="2.35632" y2="5.72909"/>
+            <atom id="a228" elementType="N" x2="1.41217" y2="5.40024"/>
+            <atom id="a229" elementType="C" x2="1.22489" y2="4.41823"/>
+            <atom id="a230" elementType="O" x2="0.280799" y2="4.08939"/>
+            <atom id="a231" elementType="O" x2="2.54361" y2="6.7111"/>
+            <atom id="a232" elementType="N" x2="1.98175" y2="3.765"/>
+            <atom id="a233" elementType="C" x2="4.05848" y2="5.40291"/>
+            <atom id="a234" elementType="C" x2="11.686" y2="1.985"/>
+            <atom id="a235" elementType="C" x2="4.81474" y2="4.74828"/>
+            <atom id="a236" elementType="C" x2="5.7601" y2="5.07533"/>
+            <atom id="a237" elementType="N" x2="6.51637" y2="4.4207"/>
+            <atom id="a238" elementType="O" x2="5.94905" y2="6.05707"/>
+            <atom id="a239" elementType="C" x2="12.6313" y2="2.31205"/>
+            <atom id="a240" elementType="C" x2="13.3876" y2="1.65742"/>
+            <atom id="a241" elementType="C" x2="14.3329" y2="1.98447"/>
+            <atom id="a242" elementType="C" x2="15.0892" y2="1.32984"/>
+            <atom id="a243" elementType="N" x2="16.0345" y2="1.65689"/>
+            <atom id="a244" elementType="C" x2="8.32273" y2="-0.106239"/>
+            <atom id="a245" elementType="H" x2="16.2235" y2="2.63856"/>
+            <atom id="a246" elementType="C" x2="6.3938" y2="1.98567"/>
+            <atom id="a247" elementType="C" x2="6.58109" y2="2.96774"/>
+            <atom id="a248" elementType="C" x2="5.82429" y2="3.62097"/>
+            <atom id="a249" elementType="N" x2="4.88013" y2="3.29212"/>
+            <atom id="a250" elementType="C" x2="4.69285" y2="2.31011"/>
+            <atom id="a251" elementType="O" x2="3.74876" y2="1.98127"/>
+            <atom id="a252" elementType="O" x2="6.01157" y2="4.60298"/>
+            <atom id="a253" elementType="N" x2="5.44972" y2="1.65689"/>
+            <atom id="a254" elementType="C" x2="7.52644" y2="3.29479"/>
+            <atom id="a255" elementType="H" x2="5.26243" y2="0.67481"/>
+            <atom id="a256" elementType="C" x2="8.28271" y2="2.64016"/>
+            <atom id="a257" elementType="C" x2="9.22806" y2="2.96721"/>
+            <atom id="a258" elementType="N" x2="9.98433" y2="2.31258"/>
+            <atom id="a259" elementType="O" x2="9.41701" y2="3.94895"/>
+            <atom id="a260" elementType="C" x2="9.26808" y2="0.220809"/>
+            <atom id="a261" elementType="C" x2="10.0243" y2="-0.43382"/>
+            <atom id="a262" elementType="C" x2="10.9697" y2="-0.106772"/>
+            <atom id="a263" elementType="C" x2="11.726" y2="-0.7614"/>
+            <atom id="a264" elementType="N" x2="12.6713" y2="-0.434353"/>
+            <atom id="a265" elementType="H" x2="13.4272" y2="-1.08865"/>
+            <atom id="a266" elementType="C" x2="11.7095" y2="-2.35624"/>
+            <atom id="a267" elementType="C" x2="3.03058" y2="-0.105572"/>
+            <atom id="a268" elementType="C" x2="3.21786" y2="0.876504"/>
+            <atom id="a269" elementType="C" x2="2.46106" y2="1.52973"/>
+            <atom id="a270" elementType="N" x2="1.51691" y2="1.20089"/>
+            <atom id="a271" elementType="C" x2="1.32962" y2="0.218876"/>
+            <atom id="a272" elementType="O" x2="0.385539" y2="-0.109971"/>
+            <atom id="a273" elementType="O" x2="2.64835" y2="2.51174"/>
+            <atom id="a274" elementType="N" x2="2.08649" y2="-0.434353"/>
+            <atom id="a275" elementType="C" x2="4.16322" y2="1.20355"/>
+            <atom id="a276" elementType="H" x2="1.89921" y2="-1.41643"/>
+            <atom id="a277" elementType="C" x2="4.91948" y2="0.548923"/>
+            <atom id="a278" elementType="C" x2="5.86484" y2="0.875971"/>
+            <atom id="a279" elementType="N" x2="6.6211" y2="0.221342"/>
+            <atom id="a280" elementType="O" x2="6.05379" y2="1.85771"/>
+            <atom id="a281" elementType="C" x2="12.6549" y2="-2.02919"/>
+            <atom id="a282" elementType="C" x2="13.4111" y2="-2.68382"/>
+            <atom id="a283" elementType="C" x2="14.3565" y2="-2.35677"/>
+            <atom id="a284" elementType="C" x2="15.1127" y2="-3.0114"/>
+            <atom id="a285" elementType="N" x2="16.0581" y2="-2.68435"/>
+            <atom id="a286" elementType="H" x2="16.814" y2="-3.33865"/>
+            <atom id="a287" elementType="H" x2="16.247" y2="-1.70268"/>
+            <atom id="a288" elementType="C" x2="6.41735" y2="-2.35557"/>
+            <atom id="a289" elementType="C" x2="6.60464" y2="-1.3735"/>
+            <atom id="a290" elementType="C" x2="5.84784" y2="-0.720267"/>
+            <atom id="a291" elementType="N" x2="4.90368" y2="-1.04911"/>
+            <atom id="a292" elementType="C" x2="4.7164" y2="-2.03112"/>
+            <atom id="a293" elementType="O" x2="3.77231" y2="-2.35997"/>
+            <atom id="a294" elementType="O" x2="6.03512" y2="0.261742"/>
+            <atom id="a295" elementType="N" x2="5.47327" y2="-2.68435"/>
+            <atom id="a296" elementType="C" x2="7.54999" y2="-1.04645"/>
+            <atom id="a297" elementType="C" x2="8.4187" y2="-4.37248"/>
+            <atom id="a298" elementType="C" x2="8.30626" y2="-1.70108"/>
+            <atom id="a299" elementType="C" x2="9.25161" y2="-1.37403"/>
+            <atom id="a300" elementType="N" x2="10.0079" y2="-2.02866"/>
+            <atom id="a301" elementType="O" x2="9.44056" y2="-0.392287"/>
+            <atom id="a302" elementType="C" x2="9.36405" y2="-4.04543"/>
+            <atom id="a303" elementType="C" x2="10.1203" y2="-4.70006"/>
+            <atom id="a304" elementType="C" x2="11.0657" y2="-4.37301"/>
+            <atom id="a305" elementType="C" x2="11.8219" y2="-5.02764"/>
+            <atom id="a306" elementType="N" x2="12.7673" y2="-4.70059"/>
+            <atom id="a307" elementType="C" x2="11.5805" y2="-6.30752"/>
+            <atom id="a308" elementType="H" x2="12.9562" y2="-3.71891"/>
+            <atom id="a309" elementType="C" x2="3.12656" y2="-4.37181"/>
+            <atom id="a310" elementType="C" x2="3.31384" y2="-3.38973"/>
+            <atom id="a311" elementType="C" x2="2.55704" y2="-2.73651"/>
+            <atom id="a312" elementType="N" x2="1.61289" y2="-3.06535"/>
+            <atom id="a313" elementType="C" x2="1.4256" y2="-4.04736"/>
+            <atom id="a314" elementType="O" x2="0.481516" y2="-4.37621"/>
+            <atom id="a315" elementType="O" x2="2.74432" y2="-1.7545"/>
+            <atom id="a316" elementType="N" x2="2.18247" y2="-4.70059"/>
+            <atom id="a317" elementType="C" x2="4.25919" y2="-3.06269"/>
+            <atom id="a318" elementType="H" x2="1.99519" y2="-5.68267"/>
+            <atom id="a319" elementType="C" x2="5.01546" y2="-3.71732"/>
+            <atom id="a320" elementType="C" x2="5.96081" y2="-3.39027"/>
+            <atom id="a321" elementType="N" x2="6.71708" y2="-4.0449"/>
+            <atom id="a322" elementType="O" x2="6.14976" y2="-2.40852"/>
+            <atom id="a323" elementType="C" x2="12.5258" y2="-5.98048"/>
+            <atom id="a324" elementType="C" x2="13.2821" y2="-6.63511"/>
+            <atom id="a325" elementType="C" x2="14.2274" y2="-6.30806"/>
+            <atom id="a326" elementType="C" x2="14.9837" y2="-6.96269"/>
+            <atom id="a327" elementType="N" x2="15.9291" y2="-6.63564"/>
+            <atom id="a328" elementType="H" x2="16.6849" y2="-7.28993"/>
+            <atom id="a329" elementType="C" x2="8.44973" y2="-7.90752"/>
+            <atom id="a330" elementType="C" x2="6.28833" y2="-6.30686"/>
+            <atom id="a331" elementType="C" x2="6.47561" y2="-5.32478"/>
+            <atom id="a332" elementType="C" x2="5.71881" y2="-4.67155"/>
+            <atom id="a333" elementType="N" x2="4.77466" y2="-5.0004"/>
+            <atom id="a334" elementType="C" x2="4.58738" y2="-5.98241"/>
+            <atom id="a335" elementType="O" x2="3.64329" y2="-6.31126"/>
+            <atom id="a336" elementType="O" x2="5.9061" y2="-3.68954"/>
+            <atom id="a337" elementType="N" x2="5.34424" y2="-6.63564"/>
+            <atom id="a338" elementType="C" x2="7.42097" y2="-4.99773"/>
+            <atom id="a339" elementType="H" x2="5.15696" y2="-7.61771"/>
+            <atom id="a340" elementType="C" x2="8.17724" y2="-5.65236"/>
+            <atom id="a341" elementType="C" x2="9.12259" y2="-5.32531"/>
+            <atom id="a342" elementType="N" x2="9.87886" y2="-5.97994"/>
+            <atom id="a343" elementType="O" x2="9.31154" y2="-4.34357"/>
+            <atom id="a344" elementType="C" x2="9.39508" y2="-7.58048"/>
+            <atom id="a345" elementType="C" x2="10.1513" y2="-8.2351"/>
+            <atom id="a346" elementType="C" x2="11.0967" y2="-7.90806"/>
+            <atom id="a347" elementType="C" x2="11.853" y2="-8.56269"/>
+            <atom id="a348" elementType="N" x2="12.7983" y2="-8.23564"/>
+            <atom id="a349" elementType="H" x2="13.5542" y2="-8.88993"/>
+            <atom id="a350" elementType="H" x2="12.9873" y2="-7.25396"/>
+            <atom id="a351" elementType="C" x2="3.15758" y2="-7.90686"/>
+            <atom id="a352" elementType="C" x2="3.34487" y2="-6.92478"/>
+            <atom id="a353" elementType="C" x2="2.58806" y2="-6.27155"/>
+            <atom id="a354" elementType="N" x2="1.64391" y2="-6.6004"/>
+            <atom id="a355" elementType="C" x2="1.45663" y2="-7.58241"/>
+            <atom id="a356" elementType="O" x2="0.512541" y2="-7.91126"/>
+            <atom id="a357" elementType="O" x2="2.77535" y2="-5.28954"/>
+            <atom id="a358" elementType="N" x2="2.2135" y2="-8.23564"/>
+            <atom id="a359" elementType="C" x2="4.29022" y2="-6.59773"/>
+            <atom id="a360" elementType="C" x2="11.694" y2="-9.81629"/>
+            <atom id="a361" elementType="C" x2="5.04649" y2="-7.25236"/>
+            <atom id="a362" elementType="C" x2="5.99184" y2="-6.92531"/>
+            <atom id="a363" elementType="N" x2="6.74811" y2="-7.57994"/>
+            <atom id="a364" elementType="O" x2="6.18079" y2="-5.94357"/>
+            <atom id="a365" elementType="C" x2="12.6393" y2="-9.48924"/>
+            <atom id="a366" elementType="C" x2="13.3956" y2="-10.1439"/>
+            <atom id="a367" elementType="C" x2="14.341" y2="-9.81682"/>
+            <atom id="a368" elementType="C" x2="15.0972" y2="-10.4714"/>
+            <atom id="a369" elementType="N" x2="16.0426" y2="-10.1444"/>
+            <atom id="a370" elementType="C" x2="8.39571" y2="-11.55"/>
+            <atom id="a371" elementType="H" x2="16.2315" y2="-9.16272"/>
+            <atom id="a372" elementType="C" x2="6.40183" y2="-9.81562"/>
+            <atom id="a373" elementType="C" x2="6.58912" y2="-8.83354"/>
+            <atom id="a374" elementType="C" x2="5.83231" y2="-8.18032"/>
+            <atom id="a375" elementType="N" x2="4.88816" y2="-8.50916"/>
+            <atom id="a376" elementType="C" x2="4.70088" y2="-9.49117"/>
+            <atom id="a377" elementType="O" x2="3.75679" y2="-9.82002"/>
+            <atom id="a378" elementType="O" x2="6.0196" y2="-7.19831"/>
+            <atom id="a379" elementType="N" x2="5.45775" y2="-10.1444"/>
+            <atom id="a380" elementType="C" x2="7.53447" y2="-8.5065"/>
+            <atom id="a381" elementType="H" x2="5.27046" y2="-11.1265"/>
+            <atom id="a382" elementType="C" x2="8.29074" y2="-9.16113"/>
+            <atom id="a383" elementType="C" x2="9.23609" y2="-8.83408"/>
+            <atom id="a384" elementType="N" x2="9.99236" y2="-9.48871"/>
+            <atom id="a385" elementType="O" x2="9.42504" y2="-7.85233"/>
+            <atom id="a386" elementType="C" x2="9.34106" y2="-11.223"/>
+            <atom id="a387" elementType="C" x2="10.0973" y2="-11.8776"/>
+            <atom id="a388" elementType="C" x2="11.0427" y2="-11.5506"/>
+            <atom id="a389" elementType="C" x2="11.7989" y2="-12.2052"/>
+            <atom id="a390" elementType="N" x2="12.7443" y2="-11.8782"/>
+            <atom id="a391" elementType="H" x2="13.5002" y2="-12.5325"/>
+            <atom id="a393" elementType="C" x2="3.10356" y2="-11.5494"/>
+            <atom id="a394" elementType="C" x2="3.29084" y2="-10.5673"/>
+            <atom id="a395" elementType="C" x2="2.53404" y2="-9.91408"/>
+            <atom id="a396" elementType="N" x2="1.58989" y2="-10.2429"/>
+            <atom id="a397" elementType="C" x2="1.40261" y2="-11.2249"/>
+            <atom id="a398" elementType="O" x2="0.458519" y2="-11.5538"/>
+            <atom id="a399" elementType="O" x2="2.72133" y2="-8.93207"/>
+            <atom id="a400" elementType="N" x2="2.15947" y2="-11.8782"/>
+            <atom id="a401" elementType="C" x2="4.2362" y2="-10.2403"/>
+            <atom id="a402" elementType="H" x2="1.97219" y2="-12.8602"/>
+            <atom id="a403" elementType="C" x2="4.99246" y2="-10.8949"/>
+            <atom id="a404" elementType="C" x2="5.93782" y2="-10.5678"/>
+            <atom id="a405" elementType="N" x2="6.69408" y2="-11.2225"/>
+            <atom id="a406" elementType="O" x2="6.12677" y2="-9.5861"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a0 a44" order="1"/>
+            <bond atomRefs2="a1 a66" order="1"/>
+            <bond atomRefs2="a2 a88" order="1"/>
+            <bond atomRefs2="a3 a110" order="1"/>
+            <bond atomRefs2="a4 a132" order="1"/>
+            <bond atomRefs2="a5 a154" order="1"/>
+            <bond atomRefs2="a6 a176" order="1"/>
+            <bond atomRefs2="a7 a198" order="1"/>
+            <bond atomRefs2="a8 a215" order="1"/>
+            <bond atomRefs2="a20 a18" order="2">
+                <bondStereo atomRefs4="a19 a20 a18 a22">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a18 a22" order="1"/>
+            <bond atomRefs2="a22 a23" order="2">
+                <bondStereo atomRefs4="a18 a22 a23 a21">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a23 a21" order="1"/>
+            <bond atomRefs2="a21 a19" order="2">
+                <bondStereo atomRefs4="a23 a21 a19 a20">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a19 a20" order="1"/>
+            <bond atomRefs2="a19 a24" order="1"/>
+            <bond atomRefs2="a21 a25" order="1"/>
+            <bond atomRefs2="a24 a26" order="2">
+                <bondStereo atomRefs4="a19 a24 a26 a25">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a27 a28" order="1"/>
+            <bond atomRefs2="a28 a29" order="1"/>
+            <bond atomRefs2="a29 a30" order="1"/>
+            <bond atomRefs2="a30 a31" order="1"/>
+            <bond atomRefs2="a27 a31" order="1"/>
+            <bond atomRefs2="a29 a32" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a32 a33" order="1"/>
+            <bond atomRefs2="a27 a25" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a30 a34" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a34 a35" order="1"/>
+            <bond atomRefs2="a35 a36" order="2"/>
+            <bond atomRefs2="a35 a37" order="1"/>
+            <bond atomRefs2="a25 a26" order="1"/>
+            <bond atomRefs2="a20 a38" order="1"/>
+            <bond atomRefs2="a22 a39" order="1"/>
+            <bond atomRefs2="a42 a0" order="2">
+                <bondStereo atomRefs4="a40 a42 a0 a44">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a35 a41" order="1"/>
+            <bond atomRefs2="a9 a234" order="1"/>
+            <bond atomRefs2="a44 a45" order="2">
+                <bondStereo atomRefs4="a0 a44 a45 a43">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a45 a43" order="1"/>
+            <bond atomRefs2="a43 a40" order="2">
+                <bondStereo atomRefs4="a45 a43 a40 a42">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a40 a42" order="1"/>
+            <bond atomRefs2="a40 a46" order="1"/>
+            <bond atomRefs2="a43 a47" order="1"/>
+            <bond atomRefs2="a46 a48" order="2">
+                <bondStereo atomRefs4="a40 a46 a48 a47">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a49 a50" order="1"/>
+            <bond atomRefs2="a50 a51" order="1"/>
+            <bond atomRefs2="a51 a52" order="1"/>
+            <bond atomRefs2="a52 a53" order="1"/>
+            <bond atomRefs2="a49 a53" order="1"/>
+            <bond atomRefs2="a51 a54" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a54 a55" order="1"/>
+            <bond atomRefs2="a49 a47" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a52 a56" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a56 a57" order="1"/>
+            <bond atomRefs2="a57 a58" order="2"/>
+            <bond atomRefs2="a57 a59" order="1"/>
+            <bond atomRefs2="a47 a48" order="1"/>
+            <bond atomRefs2="a42 a60" order="1"/>
+            <bond atomRefs2="a44 a61" order="1"/>
+            <bond atomRefs2="a64 a1" order="2">
+                <bondStereo atomRefs4="a62 a64 a1 a66">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a57 a63" order="1"/>
+            <bond atomRefs2="a10 a244" order="1"/>
+            <bond atomRefs2="a66 a67" order="2">
+                <bondStereo atomRefs4="a1 a66 a67 a65">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a67 a65" order="1"/>
+            <bond atomRefs2="a65 a62" order="2">
+                <bondStereo atomRefs4="a67 a65 a62 a64">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a62 a64" order="1"/>
+            <bond atomRefs2="a62 a68" order="1"/>
+            <bond atomRefs2="a65 a69" order="1"/>
+            <bond atomRefs2="a68 a70" order="2">
+                <bondStereo atomRefs4="a62 a68 a70 a69">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a71 a72" order="1"/>
+            <bond atomRefs2="a72 a73" order="1"/>
+            <bond atomRefs2="a73 a74" order="1"/>
+            <bond atomRefs2="a74 a75" order="1"/>
+            <bond atomRefs2="a71 a75" order="1"/>
+            <bond atomRefs2="a73 a76" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a76 a77" order="1"/>
+            <bond atomRefs2="a71 a69" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a74 a78" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a78 a79" order="1"/>
+            <bond atomRefs2="a79 a80" order="2"/>
+            <bond atomRefs2="a79 a81" order="1"/>
+            <bond atomRefs2="a69 a70" order="1"/>
+            <bond atomRefs2="a64 a82" order="1"/>
+            <bond atomRefs2="a66 a83" order="1"/>
+            <bond atomRefs2="a86 a2" order="2">
+                <bondStereo atomRefs4="a84 a86 a2 a88">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a79 a85" order="1"/>
+            <bond atomRefs2="a11 a266" order="1"/>
+            <bond atomRefs2="a88 a89" order="2">
+                <bondStereo atomRefs4="a2 a88 a89 a87">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a89 a87" order="1"/>
+            <bond atomRefs2="a87 a84" order="2">
+                <bondStereo atomRefs4="a89 a87 a84 a86">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a84 a86" order="1"/>
+            <bond atomRefs2="a84 a90" order="1"/>
+            <bond atomRefs2="a87 a91" order="1"/>
+            <bond atomRefs2="a90 a92" order="2">
+                <bondStereo atomRefs4="a84 a90 a92 a91">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a93 a94" order="1"/>
+            <bond atomRefs2="a94 a95" order="1"/>
+            <bond atomRefs2="a95 a96" order="1"/>
+            <bond atomRefs2="a96 a97" order="1"/>
+            <bond atomRefs2="a93 a97" order="1"/>
+            <bond atomRefs2="a95 a98" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a98 a99" order="1"/>
+            <bond atomRefs2="a93 a91" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a96 a100" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a100 a101" order="1"/>
+            <bond atomRefs2="a101 a102" order="2"/>
+            <bond atomRefs2="a101 a103" order="1"/>
+            <bond atomRefs2="a91 a92" order="1"/>
+            <bond atomRefs2="a86 a104" order="1"/>
+            <bond atomRefs2="a88 a105" order="1"/>
+            <bond atomRefs2="a99 a106" order="1"/>
+            <bond atomRefs2="a108 a3" order="2">
+                <bondStereo atomRefs4="a107 a108 a3 a110">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a12 a297" order="1"/>
+            <bond atomRefs2="a110 a111" order="2">
+                <bondStereo atomRefs4="a3 a110 a111 a109">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a111 a109" order="1"/>
+            <bond atomRefs2="a109 a107" order="2">
+                <bondStereo atomRefs4="a111 a109 a107 a108">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a107 a108" order="1"/>
+            <bond atomRefs2="a107 a112" order="1"/>
+            <bond atomRefs2="a109 a113" order="1"/>
+            <bond atomRefs2="a112 a114" order="2">
+                <bondStereo atomRefs4="a107 a112 a114 a113">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a115 a116" order="1"/>
+            <bond atomRefs2="a116 a117" order="1"/>
+            <bond atomRefs2="a117 a118" order="1"/>
+            <bond atomRefs2="a118 a119" order="1"/>
+            <bond atomRefs2="a115 a119" order="1"/>
+            <bond atomRefs2="a117 a120" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a120 a121" order="1"/>
+            <bond atomRefs2="a115 a113" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a118 a122" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a122 a123" order="1"/>
+            <bond atomRefs2="a123 a124" order="2"/>
+            <bond atomRefs2="a123 a125" order="1"/>
+            <bond atomRefs2="a113 a114" order="1"/>
+            <bond atomRefs2="a108 a126" order="1"/>
+            <bond atomRefs2="a110 a127" order="1"/>
+            <bond atomRefs2="a121 a128" order="1"/>
+            <bond atomRefs2="a130 a4" order="2">
+                <bondStereo atomRefs4="a129 a130 a4 a132">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a13 a307" order="1"/>
+            <bond atomRefs2="a132 a133" order="2">
+                <bondStereo atomRefs4="a4 a132 a133 a131">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a133 a131" order="1"/>
+            <bond atomRefs2="a131 a129" order="2">
+                <bondStereo atomRefs4="a133 a131 a129 a130">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a129 a130" order="1"/>
+            <bond atomRefs2="a129 a134" order="1"/>
+            <bond atomRefs2="a131 a135" order="1"/>
+            <bond atomRefs2="a134 a136" order="2">
+                <bondStereo atomRefs4="a129 a134 a136 a135">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a137 a138" order="1"/>
+            <bond atomRefs2="a138 a139" order="1"/>
+            <bond atomRefs2="a139 a140" order="1"/>
+            <bond atomRefs2="a140 a141" order="1"/>
+            <bond atomRefs2="a137 a141" order="1"/>
+            <bond atomRefs2="a139 a142" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a142 a143" order="1"/>
+            <bond atomRefs2="a137 a135" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a140 a144" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a144 a145" order="1"/>
+            <bond atomRefs2="a145 a146" order="2"/>
+            <bond atomRefs2="a145 a147" order="1"/>
+            <bond atomRefs2="a135 a136" order="1"/>
+            <bond atomRefs2="a130 a148" order="1"/>
+            <bond atomRefs2="a132 a149" order="1"/>
+            <bond atomRefs2="a143 a150" order="1"/>
+            <bond atomRefs2="a152 a5" order="2">
+                <bondStereo atomRefs4="a151 a152 a5 a154">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a14 a329" order="1"/>
+            <bond atomRefs2="a154 a155" order="2">
+                <bondStereo atomRefs4="a5 a154 a155 a153">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a155 a153" order="1"/>
+            <bond atomRefs2="a153 a151" order="2">
+                <bondStereo atomRefs4="a155 a153 a151 a152">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a151 a152" order="1"/>
+            <bond atomRefs2="a151 a156" order="1"/>
+            <bond atomRefs2="a153 a157" order="1"/>
+            <bond atomRefs2="a156 a158" order="2">
+                <bondStereo atomRefs4="a151 a156 a158 a157">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a159 a160" order="1"/>
+            <bond atomRefs2="a160 a161" order="1"/>
+            <bond atomRefs2="a161 a162" order="1"/>
+            <bond atomRefs2="a162 a163" order="1"/>
+            <bond atomRefs2="a159 a163" order="1"/>
+            <bond atomRefs2="a161 a164" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a164 a165" order="1"/>
+            <bond atomRefs2="a159 a157" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a162 a166" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a166 a167" order="1"/>
+            <bond atomRefs2="a167 a168" order="2"/>
+            <bond atomRefs2="a167 a169" order="1"/>
+            <bond atomRefs2="a157 a158" order="1"/>
+            <bond atomRefs2="a152 a170" order="1"/>
+            <bond atomRefs2="a174 a6" order="2">
+                <bondStereo atomRefs4="a171 a174 a6 a176">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a165 a172" order="1"/>
+            <bond atomRefs2="a167 a173" order="1"/>
+            <bond atomRefs2="a15 a360" order="1"/>
+            <bond atomRefs2="a176 a177" order="2">
+                <bondStereo atomRefs4="a6 a176 a177 a175">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a177 a175" order="1"/>
+            <bond atomRefs2="a175 a171" order="2">
+                <bondStereo atomRefs4="a177 a175 a171 a174">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a171 a174" order="1"/>
+            <bond atomRefs2="a171 a178" order="1"/>
+            <bond atomRefs2="a175 a179" order="1"/>
+            <bond atomRefs2="a178 a180" order="2">
+                <bondStereo atomRefs4="a171 a178 a180 a179">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a181 a182" order="1"/>
+            <bond atomRefs2="a182 a183" order="1"/>
+            <bond atomRefs2="a183 a184" order="1"/>
+            <bond atomRefs2="a184 a185" order="1"/>
+            <bond atomRefs2="a181 a185" order="1"/>
+            <bond atomRefs2="a183 a186" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a186 a187" order="1"/>
+            <bond atomRefs2="a181 a179" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a184 a188" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a188 a189" order="1"/>
+            <bond atomRefs2="a189 a190" order="2"/>
+            <bond atomRefs2="a189 a191" order="1"/>
+            <bond atomRefs2="a179 a180" order="1"/>
+            <bond atomRefs2="a174 a192" order="1"/>
+            <bond atomRefs2="a196 a7" order="2">
+                <bondStereo atomRefs4="a193 a196 a7 a198">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a187 a194" order="1"/>
+            <bond atomRefs2="a189 a195" order="1"/>
+            <bond atomRefs2="a16 a370" order="1"/>
+            <bond atomRefs2="a198 a199" order="2">
+                <bondStereo atomRefs4="a7 a198 a199 a197">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a199 a197" order="1"/>
+            <bond atomRefs2="a197 a193" order="2">
+                <bondStereo atomRefs4="a199 a197 a193 a196">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a193 a196" order="1"/>
+            <bond atomRefs2="a193 a200" order="1"/>
+            <bond atomRefs2="a197 a201" order="1"/>
+            <bond atomRefs2="a200 a202" order="2">
+                <bondStereo atomRefs4="a193 a200 a202 a201">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a203 a204" order="1"/>
+            <bond atomRefs2="a204 a205" order="1"/>
+            <bond atomRefs2="a205 a206" order="1"/>
+            <bond atomRefs2="a206 a207" order="1"/>
+            <bond atomRefs2="a203 a207" order="1"/>
+            <bond atomRefs2="a205 a208" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a208 a209" order="1"/>
+            <bond atomRefs2="a203 a201" order="1">
+                <bondStereo>W</bondStereo>
+            </bond>
+            <bond atomRefs2="a206 a210" order="1">
+                <bondStereo>H</bondStereo>
+            </bond>
+            <bond atomRefs2="a210 a211" order="1"/>
+            <bond atomRefs2="a211 a212" order="2"/>
+            <bond atomRefs2="a211 a213" order="1"/>
+            <bond atomRefs2="a201 a202" order="1"/>
+            <bond atomRefs2="a196 a214" order="1"/>
+            <bond atomRefs2="a237 a8" order="1"/>
+            <bond atomRefs2="a209 a216" order="1"/>
+            <bond atomRefs2="a211 a217" order="1"/>
+            <bond atomRefs2="a215 a218" order="1"/>
+            <bond atomRefs2="a218 a219" order="1"/>
+            <bond atomRefs2="a219 a220" order="1"/>
+            <bond atomRefs2="a220 a221" order="1"/>
+            <bond atomRefs2="a221 a222" order="1"/>
+            <bond atomRefs2="a222 a223" order="1"/>
+            <bond atomRefs2="a222 a224" order="1"/>
+            <bond atomRefs2="a225 a226" order="2">
+                <bondStereo atomRefs4="a232 a225 a226 a227">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a226 a227" order="1"/>
+            <bond atomRefs2="a227 a228" order="1"/>
+            <bond atomRefs2="a228 a229" order="1"/>
+            <bond atomRefs2="a229 a230" order="2"/>
+            <bond atomRefs2="a227 a231" order="2"/>
+            <bond atomRefs2="a232 a225" order="1"/>
+            <bond atomRefs2="a232 a229" order="1"/>
+            <bond atomRefs2="a226 a233" order="1"/>
+            <bond atomRefs2="a258 a9" order="1"/>
+            <bond atomRefs2="a233 a235" order="2">
+                <bondStereo atomRefs4="a226 a233 a235 a236">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a235 a236" order="1"/>
+            <bond atomRefs2="a236 a237" order="1"/>
+            <bond atomRefs2="a236 a238" order="2"/>
+            <bond atomRefs2="a33 a232" order="1"/>
+            <bond atomRefs2="a234 a239" order="1"/>
+            <bond atomRefs2="a239 a240" order="1"/>
+            <bond atomRefs2="a240 a241" order="1"/>
+            <bond atomRefs2="a241 a242" order="1"/>
+            <bond atomRefs2="a242 a243" order="1"/>
+            <bond atomRefs2="a279 a10" order="1"/>
+            <bond atomRefs2="a243 a245" order="1"/>
+            <bond atomRefs2="a246 a247" order="2">
+                <bondStereo atomRefs4="a253 a246 a247 a248">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a247 a248" order="1"/>
+            <bond atomRefs2="a248 a249" order="1"/>
+            <bond atomRefs2="a249 a250" order="1"/>
+            <bond atomRefs2="a250 a251" order="2"/>
+            <bond atomRefs2="a248 a252" order="2"/>
+            <bond atomRefs2="a253 a246" order="1"/>
+            <bond atomRefs2="a253 a250" order="1"/>
+            <bond atomRefs2="a247 a254" order="1"/>
+            <bond atomRefs2="a253 a255" order="1"/>
+            <bond atomRefs2="a254 a256" order="2">
+                <bondStereo atomRefs4="a247 a254 a256 a257">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a256 a257" order="1"/>
+            <bond atomRefs2="a257 a258" order="1"/>
+            <bond atomRefs2="a257 a259" order="2"/>
+            <bond atomRefs2="a55 a243" order="1"/>
+            <bond atomRefs2="a244 a260" order="1"/>
+            <bond atomRefs2="a260 a261" order="1"/>
+            <bond atomRefs2="a261 a262" order="1"/>
+            <bond atomRefs2="a262 a263" order="1"/>
+            <bond atomRefs2="a263 a264" order="1"/>
+            <bond atomRefs2="a264 a265" order="1"/>
+            <bond atomRefs2="a300 a11" order="1"/>
+            <bond atomRefs2="a267 a268" order="2">
+                <bondStereo atomRefs4="a274 a267 a268 a269">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a268 a269" order="1"/>
+            <bond atomRefs2="a269 a270" order="1"/>
+            <bond atomRefs2="a270 a271" order="1"/>
+            <bond atomRefs2="a271 a272" order="2"/>
+            <bond atomRefs2="a269 a273" order="2"/>
+            <bond atomRefs2="a274 a267" order="1"/>
+            <bond atomRefs2="a274 a271" order="1"/>
+            <bond atomRefs2="a268 a275" order="1"/>
+            <bond atomRefs2="a274 a276" order="1"/>
+            <bond atomRefs2="a275 a277" order="2">
+                <bondStereo atomRefs4="a268 a275 a277 a278">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a277 a278" order="1"/>
+            <bond atomRefs2="a278 a279" order="1"/>
+            <bond atomRefs2="a278 a280" order="2"/>
+            <bond atomRefs2="a77 a264" order="1"/>
+            <bond atomRefs2="a266 a281" order="1"/>
+            <bond atomRefs2="a281 a282" order="1"/>
+            <bond atomRefs2="a282 a283" order="1"/>
+            <bond atomRefs2="a283 a284" order="1"/>
+            <bond atomRefs2="a284 a285" order="1"/>
+            <bond atomRefs2="a285 a286" order="1"/>
+            <bond atomRefs2="a285 a287" order="1"/>
+            <bond atomRefs2="a288 a289" order="2">
+                <bondStereo atomRefs4="a295 a288 a289 a290">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a289 a290" order="1"/>
+            <bond atomRefs2="a290 a291" order="1"/>
+            <bond atomRefs2="a291 a292" order="1"/>
+            <bond atomRefs2="a292 a293" order="2"/>
+            <bond atomRefs2="a290 a294" order="2"/>
+            <bond atomRefs2="a295 a288" order="1"/>
+            <bond atomRefs2="a295 a292" order="1"/>
+            <bond atomRefs2="a289 a296" order="1"/>
+            <bond atomRefs2="a321 a12" order="1"/>
+            <bond atomRefs2="a296 a298" order="2">
+                <bondStereo atomRefs4="a289 a296 a298 a299">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a298 a299" order="1"/>
+            <bond atomRefs2="a299 a300" order="1"/>
+            <bond atomRefs2="a299 a301" order="2"/>
+            <bond atomRefs2="a101 a295" order="1"/>
+            <bond atomRefs2="a297 a302" order="1"/>
+            <bond atomRefs2="a302 a303" order="1"/>
+            <bond atomRefs2="a303 a304" order="1"/>
+            <bond atomRefs2="a304 a305" order="1"/>
+            <bond atomRefs2="a305 a306" order="1"/>
+            <bond atomRefs2="a342 a13" order="1"/>
+            <bond atomRefs2="a306 a308" order="1"/>
+            <bond atomRefs2="a309 a310" order="2">
+                <bondStereo atomRefs4="a316 a309 a310 a311">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a310 a311" order="1"/>
+            <bond atomRefs2="a311 a312" order="1"/>
+            <bond atomRefs2="a312 a313" order="1"/>
+            <bond atomRefs2="a313 a314" order="2"/>
+            <bond atomRefs2="a311 a315" order="2"/>
+            <bond atomRefs2="a316 a309" order="1"/>
+            <bond atomRefs2="a316 a313" order="1"/>
+            <bond atomRefs2="a310 a317" order="1"/>
+            <bond atomRefs2="a316 a318" order="1"/>
+            <bond atomRefs2="a317 a319" order="2">
+                <bondStereo atomRefs4="a310 a317 a319 a320">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a319 a320" order="1"/>
+            <bond atomRefs2="a320 a321" order="1"/>
+            <bond atomRefs2="a320 a322" order="2"/>
+            <bond atomRefs2="a123 a306" order="1"/>
+            <bond atomRefs2="a307 a323" order="1"/>
+            <bond atomRefs2="a323 a324" order="1"/>
+            <bond atomRefs2="a324 a325" order="1"/>
+            <bond atomRefs2="a325 a326" order="1"/>
+            <bond atomRefs2="a326 a327" order="1"/>
+            <bond atomRefs2="a327 a328" order="1"/>
+            <bond atomRefs2="a363 a14" order="1"/>
+            <bond atomRefs2="a330 a331" order="2">
+                <bondStereo atomRefs4="a337 a330 a331 a332">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a331 a332" order="1"/>
+            <bond atomRefs2="a332 a333" order="1"/>
+            <bond atomRefs2="a333 a334" order="1"/>
+            <bond atomRefs2="a334 a335" order="2"/>
+            <bond atomRefs2="a332 a336" order="2"/>
+            <bond atomRefs2="a337 a330" order="1"/>
+            <bond atomRefs2="a337 a334" order="1"/>
+            <bond atomRefs2="a331 a338" order="1"/>
+            <bond atomRefs2="a337 a339" order="1"/>
+            <bond atomRefs2="a338 a340" order="2">
+                <bondStereo atomRefs4="a331 a338 a340 a341">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a340 a341" order="1"/>
+            <bond atomRefs2="a341 a342" order="1"/>
+            <bond atomRefs2="a341 a343" order="2"/>
+            <bond atomRefs2="a145 a327" order="1"/>
+            <bond atomRefs2="a329 a344" order="1"/>
+            <bond atomRefs2="a344 a345" order="1"/>
+            <bond atomRefs2="a345 a346" order="1"/>
+            <bond atomRefs2="a346 a347" order="1"/>
+            <bond atomRefs2="a347 a348" order="1"/>
+            <bond atomRefs2="a348 a349" order="1"/>
+            <bond atomRefs2="a348 a350" order="1"/>
+            <bond atomRefs2="a351 a352" order="2">
+                <bondStereo atomRefs4="a358 a351 a352 a353">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a352 a353" order="1"/>
+            <bond atomRefs2="a353 a354" order="1"/>
+            <bond atomRefs2="a354 a355" order="1"/>
+            <bond atomRefs2="a355 a356" order="2"/>
+            <bond atomRefs2="a353 a357" order="2"/>
+            <bond atomRefs2="a358 a351" order="1"/>
+            <bond atomRefs2="a358 a355" order="1"/>
+            <bond atomRefs2="a352 a359" order="1"/>
+            <bond atomRefs2="a384 a15" order="1"/>
+            <bond atomRefs2="a359 a361" order="2">
+                <bondStereo atomRefs4="a352 a359 a361 a362">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a361 a362" order="1"/>
+            <bond atomRefs2="a362 a363" order="1"/>
+            <bond atomRefs2="a362 a364" order="2"/>
+            <bond atomRefs2="a163 a358" order="1"/>
+            <bond atomRefs2="a360 a365" order="1"/>
+            <bond atomRefs2="a365 a366" order="1"/>
+            <bond atomRefs2="a366 a367" order="1"/>
+            <bond atomRefs2="a367 a368" order="1"/>
+            <bond atomRefs2="a368 a369" order="1"/>
+            <bond atomRefs2="a405 a16" order="1"/>
+            <bond atomRefs2="a369 a371" order="1"/>
+            <bond atomRefs2="a372 a373" order="2">
+                <bondStereo atomRefs4="a379 a372 a373 a374">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a373 a374" order="1"/>
+            <bond atomRefs2="a374 a375" order="1"/>
+            <bond atomRefs2="a375 a376" order="1"/>
+            <bond atomRefs2="a376 a377" order="2"/>
+            <bond atomRefs2="a374 a378" order="2"/>
+            <bond atomRefs2="a379 a372" order="1"/>
+            <bond atomRefs2="a379 a376" order="1"/>
+            <bond atomRefs2="a373 a380" order="1"/>
+            <bond atomRefs2="a379 a381" order="1"/>
+            <bond atomRefs2="a380 a382" order="2">
+                <bondStereo atomRefs4="a373 a380 a382 a383">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a382 a383" order="1"/>
+            <bond atomRefs2="a383 a384" order="1"/>
+            <bond atomRefs2="a383 a385" order="2"/>
+            <bond atomRefs2="a185 a369" order="1"/>
+            <bond atomRefs2="a370 a386" order="1"/>
+            <bond atomRefs2="a386 a387" order="1"/>
+            <bond atomRefs2="a387 a388" order="1"/>
+            <bond atomRefs2="a388 a389" order="1"/>
+            <bond atomRefs2="a389 a390" order="1"/>
+            <bond atomRefs2="a390 a391" order="1"/>
+            <bond atomRefs2="a393 a394" order="2">
+                <bondStereo atomRefs4="a400 a393 a394 a395">C</bondStereo>
+            </bond>
+            <bond atomRefs2="a394 a395" order="1"/>
+            <bond atomRefs2="a395 a396" order="1"/>
+            <bond atomRefs2="a396 a397" order="1"/>
+            <bond atomRefs2="a397 a398" order="2"/>
+            <bond atomRefs2="a395 a399" order="2"/>
+            <bond atomRefs2="a400 a393" order="1"/>
+            <bond atomRefs2="a400 a397" order="1"/>
+            <bond atomRefs2="a394 a401" order="1"/>
+            <bond atomRefs2="a400 a402" order="1"/>
+            <bond atomRefs2="a401 a403" order="2">
+                <bondStereo atomRefs4="a394 a401 a403 a404">T</bondStereo>
+            </bond>
+            <bond atomRefs2="a403 a404" order="1"/>
+            <bond atomRefs2="a404 a405" order="1"/>
+            <bond atomRefs2="a404 a406" order="2"/>
+            <bond atomRefs2="a207 a390" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a106" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a41" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a39" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a38" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a37" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29 a30 a31 a32 a33 a34 a35 a36" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a63" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a61" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a60" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a59" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a0 a40 a42 a43 a44 a45 a46 a47 a48 a49 a50 a51 a52 a53 a54 a55 a56 a57 a58" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a85" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a83" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a82" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a81" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a1 a62 a64 a65 a66 a67 a68 a69 a70 a71 a72 a73 a74 a75 a76 a77 a78 a79 a80" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a128" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a105" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a104" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a103" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a2 a84 a86 a87 a88 a89 a90 a91 a92 a93 a94 a95 a96 a97 a98 a99 a100 a101 a102" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a150" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a127" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a126" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a125" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a3 a107 a108 a109 a110 a111 a112 a113 a114 a115 a116 a117 a118 a119 a120 a121 a122 a123 a124" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a172" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a149" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.128388" y="0.479152"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a148" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a147" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a4 a129 a130 a131 a132 a133 a134 a135 a136 a137 a138 a139 a140 a141 a142 a143 a144 a145 a146" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a173" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a194" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a170" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a169" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a5 a151 a152 a153 a154 a155 a156 a157 a158 a159 a160 a161 a162 a163 a164 a165 a166 a167 a168" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a195" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a216" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.489946" y="-0.0776002"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a192" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a191" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a6 a171 a174 a175 a176 a177 a178 a179 a180 a181 a182 a183 a184 a185 a186 a187 a188 a189 a190" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a217" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.547639" y="0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a255" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a214" role="SuperatomSgroup" title="NH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.350763" y="-0.350763"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a213" role="SuperatomSgroup" title="OH">
+            <MBracket type="SQUARE">
+                <MPoint x="0.346558" y="0.422804"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a7 a193 a196 a197 a198 a199 a200 a201 a202 a203 a204 a205 a206 a207 a208 a209 a210 a211 a212" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.350763" y="0.350763"/>
+                <MPoint x="0.128388" y="-0.479152"/>
+                <MPoint x="-0.489946" y="0.0776002"/>
+                <MPoint x="-0.346558" y="-0.422804"/>
+                <MPoint x="-0.547639" y="-0.0203414"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a223" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a224" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a221" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a219" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a8 a215 a218 a220 a222 a225 a226 a227 a228 a229 a230 a231 a232 a233 a235 a236 a237 a238" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a276" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a245" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a242" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a240" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a9 a234 a239 a241 a243 a246 a247 a248 a249 a250 a251 a252 a253 a254 a256 a257 a258 a259" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a265" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a318" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a263" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a261" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a10 a244 a260 a262 a264 a267 a268 a269 a270 a271 a272 a273 a274 a275 a277 a278 a279 a280" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a286" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a287" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a284" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a282" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a11 a266 a281 a283 a285 a288 a289 a290 a291 a292 a293 a294 a295 a296 a298 a299 a300 a301" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a339" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a308" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a305" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a303" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a12 a297 a302 a304 a306 a309 a310 a311 a312 a313 a314 a315 a316 a317 a319 a320 a321 a322" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a328" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a381" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a326" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a324" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a13 a307 a323 a325 a327 a330 a331 a332 a333 a334 a335 a336 a337 a338 a340 a341 a342 a343" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a349" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a350" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a347" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a345" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a14 a329 a344 a346 a348 a351 a352 a353 a354 a355 a356 a357 a358 a359 a361 a362 a363 a364" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a402" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="0.0936422" y="0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a371" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.0944753" y="-0.490838"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a368" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a366" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a15 a360 a365 a367 a369 a372 a373 a374 a375 a376 a377 a378 a379 a380 a382 a383 a384 a385" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a391" role="SuperatomSgroup" title="H">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.377934" y="0.327148"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a389" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a387" role="SuperatomSgroup" title="CH2">
+            <MBracket type="SQUARE">
+                <MPoint x="-0.378134" y="0.327314"/>
+                <MPoint x="0.472676" y="0.163524"/>
+            </MBracket>
+        </molecule>
+        <molecule id="sg0" atomRefs="a16 a370 a386 a388 a390 a393 a394 a395 a396 a397 a398 a399 a400 a401 a403 a404 a405 a406" role="SuperatomSgroup" title="(R1,R2,R3,R4,R5)">
+            <MBracket type="SQUARE">
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.378134" y="-0.327314"/>
+                <MPoint x="-0.472676" y="-0.163524"/>
+                <MPoint x="0.377934" y="-0.327148"/>
+                <MPoint x="0.0944753" y="0.490838"/>
+                <MPoint x="-0.0936422" y="-0.491038"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>

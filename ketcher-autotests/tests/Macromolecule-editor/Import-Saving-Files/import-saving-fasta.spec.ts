@@ -16,6 +16,7 @@ import {
   getFasta,
   moveMouseAway,
   selectSequenceLayoutModeTool,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
@@ -359,6 +360,42 @@ test.describe('Import-Saving .fasta Files', () => {
     await selectSequenceLayoutModeTool(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to fasta file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to fasta file and loaded back
+    */
+
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getFasta(page);
+    await saveToFile(
+      'FASTA//unsplit-nucleotides-connected-with-nucleotides.fasta',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: fastaFileExpected, file: fastaFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(fastaFile).toEqual(fastaFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

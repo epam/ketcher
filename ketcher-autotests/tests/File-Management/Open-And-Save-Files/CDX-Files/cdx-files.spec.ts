@@ -106,3 +106,177 @@ test.describe('CDX files', () => {
     expect(cdxFile).toEqual(cdxFileExpected);
   });
 });
+
+test.describe('CDX files without screenshots', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-nucleotides.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-nucleotides.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-chems.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-chems.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-bases.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-bases.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-sugars.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-sugars.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-phosphates.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-phosphates.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/unsplit-nucleotides-connected-with-peptides.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/unsplit-nucleotides-connected-with-peptides.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+});

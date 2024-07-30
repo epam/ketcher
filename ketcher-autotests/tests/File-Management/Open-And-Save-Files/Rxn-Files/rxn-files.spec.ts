@@ -22,9 +22,11 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
+/* eslint-disable no-magic-numbers */
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -376,5 +378,313 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 157, 307, 457, 607, 757, 907, 1057, 1207,
+    ];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with peptides could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 179, 351, 523, 695, 867, 1039, 1211, 1383,
+    ];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with other nucleotides could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with other nucleotides could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 184, 361, 538, 715, 892];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
+    ];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 181, 355, 529, 703, 877, 1051, 1225, 1399,
+    ];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with sugars could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      page,
+    );
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const xDeltaHalf = 150;
+    const yDelta20 = 20;
+    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    const yArrowStart = y + yDelta20;
+    const yArrowEnd = yArrowStart + yDelta20;
+    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
+    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
+    ];
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
+      expectedFile,
+    );
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

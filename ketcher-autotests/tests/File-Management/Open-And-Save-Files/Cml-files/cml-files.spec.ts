@@ -5,6 +5,7 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -123,5 +124,203 @@ test.describe('CML files', () => {
     // comparing cml file with golden cml file
 
     expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-peptides.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-peptides.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-peptides.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-peptides.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with nucleotides could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with nucleotides could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-nucleotides.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with chems could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with chems could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-chems.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-chems.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-chems.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-chems.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with bases could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with bases could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-bases.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-bases.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-bases.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-bases.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with sugars could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with sugars could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-sugars.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-sugars.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-sugars.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-sugars.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that unsplit nucleotides connected with phosphates could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that unsplit nucleotides connected with phosphates could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/unsplit-nucleotides-connected-with-phosphates.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

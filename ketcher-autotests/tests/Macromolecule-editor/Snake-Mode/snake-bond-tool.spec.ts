@@ -175,7 +175,7 @@ test.describe('Snake Bond Tool', () => {
     );
 
     await selectSnakeLayoutModeTool(page);
-
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -572,6 +572,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -661,6 +662,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -676,6 +678,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -694,6 +697,7 @@ test.describe('Snake Bond Tool', () => {
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -756,6 +760,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -783,6 +788,7 @@ test.describe('Snake Bond Tool', () => {
 
       await takeEditorScreenshot(page);
       await selectSnakeLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -1024,6 +1030,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1051,6 +1058,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

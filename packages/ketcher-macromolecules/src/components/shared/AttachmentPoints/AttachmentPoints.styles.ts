@@ -6,6 +6,8 @@ export const AttachmentPointsList = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+  font-size: 12px;
+  line-height: 14px;
 `;
 
 export const AttachmentPoint = styled.div<{ connected: boolean }>`

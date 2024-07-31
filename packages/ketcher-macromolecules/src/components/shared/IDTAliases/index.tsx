@@ -8,8 +8,10 @@ interface IDTAliasesProps {
 const IDTAliases = ({ idtAliasesText, preset }: IDTAliasesProps) => {
   return (
     <IDTAliasesContainer preset={preset}>
-      <IDTTitle>IDT: </IDTTitle>
-      <IDTAliasesList>{idtAliasesText}</IDTAliasesList>
+      <p>
+        <IDTTitle>IDT: </IDTTitle>
+        <IDTAliasesList>{idtAliasesText}</IDTAliasesList>
+      </p>
     </IDTAliasesContainer>
   );
 };

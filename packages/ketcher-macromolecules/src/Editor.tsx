@@ -22,9 +22,9 @@ import { NodeSelection, PolymerBondRenderer } from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
-  muiOverrides,
   EditorTheme,
   MergedThemeType,
+  muiOverrides,
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
@@ -53,19 +53,18 @@ import {
   StyledToastContent,
 } from 'components/shared/StyledToast/styles';
 import {
-  PeptideAvatar,
   ChemAvatar,
-  SugarAvatar,
+  PeptideAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  SugarAvatar,
   UnresolvedMonomerAvatar,
-  NucleotideAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { ErrorModal } from 'components/modal/Error';
 import {
-  TopMenuRightWrapper,
   EditorWrapper,
   TogglerComponentWrapper,
+  TopMenuRightWrapper,
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
@@ -162,7 +161,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 
   const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 1000),
+    debounce((p) => dispatchShowPreview(p), 2000),
     [dispatchShowPreview],
   );
 
@@ -238,11 +237,13 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
         let position: PresetPosition;
         if (sequenceNode instanceof Nucleoside) {
-          position = 'chainEnd';
-        } else if (sequenceNode.sugar.attachmentPointsToBonds.R1 === null) {
-          position = 'chainStart';
+          position = PresetPosition.ChainEnd;
+        } else if (
+          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
+        ) {
+          position = PresetPosition.ChainStart;
         } else {
-          position = 'chainMiddle';
+          position = PresetPosition.ChainMiddle;
         }
 
         debouncedShowPreview({

@@ -168991,12 +168991,7 @@
     "name": "MOE(A)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErA",
-      "modifications": {
-        "endpoint5": "52MOErA",
-        "internal": "i2MOErA",
-        "endpoint3": "32MOErA"
-      }
+      "base": "2MOErA"
     },
     "templates": [
       {
@@ -169016,12 +169011,7 @@
     "name": "MOE(5meC)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErC",
-      "modifications": {
-        "endpoint5": "52MOErC",
-        "internal": "i2MOErC",
-        "endpoint3": "32MOErC"
-      }
+      "base": "2MOErC"
     },
     "templates": [
       {
@@ -169041,12 +169031,7 @@
     "name": "MOE(G)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErG",
-      "modifications": {
-        "endpoint5": "52MOErG",
-        "internal": "i2MOErG",
-        "endpoint3": "32MOErG"
-      }
+      "base": "2MOErG"
     },
     "templates": [
       {
@@ -169066,12 +169051,7 @@
     "name": "MOE(T)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "2MOErT",
-      "modifications": {
-        "endpoint5": "52MOErT",
-        "internal": "i2MOErT",
-        "endpoint3": "32MOErT"
-      }
+      "base": "2MOErT"
     },
     "templates": [
       {

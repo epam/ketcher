@@ -19,21 +19,21 @@ const useIDTAliasesTextForPreset = ({
     }
 
     if (presetName.includes('MOE')) {
-      const { modifications } = idtAliases;
+      const { base, modifications } = idtAliases;
 
-      if (!modifications) {
-        return;
-      }
+      const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
+      const internal = modifications?.internal ?? `i${base}`;
+      const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
 
       switch (position) {
-        case 'library':
-          return `${modifications?.endpoint5}, ${modifications?.internal}`;
-        case 'chainStart':
-          return modifications?.endpoint5;
-        case 'chainMiddle':
-          return modifications?.internal;
-        case 'chainEnd':
-          return modifications?.endpoint3;
+        case PresetPosition.Library:
+          return `${endpoint5}, ${internal}`;
+        case PresetPosition.ChainStart:
+          return endpoint5;
+        case PresetPosition.ChainMiddle:
+          return internal;
+        case PresetPosition.ChainEnd:
+          return endpoint3;
       }
     }
 

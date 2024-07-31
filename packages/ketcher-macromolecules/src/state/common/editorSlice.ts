@@ -34,11 +34,12 @@ interface MonomerPreviewState {
   readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
 }
 
-export type PresetPosition =
-  | 'library'
-  | 'chainStart'
-  | 'chainMiddle'
-  | 'chainEnd';
+export enum PresetPosition {
+  Library = 'library',
+  ChainStart = 'chainStart',
+  ChainMiddle = 'chainMiddle',
+  ChainEnd = 'chainEnd',
+}
 
 export interface PresetPreviewState {
   readonly preset: {

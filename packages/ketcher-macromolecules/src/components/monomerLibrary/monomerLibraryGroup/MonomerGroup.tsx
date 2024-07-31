@@ -85,7 +85,7 @@ const MonomerGroup = ({
   );
 
   const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 1000),
+    debounce((p) => dispatchShowPreview(p), 2000),
     [dispatchShowPreview],
   );
 

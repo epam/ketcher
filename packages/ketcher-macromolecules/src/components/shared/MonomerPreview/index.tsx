@@ -59,39 +59,43 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
   const idtAliasesText = useIDTAliasesTextForMonomer({
     idtAliases,
     attachmentPointsToBonds: preview.attachmentPointsToBonds,
+    monomerClass: preview?.monomer?.props.MonomerClass,
   });
 
+  if (!preview?.monomer) {
+    return null;
+  }
+
+  const isUnresolved = preview.monomer.props?.unresolved;
+  const monomerName = isUnresolved
+    ? preview.monomer.label
+    : preview.monomer.struct.name;
+
   return (
-    preview?.monomer && (
-      <ContainerDynamic
-        className={className}
-        data-testid="polymer-library-preview"
-      >
-        <MonomerName>
-          {preview.monomer.props?.unresolved
-            ? preview.monomer.label
-            : preview.monomer.struct.name}
-        </MonomerName>
-        {preview.monomer.props?.unresolved ? (
-          <UnresolvedMonomerPreview />
-        ) : (
-          <StyledStructRender
-            struct={preview.monomer?.struct}
-            options={{
-              connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-              labelInPreview: true,
-              needCache: false,
-            }}
-          />
-        )}
-        <InfoBlock>
-          <AttachmentPoints
-            preparedAttachmentPointsData={preparedAttachmentPointsData}
-          />
-          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
-        </InfoBlock>
-      </ContainerDynamic>
-    )
+    <ContainerDynamic
+      className={className}
+      data-testid="polymer-library-preview"
+    >
+      {monomerName && <MonomerName>{monomerName}</MonomerName>}
+      {isUnresolved ? (
+        <UnresolvedMonomerPreview />
+      ) : (
+        <StyledStructRender
+          struct={preview.monomer?.struct}
+          options={{
+            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+            labelInPreview: true,
+            needCache: false,
+          }}
+        />
+      )}
+      <InfoBlock>
+        <AttachmentPoints
+          preparedAttachmentPointsData={preparedAttachmentPointsData}
+        />
+        {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+      </InfoBlock>
+    </ContainerDynamic>
   );
 };
 

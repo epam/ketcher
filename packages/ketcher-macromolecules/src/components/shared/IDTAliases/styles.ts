@@ -17,6 +17,8 @@ import styled from '@emotion/styled';
 
 export const IDTAliasesContainer = styled.span<{ preset?: boolean }>`
   max-width: ${({ preset }) => (preset ? '100%' : '50%')};
+  display: flex;
+  align-items: center;
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
   font-weight: 500;
   line-height: normal;

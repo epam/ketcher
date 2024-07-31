@@ -1,5 +1,6 @@
 import { AttachmentPointName, MonomerItemType } from 'ketcher-core';
 import { useMemo } from 'react';
+import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 type Props = {
   monomer: MonomerItemType;
@@ -32,11 +33,9 @@ export const useAttachmentPoints = ({
         connectedAttachmentPoints.push(id);
       }
 
-      const labelToRender = label === 'O' ? 'OH' : label;
-
       const preparedData: PreparedAttachmentPointData = {
         id,
-        label: labelToRender,
+        label: hydrateLeavingGroup(label),
         connected,
       };
 

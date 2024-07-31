@@ -2,7 +2,6 @@ import { CoreEditor, SnakeMode } from 'application/editor';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 
 export enum LayoutMode {
   Flex = 'Flex',

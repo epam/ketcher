@@ -18,7 +18,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
-import { Nucleotide, Nucleoside, NodeSelection } from 'ketcher-core';
+import {
+  Nucleotide,
+  Nucleoside,
+  NodeSelection,
+  PolymerBondRenderer,
+} from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -96,6 +101,7 @@ import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
+import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -154,6 +160,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const [selections, setSelections] = useState<NodeSelection[][]>();
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
+  });
+  const { show: showPolymerBondContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
 
   useEffect(() => {
@@ -306,6 +315,16 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         },
       });
     });
+    editor?.events.rightClickPolymerBond.add(
+      (event, polymerBondRenderer: PolymerBondRenderer) => {
+        showPolymerBondContextMenu({
+          event,
+          props: {
+            polymerBondRenderer,
+          },
+        });
+      },
+    );
     editor?.events.rightClickCanvas.add((event) => {
       showSequenceContextMenu({
         event,
@@ -395,6 +414,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       />
       <Preview />
       <SequenceItemContextMenu selections={selections} />
+      <PolymerBondContextMenu />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

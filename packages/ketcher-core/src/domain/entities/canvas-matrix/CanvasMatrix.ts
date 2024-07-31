@@ -24,7 +24,7 @@ export class CanvasMatrix {
   public polymerBondToConnections: Map<PolymerBond, Connection[]> = new Map();
 
   constructor(
-    private chainsCollection: ChainsCollection,
+    public chainsCollection: ChainsCollection,
     private matrixConfig: MatrixConfig = {
       initialMatrix: new Matrix<Cell>(),
     },

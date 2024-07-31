@@ -91,7 +91,7 @@ export class RenderStruct {
       rnd.setMolecule(preparedStruct);
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
-      if (needCache) {
+      if (needCache && cacheKey) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);
       }
     }

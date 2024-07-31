@@ -122,4 +122,7 @@ export const selectIsSequenceEditInRNABuilderMode = (
   state: RootState,
 ): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
 
+export const selectIsSequenceMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceMode;
+
 export const editorReducer = editorSlice.reducer;

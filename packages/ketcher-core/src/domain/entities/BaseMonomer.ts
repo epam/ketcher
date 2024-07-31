@@ -30,9 +30,9 @@ export abstract class BaseMonomer extends DrawingEntity {
   public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
   public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
-  public potentialAttachmentPointsToBonds: {
-    [key: string]: PolymerBond | null | undefined;
-  } = {};
+  public potentialAttachmentPointsToBonds: Partial<
+    Record<AttachmentPointName, PolymerBond | null>
+  > = {};
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
@@ -133,7 +133,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
       if (this.potentialAttachmentPointsToBonds[attachmentPointName] === bond) {
-        return attachmentPointName;
+        return attachmentPointName as AttachmentPointName;
       }
     }
 
@@ -217,11 +217,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
   }
 
-  public setBond(attachmentPointName: string, bond: PolymerBond) {
+  public setBond(attachmentPointName: AttachmentPointName, bond: PolymerBond) {
     this.attachmentPointsToBonds[attachmentPointName] = bond;
   }
 
-  public unsetBond(attachmentPointName: string) {
+  public unsetBond(attachmentPointName: AttachmentPointName) {
     this.attachmentPointsToBonds[attachmentPointName] = null;
   }
 

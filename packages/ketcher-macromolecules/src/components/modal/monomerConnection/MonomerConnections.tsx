@@ -4,7 +4,7 @@ import { Modal } from 'components/shared/modal';
 import { Icon, StructRender } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AttachmentPointList,
   AttachmentPoint,
@@ -82,17 +82,35 @@ const MonomerConnection = ({
   isModalOpen,
   firstMonomer,
   secondMonomer,
+  polymerBond,
+  isReconnectionDialog,
 }: MonomerConnectionProps): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
+  const initialFirstMonomerAttachmentPointRef = useRef(
+    polymerBond?.firstMonomerAttachmentPoint,
+  );
+  const initialSecondMonomerAttachmentPointRef = useRef(
+    polymerBond?.secondMonomerAttachmentPoint,
+  );
+  const hasFreeAttachmentPointsRef = useRef(
+    firstMonomer?.hasFreeAttachmentPoint ||
+      secondMonomer?.hasFreeAttachmentPoint,
+  );
 
   if (!firstMonomer || !secondMonomer) {
     throw new Error('Monomers must exist!');
   }
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
+    useState<string | null>(
+      initialFirstMonomerAttachmentPointRef.current ||
+        getDefaultAttachmentPoint(firstMonomer),
+    );
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
+    useState<string | null>(
+      initialSecondMonomerAttachmentPointRef.current ||
+        getDefaultAttachmentPoint(secondMonomer),
+    );
   const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
@@ -110,6 +128,12 @@ const MonomerConnection = ({
       secondMonomer,
       firstSelectedAttachmentPoint,
       secondSelectedAttachmentPoint,
+      polymerBond,
+      isReconnection: isReconnectionDialog,
+      initialFirstMonomerAttachmentPoint:
+        initialFirstMonomerAttachmentPointRef.current,
+      initialSecondMonomerAttachmentPoint:
+        initialSecondMonomerAttachmentPointRef.current,
     });
 
     onClose();
@@ -117,7 +141,11 @@ const MonomerConnection = ({
 
   return (
     <StyledModal
-      title="Select connection points"
+      title={
+        isReconnectionDialog
+          ? 'Edit Connection Points'
+          : 'Select connection points'
+      }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
       showExpandButton
@@ -161,9 +189,11 @@ const MonomerConnection = ({
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
-          label="Connect"
+          label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
           disabled={
-            !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
+            !firstSelectedAttachmentPoint ||
+            !secondSelectedAttachmentPoint ||
+            !hasFreeAttachmentPointsRef.current
           }
           clickHandler={connectMonomers}
         />

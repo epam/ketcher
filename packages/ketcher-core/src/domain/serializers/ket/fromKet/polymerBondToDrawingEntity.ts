@@ -106,8 +106,8 @@ export function polymerBondToDrawingEntity(
     drawingEntitiesManager.createPolymerBond(
       firstMonomer,
       secondMonomer,
-      firstAttachmentPoint,
-      secondAttachmentPoint,
+      firstAttachmentPoint as AttachmentPointName,
+      secondAttachmentPoint as AttachmentPointName,
     ),
   );
   return command;

@@ -86,11 +86,17 @@ export class PolymerBond extends DrawingEntity {
     return !this.isSideChainConnection;
   }
 
+  public get firstMonomerAttachmentPoint() {
+    return this.firstMonomer.getAttachmentPointByBond(this);
+  }
+
+  public get secondMonomerAttachmentPoint() {
+    return this.secondMonomer?.getAttachmentPointByBond(this);
+  }
+
   public get isSideChainConnection() {
-    const firstMonomerAttachmentPoint =
-      this.firstMonomer.getAttachmentPointByBond(this);
-    const secondMonomerAttachmentPoint =
-      this.secondMonomer?.getAttachmentPointByBond(this);
+    const firstMonomerAttachmentPoint = this.firstMonomerAttachmentPoint;
+    const secondMonomerAttachmentPoint = this.secondMonomerAttachmentPoint;
 
     if (!firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint) {
       return false;

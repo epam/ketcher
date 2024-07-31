@@ -276,10 +276,11 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('7. Connectivity: User can export and load back molecules with Connectivity query feature to Mol file. Feature values remain in place.', async ({
-    page,
-  }) => {
-    /*
+  test(
+    '7. Connectivity: User can export and load back molecules with Connectivity query feature to Mol file. Feature values remain in place.',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 4
         Description: User can export and load back molecules with "Connectivity" query feature to Mol file. Feature values remain in place.
         1. Clear canvas
@@ -292,39 +293,41 @@ test.describe('Open Ketcher', () => {
         IMPORTANT: Doesn't show labels for first ring because of the bug: https://github.com/epam/ketcher/issues/3529
         Will require to update screens after fix
         */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Connectivity.ket',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/Query-Features/Connectivity.ket',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await clickOnFileFormatDropdown(page);
+      await page.getByTestId('MDL Molfile V2000-option').click();
 
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
-      'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
-      await molFileV2000Expected,
-    );
-    await pressButton(page, 'Cancel');
+      const molFileV2000Expected = page
+        .getByTestId('mol-preview-area-text')
+        .inputValue();
+      //  Save it to test-data if no file in where
+      await saveToFile(
+        'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
+        await molFileV2000Expected,
+      );
+      await pressButton(page, 'Cancel');
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('8. Connectivity: User can export and load back molecules with Connectivity query feature to SDF V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
-    /*
+  test(
+    '8. Connectivity: User can export and load back molecules with Connectivity query feature to SDF V2000 file. Feature values remain in place.',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 5
         Description: User can export and load back molecules with "Connectivity" query feature to Mol file. Feature values remain in place.
         1. Clear canvas
@@ -337,39 +340,41 @@ test.describe('Open Ketcher', () => {
         IMPORTANT: Doesn't show labels for first ring because of the bug: https://github.com/epam/ketcher/issues/3529
         Will require to update screens after fix
         */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Connectivity.ket',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/Query-Features/Connectivity.ket',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await clickOnFileFormatDropdown(page);
+      await page.getByTestId('SDF V2000-option').click();
 
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
-      'SDF/Query-Feature/Connectivity-expected.sdf',
-      await sdfFileV2000Expected,
-    );
-    await pressButton(page, 'Cancel');
+      const sdfFileV2000Expected = page
+        .getByTestId('sdf-preview-area-text')
+        .inputValue();
+      //  Save it to test-data if no file in where
+      await saveToFile(
+        'SDF/Query-Feature/Connectivity-expected.sdf',
+        await sdfFileV2000Expected,
+      );
+      await pressButton(page, 'Cancel');
 
-    await openFileAndAddToCanvasAsNewProject(
-      'SDF/Query-Feature/Connectivity-expected.sdf',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        'SDF/Query-Feature/Connectivity-expected.sdf',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('9. Connectivity: User can export and load back molecules with "Connectivity" query feature to RXN V2000 file. Feature values remain in place.', async ({
-    page,
-  }) => {
-    /*
+  test(
+    '9. Connectivity: User can export and load back molecules with "Connectivity" query feature to RXN V2000 file. Feature values remain in place.',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
         Test case: https://github.com/epam/ketcher/issues/3860 - Case 6
         Description: User can export and load back molecules with "Connectivity" query feature to RXN V2000 file. Feature values remain in place.
         1. Clear canvas
@@ -382,34 +387,35 @@ test.describe('Open Ketcher', () => {
         IMPORTANT: Doesn't show labels for first ring because of the bug: https://github.com/epam/ketcher/issues/3529
         Will require to update screens after fix
         */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/Query-Features/Connectivity2.ket',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/Query-Features/Connectivity2.ket',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await clickOnFileFormatDropdown(page);
+      await page.getByTestId('MDL Rxnfile V2000-option').click();
 
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
-      'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
-      await rxnFileV2000Expected,
-    );
-    await pressButton(page, 'Cancel');
+      const rxnFileV2000Expected = page
+        .getByTestId('rxn-preview-area-text')
+        .inputValue();
+      //  Save it to test-data if no file in where
+      await saveToFile(
+        'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
+        await rxnFileV2000Expected,
+      );
+      await pressButton(page, 'Cancel');
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('10. H count: User can export and load back molecules with H count query feature to Mol file. Feature values remain in place.', async ({
     page,

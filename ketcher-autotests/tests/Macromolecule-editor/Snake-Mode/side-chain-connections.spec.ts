@@ -373,8 +373,11 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.1 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -385,21 +388,25 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.1.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
+      await pageReload(page);
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.1.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.2 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -411,19 +418,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.2.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.2.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.3 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -435,19 +446,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.3.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.3.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.4 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -459,19 +474,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.4.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.4.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.5 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -483,19 +502,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.5.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.5.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.6 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -507,19 +530,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.6.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.6.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains', async () => {
-    /*
+  test(
+    '3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 3.7 Check that R1-R1 connection is established between two monomers occupying first positions in different backbone chains, 
     /* connection drawn on the left from these monomers 
     /* 
@@ -531,21 +558,25 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/3.7.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    // Zoom out to see bottom chians
-    await page.keyboard.press('Control+Minus');
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/3.7.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      // Zoom out to see bottom chians
+      await page.keyboard.press('Control+Minus');
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.1 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -556,21 +587,25 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.1.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
+      await pageReload(page);
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.1.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.2 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.2 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.2 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -582,19 +617,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.2.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.2.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.3 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.3 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.3 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -605,21 +644,25 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.3.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
+      await pageReload(page);
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.3.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.4 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.4 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.4 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -631,19 +674,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.4.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.4.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.5 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.5 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.5 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -655,19 +702,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.5.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.5.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.6 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.6 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.6 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -679,19 +730,23 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.6.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.6.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('4.7 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers', async () => {
-    /*
+  test(
+    '4.7 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     /* Case 4.7 In case of R2-R2 bond connecting the last monomers of the chains the connection should be drawn on the right from these monomers
     /* connection drawn on the left from these monomers 
     /* 
@@ -703,18 +758,19 @@ test.describe('Side chain connections', () => {
     /*
     */
 
-    await selectSnakeLayoutModeTool(page);
-    // Closing Library to enlarge canvas
-    await hideLibrary(page);
-    await openFileAndAddToCanvasMacro(
-      `KET/Side-Chain-Connections/4.7.ket`,
-      page,
-    );
-    await moveMouseAway(page);
-    // Zoom out to see bottom chians
-    await page.keyboard.press('Control+Minus');
-    await takeEditorScreenshot(page);
-  });
+      await selectSnakeLayoutModeTool(page);
+      // Closing Library to enlarge canvas
+      await hideLibrary(page);
+      await openFileAndAddToCanvasMacro(
+        `KET/Side-Chain-Connections/4.7.ket`,
+        page,
+      );
+      await moveMouseAway(page);
+      // Zoom out to see bottom chians
+      await page.keyboard.press('Control+Minus');
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('5. Verify side-chain connections alignment and avoidance of overlap (horizontal)', async () => {
     /*

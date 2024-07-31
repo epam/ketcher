@@ -208,42 +208,46 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard"', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard"',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4175
     Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
     The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4175 For now structures overlap each other.
     When fix is made, you need to update screenshot.
     */
-    const Rna = 'acgtu';
-    const Dna = 'acgtu';
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(Rna);
-    await chooseFileFormat(page, 'Sequence');
-    await page.getByTestId('add-to-canvas-button').click();
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(Dna);
-    await chooseFileFormat(page, 'Sequence');
-    await page.getByTestId('add-to-canvas-button').click();
-    await takeEditorScreenshot(page);
-  });
+      const Rna = 'acgtu';
+      const Dna = 'acgtu';
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByTestId('paste-from-clipboard-button').click();
+      await page.getByTestId('open-structure-textarea').fill(Rna);
+      await chooseFileFormat(page, 'Sequence');
+      await page.getByTestId('add-to-canvas-button').click();
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByTestId('paste-from-clipboard-button').click();
+      await page.getByTestId('open-structure-textarea').fill(Dna);
+      await chooseFileFormat(page, 'Sequence');
+      await page.getByTestId('add-to-canvas-button').click();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('RNA and DNA structures not overlay each other on canvas, when adding them through the “Open as file”', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'RNA and DNA structures not overlay each other on canvas, when adding them through the “Open as file”',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4175
     Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
     The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4175 For now structures overlap each other.
     When fix is made, you need to update screenshot.
     */
-    await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
-    // Need open twice
-    await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+      // Need open twice
+      await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+      await takeEditorScreenshot(page);
+    },
+  );
 });

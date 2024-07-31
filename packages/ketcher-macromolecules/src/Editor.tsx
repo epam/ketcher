@@ -59,6 +59,7 @@ import {
   RNABaseAvatar,
   SugarAvatar,
   UnresolvedMonomerAvatar,
+  NucleotideAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { ErrorModal } from 'components/modal/Error';
 import {

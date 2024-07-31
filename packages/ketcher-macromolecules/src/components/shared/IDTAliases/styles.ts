@@ -27,6 +27,10 @@ export const IDTAliasesContainer = styled.span<{ preset?: boolean }>`
   border-left: ${({ preset }) => (preset ? 'none' : '1px solid #D9DCEA')};
 `;
 
+export const IDTAliasesText = styled.p`
+  margin: 0;
+`;
+
 export const IDTTitle = styled.span`
   color: #7c7c7c;
 `;

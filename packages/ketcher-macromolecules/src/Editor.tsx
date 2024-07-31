@@ -161,7 +161,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 
   const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 2000),
+    debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 

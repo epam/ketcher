@@ -32,7 +32,12 @@ import {
   GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor, selectShowPreview, showPreview } from 'state/common';
+import {
+  PresetPosition,
+  selectEditor,
+  selectShowPreview,
+  showPreview,
+} from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -109,7 +114,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   );
 
   const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 1000),
+    debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 
@@ -145,7 +150,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
         monomers,
         name: preset.name,
         idtAliases: preset.idtAliases,
-        position: 'library',
+        position: PresetPosition.Library,
       },
       style,
     });

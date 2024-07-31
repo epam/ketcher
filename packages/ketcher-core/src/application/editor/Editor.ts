@@ -346,7 +346,7 @@ export class CoreEditor {
 
       history.update(command);
       this.renderersContainer.update(command);
-      console.log(history);
+
       return;
     }
 

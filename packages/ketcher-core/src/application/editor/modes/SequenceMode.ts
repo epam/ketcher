@@ -4,12 +4,21 @@ import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
+  NodeSelection,
   NodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
-import { AttachmentPointName } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import { BaseMonomer, Phosphate, SequenceType, Vec2 } from 'domain/entities';
+import {
+  BaseMonomer,
+  LinkerSequenceNode,
+  Phosphate,
+  RNABase,
+  SequenceType,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { BaseRenderer } from 'application/render/renderers/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { Nucleoside } from 'domain/entities/Nucleoside';
@@ -34,7 +43,10 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
-import { LabeledNodesWithPositionInSequence } from 'application/editor/tools/Tool';
+import {
+  IRnaPreset,
+  LabeledNodesWithPositionInSequence,
+} from 'application/editor/tools/Tool';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 
 const naturalAnalogues = uniq([
@@ -1006,6 +1018,173 @@ export class SequenceMode extends BaseMode {
     );
 
     return modelChanges;
+  }
+
+  private replaceSelectionWithMonomer(
+    monomerItem: MonomerItemType,
+    selection: NodeSelection,
+    modelChanges: Command,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const previousNode = SequenceRenderer.getPreviousNode(selection.node);
+    const nextNode = SequenceRenderer.getNextNode(selection.node);
+    const position = selection.node.monomer.position;
+
+    selection.node.monomers.forEach((monomer) => {
+      modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
+    });
+
+    const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+      monomerItem,
+      position,
+    );
+    const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+    const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+
+    modelChanges.merge(monomerAddCommand);
+    modelChanges.merge(this.insertNewSequenceFragment(newMonomerSequenceNode));
+
+    if (previousNode) {
+      modelChanges.merge(
+        this.tryToCreatePolymerBond(previousNode.lastMonomerInNode, newMonomer),
+      );
+    }
+    if (nextNode) {
+      modelChanges.merge(
+        this.tryToCreatePolymerBond(newMonomer, nextNode.firstMonomerInNode),
+      );
+    }
+  }
+
+  public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
+    const selections = SequenceRenderer.selections;
+
+    if (selections.length > 0) {
+      selections.forEach((selectionRange) => {
+        selectionRange.forEach((selection) => {
+          if (selection.node instanceof LinkerSequenceNode) {
+            editor.events.openConfirmationDialog.dispatch({
+              confirmationText:
+                'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+              onConfirm: () =>
+                this.replaceSelectionWithMonomer(
+                  monomerItem,
+                  selection,
+                  modelChanges,
+                ),
+            });
+          } else {
+            this.replaceSelectionWithMonomer(
+              monomerItem,
+              selection,
+              modelChanges,
+            );
+          }
+        });
+      });
+    } else {
+      const newNodePosition = this.getNewNodePosition();
+
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        newNodePosition,
+      );
+      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+
+      modelChanges.merge(monomerAddCommand);
+      modelChanges.merge(
+        this.insertNewSequenceFragment(newMonomerSequenceNode),
+      );
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    SequenceRenderer.moveCaretForward();
+    history.update(modelChanges);
+  }
+
+  public insertPresetFromLibrary(preset: IRnaPreset) {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const newNodePosition = this.getNewNodePosition();
+
+    const { base: rnaBase, sugar, phosphate } = preset;
+
+    let newPresetNode: Nucleotide | Nucleoside;
+    if (
+      currentNode instanceof Nucleotide ||
+      currentNode instanceof Nucleoside
+    ) {
+      if (!rnaBase || !sugar || !phosphate) {
+        return;
+      }
+
+      const { command: presetAddCommand, monomers } =
+        editor.drawingEntitiesManager.addRnaPreset({
+          sugar,
+          sugarPosition: newNodePosition,
+          rnaBase,
+          rnaBasePosition: newNodePosition,
+          phosphate,
+          phosphatePosition: newNodePosition,
+        });
+
+      const sugarMonomer = monomers.find(
+        (monomer) => monomer instanceof Sugar,
+      ) as Sugar;
+      const rnaBaseMonomer = monomers.find(
+        (monomer) => monomer instanceof RNABase,
+      ) as RNABase;
+      const phosphateMonomer = monomers.find(
+        (monomer) => monomer instanceof Phosphate,
+      ) as Phosphate;
+
+      modelChanges.merge(presetAddCommand);
+
+      newPresetNode = new Nucleotide(
+        sugarMonomer,
+        rnaBaseMonomer,
+        phosphateMonomer,
+      );
+    } else {
+      if (!rnaBase || !sugar) {
+        return;
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.addMonomer(sugar, newNodePosition),
+      );
+      modelChanges.merge(
+        editor.drawingEntitiesManager.addMonomer(rnaBase, newNodePosition),
+      );
+
+      const sugarMonomer = modelChanges.operations[0].monomer as Sugar;
+      const rnaBaseMonomer = modelChanges.operations[1].monomer as RNABase;
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          sugarMonomer,
+          rnaBaseMonomer,
+          AttachmentPointName.R3,
+          AttachmentPointName.R1,
+        ),
+      );
+
+      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
+    }
+
+    modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    SequenceRenderer.moveCaretForward();
+    history.update(modelChanges);
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {

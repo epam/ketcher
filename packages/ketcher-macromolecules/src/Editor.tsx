@@ -61,7 +61,10 @@ import {
   openModal,
   selectErrorTooltipText,
 } from 'state/modal';
-import { ModalContainer } from 'components/modal/modalContainer';
+import {
+  ConfirmationDialogOnlyProps,
+  ModalContainer,
+} from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
@@ -209,6 +212,15 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           dispatch(
             openModal({
               name: 'monomerConnection',
+              additionalProps,
+            }),
+          ),
+      );
+      editor.events.openConfirmationDialog.add(
+        (additionalProps: ConfirmationDialogOnlyProps) =>
+          dispatch(
+            openModal({
+              name: 'confirmationDialog',
               additionalProps,
             }),
           ),
@@ -403,9 +415,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary
-            isSequenceEditInRNABuilderMode={isSequenceEditInRNABuilderMode}
-          />
+          <MonomerLibrary />
         </Layout.Right>
       </Layout>
       <MonomerLibraryToggle

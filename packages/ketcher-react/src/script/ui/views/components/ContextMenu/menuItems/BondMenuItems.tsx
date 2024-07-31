@@ -26,7 +26,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
   } as ItemEventParams);
   return (
     <>
-      <Item {...props} onClick={handleEdit}>
+      <Item {...props} onClick={handleEdit} disabled={isDisabled}>
         {props.propsFromTrigger?.extraItemsSelected
           ? 'Edit selected bonds...'
           : 'Edit...'}

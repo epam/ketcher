@@ -257,7 +257,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Macromolecule structures in micromode are represented as S-Groups with bonds
     */
-    await await turnOnMacromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,

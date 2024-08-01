@@ -121,6 +121,13 @@ export default defineConfig({
         require: 'await import',
       },
     }),
+    replace({
+      include: '**/ketcher-core/src/**',
+      preventAssignment: true,
+      values: {
+        require: 'await import',
+      },
+    }),
     createHtmlPlugin({
       entry: '/src/index.tsx',
       template: 'public/index.html',

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { Icon } from 'components';
+import Icon from '../../Icon/Icon';
 import { style } from 'src/components/styles';
 import { IStyledButtonProps } from './types';
 

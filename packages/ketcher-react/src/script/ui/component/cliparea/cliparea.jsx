@@ -25,7 +25,7 @@ import {
   notifyCopyCut,
 } from 'ketcher-core';
 
-const ieCb = window.clipboardData;
+const ieCb = typeof window !== 'undefined' ? window.clipboardData : {};
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;

@@ -8,6 +8,7 @@
     "packages/ketcher-react",
     "ketcher-autotests",
     "example",
+    "example-ssr",
     "demo"
   ],
   "scripts": {

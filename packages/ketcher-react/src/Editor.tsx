@@ -23,6 +23,7 @@ import './index.less';
 
 import init, { Config } from './script';
 import { useEffect, useRef } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 
 import { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
@@ -32,7 +33,6 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { createRoot, Root } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,

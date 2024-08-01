@@ -13,13 +13,17 @@ export interface LogSettings {
 
 export class KetcherLogger {
   static get settings(): LogSettings {
+    if (typeof window === 'undefined') {
+      return {};
+    }
+
     if (!window?.ketcher) {
       throw new Error(
         'Ketcher needs to be initialized before KetcherLogger is used',
       );
     }
 
-    return window.ketcher.logging;
+    return window.ketcher?.logging ?? {};
   }
 
   static set settings(newSettings: LogSettings) {

@@ -1024,6 +1024,7 @@ export class SequenceMode extends BaseMode {
     monomerItem: MonomerItemType,
     selection: NodeSelection,
     modelChanges: Command,
+    previousSelectionNode?: NodeSelection,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const previousNode = SequenceRenderer.getPreviousNode(selection.node);
@@ -1032,6 +1033,11 @@ export class SequenceMode extends BaseMode {
 
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
+      monomer.forEachBond((polymerBond) => {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(polymerBond),
+        );
+      });
     });
 
     const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
@@ -1042,18 +1048,15 @@ export class SequenceMode extends BaseMode {
     const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
     modelChanges.merge(monomerAddCommand);
-    modelChanges.merge(this.insertNewSequenceFragment(newMonomerSequenceNode));
+    modelChanges.merge(
+      this.insertNewSequenceFragment(
+        newMonomerSequenceNode,
+        nextNode,
+        previousSelectionNode,
+      ),
+    );
 
-    if (previousNode) {
-      modelChanges.merge(
-        this.tryToCreatePolymerBond(previousNode.lastMonomerInNode, newMonomer),
-      );
-    }
-    if (nextNode) {
-      modelChanges.merge(
-        this.tryToCreatePolymerBond(newMonomer, nextNode.firstMonomerInNode),
-      );
-    }
+    return newMonomerSequenceNode;
   }
 
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
@@ -1064,23 +1067,28 @@ export class SequenceMode extends BaseMode {
 
     if (selections.length > 0) {
       selections.forEach((selectionRange) => {
-        selectionRange.forEach((selection) => {
-          if (selection.node instanceof LinkerSequenceNode) {
+        let previousReplacedNode = SequenceRenderer.getNodeByPointer(
+          selectionRange[0].nodeIndexOverall - 1,
+        );
+
+        selectionRange.forEach((nodeSelection) => {
+          if (nodeSelection.node instanceof LinkerSequenceNode) {
             editor.events.openConfirmationDialog.dispatch({
               confirmationText:
                 'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
               onConfirm: () =>
                 this.replaceSelectionWithMonomer(
                   monomerItem,
-                  selection,
+                  nodeSelection,
                   modelChanges,
                 ),
             });
           } else {
-            this.replaceSelectionWithMonomer(
+            previousReplacedNode = this.replaceSelectionWithMonomer(
               monomerItem,
-              selection,
+              nodeSelection,
               modelChanges,
+              previousReplacedNode,
             );
           }
         });
@@ -1243,6 +1251,8 @@ export class SequenceMode extends BaseMode {
 
   private insertNewSequenceFragment(
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
+    nextNodeToConnect?: SubChainNode,
+    previousNodeToConnect?: SubChainNode,
   ) {
     const chainsCollection =
       chainsCollectionOrNode instanceof ChainsCollection
@@ -1250,8 +1260,10 @@ export class SequenceMode extends BaseMode {
         : new ChainsCollection().add(
             new Chain().addNode(chainsCollectionOrNode),
           );
-    const currentNode = SequenceRenderer.currentEdittingNode;
-    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const currentNode =
+      nextNodeToConnect || SequenceRenderer.currentEdittingNode;
+    const previousNodeInSameChain =
+      previousNodeToConnect || SequenceRenderer.previousNodeInSameChain;
     const modelChanges = new Command();
     const lastNodeOfNewFragment = chainsCollection.lastNode;
     const firstNodeOfNewFragment = chainsCollection.firstNode;

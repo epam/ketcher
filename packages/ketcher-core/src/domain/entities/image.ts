@@ -142,7 +142,7 @@ export class Image extends BaseMicromoleculeEntity {
     const topLeftCorner = this.getTopLeftPosition();
     const base64Data = this.bitmap.replace(/^.*;base64,/, '');
     const format = this.bitmap.match(
-      /^data:(image\/.*)+;base64,/,
+      /^data:(image\/.*);base64,/,
     )?.[1] as string;
     return {
       type: IMAGE_SERIALIZE_KEY,

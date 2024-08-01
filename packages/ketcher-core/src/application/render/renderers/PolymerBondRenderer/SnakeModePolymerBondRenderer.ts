@@ -8,6 +8,7 @@ import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
 
 enum LineDirection {
@@ -26,8 +27,13 @@ const CELL_HEIGHT = 40;
 const SMOOTH_CORNER_SIZE = 5;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
+// TODO: Need to split the class by three:
+//  - SnakeModeBackboneBondRenderer (black “snake” line)
+//  - SnakeModeSideChainBondRenderer (blue “snake” line)
+//  - SnakeModeRNABaseAndSugarBondRenderer (black straight line)
 export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
+  private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
   // TODO: Specify the types.
   private selectionElement;
   private path = '';
@@ -38,6 +44,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.calculateIsSnakeBond();
   }
 
   // TODO: Delete.
@@ -101,6 +108,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.isSideChainConnection) {
       this.appendSideConnectionBond(rootElement);
     } else if (
+      this.isSnakeBond &&
       this.polymerBond.finished &&
       !this.isMonomersOnSameHorizontalLine()
     ) {
@@ -712,7 +720,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       if (
-        !this.isMonomersOnSameHorizontalLine() ||
+        (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
         this.polymerBond.isSideChainConnection
       ) {
         this.selectionElement = this.rootElement
@@ -738,7 +746,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public moveEnd(): void {
-    if (!this.isMonomersOnSameHorizontalLine() && this.polymerBond.finished) {
+    if (
+      this.isSnakeBond &&
+      !this.isMonomersOnSameHorizontalLine() &&
+      this.polymerBond.finished
+    ) {
       this.moveSnakeBondEnd();
     } else {
       this.moveGraphBondEnd();
@@ -779,7 +791,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public moveStart(): void {
-    if (!this.isMonomersOnSameHorizontalLine()) {
+    if (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) {
       this.moveSnakeBondStart();
     } else {
       this.moveGraphBondStart();
@@ -817,7 +829,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   protected appendHoverAreaElement(): void {
     if (
-      !this.isMonomersOnSameHorizontalLine() ||
+      (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
       this.polymerBond.isSideChainConnection
     ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
@@ -914,6 +926,23 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
+  }
+
+  private calculateIsSnakeBond(): void {
+    if (this.polymerBond.isSideChainConnection) {
+      this.isSnakeBond = false;
+      return;
+    }
+
+    if (
+      getSugarFromRnaBase(this.polymerBond.firstMonomer) ||
+      getSugarFromRnaBase(this.polymerBond.secondMonomer)
+    ) {
+      this.isSnakeBond = false;
+      return;
+    }
+
+    this.isSnakeBond = true;
   }
 }
 

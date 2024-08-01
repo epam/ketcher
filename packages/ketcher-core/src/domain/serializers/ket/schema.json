@@ -58,23 +58,6 @@
   },
   "additionalProperties": false,
   "definitions": {
-    "2dCoordinates": {
-      "type": "object",
-      "required": ["x", "y"],
-      "properties": {
-        "x": {
-          "type": "number"
-        },
-        "y": {
-          "type": "number"
-        }
-      }
-    },
-    "imageFile": {
-      "type": "string",
-      "pattern": "^data:image/(png|svg\\+xml);base64,",
-      "minLength": 160
-    },
     "header": {
       "type": "object",
       "properties": {
@@ -800,10 +783,14 @@
     },
     "image": {
       "type": "object",
-      "required": ["type", "boundingBox", "data"],
+      "required": ["type", "format", "boundingBox", "data"],
       "properties": {
         "type": {
           "const": "image"
+        },
+        "format": {
+          "type": "string",
+          "pattern": "^image/(png|svg\\+xml)"
         },
         "boundingBox": {
           "type": "object",
@@ -829,7 +816,8 @@
           }
         },
         "data": {
-          "$ref": "#/definitions/imageFile"
+          "type": "string",
+          "minLength": 160
         }
       }
     }

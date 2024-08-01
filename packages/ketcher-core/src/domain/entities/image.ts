@@ -20,6 +20,7 @@ import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
 
 export interface KetFileImageNode extends KetFileNode<string> {
+  format: string;
   boundingBox: {
     x: number;
     y: number;
@@ -139,15 +140,20 @@ export class Image extends BaseMicromoleculeEntity {
 
   toKetNode(): KetFileImageNode {
     const topLeftCorner = this.getTopLeftPosition();
+    const base64Data = this.bitmap.replace(/^.*;base64,/, '');
+    const format = this.bitmap.match(
+      /^data:(image\/.*)+;base64,/,
+    )?.[1] as string;
     return {
       type: IMAGE_SERIALIZE_KEY,
       center: getNodeWithInvertedYCoord(this._center),
+      format,
       boundingBox: {
         ...getNodeWithInvertedYCoord(topLeftCorner),
         width: this.halfSize.x * 2,
         height: this.halfSize.y * 2,
       },
-      data: this.bitmap,
+      data: base64Data,
       selected: this.getInitiallySelected(),
     };
   }
@@ -159,9 +165,10 @@ export class Image extends BaseMicromoleculeEntity {
     const halfSize = new Vec2(width / 2, height / 2);
     const topLeftCorner = new Vec2(point);
     const center = topLeftCorner.add(halfSize);
+    const imageSrc = `data:${ketFileNode.format};base64,${ketFileNode.data}`;
 
     // Should be validated already
-    const image = new Image(ketFileNode.data as string, center, halfSize);
+    const image = new Image(imageSrc, center, halfSize);
     image.setInitiallySelected(ketFileNode.selected);
     return image;
   }

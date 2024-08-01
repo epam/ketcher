@@ -21,6 +21,7 @@ import { KetFileImageNode } from 'domain/entities';
 export function imageToKet(imageNode: KetFileNode) {
   return {
     type: IMAGE_SERIALIZE_KEY,
+    format: (imageNode as KetFileImageNode).format,
     boundingBox: (imageNode as KetFileImageNode).boundingBox,
     data: imageNode.data,
     selected: imageNode.selected,

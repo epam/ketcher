@@ -11,13 +11,15 @@ import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 
+type FlexOrSequenceOrSnakeModePolymerBondRenderer =
+  | BackBoneBondSequenceRenderer
+  | FlexModePolymerBondRenderer
+  | PolymerBondSequenceRenderer
+  | SnakeModePolymerBondRenderer;
+
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
-  public renderer?:
-    | BackBoneBondSequenceRenderer
-    | FlexModePolymerBondRenderer
-    | PolymerBondSequenceRenderer
-    | SnakeModePolymerBondRenderer = undefined;
+  public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
   public endPosition: Vec2 = new Vec2();
 
@@ -36,11 +38,7 @@ export class PolymerBond extends DrawingEntity {
   }
 
   public setRenderer(
-    renderer:
-      | BackBoneBondSequenceRenderer
-      | FlexModePolymerBondRenderer
-      | PolymerBondSequenceRenderer
-      | SnakeModePolymerBondRenderer,
+    renderer: FlexOrSequenceOrSnakeModePolymerBondRenderer,
   ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;

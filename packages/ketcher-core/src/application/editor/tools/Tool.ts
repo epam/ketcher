@@ -46,6 +46,8 @@ interface ToolEventHandler {
 
   rightClickCanvas?(event: Event): void;
 
+  rightClickPolymerBond?(event: Event): void;
+
   editSequence?(): void;
 
   startNewSequence?(): void;

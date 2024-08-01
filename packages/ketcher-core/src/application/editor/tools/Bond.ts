@@ -395,8 +395,8 @@ class PolymerBond implements BaseTool {
   public handleBondCreation = (payload: {
     firstMonomer: BaseMonomer;
     secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: string;
-    secondSelectedAttachmentPoint: string;
+    firstSelectedAttachmentPoint: AttachmentPointName;
+    secondSelectedAttachmentPoint: AttachmentPointName;
   }): void => {
     assert(this.bondRenderer);
 

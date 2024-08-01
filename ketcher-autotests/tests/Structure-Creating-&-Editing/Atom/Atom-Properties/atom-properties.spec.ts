@@ -1702,25 +1702,31 @@ test.describe('Atom Properties', () => {
     }
   });
 
-  test('The selection of an option inside the "Implicit H count" sub-section', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'The selection of an option inside the "Implicit H count" sub-section',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-18067
       Description: All Implicit H count options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-    // eslint-disable-next-line no-magic-numbers
-    const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+      // eslint-disable-next-line no-magic-numbers
+      const atomIndices = [2, 4, 5];
+      // eslint-disable-next-line no-magic-numbers
+      const optionIndices = [2, 5, 11];
 
-    await drawBenzeneRing(page);
+      await drawBenzeneRing(page);
 
-    for (let i = 0; i < atomIndices.length; i++) {
-      await selectImplicitHCountOption(page, atomIndices[i], optionIndices[i]);
-    }
-  });
+      for (let i = 0; i < atomIndices.length; i++) {
+        await selectImplicitHCountOption(
+          page,
+          atomIndices[i],
+          optionIndices[i],
+        );
+      }
+    },
+  );
 
   test('The selection of an option inside the "Aromaticity" sub-section', async ({
     page,
@@ -1740,65 +1746,75 @@ test.describe('Atom Properties', () => {
     }
   });
 
-  test('The selection of an option inside the "Ring membership" sub-section', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'The selection of an option inside the "Ring membership" sub-section',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-18069
       Description: All Ring membership options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-    // eslint-disable-next-line no-magic-numbers
-    const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+      // eslint-disable-next-line no-magic-numbers
+      const atomIndices = [2, 4, 5];
+      // eslint-disable-next-line no-magic-numbers
+      const optionIndices = [2, 5, 11];
 
-    await drawBenzeneRing(page);
+      await drawBenzeneRing(page);
 
-    for (let i = 0; i < atomIndices.length; i++) {
-      await selectRingMembershipOption(page, atomIndices[i], optionIndices[i]);
-    }
-  });
+      for (let i = 0; i < atomIndices.length; i++) {
+        await selectRingMembershipOption(
+          page,
+          atomIndices[i],
+          optionIndices[i],
+        );
+      }
+    },
+  );
 
-  test('The selection of an option inside the "Ring size" sub-section', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'The selection of an option inside the "Ring size" sub-section',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-18071
       Description: All Ring size options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-    // eslint-disable-next-line no-magic-numbers
-    const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+      // eslint-disable-next-line no-magic-numbers
+      const atomIndices = [2, 4, 5];
+      // eslint-disable-next-line no-magic-numbers
+      const optionIndices = [2, 5, 11];
 
-    await drawBenzeneRing(page);
+      await drawBenzeneRing(page);
 
-    for (let i = 0; i < atomIndices.length; i++) {
-      await selectRingSizeOption(page, atomIndices[i], optionIndices[i]);
-    }
-  });
+      for (let i = 0; i < atomIndices.length; i++) {
+        await selectRingSizeOption(page, atomIndices[i], optionIndices[i]);
+      }
+    },
+  );
 
-  test('The selection of an option inside the "Connectivity" sub-section', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'The selection of an option inside the "Connectivity" sub-section',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-18075
       Description: All Connectivity options added to Benzene structure.
       Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
-    // eslint-disable-next-line no-magic-numbers
-    const atomIndices = [2, 4, 5];
-    // eslint-disable-next-line no-magic-numbers
-    const optionIndices = [2, 5, 11];
+      // eslint-disable-next-line no-magic-numbers
+      const atomIndices = [2, 4, 5];
+      // eslint-disable-next-line no-magic-numbers
+      const optionIndices = [2, 5, 11];
 
-    await drawBenzeneRing(page);
+      await drawBenzeneRing(page);
 
-    for (let i = 0; i < atomIndices.length; i++) {
-      await selectConnectivityOption(page, atomIndices[i], optionIndices[i]);
-    }
-  });
+      for (let i = 0; i < atomIndices.length; i++) {
+        await selectConnectivityOption(page, atomIndices[i], optionIndices[i]);
+      }
+    },
+  );
 
   test('Combination of different options from different sub-sections inside the "Query properties"', async ({
     page,

@@ -1,13 +1,12 @@
-import { Item, ItemParams } from 'react-contexify';
-import { ReactElement } from 'react';
+import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
-import { StyledMenu } from '../styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
+  selectIsSequenceMode,
 } from 'state/common';
 import { BaseSequenceItemRenderer, NodesSelection } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
@@ -20,6 +19,7 @@ import {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
+import { ContextMenu } from 'components/contextMenu/ContextMenu';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -36,6 +36,7 @@ export const SequenceItemContextMenu = ({
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
+  const isSequenceMode = useAppSelector(selectIsSequenceMode);
 
   const menuItems = [
     {
@@ -46,7 +47,7 @@ export const SequenceItemContextMenu = ({
       hidden: ({
         props,
       }: {
-        props?: { sequenceItemRenderer: BaseSequenceItemRenderer };
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
       }) => {
         return (
           !props?.sequenceItemRenderer ||
@@ -61,7 +62,7 @@ export const SequenceItemContextMenu = ({
       hidden: ({
         props,
       }: {
-        props?: { sequenceItemRenderer: BaseSequenceItemRenderer };
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
       }) => {
         return (
           !props?.sequenceItemRenderer ||
@@ -76,7 +77,7 @@ export const SequenceItemContextMenu = ({
       hidden: ({
         props,
       }: {
-        props?: { sequenceItemRenderer: BaseSequenceItemRenderer };
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
       }) => {
         return !props?.sequenceItemRenderer;
       },
@@ -122,37 +123,19 @@ export const SequenceItemContextMenu = ({
     }
   };
 
-  const assembleMenuItems = () => {
-    const items: ReactElement[] = [];
-
-    menuItems.forEach(({ name, title, hidden, disabled, isMenuTitle }) => {
-      const item = (
-        <Item
-          id={name}
-          onClick={handleMenuChange}
-          key={name}
-          data-testid={name}
-          hidden={hidden}
-          disabled={disabled}
-          className={isMenuTitle ? 'contexify_item-title' : ''}
-        >
-          <span>{title}</span>
-        </Item>
-      );
-      items.push(item);
-    });
-    return items;
-  };
-
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
 
-  return ketcherEditorRootElement && !isSequenceEditInRNABuilderMode
+  return ketcherEditorRootElement &&
+    isSequenceMode &&
+    !isSequenceEditInRNABuilderMode
     ? createPortal(
-        <StyledMenu id={CONTEXT_MENU_ID.FOR_SEQUENCE}>
-          {assembleMenuItems()}
-        </StyledMenu>,
+        <ContextMenu
+          id={CONTEXT_MENU_ID.FOR_SEQUENCE}
+          handleMenuChange={handleMenuChange}
+          menuItems={menuItems}
+        ></ContextMenu>,
         ketcherEditorRootElement,
       )
     : null;

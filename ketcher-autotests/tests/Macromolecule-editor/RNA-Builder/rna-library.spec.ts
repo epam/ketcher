@@ -168,18 +168,20 @@ test.describe('RNA Library', () => {
     await page.getByTestId('RNA-TAB').click();
   });
 
-  test('Check that switch between Macro and Micro mode does not crash application', async ({
-    page,
-  }) => {
-    /* 
+  test(
+    'Check that switch between Macro and Micro mode does not crash application',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /* 
     Test case: #3498
     Description: Application does not crash. 
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3498
     */
-    await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page);
-    await takePageScreenshot(page);
-  });
+      await turnOnMicromoleculesEditor(page);
+      await turnOnMacromoleculesEditor(page);
+      await takePageScreenshot(page);
+    },
+  );
 
   test('Check the RNA components panel', async ({ page }) => {
     /* 
@@ -518,24 +520,28 @@ test.describe('RNA Library', () => {
     await takePresetsScreenshot(page);
   });
 
-  test('Add Custom preset to Presets section and Delete', async ({ page }) => {
-    /* 
+  test(
+    'Add Custom preset to Presets section and Delete',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be deleted.
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
-    await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Sugars.TwentyFiveR);
-    await selectMonomer(page, Bases.Adenine);
-    await selectMonomer(page, Phosphates.Test6Ph);
-    await pressAddToPresetsButton(page);
-    await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
-      button: 'right',
-    });
-    await page.getByTestId('deletepreset').click();
-    await page.getByRole('button', { name: 'Delete' }).click();
-    await takePresetsScreenshot(page);
-  });
+      await expandCollapseRnaBuilder(page);
+      await selectMonomer(page, Sugars.TwentyFiveR);
+      await selectMonomer(page, Bases.Adenine);
+      await selectMonomer(page, Phosphates.Test6Ph);
+      await pressAddToPresetsButton(page);
+      await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
+        button: 'right',
+      });
+      await page.getByTestId('deletepreset').click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+      await takePresetsScreenshot(page);
+    },
+  );
 
   test('Add Custom preset to Presets section and Rename', async ({ page }) => {
     /* 
@@ -853,20 +859,22 @@ test.describe('RNA Library', () => {
     });
   }
 
-  test('Press "Escape" button while pull the bond from monomer', async ({
-    page,
-  }) => {
-    /* 
+  test(
+    'Press "Escape" button while pull the bond from monomer',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Bond does not remain on the canvas and returns to original position.
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3539
     */
-    await addMonomerToCenterOfCanvas(page, Sugars.TwentyFiveR);
-    await selectSingleBondTool(page);
-    await page.getByText('25R').locator('..').first().click();
-    await pressEscapeWhenPullBond(page);
-    await takeEditorScreenshot(page);
-  });
+      await addMonomerToCenterOfCanvas(page, Sugars.TwentyFiveR);
+      await selectSingleBondTool(page);
+      await page.getByText('25R').locator('..').first().click();
+      await pressEscapeWhenPullBond(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check presence of Clear canvas button in top menu', async ({
     page,

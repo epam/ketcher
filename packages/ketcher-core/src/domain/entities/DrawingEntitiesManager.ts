@@ -34,6 +34,7 @@ import {
   PolymerBondFinishCreationOperation,
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
+  ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
 import {
   MONOMER_CONST,
@@ -559,10 +560,10 @@ export class DrawingEntitiesManager {
         polymerBond.secondMonomer as BaseMonomer,
         polymerBond.firstMonomer.getAttachmentPointByBond(
           polymerBond,
-        ) as string,
+        ) as AttachmentPointName,
         polymerBond.secondMonomer?.getAttachmentPointByBond(
           polymerBond,
-        ) as string,
+        ) as AttachmentPointName,
       ),
     );
     command.addOperation(operation);
@@ -608,8 +609,8 @@ export class DrawingEntitiesManager {
   public finishPolymerBondCreationModelChange(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
-    firstMonomerAttachmentPoint: string,
-    secondMonomerAttachmentPoint: string,
+    firstMonomerAttachmentPoint: AttachmentPointName,
+    secondMonomerAttachmentPoint: AttachmentPointName,
     _polymerBond?: PolymerBond,
   ) {
     if (_polymerBond) {
@@ -648,8 +649,8 @@ export class DrawingEntitiesManager {
   public finishPolymerBondCreation(
     polymerBond: PolymerBond,
     secondMonomer: BaseMonomer,
-    firstMonomerAttachmentPoint: string,
-    secondMonomerAttachmentPoint: string,
+    firstMonomerAttachmentPoint: AttachmentPointName,
+    secondMonomerAttachmentPoint: AttachmentPointName,
   ) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
@@ -679,8 +680,8 @@ export class DrawingEntitiesManager {
   public createPolymerBond(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
-    firstMonomerAttachmentPoint: string,
-    secondMonomerAttachmentPoint: string,
+    firstMonomerAttachmentPoint: AttachmentPointName,
+    secondMonomerAttachmentPoint: AttachmentPointName,
   ) {
     const command = new Command();
 
@@ -1688,6 +1689,64 @@ export class DrawingEntitiesManager {
 
       command.addOperation(new MonomerHoverOperation(monomer, true));
     });
+
+    return command;
+  }
+
+  private reconnectPolymerBondModelChange(
+    polymerBond: PolymerBond,
+    {
+      newFirstMonomerAttachmentPoint,
+      newSecondMonomerAttachmentPoint,
+      initialFirstMonomerAttachmentPoint,
+      initialSecondMonomerAttachmentPoint,
+    }: {
+      newFirstMonomerAttachmentPoint: AttachmentPointName;
+      newSecondMonomerAttachmentPoint: AttachmentPointName;
+      initialFirstMonomerAttachmentPoint: AttachmentPointName;
+      initialSecondMonomerAttachmentPoint: AttachmentPointName;
+    },
+  ) {
+    polymerBond.firstMonomer.unsetBond(initialFirstMonomerAttachmentPoint);
+    polymerBond.secondMonomer?.unsetBond(initialSecondMonomerAttachmentPoint);
+
+    polymerBond.firstMonomer.setBond(
+      newFirstMonomerAttachmentPoint,
+      polymerBond,
+    );
+    polymerBond.secondMonomer?.setBond(
+      newSecondMonomerAttachmentPoint,
+      polymerBond,
+    );
+
+    return polymerBond;
+  }
+
+  public reconnectPolymerBond(
+    polymerBond: PolymerBond,
+    newFirstMonomerAttachmentPoint: AttachmentPointName,
+    newSecondMonomerAttachmentPoint: AttachmentPointName,
+    initialFirstMonomerAttachmentPoint: AttachmentPointName,
+    initialSecondMonomerAttachmentPoint: AttachmentPointName,
+  ) {
+    const command = new Command();
+
+    command.addOperation(
+      new ReconnectPolymerBondOperation(
+        this.reconnectPolymerBondModelChange.bind(this, polymerBond, {
+          newFirstMonomerAttachmentPoint,
+          newSecondMonomerAttachmentPoint,
+          initialFirstMonomerAttachmentPoint,
+          initialSecondMonomerAttachmentPoint,
+        }),
+        this.reconnectPolymerBondModelChange.bind(this, polymerBond, {
+          newFirstMonomerAttachmentPoint: initialFirstMonomerAttachmentPoint,
+          newSecondMonomerAttachmentPoint: initialSecondMonomerAttachmentPoint,
+          initialFirstMonomerAttachmentPoint: newFirstMonomerAttachmentPoint,
+          initialSecondMonomerAttachmentPoint: newSecondMonomerAttachmentPoint,
+        }),
+      ),
+    );
 
     return command;
   }

@@ -225,6 +225,7 @@ import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
+import RetroSyntheticArrow from '../../../assets/icons/files/retrosynthetic_arrow.svg';
 import { RASTER_IMAGE_KEY } from 'ketcher-core';
 
 export const iconNameToIcon = {
@@ -348,6 +349,7 @@ export const iconNameToIcon = {
   'reaction-arrow-filled-bow': ReactionArrowFilledBow,
   'reaction-arrow-dashed-open-angle': ReactionArrowDashedOpenAngle,
   'reaction-arrow-failed': ReactionArrowFailed,
+  'retrosynthetic-arrow': RetroSyntheticArrow,
   'reaction-arrow-both-ends-filled-triangle':
     ReactionArrowBothEndsFilledTriangle,
   'reaction-arrow-equilibrium-filled-half-bow':

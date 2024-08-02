@@ -26,6 +26,7 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-filled-bow',
   'reaction-arrow-dashed-open-angle',
   'reaction-arrow-failed',
+  'retrosynthetic-arrow',
   'reaction-arrow-both-ends-filled-triangle',
   'reaction-arrow-equilibrium-filled-half-bow',
   'reaction-arrow-equilibrium-filled-triangle',

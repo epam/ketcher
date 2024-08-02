@@ -35,8 +35,15 @@ const useBondSGroupEdit = () => {
   );
 
   const hidden = useCallback(() => {
+    const editor = getKetcherInstance().editor as Editor;
+    const struct: ReStruct = editor.render.ctab;
+    const [sgGroupId] = sGroupsRef.current;
+    const sgroup = struct.sgroups.get(sgGroupId)?.item;
+    if (sgroup?.isSuperatomWithoutLabel) {
+      return true;
+    }
     return sGroupsRef.current.size === 0;
-  }, []);
+  }, [getKetcherInstance]);
 
   return [handler, disabled, hidden] as const;
 };

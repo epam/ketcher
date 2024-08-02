@@ -9,6 +9,11 @@ export const ConfirmationDialog = ({
   isModalOpen,
   onClose,
 }: ConfirmationDialogProps) => {
+  const handleConfirm = () => {
+    onConfirm!();
+    onClose();
+  };
+
   return (
     <Modal isOpen={isModalOpen} title="Confirm your action" onClose={onClose}>
       <Modal.Content>
@@ -16,7 +21,7 @@ export const ConfirmationDialog = ({
       </Modal.Content>
       <Modal.Footer>
         <ActionButton label="Cancel" clickHandler={onClose} />
-        <ActionButton label="Yes" clickHandler={onConfirm!} />
+        <ActionButton label="Yes" clickHandler={handleConfirm} />
       </Modal.Footer>
     </Modal>
   );

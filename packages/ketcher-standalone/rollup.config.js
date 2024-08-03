@@ -11,6 +11,7 @@ import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
 import { license } from '../../license.ts';
+import replace from '@rollup/plugin-replace';
 
 const mode = {
   PRODUCTION: 'production',
@@ -45,6 +46,9 @@ const baseConfig = {
       include: includePattern,
       comments: 'none',
     }),
+    replace({
+      'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
+    }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };
@@ -71,8 +75,17 @@ const configWithWasmBase64 = {
       runOnce: true,
     }),
     ...baseConfig.plugins,
+    alias({
+      entries: [
+        {
+          find: '_indigo-ketcher-import-alias_',
+          replacement: 'indigo-ketcher',
+        },
+      ],
+    }),
   ],
 };
+
 const configWithWasmFetch = {
   ...baseConfig,
   output: [
@@ -93,7 +106,10 @@ const configWithWasmFetch = {
     ...baseConfig.plugins,
     alias({
       entries: [
-        { find: 'indigo-ketcher', replacement: 'indigo-ketcher/binaryWasm' },
+        {
+          find: '_indigo-ketcher-import-alias_',
+          replacement: 'indigo-ketcher/binaryWasm',
+        },
       ],
     }),
     copy({
@@ -107,6 +123,77 @@ const configWithWasmFetch = {
   ],
 };
 
-export default process.env.BINARY_WASM
-  ? configWithWasmFetch
-  : configWithWasmBase64;
+const configBase64WithoutRender = {
+  ...baseConfig,
+  output: [
+    {
+      file: pkg.exports['./dist/jsNoRender'].require,
+      exports: 'named',
+      format: 'cjs',
+      banner: license,
+    },
+    {
+      file: pkg.exports['./dist/jsNoRender'].import,
+      exports: 'named',
+      format: 'es',
+      banner: license,
+    },
+  ],
+  plugins: [
+    ...baseConfig.plugins,
+    alias({
+      entries: [
+        {
+          find: '_indigo-ketcher-import-alias_',
+          replacement: 'indigo-ketcher/jsNoRender',
+        },
+      ],
+    }),
+  ],
+};
+
+const configWithWasmWithoutRender = {
+  ...baseConfig,
+  output: [
+    {
+      file: pkg.exports['./dist/binaryWasmNoRender'].require,
+      exports: 'named',
+      format: 'cjs',
+      banner: license,
+    },
+    {
+      file: pkg.exports['./dist/binaryWasmNoRender'].import,
+      exports: 'named',
+      format: 'es',
+      banner: license,
+    },
+  ],
+  plugins: [
+    ...baseConfig.plugins,
+    alias({
+      entries: [
+        {
+          find: '_indigo-ketcher-import-alias_',
+          replacement: 'indigo-ketcher/binaryWasmNoRender',
+        },
+      ],
+    }),
+    copy({
+      targets: [
+        {
+          src: '../../node_modules/indigo-ketcher/*.wasm',
+          dest: 'dist/binaryWasmNoRender',
+        },
+      ],
+    }),
+  ],
+};
+
+const modulesMap = {
+  base64: configWithWasmBase64,
+  wasm: configWithWasmFetch,
+  base64WithoutRender: configBase64WithoutRender,
+  wasmWithoutRender: configWithWasmWithoutRender,
+};
+
+export default modulesMap[process.env.INDIGO_MODULE_NAME] || modulesMap.base64;

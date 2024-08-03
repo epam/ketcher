@@ -38,7 +38,7 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import indigoModuleFn from 'indigo-ketcher';
+import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
 interface IndigoOptions {
   set: (key: string, value: string) => void;
@@ -113,6 +113,8 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Layout: {
       const data: LayoutCommandData = message.data as LayoutCommandData;
+      // eslint-disable-next-line no-debugger
+      console.info('hew');
       handle(
         (indigo, indigoOptions) => {
           const response = indigo.layout(

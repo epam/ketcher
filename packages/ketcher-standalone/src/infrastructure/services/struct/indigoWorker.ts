@@ -113,8 +113,6 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
 
     case Command.Layout: {
       const data: LayoutCommandData = message.data as LayoutCommandData;
-      // eslint-disable-next-line no-debugger
-      console.info('hew');
       handle(
         (indigo, indigoOptions) => {
           const response = indigo.layout(

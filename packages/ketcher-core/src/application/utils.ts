@@ -39,7 +39,7 @@ export function getStructure(
   const formatter = formatterFactory.create(structureFormat);
   return formatter.getStructureFromStructAsync(
     struct,
-    drawingEntitiesManager,
+    structureFormat === SupportedFormat.ket ? undefined : drawingEntitiesManager,
     selection,
   );
 }

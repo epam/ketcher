@@ -62,15 +62,13 @@
     "node": ">=16.0.0",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
   },
-  "dependencies": {
-    "ttypescript": "^1.5.15"
-  },
   "overrides": {
     "minimatch": "^9.0.3",
     "nth-check": "^2.1.1",
     "postcss": "8.4.31"
   },
   "dependencies": {
+    "ttypescript": "^1.5.15",
     "@playwright/test": "^1.44.1"
   }
 }

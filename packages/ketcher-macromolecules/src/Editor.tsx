@@ -18,10 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
-import {
-  NodeSelection,
-  PolymerBondRenderer,
-} from 'ketcher-core';
+import { NodeSelection, PolymerBondRenderer } from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,

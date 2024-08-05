@@ -4,14 +4,14 @@ import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
 import { Scale } from 'domain/helpers';
 
-export class RasterImageMove extends BaseOperation {
+export class ImageMove extends BaseOperation {
   constructor(private id: number, private offset: Vec2) {
-    super(OperationType.RASTER_IMAGE_MOVE);
+    super(OperationType.IMAGE_MOVE);
   }
 
   execute(reStruct: ReStruct) {
-    const renderItem = reStruct.rasterImages.get(this.id);
-    const item = reStruct.molecule.rasterImages.get(this.id);
+    const renderItem = reStruct.images.get(this.id);
+    const item = reStruct.molecule.images.get(this.id);
 
     if (!item || !renderItem) {
       return;
@@ -26,6 +26,6 @@ export class RasterImageMove extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new RasterImageMove(this.id, this.offset.negated());
+    return new ImageMove(this.id, this.offset.negated());
   }
 }

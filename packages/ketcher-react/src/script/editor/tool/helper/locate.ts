@@ -17,7 +17,7 @@
 import {
   FunctionalGroup,
   MonomerMicromolecule,
-  RASTER_IMAGE_KEY,
+  IMAGE_KEY,
   Struct,
   Vec2,
   ReStruct,
@@ -175,10 +175,10 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+  const reImages = Array.from(restruct.images.entries()).reduce(
     (acc: Array<number>, [id, item]): Array<number> => {
       if (
-        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+        Object.values(item.image.getReferencePositions()).some((point) =>
           point.isInsidePolygon([
             topLeftPosition,
             topRightPosition,
@@ -204,7 +204,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
-    [RASTER_IMAGE_KEY]: rerasterImages,
+    [IMAGE_KEY]: reImages,
   };
 }
 
@@ -335,10 +335,10 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     }
   });
 
-  const rerasterImages = Array.from(restruct.rasterImages.entries()).reduce(
+  const reImages = Array.from(restruct.images.entries()).reduce(
     (acc: Array<number>, [id, item]) => {
       if (
-        Object.values(item.rasterImage.getReferencePositions()).some((point) =>
+        Object.values(item.image.getReferencePositions()).some((point) =>
           isPointInPolygon(r, point),
         )
       ) {
@@ -359,7 +359,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     simpleObjects: simpleObjectsList,
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
-    [RASTER_IMAGE_KEY]: rerasterImages,
+    [IMAGE_KEY]: reImages,
   };
 }
 

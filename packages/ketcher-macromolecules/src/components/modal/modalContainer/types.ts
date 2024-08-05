@@ -13,11 +13,6 @@ export interface ConfirmationDialogOnlyProps {
   onConfirm?: () => void;
 }
 
-export interface ConfirmationDialogOnlyProps {
-  confirmationText?: string;
-  onConfirm?: () => void;
-}
-
 export interface RequiredModalProps {
   onClose: () => void;
   isModalOpen: boolean;

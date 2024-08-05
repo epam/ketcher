@@ -29,12 +29,12 @@ class ClearTool implements BaseTool {
     const isSequenceEditMode = isCurrentModeSequence && mode.isEditMode;
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
-    this.editor.renderersContainer.update(modelChanges);
 
     if (isCurrentModeSequence) {
       modelChanges.addOperation(new ReinitializeModeOperation());
     }
 
+    this.editor.renderersContainer.update(modelChanges);
     this.history.update(modelChanges);
 
     if (isSequenceEditMode) {

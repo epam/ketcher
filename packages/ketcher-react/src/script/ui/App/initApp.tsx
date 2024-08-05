@@ -24,11 +24,11 @@ import { Ketcher, StructService } from 'ketcher-core';
 import App from './App.container';
 import { Provider } from 'react-redux';
 import { uniqueId } from 'lodash';
-import createStore from '../state';
-import { initKeydownListener } from '../state/hotkeys';
-import { initResize } from '../state/toolbar';
 import { Root } from 'react-dom/client';
-import { initMouseListener } from '../state/mouse';
+import createStore from '../state';
+import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
+import { initResize } from '../state/toolbar';
+import { initMouseListener, removeMouseListeners } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
@@ -52,6 +52,7 @@ function initApp(
     resolve({ editor, setKetcher, ketcherId });
   };
   const store = createStore(options, server, setEditor);
+
   store.dispatch(initKeydownListener(element));
   store.dispatch(initMouseListener(element));
   store.dispatch(initResize());
@@ -73,6 +74,11 @@ function initApp(
       </SettingsContext.Provider>
     </Provider>,
   );
+
+  return () => {
+    store.dispatch(removeKeydownListener(element));
+    store.dispatch(removeMouseListeners(element));
+  };
 }
 
 export { initApp };

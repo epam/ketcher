@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 import { LibraryNameType } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerGroups, MonomerItemType } from 'ketcher-core';
 
 export interface IMonomerGroupProps {
   items: MonomerItemType[];
   onItemClick?: (item: MonomerItemType) => void;
   title?: string;
+  groupName?: MonomerGroups;
   libraryName?: LibraryNameType;
   disabled?: boolean;
   selectedMonomerUniqueKey?: string;

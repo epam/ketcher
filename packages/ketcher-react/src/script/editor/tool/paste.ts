@@ -109,7 +109,8 @@ class PasteTool implements Tool {
       this.action?.perform(this.restruct);
     }
 
-    const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const closestGroupItem = this.editor.findItem(event, ['functionalGroups'])!;
     const closestGroup = this.editor.struct().sgroups.get(closestGroupItem?.id);
 
     // not dropping on a group (tmp, should be removed when dealing with other entities)
@@ -200,13 +201,6 @@ class PasteTool implements Tool {
       this.dragCtx.action = action;
       this.editor.update(this.dragCtx.action, true);
     } else {
-      // todo delete after supporting expand - collapse for 2 attachment points
-      const struct = this.editor.struct();
-      this.struct.sgroups.forEach((sgroup) => {
-        if (sgroup.isNotContractible(struct)) {
-          sgroup.setAttr('expanded', true);
-        }
-      });
       // common paste logic
       const [action, pasteItems] = fromPaste(
         this.restruct,

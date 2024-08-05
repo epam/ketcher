@@ -56,6 +56,21 @@ class AtomTool implements Tool {
         const selectedSGroupsId =
           editorSelection &&
           getGroupIdsFromItemArrays(struct.molecule, editorSelection);
+        const sgroups = struct.molecule.functionalGroups;
+        const atomsInFunctionalGroup = editorSelection.atoms
+          .filter((atomId) => {
+            return !Atom.isSuperatomLeavingGroupAtom(struct.molecule, atomId);
+          })
+          .map((atom) => {
+            return FunctionalGroup.atomsInFunctionalGroup(sgroups, atom);
+          });
+        if (atomsInFunctionalGroup.some((atom) => atom !== null)) {
+          editor.event.removeFG.dispatch({ fgIds: [...selectedSGroupsId] });
+          this.editor.hoverIcon.hide();
+          this.isNotActiveTool = true;
+          return;
+        }
+
         const deletedAtomsInSGroups = deleteFunctionalGroups(
           selectedSGroupsId,
           struct,
@@ -64,7 +79,11 @@ class AtomTool implements Tool {
         const updatedAtoms = editorSelection?.atoms?.filter(
           (selectAtomId) =>
             !deletedAtomsInSGroups?.includes(selectAtomId) &&
-            struct.atoms.has(selectAtomId),
+            struct.atoms.has(selectAtomId) &&
+            !Atom.isSuperatomLeavingGroupAtom(
+              this.editor.render.ctab.molecule,
+              selectAtomId,
+            ),
         );
         action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
         editor.update(action);
@@ -272,10 +291,19 @@ class AtomTool implements Tool {
         } else if (ci.map === 'atoms') {
           const atomId = ci.id;
 
+          const isAttachmentPointLabel = Atom.isSuperatomLeavingGroupAtom(
+            editor.render.ctab.molecule,
+            atomId,
+          );
+
           if (
+            !isAttachmentPointLabel &&
             dragCtx.action === undefined &&
-            FunctionalGroup.atomsInFunctionalGroup(functionalGroups, atomId) ===
-              null
+            FunctionalGroup.atomsInFunctionalGroup(
+              functionalGroups,
+              atomId,
+              true,
+            ) === null
           ) {
             action.mergeWith(fromAtomsAttrs(reStruct, atomId, atomProps, true));
           }

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -33,17 +34,24 @@ import {
   RnaBuilderPresetsItem,
   savePreset,
   selectActivePreset,
+  selectSequenceSelection,
+  selectSequenceSelectionName,
   selectCurrentMonomerGroup,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
   selectIsPresetReadyToSave,
-  selectPresets,
+  selectAllPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
   setIsEditMode,
-  setActivePresetMonomerGroup,
   selectPresetFullName,
   setUniqueNameError,
+  setSequenceSelection,
+  setSequenceSelectionName,
+  selectIsActivePresetNewAndEmpty,
 } from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import {
@@ -51,8 +59,26 @@ import {
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
-import { selectEditor } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { ChangeEvent, useEffect, useState } from 'react';
+import {
+  generateSequenceSelectionGroupNames,
+  generateSequenceSelectionName,
+  resetRnaBuilder,
+  resetRnaBuilderAfterSequenceUpdate,
+} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
+import { openModal } from 'state/modal';
+import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import { getValidations } from 'helpers/rnaValidations';
+
+type SequenceSelectionGroupNames = {
+  [MonomerGroups.SUGARS]: string;
+  [MonomerGroups.BASES]: string;
+  [MonomerGroups.PHOSPHATES]: string;
+};
 
 export const RnaEditorExpanded = ({
   isEditMode,
@@ -78,13 +104,27 @@ export const RnaEditorExpanded = ({
 
   const dispatch = useDispatch();
   const activePreset = useAppSelector(selectActivePreset);
+  const isActivePresetEmpty = useAppSelector(selectIsActivePresetNewAndEmpty);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const editor = useAppSelector(selectEditor);
-  const presets = useAppSelector(selectPresets);
+  const presets = useAppSelector(selectAllPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,
   );
-  const [newPreset, setNewPrest] = useState(activePreset);
+  const [newPreset, setNewPreset] = useState(activePreset);
+
+  // For sequence edit in RNA Builder mode
+  const sequenceSelection = useAppSelector(selectSequenceSelection);
+  const sequenceSelectionName = useAppSelector(selectSequenceSelectionName);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
+  const [isSequenceSelectionUpdated, setIsSequenceSelectionUpdated] =
+    useState<boolean>(false);
+  const [sequenceSelectionGroupNames, setSequenceSelectionGroupNames] =
+    useState<SequenceSelectionGroupNames | undefined>(
+      generateSequenceSelectionGroupNames(sequenceSelection),
+    );
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -94,26 +134,65 @@ export const RnaEditorExpanded = ({
         ...newPreset,
         [groupName]: activePresetMonomerGroup.groupItem,
       };
-      setNewPrest(currentPreset);
+      setNewPreset(currentPreset);
       return currentPreset;
     }
     return newPreset;
   };
 
   useEffect(() => {
-    setNewPrest(activePreset);
+    setNewPreset(activePreset);
   }, [activePreset]);
 
   useEffect(() => {
-    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
-      const currentPreset = updatePresetMonomerGroup();
-      let presetFullName = newPreset?.name;
-      if (!currentPreset.editedName) {
-        presetFullName = selectPresetFullName(currentPreset);
-      }
-      setNewPrest({ ...currentPreset, name: presetFullName });
+    if (!sequenceSelection) return;
+    // If modifying 1 Nucleotide or 1 Nucleoside or Nucleoside with Phosphate in sequence
+    if (getCountOfNucleoelements(sequenceSelection) === 1) {
+      dispatch(
+        setSequenceSelectionName(
+          generateSequenceSelectionName(sequenceSelection),
+        ),
+      );
     }
-  }, [activePresetMonomerGroup?.groupItem]);
+    setSequenceSelectionGroupNames(
+      generateSequenceSelectionGroupNames(sequenceSelection),
+    );
+  }, [dispatch, sequenceSelection]);
+
+  useEffect(() => {
+    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
+      if (isSequenceEditInRNABuilderMode && activePresetMonomerGroup) {
+        const monomerType =
+          monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+        const field = `${monomerType}Label`;
+        const updatedSequenceSelection = sequenceSelection.map((node) => {
+          // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
+          // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+          if (
+            (node.isNucleosideConnectedAndSelectedWithPhosphate &&
+              field === 'phosphateLabel') ||
+            (node.type === Entities.Phosphate &&
+              (field === 'sugarLabel' || field === 'baseLabel'))
+          )
+            return node;
+
+          return {
+            ...node,
+            [field]: activePresetMonomerGroup.groupItem.label,
+          };
+        });
+        setIsSequenceSelectionUpdated(true);
+        dispatch(setSequenceSelection(updatedSequenceSelection));
+      } else {
+        const currentPreset = updatePresetMonomerGroup();
+        let presetFullName = newPreset?.name;
+        if (!currentPreset.editedName) {
+          presetFullName = selectPresetFullName(currentPreset);
+        }
+        setNewPreset({ ...currentPreset, name: presetFullName });
+      }
+    }
+  }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
 
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -136,21 +215,38 @@ export const RnaEditorExpanded = ({
       newPreset,
       selectedGroup,
     );
+
     if (selectedRNAPartMonomer) {
       editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));
+
+    const { sugarValidations, phosphateValidations, baseValidations } =
+      getValidations(newPreset);
+
+    dispatch(setSugarValidations(sugarValidations));
+    dispatch(setPhosphateValidations(phosphateValidations));
+    dispatch(setBaseValidations(baseValidations));
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     if (isEditMode) {
       const newPresetName = event.target.value;
-      setNewPrest({
+      setNewPreset({
         ...newPreset,
         name: newPresetName.trim(),
         editedName: true,
       });
+    }
+  };
+
+  const onUpdateSequence = () => {
+    if (getCountOfNucleoelements(sequenceSelection) > 1) {
+      dispatch(openModal('updateSequenceInRNABuilder'));
+    } else {
+      editor.events.modifySequenceInRnaBuilder.dispatch(sequenceSelection);
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }
   };
 
@@ -163,25 +259,27 @@ export const RnaEditorExpanded = ({
     );
     if (
       presetWithSameName &&
-      activePreset.presetInList !== presetWithSameName
+      activePreset.nameInList !== presetWithSameName.name
     ) {
       dispatch(setUniqueNameError(newPreset.name));
       return;
     }
-    dispatch(setActivePreset(newPreset));
     dispatch(savePreset(newPreset));
+    dispatch(setActivePreset(newPreset));
     editor.events.selectPreset.dispatch(newPreset);
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
     }, 0);
-    dispatch(setIsEditMode(false));
-    dispatch(setActivePresetMonomerGroup(null));
+    resetRnaBuilder(dispatch);
   };
 
   const onCancel = () => {
-    setNewPrest(activePreset);
-    dispatch(setIsEditMode(false));
-    dispatch(setActivePresetMonomerGroup(null));
+    if (isSequenceEditInRNABuilderMode) {
+      resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+    } else {
+      setNewPreset(activePreset);
+      resetRnaBuilder(dispatch);
+    }
   };
 
   const turnOnEditMode = () => {
@@ -201,9 +299,15 @@ export const RnaEditorExpanded = ({
     );
   };
 
+  const getMonomersName = (groupName: string) => {
+    if (!sequenceSelectionGroupNames) return '';
+
+    return sequenceSelectionGroupNames[groupName];
+  };
+
   let mainButton;
 
-  if (!activePreset.presetInList) {
+  if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (
       <StyledButton
         disabled={!selectIsPresetReadyToSave(newPreset)}
@@ -216,8 +320,15 @@ export const RnaEditorExpanded = ({
     );
   } else if (isEditMode) {
     mainButton = (
-      <StyledButton primary data-testid="save-btn" onClick={onSave}>
-        Save
+      <StyledButton
+        primary
+        disabled={
+          isSequenceEditInRNABuilderMode ? !isSequenceSelectionUpdated : false
+        }
+        data-testid="save-btn"
+        onClick={isSequenceEditInRNABuilderMode ? onUpdateSequence : onSave}
+      >
+        {isSequenceEditInRNABuilderMode ? 'Update' : 'Save'}
       </StyledButton>
     );
   } else {
@@ -233,15 +344,27 @@ export const RnaEditorExpanded = ({
   }
 
   return (
-    <RnaEditorExpandedContainer data-testid="rna-editor-expanded">
+    <RnaEditorExpandedContainer
+      data-testid="rna-editor-expanded"
+      className={
+        isSequenceEditInRNABuilderMode
+          ? 'rna-editor-expanded--sequence-edit-mode'
+          : ''
+      }
+    >
       <NameContainer
         selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
         onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
       >
         {isEditMode ? (
           <NameInput
-            value={newPreset?.name}
+            value={
+              isSequenceEditInRNABuilderMode
+                ? sequenceSelectionName
+                : newPreset?.name
+            }
             placeholder="Name your structure"
+            disabled={isSequenceEditInRNABuilderMode}
             onChange={onChangeName}
           />
         ) : (
@@ -258,7 +381,11 @@ export const RnaEditorExpanded = ({
               key={groupName}
               selected={activeMonomerGroup === groupName}
               groupName={groupName}
-              monomerName={getMonomerName(groupName)}
+              monomerName={
+                isSequenceEditInRNABuilderMode
+                  ? getMonomersName(groupName)
+                  : getMonomerName(groupName)
+              }
               iconName={iconName}
               testid={testId}
               onClick={selectGroup(groupName)}

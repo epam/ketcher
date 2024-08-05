@@ -62,3 +62,8 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
 } as const;
 
 export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';
+export const CUSTOM_PRESETS = 'ketcher_custom_presets';
+
+// It's set as Z, so it will always be put in the end when alphabetically sorting groups by code
+export const NoNaturalAnalogueGroupCode = 'Z';
+export const NoNaturalAnalogueGroupTitle = 'No natural analogue';

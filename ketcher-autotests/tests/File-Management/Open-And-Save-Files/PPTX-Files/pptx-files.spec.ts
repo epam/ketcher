@@ -28,10 +28,13 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import canvas with 50 big molecules from .pptx file', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'User can import canvas with 50 big molecules from .pptx file',
+    {
+      tag: ['@SlowTest'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/4016 - Test case 1
     Description: User can import canvas with 50 big molecules from .pptx file
     Scenario:
@@ -42,24 +45,36 @@ test.describe('PPTX files', () => {
     5. Press Open as New Project button
     6. Validate canvas
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/50 mols on 1 canvas.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
-    await takeEditorScreenshot(page);
-  });
+      const maxTimeout = 150000;
+      test.setTimeout(maxTimeout);
+      const originalTimeout = 10000;
+      const longerTimeout = 30000;
+      page.setDefaultTimeout(longerTimeout);
 
-  test('User can import from .pptx file with 1000 single molecules', async ({
-    page,
-  }) => {
-    /*
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await openFile('PPTX/50 mols on 1 canvas.pptx', page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await page.getByText('Structure 1', { exact: true }).click();
+      });
+      await takeEditorScreenshot(page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await pressButton(page, 'Open as New Project');
+      });
+      await takeEditorScreenshot(page);
+
+      page.setDefaultTimeout(originalTimeout);
+    },
+  );
+
+  test(
+    'User can import from .pptx file with 1000 single molecules',
+    {
+      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/4016 - Test case 2
     Description: User can import from .pptx file with 1000 single molecules
     Scenario:
@@ -71,27 +86,31 @@ test.describe('PPTX files', () => {
     6. Validate canvas
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/4015 issue.
     */
-    const maxTimeout = 120000;
-    test.setTimeout(maxTimeout);
+      const maxTimeout = 150000;
+      test.setTimeout(maxTimeout);
 
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/1000 moleculs.pptx', page);
-    });
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1000', { exact: true }).click();
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
-    await takeEditorScreenshot(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await openFile('PPTX/1000 moleculs.pptx', page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await page.getByText('Structure 1000', { exact: true }).click();
+      });
+      await takeEditorScreenshot(page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await pressButton(page, 'Open as New Project');
+      });
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('User can import from .pptx file with lots of different types of content', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'User can import from .pptx file with lots of different types of content',
+    {
+      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/4016 - Test case 3
     Description: User can import from .pptx file with lots of different types of content
     Scenario:
@@ -101,26 +120,36 @@ test.describe('PPTX files', () => {
     4. Navigate from 10 to 20 Structure in list and Validate every preview area
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/4015 issue.
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await openFile('PPTX/BigPPT (79 molecules and many objects).pptx', page);
-    });
-    for (let count = 10; count <= 20; count++) {
+      const maxTimeout = 150000;
+      test.setTimeout(maxTimeout);
+
+      await selectTopPanelButton(TopPanelButton.Open, page);
       await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText(`Structure ${count}`, { exact: true }).click();
+        await openFile(
+          'PPTX/BigPPT (79 molecules and many objects).pptx',
+          page,
+        );
+      });
+      for (let count = 10; count <= 20; count++) {
+        await waitForSpinnerFinishedWork(page, async () => {
+          await page.getByText(`Structure ${count}`, { exact: true }).click();
+        });
+        await takeEditorScreenshot(page);
+      }
+      await waitForSpinnerFinishedWork(page, async () => {
+        await page.getByText('Structure 79').click();
       });
       await takeEditorScreenshot(page);
-    }
-    await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 79').click();
-    });
-    await takeEditorScreenshot(page);
-  });
+    },
+  );
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Arrows', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Arrows @IncorrectResultBecauseOfBug',
+    {
+      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+    },
+    async ({ page }) => {
+      /*
     Test case: https://github.com/epam/ketcher/issues/4016 - Test case 4
     Description: User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Arrows
     Scenario:
@@ -134,27 +163,28 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1766 issue.
     Update screenshots after fix.
     */
-    const maxTimeout = 180000;
-    test.setTimeout(maxTimeout);
+      const maxTimeout = 210000;
+      test.setTimeout(maxTimeout);
 
-    const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
-    for await (const count of structures) {
-      await selectTopPanelButton(TopPanelButton.Open, page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await openFile('PPTX/ARROWS.pptx', page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText(`Structure ${count}`, { exact: true }).click();
-      });
-      await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
-      });
-      await takeEditorScreenshot(page);
-    }
-  });
+      const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+      for await (const count of structures) {
+        await selectTopPanelButton(TopPanelButton.Open, page);
+        await waitForSpinnerFinishedWork(page, async () => {
+          await openFile('PPTX/ARROWS.pptx', page);
+        });
+        await waitForSpinnerFinishedWork(page, async () => {
+          await page.getByText(`Structure ${count}`, { exact: true }).click();
+        });
+        await takeEditorScreenshot(page);
+        await waitForSpinnerFinishedWork(page, async () => {
+          await pressButton(page, 'Open as New Project');
+        });
+        await takeEditorScreenshot(page);
+      }
+    },
+  );
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Brackets', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Brackets @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -268,7 +298,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*
@@ -354,7 +384,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Attachment points', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Attachment points @IncorrectResultBecauseOfBug', async ({
     page,
   }) => {
     /*

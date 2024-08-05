@@ -64,6 +64,7 @@ import {
   StructService,
   StructServiceOptions,
   getLabelRenderModeForIndigo,
+  CoreEditor,
 } from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -135,6 +136,14 @@ function convertMimeTypeToOutputFormat(
     }
     case ChemicalMimeType.SEQUENCE: {
       format = SupportedFormat.SEQUENCE;
+      break;
+    }
+    case ChemicalMimeType.IDT: {
+      format = SupportedFormat.IDT;
+      break;
+    }
+    case ChemicalMimeType.HELM: {
+      format = SupportedFormat.HELM;
       break;
     }
     case ChemicalMimeType.UNKNOWN:
@@ -288,10 +297,14 @@ class IndigoService implements StructService {
           }
         }
       };
+      const monomerLibrary = JSON.stringify(
+        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      );
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
         'input-format': inputFormat,
+        monomerLibrary,
       };
 
       const commandData: ConvertCommandData = {

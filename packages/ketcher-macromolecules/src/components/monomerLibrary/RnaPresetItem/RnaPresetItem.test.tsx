@@ -5,17 +5,27 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 describe('Test Rna Preset Item component', () => {
   it('Test click event', () => {
     const rnaPresetItemHandleClick = jest.fn();
+    const rnaPresetItemHandleContextMenu = jest.fn();
+    const rnaPresetItemHandleMouseLeave = jest.fn();
+    const rnaPresetItemHandleMouseMove = jest.fn();
     const preset: IRnaPreset = {
       base: undefined,
       name: 'MyRna',
       phosphate: undefined,
-      presetInList: undefined,
+      nameInList: undefined,
       sugar: undefined,
     };
 
     render(
       withThemeAndStoreProvider(
-        <RnaPresetItem preset={preset} onClick={rnaPresetItemHandleClick} />,
+        <RnaPresetItem
+          isSelected={false}
+          onClick={rnaPresetItemHandleClick}
+          onContextMenu={rnaPresetItemHandleContextMenu}
+          onMouseLeave={rnaPresetItemHandleMouseLeave}
+          onMouseMove={rnaPresetItemHandleMouseMove}
+          preset={preset}
+        />,
       ),
     );
 

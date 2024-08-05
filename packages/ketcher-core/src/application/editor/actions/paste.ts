@@ -28,6 +28,7 @@ import {
   FragmentSetProperties,
   BondAttr,
   AtomAttr,
+  RasterImageUpsert,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -36,6 +37,7 @@ import { SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { RasterImage } from 'domain/entities/rasterImage';
 
 export function fromPaste(
   restruct,
@@ -124,11 +126,6 @@ export function fromPaste(
     );
   });
 
-  pasteItems.atoms.forEach((aid) => {
-    action.addOp(new CalcImplicitH([aid]).perform(restruct));
-    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
-  });
-
   pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
@@ -154,6 +151,11 @@ export function fromPaste(
     sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper);
     });
+  });
+
+  pasteItems.atoms.forEach((aid) => {
+    action.addOp(new CalcImplicitH([aid]).perform(restruct));
+    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
   });
 
   pstruct.rxnArrows.forEach((rxnArrow) => {
@@ -186,6 +188,13 @@ export function fromPaste(
         text.pos.map((p) => p.add(offset)),
       ).perform(restruct),
     );
+  });
+
+  pstruct.rasterImages.forEach((rasterImage: RasterImage) => {
+    const clonedImage = rasterImage.clone();
+    clonedImage.addPositionOffset(offset);
+
+    action.addOp(new RasterImageUpsert(clonedImage).perform(restruct));
   });
 
   pstruct.rgroups.forEach((rg, rgid) => {
@@ -237,6 +246,8 @@ function getStructCenter(struct: Struct): Vec2 {
     return struct.simpleObjects.get(0)!.center();
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.texts.size > 0) return struct.texts.get(0)!.position;
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  if (struct.rasterImages.size > 0) return struct.rasterImages.get(0)!.center();
 
   return new Vec2(0, 0);
 }

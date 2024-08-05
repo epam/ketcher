@@ -21,7 +21,9 @@ export class RenderStruct {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone();
       convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
-      newStruct.sgroups.delete(0);
+      if (!newStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
+        newStruct.sgroups.delete(0);
+      }
       return newStruct;
     }
     return struct;
@@ -106,6 +108,10 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
 ) {
   struct.sgroups.forEach((sgroup) => {
+    if (sgroup.isSuperatomWithoutLabel) {
+      return;
+    }
+
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;

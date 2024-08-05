@@ -117,3 +117,22 @@ export class MonomerDeleteOperation implements Operation {
     renderersManager.addMonomer(this.monomer, this.callback);
   }
 }
+
+export class MonomerItemModifyOperation implements Operation {
+  monomer: BaseMonomer;
+  constructor(
+    monomer: BaseMonomer,
+    public updateMonomerItem: () => BaseMonomer,
+    public revertMonomerItem: () => BaseMonomer,
+  ) {
+    this.monomer = monomer;
+  }
+
+  public execute() {
+    this.monomer = this.updateMonomerItem();
+  }
+
+  public invert() {
+    this.monomer = this.revertMonomerItem();
+  }
+}

@@ -17,7 +17,7 @@ export const StyledDropdown = styled(DropDown)(({ theme }) => ({
   width: 'calc(50% - 6px)',
   height: '28px',
 
-  '& .MuiOutlinedInput-root:hover': {
+  '& .MuiOutlinedInput-root:hover:not(.Mui-disabled)': {
     border: `1px solid ${theme.ketcher.color.input.border.hover}`,
   },
 
@@ -44,3 +44,9 @@ export const Loader = styled.div`
   align-items: center;
   background: #fff;
 `;
+
+export const SvgPreview = styled('div')(({ theme }) => ({
+  height: '100%',
+  position: 'relative',
+  border: `1px solid ${theme.ketcher.color.input.border.regular}`,
+}));

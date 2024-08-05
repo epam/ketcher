@@ -1,4 +1,11 @@
-import { MonomerItemType, Struct } from 'ketcher-core';
+import {
+  AttachmentPointName,
+  KetConnectionType,
+  KetMonomerGroupTemplateClass,
+  KetTemplateType,
+  MonomerItemType,
+  Struct,
+} from 'ketcher-core';
 
 // you can add other props in monomers, if you need them
 export const monomers: MonomerItemType[] = [
@@ -269,7 +276,7 @@ const phosphate = {
   props: {
     MonomerName: 'P',
     Name: 'Phosphate',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'P',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -282,7 +289,7 @@ const ribose = {
   props: {
     MonomerName: 'R',
     Name: 'Ribose',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'R',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -295,7 +302,7 @@ const thymine = {
   props: {
     MonomerName: 'T',
     Name: 'Thymine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'T',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -308,7 +315,7 @@ const cytosine = {
   props: {
     MonomerName: 'C',
     Name: 'Cytosine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'C',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -321,7 +328,7 @@ const uracil = {
   props: {
     MonomerName: 'U',
     Name: 'Uracil',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'U',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -334,7 +341,7 @@ const adenine = {
   props: {
     MonomerName: 'A',
     Name: 'Adenine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'A',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -347,7 +354,7 @@ const guanine = {
   props: {
     MonomerName: 'G',
     Name: 'Guanine',
-    MonomerNaturalAnalogCode: '',
+    MonomerNaturalAnalogCode: 'G',
     MonomerType: '',
     BranchMonomer: '',
     MonomerCaps: {},
@@ -357,4 +364,221 @@ const guanine = {
   struct: new Struct(),
 };
 
-export { phosphate, ribose, cytosine, guanine, thymine, uracil, adenine };
+const rnaPresetsTemplates = [
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'A',
+    name: 'A',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-A___Adenine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+    connections: [
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-A___Adenine',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R3,
+        },
+      },
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R2,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-P___Phosphate',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'C',
+    name: 'C',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-C___Cytosine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+    connections: [
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-C___Cytosine',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R3,
+        },
+      },
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R2,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-P___Phosphate',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'G',
+    name: 'G',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-G___Guanine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+    connections: [
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-G___Guanine',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R3,
+        },
+      },
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R2,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-P___Phosphate',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'T',
+    name: 'T',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-T___Thymine',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+    connections: [
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-T___Thymine',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R3,
+        },
+      },
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R2,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-P___Phosphate',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+      },
+    ],
+  },
+  {
+    type: KetTemplateType.MONOMER_GROUP_TEMPLATE,
+    id: 'U',
+    name: 'U',
+    class: KetMonomerGroupTemplateClass.RNA,
+    templates: [
+      {
+        $ref: 'monomerTemplate-R___Ribose',
+      },
+      {
+        $ref: 'monomerTemplate-U___Uracil',
+      },
+      {
+        $ref: 'monomerTemplate-P___Phosphate',
+      },
+    ],
+    connections: [
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-U___Uracil',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R3,
+        },
+      },
+      {
+        connectionType: KetConnectionType.SINGLE,
+        endpoint1: {
+          monomerTemplateId: 'monomerTemplate-R___Ribose',
+          attachmentPointId: AttachmentPointName.R2,
+        },
+        endpoint2: {
+          monomerTemplateId: 'monomerTemplate-P___Phosphate',
+          attachmentPointId: AttachmentPointName.R1,
+        },
+      },
+    ],
+  },
+];
+
+export {
+  phosphate,
+  ribose,
+  cytosine,
+  guanine,
+  thymine,
+  uracil,
+  adenine,
+  rnaPresetsTemplates,
+};

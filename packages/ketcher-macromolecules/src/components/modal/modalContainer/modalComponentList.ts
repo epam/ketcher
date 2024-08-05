@@ -16,14 +16,20 @@
 import { Open } from 'components/modal/Open';
 import { Save } from 'components/modal/save';
 import { Delete } from 'components/modal/Delete';
+import { UpdateSequenceInRNABuilder } from 'components/modal/UpdateSequenceInRNABuilder';
 import { MonomerConnection } from 'components/modal/monomerConnection';
 
 export const modalComponentList: Record<
   string,
-  typeof Open | typeof Save | typeof Delete | typeof MonomerConnection
+  | typeof Open
+  | typeof Save
+  | typeof Delete
+  | typeof UpdateSequenceInRNABuilder
+  | typeof MonomerConnection
 > = {
   open: Open,
   save: Save,
   delete: Delete,
+  updateSequenceInRNABuilder: UpdateSequenceInRNABuilder,
   monomerConnection: MonomerConnection,
 };

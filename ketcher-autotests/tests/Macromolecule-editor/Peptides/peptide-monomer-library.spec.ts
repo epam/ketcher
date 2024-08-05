@@ -10,10 +10,10 @@ import {
   selectSingleBondTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,8 +34,8 @@ test.describe('Peptide library testing', () => {
 
   test('Placing betaAlanine on canvas', async ({ page }) => {
     // placing molecule on canvas and molecule selected state check
-    await addPeptideOnCanvas(page, 'Bal___beta-Alanine');
-    await takePageScreenshot(page);
+    await addPeptideOnCanvas(page, 'bAla___beta-Alanine');
+    await takeEditorScreenshot(page);
   });
 
   test('add molecule in favourites', async ({ page }) => {
@@ -209,7 +209,7 @@ test.describe('Peptide library testing', () => {
     Description: A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected.
     */
     await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+    await page.getByTestId(Chems.SMPEG2).click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('SMPEG2').locator('..').first().hover();
@@ -222,7 +222,6 @@ test.describe('Peptide library testing', () => {
     /* 
     Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
     Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
-    The test is currently not functioning correctly as the bug has not been fixed
     */
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('C_C_R_P').click();

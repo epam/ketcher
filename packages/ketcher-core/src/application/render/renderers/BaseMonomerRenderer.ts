@@ -3,6 +3,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
+import { CoreEditor, SelectRectangle } from 'application/editor/internal';
 import assert from 'assert';
 import {
   attachmentPointNumberToAngle,
@@ -20,9 +21,11 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
+export const MONOMER_CSS_CLASS = 'monomer';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
+  private editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
 
@@ -54,6 +57,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.editor = CoreEditor?.provideEditorInstance();
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
@@ -271,6 +275,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return canvas
       .append('g')
       .data([this])
+      .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
@@ -280,7 +285,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
-  private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+  protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const fontSize = 6;
     const textElement = rootElement
       .append('text')
@@ -318,11 +323,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    let cursor = 'default';
+
     if (this.hoverElement) this.hoverElement.remove();
+    if (this.editor.selectedTool instanceof SelectRectangle) cursor = 'move';
+
     return hoverAreaElement
+      .style('cursor', cursor)
       .append('use')
       .attr('href', this.monomerHoveredElementId)
-      .attr('pointer-events', 'none');
+      .attr('pointer-events', 'none')
+      .attr('class', 'dynamic-element');
   }
 
   public removeHover() {
@@ -360,7 +371,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         ?.append('use')
         .attr('href', this.monomerSelectedElementId)
         .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none');
+        .attr('pointer-events', 'none')
+        .attr('class', 'dynamic-element');
 
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
@@ -368,7 +380,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F');
+        .attr('fill', '#57FF8F')
+        .attr('class', 'dynamic-element');
     }
   }
 
@@ -432,6 +445,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '500')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
@@ -457,6 +471,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '7px')
       .attr('font-weight', '700')
       .attr('text-align', 'right')
+      .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(this.beginning);

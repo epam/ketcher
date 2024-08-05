@@ -29,3 +29,6 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   erase: EraserTool,
   clear: ClearTool,
 };
+
+export * from './Tool';
+export * from './Zoom';

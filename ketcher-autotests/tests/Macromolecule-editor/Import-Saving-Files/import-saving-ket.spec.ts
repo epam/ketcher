@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   TopPanelButton,
@@ -15,8 +16,13 @@ import {
   pressButton,
   selectSnakeLayoutModeTool,
   turnOnMicromoleculesEditor,
+  clickInTheMiddleOfTheScreen,
+  selectClearCanvasTool,
+  clickUndo,
+  dragMouseTo,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Import-Saving .ket Files', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,11 +61,13 @@ test.describe('Import-Saving .ket Files', () => {
     expect(ketFile).toEqual(ketFileExpected);
 
     const numberOfPressZoomOut = 6;
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -82,11 +90,13 @@ test.describe('Import-Saving .ket Files', () => {
     expect(ketFile).toEqual(ketFileExpected);
 
     const numberOfPressZoomOut = 7;
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -103,6 +113,98 @@ test.describe('Import-Saving .ket Files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName: 'tests/test-data/KET/empty-canvas-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Validate that saving to .ket file of any monomer from our Library does not change after loading it back from .ket file to canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files #3827 #3757
+    Description: The monomer name is present in the preview after opening the saved file. 
+    */
+    await page.getByTestId(Peptides.BetaAlanine).click();
+    await clickInTheMiddleOfTheScreen(page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/monomer-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/monomer-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await selectClearCanvasTool(page);
+    await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
+    await page.getByText('Bal').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files #3756
+    Description: After pressing Undo not break the selection/moving functionality. 
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
+      page,
+    );
+    // This is not an error here you need to open the file twice
+    await openFileAndAddToCanvasMacro(
+      'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickUndo(page);
+    await page.keyboard.press('Control+a');
+    await page.getByText('Ph').locator('..').first().hover();
+    await dragMouseTo(400, 400, page);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that fields "class" and "classHELM" are presents into .ket file', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files #3846
+    Description: Fields "class" and "classHELM" are presents into .ket file. 
+    */
+    test.slow();
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('summary-Sugars').click();
+    await page.getByTestId('25R___2,5-Ribose').click();
+    await clickInTheMiddleOfTheScreen(page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/25R-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/25R-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Check .ket file that "leavingGroup" section contain information about number of atoms', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files #4172
+    Description: "leavingGroup" section contain information about number of atoms. 
+    */
+    await page.getByTestId(Peptides.D2Nal).click();
+    await clickInTheMiddleOfTheScreen(page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/D-2Nal-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/D-2Nal-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -191,6 +293,52 @@ test.describe('Import-Saving .ket Files', () => {
     */
     await openFileAndAddToCanvasMacro('KET/three-chems-connected.ket', page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Check save and open of file with unresolved monomers in KET format', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: There should be possible to load monomers which not found in Monomer library
+    */
+    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/unresolved-monomers-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/unresolved-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Validate that unsplit nucleotides connected with another monomers could be saved to ket file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: .ket file with macro structures is exported and imported correctly .
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
+      page,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });
 

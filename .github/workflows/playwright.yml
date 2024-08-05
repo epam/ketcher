@@ -17,9 +17,10 @@ env:
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
+  USE_SEPARATE_INDIGO_WASM: true
 jobs:
   playwright_tests:
-    timeout-minutes: 60
+    timeout-minutes: 150
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
@@ -42,6 +43,7 @@ jobs:
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
+          echo "USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker

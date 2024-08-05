@@ -4,6 +4,7 @@ module.exports = {
   transform: {
     '\\.js?$': 'babel-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest',
+    '\\.ket': '<rootDir>/textFileTransformer.js',
   },
   moduleNameMapper: {
     'application(.*)$': '<rootDir>/src/application/$1',

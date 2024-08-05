@@ -20,12 +20,14 @@ import {
   fromOneAtomDeletion,
   fromOneBondDeletion,
   fromPlusDeletion,
+  fromRasterImageDeletion,
   fromRGroupAttachmentPointDeletion,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
   FunctionalGroup,
   SGroup,
+  RASTER_IMAGE_KEY,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -52,6 +54,7 @@ class EraserTool implements Tool {
       'simpleObjects',
       'texts',
       'rgroupAttachmentPoints',
+      RASTER_IMAGE_KEY,
     ];
     this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
@@ -343,6 +346,7 @@ class EraserTool implements Tool {
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id);
+
       this.editor.update(
         fromFragmentDeletion(rnd.ctab, {
           atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
@@ -367,6 +371,8 @@ class EraserTool implements Tool {
       this.editor.update(fromTextDeletion(restruct, ci.id));
     } else if (ci.map === 'rgroupAttachmentPoints') {
       this.editor.update(fromRGroupAttachmentPointDeletion(restruct, ci.id));
+    } else if (ci.map === RASTER_IMAGE_KEY) {
+      this.editor.update(fromRasterImageDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

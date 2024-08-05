@@ -1,4 +1,4 @@
-import { Struct, Vec2 } from 'domain/entities';
+import { Struct } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   FormatterFactory,
@@ -7,9 +7,10 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { Coordinates, CoreEditor, EditorHistory } from './editor/internal';
+import { CoreEditor, EditorHistory } from './editor/internal';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
+import { EditorSelection } from './editor/editor.types';
 
 class KetcherProvider {
   private ketcherInstance: Ketcher | undefined;
@@ -33,9 +34,14 @@ export function getStructure(
   formatterFactory: FormatterFactory,
   struct: Struct,
   drawingEntitiesManager?: DrawingEntitiesManager,
+  selection?: EditorSelection,
 ): Promise<string> {
   const formatter = formatterFactory.create(structureFormat);
-  return formatter.getStructureFromStructAsync(struct, drawingEntitiesManager);
+  return formatter.getStructureFromStructAsync(
+    struct,
+    drawingEntitiesManager,
+    selection,
+  );
 }
 
 export async function prepareStructToRender(
@@ -97,19 +103,11 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
+  const { command: modelChanges } =
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
 
   new EditorHistory(editor).update(modelChanges);
   editor.renderersContainer.update(modelChanges);
-}
-
-export function getCurrentCenterPointOfCanvas() {
-  const editor = CoreEditor.provideEditorInstance();
-  const originalCenterPointOfCanvas = new Vec2(
-    editor.canvasOffset.width / 2,
-    editor.canvasOffset.height / 2,
-  );
-  return Coordinates.viewToCanvas(originalCenterPointOfCanvas);
 }

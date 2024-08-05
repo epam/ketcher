@@ -12,6 +12,7 @@ import strip from '@rollup/plugin-strip';
 import ttypescript from 'ttypescript';
 import typescript from 'rollup-plugin-typescript2';
 import { license } from '../../license.ts';
+import { string } from 'rollup-plugin-string';
 
 const mode = {
   PRODUCTION: 'production',
@@ -48,7 +49,7 @@ const config = {
     }),
     peerDepsExternal({ includeDependencies: true }),
     nodeResolve({ extensions }),
-    commonjs(),
+    commonjs({ transformMixedEsModules: true }),
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
@@ -76,6 +77,9 @@ const config = {
       extensions: extensions.map((ext) => ext.trimStart('.')),
       comments: 'none',
       include: includePattern,
+    }),
+    string({
+      include: '**/*.ket',
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
   ],

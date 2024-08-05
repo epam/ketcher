@@ -1,4 +1,5 @@
-import { MonomerItemType } from 'domain/types';
+import { MonomerItemType, Entities } from 'domain/types';
+import { IKetMonomerGroupTemplate } from 'application/formatters';
 
 interface ToolEventHandler {
   click?(event: Event): void;
@@ -45,9 +46,17 @@ interface ToolEventHandler {
 
   rightClickCanvas?(event: Event): void;
 
+  rightClickPolymerBond?(event: Event): void;
+
   editSequence?(): void;
 
   startNewSequence?(): void;
+
+  turnOnSequenceEditInRNABuilderMode?(): void;
+
+  turnOffSequenceEditInRNABuilderMode?(): void;
+
+  modifySequenceInRnaBuilder?(): void;
 
   mouseOverSequenceItem?(event: Event): void;
 
@@ -58,15 +67,42 @@ interface ToolEventHandler {
   changeSequenceTypeEnterMode?(event: Event): void;
 
   toggleSequenceEditMode?(event: Event): void;
+
+  toggleSequenceEditInRNABuilderMode?(event: Event): void;
+
+  clickOnSequenceItem?(event: Event): void;
+
+  mousedownBetweenSequenceItems?(event: Event): void;
+
+  mouseDownOnSequenceItem?(event: Event): void;
+
+  doubleClickOnSequenceItem?(event: Event): void;
 }
 
 export interface IRnaPreset {
   name?: string;
+  nameInList?: string;
   base?: MonomerItemType;
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
-  presetInList?: IRnaPreset;
+  default?: boolean;
+  favorite?: boolean;
+  editedName?: boolean;
 }
+
+export interface IRnaLabeledPreset
+  extends Omit<IRnaPreset, 'base' | 'sugar' | 'phosphate'>,
+    Pick<IKetMonomerGroupTemplate, 'templates'> {}
+
+export type LabeledNodesWithPositionInSequence = {
+  type: Entities;
+  nodeIndexOverall: number;
+  baseLabel?: string;
+  sugarLabel?: string;
+  phosphateLabel?: string;
+  isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
+  hasR1Connection?: boolean;
+};
 
 export interface Tool extends ToolEventHandler {
   cancel?(): void;

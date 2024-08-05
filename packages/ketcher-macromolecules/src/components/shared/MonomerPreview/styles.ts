@@ -19,7 +19,7 @@ import { StructRender } from 'ketcher-react';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   padding: 10px;
   background: ${(props) => props.theme.ketcher.color.background.primary};
   border: ${(props) => props.theme.ketcher.border.regular};
@@ -30,6 +30,7 @@ export const Container = styled.div`
 export const MonomerName = styled.p`
   color: ${(props) => props.theme.ketcher.color.text.primary};
   font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  font-weight: 700;
   word-break: break-all;
   text-align: center;
   margin: 0 0 5px 0;

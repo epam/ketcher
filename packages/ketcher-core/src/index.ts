@@ -27,6 +27,7 @@ export * from 'application/formatters';
 export * from 'application/render';
 export * from 'application/editor';
 export * from 'application/ketcher';
+export * from 'application/ketcher.types';
 export * from 'application/ketcherBuilder';
 export * from 'application/utils';
 

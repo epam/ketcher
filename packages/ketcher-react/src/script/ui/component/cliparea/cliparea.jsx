@@ -21,10 +21,11 @@ import {
   KetcherLogger,
   notifyRequestCompleted,
   isControlKey,
+  isClipboardAPIAvailable,
+  notifyCopyCut,
 } from 'ketcher-core';
-import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
-const ieCb = window.clipboardData;
+const ieCb = typeof window !== 'undefined' ? window.clipboardData : {};
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 let needSkipCopyEvent = false;

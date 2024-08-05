@@ -4,4 +4,6 @@ export class EmptySequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return '';
   }
+
+  protected drawModification() {}
 }

@@ -48,7 +48,9 @@ export class PolymerBondDeleteOperation implements Operation {
     private finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,
     ) => PolymerBond,
-  ) {}
+  ) {
+    this.deletePolymerBondChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
     this.deletePolymerBondChangeModel();
@@ -143,5 +145,23 @@ export class SelectLayoutModeOperation implements Operation {
 
   public invert(): void {
     this.onInvert();
+  }
+}
+
+export class ReconnectPolymerBondOperation implements Operation {
+  public polymerBond;
+  constructor(
+    private reconnectPolymerBondModelChange: () => PolymerBond,
+    private revertReconnectPolymerBondModelChange: () => PolymerBond,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.reconnectPolymerBondModelChange();
+    renderersManager.redrawDrawingEntity(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.polymerBond = this.revertReconnectPolymerBondModelChange();
+    renderersManager.redrawDrawingEntity(this.polymerBond);
   }
 }

@@ -127,7 +127,10 @@ class ReSGroup extends ReObject {
         'GEN',
         'queryComponent',
       ];
-      if (sgroupTypesWithBrackets.includes(sgroup.type)) {
+      if (
+        sgroupTypesWithBrackets.includes(sgroup.type) &&
+        !sgroup.isSuperatomWithoutLabel
+      ) {
         SGroupdrawBrackets(SGroupdrawBracketsOptions);
       }
     }

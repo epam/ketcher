@@ -102,7 +102,7 @@ export default defineConfig({
       exportAsDefault: true,
     }),
     vitePluginRaw({
-      match: /\.sdf/,
+      match: /\.sdf|\.ket/,
     }),
     replace({
       include: '**/ketcher-react/src/**',
@@ -116,6 +116,13 @@ export default defineConfig({
     }),
     replace({
       include: '**/example/src/**',
+      preventAssignment: true,
+      values: {
+        require: 'await import',
+      },
+    }),
+    replace({
+      include: '**/ketcher-core/src/**',
       preventAssignment: true,
       values: {
         require: 'await import',

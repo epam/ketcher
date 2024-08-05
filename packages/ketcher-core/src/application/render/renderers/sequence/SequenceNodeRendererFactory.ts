@@ -1,16 +1,29 @@
-import { Chem, Peptide, Phosphate, Vec2 } from 'domain/entities';
-import { PeptideSequenceItemRenderer } from 'application/render/renderers/sequence/PeptideSequenceItemRenderer';
-import { ChemSequenceItemRenderer } from 'application/render/renderers/sequence/ChemSequenceItemRenderer';
-import { PhosphateSequenceItemRenderer } from 'application/render/renderers/sequence/PhosphateSequenceItemRenderer';
-import { NucleotideSequenceItemRenderer } from 'application/render/renderers/sequence/NucleotideSequenceItemRenderer';
+import {
+  Chem,
+  Peptide,
+  Phosphate,
+  Vec2,
+  Nucleotide,
+  Nucleoside,
+  EmptySequenceNode,
+  LinkerSequenceNode,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+} from 'domain/entities';
+import {
+  PeptideSequenceItemRenderer,
+  ChemSequenceItemRenderer,
+  PhosphateSequenceItemRenderer,
+  NucleotideSequenceItemRenderer,
+  EmptySequenceItemRenderer,
+  BaseMonomerRenderer,
+  BaseSequenceItemRenderer,
+  NucleosideSequenceItemRenderer,
+  UnresolvedMonomerSequenceItemRenderer,
+  UnsplitNucleotideSequenceItemRenderer,
+} from 'application/render';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
-import { EmptySequenceItemRenderer } from 'application/render/renderers/sequence/EmptySequenceItemRenderer';
-import { BaseMonomerRenderer } from 'application/render';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -29,10 +42,13 @@ export class SequenceNodeRendererFactory {
         RendererClass = NucleotideSequenceItemRenderer;
         break;
       case Nucleoside:
-        RendererClass = NucleotideSequenceItemRenderer;
+        RendererClass = NucleosideSequenceItemRenderer;
         break;
       case EmptySequenceNode:
         RendererClass = EmptySequenceItemRenderer;
+        break;
+      case LinkerSequenceNode:
+        RendererClass = ChemSequenceItemRenderer;
         break;
       default:
         switch (node.monomer.constructor) {
@@ -44,6 +60,12 @@ export class SequenceNodeRendererFactory {
             break;
           case Chem:
             RendererClass = ChemSequenceItemRenderer;
+            break;
+          case UnresolvedMonomer:
+            RendererClass = UnresolvedMonomerSequenceItemRenderer;
+            break;
+          case UnsplitNucleotide:
+            RendererClass = UnsplitNucleotideSequenceItemRenderer;
             break;
           default:
             RendererClass = ChemSequenceItemRenderer;

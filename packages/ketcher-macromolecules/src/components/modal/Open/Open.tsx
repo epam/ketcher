@@ -26,6 +26,9 @@ import {
   KetcherLogger,
   EditorHistory,
   SequenceMode,
+  macromoleculesFilesInputFormats,
+  ModeTypes,
+  SnakeMode,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -55,25 +58,33 @@ const OpenFooter = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center',
 });
 
 const FooterSelectorContainer = styled.div({
+  display: 'flex',
   height: '24px',
   fontSize: '12px',
 });
 
-const FooterFormatSelector = styled(StyledDropdown)({
-  width: '180px',
-});
+const FooterFormatSelector = styled(StyledDropdown)((props) => ({
+  width:
+    props.currentSelection === 'seq' || props.currentSelection === 'fasta'
+      ? `170px`
+      : '180px',
+}));
 
 const FooterSequenceSelector = styled(StyledDropdown)({
-  width: '140px',
-  margin: '0 8px',
+  width: '110px',
+});
+
+const FooterButtonContainer = styled('div')({
+  display: 'flex',
+  gap: '10px',
 });
 
 const FooterButton = styled(ActionButton)({
-  margin: '0 8px',
-  width: '100px',
+  width: 'min-content',
 });
 
 const KET = 'ket';
@@ -86,6 +97,8 @@ const options: Array<Option> = [
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'seq', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
+  { id: 'idt', label: 'IDT' },
+  { id: 'helm', label: 'HELM' },
 ];
 
 const additionalOptions: Array<Option> = [
@@ -94,20 +107,7 @@ const additionalOptions: Array<Option> = [
   { id: 'peptide', label: 'Peptide' },
 ];
 
-const inputFormats = {
-  ket: 'chemical/x-indigo-ket',
-  mol: 'chemical/x-mdl-molfile',
-  seq: {
-    rna: 'chemical/x-rna-sequence',
-    dna: 'chemical/x-dna-sequence',
-    peptide: 'chemical/x-peptide-sequence',
-  },
-  fasta: {
-    rna: 'chemical/x-rna-fasta',
-    dna: 'chemical/x-dna-fasta',
-    peptide: 'chemical/x-peptide-fasta',
-  },
-};
+const inputFormats = macromoleculesFilesInputFormats;
 
 export const MODAL_STATES = {
   openOptions: 'openOptions',
@@ -133,11 +133,13 @@ const addToCanvas = ({
   }
 
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
-  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
+  const { command: modelChanges } =
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
   const editorHistory = new EditorHistory(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
+  const isSnakeMode = editor.mode instanceof SnakeMode;
 
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);
@@ -145,7 +147,15 @@ const addToCanvas = ({
   if (isSequenceMode) {
     modelChanges.setUndoOperationReverse();
     editor.events.selectMode.dispatch({
-      mode: 'sequence-layout-mode',
+      mode: ModeTypes.sequence,
+      mergeWithLatestHistoryCommand: true,
+    });
+  }
+
+  if (isSnakeMode) {
+    modelChanges.setUndoOperationReverse();
+    editor.events.selectMode.dispatch({
+      mode: ModeTypes.snake,
       mergeWithLatestHistoryCommand: true,
     });
   }
@@ -324,7 +334,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           />
         ) : null}
       </FooterSelectorContainer>
-      <div>
+      <FooterButtonContainer>
         <FooterButton
           key="openButton"
           disabled={!structStr}
@@ -340,7 +350,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           title="Structure will be loaded as fragment and added to Clipboard"
           data-testid="add-to-canvas-button"
         />
-      </div>
+      </FooterButtonContainer>
     </OpenFooter>
   );
 

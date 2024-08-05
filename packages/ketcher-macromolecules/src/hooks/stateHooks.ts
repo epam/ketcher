@@ -17,15 +17,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
-import { selectEditor } from 'state/common';
-import { LayoutMode } from 'ketcher-core';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
+import { LayoutMode, DEFAULT_LAYOUT_MODE } from 'ketcher-core';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useLayoutMode() {
   const editor = useAppSelector(selectEditor);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>('flex-layout-mode');
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(DEFAULT_LAYOUT_MODE);
 
   const onLayoutModeChange = useCallback(
     (newLayoutMode: LayoutMode) => {
@@ -42,4 +45,34 @@ export function useLayoutMode() {
   }, [onLayoutModeChange, editor?.events.layoutModeChange]);
 
   return layoutMode;
+}
+
+export function useSequenceEditInRNABuilderMode() {
+  const editor = useAppSelector(selectEditor);
+  const isSequenceEditInRNABuilderModeInitial = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
+  const [isSequenceEditInRNABuilderMode, setIsSequenceEditInRNABuilderMode] =
+    useState(isSequenceEditInRNABuilderModeInitial);
+
+  const onSequenceEditInRNABuilderModeChange = (value: boolean) => {
+    setIsSequenceEditInRNABuilderMode(value);
+  };
+
+  useEffect(() => {
+    editor?.events.toggleSequenceEditInRNABuilderMode.add(
+      onSequenceEditInRNABuilderModeChange,
+    );
+
+    return () => {
+      editor?.events.toggleSequenceEditInRNABuilderMode.remove(
+        onSequenceEditInRNABuilderModeChange,
+      );
+    };
+  }, [
+    onSequenceEditInRNABuilderModeChange,
+    editor?.events.toggleSequenceEditInRNABuilderMode,
+  ]);
+
+  return isSequenceEditInRNABuilderMode;
 }

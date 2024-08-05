@@ -1,6 +1,7 @@
 import { AtomType, Elements, genericsList } from 'ketcher-core';
 import { capitalize } from 'lodash';
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import { matchCharge } from 'src/script/ui/data/utils';
 
 export function atomValid(
   label: string,
@@ -33,13 +34,17 @@ export function pseudoAtomValid(
   value: string,
   atomType: AtomType,
   isCustomQuery: boolean,
+  disableQueryElements?: string[] | null,
 ) {
-  genericsList.includes(capitalize(value));
-  const isGenericElement = genericsList.includes(value);
-  if (atomType !== 'pseudo' || isCustomQuery) {
-    return true;
+  const capitalizedValue = capitalize(value);
+  const isDisabledQueryElement =
+    disableQueryElements?.includes(capitalizedValue);
+
+  if (atomType === 'pseudo' && isDisabledQueryElement) {
+    return false;
   }
-  return value && isGenericElement;
+  const isGenericElement = genericsList.includes(capitalizedValue);
+  return atomType !== 'pseudo' || isCustomQuery || (value && isGenericElement);
 }
 
 export function chargeValid(
@@ -47,8 +52,7 @@ export function chargeValid(
   isMultipleAtoms: boolean,
   isCustomQuery: boolean,
 ) {
-  const regex = new RegExp(atomSchema.properties.charge.pattern);
-  const result = regex.exec(charge);
+  const result = matchCharge(charge);
   const isValidCharge = result && (result[1] === '' || result[3] === '');
   if (isCustomQuery || charge === '') {
     return true;

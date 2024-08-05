@@ -27,6 +27,9 @@
                 "$ref": "#/definitions/plus"
               },
               {
+                "$ref": "#/definitions/rasterImage"
+              },
+              {
                 "type": "object",
                 "required": ["$ref"],
                 "properties": {
@@ -55,6 +58,23 @@
   },
   "additionalProperties": false,
   "definitions": {
+    "2dCoordinates": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "imageFile": {
+      "type": "string",
+      "pattern": "^data:image/(png|svg\\+xml);base64,",
+      "minLength": 160
+    },
     "header": {
       "type": "object",
       "properties": {
@@ -775,6 +795,41 @@
         },
         "selected": {
           "type": "boolean"
+        }
+      }
+    },
+    "rasterImage": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "rasterImage"
+        },
+        "center": {
+          "$ref": "#/definitions/2dCoordinates"
+        },
+        "data": {
+          "type": "object",
+          "required": ["bitmap", "halfSize"],
+          "properties": {
+            "bitmap": {
+              "$ref": "#/definitions/imageFile"
+            },
+            "halfSize": {
+              "type": "object",
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "y": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
         }
       }
     }

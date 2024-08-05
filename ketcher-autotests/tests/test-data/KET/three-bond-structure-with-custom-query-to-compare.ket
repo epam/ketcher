@@ -50,7 +50,8 @@
                     0,
                     1
                 ],
-                "customQuery": "=;@"
+                "customQuery": "=;@",
+                "selected": true
             },
             {
                 "type": 1,

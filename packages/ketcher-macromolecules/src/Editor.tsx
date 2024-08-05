@@ -19,14 +19,11 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
 import {
-  SdfSerializer,
-  hotkeysConfiguration,
-  generateMenuShortcuts,
   Nucleotide,
   Nucleoside,
+  NodeSelection,
+  PolymerBondRenderer,
 } from 'ketcher-core';
-import monomersData from './data/monomers.sdf';
-
 import { store } from 'state';
 import {
   defaultTheme,
@@ -40,7 +37,6 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import { Menu } from 'components/menu';
 import {
   createEditor,
   destroyEditor,
@@ -50,21 +46,22 @@ import {
   showPreview,
 } from 'state/common';
 import {
-  loadMonomerLibrary,
-  selectMonomers,
-  setFavoriteMonomersFromLocalStorage,
-} from 'state/library';
-import { useAppDispatch, useAppSelector } from 'hooks';
+  calculateMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'helpers';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useSequenceEditInRNABuilderMode,
+} from 'hooks';
 import {
   closeErrorTooltip,
+  openErrorModal,
   openErrorTooltip,
   openModal,
   selectErrorTooltipText,
 } from 'state/modal';
-import {
-  modalComponentList,
-  ModalContainer,
-} from 'components/modal/modalContainer';
+import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
 import { Snackbar } from '@mui/material';
@@ -79,28 +76,32 @@ import {
   SugarAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  UnresolvedMonomerAvatar,
+  NucleotideAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
-import { calculatePreviewPosition } from 'helpers';
 import { ErrorModal } from 'components/modal/Error';
-import { EditorWrapper } from './styledComponents';
+import {
+  TopMenuRightWrapper,
+  EditorWrapper,
+  TogglerComponentWrapper,
+} from './styledComponents';
 import { useLoading } from './hooks/useLoading';
+import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
-import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
-import {
-  setDefaultPresets,
-  setFavoritePresetsFromLocalStorage,
-  clearFavorites,
-} from 'state/rna-builder';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu';
+import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/shared/Preview';
 import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import { TopMenuComponent } from 'components/TopMenuComponent';
+import { LeftMenuComponent } from 'components/LeftMenuComponent';
+import { ZoomControls } from 'components/ZoomControls/ZoomControls';
+import { VerticalDivider } from 'components/menu/styles';
+import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -116,9 +117,6 @@ interface EditorProps {
 }
 
 const noPreviewTools = ['bond-single'];
-
-const shortcuts =
-  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
 
 function EditorContainer({
   onInit,
@@ -158,40 +156,24 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
-  const monomers = useAppSelector(selectMonomers);
+  const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
+  const [selections, setSelections] = useState<NodeSelection[][]>();
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
+  });
+  const { show: showPolymerBondContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
-    const serializer = new SdfSerializer();
-    const library = serializer.deserialize(monomersData);
-    dispatch(loadMonomerLibrary(library));
-    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
-      dispatch(loadMonomerLibrary([]));
-      dispatch(clearFavorites());
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    if (editor && monomers) {
-      editor.setMonomersLibrary(monomers);
-    }
-  }, [editor, monomers]);
-
-  useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
-    dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage());
-
-    return () => {
-      dispatch(clearFavorites());
-    };
-  }, [dispatch, monomers]);
+  useSetRnaPresets();
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -214,6 +196,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
       });
+      editor.events.openErrorModal.add(
+        (errorData: string | { errorMessage: string; errorTitle: string }) => {
+          dispatch(openErrorModal(errorData));
+        },
+      );
+
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
       editor.events.openMonomerConnectionModal.add(
@@ -236,43 +224,52 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
   const handleOpenPreview = useCallback(
     (e) => {
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+
       const sequenceNode = e.target.__data__?.node;
-      const isNucleotideOrNucleoside =
-        sequenceNode instanceof Nucleotide ||
-        sequenceNode instanceof Nucleoside;
       const monomer =
         e.target.__data__?.monomer?.monomerItem ||
         sequenceNode.monomer.monomerItem;
+      const isNucleotideOrNucleoside =
+        sequenceNode instanceof Nucleotide ||
+        sequenceNode instanceof Nucleoside;
 
-      const nucleotideParts =
-        sequenceNode instanceof Nucleotide
-          ? [
-              sequenceNode.sugar.monomerItem,
-              sequenceNode.rnaBase.monomerItem,
-              sequenceNode.phosphate?.monomerItem,
-            ]
-          : sequenceNode instanceof Nucleoside
-          ? [sequenceNode.sugar.monomerItem, sequenceNode.rnaBase.monomerItem]
-          : null;
-
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(
-        monomer,
-        cardCoordinates,
-        isNucleotideOrNucleoside,
-      );
-      const previewStyle = {
-        top,
-        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-      };
       if (isNucleotideOrNucleoside) {
+        const monomers =
+          sequenceNode instanceof Nucleotide
+            ? [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+                sequenceNode.phosphate?.monomerItem,
+              ]
+            : [
+                sequenceNode.sugar.monomerItem,
+                sequenceNode.rnaBase.monomerItem,
+              ];
+
         debouncedShowPreview({
-          nucleotide: nucleotideParts,
-          style: previewStyle,
+          preset: {
+            monomers,
+          },
+          style: {
+            left,
+            top: monomer
+              ? calculateNucleoElementPreviewTop(cardCoordinates)
+              : '',
+            transform: 'translate(-50%, 0)',
+          },
         });
-      } else {
-        debouncedShowPreview({ monomer, style: previewStyle });
+        return;
       }
+
+      debouncedShowPreview({
+        monomer,
+        style: {
+          left,
+          top: monomer ? calculateMonomerPreviewTop(cardCoordinates) : '',
+        },
+      });
     },
     [debouncedShowPreview],
   );
@@ -309,7 +306,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event) => {
+    editor?.events.rightClickSequence.add((event, selections) => {
+      setSelections(selections);
       showSequenceContextMenu({
         event,
         props: {
@@ -317,6 +315,16 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         },
       });
     });
+    editor?.events.rightClickPolymerBond.add(
+      (event, polymerBondRenderer: PolymerBondRenderer) => {
+        showPolymerBondContextMenu({
+          event,
+          props: {
+            polymerBondRenderer,
+          },
+        });
+      },
+    );
     editor?.events.rightClickCanvas.add((event) => {
       showSequenceContextMenu({
         event,
@@ -339,15 +347,31 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   return (
     <>
       <Layout>
-        <Layout.Top shortened={isMonomerLibraryHidden}>
-          <SequenceTypeDropdown />
-          <LayoutModeButton />
-          {togglerComponent}
-          <FullscreenButton />
+        <Layout.Top
+          shortened={isMonomerLibraryHidden}
+          data-testid="top-toolbar"
+        >
+          <TopMenuComponent />
+          <TopMenuRightWrapper>
+            <SequenceTypeDropdown />
+            <LayoutModeButton />
+            <TogglerComponentWrapper
+              className={
+                isSequenceEditInRNABuilderMode
+                  ? 'toggler-component-wrapper--disabled'
+                  : ''
+              }
+            >
+              {togglerComponent}
+            </TogglerComponentWrapper>
+            <FullscreenButton />
+            <VerticalDivider />
+            <ZoomControls />
+          </TopMenuRightWrapper>
         </Layout.Top>
 
         <Layout.Left>
-          <MenuComponent />
+          <LeftMenuComponent />
         </Layout.Left>
 
         <Layout.Main>
@@ -369,6 +393,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SugarAvatar />
               <PhosphateAvatar />
               <RNABaseAvatar />
+              <UnresolvedMonomerAvatar />
+              <NucleotideAvatar />
               <SequenceStartArrow />
             </defs>
             <g className="drawn-structures"></g>
@@ -377,7 +403,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary
+            isSequenceEditInRNABuilderMode={isSequenceEditInRNABuilderMode}
+          />
         </Layout.Right>
       </Layout>
       <MonomerLibraryToggle
@@ -385,7 +413,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <Preview />
-      <SequenceItemContextMenu />
+      <SequenceItemContextMenu selections={selections} />
+      <PolymerBondContextMenu />
       <ModalContainer />
       <ErrorModal />
       <Snackbar
@@ -405,110 +434,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </StyledToast>
       </Snackbar>
     </>
-  );
-}
-
-function MenuComponent() {
-  const dispatch = useAppDispatch();
-  const activeTool = useAppSelector(selectEditorActiveTool);
-  const editor = useAppSelector(selectEditor);
-  const activeMenuItems = [activeTool];
-
-  const menuItemChanged = (name) => {
-    if (modalComponentList[name]) {
-      dispatch(openModal(name));
-    } else if (name === 'undo' || name === 'redo') {
-      editor.events.selectHistory.dispatch(name);
-    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
-      editor.events.selectTool.dispatch(name);
-      if (name === 'clear') {
-        if (
-          name === 'erase' &&
-          editor.drawingEntitiesManager.selectedEntities.length
-        ) {
-          dispatch(selectTool('select-rectangle'));
-          editor.events.selectTool.dispatch(name);
-          editor.events.selectTool.dispatch('select-rectangle');
-        } else {
-          dispatch(selectTool(name));
-          editor.events.selectTool.dispatch(name);
-          if (name === 'clear') {
-            dispatch(selectTool('select-rectangle'));
-            editor.events.selectTool.dispatch('select-rectangle');
-          } else {
-            dispatch(selectTool(name));
-          }
-        }
-      }
-    }
-  };
-
-  return (
-    <Menu
-      testId="left-toolbar"
-      onItemClick={menuItemChanged}
-      activeMenuItems={activeMenuItems}
-    >
-      <Menu.Group>
-        <Menu.Item
-          itemId="clear"
-          title={`Clear Canvas (${shortcuts.clear})`}
-          testId="clear-canvas"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="undo"
-          title={`Undo (${shortcuts.undo})`}
-          testId="undo"
-        />
-        <Menu.Item
-          itemId="redo"
-          title={`Redo (${shortcuts.redo})`}
-          testId="redo"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." testId="open-button" />
-        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="erase"
-          title={`Erase (${shortcuts.erase})`}
-          testId="erase"
-        />
-        <Menu.Item
-          itemId="select-rectangle"
-          title="Select Rectangle"
-          testId="select-rectangle"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="bond-single"
-          title="Single Bond (1)"
-          testId="single-bond"
-        />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item
-          itemId="zoom-in"
-          title={`Zoom In (${shortcuts['zoom-plus']})`}
-          testId="zoom-in-button"
-        />
-        <Menu.Item
-          itemId="zoom-out"
-          title={`Zoom Out (${shortcuts['zoom-minus']})`}
-          testId="zoom-out-button"
-        />
-        <Menu.Item
-          itemId="zoom-reset"
-          title={`Reset Zoom (${shortcuts['zoom-reset']})`}
-          testId="reset-zoom-button"
-        />
-      </Menu.Group>
-    </Menu>
   );
 }
 

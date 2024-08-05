@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseMonomerRenderer } from 'application/render/renderers';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import assert from 'assert';
@@ -26,6 +26,8 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 import { AttachmentPointName } from 'domain/types';
+import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { Command } from 'domain/entities/Command';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -40,7 +42,7 @@ class PolymerBond implements BaseTool {
   public mouseDownAttachmentPoint(event) {
     const selectedRenderer = event.target.__data__;
     if (
-      selectedRenderer instanceof BaseMonomerRenderer &&
+      selectedRenderer instanceof AttachmentPoint &&
       !selectedRenderer.monomer.isAttachmentPointUsed(event.attachmentPointName)
     ) {
       selectedRenderer.monomer.setChosenFirstAttachmentPoint(
@@ -49,20 +51,26 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  private removeBond(): void {
+  private removeBond() {
     if (this.bondRenderer) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
           this.bondRenderer.polymerBond,
         );
-      this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;
+
+      return modelChanges;
+    } else {
+      return new Command();
     }
   }
 
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
-    if (selectedRenderer instanceof BaseMonomerRenderer) {
+    if (
+      selectedRenderer instanceof BaseMonomerRenderer ||
+      selectedRenderer instanceof AttachmentPoint
+    ) {
       const startAttachmentPoint =
         selectedRenderer.monomer.startBondAttachmentPoint;
 
@@ -150,8 +158,12 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseOverAttachmentPoint(event) {
-    const renderer: BaseMonomerRenderer = event.target.__data__;
+    const renderer: AttachmentPoint = event.target.__data__;
     let modelChanges;
+
+    if (renderer.monomer.isAttachmentPointUsed(event.attachmentPointName)) {
+      return;
+    }
 
     if (this.bondRenderer) {
       // Don't need to do anything if we hover over the first monomer of the bond
@@ -183,7 +195,19 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseLeaveMonomer(event) {
+    const eventToElementData = event.toElement?.__data__;
+    const eventFromElementData = event.fromElement?.__data__;
+    if (
+      eventToElementData instanceof AttachmentPoint &&
+      eventToElementData.monomer === eventFromElementData.monomer
+    ) {
+      eventToElementData.monomer.removePotentialBonds();
+
+      return;
+    }
+
     const renderer: BaseMonomerRenderer = event.target.__data__;
+
     if (
       renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
       !this.isBondConnectionModalOpen
@@ -193,6 +217,7 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
         );
+
       this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -202,11 +227,14 @@ class PolymerBond implements BaseTool {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    const renderer: BaseMonomerRenderer = event.target.__data__;
-    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+    const attachmentPointRenderer: AttachmentPoint = event.target.__data__;
+    if (
+      attachmentPointRenderer.monomer.renderer !==
+      this.bondRenderer?.polymerBond?.firstMonomer?.renderer
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
-          renderer.monomer,
+          attachmentPointRenderer.monomer,
           this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.markForRecalculateBegin();
@@ -215,9 +243,10 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAttachmentPoint(event) {
-    const renderer = event.target.__data__;
+    const renderer = event.target.__data__ as AttachmentPoint;
     const isFirstMonomerHovered =
-      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
+      renderer.monomer.renderer ===
+      this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
     if (this.bondRenderer && !isFirstMonomerHovered) {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
@@ -306,7 +335,10 @@ class PolymerBond implements BaseTool {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    this.removeBond();
+
+    const modelChanges = this.removeBond();
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   public mouseUpMonomer(event) {
@@ -363,8 +395,8 @@ class PolymerBond implements BaseTool {
   public handleBondCreation = (payload: {
     firstMonomer: BaseMonomer;
     secondMonomer: BaseMonomer;
-    firstSelectedAttachmentPoint: string;
-    secondSelectedAttachmentPoint: string;
+    firstSelectedAttachmentPoint: AttachmentPointName;
+    secondSelectedAttachmentPoint: AttachmentPointName;
   }): void => {
     assert(this.bondRenderer);
 
@@ -414,7 +446,12 @@ class PolymerBond implements BaseTool {
   };
 
   public destroy() {
-    this.removeBond();
+    const modelChanges = this.removeBond();
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.removeHoverForAllMonomers(),
+    );
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   private shouldInvokeModal(

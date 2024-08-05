@@ -19,6 +19,7 @@ import {
   Bond,
   FunctionalGroup,
   HalfBond,
+  SGroup,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -58,19 +59,27 @@ class ReBond extends ReObject {
     return true;
   }
 
+  private static getAtomPositionForBond(
+    struct: Struct,
+    atomId: number,
+    sgroup?: SGroup,
+  ) {
+    return sgroup instanceof MonomerMicromolecule
+      ? (sgroup.getAttachmentAtomId() as number)
+      : sgroup?.isContracted()
+      ? sgroup?.getContractedPosition(struct).atomId
+      : atomId;
+  }
+
   static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
     const render = restruct.render;
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
     const beginAtom = restruct.atoms.get(
-      sgroup1 instanceof MonomerMicromolecule
-        ? (sgroup1.getAttachmentAtomId() as number)
-        : bond.b.begin,
+      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.begin, sgroup1),
     );
     const endAtom = restruct.atoms.get(
-      sgroup2 instanceof MonomerMicromolecule
-        ? (sgroup2.getAttachmentAtomId() as number)
-        : bond.b.end,
+      ReBond.getAtomPositionForBond(restruct.molecule, bond.b.end, sgroup2),
     );
 
     if (
@@ -262,7 +271,8 @@ class ReBond extends ReObject {
         bond,
         sgroups,
         functionalGroups,
-      )
+      ) ||
+      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
     ) {
       return null;
     }
@@ -282,7 +292,8 @@ class ReBond extends ReObject {
         bond,
         sgroups,
         functionalGroups,
-      )
+      ) ||
+      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
     ) {
       return null;
     }
@@ -299,6 +310,11 @@ class ReBond extends ReObject {
     const bond = restruct.molecule.bonds.get(bid)!;
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
+
+    if (Bond.isBondToHiddenLeavingGroup(struct, bond)) {
+      return;
+    }
+
     if (
       bond &&
       FunctionalGroup.isBondInContractedFunctionalGroup(
@@ -1304,7 +1320,11 @@ function getBondMark(
   const path = draw.bondMark(render.paper, p, mark, options);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
-  tooltip && path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
+  tooltip &&
+  path.node.childNodes[0].setAttribute(
+    'data-tooltip',
+    util.escapeHtml(tooltip),
+  );
 
   return path;
 }

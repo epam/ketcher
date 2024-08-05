@@ -28,6 +28,7 @@ import {
   selectFilteredMonomers,
   selectMonomerGroups,
   selectMonomersInCategory,
+  selectUnsplitNucleotides,
 } from 'state/library';
 import {
   DetailsContainer,
@@ -51,12 +52,19 @@ import {
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
+  setSugarValidations,
+  setBaseValidations,
+  setPhosphateValidations,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
-import { MonomerItemType } from 'ketcher-core';
-import { selectEditor } from 'state/common';
+import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
+import { getValidations } from 'helpers/rnaValidations';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -74,19 +82,34 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
   const presets = useAppSelector(selectFilteredPresets);
+  const nucleotideItems = selectUnsplitNucleotides(monomers);
+  const nucleotideGroups = selectMonomerGroups(nucleotideItems);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
   const isActivePresetNewAndEmpty = useAppSelector(
     selectIsActivePresetNewAndEmpty,
   );
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
+  const [newPreset, setNewPreset] = useState(activePreset);
 
+  const dispatch = useDispatch();
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
-    } else setExpandedAccordion(rnaBuilderItem);
+    } else {
+      setExpandedAccordion(rnaBuilderItem);
+      const { sugarValidations, phosphateValidations, baseValidations } =
+        getValidations(newPreset);
+
+      dispatch(setSugarValidations(sugarValidations));
+      dispatch(setPhosphateValidations(phosphateValidations));
+      dispatch(setBaseValidations(baseValidations));
+    }
   };
 
   const groupsData: IGroupsDataItem[] = [
@@ -107,11 +130,20 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     {
       groupName: MonomerGroups.BASES,
       iconName: 'base',
-      groups: groups.filter(
-        (group) =>
-          MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
-          MonomerGroups.BASES,
-      ),
+      groups: groups
+        .filter(
+          (group) =>
+            MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
+            MonomerGroups.BASES,
+        )
+        .map((group) => {
+          return {
+            ...group,
+            groupItems: group.groupItems.filter(
+              (item) => item.props?.MonomerClass !== KetMonomerClass.RNA,
+            ),
+          };
+        }),
     },
     {
       groupName: MonomerGroups.PHOSPHATES,
@@ -122,12 +154,25 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
           MonomerGroups.PHOSPHATES,
       ),
     },
+    {
+      groupName: 'Nucleotides',
+      iconName: 'nucleotide',
+      groups: nucleotideGroups,
+    },
   ];
-  const dispatch = useDispatch();
+
   const selectItem = (monomer, groupName) => {
-    editor.events.selectMonomer.dispatch(monomer);
+    if (!isSequenceEditInRNABuilderMode) {
+      editor.events.selectMonomer.dispatch(monomer);
+    }
     if (!isEditMode) return;
 
+    const monomerClass = monomer.props.MonomerClass.toLowerCase();
+    const currentPreset = {
+      ...newPreset,
+      [monomerClass]: monomer,
+    };
+    setNewPreset(currentPreset);
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
     dispatch(setActiveRnaBuilderItem(groupName));
   };
@@ -192,6 +237,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
                   <MonomerGroup
                     key={groupTitle}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
+                    groupName={groupData.groupName as MonomerGroups}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={
                       monomer ? getMonomerUniqueKey(monomer) : undefined

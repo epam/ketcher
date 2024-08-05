@@ -1,13 +1,13 @@
-import { Item, ItemParams, Separator } from 'react-contexify';
+import { ItemParams } from 'react-contexify';
 import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
 import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
-import { StyledMenu } from './styles';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { ContextMenu } from 'components/contextMenu/ContextMenu';
 
 export const RNAContextMenu = () => {
   const RNA_TAB_INDEX = 2;
@@ -16,21 +16,27 @@ export const RNAContextMenu = () => {
     selectActivePresetForContextMenu,
   );
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const RNAMenus = [
-    { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
-    { name: 'edit', title: 'Edit...', seperator: true },
-    { name: 'deletepreset', title: 'Delete Preset' },
+    {
+      name: 'duplicateandedit',
+      title: 'Duplicate and Edit...',
+      disabled: false,
+    },
+    {
+      name: 'edit',
+      title: 'Edit...',
+      separator: true,
+      disabled: activePresetForContextMenu?.default,
+    },
+    {
+      name: 'deletepreset',
+      title: 'Delete Preset',
+      disabled: activePresetForContextMenu?.default,
+    },
   ];
-
-  const isItemDisabled = (name: string) => {
-    if (
-      ['deletepreset', 'edit'].includes(name) &&
-      activePresetForContextMenu?.default
-    ) {
-      return true;
-    }
-    return false;
-  };
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
@@ -52,37 +58,17 @@ export const RNAContextMenu = () => {
     }
   };
 
-  const assembleMenuItems = () => {
-    const items: ReactElement[] = [];
-    RNAMenus.forEach(({ name, title, seperator }, index) => {
-      const item = (
-        <Item
-          id={name}
-          onClick={handleMenuChange}
-          key={name}
-          disabled={isItemDisabled(name)}
-          data-testid={name}
-        >
-          <span>{title}</span>
-        </Item>
-      );
-      items.push(item);
-      if (seperator) {
-        items.push(<Separator key={index} />);
-      }
-    });
-    return items;
-  };
-
   const ketcherEditorRootElement = document.querySelector(
     KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
   );
 
-  return ketcherEditorRootElement
+  return ketcherEditorRootElement && !isSequenceEditInRNABuilderMode
     ? createPortal(
-        <StyledMenu id={CONTEXT_MENU_ID.FOR_RNA}>
-          {assembleMenuItems()}
-        </StyledMenu>,
+        <ContextMenu
+          id={CONTEXT_MENU_ID.FOR_RNA}
+          menuItems={RNAMenus}
+          handleMenuChange={handleMenuChange}
+        ></ContextMenu>,
         ketcherEditorRootElement,
       )
     : null;

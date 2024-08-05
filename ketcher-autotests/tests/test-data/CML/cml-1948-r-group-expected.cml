@@ -52,7 +52,7 @@
             <atom id="a41" elementType="N" x2="10.3699" y2="-11.5001"/>
             <atom id="a42" elementType="F" x2="2.57551" y2="-9.00005"/>
             <atom id="a43" elementType="C" x2="16.4323" y2="-9.00005">
-                <atomParity atomRefs4="a-1 a21 a44 a43">1</atomParity>
+                <atomParity atomRefs4="a21 a44 a43 a22">1</atomParity>
             </atom>
             <atom id="a44" elementType="C" x2="17.2983" y2="-8.50005"/>
             <atom id="a45" elementType="C" x2="18.1643" y2="-9.00005"/>

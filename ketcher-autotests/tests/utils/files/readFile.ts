@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import {
+  MacromoleculesTopPanelButton,
   selectTopPanelButton,
   pressButton,
   TopPanelButton,
@@ -10,6 +11,7 @@ import {
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
+  selectMacromoleculesPanelButton,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -124,8 +126,9 @@ export async function openFileAndAddToCanvasMacro(
   // to stabilize the test
   await selectOptionInDropdown(filename, page);
 
-  if (typeDropdownOption)
+  if (typeDropdownOption) {
     await selectOptionInTypeDropdown(typeDropdownOption, page);
+  }
 
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
@@ -142,7 +145,14 @@ export async function openFileAndAddToCanvasAsNewProject(
   await selectOptionInDropdown(filename, page);
 
   await waitForLoad(page, async () => {
-    await pressButton(page, 'Open as New Project');
+    const openAsNewProjectButton = await page.$(
+      'button[data-id="Open as New Project"]',
+    );
+    if (openAsNewProjectButton) {
+      await pressButton(page, 'Open as New Project');
+    } else {
+      await pressButton(page, 'Open as New');
+    }
   });
 }
 
@@ -164,6 +174,54 @@ export async function pasteFromClipboardAndAddToCanvas(
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  if (needToWait) {
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+  } else {
+    await pressButton(page, 'Add to Canvas');
+  }
+}
+export async function pasteFromClipboardAndOpenAsNewProject(
+  page: Page,
+  fillStructure: string,
+  needToWait = true,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  if (needToWait) {
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
+  } else {
+    await pressButton(page, 'Open as New Project');
+  }
+}
+
+export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
+  page: Page,
+  structureFormat: string,
+  sequenceFormat: string,
+  fillStructure: string,
+  needToWait = true,
+) {
+  await selectMacromoleculesPanelButton(
+    MacromoleculesTopPanelButton.Open,
+    page,
+  );
+  await page.getByText('Paste from clipboard').click();
+  if (!(structureFormat === 'Ket')) {
+    await page.getByRole('combobox').click();
+    await page.getByText(structureFormat).click();
+  }
+  if (!(sequenceFormat === 'RNA')) {
+    await page.getByTestId('dropdown-select-type').click();
+    const lowCaseSequenceFormat = sequenceFormat.toLowerCase();
+    await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
+  }
+
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
   if (needToWait) {
     await waitForLoad(page, async () => {

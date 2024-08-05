@@ -2,7 +2,7 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  takePageScreenshot,
+  takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
@@ -21,7 +21,7 @@ test.describe('Macromolecules default presets', () => {
     Description: Switch to Polymer Editor
     */
     await page.getByTestId('G_G_R_P').click();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Add Guanine to canvas', async ({ page }) => {

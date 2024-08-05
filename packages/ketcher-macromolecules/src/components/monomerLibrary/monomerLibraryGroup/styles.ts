@@ -15,13 +15,14 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 
-export const ItemsContainer = styled.div`
+export const ItemsContainer = styled.div<{ useLeftMargin?: boolean }>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: auto;
   flex: 1;
   gap: 8px;
   margin-bottom: 24px;
+  margin-left: ${({ useLeftMargin }) => (useLeftMargin ? '22px' : '0')};
 
   &::after {
     content: '';
@@ -29,7 +30,7 @@ export const ItemsContainer = styled.div`
   }
 `;
 
-export const GroupContainer = styled.div`
+export const GroupContainerRow = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -40,6 +41,10 @@ export const GroupContainer = styled.div`
   color: ${({ theme }) => theme.ketcher.color.divider};
   margin: 0;
   gap: 8px;
+`;
+
+export const GroupContainerColumn = styled(GroupContainerRow)`
+  flex-direction: column;
 `;
 
 export const GroupTitle = styled.div`

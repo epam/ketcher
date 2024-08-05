@@ -6,12 +6,13 @@ import {
   clickUndo,
   dragMouseTo,
   hideMonomerPreview,
+  moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectRectangleArea,
   selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
-  takeLeftToolbarMacromoleculeScreenshot,
+  takePageScreenshot,
   turnOnMacromoleculesEditor,
   waitForPageInit,
 } from '@utils';
@@ -20,6 +21,7 @@ import {
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -28,7 +30,7 @@ test.describe('Undo Redo', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     peptide1 = await addSingleMonomerToCanvas(
@@ -194,7 +196,7 @@ test.describe('Undo-Redo tests', () => {
     */
 
     const addMonomers = async (x: number, y: number) => {
-      await page.getByTestId('Bal___beta-Alanine').click();
+      await page.getByTestId(Peptides.BetaAlanine).click();
       await page.mouse.click(x, y);
     };
 
@@ -234,7 +236,7 @@ test.describe('Undo-Redo tests', () => {
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();
-      await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+      await page.getByTestId('SMPEG2___SM(PEG)2').click();
       await page.mouse.click(x, y);
     };
 
@@ -343,11 +345,10 @@ test.describe('Undo-Redo tests', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await page.getByTestId('undo').click();
-    await takeEditorScreenshot(page);
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('redo').click();
     await takeEditorScreenshot(page);
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
   });
 
   test('After creating a chain of Peptides and clicking multiple times "Undo" button to verify that the last actions are properly reversed', async ({
@@ -397,12 +398,36 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo and Redo buttons turn gray.
     The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('undo').click();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
     await page.getByTestId('redo').click();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
+    await takePageScreenshot(page);
+  });
+
+  test('Press Undo/Redo after copy/pasting Sugar-Base-Phosphate structure on canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Undo-Redo tests
+    Description: Copy/Paste working as expected and Undo/Redo
+    */
+    const x = 200;
+    const y = 200;
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('C_C_R_P').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.mouse.move(x, y);
+    await page.keyboard.press('Control+v');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await page.getByTestId('undo').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('redo').click();
+    await takeEditorScreenshot(page);
   });
 });

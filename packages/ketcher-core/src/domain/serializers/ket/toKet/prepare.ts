@@ -14,17 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Pile, Pool, SGroup, Struct, Vec2 } from 'domain/entities';
-
-type KetNode = {
-  type: string;
-  fragment?: Struct;
-  center: Vec2;
-  data?: any;
-  selected?: boolean;
-};
+import { KetFileNode } from '../../serializers.types';
 
 export function prepareStructForKet(struct: Struct) {
-  const ketNodes: KetNode[] = [];
+  const ketNodes: KetFileNode[] = [];
 
   const rgFrags = new Set(); // skip this when writing molecules
   for (const [rgnumber, rgroup] of struct.rgroups.entries()) {
@@ -96,6 +89,10 @@ export function prepareStructForKet(struct: Struct) {
     });
   });
 
+  struct.rasterImages.forEach((image) => {
+    ketNodes.push(image.toKetNode());
+  });
+
   ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
@@ -126,7 +123,7 @@ function getFragmentCenter(struct, atomSet) {
  * See: https://github.com/epam/ketcher/issues/2142
  */
 function addMolecules(
-  ketNodes: KetNode[],
+  ketNodes: KetFileNode[],
   fragmentIds: number[],
   struct: Struct,
 ) {
@@ -165,7 +162,7 @@ function addMolecules(
  * ```
  */
 function generateSGroupFragmentsMap(
-  ketNodes: KetNode[],
+  ketNodes: KetFileNode[],
   fragmentIds: number[],
   struct: Struct,
 ) {

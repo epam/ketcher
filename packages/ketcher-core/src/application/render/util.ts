@@ -205,12 +205,18 @@ function updateHalfBondCoordinates(
 
   return [hb1, hb2];
 }
+
+function escapeHtml(str) {
+  return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
   drawCIPLabel,
   updateHalfBondCoordinates,
+  escapeHtml,
 };
 
 export default util;

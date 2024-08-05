@@ -2,6 +2,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
 import {
+  getNextMonomerInChain,
   getRnaBaseFromSugar,
   isValidNucleoside,
   isValidNucleotide,
@@ -15,7 +16,7 @@ import {
   getRnaPartLibraryItem,
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class Nucleoside {
   constructor(public sugar: Sugar, public rnaBase: RNABase) {}
@@ -81,7 +82,7 @@ export class Nucleoside {
     return this.sugar;
   }
 
-  public get monomers() {
+  public get monomers(): BaseMonomer[] {
     return [this.sugar, this.rnaBase];
   }
 
@@ -98,6 +99,12 @@ export class Nucleoside {
   }
 
   public get modified() {
-    return this.sugar.label !== RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA;
+    // TODO move isNotLastNode to separate getter because it is not modification
+    //  It was added here because it needs to show similar icon as for phosphates modifications
+    const isNotLastNode = !!getNextMonomerInChain(this.sugar);
+
+    return (
+      this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
+    );
   }
 }

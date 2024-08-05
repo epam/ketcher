@@ -34,6 +34,7 @@ import {
   setIsEditMode,
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
+import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -46,6 +47,9 @@ export const scrollToSelectedMonomer = (monomerId) => {
 export const RnaEditor = ({ duplicatePreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const isEditMode = useAppSelector(selectIsEditMode);
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
   const activePresetFullName = selectPresetFullName(activePreset);
 
   const dispatch = useAppDispatch();
@@ -64,14 +68,20 @@ export const RnaEditor = ({ duplicatePreset }) => {
 
   const expandEditor = () => {
     setExpanded(!expanded);
-    if (!activePreset?.presetInList) {
+    if (!activePreset?.nameInList) {
       dispatch(setIsEditMode(true));
     }
   };
 
   return (
     <RnaEditorContainer>
-      <StyledHeader>
+      <StyledHeader
+        className={
+          isSequenceEditInRNABuilderMode
+            ? 'styled-header--sequence-edit-mode'
+            : ''
+        }
+      >
         RNA Builder
         <ExpandButton onClick={expandEditor}>
           <ExpandIcon expanded={expanded} name="chevron" />

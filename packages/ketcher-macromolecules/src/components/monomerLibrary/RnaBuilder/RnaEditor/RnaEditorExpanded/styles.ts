@@ -17,11 +17,19 @@
 import styled from '@emotion/styled';
 import { Button, Input } from 'ketcher-react';
 
-export const RnaEditorExpandedContainer = styled.div({
+export const RnaEditorExpandedContainer = styled.div((props) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '10px',
-});
+  '&.rna-editor-expanded--sequence-edit-mode': {
+    padding: '8px',
+    paddingTop: '10px',
+    border: `2px ${props.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
+    borderTop: 'none',
+    borderBottomRightRadius: '4px',
+    borderBottomLeftRadius: '4px',
+  },
+}));
 
 export const GroupsContainer = styled.div({
   marginTop: '16px',
@@ -91,6 +99,11 @@ export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
 
 export const NameInput = styled(Input)({
   width: '100%',
+  '&:disabled': {
+    background: 'none',
+    outline: 'none',
+    color: 'inherit',
+  },
 });
 
 export const PresetName = styled.div({

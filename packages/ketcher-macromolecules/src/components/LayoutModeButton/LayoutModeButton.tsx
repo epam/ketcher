@@ -18,12 +18,19 @@ import { useEffect, useState } from 'react';
 import { Menu } from 'components/menu';
 import { MenuContext } from '../../contexts';
 import { useAppSelector, useLayoutMode } from 'hooks';
-import { selectEditor } from 'state/common';
+import {
+  selectEditor,
+  selectIsSequenceEditInRNABuilderMode,
+} from 'state/common';
+import { DEFAULT_LAYOUT_MODE } from 'ketcher-core';
 
 export const LayoutModeButton = () => {
-  const [activeMode, setActiveMode] = useState('flex-layout-mode');
+  const [activeMode, setActiveMode] = useState(DEFAULT_LAYOUT_MODE);
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
+  const isSequenceEditInRNABuilderMode = useAppSelector(
+    selectIsSequenceEditInRNABuilderMode,
+  );
 
   const menuContext = {
     isActive: (mode) => activeMode === mode,
@@ -44,21 +51,25 @@ export const LayoutModeButton = () => {
   return (
     <MenuContext.Provider value={menuContext}>
       <Menu.Submenu
+        disabled={isSequenceEditInRNABuilderMode}
         testId="layout-mode"
         vertical={true}
         needOpenByMenuItemClick={true}
       >
         <Menu.Item
-          itemId="flex-layout-mode"
-          testId="flex-layout-mode"
+          itemId="sequence-layout-mode"
+          testId="sequence-layout-mode"
+          title="Switch to sequence layout mode"
         ></Menu.Item>
         <Menu.Item
           itemId="snake-layout-mode"
           testId="snake-layout-mode"
+          title="Switch to snake layout mode"
         ></Menu.Item>
         <Menu.Item
-          itemId="sequence-layout-mode"
-          testId="sequence-layout-mode"
+          itemId="flex-layout-mode"
+          testId="flex-layout-mode"
+          title="Switch to flex layout mode"
         ></Menu.Item>
       </Menu.Submenu>
     </MenuContext.Provider>

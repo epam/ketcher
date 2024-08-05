@@ -7,8 +7,9 @@ import {
   DEFAULT_KETCHER_STANDALONE_URL,
   MODES,
 } from './constants';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -133,6 +134,10 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
         launchOptions: {
           headless: true,
+        },
+        contextOptions: {
+          // chromium-specific permissions
+          permissions: ['clipboard-read', 'clipboard-write'],
         },
       },
     },

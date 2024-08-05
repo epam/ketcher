@@ -1,0 +1,29 @@
+{
+  "name": "example-ssr",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 5173",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "ketcher-core": "*",
+    "ketcher-macromolecules": "*",
+    "ketcher-react": "*",
+    "ketcher-standalone": "*",
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.2.5"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "cross-env": "^7.0.3"
+  }
+}

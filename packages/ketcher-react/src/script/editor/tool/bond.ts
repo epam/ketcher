@@ -25,6 +25,7 @@ import {
   fromOneBondDeletion,
   Struct,
   vectorUtils,
+  Atom,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -95,8 +96,10 @@ class BondTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
@@ -108,8 +111,10 @@ class BondTool implements Tool {
           result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result });
-      return;
+      if (result.length) {
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        return;
+      }
     }
 
     let attachmentAtomId: number | undefined;
@@ -166,7 +171,8 @@ class BondTool implements Tool {
           // first mousedown event intersect with any atom
           beginAtom = dragCtx.item.id;
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item);
-          const closestSGroup = editor.findItem(event, ['functionalGroups']);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const closestSGroup = editor.findItem(event, ['functionalGroups'])!;
           const sgroup = molecule.sgroups.get(closestSGroup?.id);
 
           if (sgroup) {
@@ -329,12 +335,18 @@ class BondTool implements Tool {
         this.editor.update(bondAddition[0]);
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
-        this.editor.update(
-          fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
-            label: 'C',
-          })[0],
+        const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+          struct,
+          dragCtx.item.id,
         );
-        delete this.dragCtx.existedBond;
+        if (!isAtomSuperatomLeavingGroup) {
+          this.editor.update(
+            fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
+              label: 'C',
+            })[0],
+          );
+          delete this.dragCtx.existedBond;
+        }
       } else if (dragCtx.item.map === 'bonds') {
         const bondProps = Object.assign({}, this.bondProps);
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;

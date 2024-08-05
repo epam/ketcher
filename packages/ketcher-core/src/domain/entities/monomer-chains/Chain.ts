@@ -1,26 +1,33 @@
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
-import { BaseMonomer, Sugar } from 'domain/entities';
+import {
+  BaseMonomer,
+  Peptide,
+  Phosphate,
+  SubChainNode,
+  Sugar,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+  Nucleoside,
+  Nucleotide,
+  MonomerSequenceNode,
+  EmptySequenceNode,
+  LinkerSequenceNode,
+} from 'domain/entities';
 import {
   getNextMonomerInChain,
-  getPhosphateFromSugar,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { Nucleoside } from 'domain/entities/Nucleoside';
-import { Nucleotide } from 'domain/entities/Nucleotide';
-import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
-import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
+import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
-  public firstMonomer: BaseMonomer | null;
+  public firstMonomer?: BaseMonomer;
 
   public isCyclic = false;
 
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
-    this.firstMonomer = null;
-
     if (firstMonomer) {
       this.firstMonomer = firstMonomer;
 
@@ -32,7 +39,7 @@ export class Chain {
     }
   }
 
-  public add(monomer: BaseMonomer) {
+  private createSubChainIfNeed(monomer) {
     const needCreateNewSubchain =
       !this.lastNode?.monomer ||
       monomer.isMonomerTypeDifferentForChaining(this.lastNode.monomer);
@@ -40,40 +47,100 @@ export class Chain {
     if (needCreateNewSubchain) {
       this.subChains.push(new monomer.SubChainConstructor());
     }
+  }
 
-    if (!(monomer instanceof Sugar)) {
+  public add(monomer: BaseMonomer) {
+    this.createSubChainIfNeed(monomer);
+
+    if (
+      monomer instanceof Peptide ||
+      monomer instanceof UnsplitNucleotide ||
+      monomer instanceof UnresolvedMonomer
+    ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
-    } else if (isValidNucleoside(monomer)) {
-      this.lastSubChain.add(Nucleoside.fromSugar(monomer));
-    } else if (isValidNucleotide(monomer)) {
-      this.lastSubChain.add(Nucleotide.fromSugar(monomer));
-    } else {
-      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      return;
     }
+
+    if (monomer instanceof Sugar) {
+      if (isValidNucleoside(monomer, this.firstMonomer)) {
+        this.lastSubChain.add(Nucleoside.fromSugar(monomer, false));
+        return;
+      }
+      if (isValidNucleotide(monomer, this.firstMonomer)) {
+        this.lastSubChain.add(Nucleotide.fromSugar(monomer, false));
+        return;
+      }
+    }
+
+    const nextMonomer = getNextMonomerInChain(monomer);
+    const isNextMonomerNucleosideOrNucleotideOrPeptide = () => {
+      const isNucleosideOrNucleotide =
+        nextMonomer instanceof Sugar &&
+        (isValidNucleotide(nextMonomer) || isValidNucleoside(nextMonomer));
+      return isNucleosideOrNucleotide || nextMonomer instanceof Peptide;
+    };
+    if (
+      monomer instanceof Phosphate &&
+      (!this.lastNode || this.lastNode instanceof Nucleoside) &&
+      (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
+    ) {
+      this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      return;
+    }
+    this.lastSubChain.add(new LinkerSequenceNode(monomer));
+  }
+
+  public addNode(node: SubChainNode) {
+    this.createSubChainIfNeed(node.monomer);
+
+    this.lastSubChain.add(node);
+
+    return this;
   }
 
   private fillSubChains(monomer?: BaseMonomer) {
     if (!monomer) return;
 
     this.add(monomer);
-    if (this.lastNode instanceof Nucleotide) {
-      this.fillSubChains(
-        getNextMonomerInChain(
-          getPhosphateFromSugar(monomer),
-          this.firstMonomer,
-        ),
-      );
-    } else {
-      this.fillSubChains(getNextMonomerInChain(monomer, this.firstMonomer));
-    }
+
+    this.fillSubChains(
+      getNextMonomerInChain(
+        this.lastNode?.lastMonomerInNode,
+        this.firstMonomer,
+      ),
+    );
   }
 
   public get lastSubChain() {
     return this.subChains[this.subChains.length - 1];
   }
 
-  public get lastNode() {
+  public get nodes() {
+    const nodes: SubChainNode[] = [];
+    this.subChains.forEach((subChain) => {
+      nodes.push(...subChain.nodes);
+    });
+
+    return nodes;
+  }
+
+  public get lastNode():
+    | EmptySequenceNode
+    | MonomerSequenceNode
+    | Nucleoside
+    | Nucleotide
+    | undefined {
     return this.lastSubChain?.lastNode;
+  }
+
+  public get lastNonEmptyNode() {
+    if (this.lastNode instanceof EmptySequenceNode) {
+      const nodes = this.nodes;
+
+      return nodes[nodes.length - 2];
+    } else {
+      return this.lastNode;
+    }
   }
 
   public get firstSubChain() {
@@ -101,11 +168,34 @@ export class Chain {
     );
   }
 
-  public forEachNode(callback: ({ node, subChain }) => void) {
+  public forEachNode(
+    callback: ({
+      node,
+      subChain,
+    }: {
+      node: SubChainNode;
+      subChain: BaseSubChain;
+    }) => void,
+  ) {
     this.subChains.forEach((subChain) => {
       subChain.nodes.forEach((node) => {
         callback({ node, subChain });
       });
     });
+  }
+
+  public static createChainWithEmptyNode() {
+    const emptyChain = new Chain();
+    const emptySequenceNode = new EmptySequenceNode();
+    const emptySubChain = new EmptySubChain();
+
+    emptySubChain.add(emptySequenceNode);
+    emptyChain.subChains.push(emptySubChain);
+
+    return { emptyChain, emptySubChain, emptySequenceNode };
+  }
+
+  public get isNewSequenceChain() {
+    return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
   }
 }

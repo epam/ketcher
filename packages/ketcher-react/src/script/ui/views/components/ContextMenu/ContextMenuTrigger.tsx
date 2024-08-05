@@ -50,13 +50,16 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       );
 
       functionalGroup !== null &&
+        functionalGroup.relatedSGroup &&
+        !functionalGroup.relatedSGroup.isSuperatomWithoutLabel &&
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
           functionalGroup,
         );
 
-      const sGroupId = struct.sgroups.find((_, sGroup) =>
-        sGroup.atoms.includes(atomId),
+      const sGroupId = struct.sgroups.find(
+        (_, sGroup) =>
+          !sGroup.isSuperatomWithoutLabel && sGroup.atoms.includes(atomId),
       );
 
       sGroupId !== null && selectedSGroupsIds.add(sGroupId);

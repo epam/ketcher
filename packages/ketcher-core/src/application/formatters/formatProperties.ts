@@ -132,6 +132,18 @@ const formatProperties: FormatPropertiesMap = {
     ['.fasta'],
     true,
   ),
+  idt: new SupportedFormatProperties(
+    'IDT',
+    ChemicalMimeType.IDT,
+    ['.idt'],
+    false,
+  ),
+  helm: new SupportedFormatProperties(
+    'HELM',
+    ChemicalMimeType.HELM,
+    ['.helm'],
+    true,
+  ),
   sequence: new SupportedFormatProperties(
     'SEQUENCE',
     ChemicalMimeType.SEQUENCE,

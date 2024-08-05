@@ -56,7 +56,13 @@ describe('Monomer List', () => {
       ],
     },
     rnaBuilder: {
-      presets: [preset],
+      presetsDefault: [preset],
+      presetsCustom: [],
+      groupItemValidations: {
+        Bases: [],
+        Sugars: [],
+        Phosphates: [],
+      },
     },
   };
 

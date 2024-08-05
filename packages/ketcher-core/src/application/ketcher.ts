@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
@@ -28,6 +29,7 @@ import {
   LogLevel,
   runAsyncAction,
   SettingsManager,
+  getSvgFromDrawnStructures,
 } from 'utilities';
 import {
   deleteAllEntitiesOnCanvas,
@@ -35,6 +37,14 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
+import { EditorSelection } from './editor/editor.types';
+import {
+  BlobTypes,
+  ExportImageParams,
+  ModeTypes,
+  SupportedImageFormats,
+  SupportedModes,
+} from 'application/ketcher.types';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -161,6 +171,15 @@ export class Ketcher {
     return molfile;
   }
 
+  getIdt(): Promise<string> {
+    return getStructure(
+      SupportedFormat.idt,
+      this.#formatterFactory,
+      this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');
@@ -189,6 +208,7 @@ export class Ketcher {
       this.#formatterFactory,
       this.#editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this.#editor.selection() as EditorSelection,
     );
   }
 
@@ -325,7 +345,10 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
-  async setMolecule(structStr: string): Promise<void> {
+  async setMolecule(structStr: string): Promise<void | undefined> {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -347,7 +370,25 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async addFragment(structStr: string): Promise<void> {
+  async setHelm(helmStr: string): Promise<void | undefined> {
+    runAsyncAction<void>(async () => {
+      assert(typeof helmStr === 'string');
+      const struct: Struct = await prepareStructToRender(
+        helmStr,
+        this.#structService,
+        this,
+      );
+      struct.rescale();
+      this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
+    }, this.eventBus);
+  }
+
+  async addFragment(structStr: string): Promise<void | undefined> {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
@@ -376,6 +417,41 @@ export class Ketcher {
       const ketSerializer = new KetSerializer();
       this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
+  }
+
+  /**
+   * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
+   */
+  setZoom(value: number) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor && value) editor.zoomTool.zoomTo(value);
+  }
+
+  setMode(mode: SupportedModes) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor && mode) editor.events.selectMode.dispatch(ModeTypes[mode]);
+  }
+
+  exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
+    const editor = CoreEditor.provideEditorInstance();
+    const fileName = 'ketcher';
+    let blobPart;
+
+    if (format === 'svg' && editor?.canvas) {
+      blobPart = getSvgFromDrawnStructures(
+        editor.canvas,
+        'file',
+        params?.margin,
+      );
+    }
+    if (!blobPart) {
+      throw new Error('Cannot export image');
+    }
+
+    const blob = new Blob([blobPart], {
+      type: BlobTypes[format],
+    });
+    saveAs(blob, `${fileName}.${format}`);
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {

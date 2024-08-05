@@ -28,6 +28,7 @@ import { EmptyFunction } from 'helpers';
 
 type SubMenuProps = {
   vertical?: boolean;
+  disabled?: boolean;
   needOpenByMenuItemClick?: boolean;
   testId?: string;
 };
@@ -35,6 +36,7 @@ type SubMenuProps = {
 const SubMenu = ({
   children,
   vertical = false,
+  disabled = false,
   needOpenByMenuItemClick = false,
   testId,
 }: React.PropsWithChildren<SubMenuProps>) => {
@@ -42,6 +44,7 @@ const SubMenu = ({
   const { isActive } = useMenuContext();
 
   const handleDropDownClick = () => {
+    if (disabled) return;
     setOpen((prev) => !prev);
   };
 
@@ -71,6 +74,7 @@ const SubMenu = ({
     <RootContainer data-testid={testId}>
       <VisibleItem>
         <MenuItem
+          disabled={disabled}
           itemId={visibleItemId}
           title={visibleItemTitle}
           testId={visibleItemTestId}

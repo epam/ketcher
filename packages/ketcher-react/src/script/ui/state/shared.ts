@@ -31,6 +31,7 @@ import {
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
+import { isNumber } from 'lodash';
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -149,6 +150,14 @@ export function load(struct: Struct, options?) {
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
+      const hasMoleculeToMonomerConnections = parsedStruct.bonds.find(
+        (_, bond) => {
+          return (
+            isNumber(bond.beginSuperatomAttachmentPointNumber) ||
+            isNumber(bond.endSuperatomAttachmentPointNumber)
+          );
+        },
+      );
 
       if (hasUnsupportedGroups) {
         await editor.event.confirm.dispatch();
@@ -157,7 +166,10 @@ export function load(struct: Struct, options?) {
         );
       }
 
-      parsedStruct.rescale(); // TODO: move out parsing?
+      // scaling works bad with molecule-to-monomer connections
+      if (!hasMoleculeToMonomerConnections) {
+        parsedStruct.rescale(); // TODO: move out parsing?
+      }
 
       if (editor.struct().atoms.size) {
         // NB: reset id

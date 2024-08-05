@@ -55,14 +55,28 @@ class SelectRectangle implements BaseTool {
     const brushed = (mo) => {
       this.setSelectedEntities();
       if (mo.selection) {
-        this.brushArea.call(this.brush?.clear);
+        this.brushArea?.call(this.brush?.clear);
+      }
+    };
+
+    const onStartBrush = () => {
+      const editor = CoreEditor.provideEditorInstance();
+      if (editor.isSequenceEditInRNABuilderMode) {
+        this.brushArea.select('rect.selection').style('stroke', 'transparent');
+      } else {
+        this.brushArea.select('rect.selection').style('stroke', 'darkgrey');
       }
     };
 
     const onBrush = (brushEvent) => {
       const selection = brushEvent.selection;
       const editor = CoreEditor.provideEditorInstance();
-      if (!selection || editor.isSequenceEditMode) return;
+      if (
+        !selection ||
+        editor.isSequenceEditMode ||
+        editor.isSequenceEditInRNABuilderMode
+      )
+        return;
       requestAnimationFrame(() => {
         const topLeftPoint = Coordinates.viewToCanvas(
           new Vec2(selection[0][0], selection[0][1]),
@@ -83,15 +97,14 @@ class SelectRectangle implements BaseTool {
       });
     };
 
+    this.brush.on('start', onStartBrush);
     this.brush.on('brush', onBrush);
     this.brush.on('end', brushed);
 
     this.brushArea.call(this.brush);
 
-    this.brushArea
-      .select('rect.selection')
-      .style('fill', 'transparent')
-      .style('stroke', 'darkgrey');
+    this.brushArea.select('rect.selection').style('fill', 'transparent');
+    this.brushArea.select('rect.overlay').attr('cursor', 'default');
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;
@@ -125,11 +138,7 @@ class SelectRectangle implements BaseTool {
   }
 
   mousedown(event) {
-    const editor = CoreEditor.provideEditorInstance();
-
-    if (editor.mode instanceof SequenceMode && editor.mode.isEditMode) {
-      return;
-    }
+    if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
     const renderer = event.target.__data__;
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
@@ -145,40 +154,40 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
-          renderer.drawingEntity,
-          false,
-        );
       modelChanges =
-        this.editor.drawingEntitiesManager.selectDrawingEntities(
-          drawingEntities,
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      const { command: selectModelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+          renderer.drawingEntity,
         );
+      modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      const drawingEntities =
-        this.editor.drawingEntitiesManager.getAllSelectedEntities(
-          renderer.drawingEntity,
-        );
-      modelChanges =
-        this.editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+      const drawingEntities: DrawingEntity[] = [
+        ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
+        renderer.drawingEntity,
+      ];
+      ({ command: modelChanges } =
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
-        );
+        ));
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
         .map((node) => {
-          if (node instanceof Nucleoside) {
-            return [node.sugar, node.rnaBase];
-          } else if (node instanceof Nucleotide) {
-            return [node.sugar, node.rnaBase, node.phosphate];
+          if (node instanceof Nucleoside || node instanceof Nucleotide) {
+            return node.monomers;
           } else {
             return node.monomer;
           }
         })
         .flat();
-      drawingEntities = drawingEntities.concat(renderer.currentSubChain.bonds);
+      drawingEntities.forEach((entity) => entity.turnOnSelection());
+      const bondsInsideCurrentChain = renderer.currentSubChain.bonds.filter(
+        (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
+      );
+      drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
       modelChanges =
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
@@ -216,7 +225,7 @@ class SelectRectangle implements BaseTool {
 
   mouseup(event) {
     const renderer = event.target.__data__;
-    if (this.moveStarted && renderer.drawingEntity?.selected) {
+    if (this.moveStarted && renderer?.drawingEntity?.selected) {
       this.moveStarted = false;
 
       if (

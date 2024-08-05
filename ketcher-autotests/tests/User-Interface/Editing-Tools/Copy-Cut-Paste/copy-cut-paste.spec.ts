@@ -26,6 +26,9 @@ import {
   resetCurrentTool,
   pressButton,
   clickAfterItemsToMergeInitialization,
+  cutToClipboardByKeyboard,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -185,7 +188,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+x');
+    await cutToClipboardByKeyboard(page);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -227,7 +230,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
   });
 
   test('Copy and Paste structure and edit', async ({ page }) => {
@@ -298,8 +301,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+
     await page.mouse.click(x, y);
   });
 
@@ -332,7 +337,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await page.mouse.click(x2, y2);
   });
 

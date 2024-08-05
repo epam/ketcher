@@ -1321,10 +1321,10 @@ function getBondMark(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   tooltip &&
-  path.node.childNodes[0].setAttribute(
-    'data-tooltip',
-    util.escapeHtml(tooltip),
-  );
+    path.node.childNodes[0].setAttribute(
+      'data-tooltip',
+      util.escapeHtml(tooltip),
+    );
 
   return path;
 }

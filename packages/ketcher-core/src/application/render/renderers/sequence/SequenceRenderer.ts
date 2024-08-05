@@ -217,10 +217,9 @@ export class SequenceRenderer {
             return;
           }
 
-          const handledAttachmentPoints =
-            handledMonomersToAttachmentPoints.get(
-              node.monomer,
-            ) as Set<AttachmentPointName>;
+          const handledAttachmentPoints = handledMonomersToAttachmentPoints.get(
+            node.monomer,
+          ) as Set<AttachmentPointName>;
 
           if (handledAttachmentPoints.has(attachmentPointName)) {
             return;

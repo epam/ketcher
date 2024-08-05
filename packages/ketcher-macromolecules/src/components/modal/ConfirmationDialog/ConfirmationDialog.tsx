@@ -21,7 +21,11 @@ export const ConfirmationDialog = ({
       </Modal.Content>
       <Modal.Footer>
         <ActionButton label="Cancel" clickHandler={onClose} />
-        <ActionButton label="Yes" clickHandler={handleConfirm} />
+        <ActionButton
+          label="Yes"
+          clickHandler={handleConfirm}
+          styleType="secondary"
+        />
       </Modal.Footer>
     </Modal>
   );

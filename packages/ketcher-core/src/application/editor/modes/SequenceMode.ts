@@ -951,6 +951,20 @@ export class SequenceMode extends BaseMode {
     return this.isR1Free(firstEntity) && this.isR2Free(lastEntity);
   }
 
+  private isConnectionPossible(
+    firstMonomer: BaseMonomer,
+    firstMonomerAttachmentPoint: AttachmentPointName,
+    secondMonomer: BaseMonomer,
+    secondMonomerAttachmentPoint: AttachmentPointName,
+  ) {
+    return (
+      firstMonomer.attachmentPointsToBonds[firstMonomerAttachmentPoint] ===
+        null &&
+      secondMonomer.attachmentPointsToBonds[secondMonomerAttachmentPoint] ===
+        null
+    );
+  }
+
   isPasteAvailable(drawingEntitiesManager: DrawingEntitiesManager) {
     if (!this.isEditMode) {
       return true;
@@ -1020,6 +1034,50 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
+  private preserveSideChainConnections(selection: NodeSelection) {
+    if (selection.node.monomer.sideConnections.length === 0) {
+      return null;
+    }
+
+    const sideConnectionsData: Array<{
+      firstMonomerAttachmentPointName: AttachmentPointName;
+      secondMonomer: BaseMonomer;
+      secondMonomerAttachmentPointName: AttachmentPointName;
+    }> = [];
+
+    Object.entries(selection.node.monomer.attachmentPointsToBonds).forEach(
+      ([key, bond]) => {
+        if (!bond || bond.isBackBoneChainConnection) {
+          return;
+        }
+
+        const secondMonomer = bond.getAnotherMonomer(selection.node.monomer);
+        if (!secondMonomer?.attachmentPointsToBonds) {
+          return;
+        }
+
+        const secondMonomerBondData = Object.entries(
+          secondMonomer?.attachmentPointsToBonds,
+        ).find(([, value]) => value === bond);
+
+        if (!secondMonomerBondData) {
+          return;
+        }
+
+        const [secondMonomerAttachmentPointName] = secondMonomerBondData;
+
+        sideConnectionsData.push({
+          firstMonomerAttachmentPointName: key as AttachmentPointName,
+          secondMonomer,
+          secondMonomerAttachmentPointName:
+            secondMonomerAttachmentPointName as AttachmentPointName,
+        });
+      },
+    );
+
+    return sideConnectionsData;
+  }
+
   private replaceSelectionWithMonomer(
     monomerItem: MonomerItemType,
     selection: NodeSelection,
@@ -1029,6 +1087,8 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNode(selection.node);
     const position = selection.node.monomer.position;
+
+    const sideChainConnections = this.preserveSideChainConnections(selection);
 
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -1055,7 +1115,60 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
+    sideChainConnections?.forEach((sideConnectionData) => {
+      const {
+        firstMonomerAttachmentPointName,
+        secondMonomer,
+        secondMonomerAttachmentPointName,
+      } = sideConnectionData;
+      if (
+        !this.isConnectionPossible(
+          newMonomer,
+          firstMonomerAttachmentPointName,
+          secondMonomer,
+          secondMonomerAttachmentPointName,
+        )
+      ) {
+        return;
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          newMonomer,
+          secondMonomer,
+          firstMonomerAttachmentPointName,
+          secondMonomerAttachmentPointName,
+        ),
+      );
+    });
+
     return newMonomerSequenceNode;
+  }
+
+  private checkIfNewMonomerCouldEstablishSideChainConnections(
+    nodeSelection: NodeSelection,
+    monomerItem: MonomerItemType | undefined,
+  ) {
+    if (!monomerItem?.attachmentPoints) {
+      return false;
+    }
+
+    const newMonomerAttachmentPoints =
+      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+        monomerItem.attachmentPoints,
+      );
+    const oldMonomerBonds = Object.entries(
+      nodeSelection.node.monomer.attachmentPointsToBonds,
+    );
+    return oldMonomerBonds.every(([key, bond]) => {
+      if (!bond) {
+        return true;
+      }
+
+      return newMonomerAttachmentPoints.attachmentPointsList.includes(
+        key as AttachmentPointName,
+      );
+    });
   }
 
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
@@ -1097,15 +1210,10 @@ export class SequenceMode extends BaseMode {
         } else if (
           selectionRange.some(
             (nodeSelection) =>
-              nodeSelection.node.monomer.sideConnections.length !== 0 &&
-              Object.values(
-                nodeSelection.node.monomer.attachmentPointsToBonds,
-              ).reduce((count, ap) => {
-                if (ap) {
-                  count++;
-                }
-                return count;
-              }, 0) > (monomerItem.attachmentPoints?.length ?? 0),
+              !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+                nodeSelection,
+                monomerItem,
+              ),
           )
         ) {
           editor.events.openConfirmationDialog.dispatch({
@@ -1175,6 +1283,8 @@ export class SequenceMode extends BaseMode {
     const nextNode = SequenceRenderer.getNextNode(selection.node);
     const position = selection.node.monomer.position;
 
+    const sideChainConnections = this.preserveSideChainConnections(selection);
+
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -1230,6 +1340,36 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
+    const monomerForSideConnections =
+      newPresetNode instanceof Nucleotide ? phosphateMonomer : sugarMonomer;
+
+    sideChainConnections?.forEach((sideConnectionData) => {
+      const {
+        firstMonomerAttachmentPointName,
+        secondMonomer,
+        secondMonomerAttachmentPointName,
+      } = sideConnectionData;
+      if (
+        !this.isConnectionPossible(
+          monomerForSideConnections,
+          firstMonomerAttachmentPointName,
+          secondMonomer,
+          secondMonomerAttachmentPointName,
+        )
+      ) {
+        return;
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          monomerForSideConnections,
+          secondMonomer,
+          firstMonomerAttachmentPointName,
+          secondMonomerAttachmentPointName,
+        ),
+      );
+    });
+
     return newPresetNode;
   }
 
@@ -1272,7 +1412,10 @@ export class SequenceMode extends BaseMode {
         } else if (
           selectionRange.some(
             (nodeSelection) =>
-              nodeSelection.node.monomer.sideConnections.length !== 0,
+              !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+                nodeSelection,
+                preset.sugar,
+              ),
           )
         ) {
           editor.events.openConfirmationDialog.dispatch({

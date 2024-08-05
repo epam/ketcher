@@ -9,6 +9,7 @@ export * from './erase';
 export * from './fragment';
 export * from './paste';
 export * from './image';
+export * from './multitailArrow';
 export * from './reaction';
 export * from './rgroup';
 export * from './rgroupAttachmentPoint';

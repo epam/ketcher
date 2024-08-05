@@ -40,6 +40,7 @@ import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { MultitailArrow } from './multitailArrow';
 
 export type Neighbor = {
   aid: number;
@@ -75,10 +76,11 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
-  images: Pool<Image>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
+  images = new Pool<Image>();
+  multitailArrows = new Pool<MultitailArrow>();
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -99,7 +101,6 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
-    this.images = new Pool<Image>();
   }
 
   hasRxnProps(): boolean {
@@ -128,7 +129,8 @@ export class Struct {
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
       this.texts.size === 0 &&
-      this.images.size === 0
+      this.images.size === 0 &&
+      this.multitailArrows.size === 0
     );
   }
 

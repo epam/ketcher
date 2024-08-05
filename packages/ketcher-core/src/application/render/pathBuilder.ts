@@ -25,6 +25,9 @@ export class PathBuilder {
     return this;
   }
 
+  addLine(to: Point2D): PathBuilder;
+  addLine(to: Point2D, from: Point2D): PathBuilder;
+
   addLine(to: Point2D, from?: Point2D): PathBuilder {
     if (from) {
       this.addMovement(from);
@@ -47,6 +50,11 @@ export class PathBuilder {
     return this;
   }
 
+  addPathParts(pathParts: Array<string>): PathBuilder {
+    this.pathParts = this.pathParts.concat(pathParts);
+    return this;
+  }
+
   addOpenArrowPathParts(
     start: Vec2,
     arrowLength: number,
@@ -58,24 +66,8 @@ export class PathBuilder {
     const tipX = endX - tipXOffset;
 
     return this.addLine(end, start)
-      .addLine({ x: tipX, y: end.y - tipYOffset })
-      .addLine({ x: tipX, y: end.y + tipYOffset }, end);
-  }
-
-  addFilledTriangleArrowPathParts(
-    start: Vec2,
-    arrowLength: number,
-    triangleLength = 8,
-    triangleWidth = 4,
-  ): PathBuilder {
-    const endX = start.x + arrowLength;
-    const end = new Vec2(endX, start.y);
-    const triangleBottom = new Vec2(endX - triangleLength, end.y);
-    const tipX = endX - triangleLength;
-
-    return this.addLine(start, triangleBottom)
-      .addLine({ x: tipX, y: end.y - triangleWidth }, end)
-      .addClosedLine({ x: tipX, y: end.y + triangleWidth });
+      .addLine({ x: tipX, y: start.y - tipYOffset })
+      .addLine({ x: tipX, y: start.y + tipYOffset }, end);
   }
 
   addMultitailArrowBase(
@@ -83,7 +75,7 @@ export class PathBuilder {
     bottomY: number,
     spineX: number,
     tailLength: number,
-    cubicBezierOffset = 6,
+    cubicBezierOffset = 3,
   ): PathBuilder {
     const tailX = spineX - tailLength;
     const tailStart = spineX - cubicBezierOffset;

@@ -24,14 +24,13 @@ export interface MultitailArrowsReferenceLines {
 export class MultitailArrow extends BaseMicromoleculeEntity {
   static fromTwoPoints(topLeft: Vec2, bottomRight: Vec2) {
     const center = Vec2.centre(topLeft, bottomRight);
-    const spineX = topLeft.x + (bottomRight.x - topLeft.x) * 0.33;
-    const spineTop = new Vec2(spineX, topLeft.y);
+    const spineTop = new Vec2(center.x, topLeft.y);
     const headOffset = new Vec2(bottomRight.x, center.y).sub(spineTop);
     return new MultitailArrow(
       spineTop,
       bottomRight.y - topLeft.y,
       headOffset,
-      spineX - topLeft.x,
+      center.x - topLeft.x,
       new Pool<number>(),
     );
   }
@@ -75,7 +74,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   getReferenceLines(
     referencePositions: MultitailArrowsReferencePositions,
   ): MultitailArrowsReferenceLines {
-    const spineX = referencePositions.topSpinePosition.x;
+    const spineX = referencePositions.topTailPosition.x;
     const headSpinePosition = new Vec2(
       spineX,
       referencePositions.headPosition.y,
@@ -88,11 +87,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return {
       topTail: [
         referencePositions.topTailPosition,
-        referencePositions.topSpinePosition,
+        referencePositions.topTailPosition,
       ],
       bottomTail: [
         referencePositions.bottomTailPosition,
-        referencePositions.bottomSpinePosition,
+        referencePositions.bottomTailPosition,
       ],
       spine: [
         referencePositions.topSpinePosition,

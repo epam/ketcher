@@ -66,7 +66,6 @@ export class ReMultitailArrow extends ReObject {
   show(reStruct: ReStruct, renderOptions: RenderOptions) {
     reStruct.clearVisel(this.visel);
     const pathBuilder = new PathBuilder();
-    const headPathBuilder = new PathBuilder();
     const {
       topTailPosition,
       topSpinePosition,
@@ -84,20 +83,16 @@ export class ReMultitailArrow extends ReObject {
       topSpinePosition.x,
       topTailOffsetX,
     );
-    headPathBuilder.addFilledTriangleArrowPathParts(arrowStart, arrowLength);
+    pathBuilder.addOpenArrowPathParts(arrowStart, arrowLength);
     tails.forEach((tail) => {
       pathBuilder.addLine(tail, { x: topSpinePosition.x, y: tail.y });
     });
 
     const path = reStruct.render.paper.path(pathBuilder.build());
-    const header = reStruct.render.paper.path(headPathBuilder.build());
-    path.attr(renderOptions.multitailArrow);
-    header.attr({
-      ...renderOptions.multitailArrow,
-      fill: '#000',
+    path.attr({
+      ...renderOptions.lineattr,
     });
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
-    this.visel.add(header, Box2Abs.fromRelBox(util.relBox(header.getBBox())));
   }
 
   calculateDistanceToPoint(

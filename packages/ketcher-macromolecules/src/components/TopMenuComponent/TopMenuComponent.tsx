@@ -46,24 +46,9 @@ export function TopMenuComponent() {
     } else if (name === 'undo' || name === 'redo') {
       editor.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
-      if (
-        name === 'erase' &&
-        editor.drawingEntitiesManager.selectedEntities.length
-      ) {
-        dispatch(selectTool('select-rectangle'));
-        editor.events.selectTool.dispatch(name);
-        editor.events.selectTool.dispatch('select-rectangle');
-      } else {
-        dispatch(selectTool(name));
-        editor.events.selectTool.dispatch(name);
-        if (name === 'clear') {
-          dispatch(selectTool('select-rectangle'));
-          editor.events.selectTool.dispatch('select-rectangle');
-        } else {
-          dispatch(selectTool(name));
-        }
-      }
-
+      editor.events.selectTool.dispatch(name);
+      dispatch(selectTool('select-rectangle'));
+      editor.events.selectTool.dispatch('select-rectangle');
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }

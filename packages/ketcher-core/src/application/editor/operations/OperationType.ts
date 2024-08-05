@@ -86,6 +86,9 @@ export const OperationType = Object.freeze({
   IMAGE_DELETE: 'Delete image',
   IMAGE_MOVE: 'Move image',
   IMAGE_RESIZE: 'Resize image',
+  MULTITAIL_ARROW_UPSERT: 'Upsert multitail arrow',
+  MULTITAIL_ARROW_DELETE: 'Delete multitail arrow',
+  MULTITAIL_ARROW_MOVE: 'Move multitail arrow',
 });
 
 export enum OperationPriority {

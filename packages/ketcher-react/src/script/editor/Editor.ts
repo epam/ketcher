@@ -29,6 +29,7 @@ import {
   provideEditorSettings,
   ReStruct,
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -68,6 +69,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'simpleObjects',
   'texts',
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ];
 
 const highlightTargets = [
@@ -86,6 +88,7 @@ const highlightTargets = [
   'simpleObjects',
   'texts',
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ];
 
 function selectStereoFlagsIfNecessary(

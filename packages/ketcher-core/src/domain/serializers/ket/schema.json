@@ -27,7 +27,7 @@
                 "$ref": "#/definitions/plus"
               },
               {
-                "$ref": "#/definitions/rasterImage"
+                "$ref": "#/definitions/image"
               },
               {
                 "type": "object",
@@ -58,23 +58,6 @@
   },
   "additionalProperties": false,
   "definitions": {
-    "2dCoordinates": {
-      "type": "object",
-      "required": ["x", "y"],
-      "properties": {
-        "x": {
-          "type": "number"
-        },
-        "y": {
-          "type": "number"
-        }
-      }
-    },
-    "imageFile": {
-      "type": "string",
-      "pattern": "^data:image/(png|svg\\+xml);base64,",
-      "minLength": 160
-    },
     "header": {
       "type": "object",
       "properties": {
@@ -798,38 +781,43 @@
         }
       }
     },
-    "rasterImage": {
+    "image": {
       "type": "object",
-      "required": ["type", "data"],
+      "required": ["type", "format", "boundingBox", "data"],
       "properties": {
         "type": {
-          "const": "rasterImage"
+          "const": "image"
         },
-        "center": {
-          "$ref": "#/definitions/2dCoordinates"
+        "format": {
+          "type": "string",
+          "pattern": "^image/(png|svg\\+xml)$"
         },
-        "data": {
+        "boundingBox": {
           "type": "object",
-          "required": ["bitmap", "halfSize"],
+          "required": ["width", "height", "x", "y"],
           "properties": {
-            "bitmap": {
-              "$ref": "#/definitions/imageFile"
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
             },
-            "halfSize": {
-              "type": "object",
-              "required": ["x", "y"],
-              "properties": {
-                "x": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                },
-                "y": {
-                  "type": "number",
-                  "exclusiveMinimum": 0
-                }
-              }
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
             }
           }
+        },
+        "data": {
+          "type": "string",
+          "minLength": 160
         }
       }
     }

@@ -1,45 +1,45 @@
 import { BaseOperation } from 'application/editor/operations/base';
-import { RasterImageReferenceName, Vec2 } from 'domain/entities';
+import { ImageReferenceName, Vec2 } from 'domain/entities';
 import { ReStruct } from 'application/render';
 import { OperationType } from 'application/editor';
 
-const moveLeftPositions: Array<RasterImageReferenceName> = [
+const moveLeftPositions: Array<ImageReferenceName> = [
   'topLeftPosition',
   'leftMiddlePosition',
   'bottomLeftPosition',
 ];
 
-const moveRightPositions: Array<RasterImageReferenceName> = [
+const moveRightPositions: Array<ImageReferenceName> = [
   'topRightPosition',
   'rightMiddlePosition',
   'bottomRightPosition',
 ];
 
-const moveTopPositions: Array<RasterImageReferenceName> = [
+const moveTopPositions: Array<ImageReferenceName> = [
   'topLeftPosition',
   'topMiddlePosition',
   'topRightPosition',
 ];
 
-const moveBottomPositions: Array<RasterImageReferenceName> = [
+const moveBottomPositions: Array<ImageReferenceName> = [
   'bottomLeftPosition',
   'bottomMiddlePosition',
   'bottomRightPosition',
 ];
 
-export class RasterImageResize extends BaseOperation {
+export class ImageResize extends BaseOperation {
   private previousPosition: Vec2 | null = null;
   constructor(
     private id: number,
     private position: Vec2,
-    private referencePositionName: RasterImageReferenceName,
+    private referencePositionName: ImageReferenceName,
   ) {
-    super(OperationType.RASTER_IMAGE_RESIZE);
+    super(OperationType.IMAGE_RESIZE);
   }
 
   execute(reStruct: ReStruct) {
-    const item = reStruct.molecule.rasterImages.get(this.id);
-    const renderItem = reStruct.rasterImages.get(this.id);
+    const item = reStruct.molecule.images.get(this.id);
+    const renderItem = reStruct.images.get(this.id);
 
     if (!item || !renderItem) {
       return;
@@ -69,7 +69,7 @@ export class RasterImageResize extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new RasterImageResize(
+    return new ImageResize(
       this.id,
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this.previousPosition!,

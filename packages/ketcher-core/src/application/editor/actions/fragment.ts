@@ -28,7 +28,7 @@ import {
   SGroupDataMove,
   SimpleObjectMove,
   TextMove,
-  RasterImageMove,
+  ImageMove,
 } from '../operations';
 import { Pile, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
@@ -36,7 +36,7 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
-import { RASTER_IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);
@@ -129,9 +129,9 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
-  if (lists[RASTER_IMAGE_KEY]) {
-    lists[RASTER_IMAGE_KEY].forEach((rasterImage) => {
-      action.addOp(new RasterImageMove(rasterImage, d));
+  if (lists[IMAGE_KEY]) {
+    lists[IMAGE_KEY].forEach((image) => {
+      action.addOp(new ImageMove(image, d));
     });
   }
 

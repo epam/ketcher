@@ -33,10 +33,10 @@ import {
   vectorUtils,
   KetcherLogger,
   CoordinateTransformation,
-  RASTER_IMAGE_KEY,
-  rasterImageReferencePositionToCursor,
-  RasterImageReferencePositionInfo,
-  fromRasterImageResize,
+  IMAGE_KEY,
+  imageReferencePositionToCursor,
+  ImageReferencePositionInfo,
+  fromImageResize,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -199,11 +199,11 @@ class SelectTool implements Tool {
       }
       /* end */
 
-      /* handle raster image resize */
-      if (dragCtx.item.map === RASTER_IMAGE_KEY && dragCtx.item.ref) {
+      /* handle image resize */
+      if (dragCtx.item.map === IMAGE_KEY && dragCtx.item.ref) {
         if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
         const position = CoordinateTransformation.pageToModel(event, rnd);
-        dragCtx.action = fromRasterImageResize(
+        dragCtx.action = fromImageResize(
           rnd.ctab,
           dragCtx.item.id,
           position,
@@ -278,14 +278,13 @@ class SelectTool implements Tool {
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
-    if (item?.map === RASTER_IMAGE_KEY && item.ref) {
-      const referencePositionInfo =
-        item.ref as RasterImageReferencePositionInfo;
+    if (item?.map === IMAGE_KEY && item.ref) {
+      const referencePositionInfo = item.ref as ImageReferencePositionInfo;
       handleMovingPosibilityCursor(
         item,
         this.editor.render.paper.canvas,
         // Casting is safe because we've checked for item map
-        rasterImageReferencePositionToCursor[referencePositionInfo.name],
+        imageReferencePositionToCursor[referencePositionInfo.name],
       );
     } else {
       handleMovingPosibilityCursor(
@@ -717,7 +716,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'enhancedFlags',
     'simpleObjects',
     'texts',
-    RASTER_IMAGE_KEY,
+    IMAGE_KEY,
     ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }

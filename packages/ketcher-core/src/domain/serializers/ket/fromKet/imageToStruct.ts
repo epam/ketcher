@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 import { Struct } from 'domain/entities';
-import { RasterImage } from 'domain/entities/rasterImage';
+import { Image } from 'domain/entities/image';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function rasterImageToStruct(ketItem: any, struct: Struct): Struct {
-  struct.rasterImages.add(RasterImage.fromKetNode(ketItem));
+export function imageToStruct(ketItem: any, struct: Struct): Struct {
+  struct.images.add(Image.fromKetNode(ketItem));
   return struct;
 }

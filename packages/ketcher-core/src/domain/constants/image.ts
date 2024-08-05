@@ -1,15 +1,15 @@
-import type { RasterImageReferenceName } from 'domain/entities';
+import type { ImageReferenceName } from 'domain/entities';
 
-export const RASTER_IMAGE_KEY = 'rasterImages';
-export const RASTER_IMAGE_SERIALIZE_KEY = 'rasterImage';
+export const IMAGE_KEY = 'images';
+export const IMAGE_SERIALIZE_KEY = 'image';
 
 const CURSOR_DIAGONAL_NWSE = 'nwse-resize';
 const CURSOR_DIAGONAL_NESW = 'nesw-resize';
 const CURSOR_VERTICAL = 'ns-resize';
 const CURSOR_HORIZONTAL = 'ew-resize';
 
-export const rasterImageReferencePositionToCursor: Record<
-  RasterImageReferenceName,
+export const imageReferencePositionToCursor: Record<
+  ImageReferenceName,
   string
 > = {
   topLeftPosition: CURSOR_DIAGONAL_NWSE,

@@ -82,10 +82,10 @@ export const OperationType = Object.freeze({
   DRAWING_ENTITY_SELECT: 'Select drawing entity',
   DRAWING_ENTITY_HOVER: 'Hover drawing entity',
   SHOW_POLYMER_BOND_INFORMATION: 'Show polymer bond information',
-  RASTER_IMAGE_UPSERT: 'Upsert raster image',
-  RASTER_IMAGE_DELETE: 'Delete raster image',
-  RASTER_IMAGE_MOVE: 'Move raster image',
-  RASTER_IMAGE_RESIZE: 'Resize raster image',
+  IMAGE_UPSERT: 'Upsert image',
+  IMAGE_DELETE: 'Delete image',
+  IMAGE_MOVE: 'Move image',
+  IMAGE_RESIZE: 'Resize image',
 });
 
 export enum OperationPriority {

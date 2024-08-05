@@ -41,8 +41,8 @@ import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
-import { ReRasterImage } from 'application/render/restruct/rerasterImage';
-import { RASTER_IMAGE_KEY } from 'domain/constants';
+import { ReImage } from 'application/render/restruct/reImage';
+import { IMAGE_KEY } from 'domain/constants';
 
 class ReStruct {
   public static readonly maps = {
@@ -59,7 +59,7 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
-    [RASTER_IMAGE_KEY]: ReRasterImage,
+    [IMAGE_KEY]: ReImage,
   } as const;
 
   public render: Render;
@@ -77,7 +77,7 @@ class ReStruct {
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   public simpleObjects: Map<number, ReSimpleObject> = new Map();
-  public rasterImages: Map<number, ReRasterImage> = new Map();
+  public images: Map<number, ReImage> = new Map();
   public texts: Map<number, ReText> = new Map();
   private initialized = false;
   private layers: Array<any> = [];
@@ -93,7 +93,7 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
-  private rasterImagesChanged: Map<number, ReRasterImage> = new Map();
+  private imagesChanged: Map<number, ReImage> = new Map();
   private snappingBonds: number[] = [];
 
   constructor(
@@ -161,8 +161,8 @@ class ReStruct {
         this.sgroupData.set(id, new ReDataSGroupData(item));
       }
     });
-    molecule.rasterImages.forEach((item, id) => {
-      this.rasterImages.set(id, new ReRasterImage(item));
+    molecule.images.forEach((item, id) => {
+      this.images.set(id, new ReImage(item));
     });
   }
 
@@ -724,8 +724,8 @@ class ReStruct {
 
   showImages() {
     const options = this.render.options;
-    this.rasterImagesChanged.forEach((_, id) => {
-      const image = this.rasterImages.get(id);
+    this.imagesChanged.forEach((_, id) => {
+      const image = this.images.get(id);
       if (image) {
         image.show(this, options);
       }

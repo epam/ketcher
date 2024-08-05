@@ -34,7 +34,7 @@ export * from './pile';
 export * from './vec2';
 export * from './box2Abs';
 export * from './pool';
-export * from './rasterImage';
+export * from './image';
 export * from './highlight';
 export * from './sGroupAttachmentPoint';
 export * from './monomerMicromolecule';

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { FC, MutableRefObject, useRef } from 'react';
-import { RASTER_IMAGE_KEY } from 'ketcher-core';
+import { IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -189,7 +189,7 @@ const LeftToolbar = (props: Props) => {
             items={[
               { id: 'shapes', options: shapeOptions },
               { id: 'text' },
-              { id: RASTER_IMAGE_KEY },
+              { id: IMAGE_KEY },
             ]}
           />
         </div>

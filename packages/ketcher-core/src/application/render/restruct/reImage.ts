@@ -1,34 +1,34 @@
 import { LayerMap, ReObject, ReStruct } from 'application/render/restruct';
 import {
-  RasterImage,
-  RasterImageReferenceName,
-  RasterImageReferencePositionInfo,
-} from 'domain/entities/rasterImage';
+  Image,
+  ImageReferenceName,
+  ImageReferencePositionInfo,
+} from 'domain/entities/image';
 import { RenderOptions } from 'application/render/render.types';
 import { Scale } from 'domain/helpers';
 import { RaphaelPaper, RaphaelSet } from 'raphael';
 import { Box2Abs, Vec2 } from 'domain/entities';
 import draw from 'application/render/draw';
-import { RASTER_IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants';
 import { Render } from 'application/render';
 
-type GetReferencePositions = ReturnType<RasterImage['getReferencePositions']>;
+type GetReferencePositions = ReturnType<Image['getReferencePositions']>;
 const REFERENCE_POINT_LINE_WIDTH_MULTIPLIER = 0.4;
 
 interface ClosestReferencePosition {
   distance: number;
-  ref: RasterImageReferencePositionInfo | null;
+  ref: ImageReferencePositionInfo | null;
 }
 
-export class ReRasterImage extends ReObject {
+export class ReImage extends ReObject {
   private selectionPointsSet: RaphaelSet;
 
   static isSelectable(): boolean {
     return true;
   }
 
-  constructor(public rasterImage: RasterImage) {
-    super(RASTER_IMAGE_KEY);
+  constructor(public image: Image) {
+    super(IMAGE_KEY);
   }
 
   private getScaledPointWithOffset(
@@ -46,11 +46,11 @@ export class ReRasterImage extends ReObject {
   private getDimensions(renderOptions: RenderOptions): Vec2 {
     return Vec2.diff(
       this.getScaledPointWithOffset(
-        this.rasterImage.getBottomRightPosition(),
+        this.image.getBottomRightPosition(),
         renderOptions,
       ),
       this.getScaledPointWithOffset(
-        this.rasterImage.getTopLeftPosition(),
+        this.image.getTopLeftPosition(),
         renderOptions,
       ),
     );
@@ -66,7 +66,7 @@ export class ReRasterImage extends ReObject {
       topRightPosition,
       bottomRightPosition,
       bottomLeftPosition,
-    ] = this.rasterImage
+    ] = this.image
       .getCornerPositions()
       .map((position) => Scale.modelToCanvas(position, renderOptions));
     const selectionTopLeftPosition = topLeftPosition.sub(
@@ -156,7 +156,7 @@ export class ReRasterImage extends ReObject {
         'stroke-width': strokeWidth,
       });
       if (element.node && element.node.setAttribute) {
-        element.node.setAttribute('data-testid', `rasterImageResize-${key}`);
+        element.node.setAttribute('data-testid', `imageResize-${key}`);
       }
 
       this.selectionPointsSet.push(element);
@@ -170,16 +170,16 @@ export class ReRasterImage extends ReObject {
 
   show(restruct: ReStruct, renderOptions: RenderOptions) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
-      this.rasterImage.getTopLeftPosition(),
+      this.image.getTopLeftPosition(),
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
 
     restruct.addReObjectPath(
-      LayerMap.rasterImages,
+      LayerMap.images,
       this.visel,
       restruct.render.paper.image(
-        this.rasterImage.bitmap,
+        this.image.bitmap,
         scaledTopLeftWithOffset.x,
         scaledTopLeftWithOffset.y,
         dimensions.x,
@@ -219,8 +219,8 @@ export class ReRasterImage extends ReObject {
 
   getVBoxObj(): Box2Abs | null {
     return new Box2Abs(
-      this.rasterImage.getTopLeftPosition(),
-      this.rasterImage.getBottomRightPosition(),
+      this.image.getTopLeftPosition(),
+      this.image.getBottomRightPosition(),
     );
   }
 
@@ -255,7 +255,7 @@ export class ReRasterImage extends ReObject {
   ): ClosestReferencePosition {
     const entries = Object.entries(
       this.getSelectionReferencePositions(renderOptions),
-    ) as Array<[RasterImageReferenceName, Vec2]>;
+    ) as Array<[ImageReferenceName, Vec2]>;
     return entries.reduce(
       (acc, [key, position]) => {
         const offset = Vec2.diff(position, point);

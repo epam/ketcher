@@ -38,7 +38,7 @@ import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
-import { RasterImage } from './rasterImage';
+import { Image } from './image';
 
 export type Neighbor = {
   aid: number;
@@ -74,7 +74,7 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
-  rasterImages: Pool<RasterImage>;
+  images: Pool<Image>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
@@ -98,7 +98,7 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
-    this.rasterImages = new Pool<RasterImage>();
+    this.images = new Pool<Image>();
   }
 
   hasRxnProps(): boolean {
@@ -127,7 +127,7 @@ export class Struct {
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
       this.texts.size === 0 &&
-      this.rasterImages.size === 0
+      this.images.size === 0
     );
   }
 
@@ -145,7 +145,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
-    rasterImagesSet?: Pile<number> | null,
+    imagesSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -158,7 +158,7 @@ export class Struct {
       simpleObjectsSet,
       textsSet,
       rgroupAttachmentPointSet,
-      rasterImagesSet,
+      imagesSet,
       bidMap,
     );
   }
@@ -217,7 +217,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
-    rasterImagesSet?: Pile<number> | null,
+    imagesSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
@@ -225,8 +225,7 @@ export class Struct {
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
-    rasterImagesSet =
-      rasterImagesSet || new Pile<number>(this.rasterImages.keys());
+    imagesSet = imagesSet || new Pile<number>(this.images.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -339,8 +338,8 @@ export class Struct {
       cp.texts.add(this.texts.get(id)!.clone());
     });
 
-    rasterImagesSet.forEach((id) => {
-      cp.rasterImages.add(this.rasterImages.get(id)!.clone());
+    imagesSet.forEach((id) => {
+      cp.images.add(this.images.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -841,7 +840,7 @@ export class Struct {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
 
-    this.rasterImages.forEach((rasterImage) => rasterImage.rescaleSize(scale));
+    this.images.forEach((image) => image.rescaleSize(scale));
   }
 
   rescale() {

@@ -1047,7 +1047,7 @@ export class SequenceMode extends BaseMode {
 
     Object.entries(selection.node.monomer.attachmentPointsToBonds).forEach(
       ([key, bond]) => {
-        if (!bond || bond.isBackBoneChainConnection) {
+        if (!bond || !bond.isSideChainConnection) {
           return;
         }
 
@@ -1145,6 +1145,35 @@ export class SequenceMode extends BaseMode {
     return newMonomerSequenceNode;
   }
 
+  private replaceSelectionsWithMonomer(
+    selections: NodesSelection,
+    monomerItem: MonomerItemType,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
+
+    selections.forEach((selectionRange) => {
+      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
+        selectionRange[0].nodeIndexOverall - 1,
+      );
+
+      selectionRange.forEach((nodeSelection) => {
+        previousReplacedNode = this.replaceSelectionWithMonomer(
+          monomerItem,
+          nodeSelection,
+          modelChanges,
+          previousReplacedNode,
+        );
+      });
+    });
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    SequenceRenderer.moveCaretForward();
+    history.update(modelChanges);
+  }
+
   private checkIfNewMonomerCouldEstablishSideChainConnections(
     nodeSelection: NodeSelection,
     monomerItem: MonomerItemType | undefined,
@@ -1161,7 +1190,7 @@ export class SequenceMode extends BaseMode {
       nodeSelection.node.monomer.attachmentPointsToBonds,
     );
     return oldMonomerBonds.every(([key, bond]) => {
-      if (!bond) {
+      if (!bond || !bond.isSideChainConnection) {
         return true;
       }
 
@@ -1171,6 +1200,46 @@ export class SequenceMode extends BaseMode {
     });
   }
 
+  private selectionsContainLinkerNode(selections: NodesSelection) {
+    return selections.some((selectionRange) =>
+      selectionRange.some(
+        (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
+      ),
+    );
+  }
+
+  private selectionsCantPreserveSideChainConnectionsWithMonomer(
+    selections: NodesSelection,
+    monomerItem: MonomerItemType,
+  ) {
+    return selections.some((selectionRange) =>
+      selectionRange.some(
+        (nodeSelection) =>
+          !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+            nodeSelection,
+            monomerItem,
+          ),
+      ),
+    );
+  }
+
+  private selectionsCantPreserveSideChainConnectionsWithPreset(
+    selections: NodesSelection,
+    preset: IRnaPreset,
+  ) {
+    return selections.some((selectionRange) =>
+      selectionRange.some((nodeSelection) =>
+        [preset.sugar, preset.base, preset.phosphate].some(
+          (monomer) =>
+            !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+              nodeSelection,
+              monomer,
+            ),
+        ),
+      ),
+    );
+  }
+
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
@@ -1178,79 +1247,30 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      selections.forEach((selectionRange) => {
-        let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-          selectionRange[0].nodeIndexOverall - 1,
-        );
-
-        if (
-          selectionRange.some(
-            (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
-          )
-        ) {
-          editor.events.openConfirmationDialog.dispatch({
-            confirmationText:
-              'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-            onConfirm: () => {
-              selectionRange.forEach((nodeSelection) => {
-                previousReplacedNode = this.replaceSelectionWithMonomer(
-                  monomerItem,
-                  nodeSelection,
-                  modelChanges,
-                  previousReplacedNode,
-                );
-              });
-
-              modelChanges.addOperation(new ReinitializeModeOperation());
-              editor.renderersContainer.update(modelChanges);
-              SequenceRenderer.moveCaretForward();
-              history.update(modelChanges);
-            },
-          });
-        } else if (
-          selectionRange.some(
-            (nodeSelection) =>
-              !this.checkIfNewMonomerCouldEstablishSideChainConnections(
-                nodeSelection,
-                monomerItem,
-              ),
-          )
-        ) {
-          editor.events.openConfirmationDialog.dispatch({
-            confirmationText:
-              'Side chain connections will be deleted during replacement. Do you want to proceed?',
-            onConfirm: () => {
-              selectionRange.forEach((nodeSelection) => {
-                previousReplacedNode = this.replaceSelectionWithMonomer(
-                  monomerItem,
-                  nodeSelection,
-                  modelChanges,
-                  previousReplacedNode,
-                );
-              });
-
-              modelChanges.addOperation(new ReinitializeModeOperation());
-              editor.renderersContainer.update(modelChanges);
-              SequenceRenderer.moveCaretForward();
-              history.update(modelChanges);
-            },
-          });
-        } else {
-          selectionRange.forEach((nodeSelection) => {
-            previousReplacedNode = this.replaceSelectionWithMonomer(
-              monomerItem,
-              nodeSelection,
-              modelChanges,
-              previousReplacedNode,
-            );
-          });
-
-          modelChanges.addOperation(new ReinitializeModeOperation());
-          editor.renderersContainer.update(modelChanges);
-          SequenceRenderer.moveCaretForward();
-          history.update(modelChanges);
-        }
-      });
+      if (this.selectionsContainLinkerNode(selections)) {
+        editor.events.openConfirmationDialog.dispatch({
+          confirmationText:
+            'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+          onConfirm: () => {
+            this.replaceSelectionsWithMonomer(selections, monomerItem);
+          },
+        });
+      } else if (
+        this.selectionsCantPreserveSideChainConnectionsWithMonomer(
+          selections,
+          monomerItem,
+        )
+      ) {
+        editor.events.openConfirmationDialog.dispatch({
+          confirmationText:
+            'Side chain connections will be deleted during replacement. Do you want to proceed?',
+          onConfirm: () => {
+            this.replaceSelectionsWithMonomer(selections, monomerItem);
+          },
+        });
+      } else {
+        this.replaceSelectionsWithMonomer(selections, monomerItem);
+      }
     } else {
       const newNodePosition = this.getNewNodePosition();
 
@@ -1373,6 +1393,35 @@ export class SequenceMode extends BaseMode {
     return newPresetNode;
   }
 
+  private replaceSelectionsWithPreset(
+    selections: NodesSelection,
+    preset: IRnaPreset,
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
+
+    selections.forEach((selectionRange) => {
+      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
+        selectionRange[0].nodeIndexOverall - 1,
+      );
+
+      selectionRange.forEach((nodeSelection) => {
+        previousReplacedNode = this.replaceSelectionWithPreset(
+          preset,
+          nodeSelection,
+          modelChanges,
+          previousReplacedNode,
+        );
+      });
+    });
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    SequenceRenderer.moveCaretForward();
+    history.update(modelChanges);
+  }
+
   public insertPresetFromLibrary(preset: IRnaPreset) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
@@ -1380,79 +1429,30 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      selections.forEach((selectionRange) => {
-        let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-          selectionRange[0].nodeIndexOverall - 1,
-        );
-
-        if (
-          selectionRange.some(
-            (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
-          )
-        ) {
-          editor.events.openConfirmationDialog.dispatch({
-            confirmationText:
-              'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-            onConfirm: () => {
-              selectionRange.forEach((nodeSelection) => {
-                previousReplacedNode = this.replaceSelectionWithPreset(
-                  preset,
-                  nodeSelection,
-                  modelChanges,
-                  previousReplacedNode,
-                );
-              });
-
-              modelChanges.addOperation(new ReinitializeModeOperation());
-              editor.renderersContainer.update(modelChanges);
-              SequenceRenderer.moveCaretForward();
-              history.update(modelChanges);
-            },
-          });
-        } else if (
-          selectionRange.some(
-            (nodeSelection) =>
-              !this.checkIfNewMonomerCouldEstablishSideChainConnections(
-                nodeSelection,
-                preset.sugar,
-              ),
-          )
-        ) {
-          editor.events.openConfirmationDialog.dispatch({
-            confirmationText:
-              'Side chain connections will be deleted during replacement. Do you want to proceed?',
-            onConfirm: () => {
-              selectionRange.forEach((nodeSelection) => {
-                previousReplacedNode = this.replaceSelectionWithPreset(
-                  preset,
-                  nodeSelection,
-                  modelChanges,
-                  previousReplacedNode,
-                );
-              });
-
-              modelChanges.addOperation(new ReinitializeModeOperation());
-              editor.renderersContainer.update(modelChanges);
-              SequenceRenderer.moveCaretForward();
-              history.update(modelChanges);
-            },
-          });
-        } else {
-          selectionRange.forEach((nodeSelection) => {
-            previousReplacedNode = this.replaceSelectionWithPreset(
-              preset,
-              nodeSelection,
-              modelChanges,
-              previousReplacedNode,
-            );
-          });
-
-          modelChanges.addOperation(new ReinitializeModeOperation());
-          editor.renderersContainer.update(modelChanges);
-          SequenceRenderer.moveCaretForward();
-          history.update(modelChanges);
-        }
-      });
+      if (this.selectionsContainLinkerNode(selections)) {
+        editor.events.openConfirmationDialog.dispatch({
+          confirmationText:
+            'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+          onConfirm: () => {
+            this.replaceSelectionsWithPreset(selections, preset);
+          },
+        });
+      } else if (
+        this.selectionsCantPreserveSideChainConnectionsWithPreset(
+          selections,
+          preset,
+        )
+      ) {
+        editor.events.openConfirmationDialog.dispatch({
+          confirmationText:
+            'Side chain connections will be deleted during replacement. Do you want to proceed?',
+          onConfirm: () => {
+            this.replaceSelectionsWithPreset(selections, preset);
+          },
+        });
+      } else {
+        this.replaceSelectionsWithPreset(selections, preset);
+      }
     } else {
       const newNodePosition = this.getNewNodePosition();
 

@@ -2,20 +2,16 @@
     "root": {
         "nodes": [
             {
-                "type": "rasterImage",
-                "center": {
-                    "x": 14.700000000000001,
-                    "y": -8,
-                    "z": 0
+                "type": "image",
+                "format": "image/svg+xml",
+                "boundingBox": {
+                    "x": 4.700000000000001,
+                    "y": 2,
+                    "z": 0,
+                    "width": 20,
+                    "height": 20
                 },
-                "data": {
-                    "bitmap": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMyAxMy42NDkzQzMgMTYuNjA0NCA1LjQxNzY2IDE5IDguNCAxOUwxNi41IDE5QzE4Ljk4NTMgMTkgMjEgMTYuOTgzOSAyMSAxNC40OTY5QzIxIDEyLjY1MDMgMTkuODg5MyAxMC45NDQ5IDE4LjMgMTAuMjVDMTguMTMxNyA3LjMyMjUxIDE1LjY4NCA1IDEyLjY4OTMgNUMxMC4zNTE0IDUgOC4zNDY5NCA2LjQ4NjM3IDcuNSA4LjVDNC44IDguOTM3NSAzIDExLjIwMDEgMyAxMy42NDkzWiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4=",
-                    "halfSize": {
-                        "x": 10,
-                        "y": 10,
-                        "z": 0
-                    }
-                }
+                "data": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPgo8c3ZnIHdpZHRoPSI4MDBweCIgaGVpZ2h0PSI4MDBweCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBkPSJNMyAxMy42NDkzQzMgMTYuNjA0NCA1LjQxNzY2IDE5IDguNCAxOUwxNi41IDE5QzE4Ljk4NTMgMTkgMjEgMTYuOTgzOSAyMSAxNC40OTY5QzIxIDEyLjY1MDMgMTkuODg5MyAxMC45NDQ5IDE4LjMgMTAuMjVDMTguMTMxNyA3LjMyMjUxIDE1LjY4NCA1IDEyLjY4OTMgNUMxMC4zNTE0IDUgOC4zNDY5NCA2LjQ4NjM3IDcuNSA4LjVDNC44IDguOTM3NSAzIDExLjIwMDEgMyAxMy42NDkzWiIgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4="
             }
         ],
         "connections": [],

@@ -64,11 +64,7 @@ test.describe('Image files', () => {
     /**
      * Test case: #4911
      * Description: Single image of SVG format can be saved to KET file and load
-     * The test does not work as expected. The test runs locally but on CI/CD it constantly crashes due to the
-     * difference in the returned data in \"bitmap\": \"data:image/
-     * Should be fixed by ticket https://github.com/epam/Indigo/issues/2144
      */
-    test.fail();
     await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await takeEditorScreenshot(page);
     await verifyFile(
@@ -100,11 +96,7 @@ test.describe('Image files', () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and load
-     * The test does not work as expected. The test runs locally but on CI/CD it constantly crashes due to the
-     * difference in the returned data in \"bitmap\": \"data:image/
-     * Should be fixed by ticket https://github.com/epam/Indigo/issues/2144
      */
-    test.fail();
     await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
@@ -181,14 +173,14 @@ test.describe('Image files', () => {
      * Description: Images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas
      */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/images-png-svg-30-with-30-elements.ket',
+      'KET/images-png-svg-80-with-50-structures.ket',
       page,
     );
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
-      'KET/images-png-svg-30-with-30-elements-expected.ket',
-      'tests/test-data/KET/images-png-svg-30-with-30-elements-expected.ket',
+      'KET/images-png-svg-80-with-50-structures-expected.ket',
+      'tests/test-data/KET/images-png-svg-80-with-50-structures-expected.ket',
     );
   });
 
@@ -315,18 +307,35 @@ test.describe('Image files', () => {
     });
   }
 
-  test('Verify that image with corrupted image data (wrong field name, wrong image type, issues with base64, empty image) cannot be added from .ket file to Canvas', async ({
-    page,
-  }) => {
-    /**
-     * Test case: #4911
-     * Description: Error message is displayed - "Cannot deserialize input JSON."
-     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile(`KET/image-svg-corrupted.ket`, page);
-    await pressButton(page, 'Add to Canvas');
-    await takeEditorScreenshot(page);
-  });
+  const corruptedFiles = [
+    'image-png-corrupted-data-field.ket',
+    'image-png-corrupted-height-field.ket',
+    'image-png-corrupted-height-negative.ket',
+    'image-png-corrupted-height-zero.ket',
+    'image-png-corrupted-type-value.ket',
+    'image-png-corrupted-width-field.ket',
+    'image-png-corrupted-width-negative.ket',
+    'image-png-corrupted-width-zero.ket',
+    'image-svg-corrupted.ket',
+    'image-svg-corrupted-boundingbox.ket',
+    'image-svg-corrupted-format-field.ket',
+    'image-svg-corrupted-format-value.ket',
+  ];
+
+  for (const file of corruptedFiles) {
+    test(`Verify that image with corrupted data from ${file} cannot be added from .ket file to Canvas`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: #4911
+       * Description: Error message is displayed - "Cannot deserialize input JSON."
+       */
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile(`KET/${file}`, page);
+      await pressButton(page, 'Add to Canvas');
+      await takeEditorScreenshot(page);
+    });
+  }
 
   test('Verify that image cannot be loaded from .ket file if the length of bitmap is less than 160 symbols', async ({
     page,
@@ -523,9 +532,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
-    const resizeHandle = page.getByTestId(
-      'rasterImageResize-bottomRightPosition',
-    );
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
@@ -549,9 +556,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
-    const resizeHandle = page.getByTestId(
-      'rasterImageResize-rightMiddlePosition',
-    );
+    const resizeHandle = page.getByTestId('imageResize-rightMiddlePosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 
@@ -567,8 +572,6 @@ test.describe('Image files', () => {
     /**
      * Test case: #4897
      * Description: Deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo
-     * Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5174
-     * Snapsots need to be update after fix.
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
@@ -793,9 +796,9 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     const resizeHandles = [
-      { id: 'rasterImageResize-rightMiddlePosition', moveX: 300, moveY: 0 },
-      { id: 'rasterImageResize-topMiddlePosition', moveX: 0, moveY: -200 },
-      { id: 'rasterImageResize-bottomLeftPosition', moveX: -200, moveY: 200 },
+      { id: 'imageResize-rightMiddlePosition', moveX: 300, moveY: 0 },
+      { id: 'imageResize-topMiddlePosition', moveX: 0, moveY: -200 },
+      { id: 'imageResize-bottomLeftPosition', moveX: -200, moveY: 200 },
     ];
 
     for (const handle of resizeHandles) {
@@ -898,9 +901,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
-    const resizeHandle = page.getByTestId(
-      'rasterImageResize-bottomRightPosition',
-    );
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
 

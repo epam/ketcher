@@ -127,7 +127,7 @@ export async function selectEraseTool(page: Page) {
 }
 
 export async function selectImageTool(page: Page) {
-  const bondToolButton = page.getByTestId('rasterImages');
+  const bondToolButton = page.getByTestId('images');
   await bondToolButton.click();
 }
 

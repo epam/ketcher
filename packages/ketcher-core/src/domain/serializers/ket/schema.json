@@ -790,7 +790,7 @@
         },
         "format": {
           "type": "string",
-          "pattern": "^image/(png|svg\\+xml)"
+          "pattern": "^image/(png|svg\\+xml)$"
         },
         "boundingBox": {
           "type": "object",
@@ -808,6 +808,9 @@
               "type": "number"
             },
             "y": {
+              "type": "number"
+            },
+            "z": {
               "type": "number"
             }
           }

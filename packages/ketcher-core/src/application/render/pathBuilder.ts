@@ -25,6 +25,9 @@ export class PathBuilder {
     return this;
   }
 
+  addLine(to: Point2D): PathBuilder;
+  addLine(to: Point2D, from: Point2D): PathBuilder;
+
   addLine(to: Point2D, from?: Point2D): PathBuilder {
     if (from) {
       this.addMovement(from);

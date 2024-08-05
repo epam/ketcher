@@ -68,7 +68,9 @@
     "postcss": "8.4.31"
   },
   "dependencies": {
-    "ttypescript": "^1.5.15",
-    "@playwright/test": "^1.44.1"
+    "@playwright/test": "^1.44.1",
+    "ajv": "^6.12.6",
+    "ajv-keywords": "^3.5.2",
+    "ttypescript": "^1.5.15"
   }
 }

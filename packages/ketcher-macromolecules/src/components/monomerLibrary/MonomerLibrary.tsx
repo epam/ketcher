@@ -40,12 +40,6 @@ const COPY = '_Copy';
 const MonomerLibrary = () => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
-  // const layoutMode = useLayoutMode();
-  // const isSequenceEditInRNABuilderMode = props?.isSequenceEditInRNABuilderMode;
-  // const isSequenceMode = layoutMode === 'sequence-layout-mode';
-  // const isDisabledTabs = isSequenceMode;
-  // const isDisabledTabsPanels =
-  //   isSequenceMode && !isSequenceEditInRNABuilderMode;
 
   useEffect(() => {
     dispatch(setSearchFilter(''));

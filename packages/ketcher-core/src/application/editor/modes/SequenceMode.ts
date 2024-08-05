@@ -1070,28 +1070,78 @@ export class SequenceMode extends BaseMode {
           selectionRange[0].nodeIndexOverall - 1,
         );
 
-        selectionRange.forEach((nodeSelection) => {
-          if (nodeSelection.node instanceof LinkerSequenceNode) {
-            editor.events.openConfirmationDialog.dispatch({
-              confirmationText:
-                'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-              onConfirm: () =>
-                this.replaceSelectionWithMonomer(
+        if (
+          selectionRange.some(
+            (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
+          )
+        ) {
+          editor.events.openConfirmationDialog.dispatch({
+            confirmationText:
+              'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+            onConfirm: () => {
+              selectionRange.forEach((nodeSelection) => {
+                previousReplacedNode = this.replaceSelectionWithMonomer(
                   monomerItem,
                   nodeSelection,
                   modelChanges,
                   previousReplacedNode,
-                ),
-            });
-          } else {
+                );
+              });
+
+              modelChanges.addOperation(new ReinitializeModeOperation());
+              editor.renderersContainer.update(modelChanges);
+              SequenceRenderer.moveCaretForward();
+              history.update(modelChanges);
+            },
+          });
+        } else if (
+          selectionRange.some(
+            (nodeSelection) =>
+              nodeSelection.node.monomer.sideConnections.length !== 0 &&
+              Object.values(
+                nodeSelection.node.monomer.attachmentPointsToBonds,
+              ).reduce((count, ap) => {
+                if (ap) {
+                  count++;
+                }
+                return count;
+              }, 0) > (monomerItem.attachmentPoints?.length ?? 0),
+          )
+        ) {
+          editor.events.openConfirmationDialog.dispatch({
+            confirmationText:
+              'Side chain connections will be deleted during replacement. Do you want to proceed?',
+            onConfirm: () => {
+              selectionRange.forEach((nodeSelection) => {
+                previousReplacedNode = this.replaceSelectionWithMonomer(
+                  monomerItem,
+                  nodeSelection,
+                  modelChanges,
+                  previousReplacedNode,
+                );
+              });
+
+              modelChanges.addOperation(new ReinitializeModeOperation());
+              editor.renderersContainer.update(modelChanges);
+              SequenceRenderer.moveCaretForward();
+              history.update(modelChanges);
+            },
+          });
+        } else {
+          selectionRange.forEach((nodeSelection) => {
             previousReplacedNode = this.replaceSelectionWithMonomer(
               monomerItem,
               nodeSelection,
               modelChanges,
               previousReplacedNode,
             );
-          }
-        });
+          });
+
+          modelChanges.addOperation(new ReinitializeModeOperation());
+          editor.renderersContainer.update(modelChanges);
+          SequenceRenderer.moveCaretForward();
+          history.update(modelChanges);
+        }
       });
     } else {
       const newNodePosition = this.getNewNodePosition();
@@ -1107,12 +1157,12 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(
         this.insertNewSequenceFragment(newMonomerSequenceNode),
       );
-    }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
-    editor.renderersContainer.update(modelChanges);
-    SequenceRenderer.moveCaretForward();
-    history.update(modelChanges);
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      editor.renderersContainer.update(modelChanges);
+      SequenceRenderer.moveCaretForward();
+      history.update(modelChanges);
+    }
   }
 
   private replaceSelectionWithPreset(
@@ -1195,14 +1245,70 @@ export class SequenceMode extends BaseMode {
           selectionRange[0].nodeIndexOverall - 1,
         );
 
-        selectionRange.forEach((nodeSelection) => {
-          previousReplacedNode = this.replaceSelectionWithPreset(
-            preset,
-            nodeSelection,
-            modelChanges,
-            previousReplacedNode,
-          );
-        });
+        if (
+          selectionRange.some(
+            (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
+          )
+        ) {
+          editor.events.openConfirmationDialog.dispatch({
+            confirmationText:
+              'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+            onConfirm: () => {
+              selectionRange.forEach((nodeSelection) => {
+                previousReplacedNode = this.replaceSelectionWithPreset(
+                  preset,
+                  nodeSelection,
+                  modelChanges,
+                  previousReplacedNode,
+                );
+              });
+
+              modelChanges.addOperation(new ReinitializeModeOperation());
+              editor.renderersContainer.update(modelChanges);
+              SequenceRenderer.moveCaretForward();
+              history.update(modelChanges);
+            },
+          });
+        } else if (
+          selectionRange.some(
+            (nodeSelection) =>
+              nodeSelection.node.monomer.sideConnections.length !== 0,
+          )
+        ) {
+          editor.events.openConfirmationDialog.dispatch({
+            confirmationText:
+              'Side chain connections will be deleted during replacement. Do you want to proceed?',
+            onConfirm: () => {
+              selectionRange.forEach((nodeSelection) => {
+                previousReplacedNode = this.replaceSelectionWithPreset(
+                  preset,
+                  nodeSelection,
+                  modelChanges,
+                  previousReplacedNode,
+                );
+              });
+
+              modelChanges.addOperation(new ReinitializeModeOperation());
+              editor.renderersContainer.update(modelChanges);
+              SequenceRenderer.moveCaretForward();
+              history.update(modelChanges);
+            },
+          });
+        } else {
+          selectionRange.forEach((nodeSelection) => {
+            previousReplacedNode = this.replaceSelectionWithPreset(
+              preset,
+              nodeSelection,
+              modelChanges,
+              previousReplacedNode,
+            );
+          });
+
+          modelChanges.addOperation(new ReinitializeModeOperation());
+          editor.renderersContainer.update(modelChanges);
+          SequenceRenderer.moveCaretForward();
+          history.update(modelChanges);
+        }
       });
     } else {
       const newNodePosition = this.getNewNodePosition();
@@ -1246,12 +1352,12 @@ export class SequenceMode extends BaseMode {
       }
 
       modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
-    }
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
-    editor.renderersContainer.update(modelChanges);
-    SequenceRenderer.moveCaretForward();
-    history.update(modelChanges);
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      editor.renderersContainer.update(modelChanges);
+      SequenceRenderer.moveCaretForward();
+      history.update(modelChanges);
+    }
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {

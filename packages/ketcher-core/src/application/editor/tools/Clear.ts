@@ -17,7 +17,6 @@ import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { isSequenceMode } from 'application/editor/modes';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-import { ReinitializeSequenceModeCommand } from 'application/editor/operations/modes';
 
 class ClearTool implements BaseTool {
   private history: EditorHistory;

@@ -733,18 +733,17 @@ function resetSelectionOnCanvasClick(
   }
 }
 
-// potentially not needed anymore
-// function calculateLayerOffset(event) {
-//   const target = event.target || event.srcElement;
-//   const svgTarget = target?.closest('svg');
-//   if (!svgTarget) {
-//     return null;
-//   }
-//   const svgRect = svgTarget.getBoundingClientRect();
-//   const offsetX = event.clientX - svgRect.left;
-//   const offsetY = event.clientY - svgRect.top;
-//   return { offsetX, offsetY };
-// }
+function calculateLayerOffset(event) {
+  const target = event.target || event.srcElement;
+  const svgTarget = target?.closest('svg');
+  if (!svgTarget) {
+    return null;
+  }
+  const svgRect = svgTarget.getBoundingClientRect();
+  const offsetX = event.clientX - svgRect.left;
+  const offsetY = event.clientY - svgRect.top;
+  return { offsetX, offsetY };
+}
 
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
@@ -752,10 +751,18 @@ function updateLastCursorPosition(editor: Editor, event) {
     const clientAreaBoundingBox =
       editor.render.clientArea.getBoundingClientRect();
 
-    editor.lastCursorPosition = {
-      x: event.clientX - clientAreaBoundingBox.x,
-      y: event.clientY - clientAreaBoundingBox.y,
-    };
+    const pos = calculateLayerOffset(event)
+    if (pos != null) {
+      editor.lastCursorPosition = {
+        x:
+          pos.offsetX /
+          (editor.options().zoom ?? 1.0) /
+          (editor.options().externalZoomScale ?? 1.0) - clientAreaBoundingBox.x,
+        y:
+          pos.offsetY /
+          (editor.options().zoom ?? 1.0) /
+          (editor.options().externalZoomScale ?? 1.0) - clientAreaBoundingBox.y
+      }
   }
 }
 

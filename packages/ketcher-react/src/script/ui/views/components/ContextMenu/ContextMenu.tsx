@@ -33,10 +33,9 @@ const props: Partial<MenuProps> = {
   className: styles.contextMenu,
 };
 
-// potentially not needed anymore
-// function BodyPortal(props: React.PropsWithChildren<{ refKey: string }>) {
-//   return ReactDOM.createPortal(props.children, document.body, props.refKey);
-// }
+function BodyPortal(props: React.PropsWithChildren<{ refKey: string }>) {
+  return ReactDOM.createPortal(props.children, document.body, props.refKey);
+}
 
 const ContextMenu: React.FC = () => {
   const { getKetcherInstance } = useAppContext();
@@ -166,7 +165,8 @@ const ContextMenu: React.FC = () => {
 
   return ketcherEditorRootElement
     ? createPortal(
-        <>
+      <>
+        <BodyPortal refKey={CONTEXT_MENU_ID.FOR_BONDS}>
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_BONDS}
@@ -176,7 +176,9 @@ const ContextMenu: React.FC = () => {
           >
             <BondMenuItems />
           </Menu>
+        </BodyPortal>
 
+        <BodyPortal refKey={CONTEXT_MENU_ID.FOR_ATOMS}>
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_ATOMS}
@@ -186,7 +188,9 @@ const ContextMenu: React.FC = () => {
           >
             <AtomMenuItems />
           </Menu>
+        </BodyPortal>
 
+        <BodyPortal refKey={CONTEXT_MENU_ID.FOR_SELECTION}>
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_SELECTION}
@@ -196,7 +200,9 @@ const ContextMenu: React.FC = () => {
           >
             <SelectionMenuItems />
           </Menu>
+        </BodyPortal>
 
+        <BodyPortal refKey={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}>
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}
@@ -206,7 +212,9 @@ const ContextMenu: React.FC = () => {
           >
             <FunctionalGroupMenuItems />
           </Menu>
+        </BodyPortal>
 
+        <BodyPortal refKey={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}>
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT}
@@ -219,6 +227,7 @@ const ContextMenu: React.FC = () => {
           >
             <RGroupAttachmentPointMenuItems />
           </Menu>
+        </BodyPortal>
         </>,
         ketcherEditorRootElement,
       )

@@ -18,8 +18,8 @@ import { useDispatch } from 'react-redux';
 import { indigoVerification } from '../script/ui/state/request';
 import { Ketcher, KetcherAsyncEvents } from 'ketcher-core';
 import { useEffect } from 'react';
-import { ketcherInitEventName } from '../constants';
 import { useAppContext } from './useAppContext';
+import { ketcherInitEventName } from '../constants';
 
 export const useSubscriptionOnEvents = () => {
   const dispatch = useDispatch();

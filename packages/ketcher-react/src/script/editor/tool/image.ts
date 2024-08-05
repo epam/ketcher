@@ -2,21 +2,21 @@ import {
   CoordinateTransformation,
   Scale,
   Vec2,
-  fromRasterImageCreation,
+  fromImageCreation,
   KetcherLogger,
   Action,
-  RASTER_IMAGE_KEY,
-  fromRasterImageMove,
-  fromRasterImageResize,
-  RasterImageReferencePositionInfo,
-  rasterImageReferencePositionToCursor,
+  IMAGE_KEY,
+  fromImageMove,
+  fromImageResize,
+  ImageReferencePositionInfo,
+  imageReferencePositionToCursor,
 } from 'ketcher-core';
 import { Tool } from './Tool';
 import type Editor from '../Editor';
 import { ClosestItemWithMap } from '../shared/closest.types';
 import { handleMovingPosibilityCursor } from '../utils';
 
-const TAG = 'tool/rasterImage.ts';
+const TAG = 'tool/image.ts';
 const supportedMimes = ['png', 'svg+xml'];
 
 const supportedMimesForRegex = supportedMimes
@@ -29,10 +29,10 @@ const MIN_DIMENSION_SIZE = 16;
 interface DragContext {
   center: Vec2;
   action: Action;
-  closestItem: ClosestItemWithMap<RasterImageReferencePositionInfo>;
+  closestItem: ClosestItemWithMap<ImageReferencePositionInfo>;
 }
 
-export class RasterImageTool implements Tool {
+export class ImageTool implements Tool {
   static readonly INPUT_ID = 'image-upload';
   private element: HTMLInputElement;
   private dragCtx: DragContext | null = null;
@@ -44,13 +44,13 @@ export class RasterImageTool implements Tool {
   mousedown(event: MouseEvent) {
     const render = this.editor.render;
     const closestItem = this.editor.findItem(event, [
-      RASTER_IMAGE_KEY,
-    ]) as ClosestItemWithMap<RasterImageReferencePositionInfo>;
+      IMAGE_KEY,
+    ]) as ClosestItemWithMap<ImageReferencePositionInfo>;
     this.editor.selection(null);
 
     if (closestItem) {
       this.editor.hover(null);
-      this.editor.selection({ [RASTER_IMAGE_KEY]: [closestItem.id] });
+      this.editor.selection({ [IMAGE_KEY]: [closestItem.id] });
       this.dragCtx = {
         center: CoordinateTransformation.pageToModel(event, render),
         action: new Action(),
@@ -60,7 +60,7 @@ export class RasterImageTool implements Tool {
   }
 
   click(event: MouseEvent) {
-    const closestItem = this.editor.findItem(event, [RASTER_IMAGE_KEY]);
+    const closestItem = this.editor.findItem(event, [IMAGE_KEY]);
     this.editor.hover(null);
     if (closestItem) {
       return;
@@ -81,13 +81,13 @@ export class RasterImageTool implements Tool {
       const click = CoordinateTransformation.pageToModel(event, render);
 
       this.dragCtx.action = this.dragCtx.closestItem.ref
-        ? fromRasterImageResize(
+        ? fromImageResize(
             render.ctab,
             this.dragCtx.closestItem.id,
             click,
             this.dragCtx.closestItem.ref,
           )
-        : fromRasterImageMove(
+        : fromImageMove(
             render.ctab,
             this.dragCtx.closestItem.id,
             click.sub(this.dragCtx.center),
@@ -95,15 +95,15 @@ export class RasterImageTool implements Tool {
       this.editor.update(this.dragCtx.action, true);
     } else {
       const item = this.editor.findItem(event, [
-        RASTER_IMAGE_KEY,
-      ]) as ClosestItemWithMap<RasterImageReferencePositionInfo>;
+        IMAGE_KEY,
+      ]) as ClosestItemWithMap<ImageReferencePositionInfo>;
       const render = this.editor.render;
 
       if (item?.ref) {
         handleMovingPosibilityCursor(
           item,
           render.paper.canvas,
-          rasterImageReferencePositionToCursor[item.ref.name],
+          imageReferencePositionToCursor[item.ref.name],
         );
       } else {
         handleMovingPosibilityCursor(
@@ -168,7 +168,7 @@ export class RasterImageTool implements Tool {
         );
 
         this.editor.update(
-          fromRasterImageCreation(
+          fromImageCreation(
             this.editor.render.ctab,
             image.src,
             clickPosition,
@@ -193,7 +193,7 @@ export class RasterImageTool implements Tool {
   private createElement(): HTMLInputElement {
     const uploader = document.createElement('input');
     uploader.style.display = 'none';
-    uploader.id = RasterImageTool.INPUT_ID;
+    uploader.id = ImageTool.INPUT_ID;
     uploader.type = 'file';
     uploader.accept = supportedMimes.map((item) => `image/${item}`).join(',');
     document.body.appendChild(uploader);
@@ -201,7 +201,7 @@ export class RasterImageTool implements Tool {
   }
 
   private getElement(): HTMLInputElement {
-    const element = document.getElementById(RasterImageTool.INPUT_ID);
+    const element = document.getElementById(ImageTool.INPUT_ID);
 
     if (element instanceof HTMLInputElement) {
       return element;

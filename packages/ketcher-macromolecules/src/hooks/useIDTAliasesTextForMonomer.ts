@@ -28,7 +28,7 @@ const useIDTAliasesTextForMonomer = ({
     // For preview on canvas
     if (attachmentPointsToBonds) {
       if (!modifications) {
-        return null;
+        return base;
       }
 
       const { endpoint5, internal, endpoint3 } = modifications;

@@ -32,11 +32,7 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import {
-  createEditor,
-  destroyEditor,
-  PresetPosition,
-  selectEditor} from 'state/common';
+import { createEditor, destroyEditor, selectEditor } from 'state/common';
 import {
   useAppDispatch,
   useAppSelector,
@@ -84,7 +80,6 @@ import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
-import { selectAllPresets } from 'state/rna-builder';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -134,7 +129,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
-  const presets = useAppSelector(selectAllPresets);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -155,158 +149,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [dispatch]);
 
   useSetRnaPresets();
-
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useCallback(
-    debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  useEffect(() => {
-    const handler = (toolName: string) => {
-      if (toolName !== activeTool) {
-        dispatch(selectTool(toolName));
-      }
-    };
-
-    if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
-      );
-
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
-      editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
-      );
-      editor.events.selectTool.add(handler);
-    }
-
-    return () => {
-      dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
-    };
-  }, [editor]);
-
-  const handleOpenPreview = useCallback(
-    (e) => {
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-
-      const sequenceNode = e.target.__data__?.node;
-      const monomer = e.target.__data__?.monomer || sequenceNode?.monomer;
-      const monomerItem = monomer.monomerItem;
-      const attachmentPointsToBonds = { ...monomer.attachmentPointsToBonds };
-      const isNucleotideOrNucleoside =
-        sequenceNode instanceof Nucleotide ||
-        sequenceNode instanceof Nucleoside;
-
-      if (isNucleotideOrNucleoside) {
-        const monomers =
-          sequenceNode instanceof Nucleotide
-            ? [
-                sequenceNode.sugar.monomerItem,
-                sequenceNode.rnaBase.monomerItem,
-                sequenceNode.phosphate?.monomerItem,
-              ]
-            : [
-                sequenceNode.sugar.monomerItem,
-                sequenceNode.rnaBase.monomerItem,
-              ];
-
-        const existingPreset = presets.find((preset) => {
-          const presetMonomers = [preset.sugar, preset.base, preset.phosphate];
-          return monomers.every((monomer, index) => {
-            return monomer?.props.Name === presetMonomers[index]?.props.Name;
-          });
-        });
-
-        let position: PresetPosition;
-        if (sequenceNode instanceof Nucleoside) {
-          position = PresetPosition.ChainEnd;
-        } else if (
-          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
-        ) {
-          position = PresetPosition.ChainStart;
-        } else {
-          position = PresetPosition.ChainMiddle;
-        }
-
-        debouncedShowPreview({
-          preset: {
-            monomers,
-            name: existingPreset?.name,
-            idtAliases: existingPreset?.idtAliases,
-            position,
-          },
-          style: {
-            left,
-            top: monomerItem
-              ? calculateNucleoElementPreviewTop(cardCoordinates)
-              : '',
-            transform: 'translate(-50%, 0)',
-          },
-        });
-        return;
-      }
-
-      debouncedShowPreview({
-        monomer: monomerItem,
-        attachmentPointsToBonds,
-        style: {
-          left,
-          top: monomerItem ? calculateMonomerPreviewTop(cardCoordinates) : '',
-        },
-      });
-    },
-    [debouncedShowPreview, presets],
-  );
-
-  const handleClosePreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
-
-  useEffect(() => {
-    editor?.events.mouseOverMonomer.add(handleOpenPreview);
-    editor?.events.mouseLeaveMonomer.add(handleClosePreview);
-    editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
-    editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
-
-    const onMoveHandler = (e) => {
-      handleClosePreview();
-      const isLeftClick = e.buttons === 1;
-      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
-        handleOpenPreview(e);
-      }
-    };
-    editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
-    editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
-
-    return () => {
-      editor?.events.mouseOverMonomer.remove(handleOpenPreview);
-      editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
-      editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
-      editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
-      editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
-      editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
-    };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
     editor?.events.rightClickSequence.add((event, selections) => {

@@ -21,6 +21,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
+  public priority = 1;
   constructor(
     private addPolymerBondChangeModel: (
       polymerBond?: PolymerBond,
@@ -42,6 +43,7 @@ export class PolymerBondAddOperation implements Operation {
 }
 
 export class PolymerBondDeleteOperation implements Operation {
+  public priority = -1;
   constructor(
     public polymerBond: PolymerBond,
     private deletePolymerBondChangeModel: () => void,
@@ -103,6 +105,7 @@ export class PolymerBondCancelCreationOperation implements Operation {
 
 export class PolymerBondFinishCreationOperation implements Operation {
   public polymerBond;
+  public priority = 1;
   constructor(
     private finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,

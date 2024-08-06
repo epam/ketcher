@@ -8,6 +8,11 @@ export interface MonomerConnectionOnlyProps {
   isReconnectionDialog?: boolean;
 }
 
+export interface ConfirmationDialogOnlyProps {
+  confirmationText?: string;
+  onConfirm?: () => void;
+}
+
 export interface RequiredModalProps {
   onClose: () => void;
   isModalOpen: boolean;
@@ -15,4 +20,9 @@ export interface RequiredModalProps {
 export type MonomerConnectionProps = MonomerConnectionOnlyProps &
   RequiredModalProps;
 
-export type AdditionalModalProps = Partial<MonomerConnectionProps>;
+export type ConfirmationDialogProps = ConfirmationDialogOnlyProps &
+  RequiredModalProps;
+
+export type AdditionalModalProps = Partial<
+  MonomerConnectionProps & ConfirmationDialogProps
+>;

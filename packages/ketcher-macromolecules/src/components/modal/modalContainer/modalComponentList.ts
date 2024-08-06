@@ -18,18 +18,22 @@ import { Save } from 'components/modal/save';
 import { Delete } from 'components/modal/Delete';
 import { UpdateSequenceInRNABuilder } from 'components/modal/UpdateSequenceInRNABuilder';
 import { MonomerConnection } from 'components/modal/monomerConnection';
+import { ConfirmationDialog } from 'components/modal/ConfirmationDialog';
+import { ModalName } from 'state/modal';
 
 export const modalComponentList: Record<
-  string,
+  ModalName,
   | typeof Open
   | typeof Save
   | typeof Delete
   | typeof UpdateSequenceInRNABuilder
   | typeof MonomerConnection
+  | typeof ConfirmationDialog
 > = {
   open: Open,
   save: Save,
   delete: Delete,
   updateSequenceInRNABuilder: UpdateSequenceInRNABuilder,
   monomerConnection: MonomerConnection,
+  confirmationDialog: ConfirmationDialog,
 };

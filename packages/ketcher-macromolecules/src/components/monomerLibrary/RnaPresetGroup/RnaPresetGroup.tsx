@@ -18,7 +18,7 @@ import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType } from 'ketcher-core';
 import { debounce } from 'lodash';
-import React, { ReactElement, useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
@@ -32,7 +32,12 @@ import {
   GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { selectEditor, selectShowPreview, showPreview } from 'state/common';
+import {
+  PresetPosition,
+  selectEditor,
+  selectShowPreview,
+  showPreview,
+} from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
@@ -108,8 +113,8 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     [dispatch],
   );
 
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
+  const debouncedShowPreview = useCallback(
+    debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
 
@@ -123,9 +128,11 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     e: React.MouseEvent,
   ): void => {
     handleItemMouseLeave();
+
     if (preview.preset || !e.currentTarget) {
       return;
     }
+
     const monomers: ReadonlyArray<MonomerItemType | undefined> = [
       preset.sugar,
       preset.base,
@@ -137,10 +144,13 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
       transform: 'translate(-100%, 0)',
     };
+
     debouncedShowPreview({
       preset: {
-        idtAliases: preset.idtAliases,
         monomers,
+        name: preset.name,
+        idtAliases: preset.idtAliases,
+        position: PresetPosition.Library,
       },
       style,
     });

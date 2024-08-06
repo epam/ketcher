@@ -22,9 +22,9 @@ import { NodeSelection, PolymerBondRenderer } from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
-  muiOverrides,
   EditorTheme,
   MergedThemeType,
+  muiOverrides,
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
@@ -49,19 +49,19 @@ import {
   StyledToastContent,
 } from 'components/shared/StyledToast/styles';
 import {
-  PeptideAvatar,
   ChemAvatar,
-  SugarAvatar,
+  PeptideAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  SugarAvatar,
   UnresolvedMonomerAvatar,
   NucleotideAvatar,
 } from 'components/shared/monomerOnCanvas';
 import { ErrorModal } from 'components/modal/Error';
 import {
-  TopMenuRightWrapper,
   EditorWrapper,
   TogglerComponentWrapper,
+  TopMenuRightWrapper,
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';

@@ -168890,6 +168890,9 @@
     "id": "A",
     "name": "A",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rA"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168907,6 +168910,9 @@
     "id": "C",
     "name": "C",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rC"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168924,6 +168930,9 @@
     "id": "G",
     "name": "G",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rG"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168941,6 +168950,9 @@
     "id": "T",
     "name": "T",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rT"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -168958,6 +168970,9 @@
     "id": "U",
     "name": "U",
     "class": "RNA",
+    "idtAliases": {
+      "base": "rU"
+    },
     "templates": [
       {
         "$ref": "monomerTemplate-R___Ribose"
@@ -169056,7 +169071,7 @@
     "name": "dR(U)P",
     "class": "RNA",
     "idtAliases": {
-      "base": "deoxyU"
+      "base": "U"
     },
     "templates": [
       {

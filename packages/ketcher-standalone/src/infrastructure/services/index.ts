@@ -20,3 +20,4 @@ import {
 } from './struct';
 
 export { StandaloneStructServiceProvider, StandaloneStructService };
+export * from './struct/constants';

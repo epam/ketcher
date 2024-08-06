@@ -30,9 +30,9 @@ export abstract class BaseMonomer extends DrawingEntity {
   public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
   public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
-  public potentialAttachmentPointsToBonds: Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > = {};
+  public potentialAttachmentPointsToBonds: {
+    [key: string]: PolymerBond | null | undefined;
+  } = {};
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;

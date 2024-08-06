@@ -17,6 +17,7 @@ import {
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 import { BaseMonomer, LeavingGroup } from 'ketcher-core';
+import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 interface IStyledButtonProps {
   disabled: boolean;
@@ -236,7 +237,7 @@ function AttachmentPointSelectionPanel({
       return 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
+    return hydrateLeavingGroup(leavingGroup) as LeavingGroup;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {

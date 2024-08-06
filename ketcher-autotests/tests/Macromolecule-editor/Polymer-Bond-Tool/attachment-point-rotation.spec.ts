@@ -6,6 +6,7 @@ import {
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -71,6 +72,7 @@ test.describe('Check attachment point rotation', () => {
     await bondTwoMonomers(page, peptide3, peptide4);
 
     // Hover 1th peptide
+    await moveMouseAway(page);
     await peptide1.hover();
 
     // Get rid of flakiness because of preview
@@ -79,6 +81,7 @@ test.describe('Check attachment point rotation', () => {
     await takeEditorScreenshot(page);
 
     // Hover 2nd peptide
+    await moveMouseAway(page);
     await peptide2.hover();
 
     // Get rid of flakiness because of preview
@@ -123,6 +126,7 @@ test.describe('Check attachment point rotation', () => {
     await bondTwoMonomers(page, peptide1, peptide2);
 
     // Hover 1th peptide
+    await moveMouseAway(page);
     await peptide1.hover();
 
     await takeEditorScreenshot(page);
@@ -131,6 +135,7 @@ test.describe('Check attachment point rotation', () => {
     await selectRectangleSelectionTool(page);
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
+    await moveMouseAway(page);
 
     await selectSingleBondTool(page);
     // Hover 1th peptide

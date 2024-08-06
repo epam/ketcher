@@ -34,6 +34,8 @@ import floatingToolsReducer from './floatingTools';
 
 export { onAction, load };
 
+export const SET_SERVER = 'SET_SERVER';
+
 const shared = combineReducers({
   common: commonReducer,
   actionState: actionStateReducer,
@@ -68,6 +70,13 @@ function getRootReducer(setEditor) {
           ...data
         } = action;
         if (data) state = { ...state, ...data };
+      }
+
+      case SET_SERVER: {
+        state = {
+          ...state,
+          server: action.server || state.server,
+        };
       }
     }
     /* eslint-enable no-fallthrough */
@@ -114,4 +123,11 @@ export default function (options, server, setEditor) {
 
   const rootReducer = getRootReducer(setEditor);
   return createStore(rootReducer, initState, applyMiddleware(...middleware));
+}
+
+export function setServer(server) {
+  return {
+    type: SET_SERVER,
+    server,
+  };
 }

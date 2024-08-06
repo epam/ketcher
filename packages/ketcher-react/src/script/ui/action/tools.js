@@ -18,7 +18,7 @@ import {
   RxnArrowMode,
   SimpleObjectMode,
   findStereoAtoms,
-  RASTER_IMAGE_KEY,
+  IMAGE_KEY,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -325,10 +325,10 @@ const toolActions = {
   bonds: {
     hidden: (options) => isHidden(options, 'bonds'),
   },
-  [RASTER_IMAGE_KEY]: {
+  [IMAGE_KEY]: {
     title: 'Add Image',
-    action: { tool: RASTER_IMAGE_KEY },
-    hidden: (options) => isHidden(options, RASTER_IMAGE_KEY),
+    action: { tool: IMAGE_KEY },
+    hidden: (options) => isHidden(options, IMAGE_KEY),
   },
 };
 

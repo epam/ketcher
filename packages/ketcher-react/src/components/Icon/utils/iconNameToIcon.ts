@@ -226,7 +226,7 @@ import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import RetroSyntheticArrow from '../../../assets/icons/files/retrosynthetic_arrow.svg';
-import { RASTER_IMAGE_KEY } from 'ketcher-core';
+import { IMAGE_KEY } from 'ketcher-core';
 
 export const iconNameToIcon = {
   α,
@@ -393,7 +393,7 @@ export const iconNameToIcon = {
   'template-lib': TemplateLibIcon,
   'snake-mode': SnakeModeIcon,
   text: TextIcon,
-  [RASTER_IMAGE_KEY]: AddImageIcon,
+  [IMAGE_KEY]: AddImageIcon,
   'text-bold': TextBold,
   'text-italic': TextItalic,
   'text-subscript': TextSubscript,

@@ -38,7 +38,7 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import indigoModuleFn from 'indigo-ketcher';
+import indigoModuleFn from '_indigo-ketcher-import-alias_';
 
 interface IndigoOptions {
   set: (key: string, value: string) => void;

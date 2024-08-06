@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RASTER_IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY } from 'domain/constants';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -138,7 +138,7 @@ type LeftToolbarItemVariant =
   // text group
   | 'text'
   // image group
-  | typeof RASTER_IMAGE_KEY;
+  | typeof IMAGE_KEY;
 
 type BottomToolbarItemVariant =
   | 'template-common'

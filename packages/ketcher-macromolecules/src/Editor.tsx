@@ -211,7 +211,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       const sequenceNode = e.target.__data__?.node;
       const monomer = e.target.__data__?.monomer || sequenceNode?.monomer;
       const monomerItem = monomer.monomerItem;
-      const attachmentPointsToBonds = monomer.attachmentPointsToBonds;
+      const attachmentPointsToBonds = { ...monomer.attachmentPointsToBonds };
       const isNucleotideOrNucleoside =
         sequenceNode instanceof Nucleotide ||
         sequenceNode instanceof Nucleoside;

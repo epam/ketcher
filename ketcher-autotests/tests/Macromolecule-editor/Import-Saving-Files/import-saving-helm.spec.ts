@@ -11,7 +11,6 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  delay,
 } from '@utils';
 
 let page: Page;

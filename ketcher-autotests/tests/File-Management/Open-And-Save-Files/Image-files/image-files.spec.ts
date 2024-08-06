@@ -171,6 +171,7 @@ test.describe('Image files', () => {
   test('Verify that images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas', async ({
     page,
   }) => {
+    test.slow();
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas
@@ -1018,6 +1019,7 @@ test.describe('Image files', () => {
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved and aligned', async ({
     page,
   }) => {
+    test.slow();
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved

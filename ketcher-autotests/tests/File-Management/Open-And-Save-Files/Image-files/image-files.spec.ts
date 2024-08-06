@@ -8,6 +8,7 @@ import {
   dragMouseTo,
   getKet,
   LeftPanelButton,
+  moveOnAtom,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -31,6 +32,7 @@ import {
   takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { openStructureLibrary } from '@utils/templates';
 
@@ -953,6 +955,62 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-png-after-copying-expected.ket',
       'tests/test-data/KET/image-svg-png-after-copying-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions and can be
+     * saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer level.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved and aligned', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved
+     * and aligned, they can be saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     * Need to be updated after fixing bug https://github.com/epam/Indigo/issues/2172
+     */
+    const x = 400;
+    const y = 300;
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-distorting-expected.ket',
     );
   });
 });

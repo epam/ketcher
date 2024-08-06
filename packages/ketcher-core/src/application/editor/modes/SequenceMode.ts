@@ -48,6 +48,7 @@ import {
   LabeledNodesWithPositionInSequence,
 } from 'application/editor/tools/Tool';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -1115,6 +1116,7 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
+    // TODO: Check for multiple side chain connections in Linkers
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
         firstMonomerAttachmentPointName,
@@ -1170,7 +1172,6 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
-    SequenceRenderer.moveCaretForward();
     modelChanges.setUndoOperationReverse();
     modelChanges.setUndoOperationsByPriority();
     history.update(modelChanges);
@@ -1189,9 +1190,25 @@ export class SequenceMode extends BaseMode {
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
         monomerItem.attachmentPoints,
       );
-    const oldMonomerBonds = Object.entries(
-      nodeSelection.node.monomer.attachmentPointsToBonds,
-    );
+    // Side chains
+    // node.selection.node.monomers.attachmentPoints
+    const oldMonomerBonds: [string, PolymerBond | null][] = sideChainConnections
+      ? Object.entries(nodeSelection.node.monomer.attachmentPointsToBonds)
+      : [
+          [
+            AttachmentPointName.R1 as string,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            nodeSelection.node.firstMonomerInNode.attachmentPointsToBonds.R1!,
+          ],
+          [
+            AttachmentPointName.R2 as string,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            nodeSelection.node.lastMonomerInNode.attachmentPointsToBonds.R2!,
+          ],
+        ];
+    // Backbone
+    // nodeSelection.node.firstMonomerInNode.attachmentPointsToBonds.R1
+    // nodeSelection.node.lastMonomerInNode.attachmentPointsToBonds.R2
     return oldMonomerBonds.every(([key, bond]) => {
       if (
         !bond ||
@@ -1231,6 +1248,28 @@ export class SequenceMode extends BaseMode {
           ),
       ),
     );
+  }
+
+  private presetHasNeededAttachmentPoints(preset) {
+    // TODO: This check is not universal, it won't allow to put presets without R1 in sugar, revisit later
+    if (!preset.sugar) {
+      return false;
+    }
+
+    const sugarHasR1 = BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+      preset.sugar.attachmentPoints,
+    ).attachmentPointsList.includes(AttachmentPointName.R1);
+
+    if (preset.phosphate) {
+      const phosphateHasR2 =
+        BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+          preset.phosphate.attachmentPoints,
+        ).attachmentPointsList.includes(AttachmentPointName.R2);
+
+      return sugarHasR1 && phosphateHasR2;
+    }
+
+    return sugarHasR1;
   }
 
   private selectionsCantPreserveConnectionsWithPreset(
@@ -1383,6 +1422,7 @@ export class SequenceMode extends BaseMode {
       ),
     );
 
+    // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
     const monomerForSideConnections =
       newPresetNode instanceof Nucleotide ? phosphateMonomer : sugarMonomer;
 
@@ -1441,7 +1481,6 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
-    SequenceRenderer.moveCaretForward();
     modelChanges.setUndoOperationReverse();
     modelChanges.setUndoOperationsByPriority();
     history.update(modelChanges);
@@ -1454,9 +1493,7 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      if (
-        this.selectionsCantPreserveConnectionsWithPreset(selections, preset)
-      ) {
+      if (!this.presetHasNeededAttachmentPoints(preset)) {
         this.showMergeWarningModal();
         return;
       }

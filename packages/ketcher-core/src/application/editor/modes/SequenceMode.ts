@@ -1176,9 +1176,10 @@ export class SequenceMode extends BaseMode {
     history.update(modelChanges);
   }
 
-  private checkIfNewMonomerCouldEstablishSideChainConnections(
+  private checkIfNewMonomerCouldEstablishConnections(
     nodeSelection: NodeSelection,
     monomerItem: MonomerItemType | undefined,
+    sideChainConnections?: boolean,
   ) {
     if (!monomerItem?.attachmentPoints) {
       return false;
@@ -1192,7 +1193,12 @@ export class SequenceMode extends BaseMode {
       nodeSelection.node.monomer.attachmentPointsToBonds,
     );
     return oldMonomerBonds.every(([key, bond]) => {
-      if (!bond || !bond.isSideChainConnection) {
+      if (
+        !bond ||
+        (sideChainConnections
+          ? !bond.isSideChainConnection
+          : !bond.isBackBoneChainConnection)
+      ) {
         return true;
       }
 
@@ -1210,32 +1216,36 @@ export class SequenceMode extends BaseMode {
     );
   }
 
-  private selectionsCantPreserveSideChainConnectionsWithMonomer(
+  private selectionsCantPreserveConnectionsWithMonomer(
     selections: NodesSelection,
     monomerItem: MonomerItemType,
+    sideChainConnections?: boolean,
   ) {
     return selections.some((selectionRange) =>
       selectionRange.some(
         (nodeSelection) =>
-          !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+          !this.checkIfNewMonomerCouldEstablishConnections(
             nodeSelection,
             monomerItem,
+            sideChainConnections,
           ),
       ),
     );
   }
 
-  private selectionsCantPreserveSideChainConnectionsWithPreset(
+  private selectionsCantPreserveConnectionsWithPreset(
     selections: NodesSelection,
     preset: IRnaPreset,
+    sideChainConnections?: boolean,
   ) {
     return selections.some((selectionRange) =>
       selectionRange.some((nodeSelection) =>
         [preset.sugar, preset.base, preset.phosphate].some(
           (monomer) =>
-            !this.checkIfNewMonomerCouldEstablishSideChainConnections(
+            !this.checkIfNewMonomerCouldEstablishConnections(
               nodeSelection,
               monomer,
+              sideChainConnections,
             ),
         ),
       ),
@@ -1249,6 +1259,16 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
+      if (
+        this.selectionsCantPreserveConnectionsWithMonomer(
+          selections,
+          monomerItem,
+        )
+      ) {
+        this.showMergeWarningModal();
+        return;
+      }
+
       if (this.selectionsContainLinkerNode(selections)) {
         editor.events.openConfirmationDialog.dispatch({
           confirmationText:
@@ -1258,9 +1278,10 @@ export class SequenceMode extends BaseMode {
           },
         });
       } else if (
-        this.selectionsCantPreserveSideChainConnectionsWithMonomer(
+        this.selectionsCantPreserveConnectionsWithMonomer(
           selections,
           monomerItem,
+          true,
         )
       ) {
         editor.events.openConfirmationDialog.dispatch({
@@ -1433,6 +1454,13 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
+      if (
+        this.selectionsCantPreserveConnectionsWithPreset(selections, preset)
+      ) {
+        this.showMergeWarningModal();
+        return;
+      }
+
       if (this.selectionsContainLinkerNode(selections)) {
         editor.events.openConfirmationDialog.dispatch({
           confirmationText:
@@ -1442,9 +1470,10 @@ export class SequenceMode extends BaseMode {
           },
         });
       } else if (
-        this.selectionsCantPreserveSideChainConnectionsWithPreset(
+        this.selectionsCantPreserveConnectionsWithPreset(
           selections,
           preset,
+          true,
         )
       ) {
         editor.events.openConfirmationDialog.dispatch({

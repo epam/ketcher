@@ -49,6 +49,7 @@ function createApi(
     getInChIKey: structService.getInChIKey.bind(structService),
     toggleExplicitHydrogens:
       structService.toggleExplicitHydrogens.bind(structService),
+    destroy: structService.destroy?.bind(structService),
   });
 }
 

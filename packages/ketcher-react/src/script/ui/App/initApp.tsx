@@ -25,7 +25,7 @@ import App from './App.container';
 import { Provider } from 'react-redux';
 import { uniqueId } from 'lodash';
 import { Root } from 'react-dom/client';
-import createStore from '../state';
+import createStore, { setServer } from '../state';
 import { initKeydownListener, removeKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
 import { initMouseListener, removeMouseListeners } from '../state/mouse';
@@ -40,6 +40,7 @@ function initApp(
     editor: any;
     setKetcher: (ketcher: Ketcher) => void;
     ketcherId: string;
+    setServer: (server: StructService) => void;
   }) => void,
   togglerComponent?: JSX.Element,
 ) {
@@ -48,10 +49,22 @@ function initApp(
     ketcherRef = ketcher;
   };
   const ketcherId = uniqueId();
+  // hack to return server setter to Editor.tsx
+  // because it does not have access to store
+  // eslint-disable-next-line prefer-const
+  let getServerSetter: () => (structService: StructService) => void;
+
   const setEditor = (editor) => {
-    resolve({ editor, setKetcher, ketcherId });
+    const setServer = getServerSetter();
+    resolve({ editor, setKetcher, ketcherId, setServer });
   };
   const store = createStore(options, server, setEditor);
+
+  getServerSetter = () => {
+    return (structService: StructService) => {
+      store.dispatch(setServer(structService));
+    };
+  };
 
   store.dispatch(initKeydownListener(element));
   store.dispatch(initMouseListener(element));

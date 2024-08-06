@@ -25,7 +25,7 @@ import init, { Config } from './script';
 import { useEffect, useRef } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
-import { Ketcher } from 'ketcher-core';
+import { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
 import { useResizeObserver } from './hooks';
@@ -33,6 +33,7 @@ import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
+import { KetcherBuilder } from './script/builders';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -47,12 +48,23 @@ function Editor(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
+  const ketcherBuilderRef = useRef<KetcherBuilder | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const setServerRef = useRef<(structService: StructService) => void>(() => {});
+  const structServiceProvider = props.structServiceProvider;
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef,
   });
+
+  useEffect(() => {
+    ketcherBuilderRef.current?.reinitializeApi(
+      props.structServiceProvider,
+      setServerRef.current,
+    );
+  }, [structServiceProvider]);
 
   const initKetcher = () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
@@ -63,15 +75,19 @@ function Editor(props: EditorProps) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(({ ketcher, ketcherId, cleanup }) => {
-      cleanupRef.current = cleanup;
+    initPromiseRef.current?.then(
+      ({ ketcher, ketcherId, cleanup, builder, setServer }) => {
+        cleanupRef.current = cleanup;
+        ketcherBuilderRef.current = builder;
+        setServerRef.current = setServer;
 
-      if (typeof props.onInit === 'function' && ketcher) {
-        props.onInit(ketcher);
-        const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
-        window.dispatchEvent(ketcherInitEvent);
-      }
-    });
+        if (typeof props.onInit === 'function' && ketcher) {
+          props.onInit(ketcher);
+          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
+          window.dispatchEvent(ketcherInitEvent);
+        }
+      },
+    );
   };
   useEffect(() => {
     if (initPromiseRef.current === null) {

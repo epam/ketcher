@@ -204,4 +204,5 @@ export interface StructService {
     data: ExplicitHydrogensData,
     options?: StructServiceOptions,
   ) => Promise<ExplicitHydrogensResult>;
+  destroy?: () => void;
 }

@@ -135,10 +135,10 @@ test.describe('Check attachment point rotation', () => {
     await selectRectangleSelectionTool(page);
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
+    await moveMouseAway(page);
 
     await selectSingleBondTool(page);
     // Hover 1th peptide
-    await moveMouseAway(page);
     await peptide1.hover();
     await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page);

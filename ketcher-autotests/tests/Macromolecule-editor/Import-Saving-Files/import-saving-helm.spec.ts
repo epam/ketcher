@@ -223,6 +223,13 @@ test.describe('Import correct HELM sequence: ', () => {
     Test case: https://github.com/epam/ketcher/issues/5215
     Description: Load correct HELM sequences and compare canvas with the template
     */
+      test.setTimeout(20000);
+      test.fail(
+        correctHELMString.shouldFail === true,
+        `That test fails because of ${correctHELMString.issueNumber} issue.`,
+      );
+      if (correctHELMString.pageReloadNeeded) await pageReload(page);
+
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
       await takeEditorScreenshot(page);
     });

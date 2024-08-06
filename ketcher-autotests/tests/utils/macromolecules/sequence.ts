@@ -11,6 +11,7 @@ export async function clickOnSequenceSymbol(
     symbolText,
     clickOptions?.nthNumber,
   );
+  await symbolLocator.hover();
   await symbolLocator.click(clickOptions);
 }
 

@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
+  applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
   clickOnFileFormatDropdown,
   copyAndPaste,
@@ -1012,5 +1013,302 @@ test.describe('Image files', () => {
       'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-distorting-expected.ket',
     );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved and aligned', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved
+     * and aligned, they can be saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    const x = 400;
+    const y = 300;
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(x, y, page);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-cleanup-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-cleanup-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements, they can be
+     * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-calculateCIP.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, it is calculated for elements', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, CIP is calculated for elements, they can be
+     * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Check, page),
+    );
+    await takeEditorScreenshot(page, {
+      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+    });
+    await pressButton(page, 'Cancel');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, it is calculated for elements', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, CIP is calculated for elements, they can be
+     * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
+    );
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Close');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements, they can be
+     * saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        ),
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        ),
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-explicit-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.ThreeD, page),
+    );
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Discard), only elements are affected', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Discard), only elements are affected,
+     * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await applyAutoMapMode(page, 'Discard');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-discard-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-discard-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Keep), only elements are affected', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Keep), only elements are affected,
+     * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await applyAutoMapMode(page, 'Keep');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-keep-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-keep-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Alter), only elements are affected', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Alter), only elements are affected,
+     * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await applyAutoMapMode(page, 'Alter');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-alter-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-alter-expected.ket',
+    );
+  });
+
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Clear), only elements are affected', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #2144
+     * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool (Clear), only elements are affected,
+     * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await applyAutoMapMode(page, 'Alter');
+    await applyAutoMapMode(page, 'Clear');
+    await verifyFile(
+      page,
+      'KET/images-png-svg-with-benzene-clear-expected.ket',
+      'tests/test-data/KET/images-png-svg-with-benzene-clear-expected.ket',
+    );
+  });
+
+  const autoMapModes = ['Discard', 'Keep', 'Alter', 'Clear'];
+  const expectedFiles = [
+    'KET/images-png-svg-with-benzene-discard-expected.ket',
+    'KET/images-png-svg-with-benzene-keep-expected.ket',
+    'KET/images-png-svg-with-benzene-alter-expected.ket',
+    'KET/images-png-svg-with-benzene-clear-expected.ket',
+  ];
+  const testDescription =
+    'Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool';
+
+  autoMapModes.forEach((mode, index) => {
+    test(`${testDescription} (${mode}), only elements are affected - ${index}`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: #2144
+       * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tools, only elements are affected,
+       * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/images-png-svg-with-benzene-for-distorting.ket',
+        page,
+      );
+      await takeEditorScreenshot(page);
+
+      if (mode === 'Clear') {
+        await applyAutoMapMode(page, 'Alter');
+      }
+
+      await applyAutoMapMode(page, mode);
+
+      await verifyFile(
+        page,
+        expectedFiles[index],
+        `tests/test-data/${expectedFiles[index]}`,
+      );
+    });
   });
 });

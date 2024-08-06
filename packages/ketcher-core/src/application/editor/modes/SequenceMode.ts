@@ -1421,6 +1421,8 @@ export class SequenceMode extends BaseMode {
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     SequenceRenderer.moveCaretForward();
+    modelChanges.setUndoOperationReverse();
+    modelChanges.setUndoOperationsByPriority();
     history.update(modelChanges);
   }
 

@@ -40,7 +40,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   await selectClearCanvasTool(page);
-  await page.keyboard.press('Control+0');
+  // await page.keyboard.press('Control+0');
 });
 
 test.afterAll(async ({ browser }) => {
@@ -156,11 +156,6 @@ const correctHELMStrings: IHELMString[] = [
       'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
   },
   {
-    helmDescription: '21. Index starts from 100',
-    HELMString:
-      'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
-  },
-  {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
     HELMString: 'PEPTIDE1{A}|RNA1{R(A)P}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
   },
@@ -206,6 +201,11 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '30. Cycled RNAs',
     HELMString: 'RNA1{R(A)P.R(C)P.R(G)P}$RNA1,RNA1,9:R2-1:R1$$$V2.0',
+  },
+  {
+    helmDescription: '21. Index starts from 100',
+    HELMString:
+      'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
   },
 ];
 

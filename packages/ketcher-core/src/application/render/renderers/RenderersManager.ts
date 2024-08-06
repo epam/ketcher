@@ -1,12 +1,5 @@
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import { Command } from 'domain/entities/Command';
-import assert from 'assert';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { CoreEditor } from 'application/editor';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import { AttachmentPointName } from 'domain/types';
 import {
   PeptideRenderer,
   PhosphateRenderer,
@@ -15,25 +8,43 @@ import {
   UnsplitNucleotideRenderer,
 } from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
+import assert from 'assert';
 import {
   Peptide,
-  Sugar,
-  RNABase,
   Phosphate,
+  RNABase,
+  Sugar,
   UnsplitNucleotide,
 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Command } from 'domain/entities/Command';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
-import { CoreEditor } from 'application/editor';
+import { AttachmentPointName } from 'domain/types';
+
+type FlexModeOrSnakeModePolymerBondRenderer =
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 export class RenderersManager {
+  // FIXME: Specify the types.
   private theme;
   public monomers: Map<number, BaseMonomerRenderer> = new Map();
-  public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
+  public polymerBonds = new Map<
+    number,
+    FlexModeOrSnakeModePolymerBondRenderer
+  >();
+
   private needRecalculateMonomersEnumeration = false;
   private needRecalculateMonomersBeginning = false;
 
@@ -103,8 +114,9 @@ export class RenderersManager {
     this.markForRecalculateBegin();
   }
 
-  public addPolymerBond(polymerBond: PolymerBond) {
-    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+  public addPolymerBond(polymerBond: PolymerBond): void {
+    const polymerBondRenderer =
+      PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
@@ -329,10 +341,12 @@ export class RenderersManager {
     this.needRecalculateMonomersBeginning = false;
   }
 
+  // FIXME: Specify the types.
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
-    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+    const polymerBondRenderer =
+      PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
     this.markForRecalculateBegin();
@@ -371,7 +385,7 @@ export class RenderersManager {
     attachmentPointName: AttachmentPointName,
   ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
-    monomer.renderer?.hoverAttachmenPoint(attachmentPointName);
+    monomer.renderer?.hoverAttachmentPoint(attachmentPointName);
     monomer.renderer?.updateAttachmentPoints();
   }
 

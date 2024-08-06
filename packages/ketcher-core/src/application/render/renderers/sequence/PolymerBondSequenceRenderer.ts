@@ -134,15 +134,15 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     return path;
   }
 
-  public moveStart() {}
+  public moveStart(): void {}
 
-  public moveEnd() {}
+  public moveEnd(): void {}
 
-  public get isSnake() {
+  public get isSnake(): false {
     return false;
   }
 
-  public isMonomersOnSameHorizontalLine() {
+  public isMonomersOnSameHorizontalLine(): false {
     return false;
   }
 }

@@ -19,10 +19,10 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
 import {
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   Nucleotide,
   Nucleoside,
   NodeSelection,
-  PolymerBondRenderer,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -316,7 +316,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      (event, polymerBondRenderer: PolymerBondRenderer) => {
+      (
+        event,
+        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ): void => {
         showPolymerBondContextMenu({
           event,
           props: {

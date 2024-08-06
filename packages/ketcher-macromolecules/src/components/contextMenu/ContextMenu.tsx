@@ -1,6 +1,9 @@
 import { ReactElement } from 'react';
 import { Item, ItemParams, Separator } from 'react-contexify';
-import { BaseSequenceItemRenderer, PolymerBondRenderer } from 'ketcher-core';
+import {
+  BaseSequenceItemRenderer,
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+} from 'ketcher-core';
 import { StyledMenu } from 'components/contextMenu/styles';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 
@@ -13,8 +16,8 @@ interface MenuItem {
     props,
   }: {
     props?: {
+      polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
       sequenceItemRenderer?: BaseSequenceItemRenderer;
-      polymerBondRenderer?: PolymerBondRenderer;
     };
   }) => boolean;
   isMenuTitle?: boolean;

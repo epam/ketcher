@@ -40,6 +40,7 @@ const idToTitle: {
   'reaction-arrow-filled-bow': 'Arrow Filled Bow Tool',
   'reaction-arrow-dashed-open-angle': 'Arrow Dashed Open Angle Tool',
   'reaction-arrow-failed': 'Failed Arrow Tool',
+  'reaction-arrow-retrosynthetic': 'Retrosynthetic Arrow Tool',
   'reaction-arrow-both-ends-filled-triangle':
     'Arrow Both Ends Filled Triangle Tool',
   'reaction-arrow-equilibrium-filled-half-bow':

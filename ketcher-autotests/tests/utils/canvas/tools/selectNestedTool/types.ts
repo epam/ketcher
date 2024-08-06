@@ -54,16 +54,17 @@ export const ArrowTool: toolType = {
   ARROW_FILLED_BOW: [3, 'reaction-arrow-filled-bow'],
   ARROW_DASHED_OPEN_ANGLE: [4, 'reaction-arrow-dashed-open-angle'],
   ARROW_FAILED: [5, 'reaction-arrow-failed'],
+  ARROW_RETROSYNTHETIC: [6, 'reaction-arrow-retrosynthetic'],
   ARROW_BOTH_ENDS_FILLED_TRIANGLE: [
-    6,
+    7,
     'reaction-arrow-both-ends-filled-triangle',
   ],
   ARROW_EQUILIBRIUM_FILLED_HALF_BOW: [
-    7,
+    8,
     'reaction-arrow-equilibrium-filled-half-bow',
   ],
   ARROW_EQUILIBRIUM_FILLED_TRIANGLE: [
-    8,
+    9,
     'reaction-arrow-equilibrium-filled-triangle',
   ],
   ARROW_EQUILIBRIUM_OPEN_ANGLE: [9, 'reaction-arrow-equilibrium-open-angle'],

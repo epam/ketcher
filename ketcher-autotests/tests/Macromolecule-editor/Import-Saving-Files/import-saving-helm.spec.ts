@@ -157,18 +157,18 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '20. ListOfSimplePolymers - Mix - reverse order',
     HELMString:
       'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
-    pageReloadNeeded: true,
+    // pageReloadNeeded: true,
   },
   {
     helmDescription: '21. Index starts from 100',
     HELMString:
       'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
-    pageReloadNeeded: true,
+    // pageReloadNeeded: true,
   },
   {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
     HELMString: 'PEPTIDE1{A}|RNA1{R(A)P}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
-    pageReloadNeeded: true,
+    // pageReloadNeeded: true,
   },
   {
     helmDescription: '23. Connection CHEM1(R2) to Peptide(R1)',
@@ -191,7 +191,7 @@ const correctHELMStrings: IHELMString[] = [
       '26. List of peptides connected to another list of peptides via R3 to R1',
     HELMString:
       'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.R.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
-    pageReloadNeeded: true,
+    // pageReloadNeeded: true,
   },
   {
     helmDescription:

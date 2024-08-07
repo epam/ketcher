@@ -59,6 +59,7 @@ export async function chooseFileFormat(
     | 'FASTA'
     | 'Sequence'
     | 'IDT'
+    | 'HELM'
     | 'SVG Document',
 ) {
   await page.getByTestId('dropdown-select').click();

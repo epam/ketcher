@@ -690,7 +690,6 @@ export class KetSerializer implements Serializer<Struct> {
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
-    console.log(fileContent);
     return {
       serializedMacromolecules: fileContent,
       micromoleculesStruct: struct,

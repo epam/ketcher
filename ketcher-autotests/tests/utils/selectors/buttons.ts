@@ -98,6 +98,7 @@ export enum LeftPanelButton {
   R_GroupLabelTool = 'R-Group Label Tool',
   ShapeEllipse = 'Shape Ellipse',
   AddText = 'Add text',
+  AddImage = 'Add Image',
   ZoomIn = 'Zoom In',
   ZoomOut = 'Zoom Out',
   ZoomReset = 'Reset Zoom',

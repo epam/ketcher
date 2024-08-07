@@ -583,7 +583,20 @@ export class KetSerializer implements Serializer<Struct> {
     };
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
 
-    drawingEntitiesManager.monomers.forEach((monomer) => {
+    const seenPositions = new Set<string>();
+    const uniqueMonomers = new Map<number, BaseMonomer>();
+
+    drawingEntitiesManager.monomers.forEach((monomer, id) => {
+      const positionKey = `${monomer.position.x},${monomer.position.y}`;
+      if (!seenPositions.has(positionKey)) {
+        seenPositions.add(positionKey);
+        uniqueMonomers.set(id, monomer);
+      }
+    });
+
+    drawingEntitiesManager.monomers = uniqueMonomers;
+
+    uniqueMonomers.forEach((monomer) => {
       if (
         monomer instanceof Chem &&
         monomer.monomerItem.props.isMicromoleculeFragment
@@ -677,6 +690,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
+    console.log(fileContent);
     return {
       serializedMacromolecules: fileContent,
       micromoleculesStruct: struct,

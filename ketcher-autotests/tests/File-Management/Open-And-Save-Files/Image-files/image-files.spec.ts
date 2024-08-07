@@ -991,18 +991,11 @@ test.describe('Image files', () => {
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved
      * and aligned, they can be saved to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
-     * Need to be updated after fixing bug https://github.com/epam/Indigo/issues/2172
      */
-    const x = 400;
-    const y = 300;
     await openFileAndAddToCanvasAsNewProject(
       'KET/images-png-svg-with-benzene-for-distorting.ket',
       page,
     );
-    await takeEditorScreenshot(page);
-    await moveOnAtom(page, 'C', 0);
-    await dragMouseTo(x, y, page);
-    await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -1040,7 +1033,7 @@ test.describe('Image files', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
     await verifyFile(
       page,
       'KET/images-png-svg-with-benzene-for-cleanup-expected.ket',

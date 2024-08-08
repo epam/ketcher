@@ -26,6 +26,7 @@ export enum RxnArrowMode {
   FilledBow = 'filled-bow',
   DashedOpenAngle = 'dashed-open-angle',
   Failed = 'failed',
+  Retrosynthetic = 'retrosynthetic',
   BothEndsFilledTriangle = 'both-ends-filled-triangle',
   EquilibriumFilledTriangle = 'equilibrium-filled-triangle',
   EquilibriumFilledHalfBow = 'equilibrium-filled-half-bow',

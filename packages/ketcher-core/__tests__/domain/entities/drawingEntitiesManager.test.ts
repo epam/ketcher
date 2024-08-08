@@ -19,6 +19,9 @@ import {
   MonomerHoverOperation,
 } from 'application/editor/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { createPolymerEditorCanvas } from '../../helpers/dom';
+import { CoreEditor } from 'application/editor';
+import { FlexMode } from 'application/editor/modes/FlexMode';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -86,7 +89,12 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete peptide', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      mode: new FlexMode(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
     const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
@@ -99,7 +107,12 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete polymer bond', () => {
-    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const editor = new CoreEditor({
+      canvas: createPolymerEditorCanvas(),
+      theme: {},
+      mode: new FlexMode(),
+    });
+    const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
     const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),

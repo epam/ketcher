@@ -26,6 +26,7 @@ import {
   checkIsR2R1Connection,
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 import { CoreEditor } from 'application/editor';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -254,7 +255,10 @@ export class RenderersManager {
       peptideRenderer.redrawEnumeration();
     }
 
-    if (!firstMonomers.includes(peptideRenderer.monomer)) {
+    if (
+      !isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide]) &&
+      !firstMonomers.includes(peptideRenderer.monomer)
+    ) {
       return;
     }
 
@@ -265,7 +269,14 @@ export class RenderersManager {
     rnaComponentRenderer: BaseMonomerRenderer,
     firstMonomers: BaseMonomer[],
   ) {
-    if (!firstMonomers.includes(rnaComponentRenderer.monomer)) {
+    if (
+      !isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
+        Phosphate,
+        Sugar,
+        UnsplitNucleotide,
+      ]) &&
+      !firstMonomers.includes(rnaComponentRenderer.monomer)
+    ) {
       return;
     }
 
@@ -274,20 +285,16 @@ export class RenderersManager {
 
   private recalculateMonomersEnumeration() {
     const editor = CoreEditor.provideEditorInstance();
-    const [firstMonomersInRegularChains, firstMonomersInCyclicChains] =
+    const [, firstMonomersInCyclicChains] =
       ChainsCollection.getFirstMonomersInChains([
         ...editor.drawingEntitiesManager.monomers.values(),
       ]);
-    const firstMonomers = [
-      ...firstMonomersInRegularChains,
-      ...firstMonomersInCyclicChains,
-    ];
 
     this.monomers.forEach((monomerRenderer) => {
       if (monomerRenderer instanceof PeptideRenderer) {
         this.recalculatePeptideEnumeration(
           monomerRenderer as PeptideRenderer,
-          firstMonomers,
+          firstMonomersInCyclicChains,
         );
       }
 
@@ -298,7 +305,7 @@ export class RenderersManager {
       ) {
         this.recalculateRnaEnumeration(
           monomerRenderer as BaseMonomerRenderer,
-          firstMonomers,
+          firstMonomersInCyclicChains,
         );
       }
 

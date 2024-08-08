@@ -1086,7 +1086,7 @@ export class SequenceMode extends BaseMode {
     previousSelectionNode?: SubChainNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNode(selection.node);
+    const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
 
     const sideChainConnections = this.preserveSideChainConnections(selection);
@@ -1111,7 +1111,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newMonomerSequenceNode,
-        nextNode,
+        nextNode || null,
         previousSelectionNode,
       ),
     );
@@ -1156,8 +1156,8 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-        selectionRange[0].nodeIndexOverall - 1,
+      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
+        selectionRange[0].node,
       );
 
       selectionRange.forEach((nodeSelection) => {
@@ -1362,7 +1362,7 @@ export class SequenceMode extends BaseMode {
     previousSelectionNode?: SubChainNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNode(selection.node);
+    const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
 
     const sideChainConnections = this.preserveSideChainConnections(selection);
@@ -1417,7 +1417,7 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPresetNode,
-        nextNode,
+        nextNode || null,
         previousSelectionNode,
       ),
     );
@@ -1465,8 +1465,8 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-        selectionRange[0].nodeIndexOverall - 1,
+      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
+        selectionRange[0].node,
       );
 
       selectionRange.forEach((nodeSelection) => {
@@ -1629,7 +1629,7 @@ export class SequenceMode extends BaseMode {
 
   private insertNewSequenceFragment(
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
-    nextNodeToConnect?: SubChainNode,
+    nextNodeToConnect?: SubChainNode | null,
     previousNodeToConnect?: SubChainNode,
   ) {
     const chainsCollection =
@@ -1639,7 +1639,9 @@ export class SequenceMode extends BaseMode {
             new Chain().addNode(chainsCollectionOrNode),
           );
     const currentNode =
-      nextNodeToConnect || SequenceRenderer.currentEdittingNode;
+      nextNodeToConnect === null
+        ? undefined
+        : nextNodeToConnect || SequenceRenderer.currentEdittingNode;
     const previousNodeInSameChain =
       previousNodeToConnect || SequenceRenderer.previousNodeInSameChain;
     const modelChanges = new Command();

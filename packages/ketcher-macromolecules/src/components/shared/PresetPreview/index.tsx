@@ -29,6 +29,7 @@ import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
 import { PresetPreviewState, selectShowPreview } from 'state/common';
 import { IconName } from 'ketcher-react/dist/components/Icon/types';
+import useIDTAliasesTextForPreset from '../../../hooks/useIDTAliasesTextForPreset';
 
 const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
   'sugar',
@@ -51,13 +52,22 @@ const PresetPreview = ({ className }: IPreviewProps) => {
       transform: ${preview.style.transform || ''};
     `;
   }, [preview]);
-  if (!preview || !('preset' in preview)) {
-    return undefined;
-  }
+
   const { preset } = preview as PresetPreviewState;
   const { idtAliases } = preset;
   const [, baseMonomer] = preset.monomers;
-  const presetName = baseMonomer?.props.Name;
+  const presetName = preset?.name ?? baseMonomer?.props.Name;
+  const position = preset.position;
+
+  const idtAliasesText = useIDTAliasesTextForPreset({
+    presetName,
+    position,
+    idtAliases,
+  });
+
+  if (!preview || !('preset' in preview)) {
+    return undefined;
+  }
 
   return (
     preview.preset && (
@@ -77,7 +87,9 @@ const PresetPreview = ({ className }: IPreviewProps) => {
               </PresetMonomerRow>
             ),
         )}
-        {idtAliases && <IDTAliases aliases={idtAliases}></IDTAliases>}
+        {idtAliasesText && (
+          <IDTAliases idtAliasesText={idtAliasesText} preset />
+        )}
       </ContainerDynamic>
     )
   );

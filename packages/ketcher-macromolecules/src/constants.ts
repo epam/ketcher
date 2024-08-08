@@ -26,8 +26,8 @@ export type LibraryNameType =
   | keyof typeof MONOMER_TYPES;
 
 export const preview = {
-  width: 230,
-  height: 230,
+  width: 345,
+  height: 345,
   gap: 5,
   topPadding: 16,
   heightForNucleotide: 105,

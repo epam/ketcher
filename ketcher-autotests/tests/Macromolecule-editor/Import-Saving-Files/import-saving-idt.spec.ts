@@ -39,6 +39,7 @@ import {
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
@@ -392,7 +393,7 @@ test.describe('Import-Saving .idt Files', () => {
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await enterSequence(page, 'ttt');
     await page.keyboard.press('Escape');

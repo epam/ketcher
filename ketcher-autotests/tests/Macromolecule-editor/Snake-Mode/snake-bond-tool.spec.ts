@@ -711,11 +711,13 @@ test.describe('Snake Bond Tool', () => {
       `KET/peptides-flex-chain.ket`,
       page,
     );
-    scrollUp(page, 200);
+    await scrollUp(page, 200);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await page.getByText('meS').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.mouse.click(x2, y2);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

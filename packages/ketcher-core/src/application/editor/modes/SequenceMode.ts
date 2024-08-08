@@ -1088,8 +1088,11 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
-
     const sideChainConnections = this.preserveSideChainConnections(selection);
+    const hasPreviousNodeInChain =
+      selection.node.firstMonomerInNode.attachmentPointsToBonds.R1;
+    const hasNextNodeInChain =
+      selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -1113,6 +1116,8 @@ export class SequenceMode extends BaseMode {
         newMonomerSequenceNode,
         nextNode || null,
         previousSelectionNode,
+        Boolean(hasPreviousNodeInChain),
+        Boolean(hasNextNodeInChain),
       ),
     );
 
@@ -1161,6 +1166,10 @@ export class SequenceMode extends BaseMode {
       );
 
       selectionRange.forEach((nodeSelection) => {
+        if (nodeSelection.node instanceof EmptySequenceNode) {
+          return;
+        }
+
         previousReplacedNode = this.replaceSelectionWithMonomer(
           monomerItem,
           nodeSelection,
@@ -1364,6 +1373,10 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
+    const hasPreviousNodeInChain =
+      selection.node.firstMonomerInNode.attachmentPointsToBonds.R1;
+    const hasNextNodeInChain =
+      selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     const sideChainConnections = this.preserveSideChainConnections(selection);
 
@@ -1419,6 +1432,8 @@ export class SequenceMode extends BaseMode {
         newPresetNode,
         nextNode || null,
         previousSelectionNode,
+        Boolean(hasPreviousNodeInChain),
+        Boolean(hasNextNodeInChain),
       ),
     );
 
@@ -1470,6 +1485,10 @@ export class SequenceMode extends BaseMode {
       );
 
       selectionRange.forEach((nodeSelection) => {
+        if (nodeSelection.node instanceof EmptySequenceNode) {
+          return;
+        }
+
         previousReplacedNode = this.replaceSelectionWithPreset(
           preset,
           nodeSelection,
@@ -1631,6 +1650,8 @@ export class SequenceMode extends BaseMode {
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
     nextNodeToConnect?: SubChainNode | null,
     previousNodeToConnect?: SubChainNode,
+    needConnectWithPreviousNodeInChain = true,
+    needConnectWithNextNodeInChain = true,
   ) {
     const chainsCollection =
       chainsCollectionOrNode instanceof ChainsCollection
@@ -1651,20 +1672,24 @@ export class SequenceMode extends BaseMode {
 
     this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
 
-    this.connectNodes(
-      previousNodeInSameChain,
-      firstNodeOfNewFragment,
-      modelChanges,
-      newNodePosition,
-      currentNode,
-    );
+    if (needConnectWithPreviousNodeInChain) {
+      this.connectNodes(
+        previousNodeInSameChain,
+        firstNodeOfNewFragment,
+        modelChanges,
+        newNodePosition,
+        currentNode,
+      );
+    }
 
-    this.connectNodes(
-      lastNodeOfNewFragment,
-      currentNode,
-      modelChanges,
-      newNodePosition,
-    );
+    if (needConnectWithNextNodeInChain) {
+      this.connectNodes(
+        lastNodeOfNewFragment,
+        currentNode,
+        modelChanges,
+        newNodePosition,
+      );
+    }
 
     return modelChanges;
   }

@@ -28,6 +28,7 @@ import { Coordinates } from '../shared/coordinates';
 import { AttachmentPointName } from 'domain/types';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { Command } from 'domain/entities/Command';
+import { UnresolvedMonomer } from 'domain/entities';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -490,6 +491,14 @@ class PolymerBond implements BaseTool {
 
     // Modal: Any or both monomers are Chems
     if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+      return true;
+    }
+
+    // Modal: Any or both monomers are unresolved
+    if (
+      firstMonomer instanceof UnresolvedMonomer ||
+      secondMonomer instanceof UnresolvedMonomer
+    ) {
       return true;
     }
 

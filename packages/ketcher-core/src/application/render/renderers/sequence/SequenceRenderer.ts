@@ -593,7 +593,7 @@ export class SequenceRenderer {
   }
 
   public static get nextNodeInSameChain(): SubChainNode | undefined {
-    if (SequenceRenderer.nextCaretPosition !== SequenceRenderer.caretPosition) {
+    if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
       return;
     }
 

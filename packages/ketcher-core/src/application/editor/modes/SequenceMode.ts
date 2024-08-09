@@ -1349,14 +1349,20 @@ export class SequenceMode extends BaseMode {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
     } else if (
-      (previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2 &&
-        !newMonomerAttachmentPoints.attachmentPointsList.includes(
-          AttachmentPointName.R1,
-        )) ||
-      (nextNodeInSameChain?.firstMonomerInNode.attachmentPointsToBonds.R1 &&
-        !newMonomerAttachmentPoints.attachmentPointsList.includes(
+      (previousNodeInSameChain &&
+        (!previousNodeInSameChain?.lastMonomerInNode.hasAttachmentPoint(
           AttachmentPointName.R2,
-        ))
+        ) ||
+          !newMonomerAttachmentPoints.attachmentPointsList.includes(
+            AttachmentPointName.R1,
+          ))) ||
+      (nextNodeInSameChain &&
+        (!nextNodeInSameChain?.firstMonomerInNode.hasAttachmentPoint(
+          AttachmentPointName.R1,
+        ) ||
+          !newMonomerAttachmentPoints.attachmentPointsList.includes(
+            AttachmentPointName.R2,
+          )))
     ) {
       this.showMergeWarningModal();
     } else {

@@ -937,7 +937,7 @@ export class SequenceMode extends BaseMode {
     return entity?.firstMonomerInNode?.attachmentPointsToBonds?.R1 === null;
   }
 
-  private isR2Free(entity: SubChainNode | BaseMonomer): boolean {
+  private isR2Free(entity?: SubChainNode | BaseMonomer): boolean {
     if (entity instanceof BaseMonomer) {
       return entity.attachmentPointsToBonds.R2 === null;
     }
@@ -1305,6 +1305,12 @@ export class SequenceMode extends BaseMode {
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const nextNodeInSameChain = SequenceRenderer.nextNodeInSameChain;
+    const newMonomerAttachmentPoints =
+      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+        monomerItem.attachmentPoints || [],
+      );
 
     if (selections.length > 0) {
       if (
@@ -1342,6 +1348,17 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
+    } else if (
+      (previousNodeInSameChain?.lastMonomerInNode.attachmentPointsToBonds.R2 &&
+        !newMonomerAttachmentPoints.attachmentPointsList.includes(
+          AttachmentPointName.R1,
+        )) ||
+      (nextNodeInSameChain?.firstMonomerInNode.attachmentPointsToBonds.R1 &&
+        !newMonomerAttachmentPoints.attachmentPointsList.includes(
+          AttachmentPointName.R2,
+        ))
+    ) {
+      this.showMergeWarningModal();
     } else {
       const newNodePosition = this.getNewNodePosition();
 

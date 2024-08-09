@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState, StrictMode } from 'react';
+import { useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
@@ -26,6 +26,7 @@ let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(
     process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
+let structServiceInitializedEventName: string;
 if (process.env.MODE === 'standalone') {
   if (process.env.USE_SEPARATE_INDIGO_WASM === 'true') {
     // It is possible to use just 'ketcher-standalone' instead of ketcher-standalone/dist/binaryWasm
@@ -35,17 +36,23 @@ if (process.env.MODE === 'standalone') {
     // to copy .wasm files in build folder. Please check /example/config/webpack.config.js.
     const {
       StandaloneStructServiceProvider,
+      STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
       // eslint-disable-next-line @typescript-eslint/no-var-requires
     } = require('ketcher-standalone/dist/binaryWasm');
     structServiceProvider =
       new StandaloneStructServiceProvider() as StructServiceProvider;
+    structServiceInitializedEventName =
+      STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT;
   } else {
     const {
       StandaloneStructServiceProvider,
+      STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-    } = require('ketcher-standalone');
+    } = require('ketcher-standalone/dist/binaryWasmNoRender');
     structServiceProvider =
       new StandaloneStructServiceProvider() as StructServiceProvider;
+    structServiceInitializedEventName =
+      STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT;
   }
 }
 
@@ -69,6 +76,8 @@ const App = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
+  const [currentStructServiceProvider, setCurrentStructServiceProvider] =
+    useState(structServiceProvider);
 
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
@@ -87,7 +96,7 @@ const App = () => {
       <PolymerEditor togglerComponent={togglerComponent} />
     </>
   ) : (
-    <StrictMode>
+    <>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -95,7 +104,7 @@ const App = () => {
         }}
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
+        structServiceProvider={currentStructServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
 
@@ -104,6 +113,19 @@ const App = () => {
               eventType: 'init',
             },
             '*',
+          );
+
+          window.parent.addEventListener(
+            structServiceInitializedEventName,
+            () => {
+              import('ketcher-standalone/dist/binaryWasm').then(
+                ({ StandaloneStructServiceProvider }) => {
+                  const structServiceProvider =
+                    new StandaloneStructServiceProvider();
+                  setCurrentStructServiceProvider(structServiceProvider);
+                },
+              );
+            },
           );
         }}
         togglerComponent={togglerComponent}
@@ -121,7 +143,7 @@ const App = () => {
           }}
         />
       )}
-    </StrictMode>
+    </>
   );
 };
 

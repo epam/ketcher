@@ -11,10 +11,10 @@ export const getValidations = (
   const phosphateValidations: string[] = [];
   const baseValidations: string[] = [];
 
-  if (newPreset.phosphate) {
+  if (newPreset?.phosphate) {
     sugarValidations.push('R2');
   }
-  if (newPreset.base) {
+  if (newPreset?.base) {
     sugarValidations.push('R3');
   }
   baseValidations.push('R1');

@@ -1393,16 +1393,17 @@ export class SequenceMode extends BaseMode {
     ) as Phosphate;
 
     let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
-    if (phosphateMonomer) {
+
+    if (!rnaBase) {
+      newPresetNode = new LinkerSequenceNode(sugarMonomer);
+    } else if (!phosphateMonomer) {
+      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
+    } else {
       newPresetNode = new Nucleotide(
         sugarMonomer,
         rnaBaseMonomer,
         phosphateMonomer,
       );
-    } else if (rnaBase) {
-      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
-    } else {
-      newPresetNode = new LinkerSequenceNode(sugarMonomer);
     }
 
     return {

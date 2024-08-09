@@ -1086,10 +1086,13 @@ export class SequenceMode extends BaseMode {
     previousSelectionNode?: SubChainNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNode(selection.node);
+    const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
-
     const sideChainConnections = this.preserveSideChainConnections(selection);
+    const hasPreviousNodeInChain =
+      selection.node.firstMonomerInNode.attachmentPointsToBonds.R1;
+    const hasNextNodeInChain =
+      selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -1111,8 +1114,10 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newMonomerSequenceNode,
-        nextNode,
+        nextNode || null,
         previousSelectionNode,
+        Boolean(hasPreviousNodeInChain),
+        Boolean(hasNextNodeInChain),
       ),
     );
 
@@ -1156,11 +1161,15 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-        selectionRange[0].nodeIndexOverall - 1,
+      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
+        selectionRange[0].node,
       );
 
       selectionRange.forEach((nodeSelection) => {
+        if (nodeSelection.node instanceof EmptySequenceNode) {
+          return;
+        }
+
         previousReplacedNode = this.replaceSelectionWithMonomer(
           monomerItem,
           nodeSelection,
@@ -1362,8 +1371,12 @@ export class SequenceMode extends BaseMode {
     previousSelectionNode?: SubChainNode,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const nextNode = SequenceRenderer.getNextNode(selection.node);
+    const nextNode = SequenceRenderer.getNextNodeInSameChain(selection.node);
     const position = selection.node.monomer.position;
+    const hasPreviousNodeInChain =
+      selection.node.firstMonomerInNode.attachmentPointsToBonds.R1;
+    const hasNextNodeInChain =
+      selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     const sideChainConnections = this.preserveSideChainConnections(selection);
 
@@ -1417,8 +1430,10 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPresetNode,
-        nextNode,
+        nextNode || null,
         previousSelectionNode,
+        Boolean(hasPreviousNodeInChain),
+        Boolean(hasNextNodeInChain),
       ),
     );
 
@@ -1465,11 +1480,15 @@ export class SequenceMode extends BaseMode {
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      let previousReplacedNode = SequenceRenderer.getNodeByPointer(
-        selectionRange[0].nodeIndexOverall - 1,
+      let previousReplacedNode = SequenceRenderer.getPreviousNodeInSameChain(
+        selectionRange[0].node,
       );
 
       selectionRange.forEach((nodeSelection) => {
+        if (nodeSelection.node instanceof EmptySequenceNode) {
+          return;
+        }
+
         previousReplacedNode = this.replaceSelectionWithPreset(
           preset,
           nodeSelection,
@@ -1629,8 +1648,10 @@ export class SequenceMode extends BaseMode {
 
   private insertNewSequenceFragment(
     chainsCollectionOrNode: ChainsCollection | SubChainNode,
-    nextNodeToConnect?: SubChainNode,
+    nextNodeToConnect?: SubChainNode | null,
     previousNodeToConnect?: SubChainNode,
+    needConnectWithPreviousNodeInChain = true,
+    needConnectWithNextNodeInChain = true,
   ) {
     const chainsCollection =
       chainsCollectionOrNode instanceof ChainsCollection
@@ -1639,7 +1660,9 @@ export class SequenceMode extends BaseMode {
             new Chain().addNode(chainsCollectionOrNode),
           );
     const currentNode =
-      nextNodeToConnect || SequenceRenderer.currentEdittingNode;
+      nextNodeToConnect === null
+        ? undefined
+        : nextNodeToConnect || SequenceRenderer.currentEdittingNode;
     const previousNodeInSameChain =
       previousNodeToConnect || SequenceRenderer.previousNodeInSameChain;
     const modelChanges = new Command();
@@ -1649,20 +1672,24 @@ export class SequenceMode extends BaseMode {
 
     this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
 
-    this.connectNodes(
-      previousNodeInSameChain,
-      firstNodeOfNewFragment,
-      modelChanges,
-      newNodePosition,
-      currentNode,
-    );
+    if (needConnectWithPreviousNodeInChain) {
+      this.connectNodes(
+        previousNodeInSameChain,
+        firstNodeOfNewFragment,
+        modelChanges,
+        newNodePosition,
+        currentNode,
+      );
+    }
 
-    this.connectNodes(
-      lastNodeOfNewFragment,
-      currentNode,
-      modelChanges,
-      newNodePosition,
-    );
+    if (needConnectWithNextNodeInChain) {
+      this.connectNodes(
+        lastNodeOfNewFragment,
+        currentNode,
+        modelChanges,
+        newNodePosition,
+      );
+    }
 
     return modelChanges;
   }

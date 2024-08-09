@@ -133,7 +133,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       .append('path')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
-      .attr('class', 'selection-area')
+      .attr('class', 'selection-area snake-bond')
       .attr('d', this.path)
       .attr('fill-opacity', 0)
       .attr('pointer-events', 'stroke');
@@ -728,7 +728,8 @@ export class PolymerBondRenderer extends BaseRenderer {
           .attr('stroke', '#57FF8F')
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
-          .attr('d', this.path);
+          .attr('d', this.path)
+          .attr('class', 'snake-bond-selection');
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')

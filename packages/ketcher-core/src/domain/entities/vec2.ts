@@ -275,10 +275,10 @@ export class Vec2 {
 
   calculateDistanceToLine(line: [Vec2, Vec2]): number {
     if (
-      (this.x < Math.min(line[0].x, line[1].x) ||
-        this.x > Math.max(line[0].x, line[1].x)) &&
-      (this.y < Math.min(line[0].y, line[1].y) ||
-        this.y > Math.max(line[0].y, line[1].y))
+      (this.x <= Math.min(line[0].x, line[1].x) ||
+        this.x >= Math.max(line[0].x, line[1].x)) &&
+      (this.y <= Math.min(line[0].y, line[1].y) ||
+        this.y >= Math.max(line[0].y, line[1].y))
     ) {
       return Math.min(Vec2.dist(line[0], this), Vec2.dist(line[1], this));
     } else {
@@ -294,11 +294,11 @@ export class Vec2 {
     return Math.atan2(this.y, this.x);
   }
 
-  static radiansToDegrees(radians) {
+  static radiansToDegrees(radians: number) {
     return radians * (180 / Math.PI);
   }
 
-  static degrees_to_radians(degrees) {
+  static degrees_to_radians(degrees: number) {
     return (degrees * Math.PI) / 180;
   }
 

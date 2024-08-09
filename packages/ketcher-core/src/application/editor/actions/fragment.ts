@@ -29,6 +29,7 @@ import {
   SimpleObjectMove,
   TextMove,
   ImageMove,
+  MultitailArrowMove,
 } from '../operations';
 import { Pile, RGroup, Vec2 } from 'domain/entities';
 import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
@@ -36,7 +37,7 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup';
 import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);
@@ -132,6 +133,12 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
   if (lists[IMAGE_KEY]) {
     lists[IMAGE_KEY].forEach((image) => {
       action.addOp(new ImageMove(image, d));
+    });
+  }
+
+  if (lists[MULTITAIL_ARROW_KEY]) {
+    lists[MULTITAIL_ARROW_KEY].forEach((multitailArrow) => {
+      action.addOp(new MultitailArrowMove(multitailArrow, d));
     });
   }
 

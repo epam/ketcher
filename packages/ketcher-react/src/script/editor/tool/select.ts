@@ -37,6 +37,7 @@ import {
   imageReferencePositionToCursor,
   ImageReferencePositionInfo,
   fromImageResize,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -717,6 +718,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'simpleObjects',
     'texts',
     IMAGE_KEY,
+    MULTITAIL_ARROW_KEY,
     ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }

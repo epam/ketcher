@@ -14,33 +14,71 @@
  * limitations under the License.
  ***************************************************************************/
 
-@import '../../style/mixins.less';
-@import '../../style/variables.less';
+ @import '../../style/mixins.less';
+ @import '../../style/variables.less';
 
-.button {
-  .btn();
-
-  cursor: pointer;
-  height: 24px;
-  white-space: nowrap;
-  font-size: 12px;
-  color: @color-grey-6!important;
-  border-color: @color-grey-6!important;
-  text-transform: none!important;
-
-  &:hover {
-    color: @color-spec-button-primary-hover!important;
-  }
-}
-
-.button.selected,
-.button:active {
-  background: @color-primary!important;
-  color: #fff!important;
-
-  &:hover {
-    background-color: @color-spec-button-primary-hover!important;
-  }
-}
-
-
+ .button {
+   .btn();
+ 
+   cursor: pointer;
+   height: 28px!important;
+   white-space: nowrap;
+   font-size: 12px;
+   color: @color-grey-6!important;
+   background-color: #F3F8F9!important;
+   text-transform: none!important;
+   margin: 2px!important;
+   border-color: transparent!important;
+ 
+   &:hover {
+     background-color:  #E1E5EA!important;
+   }
+ }
+ 
+ .button.selected,
+ .button:active {
+   background: @color-primary!important;
+   color: #fff!important;
+ 
+   &:hover {
+     background-color: @color-spec-button-primary-hover!important;
+   }
+ }
+ 
+ 
+ .buttonGroupContainer {
+   display: inline-flex!important;
+   flex-direction: column!important;
+   align-items: start!important;
+   padding: 2px!important;
+   box-sizing: border-box!important;
+ }
+ 
+ .textButtonGroupColumn {
+   flex-direction: column;
+   width: 101px!important;
+ }
+ 
+ .textButtonGroupRow {
+   flex-direction: row;
+ }
+ 
+ .buttonGroupContainerSpecific {
+   width: auto!important;
+   box-sizing: border-box!important;
+ }
+ 
+ .buttonSpecific {
+   height: 28px!important;
+ }
+ 
+ .contexify {
+   min-width: 0 !important;
+ }
+ 
+ .contexify_submenu[data-target-label-submenu="true"] {
+   min-width: 0 !important;
+   width: 109px !important;
+   padding: 4px;
+ }
+ 

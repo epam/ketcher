@@ -162,10 +162,13 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   ];
 
   const selectItem = (monomer, groupName) => {
-    if (!isSequenceEditInRNABuilderMode) {
+    if (!isSequenceEditInRNABuilderMode && !isEditMode) {
       editor.events.selectMonomer.dispatch(monomer);
     }
-    if (!isEditMode) return;
+
+    if (!isEditMode) {
+      return;
+    }
 
     const monomerClass = monomer.props.MonomerClass.toLowerCase();
     const currentPreset = {

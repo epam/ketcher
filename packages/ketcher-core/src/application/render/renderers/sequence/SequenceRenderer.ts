@@ -592,8 +592,8 @@ export class SequenceRenderer {
     );
   }
 
-  public static get nextNodeInSameChain() {
-    if (SequenceRenderer.nextCaretPosition !== SequenceRenderer.caretPosition) {
+  public static get nextNodeInSameChain(): SubChainNode | undefined {
+    if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
       return;
     }
 
@@ -653,7 +653,9 @@ export class SequenceRenderer {
     );
   }
 
-  public static getPreviousNodeInSameChain(nodeToCompare: SubChainNode) {
+  public static getPreviousNodeInSameChain(
+    nodeToCompare: SubChainNode,
+  ): SubChainNode | undefined {
     let previousNode;
     let previousNodeChainIndex = -1;
     let nodeToReturn;
@@ -669,7 +671,9 @@ export class SequenceRenderer {
     return nodeToReturn;
   }
 
-  public static getNextNodeInSameChain(nodeToCompare: SubChainNode) {
+  public static getNextNodeInSameChain(
+    nodeToCompare: SubChainNode,
+  ): SubChainNode {
     let previousNode;
     let previousNodeChainIndex = -1;
     let nodeToReturn;

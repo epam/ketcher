@@ -29,13 +29,13 @@ export const useMultitailArrowTailsAdd = () => {
   );
 
   const isAddTailDisabled = useCallback(
-    ({ props }: Params) => {
+    ({ props }: Params): boolean => {
       const editor = getKetcherInstance().editor as Editor;
       const multitailArrow = editor.render.ctab.molecule.multitailArrows.get(
         props?.itemId as number,
       );
       return (
-        multitailArrow &&
+        !!multitailArrow &&
         !MultitailArrow.canAddTail(
           multitailArrow.getTailsMaxDistance().distance,
         )

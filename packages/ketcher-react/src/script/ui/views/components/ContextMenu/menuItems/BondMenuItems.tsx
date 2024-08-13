@@ -15,6 +15,8 @@ import {
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 
+type Params = ItemEventParams<BondsContextMenuProps>;
+
 const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
@@ -27,7 +29,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
   const isDisabled = disabled({
     props: props.propsFromTrigger,
-  } as ItemEventParams);
+  } as Params);
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>

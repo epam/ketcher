@@ -25,9 +25,6 @@ export class PathBuilder {
     return this;
   }
 
-  addLine(to: Point2D): PathBuilder;
-  addLine(to: Point2D, from: Point2D): PathBuilder;
-
   addLine(to: Point2D, from?: Point2D): PathBuilder {
     if (from) {
       this.addMovement(from);
@@ -36,15 +33,17 @@ export class PathBuilder {
     return this;
   }
 
+  addClosedLine(to: Point2D, from?: Point2D): PathBuilder {
+    this.addLine(to, from);
+    const index = this.pathParts.length - 1;
+    this.pathParts[index] = this.pathParts[index].concat('Z');
+    return this;
+  }
+
   addQuadraticBezierCurve(control: Point2D, to: Point2D): PathBuilder {
     this.pathParts.push(
       `Q${PathBuilder.generatePoint(control)} ${PathBuilder.generatePoint(to)}`,
     );
-    return this;
-  }
-
-  addPathParts(pathParts: Array<string>): PathBuilder {
-    this.pathParts = this.pathParts.concat(pathParts);
     return this;
   }
 
@@ -59,8 +58,24 @@ export class PathBuilder {
     const tipX = endX - tipXOffset;
 
     return this.addLine(end, start)
-      .addLine({ x: tipX, y: start.y - tipYOffset })
-      .addLine({ x: tipX, y: start.y + tipYOffset }, end);
+      .addLine({ x: tipX, y: end.y - tipYOffset })
+      .addLine({ x: tipX, y: end.y + tipYOffset }, end);
+  }
+
+  addFilledTriangleArrowPathParts(
+    start: Vec2,
+    arrowLength: number,
+    triangleLength = 8,
+    triangleWidth = 4,
+  ): PathBuilder {
+    const endX = start.x + arrowLength;
+    const end = new Vec2(endX, start.y);
+    const triangleBottom = new Vec2(endX - triangleLength, end.y);
+    const tipX = endX - triangleLength;
+
+    return this.addLine(start, triangleBottom)
+      .addLine({ x: tipX, y: end.y - triangleWidth }, end)
+      .addClosedLine({ x: tipX, y: end.y + triangleWidth });
   }
 
   addMultitailArrowBase(
@@ -68,7 +83,7 @@ export class PathBuilder {
     bottomY: number,
     spineX: number,
     tailLength: number,
-    cubicBezierOffset = 3,
+    cubicBezierOffset = 6,
   ): PathBuilder {
     const tailX = spineX - tailLength;
     const tailStart = spineX - cubicBezierOffset;

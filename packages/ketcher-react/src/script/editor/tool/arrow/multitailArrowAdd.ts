@@ -26,7 +26,7 @@ type MultitailArrowAddDragContext = InitialDragContext | ProgressDragContext;
 
 export class MultitailArrowAddTool implements ArrowAddTool {
   static MIN_HEIGHT = 2.5;
-  static MIN_WIDTH = 1;
+  static MIN_WIDTH = 1.25;
 
   // private dragContext: MultitailArrowAddDragContext | null = null;
 
@@ -57,7 +57,8 @@ export class MultitailArrowAddTool implements ArrowAddTool {
   }
 
   mouseup(event: MouseEvent) {
-    const start = CoordinateTransformation.pageToModel(event, this.render);
+    const click = CoordinateTransformation.pageToModel(event, this.render);
+    const start = new Vec2(click.x, click.y - MultitailArrowAddTool.MIN_HEIGHT);
     const end = this.getArrowWithMinimalSizeEnd(start);
 
     this.editor.update(fromMultitailArrowCreation(this.reStruct, start, end));

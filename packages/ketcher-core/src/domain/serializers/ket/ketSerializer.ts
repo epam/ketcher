@@ -84,7 +84,12 @@ import { MonomerItemType, AmbiguousMonomerType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { imageToKet } from 'domain/serializers/ket/toKet/imageToKet';
 import { imageToStruct } from 'domain/serializers/ket/fromKet/imageToStruct';
-import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import {
+  IMAGE_SERIALIZE_KEY,
+  MULTITAIL_ARROW_SERIALIZE_KEY,
+} from 'domain/constants';
+import { multitailArrowToKet } from 'domain/serializers/ket/toKet/multitailArrowToKet';
+import { multitailArrowToStruct } from 'domain/serializers/ket/fromKet/multitailArrowToStruct';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 function parseNode(node: any, struct: any) {
@@ -118,6 +123,10 @@ function parseNode(node: any, struct: any) {
     }
     case 'text': {
       textToStruct(node, struct);
+      break;
+    }
+    case MULTITAIL_ARROW_SERIALIZE_KEY: {
+      multitailArrowToStruct(node, struct);
       break;
     }
     case IMAGE_SERIALIZE_KEY: {
@@ -198,6 +207,9 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push(imageToKet(item));
           break;
         }
+        case MULTITAIL_ARROW_SERIALIZE_KEY:
+          result.root.nodes.push(multitailArrowToKet(item));
+          break;
         default:
           break;
       }

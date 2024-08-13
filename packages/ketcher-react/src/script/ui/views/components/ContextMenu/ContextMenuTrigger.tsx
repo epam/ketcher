@@ -15,14 +15,11 @@
  ***************************************************************************/
 
 import { FunctionalGroup } from 'ketcher-core';
-import { PropsWithChildren, useCallback } from 'react';
+import { FC, PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import {
-  ContextMenuShowProps,
-  ContextMenuTriggerType,
-} from './contextMenu.types';
+import { ContextMenuProps, ContextMenuTriggerType } from './contextMenu.types';
 import {
   getMenuPropsForClosestItem,
   getIsItemInSelection,
@@ -30,9 +27,9 @@ import {
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
 
-const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
+const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext();
-  const { show } = useContextMenu<ContextMenuShowProps>();
+  const { show } = useContextMenu<ContextMenuProps>();
 
   const getSelectedGroupsInfo = useCallback(() => {
     const editor = getKetcherInstance().editor as Editor;
@@ -87,7 +84,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const { selectedFunctionalGroups, selectedSGroupsIds } =
         getSelectedGroupsInfo();
 
-      let showProps: ContextMenuShowProps = null;
+      let showProps: ContextMenuProps | null = null;
       let triggerType: ContextMenuTriggerType;
 
       if (!closestItem) {

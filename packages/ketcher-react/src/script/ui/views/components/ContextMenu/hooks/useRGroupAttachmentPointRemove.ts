@@ -2,13 +2,18 @@ import { Action, fromRGroupAttachmentPointDeletion } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import { ItemEventParams } from '../contextMenu.types';
+import {
+  ItemEventParams,
+  RGroupAttachmentPointContextMenuProps,
+} from '../contextMenu.types';
+
+type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
 
 const useDelete = () => {
   const { getKetcherInstance } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
+    async ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const restruct = editor.render.ctab;
       const pointsToDelete = props?.rgroupAttachmentPoints || [];

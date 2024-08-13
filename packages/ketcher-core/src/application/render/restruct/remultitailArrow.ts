@@ -14,8 +14,19 @@ interface ClosestReferencePosition {
 }
 
 export class ReMultitailArrow extends ReObject {
+  static TAILS_NAME = 'tails';
+
   static isSelectable(): boolean {
     return true;
+  }
+
+  static getTailIdFromRef(
+    ref?: ClosestReferencePosition['ref'],
+  ): number | null {
+    if (ref && ref.name.startsWith(ReMultitailArrow.TAILS_NAME)) {
+      return parseInt(ref.name.replace(`${ReMultitailArrow.TAILS_NAME}-`, ''));
+    }
+    return null;
   }
 
   constructor(public multitailArrow: MultitailArrow) {
@@ -111,7 +122,7 @@ export class ReMultitailArrow extends ReObject {
     );
     const { tails, ...rest } = referenceLines;
     const tailsLines: Array<[string, Line]> = Array.from(tails.entries()).map(
-      ([key, value]) => [`tails-${key}`, value],
+      ([key, value]) => [`${ReMultitailArrow.TAILS_NAME}-${key}`, value],
     );
     const lines: Array<[string, Line]> =
       Object.entries(rest).concat(tailsLines);

@@ -30,6 +30,9 @@
                 "$ref": "#/definitions/image"
               },
               {
+                "$ref": "#/definitions/multitailArrow"
+              },
+              {
                 "type": "object",
                 "required": ["$ref"],
                 "properties": {
@@ -63,6 +66,21 @@
       "properties": {
         "moleculeName": {
           "type": "string"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
         }
       }
     },
@@ -385,8 +403,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "key": { "type": "string" },
-              "value": { "type": "string" }
+              "key": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
             }
           }
         },
@@ -818,6 +840,57 @@
         "data": {
           "type": "string",
           "minLength": 160
+        }
+      }
+    },
+    "multitailArrow": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "multi-tailed-arrow"
+        },
+        "data": {
+          "type": "object",
+          "required": ["head", "spine", "tails"],
+          "properties": {
+            "head": {
+              "type": "object",
+              "required": ["position"],
+              "properties": {
+                "position": {
+                  "$ref": "#/definitions/point"
+                }
+              }
+            },
+            "spine": {
+              "type": "object",
+              "required": ["pos"],
+              "properties": {
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/point"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "tails": {
+              "type": "object",
+              "required": ["pos"],
+              "properties": {
+                "pos": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/point"
+                  },
+                  "minItems": 2
+                }
+              }
+            }
+          }
         }
       }
     }

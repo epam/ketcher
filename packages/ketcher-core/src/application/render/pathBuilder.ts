@@ -47,6 +47,11 @@ export class PathBuilder {
     return this;
   }
 
+  addPathParts(pathParts: Array<string>): PathBuilder {
+    this.pathParts = this.pathParts.concat(pathParts);
+    return this;
+  }
+
   addOpenArrowPathParts(
     start: Vec2,
     arrowLength: number,

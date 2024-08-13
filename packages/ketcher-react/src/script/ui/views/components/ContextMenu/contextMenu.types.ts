@@ -8,27 +8,76 @@ export enum CONTEXT_MENU_ID {
   FOR_SELECTION = 'context-menu-for-selection',
   FOR_FUNCTIONAL_GROUPS = 'context-menu-for-functional-groups',
   FOR_R_GROUP_ATTACHMENT_POINT = 'context-menu-for-rgroup-attachment-point',
+  FOR_MULTITAIL_ARROW = 'context-menu-for-multiple-arrowed',
 }
 
 export type ItemData = unknown;
 
-export type ContextMenuShowProps = {
+interface BaseContextMenuProps {
   id: CONTEXT_MENU_ID;
-  functionalGroups?: FunctionalGroup[];
-  bondIds?: number[];
-  atomIds?: number[];
-  extraItemsSelected?: boolean;
-  rgroupAttachmentPoints?: number[];
-} | null;
-
-export interface MenuItemsProps {
-  triggerEvent?: TriggerEvent;
-  propsFromTrigger?: ContextMenuShowProps;
 }
 
-export type ItemEventParams = PredicateParams<ContextMenuShowProps, ItemData>;
+interface WithExtraItems {
+  extraItemsSelected?: boolean;
+}
 
-export type contextMenuInfo = {
+export interface BondsContextMenuProps
+  extends BaseContextMenuProps,
+    WithExtraItems {
+  id: CONTEXT_MENU_ID.FOR_BONDS;
+  bondIds: Array<number>;
+}
+
+export interface AtomContextMenuProps
+  extends BaseContextMenuProps,
+    WithExtraItems {
+  id: CONTEXT_MENU_ID.FOR_ATOMS;
+  atomIds: Array<number>;
+}
+
+export interface SelectionContextMenuProps
+  extends BaseContextMenuProps,
+    Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
+    Partial<Pick<AtomContextMenuProps, 'atomIds'>> {
+  id: CONTEXT_MENU_ID.FOR_SELECTION;
+}
+
+export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
+  id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS;
+  functionalGroups: FunctionalGroup[];
+}
+
+export interface RGroupAttachmentPointContextMenuProps
+  extends BaseContextMenuProps,
+    WithExtraItems {
+  id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT;
+  rgroupAttachmentPoints: Array<number>;
+  atomIds?: AtomContextMenuProps['atomIds'];
+}
+
+export interface MultitailArrowContextMenuProps {
+  id: CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW;
+  itemId: number;
+  tailId: number | null;
+}
+
+export type ContextMenuProps =
+  | BondsContextMenuProps
+  | AtomContextMenuProps
+  | SelectionContextMenuProps
+  | FunctionalGroupsContextMenuProps
+  | RGroupAttachmentPointContextMenuProps
+  | MultitailArrowContextMenuProps;
+
+export interface MenuItemsProps<T extends ContextMenuProps> {
+  triggerEvent?: TriggerEvent;
+  propsFromTrigger?: T;
+}
+
+export type ItemEventParams<T extends ContextMenuProps = ContextMenuProps> =
+  PredicateParams<T, ItemData>;
+
+export type ContextMenuInfo = {
   [id in CONTEXT_MENU_ID]?: boolean;
 };
 

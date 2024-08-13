@@ -89,6 +89,8 @@ export const OperationType = Object.freeze({
   MULTITAIL_ARROW_UPSERT: 'Upsert multitail arrow',
   MULTITAIL_ARROW_DELETE: 'Delete multitail arrow',
   MULTITAIL_ARROW_MOVE: 'Move multitail arrow',
+  MULTITAIL_ARROW_ADD_TAIL: 'Add multitail arrow tail',
+  MULTITAIL_ARROW_REMOVE_TAIL: 'Remove multitail arrow tail',
 });
 
 export enum OperationPriority {

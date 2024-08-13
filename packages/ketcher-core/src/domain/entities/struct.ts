@@ -149,6 +149,7 @@ export class Struct {
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
     imagesSet?: Pile<number> | null,
+    multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -162,6 +163,7 @@ export class Struct {
       textsSet,
       rgroupAttachmentPointSet,
       imagesSet,
+      multitailArrowsSet,
       bidMap,
     );
   }
@@ -207,6 +209,7 @@ export class Struct {
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
+      copyNonFragmentObjects ? undefined : new Pile(),
     );
   }
 
@@ -221,6 +224,7 @@ export class Struct {
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
     imagesSet?: Pile<number> | null,
+    multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
@@ -229,6 +233,8 @@ export class Struct {
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
     imagesSet = imagesSet || new Pile<number>(this.images.keys());
+    multitailArrowsSet =
+      multitailArrowsSet || new Pile<number>(this.multitailArrows.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -343,6 +349,10 @@ export class Struct {
 
     imagesSet.forEach((id) => {
       cp.images.add(this.images.get(id)!.clone());
+    });
+
+    multitailArrowsSet.forEach((id) => {
+      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -844,6 +854,9 @@ export class Struct {
     });
 
     this.images.forEach((image) => image.rescaleSize(scale));
+    this.multitailArrows.forEach((multitailArrow) =>
+      multitailArrow.rescaleSize(scale),
+    );
   }
 
   rescale() {

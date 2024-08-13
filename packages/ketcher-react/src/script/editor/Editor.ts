@@ -43,7 +43,7 @@ import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
 import { Highlighter } from './highlighter';
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
-import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
+import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
 import {
@@ -135,7 +135,7 @@ class Editor implements KetcherEditor {
   highlights: Highlighter;
   hoverIcon: HoverIcon;
   lastCursorPosition: { x: number; y: number };
-  contextMenu: contextMenuInfo;
+  contextMenu: ContextMenuInfo;
   rotateController: RotateController;
   event: {
     message: Subscription;
@@ -749,7 +749,7 @@ function updateLastCursorPosition(editor: Editor, event) {
   }
 }
 
-function isContextMenuClosed(contextMenu: contextMenuInfo) {
+function isContextMenuClosed(contextMenu: ContextMenuInfo) {
   return !Object.values(contextMenu).some(Boolean);
 }
 

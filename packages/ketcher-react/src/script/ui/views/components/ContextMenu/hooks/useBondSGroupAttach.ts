@@ -3,13 +3,15 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import SGroupTool from 'src/script/editor/tool/sgroup';
-import { ItemEventParams } from '../contextMenu.types';
+import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
+
+type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondSGroupAttach = () => {
   const { getKetcherInstance } = useAppContext();
 
   const handler = useCallback(
-    ({ props }: ItemEventParams) => {
+    ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const struct: ReStruct = editor.render.ctab;
       const bondId = props!.bondIds![0];
@@ -27,7 +29,7 @@ const useBondSGroupAttach = () => {
   );
 
   const hidden = useCallback(
-    ({ props }: ItemEventParams) => {
+    ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const struct: ReStruct = editor.render.ctab;
       const bondIds = props!.bondIds!;

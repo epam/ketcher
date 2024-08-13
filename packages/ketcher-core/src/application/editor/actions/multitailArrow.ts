@@ -4,6 +4,8 @@ import {
   MultitailArrowDelete,
   MultitailArrowUpsert,
   MultitailArrowMove,
+  MultitailArrowAddTail,
+  MultitailArrowRemoveTail,
 } from 'application/editor';
 import { Vec2, MultitailArrow } from 'domain/entities';
 
@@ -32,5 +34,23 @@ export function fromMultitailArrowMove(
   const action = new Action();
 
   action.addOp(new MultitailArrowMove(id, offset));
+  return action.perform(reStruct);
+}
+
+export function fromMultitailArrowTailAdd(reStruct: ReStruct, id: number) {
+  const action = new Action();
+
+  action.addOp(new MultitailArrowAddTail(id));
+  return action.perform(reStruct);
+}
+
+export function fromMultitailArrowTailRemove(
+  reStruct: ReStruct,
+  id: number,
+  tailId: number,
+) {
+  const action = new Action();
+
+  action.addOp(new MultitailArrowRemoveTail(id, tailId));
   return action.perform(reStruct);
 }

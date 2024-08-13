@@ -8,12 +8,17 @@ import useBondEdit from '../hooks/useBondEdit';
 import useBondTypeChange from '../hooks/useBondTypeChange';
 import useDelete from '../hooks/useDelete';
 import { formatTitle, getBondNames } from '../utils';
-import { MenuItemsProps } from '../contextMenu.types';
+import {
+  MenuItemsProps,
+  SelectionContextMenuProps,
+} from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
 
 const bondNames = getBondNames(tools);
 
-const SelectionMenuItems: FC<MenuItemsProps> = (props) => {
+const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
+  props,
+) => {
   const [handleBondEdit, bondEditDisabled] = useBondEdit();
   const [handleAtomEdit, atomEditDisabled] = useAtomEdit();
   const [handleTypeChange, bondTypeChangeDisabled] = useBondTypeChange();

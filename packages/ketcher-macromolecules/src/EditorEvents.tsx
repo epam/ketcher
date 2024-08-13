@@ -15,7 +15,12 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
+  BondPreviewState,
+  MonomerPreviewState,
   PresetPosition,
+  PresetPreviewState,
+  PreviewStyle,
+  PreviewType,
   selectEditor,
   selectEditorActiveTool,
   selectTool,
@@ -34,6 +39,7 @@ import {
   calculateNucleoElementPreviewTop,
 } from 'helpers';
 import { selectAllPresets } from 'state/rna-builder';
+import { PolymerBond } from 'ketcher-core/dist/domain/entities/PolymerBond';
 
 const noPreviewTools = ['bond-single'];
 
@@ -136,11 +142,44 @@ export const EditorEvents = () => {
     };
   }, [editor]);
 
+  const handleOpenBondPreview = useCallback(
+    (polymerBond: PolymerBond, style: PreviewStyle) => {
+      const previewData: BondPreviewState = {
+        type: PreviewType.Bond,
+        polymerBond,
+        style,
+      };
+
+      debouncedShowPreview(previewData);
+    },
+    [debouncedShowPreview],
+  );
+
   const handleOpenPreview = useCallback(
     (e) => {
+      const polymerBond = e.target.__data__?.polymerBond;
+      if (polymerBond) {
+        const polymerCoordinates = e.target.getBoundingClientRect();
+        const { width, height, top, left } = polymerCoordinates;
+        let style = { top: '', left: '' };
+        if (width > height) {
+          style = {
+            top: `${top + height + 10}px`,
+            left: `${left + width / 2}px`,
+          };
+        } else {
+          style = {
+            top: `${top + height / 2}px`,
+            left: `${left + width + 10}px`,
+          };
+        }
+        handleOpenBondPreview(polymerBond, style);
+        return;
+      }
+
+      // TODO: Split to separate functions for monomers and presets
       const cardCoordinates = e.target.getBoundingClientRect();
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-
       const sequenceNode = e.target.__data__?.node;
       const monomer = e.target.__data__?.monomer || sequenceNode?.monomer;
       const monomerItem = monomer.monomerItem;
@@ -180,13 +219,12 @@ export const EditorEvents = () => {
           position = PresetPosition.ChainMiddle;
         }
 
-        debouncedShowPreview({
-          preset: {
-            monomers,
-            name: existingPreset?.name,
-            idtAliases: existingPreset?.idtAliases,
-            position,
-          },
+        const presetPreviewData: PresetPreviewState = {
+          type: PreviewType.Preset,
+          monomers,
+          name: existingPreset?.name,
+          idtAliases: existingPreset?.idtAliases,
+          position,
           style: {
             left,
             top: monomerItem
@@ -194,20 +232,25 @@ export const EditorEvents = () => {
               : '',
             transform: 'translate(-50%, 0)',
           },
-        });
+        };
+
+        debouncedShowPreview(presetPreviewData);
         return;
       }
 
-      debouncedShowPreview({
+      const monomerPreviewData: MonomerPreviewState = {
+        type: PreviewType.Monomer,
         monomer: monomerItem,
         attachmentPointsToBonds,
         style: {
           left,
           top: monomerItem ? calculateMonomerPreviewTop(cardCoordinates) : '',
         },
-      });
+      };
+
+      debouncedShowPreview(monomerPreviewData);
     },
-    [debouncedShowPreview, presets],
+    [handleOpenBondPreview, debouncedShowPreview, presets],
   );
 
   const handleClosePreview = useCallback(() => {
@@ -220,6 +263,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
     editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
+    editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
+    editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -238,6 +283,8 @@ export const EditorEvents = () => {
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
+      editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
+      editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 

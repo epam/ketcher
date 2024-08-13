@@ -28,10 +28,12 @@ import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  showPreview,
-  selectShowPreview,
+  MonomerPreviewState,
+  PreviewType,
   selectEditor,
+  selectShowPreview,
   selectTool,
+  showPreview,
 } from 'state/common';
 import {
   selectActiveRnaBuilderItem,
@@ -99,13 +101,18 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
-    if (preview.monomer || !e.currentTarget) {
+    if (preview.type === PreviewType.Monomer || !e.currentTarget) {
       return;
     }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
     const style = { right: '-88px', top };
-    debouncedShowPreview({ monomer, style });
+    const previewData: MonomerPreviewState = {
+      type: PreviewType.Monomer,
+      monomer,
+      style,
+    };
+    debouncedShowPreview(previewData);
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {

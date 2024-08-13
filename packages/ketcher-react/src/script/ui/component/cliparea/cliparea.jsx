@@ -214,7 +214,10 @@ async function copy(data) {
 
     const clipboardItem = new ClipboardItem(clipboardItemData);
 
-    if (clipboardItem.presentationStyle && clipboardItem.presentationStyle === 'unspecified') {
+    if (
+      clipboardItem.presentationStyle &&
+      clipboardItem.presentationStyle === 'unspecified'
+    ) {
       if (navigator.clipboard.writeText) {
         // Fallback to simple text copy
         const textData = data['text/plain'] || JSON.stringify(data);

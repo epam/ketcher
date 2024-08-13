@@ -25,9 +25,6 @@ export class PathBuilder {
     return this;
   }
 
-  addLine(to: Point2D): PathBuilder;
-  addLine(to: Point2D, from: Point2D): PathBuilder;
-
   addLine(to: Point2D, from?: Point2D): PathBuilder {
     if (from) {
       this.addMovement(from);
@@ -47,11 +44,6 @@ export class PathBuilder {
     this.pathParts.push(
       `Q${PathBuilder.generatePoint(control)} ${PathBuilder.generatePoint(to)}`,
     );
-    return this;
-  }
-
-  addPathParts(pathParts: Array<string>): PathBuilder {
-    this.pathParts = this.pathParts.concat(pathParts);
     return this;
   }
 

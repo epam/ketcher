@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { moveMouseAway } from '@utils';
 
@@ -13,6 +14,11 @@ export async function clickOnSequenceSymbol(
   );
   await symbolLocator.hover();
   await symbolLocator.click(clickOptions);
+}
+
+export async function hoverOnSequenceSymbol(page: Page, symbolText: string) {
+  const symbolLocator = getSequenceSymbolLocator(page, symbolText);
+  await symbolLocator.hover();
 }
 
 export function getSequenceSymbolLocator(

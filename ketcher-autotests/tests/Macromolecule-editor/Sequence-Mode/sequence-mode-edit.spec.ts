@@ -1,14 +1,17 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  delay,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
   startNewSequence,
   switchSequenceEnteringType,
   takeEditorScreenshot,
+  takePageScreenshot,
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
@@ -17,7 +20,16 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import {
+  toggleBasesAccordion,
+  toggleNucleotidesAccordion,
+  togglePhosphatesAccordion,
+  toggleSugarsAccordion,
+} from '@utils/macromolecules/rnaBuilder';
+import {
+  clickOnSequenceSymbol,
+  hoverOnSequenceSymbol,
+} from '@utils/macromolecules/sequence';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -259,5 +271,130 @@ test.describe('Sequence edit mode', () => {
 
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
+  });
+
+  test('Validate that attachment point on preview tooltip marked gray if an attachment point participates in a bond', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await hoverOnSequenceSymbol(page, 'A');
+    await takeEditorScreenshot(page);
+    await hoverOnSequenceSymbol(page, 'K');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await hoverOnSequenceSymbol(page, 'A');
+    await takeEditorScreenshot(page);
+    await hoverOnSequenceSymbol(page, 'Aad');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+
+    const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
+
+    for (const symbol of sequenceSymbols) {
+      await hoverOnSequenceSymbol(page, symbol);
+      await takeEditorScreenshot(page);
+      await moveMouseAway(page);
+    }
+    await page.getByText('5HydMe').locator('..').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Peptide type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Peptide type of monomer in the library appears.
+    */
+    await page.getByTestId('A___Alanine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Sugar type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Sugar type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleSugarsAccordion(page);
+    await page.getByTestId('25d3r___3-Deoxyribose (2,5 connectivity)').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Base type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Base type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleBasesAccordion(page);
+    await page.getByTestId('c7A___7-Deazaadenine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Phosphate type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Phosphate type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await togglePhosphatesAccordion(page);
+    await page.getByTestId('ibun___Isobutylamino').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Nucleotide type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Nucleotide type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleNucleotidesAccordion(page);
+    await page.getByTestId('Super T___5-hydroxybutynl-2’-deoxyuridine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for CHEM type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for CHEM type of monomer in the library appears.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('DOTA___Tetraxetan').click();
+    await takePageScreenshot(page);
   });
 });

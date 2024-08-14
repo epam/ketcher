@@ -1,20 +1,26 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-} from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
-  openStructurePasteFromClipboard,
-  waitForSpinnerFinishedWork,
   selectFlexLayoutModeTool,
+  openFileAndAddToCanvasMacro,
+  selectSequenceLayoutModeTool,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
-import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
+
+import { goToCHEMTab, goToPeptidesTab } from '@utils/macromolecules/library';
+import {
+  gotoRNA,
+  toggleBasesAccordion,
+  toggleNucleotidesAccordion,
+  togglePhosphatesAccordion,
+  togglePresetsAccordion,
+  toggleSugarsAccordion,
+} from '@utils/macromolecules/rnaBuilder';
+import { clickOnSequenceSymbolByIndex } from '@utils/macromolecules/sequence';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -56,7 +62,7 @@ test.afterAll(async ({ browser }) => {
 });
 
 interface IReplaceMonomer {
-  MonomerTypeName: string;
+  MonomerType: string;
   MonomerSubType?: string;
   MonomerAlias: string;
   MonomerDescription: string;
@@ -83,7 +89,7 @@ interface IFailedTest {
 
 const ReplaceMonomers: IReplaceMonomer[] = [
   {
-    MonomerTypeName: 'Peptides',
+    MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
     MonomerDescription: 'Peptide (Cys_Bn)',
   },
@@ -97,6 +103,54 @@ const Sequences: ISequence[] = [
   },
 ];
 
+async function clickOnMonomerFromLibrary(page: Page, monomer: IReplaceMonomer) {
+  switch (monomer.MonomerType) {
+    case 'Peptide':
+      await goToPeptidesTab(page);
+      break;
+    case 'RNA':
+      await gotoRNA(page);
+      switch (monomer.MonomerSubType) {
+        case 'Presets':
+          await togglePresetsAccordion(page);
+          break;
+        case 'Sugars':
+          await toggleSugarsAccordion(page);
+          break;
+        case 'Bases':
+          await toggleBasesAccordion(page);
+          break;
+        case 'Phosphates':
+          await togglePhosphatesAccordion(page);
+          break;
+        case 'Nucleotides':
+          await toggleNucleotidesAccordion(page);
+          break;
+        default:
+          throw new Error(
+            `Tab with name "${monomer.MonomerSubType}" not found.`,
+          );
+      }
+      break;
+    case 'CHEM':
+      await goToCHEMTab(page);
+      break;
+    default:
+      throw new Error(`Tab with name "${monomer.MonomerType}" not found.`);
+  }
+  await page.getByTestId(monomer.MonomerAlias).click();
+}
+
+async function selectAndReplaceSymbol(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  replacementPosition: number,
+) {
+  await selectSequenceLayoutModeTool(page);
+  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+}
+
 test.describe('Replacement of first symbol: ', () => {
   for (const ReplaceMonomer of ReplaceMonomers) {
     for (const Sequence of Sequences) {
@@ -105,7 +159,6 @@ test.describe('Replacement of first symbol: ', () => {
         await selectAndReplaceSymbol(
           page,
           ReplaceMonomer,
-          Sequence,
           Sequence.ReplacementPositions.LeftEnd,
         );
         await takeEditorScreenshot(page);

@@ -674,4 +674,36 @@ test.describe('SMILES files', () => {
       page,
     );
   });
+
+  test('Validate that the simple schema with retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      page,
+    );
+  });
 });

@@ -358,4 +358,32 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
+
+  test('Validate that simple schema with retrosynthetic arrow could be saved to Cdxml file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+  });
 });

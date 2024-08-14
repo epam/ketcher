@@ -279,4 +279,32 @@ test.describe('CDX files without screenshots', () => {
 
     expect(cdxFile).toEqual(cdxFileExpected);
   });
+
+  test('Validate that simple schema with retrosynthetic arrow could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that schema could be saved to Cdx file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/simple-schema-with-retrosynthetic-arrow.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/simple-schema-with-retrosynthetic-arrow.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
 });

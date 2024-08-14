@@ -687,4 +687,88 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Validate that simple schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
+    ];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that simple schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [
+      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
+    ];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

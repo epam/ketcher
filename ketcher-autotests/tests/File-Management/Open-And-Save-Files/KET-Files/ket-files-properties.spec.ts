@@ -3,6 +3,7 @@ import {
   openFileAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
+  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { getKet } from '@utils/formats';
@@ -59,4 +60,31 @@ test('Save a structure with properties to KET format', async ({ page }) => {
     });
 
   expect(ketFile).toEqual(ketFileExpected);
+});
+
+test('Validate that simple schema with retrosynthetic arrow could be saved to ket file and loaded back', async ({
+  page,
+}) => {
+  /*
+  Test case: Import/Saving files
+  Description: .ket file with macro structures is exported and imported correctly .
+  */
+  await openFileAndAddToCanvas(
+    'KET/simple-schema-with-retrosynthetic-arrow.ket',
+    page,
+  );
+  const expectedFile = await getKet(page);
+  await saveToFile(
+    'KET/simple-schema-with-retrosynthetic-arrow.ket',
+    expectedFile,
+  );
+  const { file: ketFile, fileExpected: ketFileExpected } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/KET/simple-schema-with-retrosynthetic-arrow.ket',
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
+  await takeEditorScreenshot(page);
 });

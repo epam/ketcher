@@ -51,4 +51,18 @@ test.describe('Saving in .png files', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test(`Verify it is possible to export the simple schema with retrosynthetic arrow to PNG`, async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await clickOnFileFormatDropdown(page);
+    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await takeEditorScreenshot(page);
+  });
 });

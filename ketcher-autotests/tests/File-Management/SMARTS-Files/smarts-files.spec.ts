@@ -231,4 +231,36 @@ test.describe('Loading SMARTS files', () => {
       page,
     );
   });
+
+  test('Validate that the simple schema with retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4382
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
+      page,
+    );
+  });
 });

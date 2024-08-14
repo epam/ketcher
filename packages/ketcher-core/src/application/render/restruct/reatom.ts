@@ -61,6 +61,13 @@ export enum ShowHydrogenLabels {
   On = 'all',
 }
 
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
 export enum ShowHydrogenLabelNames {
   Off = 'Off',
   Hetero = 'Hetero',

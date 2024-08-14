@@ -26,6 +26,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';
+import { pageReload } from '@utils/common/helpers';
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
@@ -564,6 +565,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to mol 3000 file and loaded back
     */
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
@@ -599,6 +601,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back
     */
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',

@@ -15,7 +15,6 @@
  ***************************************************************************/
 import React, { useCallback } from 'react';
 import { Menu, MenuProps } from 'react-contexify';
-import ReactDOM from 'react-dom';
 import 'react-contexify/ReactContexify.css';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -26,7 +25,7 @@ import BondMenuItems from './menuItems/BondMenuItems';
 import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems';
 import SelectionMenuItems from './menuItems/SelectionMenuItems';
 import RGroupAttachmentPointMenuItems from './menuItems/RGroupAttachmentPointMenuItems';
-import { createPortal } from 'react-dom';
+import ReactDOM, { createPortal } from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 const props: Partial<MenuProps> = {

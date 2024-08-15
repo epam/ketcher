@@ -39,13 +39,13 @@ const MeasureInput = ({
   ...rest
 }) => {
   const [measure, setMeasure] = useState(
-    extraValue || extraSchema?.default || 'px',
+    extraValue || extraSchema?.default || MeasurementUnits.Px,
   );
   const [cust, setCust] = useState(value || schema.default);
 
   useEffect(() => {
-    if (measure === 'px' && cust?.toFixed() - 0 !== value) {
-      setMeasure('px');
+    if (measure === MeasurementUnits.Px && cust?.toFixed() - 0 !== value) {
+      setMeasure(MeasurementUnits.Px);
       setCust(value);
     } // Hack: Set init value (RESET)
   }, []);
@@ -55,7 +55,7 @@ const MeasureInput = ({
   }, [extraValue]);
 
   const handleChange = (value) => {
-    const convValue = convertValue(value, measure, 'px');
+    const convValue = convertValue(value, measure, MeasurementUnits.Px);
     setCust(value);
     onChange(convValue);
   };
@@ -69,7 +69,7 @@ const MeasureInput = ({
   };
 
   useEffect(() => {
-    setCust(convertValue(value, 'px', measure));
+    setCust(convertValue(value, MeasurementUnits.Px, measure));
   }, [value, measure]);
 
   const desc = schema || schema.properties[name];
@@ -80,7 +80,11 @@ const MeasureInput = ({
       <div style={{ display: 'flex' }}>
         <Input
           schema={schema}
-          step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
+          step={
+            measure === MeasurementUnits.Px || measure === MeasurementUnits.Pt
+              ? '1'
+              : '0.001'
+          }
           value={cust}
           onChange={handleChange}
         />
@@ -105,7 +109,7 @@ const measureMap = {
 function convertValue(value, measureFrom, measureTo) {
   if ((!value && value !== 0) || isNaN(value)) return null; // eslint-disable-line
 
-  return measureTo === 'px' || measureTo === 'pt'
+  return measureTo === MeasurementUnits.Px || measureTo === MeasurementUnits.Pt
     ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
     : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) -
         0;

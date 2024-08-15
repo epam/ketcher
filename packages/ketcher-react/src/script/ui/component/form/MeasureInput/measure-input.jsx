@@ -21,20 +21,26 @@ import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
 import { getSelectOptionsFromSchema } from '../../../utils';
+import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 
 const selectOptions = getSelectOptionsFromSchema({
-  enum: ['cm', 'px', 'pt', 'inch'],
+  enum: Object.values(MeasurementUnits),
 });
 
 const MeasureInput = ({
   schema,
+  extraSchema,
   value,
+  extraValue,
   onChange,
+  onExtraChange,
   name,
   className,
   ...rest
 }) => {
-  const [measure, setMeasure] = useState('px');
+  const [measure, setMeasure] = useState(
+    extraValue || extraSchema?.default || 'px',
+  );
   const [cust, setCust] = useState(value || schema.default);
 
   useEffect(() => {
@@ -44,27 +50,27 @@ const MeasureInput = ({
     } // Hack: Set init value (RESET)
   }, []);
 
+  useEffect(() => {
+    setMeasure(extraValue);
+  }, [extraValue]);
+
   const handleChange = (value) => {
     const convValue = convertValue(value, measure, 'px');
     setCust(value);
     onChange(convValue);
   };
 
-  const handleMeasChange = (m) => {
+  const handleMeasChange = (unit) => {
     setCust((prev) => {
-      convertValue(prev, measure, m);
+      convertValue(prev, measure, unit);
     });
-    setMeasure(m);
-  };
-
-  const calcValue = () => {
-    const newValue = convertValue(value, 'px', measure);
-    setCust(newValue);
+    setMeasure(unit);
+    onExtraChange(unit);
   };
 
   useEffect(() => {
-    calcValue();
-  }, [value, measure, calcValue]);
+    setCust(convertValue(value, 'px', measure));
+  }, [value, measure]);
 
   const desc = schema || schema.properties[name];
 

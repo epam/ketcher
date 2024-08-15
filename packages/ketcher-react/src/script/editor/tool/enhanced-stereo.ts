@@ -71,12 +71,13 @@ class EnhancedStereoTool implements Tool {
 
       const action = stereoAtoms.reduce(
         (acc, stereoAtom) => {
-          return acc.mergeWith(
-            fromStereoFlagUpdate(
-              restruct,
-              struct.atoms.get(stereoAtom)?.fragment,
-            ),
-          );
+          const frid = struct.atoms.get(stereoAtom)?.fragment;
+          const frag = frid ? restruct.molecule.frags.get(frid) : null;
+
+          if (frag && frag.stereoAtoms) {
+            return acc.mergeWith(fromStereoFlagUpdate(restruct, frid));
+          }
+          return acc;
         },
         fromAtomsAttrs(
           restruct,

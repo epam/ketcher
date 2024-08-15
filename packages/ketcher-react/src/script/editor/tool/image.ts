@@ -102,12 +102,16 @@ export class ImageTool implements Tool {
       if (item?.ref) {
         handleMovingPosibilityCursor(
           item,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           render.paper.canvas,
           imageReferencePositionToCursor[item.ref.name],
         );
       } else {
         handleMovingPosibilityCursor(
           item,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           render.paper.canvas,
           render.options.movingStyle.cursor as string,
         );

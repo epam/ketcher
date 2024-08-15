@@ -291,6 +291,8 @@ class SelectTool implements Tool {
     } else {
       handleMovingPosibilityCursor(
         item,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: raphael typing issues
         this.editor.render.paper.canvas,
         this.editor.render.options.movingStyle.cursor as string,
       );

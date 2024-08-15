@@ -21,6 +21,8 @@ interface ClosestReferencePosition {
 }
 
 export class ReImage extends ReObject {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore: raphael typing issues
   private selectionPointsSet: RaphaelSet;
 
   static isSelectable(): boolean {

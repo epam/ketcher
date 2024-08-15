@@ -19,9 +19,9 @@ export async function clickOnSequenceSymbolByIndex(
   page: Page,
   symbolIndex: number,
 ) {
-  const symbolLocator = page.locator(
-    `g:nth-child(${symbolIndex.toString()}) > text`,
-  );
+  const symbolLocator = page
+    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .first();
   await symbolLocator.hover();
   await symbolLocator.click();
 }

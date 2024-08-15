@@ -36,7 +36,6 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
-  goToCHEMTab,
   gotoRNA,
   pressNewPresetButton,
   toggleBasesAccordion,
@@ -45,6 +44,7 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
+import { goToCHEMTab } from '@utils/macromolecules/library';
 
 async function expandCollapseRnaBuilder(page: Page) {
   await page

@@ -35,3 +35,19 @@ export async function toggleNucleotidesAccordion(page: Page) {
 export async function pressNewPresetButton(page: Page) {
   await page.getByRole('button', { name: 'New Preset' }).click();
 }
+
+export async function selectSugarSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--sugar').click();
+}
+
+export async function selectBaseSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--base').click();
+}
+
+export async function selectPhosphateSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--phosphate').click();
+}
+
+export async function pressAddToPresetsButton(page: Page) {
+  await page.getByTestId('add-to-presets-btn').click();
+}

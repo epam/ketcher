@@ -209,6 +209,10 @@ export default defineConfig({
         find: 'web-worker:./indigoWorker',
         replacement: './indigoWorker?worker',
       },
+      {
+        find: '_indigo-ketcher-import-alias_',
+        replacement: 'indigo-ketcher',
+      },
     ],
   },
   customLogger: logger,

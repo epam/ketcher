@@ -89,7 +89,7 @@ export function prepareStructForKet(struct: Struct) {
     });
   });
 
-  struct.rasterImages.forEach((image) => {
+  struct.images.forEach((image) => {
     ketNodes.push(image.toKetNode());
   });
 

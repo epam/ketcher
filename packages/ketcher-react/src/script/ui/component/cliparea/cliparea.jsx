@@ -210,7 +210,21 @@ async function copy(data) {
         }),
       );
     });
-    await navigator.clipboard.write([new ClipboardItem(clipboardItemData)]);
+
+    const clipboardItem = new ClipboardItem(clipboardItemData);
+
+    if (
+      clipboardItem.presentationStyle &&
+      clipboardItem.presentationStyle === 'unspecified'
+    ) {
+      if (navigator.clipboard.writeText) {
+        // Fallback to simple text copy
+        const textData = data['text/plain'] || JSON.stringify(data);
+        await navigator.clipboard.writeText(textData);
+      }
+    } else {
+      await navigator.clipboard.write([clipboardItem]);
+    }
   } catch (e) {
     KetcherLogger.error('cliparea.jsx::copy', e);
     console.info(`Could not write exact type ${data && data.toString()}`);

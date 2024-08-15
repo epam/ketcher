@@ -26,7 +26,7 @@ export * from './FragmentStereoFlag';
 export * from './calcimplicitH';
 export * from './LoopMove';
 export * from './OperationType';
-export * from './rasterImage';
+export * from './image';
 export * from './rgroup';
 export * from './rgroupAttachmentPoint';
 export * from './rxn';

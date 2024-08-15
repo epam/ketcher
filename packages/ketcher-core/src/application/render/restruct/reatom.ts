@@ -796,6 +796,15 @@ function buildLabel(
   leftMargin: number;
   label: ElemAttr;
 } {
+  const {
+    atomColoring,
+    font,
+    fontsz,
+    currentlySelectedMonomerAttachmentPoint,
+    connectedMonomerAttachmentPoints,
+    labelInMonomerConnectionsModal,
+    labelInPreview,
+  } = options;
   // eslint-disable-line max-statements
   const label: any = {
     text: getLabelText(atom.a, atomId, sgroup),
@@ -807,18 +816,19 @@ function buildLabel(
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
-    if (options.atomColoring && element) {
+    if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }
 
+  const shouldStyleLabel = labelInMonomerConnectionsModal || labelInPreview;
   const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
   const isMonomerAttachmentPointSelected =
-    options.currentlySelectedMonomerAttachmentPoint === label.text;
+    currentlySelectedMonomerAttachmentPoint === label.text;
   const isMonomerAttachmentPointUsed =
-    options.connectedMonomerAttachmentPoints?.includes(label.text);
+    connectedMonomerAttachmentPoints?.includes(label.text);
 
-  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+  if (isMonomerAttachmentPoint && shouldStyleLabel) {
     atom.color = isMonomerAttachmentPointSelected
       ? '#FFF'
       : isMonomerAttachmentPointUsed
@@ -834,20 +844,20 @@ function buildLabel(
   const { previewOpacity } = options;
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
-    font: options.font,
-    'font-size': options.fontsz,
+    font,
+    'font-size': fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+  if (isMonomerAttachmentPoint && shouldStyleLabel) {
     const fill = isMonomerAttachmentPointSelected
       ? '#167782'
       : isMonomerAttachmentPointUsed
       ? '#E1E5EA'
       : '#FFF';
-    const backgroundSize = options.fontsz * 2;
+    const backgroundSize = fontsz * 2;
 
     label.background = paper
       .rect(
@@ -858,7 +868,13 @@ function buildLabel(
         10,
       )
       .attr({ fill })
-      .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
+      .attr({
+        stroke: labelInPreview
+          ? 'none'
+          : isMonomerAttachmentPointUsed
+          ? '#B4B9D6'
+          : '#7C7C7F',
+      });
   }
   if (tooltip) {
     addTooltip(label.path.node, tooltip);

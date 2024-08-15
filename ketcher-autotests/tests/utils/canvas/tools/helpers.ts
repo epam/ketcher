@@ -4,6 +4,7 @@ import {
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
+  waitForRender,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
@@ -125,6 +126,11 @@ export async function selectEraseTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectImageTool(page: Page) {
+  const bondToolButton = page.getByTestId('images');
+  await bondToolButton.click();
+}
+
 export async function selectClearCanvasTool(page: Page) {
   const bondToolButton = page.getByTestId('clear-canvas');
   await bondToolButton.click();
@@ -232,4 +238,34 @@ export async function typeRNADNAAlphabet(page: Page) {
 
 export async function typePeptideAlphabet(page: Page) {
   await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+}
+
+export async function setZoomInputValue(page: Page, value: string) {
+  await page.getByTestId('zoom-input').click();
+  await page.getByTestId('zoom-value').fill(value);
+  await page.keyboard.press('Enter');
+}
+
+export async function selectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const coord of coords) {
+    await page.mouse.move(coord.x, coord.y);
+  }
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
+}
+
+export async function saveToTemplates(page: Page, templateName: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await page.getByPlaceholder('template').click();
+  await page.getByPlaceholder('template').fill(templateName);
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 }

@@ -17,7 +17,6 @@
 import {
   StereLabelStyleType,
   StereoColoringType,
-  MeasurementUnits,
   ShowHydrogenLabels,
   ShowHydrogenLabelNames,
   defaultBondThickness,
@@ -28,6 +27,13 @@ type ExtendedSchema = SchemaObject & {
   enumNames?: Array<string>;
   default?: any;
 };
+
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
 
 const editor: {
   resetToSelect: ExtendedSchema;

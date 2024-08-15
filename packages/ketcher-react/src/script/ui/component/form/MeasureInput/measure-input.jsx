@@ -21,9 +21,10 @@ import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
 import { getSelectOptionsFromSchema } from '../../../utils';
+import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 
 const selectOptions = getSelectOptionsFromSchema({
-  enum: ['cm', 'px', 'pt', 'inch'],
+  enum: Object.values(MeasurementUnits),
 });
 
 const MeasureInput = ({

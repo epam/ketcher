@@ -36,6 +36,7 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
+  expandCollapseRnaBuilder,
   goToCHEMTab,
   gotoRNA,
   pressNewPresetButton,
@@ -45,14 +46,6 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
-
-async function expandCollapseRnaBuilder(page: Page) {
-  await page
-    .locator('div')
-    .filter({ hasText: /^RNA Builder$/ })
-    .getByRole('button')
-    .click();
-}
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;

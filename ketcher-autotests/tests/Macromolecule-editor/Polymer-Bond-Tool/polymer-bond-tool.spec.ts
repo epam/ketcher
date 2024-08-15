@@ -5,6 +5,7 @@ import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
+  openFileAndAddToCanvasMacro,
 } from '@utils';
 import {
   hideMonomerPreview,
@@ -218,6 +219,33 @@ test.describe('Signle Bond Tool', () => {
       .click();
     await page.getByRole('button', { name: 'R1' }).nth(1).click();
     await page.getByRole('button', { name: 'Connect' }).click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the context menu with the "Edit Connection Points..." option appears when the user right-clicks on a bond', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4905
+    Description: Context menu with the "Edit Connection Points..." option appears when the user right-clicks on a bond.
+    */
+    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
+    await bondLine.click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that clicking on the "Edit Connection Points..." option opens the dialog', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #4905
+    Description: Clicking on the "Edit Connection Points..." option opens the dialog.
+    */
+    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
+    await bondLine.click({ button: 'right' });
+    await page.getByText('Edit Connection Points...').click();
     await takeEditorScreenshot(page);
   });
 });

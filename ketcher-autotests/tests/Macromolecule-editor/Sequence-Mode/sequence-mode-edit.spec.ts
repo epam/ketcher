@@ -20,6 +20,7 @@ import {
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
 import {
+  expandCollapseRnaBuilder,
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
@@ -395,5 +396,49 @@ test.describe('Sequence edit mode', () => {
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('DOTA___Tetraxetan').click();
     await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer in sequence mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+
+    const sequenceSymbols = ['A', 'C', '@'];
+
+    for (const symbol of sequenceSymbols) {
+      await hoverOnSequenceSymbol(page, symbol);
+      await takePageScreenshot(page);
+      await moveMouseAway(page);
+    }
+  });
+
+  test('Check that system show full set of IDT aliases at preview tooltip', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4928
+    Description: System show full set of IDT aliases at preview tooltip.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('dR(U)P_U_dR_P').hover();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4887
+    Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
+    */
+    await enterSequence(page, 'aaaaaaaaaa');
+    await page.getByTestId('ketcher-canvas').locator('div').click();
+    await takeEditorScreenshot(page);
   });
 });

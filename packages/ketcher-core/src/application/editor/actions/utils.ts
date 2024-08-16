@@ -19,7 +19,6 @@ import {
   AtomAttributes,
   AtomQueryProperties,
   Bond,
-  MonomerMicromolecule,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -63,11 +62,7 @@ export function findStereoAtoms(
   struct: Struct,
   atomIds: number[] | undefined,
 ): number[] {
-  const isMonomer = struct.sgroups.find(
-    (_, sgroup) => sgroup instanceof MonomerMicromolecule,
-  );
-
-  if (isMonomer !== null || !atomIds) {
+  if (!atomIds) {
     return [] as number[];
   }
 

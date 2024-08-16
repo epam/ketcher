@@ -160,7 +160,36 @@ export const EditorEvents = () => {
       const polymerBond = e.target.__data__?.polymerBond;
       if (polymerBond) {
         const polymerCoordinates = e.target.getBoundingClientRect();
-        const { width, height, top, left } = polymerCoordinates;
+        const firstMonomerCoordinates =
+          polymerBond.firstMonomer.renderer.rootBoundingClientRect;
+        const secondMonomerCoordinates =
+          polymerBond.secondMonomer.renderer.rootBoundingClientRect;
+        const minX = Math.min(
+          polymerCoordinates.left,
+          firstMonomerCoordinates.left,
+          secondMonomerCoordinates.left,
+        );
+        const minY = Math.min(
+          polymerCoordinates.top,
+          firstMonomerCoordinates.top,
+          secondMonomerCoordinates.top,
+        );
+        const maxX = Math.max(
+          polymerCoordinates.right,
+          firstMonomerCoordinates.right,
+          secondMonomerCoordinates.right,
+        );
+        const maxY = Math.max(
+          polymerCoordinates.bottom,
+          firstMonomerCoordinates.bottom,
+          secondMonomerCoordinates.bottom,
+        );
+
+        // const { width, height, top, left } = polymerCoordinates;
+        const top = minY;
+        const left = minX;
+        const width = maxX - minX;
+        const height = maxY - minY;
         let style = { top: '', left: '' };
         if (width > height) {
           style = {
@@ -170,7 +199,7 @@ export const EditorEvents = () => {
         } else {
           style = {
             top: `${top + height / 2}px`,
-            left: `${left + width + 10}px`,
+            left: `${left + width + 179}px`,
           };
         }
         handleOpenBondPreview(polymerBond, style);

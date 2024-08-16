@@ -1,4 +1,4 @@
-# Class: [PolymerBondRenderer](../PolymerBondRenderer.ts)
+# Class: [SnakeModePolymerBondRenderer](../PolymerBondRenderer/SnakeModePolymerBondRenderer.ts)
 
 ## How Snake Bonds Algorithm Works
 

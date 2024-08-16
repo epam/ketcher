@@ -18,7 +18,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
-import { NodeSelection, PolymerBondRenderer } from 'ketcher-core';
+import {
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  NodeSelection,
+} from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -161,7 +164,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      (event, polymerBondRenderer: PolymerBondRenderer) => {
+      (
+        event,
+        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ): void => {
         showPolymerBondContextMenu({
           event,
           props: {

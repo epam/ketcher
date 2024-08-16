@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
-
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import {
   Box2Abs,
   Loop,
@@ -9,12 +9,10 @@ import {
   Struct,
   Vec2,
 } from 'domain/entities';
-import { mockFn } from 'jest-mock-extended';
-import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import { MonomerItemType } from 'domain/types';
+import { mockFn } from 'jest-mock-extended';
 
 const mockAtoms = [
   {
@@ -782,8 +780,7 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);
 
-  // eslint-disable-next-line no-new
-  new PolymerBondRenderer(polymerBond);
+  PolymerBondRendererFactory.createInstance(polymerBond);
 
   return polymerBond;
 };

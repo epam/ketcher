@@ -205,6 +205,20 @@ const Sequences: ISequence[] = [
     SequenceName: 'sequence of presets (A)',
     ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
   },
+  {
+    Id: 4,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of presets without phosphate (SGNA(U)).ket',
+    SequenceName: 'sequence of presets without phosphate (SGNA(U))',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  //   {
+  //     Id: 5,
+  //     FileName:
+  //       'KET/Sequence-Mode-Replacement/sequence of presets without base (SGNA()ibun).ket',
+  //     SequenceName: 'sequence of presets without base (SGNA()ibun)',
+  //     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+  //   },
 ];
 
 async function createTestPresets(page: Page) {

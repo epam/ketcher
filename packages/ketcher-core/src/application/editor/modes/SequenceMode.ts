@@ -1301,22 +1301,11 @@ export class SequenceMode extends BaseMode {
     );
   }
 
-  private checkInsertPossibility(monomerItem: MonomerItemType | undefined) {
-    if (!monomerItem) {
-      return {
-        monomerCanBeInserted: false,
-        missingAttachmentPoint: null,
-      };
-    }
-
+  private checkNodeInsertionPossibility(newNode: SubChainNode) {
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
     const currentNode = SequenceRenderer.currentEdittingNode;
     const currentNodeIsNotEmpty = !(currentNode instanceof EmptySequenceNode);
 
-    const newMonomerAttachmentPoints =
-      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
-        monomerItem.attachmentPoints || [],
-      );
     let missingAttachmentPoint: AttachmentPointName | null = null;
 
     const previousMonomerHasR2 = Boolean(
@@ -1324,38 +1313,37 @@ export class SequenceMode extends BaseMode {
         AttachmentPointName.R2,
       ),
     );
-    const newMonomerHasR1 =
-      newMonomerAttachmentPoints.attachmentPointsList.includes(
-        AttachmentPointName.R1,
-      );
+    const newMonomerHasR1 = newNode.firstMonomerInNode.hasAttachmentPoint(
+      AttachmentPointName.R1,
+    );
     const rightSideInsertImpossible =
       Boolean(previousNodeInSameChain) &&
       (!previousMonomerHasR2 || !newMonomerHasR1);
+    if (rightSideInsertImpossible && !newMonomerHasR1) {
+      missingAttachmentPoint = AttachmentPointName.R1;
+    }
 
     const nextMonomerHasR1 = Boolean(
       currentNode?.firstMonomerInNode.hasAttachmentPoint(
         AttachmentPointName.R1,
       ),
     );
-    const newMonomerHasR2 =
-      newMonomerAttachmentPoints.attachmentPointsList.includes(
-        AttachmentPointName.R2,
-      );
+    const newMonomerHasR2 = newNode.lastMonomerInNode.hasAttachmentPoint(
+      AttachmentPointName.R2,
+    );
     const leftSideInsertImpossible =
       Boolean(currentNode) &&
       currentNodeIsNotEmpty &&
       (!nextMonomerHasR1 || !newMonomerHasR2);
-
-    const monomerCanBeInserted =
-      !rightSideInsertImpossible && !leftSideInsertImpossible;
-    if (!newMonomerHasR1 || !newMonomerHasR2) {
-      missingAttachmentPoint = !newMonomerHasR1
-        ? AttachmentPointName.R1
-        : AttachmentPointName.R2;
+    if (leftSideInsertImpossible && !newMonomerHasR2) {
+      missingAttachmentPoint = AttachmentPointName.R2;
     }
 
+    const nodeCanBeInserted =
+      !rightSideInsertImpossible && !leftSideInsertImpossible;
+
     return {
-      monomerCanBeInserted,
+      nodeCanBeInserted,
       missingAttachmentPoint,
     };
   }
@@ -1403,16 +1391,6 @@ export class SequenceMode extends BaseMode {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
     } else {
-      const { monomerCanBeInserted, missingAttachmentPoint } =
-        this.checkInsertPossibility(monomerItem);
-      if (!monomerCanBeInserted) {
-        const message =
-          missingAttachmentPoint &&
-          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
-        this.showMergeWarningModal(message);
-        return;
-      }
-
       const newNodePosition = this.getNewNodePosition();
 
       const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
@@ -1421,6 +1399,16 @@ export class SequenceMode extends BaseMode {
       );
       const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
       const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+
+      const { nodeCanBeInserted, missingAttachmentPoint } =
+        this.checkNodeInsertionPossibility(newMonomerSequenceNode);
+      if (!nodeCanBeInserted) {
+        const message =
+          missingAttachmentPoint &&
+          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
+        return;
+      }
 
       modelChanges.merge(monomerAddCommand);
       modelChanges.merge(
@@ -1635,25 +1623,6 @@ export class SequenceMode extends BaseMode {
         this.replaceSelectionsWithPreset(selections, preset);
       }
     } else {
-      const {
-        monomerCanBeInserted: sugarCanBeInserted,
-        missingAttachmentPoint: missingAttachmentPointForSugar,
-      } = this.checkInsertPossibility(preset.sugar);
-      const {
-        monomerCanBeInserted: phosphateCanBeInserted,
-        missingAttachmentPoint: missingAttachmentPointForPhosphate,
-      } = this.checkInsertPossibility(preset.phosphate);
-
-      if (!sugarCanBeInserted || !phosphateCanBeInserted) {
-        const missingAttachmentPoint =
-          missingAttachmentPointForSugar || missingAttachmentPointForPhosphate;
-        const message =
-          missingAttachmentPoint &&
-          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
-        this.showMergeWarningModal(message);
-        return;
-      }
-
       const newNodePosition = this.getNewNodePosition();
 
       const rnaAdditionResult = this.createRnaPresetNode(
@@ -1662,6 +1631,17 @@ export class SequenceMode extends BaseMode {
       );
 
       if (!rnaAdditionResult) {
+        return;
+      }
+
+      const { nodeCanBeInserted, missingAttachmentPoint } =
+        this.checkNodeInsertionPossibility(rnaAdditionResult.newPresetNode);
+
+      if (!nodeCanBeInserted) {
+        const message =
+          missingAttachmentPoint &&
+          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
         return;
       }
 

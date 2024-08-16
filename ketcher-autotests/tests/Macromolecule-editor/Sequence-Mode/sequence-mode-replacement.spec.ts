@@ -188,8 +188,21 @@ const ReplaceMonomers: IReplaceMonomer[] = [
 const Sequences: ISequence[] = [
   {
     Id: 1,
-    FileName: 'KET/Sequence-Mode-Replacement/sequence made of peptides (A).ket',
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of peptides (A).ket',
     SequenceName: 'sequence of peptides (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 2,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of peptides w_o natural analog (4Abz).ket',
+    SequenceName: 'sequence of peptides w/o natural analog (4Abz)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
     ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
   },
 ];

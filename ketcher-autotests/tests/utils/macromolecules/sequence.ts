@@ -16,8 +16,26 @@ export async function clickOnSequenceSymbol(
   await symbolLocator.click(clickOptions);
 }
 
-export async function hoverOnSequenceSymbol(page: Page, symbolText: string) {
-  const symbolLocator = getSequenceSymbolLocator(page, symbolText);
+export async function doubleClickOnSequenceSymbol(
+  page: Page,
+  symbolText: string,
+  clickOptions?: { button?: 'right' | 'left'; nthNumber?: number },
+) {
+  const symbolLocator = getSequenceSymbolLocator(
+    page,
+    symbolText,
+    clickOptions?.nthNumber,
+  );
+  await symbolLocator.hover();
+  await symbolLocator.dblclick(clickOptions);
+}
+
+export async function hoverOnSequenceSymbol(
+  page: Page,
+  symbolText: string,
+  nthNumber?: number,
+) {
+  const symbolLocator = getSequenceSymbolLocator(page, symbolText, nthNumber);
   await symbolLocator.hover();
 }
 

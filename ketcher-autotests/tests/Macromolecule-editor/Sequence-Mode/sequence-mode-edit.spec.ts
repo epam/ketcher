@@ -28,6 +28,7 @@ import {
 } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
+  doubleClickOnSequenceSymbol,
   hoverOnSequenceSymbol,
 } from '@utils/macromolecules/sequence';
 
@@ -439,6 +440,43 @@ test.describe('Sequence edit mode', () => {
     */
     await enterSequence(page, 'aaaaaaaaaa');
     await page.getByTestId('ketcher-canvas').locator('div').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Hover mouse over any letter in sequence, verify that the cursor should be displayed as a arrow', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
+    */
+    await enterSequence(page, 'aaaaaaaaaa');
+    await hoverOnSequenceSymbol(page, 'A', 0);
+    await takePageScreenshot(page);
+  });
+
+  test('Hover mouse between two letters in sequence, verify that the cursor should be displayed as a caret', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
+    */
+    await enterSequence(page, 'aaaagaaaaaa');
+    await clickOnSequenceSymbol(page, 'G');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Double-click on any symbol of sequence, verify that the edit mode turned on and the symbol highlighted', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Double-click on any symbol of sequence, the edit mode turned on AND cursor (blinking line) 
+    placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
+    */
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await doubleClickOnSequenceSymbol(page, 'G');
     await takeEditorScreenshot(page);
   });
 });

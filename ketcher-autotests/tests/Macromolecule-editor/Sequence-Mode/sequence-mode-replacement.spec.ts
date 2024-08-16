@@ -505,3 +505,114 @@ for (const replaceMonomer of replaceMonomers) {
     });
   }
 }
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`4-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+      /*
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 1
+          Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in viev mode
+          Scenario:
+          1. Clear canvas
+          2. Load sequence from file (sequence contains monomers of nessussary type)
+          3. Select first symbol
+          4. Click on monomer from the library
+          5. Take screenshot to validate that replacement work in Sequence mode canvas
+          6. Switch to Flex mode
+          7. Take screenshot to validate that replacement work in Flex mode canvas
+          8. Add info to log if known bugs exist and skip test
+        */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbol(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`5-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+      /*
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 2
+          Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in viev mode
+          Scenario:
+          1. Clear canvas
+          2. Load sequence from file (sequence contains monomers of nessussary type)
+          3. Select symbol in the meddle of sequence
+          4. Click on monomer from the library
+          5. Take screenshot to validate that replacement work in Sequence mode canvas
+          6. Switch to Flex mode
+          7. Take screenshot to validate that replacement work in Flex mode canvas
+          8. Add info to log if known bugs exist and skip test
+        */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbol(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`6-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+      /*
+            Test case: https://github.com/epam/ketcher/issues/5290 - Test case 3
+            Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in viev mode
+            Scenario:
+            1. Clear canvas
+            2. Load sequence from file (sequence contains monomers of nessussary type)
+            3. Select last symbol in the sequence
+            4. Click on monomer from the library
+            5. Take screenshot to validate that replacement work in Sequence mode canvas
+            6. Switch to Flex mode
+            7. Take screenshot to validate that replacement work in Flex mode canvas
+            8. Add info to log if known bugs exist and skip test
+          */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbol(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+    });
+  }
+}

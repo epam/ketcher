@@ -48,6 +48,7 @@ export function resetEditorEvents() {
     mousedownBetweenSequenceItems: new Subscription(),
     mouseDownOnSequenceItem: new Subscription(),
     doubleClickOnSequenceItem: new Subscription(),
+    openConfirmationDialog: new Subscription(),
   };
 }
 resetEditorEvents();

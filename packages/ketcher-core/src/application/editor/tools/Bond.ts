@@ -20,6 +20,7 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { UnresolvedMonomer } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
@@ -503,6 +504,14 @@ class PolymerBond implements BaseTool {
 
     // Modal: Any or both monomers are Chems
     if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+      return true;
+    }
+
+    // Modal: Any or both monomers are unresolved
+    if (
+      firstMonomer instanceof UnresolvedMonomer ||
+      secondMonomer instanceof UnresolvedMonomer
+    ) {
       return true;
     }
 

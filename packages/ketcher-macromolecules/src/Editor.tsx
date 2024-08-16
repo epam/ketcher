@@ -14,22 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
-import { debounce, merge } from 'lodash';
+import { merge } from 'lodash';
 import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-  Nucleotide,
-  Nucleoside,
   NodeSelection,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
-  muiOverrides,
   EditorTheme,
   MergedThemeType,
+  muiOverrides,
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
@@ -37,30 +35,13 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import {
-  createEditor,
-  destroyEditor,
-  selectEditor,
-  selectEditorActiveTool,
-  selectTool,
-  showPreview,
-} from 'state/common';
-import {
-  calculateMonomerPreviewTop,
-  calculateNucleoElementPreviewTop,
-} from 'helpers';
+import { createEditor, destroyEditor, selectEditor } from 'state/common';
 import {
   useAppDispatch,
   useAppSelector,
   useSequenceEditInRNABuilderMode,
 } from 'hooks';
-import {
-  closeErrorTooltip,
-  openErrorModal,
-  openErrorTooltip,
-  openModal,
-  selectErrorTooltipText,
-} from 'state/modal';
+import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
@@ -71,20 +52,19 @@ import {
   StyledToastContent,
 } from 'components/shared/StyledToast/styles';
 import {
-  PeptideAvatar,
   ChemAvatar,
-  SugarAvatar,
+  PeptideAvatar,
   PhosphateAvatar,
   RNABaseAvatar,
+  SugarAvatar,
   UnresolvedMonomerAvatar,
   NucleotideAvatar,
 } from 'components/shared/monomerOnCanvas';
-import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { ErrorModal } from 'components/modal/Error';
 import {
-  TopMenuRightWrapper,
   EditorWrapper,
   TogglerComponentWrapper,
+  TopMenuRightWrapper,
 } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import useSetRnaPresets from './hooks/useSetRnaPresets';
@@ -102,6 +82,7 @@ import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
+import { EditorEvents } from './EditorEvents';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -115,8 +96,6 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
 }
-
-const noPreviewTools = ['bond-single'];
 
 function EditorContainer({
   onInit,
@@ -153,7 +132,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
-  const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -174,136 +152,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [dispatch]);
 
   useSetRnaPresets();
-
-  const dispatchShowPreview = useCallback(
-    (payload) => dispatch(showPreview(payload)),
-    [dispatch],
-  );
-
-  const debouncedShowPreview = useMemo(
-    () => debounce((p) => dispatchShowPreview(p), 500),
-    [dispatchShowPreview],
-  );
-
-  useEffect(() => {
-    const handler = (toolName: string) => {
-      if (toolName !== activeTool) {
-        dispatch(selectTool(toolName));
-      }
-    };
-
-    if (editor) {
-      editor.events.error.add((errorText) => {
-        dispatch(openErrorTooltip(errorText));
-      });
-      editor.events.openErrorModal.add(
-        (errorData: string | { errorMessage: string; errorTitle: string }) => {
-          dispatch(openErrorModal(errorData));
-        },
-      );
-
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
-      editor.events.openMonomerConnectionModal.add(
-        (additionalProps: MonomerConnectionOnlyProps) =>
-          dispatch(
-            openModal({
-              name: 'monomerConnection',
-              additionalProps,
-            }),
-          ),
-      );
-      editor.events.selectTool.add(handler);
-    }
-
-    return () => {
-      dispatch(selectTool(null));
-      editor?.events.selectTool.remove(handler);
-    };
-  }, [editor]);
-
-  const handleOpenPreview = useCallback(
-    (e) => {
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-
-      const sequenceNode = e.target.__data__?.node;
-      const monomer =
-        e.target.__data__?.monomer?.monomerItem ||
-        sequenceNode.monomer.monomerItem;
-      const isNucleotideOrNucleoside =
-        sequenceNode instanceof Nucleotide ||
-        sequenceNode instanceof Nucleoside;
-
-      if (isNucleotideOrNucleoside) {
-        const monomers =
-          sequenceNode instanceof Nucleotide
-            ? [
-                sequenceNode.sugar.monomerItem,
-                sequenceNode.rnaBase.monomerItem,
-                sequenceNode.phosphate?.monomerItem,
-              ]
-            : [
-                sequenceNode.sugar.monomerItem,
-                sequenceNode.rnaBase.monomerItem,
-              ];
-
-        debouncedShowPreview({
-          preset: {
-            monomers,
-          },
-          style: {
-            left,
-            top: monomer
-              ? calculateNucleoElementPreviewTop(cardCoordinates)
-              : '',
-            transform: 'translate(-50%, 0)',
-          },
-        });
-        return;
-      }
-
-      debouncedShowPreview({
-        monomer,
-        style: {
-          left,
-          top: monomer ? calculateMonomerPreviewTop(cardCoordinates) : '',
-        },
-      });
-    },
-    [debouncedShowPreview],
-  );
-
-  const handleClosePreview = useCallback(() => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  }, [debouncedShowPreview, dispatch]);
-
-  useEffect(() => {
-    editor?.events.mouseOverMonomer.add(handleOpenPreview);
-    editor?.events.mouseLeaveMonomer.add(handleClosePreview);
-    editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
-    editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
-
-    const onMoveHandler = (e) => {
-      handleClosePreview();
-      const isLeftClick = e.buttons === 1;
-      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
-        handleOpenPreview(e);
-      }
-    };
-    editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
-    editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
-
-    return () => {
-      editor?.events.mouseOverMonomer.remove(handleOpenPreview);
-      editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
-      editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
-      editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
-      editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
-      editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
-    };
-  }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
     editor?.events.rightClickSequence.add((event, selections) => {
@@ -378,6 +226,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Left>
 
         <Layout.Main>
+          <EditorEvents />
           <svg
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
@@ -406,9 +255,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary
-            isSequenceEditInRNABuilderMode={isSequenceEditInRNABuilderMode}
-          />
+          <MonomerLibrary />
         </Layout.Right>
       </Layout>
       <MonomerLibraryToggle

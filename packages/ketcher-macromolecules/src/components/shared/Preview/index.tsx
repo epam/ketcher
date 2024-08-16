@@ -14,36 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 import MonomerPreview from 'components/shared/MonomerPreview';
-import MonomerWithIDTAliasesPreview from 'components/shared/MonomerWithIDTAliasesPreview';
 import PresetPreview from 'components/shared/PresetPreview';
 import { useAppSelector } from 'hooks';
-import { KetMonomerClass } from 'ketcher-core';
 import { selectShowPreview } from 'state/common';
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
 
-  if (preview && 'preset' in preview) {
+  if (!preview) {
+    return null;
+  }
+
+  if (preview.preset) {
     return <PresetPreview />;
   }
 
-  const ketMonomerWithIDTAliasesClassSet = new Set<KetMonomerClass>([
-    KetMonomerClass.Base,
-    KetMonomerClass.CHEM,
-    KetMonomerClass.Phosphate,
-    KetMonomerClass.Sugar,
-    KetMonomerClass.RNA,
-    KetMonomerClass.DNA,
-  ]);
-  const monomerClass = preview?.monomer?.props.MonomerClass;
-  if (ketMonomerWithIDTAliasesClassSet.has(monomerClass)) {
-    return <MonomerWithIDTAliasesPreview className="polymer-library-preview" />;
+  if (!preview?.monomer) {
+    return null;
   }
 
   return (
     <MonomerPreview
       className="polymer-library-preview"
-      unresolvedMonomer={preview?.monomer?.props?.unresolved}
+      unresolvedMonomer={preview.monomer.props.unresolved}
     />
   );
 };

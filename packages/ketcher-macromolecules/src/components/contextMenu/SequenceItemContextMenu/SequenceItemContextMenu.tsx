@@ -2,13 +2,16 @@ import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
-  selectIsSequenceMode,
 } from 'state/common';
-import { BaseSequenceItemRenderer, NodesSelection } from 'ketcher-core';
+import {
+  BaseSequenceItemRenderer,
+  ModeTypes,
+  NodesSelection,
+} from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
   setSequenceSelection,
@@ -36,7 +39,7 @@ export const SequenceItemContextMenu = ({
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
-  const isSequenceMode = useAppSelector(selectIsSequenceMode);
+  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
 
   const menuItems = [
     {

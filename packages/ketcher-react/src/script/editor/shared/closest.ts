@@ -23,8 +23,8 @@ import {
   ReStruct,
   Atom,
   Bond,
-  RASTER_IMAGE_KEY,
-  RasterImageReferencePositionInfo,
+  IMAGE_KEY,
+  ImageReferencePositionInfo,
 } from 'ketcher-core';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -45,7 +45,7 @@ const findMaps = {
   rgroupAttachmentPoints: findClosestRgroupAttachmentPoints,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText,
-  [RASTER_IMAGE_KEY]: findClosestRasterImage,
+  [IMAGE_KEY]: findClosestImage,
 };
 
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;
@@ -703,7 +703,7 @@ function mergeAtomToFunctionalGroup(
   return false;
 }
 
-function findClosestRasterImage(reStruct: ReStruct, cursorPosition: Vec2) {
+function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
   const renderOptions = reStruct.render.options;
   const canvasScaledPosition = Scale.modelToCanvas(
     cursorPosition,
@@ -711,8 +711,8 @@ function findClosestRasterImage(reStruct: ReStruct, cursorPosition: Vec2) {
   );
   const maxDistance =
     renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
-  return Array.from(reStruct.rasterImages.entries()).reduce(
-    (acc: ClosestReturnType<RasterImageReferencePositionInfo>, [id, item]) => {
+  return Array.from(reStruct.images.entries()).reduce(
+    (acc: ClosestReturnType<ImageReferencePositionInfo>, [id, item]) => {
       const distanceToPoint = item.calculateDistanceToPoint(
         canvasScaledPosition,
         renderOptions,

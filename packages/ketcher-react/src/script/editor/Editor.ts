@@ -28,7 +28,7 @@ import {
   fromNewCanvas,
   provideEditorSettings,
   ReStruct,
-  RASTER_IMAGE_KEY,
+  IMAGE_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -67,7 +67,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
-  RASTER_IMAGE_KEY,
+  IMAGE_KEY,
 ];
 
 const highlightTargets = [
@@ -85,7 +85,7 @@ const highlightTargets = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
-  RASTER_IMAGE_KEY,
+  IMAGE_KEY,
 ];
 
 function selectStereoFlagsIfNecessary(
@@ -670,7 +670,7 @@ class Editor implements KetcherEditor {
       new Pile(selection.simpleObjects),
       new Pile(selection.texts),
       null,
-      new Pile(selection.rasterImages),
+      new Pile(selection.images),
     );
 
     // Copy by its own as Struct.clone doesn't support

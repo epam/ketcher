@@ -284,14 +284,22 @@ export class CoreEditor {
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
-    this.selectTool('monomer', monomer);
+    if (this.mode instanceof SequenceMode) {
+      this.mode.insertMonomerFromLibrary(monomer);
+    } else {
+      this.selectTool('monomer', monomer);
+    }
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
-    if (preset) {
-      this.selectTool('preset', preset);
+    if (this.mode instanceof SequenceMode) {
+      this.mode.insertPresetFromLibrary(preset);
     } else {
-      this.tool = undefined;
+      if (preset) {
+        this.selectTool('preset', preset);
+      } else {
+        this.tool = undefined;
+      }
     }
   }
 

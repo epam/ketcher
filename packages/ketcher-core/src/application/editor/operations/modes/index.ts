@@ -26,6 +26,7 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 
 export class ReinitializeModeOperation implements Operation {
+  public priority = 2;
   constructor() {}
 
   public execute(_renderersManager: RenderersManager) {

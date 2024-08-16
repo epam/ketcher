@@ -26,7 +26,6 @@ import {
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
-  togglePresetsAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { clickOnSequenceSymbolByIndex } from '@utils/macromolecules/sequence';
@@ -91,17 +90,20 @@ interface ISequence {
   FileName: string;
   SequenceName: string;
   ReplacementPositions: IReplacementPosition;
+  ConfirmationOnReplecement?: boolean;
+  KnownBugs?: boolean;
+  Description?: string;
 }
 
 interface IFailedTest {
-  ReplaceMonomer: IReplaceMonomer;
-  Sequence: ISequence;
-  ReplacementSybolPosition: number;
+  ReplaceMonomerId?: number;
+  SequenceId?: number;
+  ReplacementSybolPosition?: number;
   IssueNumber: string;
   Description?: string;
 }
 
-const ReplaceMonomers: IReplaceMonomer[] = [
+const replaceMonomers: IReplaceMonomer[] = [
   {
     Id: 1,
     MonomerType: 'Peptide',
@@ -147,9 +149,9 @@ const ReplaceMonomers: IReplaceMonomer[] = [
     Id: 6,
     MonomerType: 'RNA',
     MonomerSubType: 'Bases',
-    MonomerAlias: 'nC6n5U',
-    MonomerTestId: 'nC6n5U___Amino-Modier C6 dT',
-    MonomerDescription: 'base (nC6n5U)',
+    MonomerAlias: 'oC64m5',
+    MonomerTestId: 'oC64m5___4-Hexan-6-ol-5-methylcytosine',
+    MonomerDescription: 'base (oC64m5)',
   },
   {
     Id: 7,
@@ -185,7 +187,7 @@ const ReplaceMonomers: IReplaceMonomer[] = [
   },
 ];
 
-const Sequences: ISequence[] = [
+const sequences: ISequence[] = [
   {
     Id: 1,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of peptides (A).ket',
@@ -212,13 +214,85 @@ const Sequences: ISequence[] = [
     SequenceName: 'sequence of presets without phosphate (SGNA(U))',
     ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
   },
-  //   {
-  //     Id: 5,
-  //     FileName:
-  //       'KET/Sequence-Mode-Replacement/sequence of presets without base (SGNA()ibun).ket',
-  //     SequenceName: 'sequence of presets without base (SGNA()ibun)',
-  //     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
-  //   },
+  {
+    Id: 5,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of presets without base (SGNA()ibun).ket',
+    SequenceName: 'sequence of presets without base (SGNA()ibun)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5236',
+  },
+  {
+    Id: 6,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of sugars (UNA).ket',
+    SequenceName: 'sequence of sugars (UNA)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5236',
+  },
+  {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5236',
+  },
+  {
+    Id: 8,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of phosphates (moen).ket',
+    SequenceName: 'sequence of phosphates (moen)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5236',
+  },
+  {
+    Id: 9,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides (2-Amino-dA).ket',
+    SequenceName: 'sequence of unsplit nucleotides (2-Amino-dA)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 10,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides w_o natural analog (5NitInd).ket',
+    SequenceName:
+      'sequence of unsplit nucleotides w/o natural analog (5NitInd)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5240',
+  },
+  {
+    Id: 11,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of CHEMs (A6OH).ket',
+    SequenceName: 'sequence of CHEMs (A6OH)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+    KnownBugs: true,
+    Description: 'https://github.com/epam/ketcher/issues/5240',
+  },
+  {
+    Id: 12,
+    FileName:
+      'KET/Sequence-Mode-Replacement/sequence of unresolved nucleotide (5Unres).ket',
+    SequenceName: 'sequence of unresolved nucleotide (5Unres)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+];
+
+const FailedTests: IFailedTest[] = [
+  {
+    SequenceId: 5,
+    IssueNumber: 'https://github.com/epam/ketcher/issues/5236',
+    Description:
+      '@A@A@ should go to CCCA@A@ if we replace first sybol on A monomer - all monomers wrapped into @ have to be replaced',
+  },
 ];
 
 async function createTestPresets(page: Page) {
@@ -286,17 +360,44 @@ async function clickOnMonomerFromLibrary(page: Page, monomer: IReplaceMonomer) {
 async function selectAndReplaceSymbol(
   page: Page,
   replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
   await clickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
+  if (sequence.ConfirmationOnReplecement) {
+    await page.getByRole('button', { name: 'Yes' }).click();
+  }
   await moveMouseAway(page);
 }
 
-for (const ReplaceMonomer of ReplaceMonomers) {
-  for (const Sequence of Sequences) {
-    test(`1-${Sequence.Id}-${ReplaceMonomer.Id}. Replace first symbol at ${Sequence.SequenceName} on ${ReplaceMonomer.MonomerDescription}`, async () => {
+function addAnnotation(message: string) {
+  test.info().annotations.push({ type: 'WARNING', description: message });
+}
+
+async function checkForKnownBugs(
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+  replacementPosition: number,
+) {
+  if (sequence.KnownBugs) {
+    addAnnotation(
+      `That test works wrong because of bug(s): ${sequence.Description}`,
+    );
+    addAnnotation(
+      `If all bugs has been fixed - screenshots have to be updated, sequence at sequences have to be corrected.`,
+    );
+    addAnnotation(`SequenceId: ${sequence.Id}`);
+    addAnnotation(`ReplaceMonomerId: ${replaceMonomer.Id}`);
+    addAnnotation(`ReplacementPosition: ${replacementPosition}`);
+    test.info().fixme();
+  }
+}
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 1
         Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in viev mode
@@ -308,23 +409,32 @@ for (const ReplaceMonomer of ReplaceMonomers) {
         5. Take screenshot to validate that replacement work in Sequence mode canvas
         6. Switch to Flex mode
         7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(Sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceSymbol(
         page,
-        ReplaceMonomer,
-        Sequence.ReplacementPositions.LeftEnd,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
       await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
     });
   }
 }
 
-for (const ReplaceMonomer of ReplaceMonomers) {
-  for (const Sequence of Sequences) {
-    test(`2-${Sequence.Id}-${ReplaceMonomer.Id}. Replace center symbol at ${Sequence.SequenceName} on ${ReplaceMonomer.MonomerDescription}`, async () => {
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`2-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 2
         Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in viev mode
@@ -336,23 +446,32 @@ for (const ReplaceMonomer of ReplaceMonomers) {
         5. Take screenshot to validate that replacement work in Sequence mode canvas
         6. Switch to Flex mode
         7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
       */
-      await openFileAndAddToCanvasMacro(Sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceSymbol(
         page,
-        ReplaceMonomer,
-        Sequence.ReplacementPositions.Center,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
       await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
     });
   }
 }
 
-for (const ReplaceMonomer of ReplaceMonomers) {
-  for (const Sequence of Sequences) {
-    test(`3-${Sequence.Id}-${ReplaceMonomer.Id}. Replace last symbol at ${Sequence.SequenceName} on ${ReplaceMonomer.MonomerDescription}`, async () => {
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`3-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 3
           Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in viev mode
@@ -364,16 +483,25 @@ for (const ReplaceMonomer of ReplaceMonomers) {
           5. Take screenshot to validate that replacement work in Sequence mode canvas
           6. Switch to Flex mode
           7. Take screenshot to validate that replacement work in Flex mode canvas
+          8. Add info to log if known bugs exist and skip test
         */
-      await openFileAndAddToCanvasMacro(Sequence.FileName, page);
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceSymbol(
         page,
-        ReplaceMonomer,
-        Sequence.ReplacementPositions.RightEnd,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
       await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
     });
   }
 }

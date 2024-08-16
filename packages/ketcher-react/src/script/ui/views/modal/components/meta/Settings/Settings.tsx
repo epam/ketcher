@@ -153,8 +153,18 @@ const SettingsDialog = (props: Props) => {
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
         <Field name="font" component={SystemFonts} data-testid="font" />
-        <Field name="fontsz" component={MeasureInput} labelPos={false} />
-        <Field name="fontszsub" component={MeasureInput} labelPos={false} />
+        <Field
+          name="fontsz"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszUnit"
+        />
+        <Field
+          name="fontszsub"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszsubUnit"
+        />
       </fieldset>
     ),
   };
@@ -222,12 +232,19 @@ const SettingsDialog = (props: Props) => {
           name="doubleBondWidth"
           component={MeasureInput}
           labelPos={false}
+          extraName="doubleBondWidthUnit"
         />
-        <Field name="bondThickness" component={MeasureInput} labelPos={false} />
+        <Field
+          name="bondThickness"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="bondThicknessUnit"
+        />
         <Field
           name="stereoBondWidth"
           component={MeasureInput}
           labelPos={false}
+          extraName="stereoBondWidthUnit"
         />
       </fieldset>
     ),

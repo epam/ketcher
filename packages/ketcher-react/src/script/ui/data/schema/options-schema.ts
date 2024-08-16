@@ -28,6 +28,13 @@ type ExtendedSchema = SchemaObject & {
   default?: any;
 };
 
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
 const editor: {
   resetToSelect: ExtendedSchema;
   rotationStep: ExtendedSchema;
@@ -64,15 +71,20 @@ const render: {
   orFlagLabel: ExtendedSchema;
   font: ExtendedSchema;
   fontsz: ExtendedSchema;
+  fontszUnit: ExtendedSchema;
   fontszsub: ExtendedSchema;
+  fontszsubUnit: ExtendedSchema;
   carbonExplicitly: ExtendedSchema;
   showCharge: ExtendedSchema;
   showValence: ExtendedSchema;
   showHydrogenLabels: ExtendedSchema;
   aromaticCircle: ExtendedSchema;
   doubleBondWidth: ExtendedSchema;
+  doubleBondWidthUnit: ExtendedSchema;
   bondThickness: ExtendedSchema;
+  bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
+  stereoBondWidthUnit: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -173,12 +185,24 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  fontszUnit: {
+    title: 'Font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   fontszsub: {
     title: 'Sub font size',
     type: 'integer',
     default: 13,
     minimum: 1,
     maximum: 96,
+  },
+  fontszsubUnit: {
+    title: 'Sub font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
   // Atom
   carbonExplicitly: {
@@ -219,6 +243,12 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  doubleBondWidthUnit: {
+    title: 'Double bond width unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   bondThickness: {
     title: 'Bond thickness',
     type: 'integer',
@@ -226,12 +256,24 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  bondThicknessUnit: {
+    title: 'Bond thickness unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   stereoBondWidth: {
     title: 'Stereo (Wedge) bond width',
     type: 'integer',
     default: 6,
     minimum: 1,
     maximum: 96,
+  },
+  stereoBondWidthUnit: {
+    title: 'Stereo (Wedge) bond width unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
 };
 

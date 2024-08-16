@@ -1312,6 +1312,26 @@ export class SequenceMode extends BaseMode {
       BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
         monomerItem.attachmentPoints || [],
       );
+    const previousMonomerHasR2 =
+      previousNodeInSameChain?.lastMonomerInNode.hasAttachmentPoint(
+        AttachmentPointName.R2,
+      );
+    const newMonomerHasR1 =
+      newMonomerAttachmentPoints.attachmentPointsList.includes(
+        AttachmentPointName.R1,
+      );
+    const nextMonomerHasR1 =
+      nextNodeInSameChain?.firstMonomerInNode.hasAttachmentPoint(
+        AttachmentPointName.R1,
+      );
+    const newMonomerHasR2 =
+      newMonomerAttachmentPoints.attachmentPointsList.includes(
+        AttachmentPointName.R2,
+      );
+    const leftSideInsertImpossible =
+      previousNodeInSameChain && (!previousMonomerHasR2 || !newMonomerHasR1);
+    const rightSideInsertImpossible =
+      nextNodeInSameChain && (!nextMonomerHasR1 || !newMonomerHasR2);
 
     if (selections.length > 0) {
       if (
@@ -1349,23 +1369,11 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else if (
-      (previousNodeInSameChain &&
-        (!previousNodeInSameChain?.lastMonomerInNode.hasAttachmentPoint(
-          AttachmentPointName.R2,
-        ) ||
-          !newMonomerAttachmentPoints.attachmentPointsList.includes(
-            AttachmentPointName.R1,
-          ))) ||
-      (nextNodeInSameChain &&
-        (!nextNodeInSameChain?.firstMonomerInNode.hasAttachmentPoint(
-          AttachmentPointName.R1,
-        ) ||
-          !newMonomerAttachmentPoints.attachmentPointsList.includes(
-            AttachmentPointName.R2,
-          )))
-    ) {
-      this.showMergeWarningModal();
+    } else if (leftSideInsertImpossible || rightSideInsertImpossible) {
+      const message = `The monomer lacks ${
+        !newMonomerHasR1 ? AttachmentPointName.R1 : AttachmentPointName.R2
+      } attachment point and cannot be inserted at current position`;
+      this.showMergeWarningModal(message);
     } else {
       const newNodePosition = this.getNewNodePosition();
 
@@ -1656,12 +1664,13 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private showMergeWarningModal() {
+  private showMergeWarningModal(message?: string) {
     const editor = CoreEditor.provideEditorInstance();
 
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error Message',
       errorMessage:
+        message ??
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
     });
   }

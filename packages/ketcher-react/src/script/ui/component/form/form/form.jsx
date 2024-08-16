@@ -71,18 +71,23 @@ class Form extends Component {
     onUpdate(instance, valid, errs);
   }
 
-  field(name, onChange) {
+  field(name, onChange, extraName) {
     const { result, errors } = this.props;
     const value = result[name];
+    const extraValue = extraName ? result[extraName] : null;
+
+    const handleOnChange = (name, value) => {
+      const newState = Object.assign({}, this.props.result, { [name]: value });
+      this.updateState(newState);
+      if (onChange) onChange(value);
+    };
 
     return {
       dataError: errors && errors[name],
       value,
-      onChange: (val) => {
-        const newState = Object.assign({}, this.props.result, { [name]: val });
-        this.updateState(newState);
-        if (onChange) onChange(val);
-      },
+      extraValue,
+      onChange: (val) => handleOnChange(name, val),
+      onExtraChange: (val) => handleOnChange(extraName, val),
     };
   }
 
@@ -126,7 +131,8 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-  const { name, onChange, component, labelPos, className, ...rest } = props;
+  const { name, extraName, onChange, component, labelPos, className, ...rest } =
+    props;
   const [anchorEl, setAnchorEl] = useState(null);
   const handlePopoverOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -136,13 +142,22 @@ function Field(props) {
   }, []);
   const { schema, stateStore } = useFormContext();
   const desc = rest.schema || schema.properties[name];
-  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const { dataError, onExtraChange, extraValue, ...fieldOpts } =
+    stateStore.field(name, onChange, extraName);
+
+  const getExtraSchema = () => {
+    return rest.extraSchema || schema.properties[extraName];
+  };
+
   const Component = component;
   const formField = component ? (
     <Component
       name={name}
       schema={desc}
       className={className}
+      onExtraChange={onExtraChange}
+      extraValue={extraValue}
+      {...(extraName && { extraSchema: getExtraSchema() })}
       {...fieldOpts}
       {...rest}
     />

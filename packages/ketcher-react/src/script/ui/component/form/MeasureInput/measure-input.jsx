@@ -21,50 +21,56 @@ import Input from '../Input/Input';
 import Select from '../Select';
 import styles from './measure-input.module.less';
 import { getSelectOptionsFromSchema } from '../../../utils';
+import { MeasurementUnits } from 'src/script/ui/data/schema/options-schema';
 
 const selectOptions = getSelectOptionsFromSchema({
-  enum: ['cm', 'px', 'pt', 'inch'],
+  enum: Object.values(MeasurementUnits),
 });
 
 const MeasureInput = ({
   schema,
+  extraSchema,
   value,
+  extraValue,
   onChange,
+  onExtraChange,
   name,
   className,
   ...rest
 }) => {
-  const [measure, setMeasure] = useState('px');
+  const [measure, setMeasure] = useState(
+    extraValue || extraSchema?.default || MeasurementUnits.Px,
+  );
   const [cust, setCust] = useState(value || schema.default);
 
   useEffect(() => {
-    if (measure === 'px' && cust?.toFixed() - 0 !== value) {
-      setMeasure('px');
+    if (measure === MeasurementUnits.Px && cust?.toFixed() - 0 !== value) {
+      setMeasure(MeasurementUnits.Px);
       setCust(value);
     } // Hack: Set init value (RESET)
   }, []);
 
+  useEffect(() => {
+    setMeasure(extraValue);
+  }, [extraValue]);
+
   const handleChange = (value) => {
-    const convValue = convertValue(value, measure, 'px');
+    const convValue = convertValue(value, measure, MeasurementUnits.Px);
     setCust(value);
     onChange(convValue);
   };
 
-  const handleMeasChange = (m) => {
+  const handleMeasChange = (unit) => {
     setCust((prev) => {
-      convertValue(prev, measure, m);
+      convertValue(prev, measure, unit);
     });
-    setMeasure(m);
-  };
-
-  const calcValue = () => {
-    const newValue = convertValue(value, 'px', measure);
-    setCust(newValue);
+    setMeasure(unit);
+    onExtraChange(unit);
   };
 
   useEffect(() => {
-    calcValue();
-  }, [value, measure, calcValue]);
+    setCust(convertValue(value, MeasurementUnits.Px, measure));
+  }, [value, measure]);
 
   const desc = schema || schema.properties[name];
 
@@ -74,7 +80,11 @@ const MeasureInput = ({
       <div style={{ display: 'flex' }}>
         <Input
           schema={schema}
-          step={measure === 'px' || measure === 'pt' ? '1' : '0.001'}
+          step={
+            measure === MeasurementUnits.Px || measure === MeasurementUnits.Pt
+              ? '1'
+              : '0.001'
+          }
           value={cust}
           onChange={handleChange}
         />
@@ -99,7 +109,7 @@ const measureMap = {
 function convertValue(value, measureFrom, measureTo) {
   if ((!value && value !== 0) || isNaN(value)) return null; // eslint-disable-line
 
-  return measureTo === 'px' || measureTo === 'pt'
+  return measureTo === MeasurementUnits.Px || measureTo === MeasurementUnits.Pt
     ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
     : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) -
         0;

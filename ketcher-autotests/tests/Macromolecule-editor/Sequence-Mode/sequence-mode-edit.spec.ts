@@ -3,6 +3,7 @@ import { test } from '@playwright/test';
 import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -478,5 +479,123 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
     await doubleClickOnSequenceSymbol(page, 'G');
     await takeEditorScreenshot(page);
+  });
+
+  test('Switch to RNA mode and type any RNA symbol - A, C, G, U, T', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Clear canvas, switch to RNA mode, type any non-RNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['d', 'e', 'f'];
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to DNA mode and type any DNA symbol - A, C, G, U, T', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
+    await switchSequenceEnteringType(page, SequenceType.DNA);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Clear canvas, switch to DNA mode, type any non-DNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['d', 'e', 'f'];
+    await switchSequenceEnteringType(page, SequenceType.DNA);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to Peptide mode and type any Peptide symbol - A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = [
+      'a',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'h',
+      'i',
+      'k',
+      'l',
+      'm',
+      'n',
+      'p',
+      'q',
+      'r',
+      's',
+      't',
+      'v',
+      'w',
+      'y',
+    ];
+    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to Peptide mode, type any non-Peptide symbol  (i.e. any but A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['b', 'j', 'u', 'z'];
+    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
   });
 });

@@ -2260,13 +2260,13 @@
         "$ref": "monomerTemplate-Mal___Maleimide"
       },
       {
-        "$ref": "monomerTemplate-Biotin___Biotin"
+        "$ref": "monomerTemplate-B7___Biotin"
       },
       {
-        "$ref": "monomerTemplate-PQuinFluor___P-quinonoid fluorescein"
+        "$ref": "monomerTemplate-flsQ___P-quinonoid fluorescein"
       },
       {
-        "$ref": "monomerTemplate-LactoneFluorescein___LactoneFluorescein"
+        "$ref": "monomerTemplate-flsL___LactoneFluorescein"
       }
     ]
   },
@@ -174852,11 +174852,11 @@
       }
     ]
   },
-  "monomerTemplate-Biotin___Biotin": {
+  "monomerTemplate-B7___Biotin": {
     "type": "monomerTemplate",
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "Biotin___Biotin",
+    "id": "B7___Biotin",
     "fullName": "Biotin",
     "alias": "B7",
     "atoms": [
@@ -175158,11 +175158,11 @@
       }
     ]
   },
-  "monomerTemplate-PQuinFluor___P-quinonoid fluorescein": {
+  "monomerTemplate-flsQ___P-quinonoid fluorescein": {
     "type": "monomerTemplate",
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "PQuinFluor___P-quinonoid fluorescein",
+    "id": "flsQ___P-quinonoid fluorescein",
     "fullName": "P-quinonoid fluorescein",
     "alias": "flsQ",
     "atoms": [
@@ -175592,11 +175592,11 @@
       }
     ]
   },
-  "monomerTemplate-LactoneFluorescein___LactoneFluorescein": {
+  "monomerTemplate-flsL___LactoneFluorescein": {
     "type": "monomerTemplate",
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "LactoneFluorescein___LactoneFluorescein",
+    "id": "flsL___LactoneFluorescein",
     "fullName": "Lactone fluorescein",
     "alias": "flsL",
     "atoms": [

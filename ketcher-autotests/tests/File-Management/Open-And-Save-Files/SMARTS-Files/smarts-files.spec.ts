@@ -236,7 +236,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4382
+    Test case: #4985
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -260,6 +260,166 @@ test.describe('Loading SMARTS files', () => {
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
+      page,
+    );
+  });
+
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+      page,
+    );
+  });
+
+  test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
+      page,
+    );
+  });
+
+  test('Validate that the schema with two retrosynthetic arrows could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
+      page,
+    );
+  });
+
+  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
+      page,
+    );
+  });
+
+  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMARTS file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+      page,
+    );
+    const expectedFile = await getSmarts(page);
+    await saveToFile(
+      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
+      expectedFile,
+    );
+    const { fileExpected: smartsFileExpected, file: smartsFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
+      });
+
+    expect(smartsFile).toEqual(smartsFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
       page,
     );
   });

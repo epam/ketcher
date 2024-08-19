@@ -692,7 +692,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4382
+    Test case: #4985
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -708,9 +708,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 25];
 
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -734,7 +732,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4382
+    Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
@@ -750,9 +748,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
-    ];
+    const METADATA_STRINGS_INDEXES = [2];
 
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -767,6 +763,406 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 65, 72, 79];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with vertical retrosynthetic arrow could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 65, 72, 79];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with vertical retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with two retrosynthetic arrows could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 26, 39, 63];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with two retrosynthetic arrows could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 26, 33, 51, 58];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to rxn2000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 25, 42, 54];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to rxn3000 file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: Import/Saving files
+    Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+      page,
+    );
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
       page,
     );
     await takeEditorScreenshot(page);

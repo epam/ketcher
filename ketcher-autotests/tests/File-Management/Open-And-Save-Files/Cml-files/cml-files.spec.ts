@@ -323,4 +323,37 @@ test.describe('CML files', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Validate that the simple schema with retrosynthetic arrow could be saved to CML file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4985
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/simple-schema-with-retrosynthetic-arrow.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/simple-schema-with-retrosynthetic-arrow.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/simple-schema-with-retrosynthetic-arrow.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

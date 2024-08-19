@@ -751,21 +751,10 @@ function updateLastCursorPosition(editor: Editor, event) {
     const clientAreaBoundingBox =
       editor.render.clientArea.getBoundingClientRect();
 
-    const pos = calculateLayerOffset(event);
-    if (pos != null) {
-      editor.lastCursorPosition = {
-        x:
-          pos.offsetX /
-            (editor.options().zoom ?? 1.0) /
-            (editor.options().externalZoomScale ?? 1.0) -
-          clientAreaBoundingBox.x,
-        y:
-          pos.offsetY /
-            (editor.options().zoom ?? 1.0) /
-            (editor.options().externalZoomScale ?? 1.0) -
-          clientAreaBoundingBox.y,
-      };
-    }
+    editor.lastCursorPosition = {
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
+    };
   }
 }
 

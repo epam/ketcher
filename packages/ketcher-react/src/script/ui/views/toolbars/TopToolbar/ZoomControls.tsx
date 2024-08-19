@@ -172,10 +172,6 @@ export const ZoomControls = ({
         open={isExpanded}
         onClose={onClose}
         anchorEl={containerRef.current}
-        container={
-          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
-          document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
-        }
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',

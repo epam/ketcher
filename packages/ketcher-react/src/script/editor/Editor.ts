@@ -733,18 +733,6 @@ function resetSelectionOnCanvasClick(
   }
 }
 
-function calculateLayerOffset(event) {
-  const target = event.target || event.srcElement;
-  const svgTarget = target?.closest('svg');
-  if (!svgTarget) {
-    return null;
-  }
-  const svgRect = svgTarget.getBoundingClientRect();
-  const offsetX = event.clientX - svgRect.left;
-  const offsetY = event.clientY - svgRect.top;
-  return { offsetX, offsetY };
-}
-
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
   if (events.includes(event.type)) {

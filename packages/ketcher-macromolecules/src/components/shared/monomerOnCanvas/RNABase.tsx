@@ -54,7 +54,7 @@ export const RNABaseAvatar = () => (
         data-actual-width="30"
         data-actual-height="30"
         stroke="#585858"
-        stroke-width="0.5"
+        strokeWidth="0.5"
         rx="1"
         x="-10.25"
         y="-10.25"

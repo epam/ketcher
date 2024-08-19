@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { PolymerBondRenderer } from 'ketcher-core';
+import { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 
 export const PolymerBondContextMenu = () => {
@@ -18,7 +18,9 @@ export const PolymerBondContextMenu = () => {
       hidden: ({
         props,
       }: {
-        props?: { polymerBondRenderer?: PolymerBondRenderer };
+        props?: {
+          polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
+        };
       }) => {
         return !props?.polymerBondRenderer;
       },

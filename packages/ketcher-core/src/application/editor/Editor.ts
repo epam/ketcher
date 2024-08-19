@@ -1,5 +1,21 @@
-import { DOMSubscription } from 'subscription';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { drawnStructuresSelector } from 'application/editor/constants';
+import { Editor } from 'application/editor/editor.types';
+import {
+  editorEvents,
+  hotkeysConfiguration,
+  renderersEvents,
+  resetEditorEvents,
+} from 'application/editor/editorEvents';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import {
+  LayoutMode,
+  modesMap,
+  SequenceMode,
+  SnakeMode,
+} from 'application/editor/modes/';
+import { BaseMode } from 'application/editor/modes/internal';
+import { toolsMap } from 'application/editor/tools';
+import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
   IRnaPreset,
@@ -8,47 +24,32 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
-import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
-import { toolsMap } from 'application/editor/tools';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import ZoomTool from './tools/Zoom';
-import { Coordinates } from './shared/coordinates';
-import {
-  editorEvents,
-  hotkeysConfiguration,
-  renderersEvents,
-  resetEditorEvents,
-} from 'application/editor/editorEvents';
-import { EditorHistory, HistoryOperationType } from './EditorHistory';
-import { Editor } from 'application/editor/editor.types';
-import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { ketcherProvider } from 'application/utils';
-import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
-import {
-  LayoutMode,
-  modesMap,
-  SequenceMode,
-  SnakeMode,
-} from 'application/editor/modes/';
-import { BaseMode } from 'application/editor/modes/internal';
-import assert from 'assert';
-import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import {
   IKetMacromoleculesContent,
   IKetMonomerGroupTemplate,
   KetMonomerGroupTemplateClass,
   KetTemplateType,
 } from 'application/formatters';
-import { KetSerializer } from 'domain/serializers';
-import monomersDataRaw from './data/monomers.ket';
-import { drawnStructuresSelector } from 'application/editor/constants';
-import { PolymerBondRenderer } from 'application/render';
-import { PolymerBond } from 'domain/entities/PolymerBond';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import { ketcherProvider } from 'application/utils';
+import assert from 'assert';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { KetSerializer } from 'domain/serializers';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import { DOMSubscription } from 'subscription';
+import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
+import monomersDataRaw from './data/monomers.ket';
+import { EditorHistory, HistoryOperationType } from './EditorHistory';
+import { Coordinates } from './shared/coordinates';
+import ZoomTool from './tools/Zoom';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -208,7 +209,10 @@ export class CoreEditor {
           event,
           SequenceRenderer.selections,
         );
-      } else if (eventData instanceof PolymerBondRenderer) {
+      } else if (
+        eventData instanceof FlexModePolymerBondRenderer ||
+        eventData instanceof SnakeModePolymerBondRenderer
+      ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
       } else {
         this.events.rightClickCanvas.dispatch(event);
@@ -280,14 +284,22 @@ export class CoreEditor {
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
-    this.selectTool('monomer', monomer);
+    if (this.mode instanceof SequenceMode) {
+      this.mode.insertMonomerFromLibrary(monomer);
+    } else {
+      this.selectTool('monomer', monomer);
+    }
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
-    if (preset) {
-      this.selectTool('preset', preset);
+    if (this.mode instanceof SequenceMode) {
+      this.mode.insertPresetFromLibrary(preset);
     } else {
-      this.tool = undefined;
+      if (preset) {
+        this.selectTool('preset', preset);
+      } else {
+        this.tool = undefined;
+      }
     }
   }
 

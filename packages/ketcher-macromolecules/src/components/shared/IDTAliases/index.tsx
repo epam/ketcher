@@ -1,26 +1,22 @@
-import { IKetIdtAliases } from 'ketcher-core';
-import { IDTAliasesContainer } from './styles';
+import {
+  IDTAliasesContainer,
+  IDTAliasesList,
+  IDTAliasesText,
+  IDTTitle,
+} from './styles';
 
 interface IDTAliasesProps {
-  readonly aliases: IKetIdtAliases;
+  readonly idtAliasesText: string;
+  readonly preset?: boolean;
 }
 
-const IDTAliases = ({ aliases }: IDTAliasesProps) => {
-  let idtAliasesText: string;
-  if (aliases.modifications) {
-    const modificationsValues = Object.values(aliases.modifications);
-    if (modificationsValues.length) {
-      idtAliasesText = modificationsValues.join(', ');
-    } else {
-      idtAliasesText = aliases.base;
-    }
-  } else {
-    idtAliasesText = aliases.base;
-  }
-
+const IDTAliases = ({ idtAliasesText, preset }: IDTAliasesProps) => {
   return (
-    <IDTAliasesContainer>
-      IDT: <b>{idtAliasesText}</b>
+    <IDTAliasesContainer preset={preset}>
+      <IDTAliasesText>
+        <IDTTitle>IDT: </IDTTitle>
+        <IDTAliasesList>{idtAliasesText}</IDTAliasesList>
+      </IDTAliasesText>
     </IDTAliasesContainer>
   );
 };

@@ -35,6 +35,14 @@ const initialState: ModalState = {
   errorModalTitle: '',
 };
 
+export type ModalName =
+  | 'open'
+  | 'save'
+  | 'delete'
+  | 'updateSequenceInRNABuilder'
+  | 'monomerConnection'
+  | 'confirmationDialog';
+
 export const modalSlice = createSlice({
   name: 'modal',
   initialState,
@@ -42,7 +50,7 @@ export const modalSlice = createSlice({
     openModal: (
       state,
       action: PayloadAction<
-        string | { name: string; additionalProps: AdditionalModalProps }
+        ModalName | { name: ModalName; additionalProps: AdditionalModalProps }
       >,
     ) => {
       if (typeof action.payload === 'string') {

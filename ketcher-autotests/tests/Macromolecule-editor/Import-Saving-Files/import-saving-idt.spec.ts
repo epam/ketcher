@@ -39,6 +39,7 @@ import {
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
@@ -392,7 +393,7 @@ test.describe('Import-Saving .idt Files', () => {
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await enterSequence(page, 'ttt');
     await page.keyboard.press('Escape');
@@ -843,50 +844,42 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Delete bond between unresolved and known monomers connected through R2/R1 and Undo',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
-  Test case: Import/Saving files/4431
-  Description: Bond deleted and after pressing Undo appears.
-  Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
-  */
-      test.fail();
-      const x = 650;
-      const y = 400;
-      const firstMonomer = await page.getByText('iMe-dC').locator('..');
-      const secondMonomer = await page.getByText('1Nal').locator('..').first();
-      const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async ({
+    page,
+  }) => {
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
 
-      await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        page,
-        'IDT',
-        `/iMe-dC/`,
-      );
-      await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        'R2',
-        'R1',
-      );
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      'IDT',
+      `/iMe-dC/`,
+    );
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R2',
+      'R1',
+    );
 
-      const bondExists = await bondLine.isVisible();
+    const bondExists = await bondLine.isVisible();
 
-      if (!bondExists) {
-        throw new Error('Bond line is not present, likely due to a known bug.');
-      }
+    if (!bondExists) {
+      throw new Error('Bond line is not present, likely due to a known bug.');
+    }
 
-      await selectEraseTool(page);
-      await bondLine.click();
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await selectEraseTool(page);
+    await bondLine.click();
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Delete bond between unresolved and known monomers connected through R3/R4 and Undo', async ({
     page,

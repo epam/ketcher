@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { ChangeEvent, useEffect, useRef } from 'react';
+import { ChangeEvent, useEffect, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
-import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
@@ -37,19 +37,9 @@ import {
 
 const COPY = '_Copy';
 
-type MonomerLibraryProps = {
-  isSequenceEditInRNABuilderMode?: boolean;
-};
-
-const MonomerLibrary = React.memo((props: MonomerLibraryProps) => {
+const MonomerLibrary = () => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
-  const layoutMode = useLayoutMode();
-  const isSequenceEditInRNABuilderMode = props?.isSequenceEditInRNABuilderMode;
-  const isSequenceMode = layoutMode === 'sequence-layout-mode';
-  const isDisabledTabs = isSequenceMode;
-  const isDisabledTabsPanels =
-    isSequenceMode && !isSequenceEditInRNABuilderMode;
 
   useEffect(() => {
     dispatch(setSearchFilter(''));
@@ -115,13 +105,9 @@ const MonomerLibrary = React.memo((props: MonomerLibraryProps) => {
           </div>
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
-      <Tabs
-        disabledTabs={isDisabledTabs}
-        disabledTabsPanels={isDisabledTabsPanels}
-        tabs={tabsContent(duplicatePreset, editPreset)}
-      />
+      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
     </MonomerLibraryContainer>
   );
-});
+};
 
 export { MonomerLibrary };

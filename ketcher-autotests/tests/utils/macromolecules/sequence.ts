@@ -26,6 +26,17 @@ export async function clickOnSequenceSymbolByIndex(
   await symbolLocator.click();
 }
 
+export async function doubleClickOnSequenceSymbolByIndex(
+  page: Page,
+  symbolIndex: number,
+) {
+  const symbolLocator = page
+    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .first();
+  await symbolLocator.hover();
+  await symbolLocator.dblclick();
+}
+
 export function getSequenceSymbolLocator(
   page: Page,
   symbolText: string,

@@ -10,6 +10,7 @@ import {
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   moveMouseAway,
+  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 
 import {
@@ -28,7 +29,10 @@ import {
   togglePhosphatesAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
-import { clickOnSequenceSymbolByIndex } from '@utils/macromolecules/sequence';
+import {
+  clickOnSequenceSymbolByIndex,
+  doubleClickOnSequenceSymbolByIndex,
+} from '@utils/macromolecules/sequence';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -85,6 +89,11 @@ interface IReplacementPosition {
   Center: number;
   RightEnd: number;
 }
+
+interface IBugsInTests {
+  TestNameContains: string;
+  BugNumber: string;
+}
 interface ISequence {
   Id: number;
   FileName: string;
@@ -92,7 +101,7 @@ interface ISequence {
   ReplacementPositions: IReplacementPosition;
   ConfirmationOnReplecement?: boolean;
   KnownBugs?: boolean;
-  Description?: string;
+  BugsInTests?: IBugsInTests[];
 }
 
 interface IFailedTest {
@@ -222,7 +231,16 @@ const sequences: ISequence[] = [
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5236',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+    ],
   },
   {
     Id: 6,
@@ -231,7 +249,16 @@ const sequences: ISequence[] = [
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5236',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+    ],
   },
   {
     Id: 7,
@@ -240,7 +267,16 @@ const sequences: ISequence[] = [
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5236',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+    ],
   },
   {
     Id: 8,
@@ -249,7 +285,16 @@ const sequences: ISequence[] = [
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5236',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
+      },
+    ],
   },
   {
     Id: 9,
@@ -266,7 +311,16 @@ const sequences: ISequence[] = [
       'sequence of unsplit nucleotides w/o natural analog (5NitInd)',
     ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5240',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
+      },
+    ],
   },
   {
     Id: 11,
@@ -275,7 +329,16 @@ const sequences: ISequence[] = [
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
     KnownBugs: true,
-    Description: 'https://github.com/epam/ketcher/issues/5240',
+    BugsInTests: [
+      {
+        TestNameContains: 'in view mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
+      },
+      {
+        TestNameContains: 'in edit mode',
+        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
+      },
+    ],
   },
   {
     Id: 12,
@@ -372,6 +435,22 @@ async function selectAndReplaceSymbol(
   await moveMouseAway(page);
 }
 
+async function selectAndReplaceSymbolInEditMode(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+  replacementPosition: number,
+) {
+  await selectSequenceLayoutModeTool(page);
+  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+  if (sequence.ConfirmationOnReplecement) {
+    await page.getByRole('button', { name: 'Yes' }).click();
+  }
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.mouse.click(200, 200);
+}
+
 function addAnnotation(message: string) {
   test.info().annotations.push({ type: 'WARNING', description: message });
 }
@@ -381,10 +460,16 @@ async function checkForKnownBugs(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  if (sequence.KnownBugs) {
-    addAnnotation(
-      `That test works wrong because of bug(s): ${sequence.Description}`,
-    );
+  // Check if particular sequence has any known bugs that makes test case works wrong
+  const matchingBugs = sequence.BugsInTests?.filter((bug) =>
+    test.info().title.includes(bug.TestNameContains),
+  );
+
+  if (matchingBugs && matchingBugs.length > 0) {
+    addAnnotation(`That test works wrong because of bug(s):`);
+    matchingBugs.forEach((bug) => {
+      addAnnotation(`${bug.BugNumber}`);
+    });
     addAnnotation(
       `If all bugs has been fixed - screenshots have to be updated, sequence at sequences have to be corrected.`,
     );
@@ -397,13 +482,13 @@ async function checkForKnownBugs(
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
+    test(`1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 1
-        Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in viev mode
+        Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in view mode
         Scenario:
         1. Clear canvas
-        2. Load sequence from file (sequence contains monomers of nessussary type)
+        2. Load sequence from file (sequence contains monomers of necessary type)
         3. Select first symbol
         4. Click on monomer from the library
         5. Take screenshot to validate that replacement work in Sequence mode canvas
@@ -434,14 +519,14 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`2-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
+    test(`2-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 2
-        Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in viev mode
+        Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in view mode
         Scenario:
         1. Clear canvas
-        2. Load sequence from file (sequence contains monomers of nessussary type)
-        3. Select symbol in the meddle of sequence
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select symbol in the middle of sequence
         4. Click on monomer from the library
         5. Take screenshot to validate that replacement work in Sequence mode canvas
         6. Switch to Flex mode
@@ -471,13 +556,13 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`3-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription}`, async () => {
+    test(`3-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 3
-          Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in viev mode
+          Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in view mode
           Scenario:
           1. Clear canvas
-          2. Load sequence from file (sequence contains monomers of nessussary type)
+          2. Load sequence from file (sequence contains monomers of necessary type)
           3. Select last symbol in the sequence
           4. Click on monomer from the library
           5. Take screenshot to validate that replacement work in Sequence mode canvas
@@ -508,14 +593,14 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`4-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+    test(`4-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
-          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 1
-          Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in viev mode
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 4
+          Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in edit mode
           Scenario:
           1. Clear canvas
-          2. Load sequence from file (sequence contains monomers of nessussary type)
-          3. Select first symbol
+          2. Load sequence from file (sequence contains monomers of necessary type)
+          3. Double click on first symbol (that turns sequence into edit mode)
           4. Click on monomer from the library
           5. Take screenshot to validate that replacement work in Sequence mode canvas
           6. Switch to Flex mode
@@ -523,7 +608,7 @@ for (const replaceMonomer of replaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
-      await selectAndReplaceSymbol(
+      await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
         sequence,
@@ -545,14 +630,14 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`5-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+    test(`5-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
-          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 2
-          Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in viev mode
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 5
+          Description: User can replace symbol (of every type) in the middle of sequence with another monomer (of every type) in edit mode
           Scenario:
           1. Clear canvas
-          2. Load sequence from file (sequence contains monomers of nessussary type)
-          3. Select symbol in the meddle of sequence
+          2. Load sequence from file (sequence contains monomers of necessary type)
+          3. Double click symbol in the middle of sequence (that turns sequence into edit mode)
           4. Click on monomer from the library
           5. Take screenshot to validate that replacement work in Sequence mode canvas
           6. Switch to Flex mode
@@ -560,7 +645,7 @@ for (const replaceMonomer of replaceMonomers) {
           8. Add info to log if known bugs exist and skip test
         */
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
-      await selectAndReplaceSymbol(
+      await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
         sequence,
@@ -582,14 +667,14 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`6-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} at edit mode`, async () => {
+    test(`6-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
-            Test case: https://github.com/epam/ketcher/issues/5290 - Test case 3
-            Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in viev mode
+            Test case: https://github.com/epam/ketcher/issues/5290 - Test case 6
+            Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in edit mode
             Scenario:
             1. Clear canvas
-            2. Load sequence from file (sequence contains monomers of nessussary type)
-            3. Select last symbol in the sequence
+            2. Load sequence from file (sequence contains monomers of necessary type)
+            3. Double click on the last symbol (that turns sequence into edit mode)
             4. Click on monomer from the library
             5. Take screenshot to validate that replacement work in Sequence mode canvas
             6. Switch to Flex mode
@@ -597,7 +682,7 @@ for (const replaceMonomer of replaceMonomers) {
             8. Add info to log if known bugs exist and skip test
           */
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
-      await selectAndReplaceSymbol(
+      await selectAndReplaceSymbolInEditMode(
         page,
         replaceMonomer,
         sequence,

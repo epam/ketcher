@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -75,6 +75,10 @@ test.afterAll(async ({ browser }) => {
   });
 });
 
+interface IBugsInTests {
+  TestNameContains: string;
+  BugNumber: string;
+}
 interface IReplaceMonomer {
   Id: number;
   MonomerType: string;
@@ -82,17 +86,14 @@ interface IReplaceMonomer {
   MonomerAlias: string;
   MonomerTestId: string;
   MonomerDescription: string;
+  ShouldFail?: boolean;
+  KnownBugs?: boolean;
+  BugsInTests?: IBugsInTests[];
 }
-
 interface IReplacementPosition {
   LeftEnd: number;
   Center: number;
   RightEnd: number;
-}
-
-interface IBugsInTests {
-  TestNameContains: string;
-  BugNumber: string;
 }
 interface ISequence {
   Id: number;
@@ -435,6 +436,76 @@ async function selectAndReplaceSymbol(
   await moveMouseAway(page);
 }
 
+async function selectAndReplaceSymbolWithError(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+  replacementPosition: number,
+) {
+  await selectSequenceLayoutModeTool(page);
+  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+  await moveMouseAway(page);
+}
+
+async function selectAndReplaceAllSymbols(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+) {
+  await selectSequenceLayoutModeTool(page);
+
+  await page.keyboard.down('Shift');
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.LeftEnd,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.Center,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.RightEnd,
+  );
+  await page.keyboard.up('Shift');
+
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+  if (sequence.ConfirmationOnReplecement) {
+    await page.getByRole('button', { name: 'Yes' }).click();
+  }
+  await moveMouseAway(page);
+}
+
+async function selectAndReplaceAllSymbolsInEditMode(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+) {
+  await selectSequenceLayoutModeTool(page);
+
+  await page.keyboard.down('Shift');
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.LeftEnd,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.Center,
+  );
+  await doubleClickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.RightEnd,
+  );
+  await page.keyboard.up('Shift');
+
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+  if (sequence.ConfirmationOnReplecement) {
+    await page.getByRole('button', { name: 'Yes' }).click();
+  }
+  await moveMouseAway(page);
+}
+
 async function selectAndReplaceSymbolInEditMode(
   page: Page,
   replaceMonomer: IReplaceMonomer,
@@ -451,6 +522,18 @@ async function selectAndReplaceSymbolInEditMode(
   await page.mouse.click(200, 200);
 }
 
+async function selectAndReplaceSymbolInEditModeWithError(
+  page: Page,
+  replaceMonomer: IReplaceMonomer,
+  sequence: ISequence,
+  replacementPosition: number,
+) {
+  await selectSequenceLayoutModeTool(page);
+  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+  await moveMouseAway(page);
+}
+
 function addAnnotation(message: string) {
   test.info().annotations.push({ type: 'WARNING', description: message });
 }
@@ -461,13 +544,24 @@ async function checkForKnownBugs(
   replacementPosition: number,
 ) {
   // Check if particular sequence has any known bugs that makes test case works wrong
-  const matchingBugs = sequence.BugsInTests?.filter((bug) =>
-    test.info().title.includes(bug.TestNameContains),
-  );
+  const sequenceMatchingBugs =
+    sequence.BugsInTests?.filter((bug) =>
+      test.info().title.includes(bug.TestNameContains),
+    ) || [];
 
-  if (matchingBugs && matchingBugs.length > 0) {
+  const replaceMonomerMatchingBugs =
+    replaceMonomer.BugsInTests?.filter((bug) =>
+      test.info().title.includes(bug.TestNameContains),
+    ) || [];
+
+  const allMatchingBugs = [
+    ...sequenceMatchingBugs,
+    ...replaceMonomerMatchingBugs,
+  ];
+
+  if (allMatchingBugs && allMatchingBugs.length > 0) {
     addAnnotation(`That test works wrong because of bug(s):`);
-    matchingBugs.forEach((bug) => {
+    allMatchingBugs.forEach((bug) => {
       addAnnotation(`${bug.BugNumber}`);
     });
     addAnnotation(
@@ -478,6 +572,19 @@ async function checkForKnownBugs(
     addAnnotation(`ReplacementPosition: ${replacementPosition}`);
     test.info().fixme();
   }
+}
+
+async function closeErrorMessage(page: Page) {
+  const errorMessage = await page.getByText('Error message', {
+    exact: true,
+  });
+  const closeWindowButton = await page.getByRole('button', {
+    name: 'Close window',
+  });
+
+  await closeWindowButton.click();
+  await errorMessage.waitFor({ state: 'hidden' });
+  // await closeWindowButton.click();
 }
 
 for (const replaceMonomer of replaceMonomers) {
@@ -697,6 +804,402 @@ for (const replaceMonomer of replaceMonomers) {
         replaceMonomer,
         sequence,
         sequence.ReplacementPositions.RightEnd,
+      );
+    });
+  }
+}
+
+const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
+  {
+    Id: 11,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Ala-al',
+    MonomerTestId: 'Ala-al___(2S)-2-aminopropanal',
+    MonomerDescription: 'peptide w/o R2 (Ala-al)',
+  },
+  {
+    Id: 12,
+    MonomerType: 'Peptide',
+    MonomerAlias: '-NHBn',
+    MonomerTestId: '-NHBn___C-Terminal benzylamino',
+    MonomerDescription: 'peptide w/o natural analog w/o R2 (-NHBn)',
+  },
+  {
+    Id: 13,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Bases',
+    MonomerAlias: '5meC',
+    MonomerTestId: '5meC___5-methyl-cytidine',
+    MonomerDescription: 'base w/o R2 (5meC)',
+  },
+  {
+    Id: 14,
+    MonomerType: 'CHEM',
+    MonomerAlias: 'Az',
+    MonomerTestId: 'Az___4-azidobutyric acid',
+    MonomerDescription: 'CHEM w/o R2 (Mal)',
+  },
+];
+
+for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+      Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 7
+        Description: User can't replace first symbol (of every type) in sequence with another monomer (of every type) with no R2 in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select first symbol
+        4. Click on monomer from the library that has no R2 connection point
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolWithError(
+        page,
+        noR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}
+
+const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
+  {
+    Id: 15,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'D-OAla',
+    MonomerTestId: 'D-OAla___D-lactic acid',
+    MonomerDescription: 'peptide w/o R1 (D-OAla)',
+  },
+  {
+    Id: 16,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Boc-',
+    MonomerTestId: 'Boc-___N-Terminal tert-butyloxycarbonyl',
+    MonomerDescription: 'peptide w/o R1 (Boc-)',
+  },
+  {
+    Id: 17,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Sugars',
+    MonomerAlias: '5cGT',
+    MonomerTestId: "5cGT___2-(methylamino)acetamide (GeneTools 5'-cap for PMO)",
+    MonomerDescription: 'sugar w/o R1 (5cGT)',
+    ShouldFail: true,
+    KnownBugs: true,
+    BugsInTests: [
+      {
+        TestNameContains: "Can't replace symbol in the center of",
+        BugNumber: 'https://github.com/epam/ketcher/issues/5313',
+      },
+    ],
+  },
+];
+
+const noR1orR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
+  ...noR2ConnectionPointReplaceMonomers,
+  ...noR1ConnectionPointReplaceMonomers,
+];
+
+for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 8
+        Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select symbol in the center of sequence
+        4. Click on monomer from the library that has no R1 or R2 connection points
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      test.setTimeout(20000);
+      test.fail(
+        noR1orR2ConnectionPointReplaceMonomer.ShouldFail === true,
+        `Test fails because of bug. See list of them for monomer with Id = ${noR1orR2ConnectionPointReplaceMonomer.Id}`,
+      );
+
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolWithError(
+        page,
+        noR1orR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR1orR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+    });
+  }
+}
+
+for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+      Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 9
+        Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select last symbol of sequence
+        4. Click on monomer from the library that has no R1 or R2 connection points
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      test.setTimeout(20000);
+      test.fail(
+        noR1ConnectionPointReplaceMonomer.ShouldFail === true,
+        `Test fails because of bug. See list of them for monomer with Id = ${noR1ConnectionPointReplaceMonomer.Id}`,
+      );
+
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolWithError(
+        page,
+        noR1ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR1ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+    });
+  }
+}
+
+for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+      Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 10
+        Description: User can't replace first symbol (of every type) in sequence with another monomer (of every type) with no R2 in edit mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Double click on the first symbol (that turns sequence into edit mode)
+        4. Click on monomer from the library that has no R2 connection point
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolInEditModeWithError(
+        page,
+        noR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}
+
+for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+      Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 11
+        Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in edit mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Double click symbol in the center of sequence (that turns sequence into edit mode)
+        4. Click on monomer from the library that has no R1 or R2 connection points
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      test.setTimeout(20000);
+      test.fail(
+        noR1orR2ConnectionPointReplaceMonomer.ShouldFail === true,
+        `Test fails because of bug. See list of them for monomer with Id = ${noR1orR2ConnectionPointReplaceMonomer.Id}`,
+      );
+
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolWithError(
+        page,
+        noR1orR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR1orR2ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+    });
+  }
+}
+
+for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
+  for (const sequence of sequences) {
+    test(`12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+      Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 12
+        Description: User can't replace symbol (of every type) in the middle of sequence with another monomer (of every type) with no R1 or R2 in edit mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Double click on the last sequence of sequence (that turns sequence into edit mode)
+        4. Click on monomer from the library that has no R1 or R2 connection points
+        5. Take screenshot to validate that error message occures
+        6. Add info to log if known bugs exist and skip test
+      */
+      test.setTimeout(20000);
+      test.fail(
+        noR1ConnectionPointReplaceMonomer.ShouldFail === true,
+        `Test fails because of bug. See list of them for monomer with Id = ${noR1ConnectionPointReplaceMonomer.Id}`,
+      );
+
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolWithError(
+        page,
+        noR1ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+
+      const fullErrorMessage = page.getByText(
+        'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
+      );
+      await expect(fullErrorMessage).toBeVisible();
+
+      await closeErrorMessage(page);
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        noR1ConnectionPointReplaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`13-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 13
+        Description: User can replace all symbols (of every type) in sequence with another monomer (of every type) in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select all symbol of target type
+        4. Click on monomer from the library
+        5. Take screenshot to validate that replacement work in Sequence mode canvas
+        6. Switch to Flex mode
+        7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
+      */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of replaceMonomers) {
+  for (const sequence of sequences) {
+    test(`14-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 14
+        Description: User can replace all symbols (of every type) in sequence with another monomer (of every type) in edit mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Hold Shift key and select all symbol of target type and double click on the last
+        4. Click on monomer from the library
+        5. Take screenshot to validate that replacement work in Sequence mode canvas
+        6. Switch to Flex mode
+        7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
+      */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceAllSymbolsInEditMode(
+        page,
+        replaceMonomer,
+        sequence,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
       );
     });
   }

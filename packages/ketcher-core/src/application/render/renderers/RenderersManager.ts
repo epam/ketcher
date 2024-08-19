@@ -32,6 +32,8 @@ import {
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
+import { VariantMonomer } from 'domain/entities/VariantMonomer';
+import { VariantMonomerRenderer } from 'application/render/renderers/VariantMonomerRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -40,7 +42,9 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 export class RenderersManager {
   // FIXME: Specify the types.
   private theme;
-  public monomers: Map<number, BaseMonomerRenderer> = new Map();
+  public monomers: Map<number, BaseMonomerRenderer | VariantMonomerRenderer> =
+    new Map();
+
   public polymerBonds = new Map<
     number,
     FlexModeOrSnakeModePolymerBondRenderer
@@ -77,9 +81,19 @@ export class RenderersManager {
     this.needRecalculateMonomersBeginning = true;
   }
 
-  public addMonomer(monomer: BaseMonomer, callback?: () => void) {
-    const [, MonomerRenderer] = monomerFactory(monomer.monomerItem);
-    const monomerRenderer = new MonomerRenderer(monomer);
+  public addMonomer(
+    monomer: BaseMonomer | VariantMonomer,
+    callback?: () => void,
+  ) {
+    let monomerRenderer;
+
+    if (monomer instanceof VariantMonomer) {
+      monomerRenderer = new VariantMonomerRenderer(monomer);
+    } else {
+      const MonomerRenderer = monomerFactory(monomer.monomerItem)[1];
+      monomerRenderer = new MonomerRenderer(monomer);
+    }
+
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();

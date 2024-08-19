@@ -44,7 +44,9 @@ import {
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
   IKetMonomerTemplate,
+  IKetVariantMonomerTemplate,
   KetConnectionType,
+  KetNodeType,
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
@@ -52,6 +54,7 @@ import { CoreEditor, EditorSelection } from 'application/editor/internal';
 import {
   monomerToDrawingEntity,
   templateToMonomerProps,
+  variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
@@ -68,6 +71,7 @@ import {
   populateStructWithSelection,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
+  setVariantMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -287,8 +291,8 @@ export class KetSerializer implements Serializer<Struct> {
           const nodeDefinition = parsedFileContent[node.$ref];
 
           return (
-            nodeDefinition?.type !== 'monomer' &&
-            nodeDefinition?.type !== 'group'
+            nodeDefinition?.type !== KetNodeType.MONOMER &&
+            nodeDefinition?.type !== KetNodeType.VARIANT_MONOMER
           );
         }),
       },
@@ -296,8 +300,8 @@ export class KetSerializer implements Serializer<Struct> {
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
       if (
-        nodeDefinition?.type === 'monomer' ||
-        nodeDefinition?.type === 'group'
+        nodeDefinition?.type === KetNodeType.MONOMER ||
+        nodeDefinition?.type === KetNodeType.VARIANT_MONOMER
       ) {
         fileContentForMicromolecules[node.$ref] = undefined;
       }
@@ -433,7 +437,7 @@ export class KetSerializer implements Serializer<Struct> {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       switch (nodeDefinition?.type) {
-        case 'monomer': {
+        case KetNodeType.MONOMER: {
           const template = parsedFileContent[
             setMonomerTemplatePrefix(nodeDefinition.templateId)
           ] as IKetMonomerTemplate;
@@ -452,6 +456,22 @@ export class KetSerializer implements Serializer<Struct> {
           this.fillStructRgLabelsByMonomerTemplate(
             template,
             monomer.monomerItem,
+          );
+
+          command.merge(monomerAdditionCommand);
+          break;
+        }
+        case KetNodeType.VARIANT_MONOMER: {
+          const template = parsedFileContent[
+            setVariantMonomerTemplatePrefix(nodeDefinition.templateId)
+          ] as IKetVariantMonomerTemplate;
+          assert(template);
+
+          const monomerAdditionCommand = variantMonomerToDrawingEntity(
+            drawingEntitiesManager,
+            nodeDefinition,
+            template,
+            parsedFileContent,
           );
 
           command.merge(monomerAdditionCommand);

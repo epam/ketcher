@@ -1,11 +1,18 @@
 import {
+  IKetMacromoleculesContent,
   IKetMonomerNode,
   IKetMonomerTemplate,
+  IKetVariantMonomerNode,
+  IKetVariantMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import {
+  setMonomerTemplatePrefix,
+  switchIntoChemistryCoordSystem,
+} from 'domain/serializers/ket/helpers';
 import { KetSerializer } from 'domain/serializers';
+import { monomerFactory } from 'application/editor';
 
 export function templateToMonomerProps(template: IKetMonomerTemplate) {
   return {
@@ -42,5 +49,36 @@ export function monomerToDrawingEntity(
       seqId: node.seqid,
     },
     position,
+  );
+}
+
+export function variantMonomerToDrawingEntity(
+  drawingEntitiesManager: DrawingEntitiesManager,
+  node: IKetVariantMonomerNode,
+  template: IKetVariantMonomerTemplate,
+  parsedFileContent: IKetMacromoleculesContent,
+) {
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(node.position.x, node.position.y),
+  );
+  const monomerTemplates = template.options.map((option) => {
+    return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
+  }) as IKetMonomerTemplate[];
+  const monomers = monomerTemplates.map((monomerTemplate) => {
+    const monomerItem = {
+      label: monomerTemplate.alias,
+      struct: new Struct(),
+      props: templateToMonomerProps(monomerTemplate),
+      attachmentPoints: monomerTemplate.attachmentPoints,
+    };
+    const [MonomerConstructor] = monomerFactory(monomerItem);
+
+    return new MonomerConstructor(monomerItem);
+  });
+
+  return drawingEntitiesManager.addVariantMonomer(
+    node.alias,
+    position,
+    monomers,
   );
 }

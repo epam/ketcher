@@ -58,6 +58,7 @@ import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { VariantMonomer } from 'domain/entities/VariantMonomer';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1499,10 +1500,17 @@ export class DrawingEntitiesManager {
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
-      const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
-        monomer.monomerItem,
-        monomer.position,
-      );
+      const monomerAddCommand =
+        monomer instanceof VariantMonomer
+          ? targetDrawingEntitiesManager.addVariantMonomer(
+              monomer.label,
+              monomer.position,
+              monomer.monomers,
+            )
+          : targetDrawingEntitiesManager.addMonomer(
+              monomer.monomerItem,
+              monomer.position,
+            );
 
       command.merge(monomerAddCommand);
 
@@ -1824,6 +1832,34 @@ export class DrawingEntitiesManager {
         }),
       ),
     );
+
+    return command;
+  }
+
+  private addVariantMonomerChangeModel(
+    label: string,
+    position: Vec2,
+    monomers: BaseMonomer[],
+  ) {
+    const monomer = new VariantMonomer(monomers, position, label);
+
+    this.monomers.set(monomer.id, monomer);
+
+    return monomer;
+  }
+
+  public addVariantMonomer(
+    label: string,
+    position: Vec2,
+    monomers: BaseMonomer[],
+  ) {
+    const command = new Command();
+    const operation = new MonomerAddOperation(
+      this.addVariantMonomerChangeModel.bind(this, label, position, monomers),
+      () => {},
+    );
+
+    command.addOperation(operation);
 
     return command;
   }

@@ -42,18 +42,21 @@ async function buildKetcherAsync({
 
   await builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
-  const { setKetcher, ketcherId } = await builder.appendUiAsync(
-    element,
-    appRoot,
-    staticResourcesUrl,
-    errorHandler,
-    buttons,
-    togglerComponent,
-  );
+  const { setKetcher, ketcherId, cleanup, setServer } =
+    await builder.appendUiAsync(
+      element,
+      appRoot,
+      staticResourcesUrl,
+      errorHandler,
+      buttons,
+      togglerComponent,
+    );
 
   const ketcher = builder.build();
-  setKetcher(ketcher);
-  return { ketcher, ketcherId };
+  if (ketcher) {
+    setKetcher(ketcher);
+  }
+  return { ketcher, ketcherId, cleanup, builder, setServer };
 }
 
 export type { Config, ButtonsConfig };

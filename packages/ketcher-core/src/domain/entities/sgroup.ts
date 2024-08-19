@@ -26,6 +26,7 @@ import { FunctionalGroup, Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
+import { isNumber } from 'lodash';
 
 export class SGroupBracketParams {
   readonly c: Vec2;
@@ -111,7 +112,7 @@ export class SGroup {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
       name: '',
-      subscript: 'n',
+      subscript: '',
       expanded: undefined,
       // data s-group fields
       attached: false,
@@ -244,7 +245,9 @@ export class SGroup {
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId }) => attachmentPoint.atomId === atomId,
+      ({ atomId, leaveAtomId }) =>
+        attachmentPoint.atomId === atomId &&
+        attachmentPoint.leaveAtomId === leaveAtomId,
     );
 
     if (isAttachmentPointAlreadyExist) {
@@ -266,10 +269,8 @@ export class SGroup {
     }
   }
 
-  removeAttachmentPoint(attachmentPointAtomId: number): boolean {
-    const index = this.attachmentPoints.findIndex(
-      ({ atomId }) => attachmentPointAtomId === atomId,
-    );
+  removeAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): boolean {
+    const index = this.attachmentPoints.indexOf(attachmentPoint);
     if (index !== -1) {
       this.attachmentPoints.splice(index, 1);
       return true;
@@ -329,9 +330,25 @@ export class SGroup {
   } {
     let atomId = this.attachmentPoints[0]?.atomId;
     let representAtom = struct.atoms.get(atomId);
+    // if there is no attachment points in sgroup - use first externally connected atom if exist or just first atom
     if (!representAtom) {
-      atomId = this.atoms[0];
-      representAtom = struct.atoms.get(this.atoms[0]);
+      let externalConnectionAtom;
+      struct.bonds.forEach((bond) => {
+        const isBeginAtomInCurrentSgroup =
+          this.atoms.indexOf(bond.begin) !== -1;
+        const isEndAtomInCurrentSgroup = this.atoms.indexOf(bond.end) !== -1;
+
+        if (isBeginAtomInCurrentSgroup && !isEndAtomInCurrentSgroup) {
+          externalConnectionAtom = bond.begin;
+        } else if (isEndAtomInCurrentSgroup && !isBeginAtomInCurrentSgroup) {
+          externalConnectionAtom = bond.end;
+        }
+      });
+
+      atomId = isNumber(externalConnectionAtom)
+        ? externalConnectionAtom
+        : this.atoms[0];
+      representAtom = struct.atoms.get(atomId);
     }
     assert(representAtom != null);
     return { atomId, position: representAtom.pp };
@@ -341,6 +358,10 @@ export class SGroup {
     atomIdMap: Map<number, number>,
   ): ReadonlyArray<SGroupAttachmentPoint> {
     return this.attachmentPoints.map((point) => point.clone(atomIdMap));
+  }
+
+  public get isSuperatomWithoutLabel() {
+    return this.type === SGroup.TYPES.SUP && !this.data.name;
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {

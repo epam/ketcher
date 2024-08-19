@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { IMAGE_KEY } from 'ketcher-core';
 
 import APointTool from './apoint';
 import AtomTool from './atom';
@@ -37,6 +38,7 @@ import SimpleObjectTool from './simpleobject';
 import TemplateTool from './template';
 import TextTool from './text';
 import { ToolConstructorInterface } from './Tool';
+import { ImageTool } from './image';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,
@@ -61,4 +63,5 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   enhancedStereo: EnhancedStereoTool,
   simpleobject: SimpleObjectTool,
   text: TextTool,
+  [IMAGE_KEY]: ImageTool,
 };

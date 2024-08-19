@@ -30,6 +30,7 @@ import {
   SettingsManager,
   keyNorm,
   initHotKeys,
+  getStructStringFromClipboardData,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -48,12 +49,22 @@ import {
 import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
 import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
+let keydownListener: ((event: KeyboardEvent) => void) | null = null;
+
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys(actions);
-    element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState, hotKeys, event),
-    );
+
+    keydownListener = (event) => keyHandle(dispatch, getState, hotKeys, event);
+    element.addEventListener('keydown', keydownListener);
+  };
+}
+
+export function removeKeydownListener(element) {
+  return function () {
+    if (keydownListener) {
+      element.removeEventListener('keydown', keydownListener);
+    }
   };
 }
 
@@ -337,40 +348,6 @@ export function initClipboard(dispatch) {
       }
     },
   };
-}
-
-async function safelyGetMimeType(
-  clipboardItem: ClipboardItem,
-  mimeType: string,
-) {
-  try {
-    const result = await clipboardItem.getType(mimeType);
-    return result;
-  } catch {
-    return '';
-  }
-}
-
-async function getStructStringFromClipboardData(
-  data: ClipboardItem[],
-): Promise<string> {
-  const clipboardItem = data[0];
-
-  if (clipboardItem instanceof ClipboardItem) {
-    const structStr =
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
-      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-      (await safelyGetMimeType(clipboardItem, 'text/plain'));
-    return structStr === '' ? '' : structStr.text();
-  } else {
-    return (
-      data[ChemicalMimeType.KET] ||
-      data[ChemicalMimeType.Mol] ||
-      data[ChemicalMimeType.Rxn] ||
-      data['text/plain']
-    );
-  }
 }
 
 function isAbleToCopy(editor: Editor): boolean {

@@ -197,6 +197,16 @@ class RnaPresetTool implements Tool {
       this.phosphatePreviewRenderer?.show(this.editor.theme);
     }
   }
+
+  hidePreview() {
+    this.rnaBasePreviewRenderer?.remove();
+    this.phosphatePreviewRenderer?.remove();
+    this.sugarPreviewRenderer?.remove();
+  }
+
+  destroy(): void {
+    this.hidePreview();
+  }
 }
 
 export { RnaPresetTool };

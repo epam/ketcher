@@ -18,9 +18,11 @@ import {
   AtomDelete,
   BondDelete,
   CalcImplicitH,
+  ImageDelete,
   RGroupAttachmentPointRemove,
   RxnArrowDelete,
   RxnPlusDelete,
+  SGroupAtomRemove,
   SimpleObjectDelete,
   TextDelete,
 } from '../operations';
@@ -30,16 +32,44 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup';
 import { Action } from './action';
 import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
-import { fromBondStereoUpdate } from '../actions/bond';
+import {
+  fromBondStereoUpdate,
+  removeAttachmentPointFromSuperatom,
+} from '../actions/bond';
 import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
+import { ReStruct } from 'application/render';
+import { isNumber } from 'lodash';
+import { IMAGE_KEY } from 'domain/constants';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
 }
 
-function fromBondDeletion(restruct, bid: number, skipAtoms: Array<any> = []) {
+function fromBondDeletion(
+  restruct: ReStruct,
+  bid: number,
+  skipAtoms: Array<any> = [],
+) {
   let action = new Action();
+
+  if (restruct.sgroups && restruct.sgroups.size > 0) {
+    restruct.sgroups.forEach((sgroup) => {
+      if (sgroup.item?.type && sgroup.item?.type === 'SUP') {
+        const beginAtomConnectedToBond = restruct.bonds.get(bid)?.b.begin;
+        const endAtomConnectedToBond = restruct.bonds.get(bid)?.b.end;
+
+        removeAttachmentPointFromSuperatom(
+          sgroup,
+          beginAtomConnectedToBond,
+          endAtomConnectedToBond,
+          action,
+          restruct,
+        );
+      }
+    });
+  }
+
   const bond: any = restruct.molecule.bonds.get(bid);
   const atomsToRemove: Array<any> = [];
 
@@ -92,7 +122,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   let action = new Action();
   const atomsToRemove: Array<number> = [];
   const frids: Array<number> = [];
-
+  const struct = restruct.molecule;
   const selection = formatSelection(rawSelection);
 
   selection.sgroups.forEach((sgroupId) => {
@@ -113,6 +143,25 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.atoms = Array.from(new Set(selection.atoms));
   selection.bonds = Array.from(new Set(selection.bonds));
+
+  selection.atoms.forEach((atomId) => {
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    if (sgroup && sgroup.isSuperatomWithoutLabel) {
+      const attachmentPoints = sgroup.getAttachmentPoints();
+      attachmentPoints.forEach((attachmentPoint) => {
+        if (
+          attachmentPoint.atomId === atomId &&
+          isNumber(attachmentPoint.leaveAtomId) &&
+          !selection.atoms.includes(attachmentPoint.leaveAtomId)
+        ) {
+          action.addOp(
+            new SGroupAtomRemove(sgroup.id, attachmentPoint.leaveAtomId),
+          );
+          action.addOp(new AtomDelete(attachmentPoint.leaveAtomId));
+        }
+      });
+    }
+  });
 
   selection.atoms.forEach((aid) => {
     restruct.molecule.atomGetNeighbors(aid).forEach((nei) => {
@@ -167,6 +216,10 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection.texts.forEach((id) => {
     action.addOp(new TextDelete(id));
+  });
+
+  selection[IMAGE_KEY].forEach((id) => {
+    action.addOp(new ImageDelete(id));
   });
 
   const actionToDeleteRGroupAttachmentPoints = new Action();

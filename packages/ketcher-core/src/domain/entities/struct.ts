@@ -37,6 +37,8 @@ import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
+import { Image } from './image';
 
 export type Neighbor = {
   aid: number;
@@ -72,6 +74,7 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
+  images: Pool<Image>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
@@ -95,6 +98,7 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
+    this.images = new Pool<Image>();
   }
 
   hasRxnProps(): boolean {
@@ -122,7 +126,8 @@ export class Struct {
       this.rxnArrows.size === 0 &&
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
-      this.texts.size === 0
+      this.texts.size === 0 &&
+      this.images.size === 0
     );
   }
 
@@ -140,6 +145,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    imagesSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -152,6 +158,7 @@ export class Struct {
       simpleObjectsSet,
       textsSet,
       rgroupAttachmentPointSet,
+      imagesSet,
       bidMap,
     );
   }
@@ -183,12 +190,17 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
+  getFragment(
+    fid: number | number[],
+    copyNonFragmentObjects = true,
+    aidMap?: Map<number, number>,
+  ): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,
       true,
-      undefined,
+      aidMap,
+      copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
@@ -205,6 +217,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    imagesSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
@@ -212,6 +225,7 @@ export class Struct {
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
+    imagesSet = imagesSet || new Pile<number>(this.images.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -288,7 +302,7 @@ export class Struct {
 
       sg =
         oldSgroup instanceof MonomerMicromolecule
-          ? MonomerMicromolecule.clone(oldSgroup)
+          ? MonomerMicromolecule.clone(oldSgroup, aidMap!)
           : SGroup.clone(sg, aidMap!);
 
       const id = cp.sgroups.add(sg);
@@ -322,6 +336,10 @@ export class Struct {
 
     textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
+    });
+
+    imagesSet.forEach((id) => {
+      cp.images.add(this.images.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -366,6 +384,11 @@ export class Struct {
     for (let i = 0; i < atom.neighbors.length; ++i) {
       const hb = this.halfBonds.get(atom.neighbors[i])!;
       const bond = this.bonds.get(hb.bid)!;
+
+      if (Bond.isBondToHiddenLeavingGroup(this, bond)) {
+        continue;
+      }
+
       switch (bond.type) {
         case Bond.PATTERN.TYPE.SINGLE:
           conn += 1;
@@ -816,6 +839,8 @@ export class Struct {
     this.simpleObjects.forEach((simpleObjects) => {
       simpleObjects.pos = simpleObjects.pos.map((p) => p.scaled(scale));
     });
+
+    this.images.forEach((image) => image.rescaleSize(scale));
   }
 
   rescale() {
@@ -975,6 +1000,10 @@ export class Struct {
   }
 
   calcImplicitHydrogen(aid: number) {
+    if (Atom.isHiddenLeavingGroupAtom(this, aid)) {
+      return;
+    }
+
     const atom = this.atoms.get(aid)!;
     const charge = atom.charge || 0;
     const [conn, isAromatic] = this.calcConn(atom);
@@ -1162,6 +1191,16 @@ export class Struct {
     return null;
   }
 
+  getGroupFromBondId(atomId: number): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromBondId(atomId);
+
+    if (!isNumber(sgroupId)) {
+      return;
+    }
+
+    return this.sgroups?.get(sgroupId as number);
+  }
+
   getGroupsIdsFromBondId(bondId: number): number[] {
     const bond = this.bonds.get(bondId);
     if (!bond) return [];
@@ -1245,7 +1284,7 @@ export class Struct {
     return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
   }
 
-  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+  isTargetFromMacromolecule(target?: { id: number; map: string } | null) {
     return (
       target &&
       ((target.map === 'functionalGroups' &&

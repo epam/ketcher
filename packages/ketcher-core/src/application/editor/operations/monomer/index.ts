@@ -23,6 +23,7 @@ import { AttachmentPointName } from 'domain/types';
 
 export class MonomerAddOperation implements Operation {
   public monomer: BaseMonomer;
+  public priority = 1;
   constructor(
     public addMonomerChangeModel: (monomer?: BaseMonomer) => BaseMonomer,
     public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
@@ -98,6 +99,7 @@ export class AttachmentPointHoverOperation implements Operation {
 
 export class MonomerDeleteOperation implements Operation {
   monomer: BaseMonomer;
+  public priority = -1;
   constructor(
     monomer: BaseMonomer,
     public addMonomerChangeModel: (monomer: BaseMonomer) => BaseMonomer,
@@ -115,5 +117,24 @@ export class MonomerDeleteOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     this.monomer = this.addMonomerChangeModel(this.monomer);
     renderersManager.addMonomer(this.monomer, this.callback);
+  }
+}
+
+export class MonomerItemModifyOperation implements Operation {
+  monomer: BaseMonomer;
+  constructor(
+    monomer: BaseMonomer,
+    public updateMonomerItem: () => BaseMonomer,
+    public revertMonomerItem: () => BaseMonomer,
+  ) {
+    this.monomer = monomer;
+  }
+
+  public execute() {
+    this.monomer = this.updateMonomerItem();
+  }
+
+  public invert() {
+    this.monomer = this.revertMonomerItem();
   }
 }

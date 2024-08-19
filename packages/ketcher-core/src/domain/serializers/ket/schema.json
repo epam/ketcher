@@ -27,6 +27,9 @@
                 "$ref": "#/definitions/plus"
               },
               {
+                "$ref": "#/definitions/image"
+              },
+              {
                 "type": "object",
                 "required": ["$ref"],
                 "properties": {
@@ -775,6 +778,46 @@
         },
         "selected": {
           "type": "boolean"
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "required": ["type", "format", "boundingBox", "data"],
+      "properties": {
+        "type": {
+          "const": "image"
+        },
+        "format": {
+          "type": "string",
+          "pattern": "^image/(png|svg\\+xml)$"
+        },
+        "boundingBox": {
+          "type": "object",
+          "required": ["width", "height", "x", "y"],
+          "properties": {
+            "width": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "height": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "z": {
+              "type": "number"
+            }
+          }
+        },
+        "data": {
+          "type": "string",
+          "minLength": 160
         }
       }
     }

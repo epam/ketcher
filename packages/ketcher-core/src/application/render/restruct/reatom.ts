@@ -19,6 +19,7 @@ import {
   Bond,
   Box2Abs,
   FunctionalGroup,
+  SGroup,
   StereoFlag,
   StereoLabel,
   Struct,
@@ -41,6 +42,7 @@ import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
+import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 
 interface ElemAttr {
   text: string;
@@ -149,13 +151,17 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -169,13 +175,17 @@ class ReAtom extends ReObject {
     const { options } = render;
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
+    const struct = render.ctab.molecule;
+    const atomId = struct.atoms.keyOf(atom) as number;
+
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      )
+      ) ||
+      Atom.isHiddenLeavingGroupAtom(struct, atomId)
     ) {
       return null;
     }
@@ -223,11 +233,17 @@ class ReAtom extends ReObject {
 
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
-    const atom = restruct.molecule.atoms.get(aid)!;
-    const sgroups = restruct.molecule.sgroups;
-    const functionalGroups = restruct.molecule.functionalGroups;
+    const struct = restruct.molecule;
+    const atom = struct.atoms.get(aid)!;
+    const sgroups = struct.sgroups;
+    const functionalGroups = struct.functionalGroups;
     const render = restruct.render;
     const ps = Scale.modelToCanvas(this.a.pp, render.options);
+    const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+
+    if (Atom.isHiddenLeavingGroupAtom(struct, aid)) {
+      return;
+    }
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -237,8 +253,6 @@ class ReAtom extends ReObject {
         false,
       )
     ) {
-      const sgroup = restruct.molecule.getGroupFromAtomId(aid);
-
       const isPositionAtom =
         sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
       if (isPositionAtom) {
@@ -278,7 +292,7 @@ class ReAtom extends ReObject {
     let index: any = null;
 
     if (this.showLabel) {
-      const data = buildLabel(this, render.paper, ps, options);
+      const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
       delta = 0.5 * options.lineWidth;
       label = data.label;
       rightMargin = data.rightMargin;
@@ -384,8 +398,10 @@ class ReAtom extends ReObject {
           );
         }
       }
-
-      if (this.a.charge !== null && options.showCharge) {
+      if (this.a.charge === 0) {
+        this.a.charge = null;
+      }
+      if (this.a.charge && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;
         restruct.addReObjectPath(
@@ -764,8 +780,8 @@ function getOnlyQueryAttributesCustomQuery(atom: Atom) {
 }
 
 function addTooltip(node, text: string) {
-  const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
-  node.childNodes[0].setAttribute('data-tooltip', tooltip);
+  const tooltip = text.split(/(?<=[;,])/).join(' ');
+  node.childNodes[0].setAttribute('data-tooltip', util.escapeHtml(tooltip));
 }
 
 function buildLabel(
@@ -773,14 +789,25 @@ function buildLabel(
   paper: any,
   ps: Vec2,
   options: any,
+  atomId: number,
+  sgroup?: SGroup,
 ): {
   rightMargin: number;
   leftMargin: number;
   label: ElemAttr;
 } {
+  const {
+    atomColoring,
+    font,
+    fontsz,
+    currentlySelectedMonomerAttachmentPoint,
+    connectedMonomerAttachmentPoints,
+    labelInMonomerConnectionsModal,
+    labelInPreview,
+  } = options;
   // eslint-disable-line max-statements
   const label: any = {
-    text: getLabelText(atom.a),
+    text: getLabelText(atom.a, atomId, sgroup),
   };
   let tooltip: string | null = null;
   if (!label.text) {
@@ -789,18 +816,19 @@ function buildLabel(
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
-    if (options.atomColoring && element) {
+    if (atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }
 
+  const shouldStyleLabel = labelInMonomerConnectionsModal || labelInPreview;
   const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
   const isMonomerAttachmentPointSelected =
-    options.currentlySelectedMonomerAttachmentPoint === label.text;
+    currentlySelectedMonomerAttachmentPoint === label.text;
   const isMonomerAttachmentPointUsed =
-    options.connectedMonomerAttachmentPoints?.includes(label.text);
+    connectedMonomerAttachmentPoints?.includes(label.text);
 
-  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+  if (isMonomerAttachmentPoint && shouldStyleLabel) {
     atom.color = isMonomerAttachmentPointSelected
       ? '#FFF'
       : isMonomerAttachmentPointUsed
@@ -816,20 +844,20 @@ function buildLabel(
   const { previewOpacity } = options;
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
-    font: options.font,
-    'font-size': options.fontsz,
+    font,
+    'font-size': fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+  if (isMonomerAttachmentPoint && shouldStyleLabel) {
     const fill = isMonomerAttachmentPointSelected
       ? '#167782'
       : isMonomerAttachmentPointUsed
       ? '#E1E5EA'
       : '#FFF';
-    const backgroundSize = options.fontsz * 2;
+    const backgroundSize = fontsz * 2;
 
     label.background = paper
       .rect(
@@ -840,7 +868,13 @@ function buildLabel(
         10,
       )
       .attr({ fill })
-      .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
+      .attr({
+        stroke: labelInPreview
+          ? 'none'
+          : isMonomerAttachmentPointUsed
+          ? '#B4B9D6'
+          : '#7C7C7F',
+      });
   }
   if (tooltip) {
     addTooltip(label.path.node, tooltip);
@@ -873,7 +907,19 @@ function buildLabel(
   return { label, rightMargin, leftMargin };
 }
 
-function getLabelText(atom) {
+function getLabelText(atom, atomId: number, sgroup?: SGroup) {
+  if (sgroup?.isSuperatomWithoutLabel) {
+    const attachmentPoint = sgroup
+      .getAttachmentPoints()
+      .find((attachmentPoint) => {
+        return attachmentPoint.leaveAtomId === atomId;
+      });
+
+    if (attachmentPoint && attachmentPoint.attachmentPointNumber) {
+      return getAttachmentPointLabel(attachmentPoint.attachmentPointNumber);
+    }
+  }
+
   if (atom.atomList !== null) return atom.atomList.label();
 
   if (atom.pseudo) return atom.pseudo;

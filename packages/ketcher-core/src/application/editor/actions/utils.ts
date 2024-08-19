@@ -19,6 +19,7 @@ import {
   AtomAttributes,
   AtomQueryProperties,
   Bond,
+  MonomerMicromolecule,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -28,7 +29,6 @@ import { difference } from 'lodash';
 import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
-
 export type AtomType = 'single' | 'list' | 'pseudo';
 export type AtomAttributeName = keyof AtomAttributes;
 export type AtomQueryPropertiesName = keyof AtomQueryProperties;
@@ -63,7 +63,11 @@ export function findStereoAtoms(
   struct: Struct,
   atomIds: number[] | undefined,
 ): number[] {
-  if (!atomIds) {
+  const isMonomer = struct.sgroups.find(
+    (_, sgroup) => sgroup instanceof MonomerMicromolecule,
+  );
+
+  if (isMonomer !== null || !atomIds) {
     return [] as number[];
   }
 

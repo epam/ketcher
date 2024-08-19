@@ -24,17 +24,17 @@ import {
   CleanCommandData,
   Command,
   CommandOptions,
-  WorkerEvent,
   ConvertCommandData,
   DearomatizeCommandData,
+  ExplicitHydrogensCommandData,
   GenerateImageCommandData,
   GenerateInchIKeyCommandData,
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  SupportedFormat,
   OutputMessageWrapper,
-  ExplicitHydrogensCommandData,
+  SupportedFormat,
+  WorkerEvent,
 } from './indigoWorker.types';
 import {
   AromatizeData,
@@ -52,24 +52,29 @@ import {
   CleanResult,
   ConvertData,
   ConvertResult,
+  CoreEditor,
   DearomatizeData,
   DearomatizeResult,
   ExplicitHydrogensData,
   ExplicitHydrogensResult,
   GenerateImageOptions,
+  getLabelRenderModeForIndigo,
   InfoResult,
   LayoutData,
   LayoutResult,
   RecognizeResult,
   StructService,
   StructServiceOptions,
-  getLabelRenderModeForIndigo,
 } from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import IndigoWorker from 'web-worker:./indigoWorker';
 import EventEmitter from 'events';
+import {
+  STRUCT_SERVICE_INITIALIZED_EVENT,
+  STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
+} from './constants';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;
@@ -137,6 +142,14 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.SEQUENCE;
       break;
     }
+    case ChemicalMimeType.IDT: {
+      format = SupportedFormat.IDT;
+      break;
+    }
+    case ChemicalMimeType.HELM: {
+      format = SupportedFormat.HELM;
+      break;
+    }
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');
@@ -198,7 +211,7 @@ let worker: IndigoWorker;
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private readonly worker: IndigoWorker;
+  private worker: IndigoWorker;
   private readonly EE: EventEmitter = new EventEmitter();
 
   constructor(defaultOptions: StructServiceOptions) {
@@ -206,12 +219,28 @@ class IndigoService implements StructService {
     this.worker = worker || new IndigoWorker();
     worker = this.worker;
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
+      if (e.data.type === Command.Info) {
+        const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
+          ? this.callIndigoNoRenderLoadedCallback
+          : this.callIndigoLoadedCallback;
+
+        callbackMethod();
+      }
+
       const message: OutputMessage<string> = e.data;
       if (message.type !== undefined) {
         const event = messageTypeToEventMapping[message.type];
         this.EE.emit(event, { data: message });
       }
     };
+  }
+
+  private callIndigoNoRenderLoadedCallback() {
+    window.dispatchEvent(new Event(STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT));
+  }
+
+  private callIndigoLoadedCallback() {
+    window.dispatchEvent(new Event(STRUCT_SERVICE_INITIALIZED_EVENT));
   }
 
   async getInChIKey(struct: string): Promise<string> {
@@ -288,10 +317,14 @@ class IndigoService implements StructService {
           }
         }
       };
+      const monomerLibrary = JSON.stringify(
+        CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
+      );
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
         'input-format': inputFormat,
+        monomerLibrary,
       };
 
       const commandData: ConvertCommandData = {
@@ -785,6 +818,13 @@ class IndigoService implements StructService {
 
       this.worker.postMessage(inputMessage);
     });
+  }
+
+  public destroy() {
+    this.worker.terminate();
+    this.worker.onmessage = null;
+    this.worker = null;
+    worker = null;
   }
 }
 

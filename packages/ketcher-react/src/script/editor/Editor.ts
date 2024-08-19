@@ -27,6 +27,8 @@ import {
   fromMultipleMove,
   fromNewCanvas,
   provideEditorSettings,
+  ReStruct,
+  IMAGE_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -53,7 +55,7 @@ import { getSelectionMap, getStructCenter } from './utils/structLayout';
 const SCALE = provideEditorSettings().microModeScale;
 const HISTORY_SIZE = 32; // put me to options
 
-const structObjects = [
+const structObjects: Array<keyof typeof ReStruct.maps> = [
   'atoms',
   'bonds',
   'frags',
@@ -65,6 +67,7 @@ const structObjects = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  IMAGE_KEY,
 ];
 
 const highlightTargets = [
@@ -82,6 +85,7 @@ const highlightTargets = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  IMAGE_KEY,
 ];
 
 function selectStereoFlagsIfNecessary(
@@ -665,6 +669,8 @@ class Editor implements KetcherEditor {
       null,
       new Pile(selection.simpleObjects),
       new Pile(selection.texts),
+      null,
+      new Pile(selection.images),
     );
 
     // Copy by its own as Struct.clone doesn't support
@@ -697,6 +703,11 @@ class Editor implements KetcherEditor {
   clearMacromoleculeConvertionError() {
     this.macromoleculeConvertionError = null;
   }
+
+  focusCliparea() {
+    const cliparea: HTMLElement | null = document.querySelector('.cliparea');
+    cliparea?.focus();
+  }
 }
 
 /**
@@ -722,18 +733,17 @@ function resetSelectionOnCanvasClick(
   }
 }
 
-// potentially not needed anymore
-// function calculateLayerOffset(event) {
-//   const target = event.target || event.srcElement;
-//   const svgTarget = target?.closest('svg');
-//   if (!svgTarget) {
-//     return null;
-//   }
-//   const svgRect = svgTarget.getBoundingClientRect();
-//   const offsetX = event.clientX - svgRect.left;
-//   const offsetY = event.clientY - svgRect.top;
-//   return { offsetX, offsetY };
-// }
+function calculateLayerOffset(event) {
+  const target = event.target || event.srcElement;
+  const svgTarget = target?.closest('svg');
+  if (!svgTarget) {
+    return null;
+  }
+  const svgRect = svgTarget.getBoundingClientRect();
+  const offsetX = event.clientX - svgRect.left;
+  const offsetY = event.clientY - svgRect.top;
+  return { offsetX, offsetY };
+}
 
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
@@ -741,10 +751,21 @@ function updateLastCursorPosition(editor: Editor, event) {
     const clientAreaBoundingBox =
       editor.render.clientArea.getBoundingClientRect();
 
-    editor.lastCursorPosition = {
-      x: event.clientX - clientAreaBoundingBox.x,
-      y: event.clientY - clientAreaBoundingBox.y,
-    };
+    const pos = calculateLayerOffset(event);
+    if (pos != null) {
+      editor.lastCursorPosition = {
+        x:
+          pos.offsetX /
+            (editor.options().zoom ?? 1.0) /
+            (editor.options().externalZoomScale ?? 1.0) -
+          clientAreaBoundingBox.x,
+        y:
+          pos.offsetY /
+            (editor.options().zoom ?? 1.0) /
+            (editor.options().externalZoomScale ?? 1.0) -
+          clientAreaBoundingBox.y,
+      };
+    }
   }
 }
 

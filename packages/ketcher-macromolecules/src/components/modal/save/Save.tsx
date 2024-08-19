@@ -29,6 +29,7 @@ import {
   StructService,
   CoreEditor,
   KetcherLogger,
+  getSvgFromDrawnStructures,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -39,6 +40,7 @@ import {
   Row,
   StyledDropdown,
   stylesForExpanded,
+  SvgPreview,
 } from './Save.styles';
 import styled from '@emotion/styled';
 import { useAppDispatch } from 'hooks';
@@ -49,12 +51,17 @@ const options: Array<Option> = [
   { id: 'mol', label: 'MDL Molfile V3000' },
   { id: 'sequence', label: 'Sequence' },
   { id: 'fasta', label: 'FASTA' },
+  { id: 'idt', label: 'IDT' },
+  { id: 'svg', label: 'SVG Document' },
+  { id: 'helm', label: 'HELM' },
 ];
 
 const formatDetector = {
   mol: ChemicalMimeType.Mol,
   fasta: ChemicalMimeType.FASTA,
   sequence: ChemicalMimeType.SEQUENCE,
+  idt: ChemicalMimeType.IDT,
+  helm: ChemicalMimeType.HELM,
 };
 
 const StyledModal = styled(Modal)({
@@ -80,6 +87,7 @@ export const Save = ({
   const [currentFileName, setCurrentFileName] = useState('ketcher');
   const [struct, setStruct] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [svgData, setSvgData] = useState<string | undefined>();
   const indigo = IndigoProvider.getIndigo() as StructService;
   const editor = CoreEditor.provideEditorInstance();
 
@@ -90,8 +98,14 @@ export const Save = ({
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
     );
+    setSvgData(undefined);
     if (fileFormat === 'ket') {
       setStruct(serializedKet);
+      return;
+    }
+    if (fileFormat === 'svg') {
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'preview');
+      setSvgData(svgData);
       return;
     }
 
@@ -132,7 +146,18 @@ export const Save = ({
   };
 
   const handleSave = () => {
-    const blob = new Blob([struct], {
+    let blobPart;
+    if (currentFileFormat === 'svg') {
+      const svgData = getSvgFromDrawnStructures(editor.canvas, 'file');
+      if (!svgData) {
+        onClose();
+        return;
+      }
+      blobPart = svgData;
+    } else {
+      blobPart = struct;
+    }
+    const blob = new Blob([blobPart], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
     const formatProperties = getPropertiesByFormat(currentFileFormat);
@@ -172,19 +197,23 @@ export const Save = ({
               customStylesForExpanded={stylesForExpanded}
             />
           </Row>
-          <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
-            <TextArea
-              testId="preview-area-text"
-              value={struct}
-              readonly
-              selectOnInit
-            />
-            {isLoading && (
-              <Loader>
-                <LoadingCircles />
-              </Loader>
-            )}
-          </div>
+          {svgData ? (
+            <SvgPreview dangerouslySetInnerHTML={{ __html: svgData }} />
+          ) : (
+            <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
+              <TextArea
+                testId="preview-area-text"
+                value={struct}
+                readonly
+                selectOnInit
+              />
+              {isLoading && (
+                <Loader>
+                  <LoadingCircles />
+                </Loader>
+              )}
+            </div>
+          )}
         </Form>
       </Modal.Content>
 

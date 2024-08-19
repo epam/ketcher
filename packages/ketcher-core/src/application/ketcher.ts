@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
@@ -28,6 +29,7 @@ import {
   LogLevel,
   runAsyncAction,
   SettingsManager,
+  getSvgFromDrawnStructures,
 } from 'utilities';
 import {
   deleteAllEntitiesOnCanvas,
@@ -35,6 +37,14 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
+import { EditorSelection } from './editor/editor.types';
+import {
+  BlobTypes,
+  ExportImageParams,
+  ModeTypes,
+  SupportedImageFormats,
+  SupportedModes,
+} from 'application/ketcher.types';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -45,10 +55,10 @@ const allowedApiSettings = {
 
 export class Ketcher {
   logging: LogSettings;
-  #structService: StructService;
+  structService: StructService;
   #formatterFactory: FormatterFactory;
   #editor: Editor;
-  #indigo: Indigo;
+  _indigo: Indigo;
   #eventBus: EventEmitter;
 
   get editor(): Editor {
@@ -69,9 +79,9 @@ export class Ketcher {
     assert(formatterFactory != null);
 
     this.#editor = editor;
-    this.#structService = structService;
+    this.structService = structService;
     this.#formatterFactory = formatterFactory;
-    this.#indigo = new Indigo(this.#structService);
+    this._indigo = new Indigo(this.structService);
     this.#eventBus = new EventEmitter();
     this.logging = {
       enabled: false,
@@ -85,7 +95,7 @@ export class Ketcher {
   }
 
   get indigo() {
-    return this.#indigo;
+    return this._indigo;
   }
 
   // TEMP.: getting only dearomatize-on-load setting
@@ -161,6 +171,15 @@ export class Ketcher {
     return molfile;
   }
 
+  getIdt(): Promise<string> {
+    return getStructure(
+      SupportedFormat.idt,
+      this.#formatterFactory,
+      this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+    );
+  }
+
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('RXN format is not available in macro mode');
@@ -189,6 +208,7 @@ export class Ketcher {
       this.#formatterFactory,
       this.#editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      this.#editor.selection() as EditorSelection,
     );
   }
 
@@ -280,7 +300,7 @@ export class Ketcher {
       this.#editor.struct(),
     );
 
-    return this.#structService.getInChIKey(struct);
+    return this.structService.getInChIKey(struct);
   }
 
   containsReaction(): boolean {
@@ -325,17 +345,20 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
-  async setMolecule(structStr: string): Promise<void> {
+  async setMolecule(structStr: string): Promise<void | undefined> {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.#structService);
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
-          this.#structService,
+          this.structService,
           this,
         );
 
@@ -347,16 +370,34 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async addFragment(structStr: string): Promise<void> {
+  async setHelm(helmStr: string): Promise<void | undefined> {
+    runAsyncAction<void>(async () => {
+      assert(typeof helmStr === 'string');
+      const struct: Struct = await prepareStructToRender(
+        helmStr,
+        this.structService,
+        this,
+      );
+      struct.rescale();
+      this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
+    }, this.eventBus);
+  }
+
+  async addFragment(structStr: string): Promise<void | undefined> {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
+      return;
+
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
-        await parseAndAddMacromoleculesOnCanvas(structStr, this.#structService);
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
-          this.#structService,
+          this.structService,
           this,
         );
 
@@ -372,17 +413,52 @@ export class Ketcher {
     }
 
     runAsyncAction<void>(async () => {
-      const struct = await this.#indigo.layout(this.#editor.struct());
+      const struct = await this._indigo.layout(this.#editor.struct());
       const ketSerializer = new KetSerializer();
       this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
+  }
+
+  /**
+   * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
+   */
+  setZoom(value: number) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor && value) editor.zoomTool.zoomTo(value);
+  }
+
+  setMode(mode: SupportedModes) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor && mode) editor.events.selectMode.dispatch(ModeTypes[mode]);
+  }
+
+  exportImage(format: SupportedImageFormats, params?: ExportImageParams) {
+    const editor = CoreEditor.provideEditorInstance();
+    const fileName = 'ketcher';
+    let blobPart;
+
+    if (format === 'svg' && editor?.canvas) {
+      blobPart = getSvgFromDrawnStructures(
+        editor.canvas,
+        'file',
+        params?.margin,
+      );
+    }
+    if (!blobPart) {
+      throw new Error('Cannot export image');
+    }
+
+    const blob = new Blob([blobPart], {
+      type: BlobTypes[format],
+    });
+    saveAs(blob, `${fileName}.${format}`);
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('Recognize is not available in macro mode');
     }
-    return this.#indigo.recognize(image, { version });
+    return this._indigo.recognize(image, { version });
   }
 
   async generateImage(
@@ -405,7 +481,7 @@ export class Ketcher {
         options.outputFormat = 'png';
     }
 
-    const base64 = await this.#structService.generateImageAsBase64(
+    const base64 = await this.structService.generateImageAsBase64(
       data,
       options,
     );
@@ -417,5 +493,10 @@ export class Ketcher {
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: meta });
     return blob;
+  }
+
+  public reinitializeIndigo(structService: StructService) {
+    this.structService = structService;
+    this._indigo = new Indigo(structService);
   }
 }

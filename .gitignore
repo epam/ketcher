@@ -37,3 +37,50 @@ yarn-error.log*
 
 .pnp.*
 .yarn/*
+tests/test-data/KET/Nucleotide-Templates/01 - (R1) - Left only.ket
+tests/test-data/KET/Nucleotide-Templates/02 - (R2) - Right only.ket
+tests/test-data/KET/Nucleotide-Templates/03 - (R3) - Side only.ket
+tests/test-data/KET/Nucleotide-Templates/04 - (R1,R2) - R3 gap.ket
+tests/test-data/KET/Nucleotide-Templates/05 - (R1,R3) - R2 gap.ket
+tests/test-data/KET/Nucleotide-Templates/06 - (R2,R3) - R1 gap.ket
+tests/test-data/KET/Nucleotide-Templates/07 - (R3,R4).ket
+tests/test-data/KET/Nucleotide-Templates/08 - (R1,R2,R3).ket
+tests/test-data/KET/Nucleotide-Templates/09 - (R1,R3,R4).ket
+tests/test-data/KET/Nucleotide-Templates/10 - (R2,R3,R4).ket
+tests/test-data/KET/Nucleotide-Templates/11 - (R3,R4,R5).ket
+tests/test-data/KET/Nucleotide-Templates/12 - (R1,R2,R3,R4).ket
+tests/test-data/KET/Nucleotide-Templates/13 - (R1,R3,R4,R5).ket
+tests/test-data/KET/Nucleotide-Templates/14 - (R2,R3,R4,R5).ket
+tests/test-data/KET/Nucleotide-Templates/15 - (R1,R2,R3,R4,R5).ket
+tests/test-data/KET/Phosphate-Templates/01 - (R1) - Left only-expected.ket
+tests/test-data/KET/Phosphate-Templates/01 - (R1) - Left only.ket
+tests/test-data/KET/Phosphate-Templates/02 - (R2) - Right only-expected.ket
+tests/test-data/KET/Phosphate-Templates/02 - (R2) - Right only.ket
+tests/test-data/KET/Phosphate-Templates/03 - (R3) - Side only-expected.ket
+tests/test-data/KET/Phosphate-Templates/03 - (R3) - Side only.ket
+tests/test-data/KET/Phosphate-Templates/04 - (R1,R2) - R3 gap-expected.ket
+tests/test-data/KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket
+tests/test-data/KET/Phosphate-Templates/05 - (R1,R3) - R2 gap-expected.ket
+tests/test-data/KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket
+tests/test-data/KET/Phosphate-Templates/06 - (R2,R3) - R1 gap-expected.ket
+tests/test-data/KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket
+tests/test-data/KET/Phosphate-Templates/07 - (R3,R4)-expected.ket
+tests/test-data/KET/Phosphate-Templates/07 - (R3,R4).ket
+tests/test-data/KET/Phosphate-Templates/08 - (R1,R2,R3)-expected.ket
+tests/test-data/KET/Phosphate-Templates/08 - (R1,R2,R3).ket
+tests/test-data/KET/Phosphate-Templates/09 - (R1,R3,R4)-expected.ket
+tests/test-data/KET/Phosphate-Templates/09 - (R1,R3,R4).ket
+tests/test-data/KET/Phosphate-Templates/10 - (R2,R3,R4)-expected.ket
+tests/test-data/KET/Phosphate-Templates/10 - (R2,R3,R4).ket
+tests/test-data/KET/Phosphate-Templates/11 - (R3,R4,R5)-expected.ket
+tests/test-data/KET/Phosphate-Templates/11 - (R3,R4,R5).ket
+tests/test-data/KET/Phosphate-Templates/12 - (R1,R2,R3,R4)-expected.ket
+tests/test-data/KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket
+tests/test-data/KET/Phosphate-Templates/13 - (R1,R3,R4,R5)-expected.ket
+tests/test-data/KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket
+tests/test-data/KET/Phosphate-Templates/14 - (R2,R3,R4,R5)-expected.ket
+tests/test-data/KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket
+tests/test-data/KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5)-expected.ket
+tests/test-data/KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket
+tests/test-data/KET/Phosphate-Templates/peptide-connection-rules-cases-template.ket
+tests/test-data/KET/Phosphate-Templates/Test-6-P-x.ket

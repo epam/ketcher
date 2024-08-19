@@ -1,11 +1,18 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import { selectOption, SequenceType } from '@utils';
+import {
+  MacromoleculesTopPanelButton,
+  selectOption,
+  SequenceType,
+  waitForRender,
+} from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
   BondIds,
   LeftPanelButton,
+  MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
@@ -22,7 +29,10 @@ export async function selectAtom(type: AtomButton, page: Page) {
  *  Select button from left panel
  * Usage: await selectTool(LeftPanelButton.HandTool, page)
  */
-export async function selectTool(type: LeftPanelButton, page: Page) {
+export async function selectTool(
+  type: LeftPanelButton | MacromoleculesTopPanelButton,
+  page: Page,
+) {
   await selectButtonByTitle(type, page);
 }
 
@@ -53,9 +63,25 @@ export async function openLayoutModeMenu(page: Page) {
   await modeSelectorButton.click();
 }
 
+export async function hideLibrary(page: Page) {
+  const hideLibraryLink = await page.getByText('Hide');
+  const isVisible = await hideLibraryLink.isVisible();
+  if (isVisible) {
+    await hideLibraryLink.click();
+  }
+}
+
+export async function showLibrary(page: Page) {
+  const showLibraryButton = await await page.getByText('Show Library');
+  const isVisible = await showLibraryButton.isVisible();
+  if (isVisible) {
+    await showLibraryButton.click();
+  }
+}
+
 export async function selectSnakeLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const snakeModeButton = page.getByTestId('snake-layout-mode');
+  const snakeModeButton = page.getByTestId('snake-layout-mode').first();
 
   await snakeModeButton.waitFor({ state: 'visible' });
   await snakeModeButton.click();
@@ -63,7 +89,7 @@ export async function selectSnakeLayoutModeTool(page: Page) {
 
 export async function selectSequenceLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const sequenceModeButton = page.getByTestId('sequence-layout-mode');
+  const sequenceModeButton = page.getByTestId('sequence-layout-mode').first();
 
   await sequenceModeButton.waitFor({ state: 'visible' });
   await sequenceModeButton.click();
@@ -89,7 +115,7 @@ export async function switchSequenceEnteringType(
 
 export async function selectFlexLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
-  const flexModeButton = page.getByTestId('flex-layout-mode');
+  const flexModeButton = page.getByTestId('flex-layout-mode').first();
 
   await flexModeButton.waitFor({ state: 'visible' });
   await flexModeButton.click();
@@ -97,6 +123,11 @@ export async function selectFlexLayoutModeTool(page: Page) {
 
 export async function selectEraseTool(page: Page) {
   const bondToolButton = page.getByTestId('erase');
+  await bondToolButton.click();
+}
+
+export async function selectImageTool(page: Page) {
+  const bondToolButton = page.getByTestId('images');
   await bondToolButton.click();
 }
 
@@ -108,6 +139,25 @@ export async function selectClearCanvasTool(page: Page) {
 export async function selectRectangleSelectionTool(page: Page) {
   const bondToolButton = page.getByTestId('select-rectangle');
   await bondToolButton.click();
+}
+
+export async function selectOpenTool(page: Page) {
+  const openToolButton = page.getByTestId('open-button');
+  await openToolButton.click();
+}
+
+export async function selectSaveTool(page: Page) {
+  const saveToolButton = page.getByTestId('save-button');
+  await saveToolButton.click();
+}
+
+export async function openStructurePasteFromClipboard(page: Page) {
+  const bondToolButton = page.getByTestId('open-button');
+  await bondToolButton.click();
+  const pasteFromClipboardButton = page.getByTestId(
+    'paste-from-clipboard-button',
+  );
+  await pasteFromClipboardButton.click();
 }
 
 // undo/redo heplers currently used for macromolecules editor because buttons are in different panel
@@ -156,6 +206,14 @@ export async function selectLeftPanelButton(
   await leftPanelButton.click();
 }
 
+export async function selectMacromoleculesPanelButton(
+  buttonName: MacromoleculesLeftPanelButton | MacromoleculesTopPanelButton,
+  page: Page,
+) {
+  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
+  await topPanelButton.click();
+}
+
 export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
@@ -172,4 +230,42 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
 
 export async function typeAllEnglishAlphabet(page: Page) {
   await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+}
+
+export async function typeRNADNAAlphabet(page: Page) {
+  await page.keyboard.type('ATGCU');
+}
+
+export async function typePeptideAlphabet(page: Page) {
+  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+}
+
+export async function setZoomInputValue(page: Page, value: string) {
+  await page.getByTestId('zoom-input').click();
+  await page.getByTestId('zoom-value').fill(value);
+  await page.keyboard.press('Enter');
+}
+
+export async function selectWithLasso(
+  page: Page,
+  startX: number,
+  startY: number,
+  coords: { x: number; y: number }[],
+) {
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  for (const coord of coords) {
+    await page.mouse.move(coord.x, coord.y);
+  }
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
+}
+
+export async function saveToTemplates(page: Page, templateName: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await page.getByPlaceholder('template').click();
+  await page.getByPlaceholder('template').fill(templateName);
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 }

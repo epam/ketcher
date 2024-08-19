@@ -6,22 +6,56 @@ import {
   Peptide,
   Phosphate,
   RNABase,
+  SubChainNode,
   Sugar,
+  UnresolvedMonomer,
+  UnsplitNucleotide,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  isMonomerConnectedToR2RnaBase,
 } from 'domain/helpers/monomers';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
 
+  private get monomerToChain() {
+    const monomerToChain = new Map<BaseMonomer, Chain>();
+
+    this.chains.forEach((chain) => {
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          monomerToChain.set(monomer, chain);
+        });
+      });
+    });
+
+    return monomerToChain;
+  }
+
+  public get monomerToNode() {
+    const monomerToNode = new Map<BaseMonomer, SubChainNode>();
+
+    this.forEachNode(({ node }) => {
+      node.monomers.forEach((monomer) => {
+        monomerToNode.set(monomer, node);
+      });
+    });
+
+    return monomerToNode;
+  }
+
   public rearrange() {
     this.chains.sort((chain1, chain2) => {
+      // The factor is used to reduce the influence of the X coordinate on the sorting
+      // to make the sorting more oriented to Y coordinate
+      const X_COORDINATE_REDUCTION_FACTOR = 0.01;
       if (
-        chain2.firstNode?.monomer.position.x +
+        chain2.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain2.firstNode?.monomer.position.y >
-        chain1.firstNode?.monomer.position.x +
+        chain1.firstNode?.monomer.position.x * X_COORDINATE_REDUCTION_FACTOR +
           chain1.firstNode?.monomer.position.y
       ) {
         return -1;
@@ -29,10 +63,35 @@ export class ChainsCollection {
         return 1;
       }
     });
+
+    const reorderedChains = new Set<Chain>();
+    const monomerToChain = this.monomerToChain;
+    this.chains.forEach((chain) => {
+      reorderedChains.add(chain);
+
+      chain.forEachNode(({ node }) => {
+        node.monomers.forEach((monomer) => {
+          const sideConnections = monomer.sideConnections;
+          if (sideConnections.length) {
+            sideConnections.forEach((sideConnection) => {
+              const anotherMonomer = sideConnection.getAnotherMonomer(monomer);
+              const anotherChain =
+                anotherMonomer && monomerToChain.get(anotherMonomer);
+              if (anotherChain && !reorderedChains.has(anotherChain)) {
+                reorderedChains.add(anotherChain);
+              }
+            });
+          }
+        });
+      });
+    });
+    this.chains = [...reorderedChains.values()];
   }
 
   public add(chain: Chain) {
     this.chains.push(chain);
+
+    return this;
   }
 
   public static fromMonomers(monomers: BaseMonomer[]) {
@@ -59,7 +118,17 @@ export class ChainsCollection {
       | typeof Phosphate
       | typeof Sugar
       | typeof RNABase
-    > = [Peptide, Chem, Phosphate, Sugar, RNABase],
+      | typeof UnresolvedMonomer
+      | typeof UnsplitNucleotide
+    > = [
+      Peptide,
+      Chem,
+      Phosphate,
+      Sugar,
+      RNABase,
+      UnresolvedMonomer,
+      UnsplitNucleotide,
+    ],
   ) {
     const monomersList = monomers.filter((monomer) =>
       MonomerTypes.some((MonomerType) => monomer instanceof MonomerType),
@@ -98,16 +167,10 @@ export class ChainsCollection {
         monomer instanceof RNABase &&
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
-      const isSugarConnectedToR2RnaBase =
-        monomer instanceof Sugar &&
-        R1ConnectedMonomer instanceof RNABase &&
-        getRnaBaseFromSugar(monomer) &&
-        R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
-          R1ConnectedMonomer,
-        ) === monomer;
 
       return (
-        (isFirstMonomerWithR2R1connection || isSugarConnectedToR2RnaBase) &&
+        (isFirstMonomerWithR2R1connection ||
+          isMonomerConnectedToR2RnaBase(monomer)) &&
         !isRnaBaseConnectedToSugar
       );
     });
@@ -168,5 +231,44 @@ export class ChainsCollection {
     const monomerWithLowerCoords = monomerListShallowCopy[0];
 
     return monomerWithLowerCoords;
+  }
+
+  public get lastNode() {
+    return this.chains[0].lastSubChain.lastNode;
+  }
+
+  public get length() {
+    return this.chains.reduce((length, chain) => length + chain.length, 0);
+  }
+
+  public forEachNode(
+    forEachCallback: (params: {
+      chainIndex: number;
+      subChainIndex: number;
+      nodeIndex: number;
+      nodeIndexOverall: number;
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      chain: Chain;
+    }) => void,
+  ) {
+    let nodeIndexOverall = 0;
+
+    this.chains.forEach((chain, chainIndex) => {
+      chain.subChains.forEach((subChain, subChainIndex) => {
+        subChain.nodes.forEach((node, nodeIndex) => {
+          forEachCallback({
+            chainIndex,
+            subChainIndex,
+            nodeIndex,
+            nodeIndexOverall,
+            node,
+            subChain,
+            chain,
+          });
+          nodeIndexOverall++;
+        });
+      });
+    });
   }
 }

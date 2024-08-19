@@ -10,6 +10,9 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   saveToFile,
+  openFileAndAddToCanvasAsNewProject,
+  drawBenzeneRing,
+  waitForLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -65,6 +68,28 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, 'c1ccccc1'),
     );
   });
+
+  test(
+    'Structure import if dearomotize-on-load is true for Mol V2000 file',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: https://github.com/epam/ketcher/issues/4320
+    Description: Aromatic Benzene ring loads as non aromatic Benzene ring
+    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4320
+    After fix we need update screenshot.
+    */
+      const MolV2000File = await readFileContents(
+        'tests/test-data/Molfiles-V2000/aromatized-benzene-ring.mol',
+      );
+      await clickInTheMiddleOfTheScreen(page);
+      await enableDearomatizeOnLoad(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await setMolecule(page, MolV2000File),
+      );
+    },
+  );
 
   test('Add a molecule with custom atom properties using ketcher.setMolecule() method', async ({
     page,
@@ -696,5 +721,39 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+  });
+  test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #3531
+     * Description: "containsReaction" method returns "true" if structure has a reaction in micro mode
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    const containsReaction = await page.evaluate(() => {
+      return window.ketcher.containsReaction();
+    });
+
+    expect(containsReaction).toBe(true);
+  });
+
+  test('Check that "containsReaction" method returns "false" if structure has not a reaction in micro mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: #3531
+     * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
+     */
+    await waitForLoad(page, async () => {
+      await drawBenzeneRing(page);
+    });
+    const containsReaction = await page.evaluate(() => {
+      return window.ketcher.containsReaction();
+    });
+
+    expect(containsReaction).not.toBe(true);
   });
 });

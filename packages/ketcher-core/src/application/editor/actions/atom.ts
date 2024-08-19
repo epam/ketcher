@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, RGroup, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  MonomerMicromolecule,
+  RGroup,
+  SGroupAttachmentPoint,
+} from 'domain/entities';
 import {
   AtomAdd,
   AtomAttr,
@@ -125,7 +131,8 @@ export function fromAtomsAttrs(
 export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
   const action = new Action();
   const atom = restruct.molecule.atoms.get(aid);
-  if (atom) {
+  const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+  if (atom && !(sgroup instanceof MonomerMicromolecule)) {
     const frid = atom.fragment;
 
     if ('stereoParity' in attrs) {
@@ -154,7 +161,13 @@ export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
 
   aids.forEach((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
+    const sgroup = restruct.molecule.getGroupFromAtomId(aid);
     const oldfrid = atom.fragment;
+
+    if (sgroup instanceof MonomerMicromolecule) {
+      return;
+    }
+
     action.addOp(new AtomAttr(aid, 'fragment', newfrid));
 
     if (atom.stereoLabel !== null) {

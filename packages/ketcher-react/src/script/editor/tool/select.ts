@@ -33,6 +33,10 @@ import {
   vectorUtils,
   KetcherLogger,
   CoordinateTransformation,
+  IMAGE_KEY,
+  imageReferencePositionToCursor,
+  ImageReferencePositionInfo,
+  fromImageResize,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -175,6 +179,7 @@ class SelectTool implements Tool {
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
+
     if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
@@ -193,6 +198,21 @@ class SelectTool implements Tool {
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /* end */
+
+      /* handle image resize */
+      if (dragCtx.item.map === IMAGE_KEY && dragCtx.item.ref) {
+        if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
+        const position = CoordinateTransformation.pageToModel(event, rnd);
+        dragCtx.action = fromImageResize(
+          rnd.ctab,
+          dragCtx.item.id,
+          position,
+          dragCtx.item.ref,
+        );
+        editor.update(dragCtx.action, true);
+        return true;
+      }
+      /* end + fullstop */
 
       /* handle simpleObjects */
       if (dragCtx.item.map === 'simpleObjects' && dragCtx.item.ref) {
@@ -258,14 +278,25 @@ class SelectTool implements Tool {
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
-
-    handleMovingPosibilityCursor(
-      item,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore: raphael typing issues
-      this.editor.render.paper.canvas,
-      this.editor.render.options.movingStyle.cursor as string,
-    );
+    if (item?.map === IMAGE_KEY && item.ref) {
+      const referencePositionInfo = item.ref as ImageReferencePositionInfo;
+      handleMovingPosibilityCursor(
+        item,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: raphael typing issues
+        this.editor.render.paper.canvas,
+        // Casting is safe because we've checked for item map
+        imageReferencePositionToCursor[referencePositionInfo.name],
+      );
+    } else {
+      handleMovingPosibilityCursor(
+        item,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: raphael typing issues
+        this.editor.render.paper.canvas,
+        this.editor.render.options.movingStyle.cursor as string,
+      );
+    }
 
     return true;
   }
@@ -689,6 +720,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'enhancedFlags',
     'simpleObjects',
     'texts',
+    IMAGE_KEY,
     ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }
@@ -711,7 +743,7 @@ function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
 
   for (const sgId of selectedSgroups) {
     const sgroup = editor.render.ctab.sgroups.get(sgId);
-    if (sgroup) {
+    if (sgroup && !sgroup.item?.isSuperatomWithoutLabel) {
       const sgroupAtoms = SGroup.getAtoms(editor.struct(), sgroup.item);
       const sgroupBonds = SGroup.getBonds(editor.struct(), sgroup.item);
       newSelected.atoms.push(...sgroupAtoms);

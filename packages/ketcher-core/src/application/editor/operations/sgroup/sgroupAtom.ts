@@ -43,9 +43,7 @@ class SGroupAtomAdd extends BaseOperation {
     const sgroup = struct.sgroups.get(sgid)!;
 
     if (sgroup.atoms.indexOf(aid) >= 0) {
-      throw new Error(
-        'The same atom cannot be added to an S-group more than once',
-      );
+      return;
     }
 
     if (!atom) {

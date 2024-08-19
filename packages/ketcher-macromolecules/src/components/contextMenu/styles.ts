@@ -12,4 +12,8 @@ export const StyledMenu = styled(Menu)`
   .contexify_separator {
     color: rgba(225, 229, 234, 1);
   }
+  .contexify_item-title {
+    opacity: 1;
+    font-weight: bold;
+  }
 `;

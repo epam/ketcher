@@ -18,10 +18,11 @@ env:
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
   ENABLE_POLYMER_EDITOR: true
+  USE_SEPARATE_INDIGO_WASM: true
 jobs:
   playwright_tests:
-    timeout-minutes: 40
-    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:
@@ -44,6 +45,7 @@ jobs:
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
           echo "ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR" >> .env
+          echo "USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker

@@ -5,7 +5,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   waitForRender,
-  takeLeftToolbarMacromoleculeScreenshot,
   selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
@@ -13,9 +12,11 @@ import {
   selectSingleBondTool,
   takePageScreenshot,
   moveMouseAway,
+  openStructurePasteFromClipboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
+import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -35,44 +36,35 @@ test.describe('Zoom Tool', () => {
     await turnOnMacromoleculesEditor(page);
   });
 
-  test('Validate presence of zoom button with three options: zoom in, zoom out, reset zoom.', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Zoom Tool
-    Description: Zoom button with three options: zoom in, zoom out, reset zoom are located in left toolbar.
-    */
-    await page.getByTestId('zoom-in-button').hover();
-    await takeLeftToolbarMacromoleculeScreenshot(page);
-  });
-
   test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
     page,
   }) => {
     /* 
     Test case: Zoom Tool
-    Description: Zoom in, Zoom out, Reset buttons tooltips are located in the left toolbar.
+    Description: Zoom in, Zoom out, Reset buttons tooltips are located in the top toolbar.
     */
     const icons = [
       {
         testId: 'zoom-in-button',
-        title: 'Zoom In (Ctrl+=)',
+        title: 'Zoom In',
       },
       {
         testId: 'zoom-out-button',
-        title: 'Zoom Out (Ctrl+-)',
+        title: 'Zoom Out',
       },
       {
         testId: 'reset-zoom-button',
-        title: 'Reset Zoom (Ctrl+0)',
+        title: 'Zoom 100%',
       },
     ];
+    await page.getByTestId('zoom-selector').click();
     for (const icon of icons) {
       const iconButton = page.getByTestId(icon.testId);
       await expect(iconButton).toHaveAttribute('title', icon.title);
       await iconButton.hover();
       expect(icon.title).toBeTruthy();
     }
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into center of current view', async ({
@@ -86,18 +78,59 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-in-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
       });
     }
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Check that minimum value for zoom out is 20% and maximum value for zoom in is 400%', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Zoom Tool
+    Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
+    */
+    await openFileAndAddToCanvasMacro(
+      'KET/peptides-connected-with-bonds.ket',
+      page,
+    );
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < 8; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    let zoomValue = await page.getByTestId('zoom-selector').textContent();
+    expect(zoomValue).toBe('20%');
+    await takePageScreenshot(page);
+
+    await page.getByTestId('zoom-selector').click();
+    await waitForRender(page, async () => {
+      await page.getByTestId('reset-zoom-button').click();
+    });
+    for (let i = 0; i < 30; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    zoomValue = await page.getByTestId('zoom-selector').textContent();
+    expect(zoomValue).toBe('400%');
+    await takePageScreenshot(page);
   });
 
   test('Validate that mouse scrolling IN/OUT - zooms into center of current mouse position', async ({
@@ -132,7 +165,9 @@ test.describe('Zoom Tool', () => {
       });
     }
     await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
     await page.getByTestId('reset-zoom-button').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
@@ -190,7 +225,8 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: After zoom in on created long snake chain of peptides you can use scroll with Shift
     */
-    const wheelDelta = 200;
+    const wheelYDelta = -400;
+    const wheelXDelta = -400;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
@@ -202,8 +238,9 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.keyboard.down('Shift');
-    await page.mouse.wheel(0, wheelDelta);
+    await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
+    await page.mouse.wheel(0, wheelYDelta);
     await takeEditorScreenshot(page);
   });
 
@@ -263,7 +300,7 @@ test.describe('Zoom Tool', () => {
     const y = 350;
     const x1 = 650;
     const y1 = 150;
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     for (let i = 0; i < 3; i++) {
       await waitForRender(page, async () => {
@@ -272,7 +309,7 @@ test.describe('Zoom Tool', () => {
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await page.mouse.click(x, y);
-    await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+    await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+-');
@@ -292,11 +329,11 @@ test.describe('Zoom Tool', () => {
     */
     const x = 800;
     const y = 350;
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await page.mouse.click(x, y);
-    await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+    await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
@@ -320,7 +357,7 @@ test.describe('Zoom Tool', () => {
         await page.keyboard.press('Control+-');
       });
     }
-    await page.getByTestId('Bal___beta-Alanine').click();
+    await page.getByTestId(Peptides.BetaAlanine).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('RNA-TAB').click();
@@ -328,7 +365,7 @@ test.describe('Zoom Tool', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+    await page.getByTestId(Chems.SMPEG2).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -380,6 +417,17 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId('paste-from-clipboard-button').click();
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
+    await takePageScreenshot(page);
+  });
+
+  test('Maximum browser zoom in', async ({ page, browser }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/4422 - Case 29
+    Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
+    */
+    await openStructurePasteFromClipboard(page);
+    await browser.newContext({ deviceScaleFactor: 4 });
+    await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);
   });
 });

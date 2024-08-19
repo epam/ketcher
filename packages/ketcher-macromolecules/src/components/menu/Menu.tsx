@@ -17,12 +17,13 @@ import React from 'react';
 import { MenuItem } from './menuItem';
 import { SubMenu } from './subMenu';
 import { IMenuContext, MenuContext } from '../../contexts';
-import { Divider, MenuLayout, StyledGroup } from './styles';
+import { Divider, MenuLayout, StyledGroup, VerticalDivider } from './styles';
 import { GroupProps, MenuProps } from './types';
 
 const Group = ({
   children,
   divider = false,
+  isHorizontal,
 }: React.PropsWithChildren<GroupProps>) => {
   const subComponents = React.Children.map(
     children as JSX.Element[],
@@ -33,8 +34,10 @@ const Group = ({
 
   return (
     <>
-      <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
-      {divider && <Divider />}
+      <StyledGroup isHorizontal={isHorizontal}>
+        {subComponents.map((component) => component)}
+      </StyledGroup>
+      {divider && (isHorizontal ? <VerticalDivider /> : <Divider />)}
     </>
   );
 };
@@ -44,6 +47,7 @@ const Menu = ({
   onItemClick,
   activeMenuItems,
   testId,
+  isHorizontal,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
@@ -65,7 +69,7 @@ const Menu = ({
 
   return (
     <MenuContext.Provider value={context}>
-      <MenuLayout data-testid={testId}>
+      <MenuLayout data-testid={testId} isHorizontal={isHorizontal}>
         {subComponents.map((component) => component)}
       </MenuLayout>
     </MenuContext.Provider>

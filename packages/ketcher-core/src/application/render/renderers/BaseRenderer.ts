@@ -28,6 +28,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
     void
   >;
 
+  protected hoverCircleAreaElement?: D3SvgElementSelection<
+    SVGGElement | SVGCircleElement,
+    void
+  >;
+
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -48,6 +53,13 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return rootNode.getBBox();
   }
 
+  public get rootBoundingClientRect() {
+    const rootNode = this.rootElement?.node();
+    if (!rootNode) return;
+
+    return rootNode.getBoundingClientRect();
+  }
+
   public get width() {
     return this.rootBBox?.width || 0;
   }
@@ -64,7 +76,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return this.rootBBox?.y || 0;
   }
 
-  public abstract show(theme): void;
+  public abstract show(theme, force?: boolean): void;
   public abstract drawSelection(): void;
   public abstract moveSelection(): void;
   protected abstract appendHover(

@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy,
 } from '../operations';
-import { Pile, SGroup } from 'domain/entities';
+import { Pile, SGroup, SGroupAttachmentPoint } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
@@ -38,6 +38,7 @@ import {
 import Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -45,6 +46,8 @@ export function fromSeveralSgroupAddition(
   atoms,
   attrs,
 ) {
+  const attachmentPoints = [];
+
   const descriptors = attrs.fieldValue;
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
@@ -53,7 +56,7 @@ export function fromSeveralSgroupAddition(
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      [],
+      attachmentPoints,
     );
   }
 
@@ -68,7 +71,7 @@ export function fromSeveralSgroupAddition(
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        [],
+        attachmentPoints,
       ),
     );
   }, new Action());
@@ -140,7 +143,7 @@ export function sGroupAttributeAction(id, attrs) {
   return action;
 }
 
-export function fromSgroupDeletion(restruct, id) {
+export function fromSgroupDeletion(restruct, id, needPerform = true) {
   let action = new Action();
   const struct = restruct.molecule;
 
@@ -172,7 +175,9 @@ export function fromSgroupDeletion(restruct, id) {
 
   action.addOp(new SGroupDelete(id));
 
-  action = action.perform(restruct);
+  if (needPerform) {
+    action = action.perform(restruct);
+  }
 
   action.mergeWith(sGroupAttributeAction(id, attrs));
 
@@ -455,12 +460,12 @@ export function removeAtomFromSgroupIfNeeded(action, restruct, id) {
 }
 
 // Add action operations to remove whole s-group if needed
-export function removeSgroupIfNeeded(action, restruct, atoms) {
+export function removeSgroupIfNeeded(action, restruct: Restruct, atoms) {
   const struct = restruct.molecule;
   const sgCounts = new Map();
 
-  atoms.forEach((id) => {
-    const sgroups = atomGetSGroups(restruct, id);
+  atoms.forEach((atomId) => {
+    const sgroups = atomGetSGroups(restruct, atomId);
 
     sgroups.forEach((sid) => {
       sgCounts.set(sid, sgCounts.has(sid) ? sgCounts.get(sid) + 1 : 1);
@@ -468,10 +473,10 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
   });
 
   sgCounts.forEach((count, sid) => {
-    const sG = restruct.sgroups.get(sid).item;
-    const sgAtoms = SGroup.getAtoms(restruct.molecule, sG);
+    const sGroup = restruct.sgroups.get(sid)?.item;
+    const sgAtoms = SGroup.getAtoms(restruct.molecule, sGroup);
 
-    if (sgAtoms.length === count) {
+    if (sgAtoms.length === count && !sGroup?.isSuperatomWithoutLabel) {
       // delete whole s-group
       const sgroup = struct.sgroups.get(sid) as SGroup;
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()));
@@ -480,6 +485,13 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
         action.addOp(new SGroupAttachmentPointRemove(sid, attachmentPoint));
       });
       action.addOp(new SGroupDelete(sid));
+    }
+
+    if (
+      sGroup?.isSuperatomWithoutLabel &&
+      sGroup.getAttachmentPoints().length === 0
+    ) {
+      action.mergeWith(fromSgroupDeletion(restruct, sid, false));
     }
   });
 }
@@ -500,4 +512,47 @@ function getAtomsFromBonds(struct, bonds) {
     acc = acc.concat([bond.begin, bond.end]);
     return acc;
   }, []);
+}
+
+export function fromSgroupAttachmentPointAddition(
+  restruct: Restruct,
+  sgroupId: number,
+  attachmentPoint: SGroupAttachmentPoint,
+) {
+  let action = new Action();
+
+  action.addOp(new SGroupAttachmentPointAdd(sgroupId, attachmentPoint));
+  action = action.perform(restruct);
+
+  return action;
+}
+
+export function fromSgroupAttachmentPointRemove(
+  restruct: Restruct,
+  sgroupId: number,
+  atomId: number,
+  leaveAtomId?: number,
+  needPerform = true,
+) {
+  let action = new Action();
+  const struct = restruct.molecule;
+  const sgroup = struct.sgroups.get(sgroupId);
+  const atomAttachmentPoints = sgroup
+    ?.getAttachmentPoints()
+    .filter((attachmentPoint) => attachmentPoint.atomId === atomId);
+  atomAttachmentPoints?.forEach((attachmentPoint) => {
+    if (
+      sgroup &&
+      (!isNumber(attachmentPoint.leaveAtomId) ||
+        attachmentPoint.leaveAtomId === leaveAtomId)
+    ) {
+      action.addOp(new SGroupAttachmentPointRemove(sgroupId, attachmentPoint));
+    }
+  });
+
+  if (needPerform) {
+    action = action.perform(restruct);
+  }
+
+  return action;
 }

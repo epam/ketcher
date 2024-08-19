@@ -6,9 +6,11 @@ import {
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
@@ -24,7 +26,7 @@ test.describe('Check attachment point rotation', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
@@ -70,6 +72,7 @@ test.describe('Check attachment point rotation', () => {
     await bondTwoMonomers(page, peptide3, peptide4);
 
     // Hover 1th peptide
+    await moveMouseAway(page);
     await peptide1.hover();
 
     // Get rid of flakiness because of preview
@@ -78,6 +81,7 @@ test.describe('Check attachment point rotation', () => {
     await takeEditorScreenshot(page);
 
     // Hover 2nd peptide
+    await moveMouseAway(page);
     await peptide2.hover();
 
     // Get rid of flakiness because of preview
@@ -94,7 +98,7 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
@@ -122,6 +126,7 @@ test.describe('Check attachment point rotation', () => {
     await bondTwoMonomers(page, peptide1, peptide2);
 
     // Hover 1th peptide
+    await moveMouseAway(page);
     await peptide1.hover();
 
     await takeEditorScreenshot(page);
@@ -130,6 +135,7 @@ test.describe('Check attachment point rotation', () => {
     await selectRectangleSelectionTool(page);
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
+    await moveMouseAway(page);
 
     await selectSingleBondTool(page);
     // Hover 1th peptide

@@ -18,8 +18,8 @@ import { useDispatch } from 'react-redux';
 import { indigoVerification } from '../script/ui/state/request';
 import { Ketcher, KetcherAsyncEvents } from 'ketcher-core';
 import { useEffect } from 'react';
-import { ketcherInitEventName } from '../constants';
 import { useAppContext } from './useAppContext';
+import { ketcherInitEventName } from '../constants';
 
 export const useSubscriptionOnEvents = () => {
   const dispatch = useDispatch();
@@ -66,13 +66,11 @@ export const useSubscriptionOnEvents = () => {
       unsubscribe(getKetcherInstance());
     };
 
-    const fullEventName = ketcherInitEventName(ketcherId);
-    window.addEventListener(fullEventName, () => {
-      subscribeOnInit();
-    });
+    const initEventName = ketcherInitEventName(ketcherId);
+    window.addEventListener(initEventName, subscribeOnInit);
     return () => {
       unsubscribeOnUnMount();
-      window.removeEventListener(fullEventName, subscribeOnInit);
+      window.removeEventListener(initEventName, subscribeOnInit);
     };
   }, []);
 };

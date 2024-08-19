@@ -27,6 +27,7 @@ import {
   getPropertiesByImgFormat,
   b64toBlob,
   KetcherLogger,
+  Atom,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -202,6 +203,11 @@ class SaveDialog extends Component {
       const getStructFromStringByType = () => {
         if (type === 'ket') {
           const selection = this.props.editor.selection();
+          if (selection?.atoms?.length > 0) {
+            selection.atoms = selection.atoms.filter((selectedAtomId) => {
+              return !Atom.isSuperatomLeavingGroupAtom(struct, selectedAtomId);
+            });
+          }
           return service.getStructureFromStructAsync(
             struct,
             undefined,

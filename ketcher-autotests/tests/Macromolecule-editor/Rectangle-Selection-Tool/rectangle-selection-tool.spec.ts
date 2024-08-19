@@ -48,7 +48,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = Peptides.Tza;
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(
@@ -160,8 +160,12 @@ test.describe('Rectangle Selection Tool', () => {
   test('Monomer appears above other monomers, when selected', async ({
     page,
   }) => {
+    /*
+      Test case: Selected monomer does not appear above the others
+      See issue https://github.com/epam/ketcher/issues/3703 for more detailes
+    */
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const shift = 25;
+    const shift = 12;
     const betaAlaninePosition = {
       x: center.x - shift,
       y: center.y,
@@ -176,6 +180,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Now Beta Alanine must be above Ethylthiocysteine
     await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -186,7 +191,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_NAME = 'Tza___3-(4-Thiazolyl)-alanine';
     const MONOMER_ALIAS = 'Tza';
 
     const peptide1 = await addSingleMonomerToCanvas(
@@ -380,9 +385,9 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await addPeptideOnCanvas(page, 'Nal___3-naphthylalanine');
+    await addPeptideOnCanvas(page, '2Nal___3-(2-naphthyl)-alanine');
     await selectRectangleSelectionTool(page);
-    await page.getByText('Nal').locator('..').first().hover();
+    await page.getByText('2Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);

@@ -15,9 +15,13 @@ import {
   AtomQueryPropertiesName,
   AtomQueryProperties,
   AtomAllAttributeName,
+  Atom,
 } from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
+import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
+import { isNumber } from 'lodash';
+import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
 
 const {
   ringBondCount,
@@ -93,10 +97,13 @@ const atomPropertiesForSubMenu: {
 
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useAtomEdit();
+  const [handleAddAttachmentPoint] = useAddAttachmentPoint();
+  const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
   const { getKetcherInstance } = useAppContext();
   const editor = getKetcherInstance().editor as Editor;
+  const struct = editor.struct();
 
   const getPropertyValue = (key: AtomAllAttributeName) => {
     const { ctab } = editor.render;
@@ -133,6 +140,45 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
     }
   };
 
+  const onlyOneAtomSelected = props.propsFromTrigger?.atomIds?.length === 1;
+  const selectedAtomId = props.propsFromTrigger?.atomIds?.[0];
+  const sgroup = isNumber(selectedAtomId)
+    ? struct.getGroupFromAtomId(selectedAtomId)
+    : undefined;
+  const atomInSgroupWithLabel = sgroup && !sgroup?.isSuperatomWithoutLabel;
+  const attachmentPoints = sgroup?.getAttachmentPoints() || [];
+  const maxAttachmentPointsAmount = attachmentPoints.length >= 8;
+  const isAtomSuperatomAttachmentPoint = Atom.isSuperatomAttachmentAtom(
+    struct,
+    selectedAtomId,
+  );
+  const isAtomSuperatomLeavingGroup = Atom.isSuperatomLeavingGroupAtom(
+    struct,
+    selectedAtomId,
+  );
+  const atomExternalConnections = isNumber(selectedAtomId)
+    ? Atom.getAttachmentAtomExternalConnections(struct, selectedAtomId)
+    : undefined;
+  const atomFreeAttachmentPoints = attachmentPoints?.filter(
+    (attachmentPoint) =>
+      attachmentPoint.atomId === selectedAtomId &&
+      !atomExternalConnections?.some(
+        (bond) =>
+          bond.endSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber ||
+          bond.beginSuperatomAttachmentPointNumber ===
+            attachmentPoint.attachmentPointNumber,
+      ),
+  );
+
+  if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
+    return (
+      <Item {...props} onClick={handleDelete}>
+        Delete
+      </Item>
+    );
+  }
+
   return (
     <>
       <Item {...props} onClick={handleEdit}>
@@ -140,11 +186,9 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
           ? 'Edit selected atoms...'
           : 'Edit...'}
       </Item>
-
       <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>
         Enhanced stereochemistry...
       </Item>
-
       <Submenu
         {...props}
         label="Query properties"
@@ -169,6 +213,20 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
           );
         })}
       </Submenu>
+      {onlyOneAtomSelected &&
+        !atomInSgroupWithLabel &&
+        !maxAttachmentPointsAmount &&
+        !isAtomSuperatomLeavingGroup && (
+          <Item {...props} onClick={handleAddAttachmentPoint}>
+            Add attachment point
+          </Item>
+        )}
+      {isAtomSuperatomAttachmentPoint &&
+        atomFreeAttachmentPoints.length > 0 && (
+          <Item {...props} onClick={handleRemoveAttachmentPoint}>
+            Remove attachment point
+          </Item>
+        )}
       <Item {...props} onClick={handleDelete}>
         Delete
       </Item>

@@ -4,4 +4,6 @@ export class PeptideSequenceItemRenderer extends BaseSequenceItemRenderer {
   get symbolToDisplay(): string {
     return this.node.monomer.monomerItem.props.MonomerNaturalAnalogCode || '@';
   }
+
+  protected drawModification() {}
 }

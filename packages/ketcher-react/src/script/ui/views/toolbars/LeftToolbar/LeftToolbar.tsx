@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { FC, MutableRefObject, useRef } from 'react';
+import { IMAGE_KEY } from 'ketcher-core';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
@@ -185,7 +186,11 @@ const LeftToolbar = (props: Props) => {
         <div ref={endRef}>
           <Group
             className={classes.groupItem}
-            items={[{ id: 'shapes', options: shapeOptions }, { id: 'text' }]}
+            items={[
+              { id: 'shapes', options: shapeOptions },
+              { id: 'text' },
+              { id: IMAGE_KEY },
+            ]}
           />
         </div>
       </div>

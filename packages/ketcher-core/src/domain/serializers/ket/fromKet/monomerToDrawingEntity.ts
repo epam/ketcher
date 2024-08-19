@@ -5,6 +5,22 @@ import {
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
+import { KetSerializer } from 'domain/serializers';
+
+export function templateToMonomerProps(template: IKetMonomerTemplate) {
+  return {
+    id: template.id,
+    Name: template.fullName || template.name || template.alias || template.id,
+    MonomerNaturalAnalogCode: template.naturalAnalogShort || '',
+    MonomerName: template.alias || template.id,
+    MonomerFullName: template.fullName,
+    MonomerType: template.classHELM,
+    MonomerClass: template.class,
+    MonomerCaps: {},
+    idtAliases: template.idtAliases,
+    unresolved: template.unresolved,
+  };
+}
 
 export function monomerToDrawingEntity(
   node: IKetMonomerNode,
@@ -21,19 +37,8 @@ export function monomerToDrawingEntity(
       label: template.alias || template.id,
       colorScheme: undefined,
       favorite: false,
-      props: {
-        id: template.id,
-        Name:
-          template.fullName || template.name || template.alias || template.id,
-        MonomerNaturalAnalogCode: template.naturalAnalogShort,
-        MonomerName:
-          template.fullName || template.name || template.alias || template.id,
-        MonomerFullName: template.fullName,
-        MonomerType: template.classHELM,
-        MonomerClass: template.class,
-        MonomerCaps: {},
-      },
-      attachmentPoints: template.attachmentPoints,
+      props: templateToMonomerProps(template),
+      attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       seqId: node.seqid,
     },
     position,

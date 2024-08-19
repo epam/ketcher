@@ -22,6 +22,7 @@ import {
   StructService,
   StructServiceProvider,
   ketcherProvider,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';
@@ -30,6 +31,7 @@ import createApi from '../../api';
 import { initApp } from '../../ui';
 import { Root } from 'react-dom/client';
 import { IndigoProvider } from 'src/script/providers';
+import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
 
 class KetcherBuilder {
   private structService: StructService | null;
@@ -51,6 +53,39 @@ class KetcherBuilder {
     );
   }
 
+  reinitializeApi(
+    structServiceProvider: StructServiceProvider,
+    setStructServiceToStore: (structService: StructService) => void,
+  ) {
+    const oldStructService = this.structService;
+
+    this.structService = createApi(
+      structServiceProvider,
+      DefaultStructServiceOptions,
+    );
+
+    window.addEventListener(
+      STRUCT_SERVICE_INITIALIZED_EVENT,
+      () => {
+        oldStructService?.destroy?.();
+
+        if (!this.structService) {
+          KetcherLogger.warn('Structure service is not reinitialized');
+
+          return;
+        }
+
+        const ketcher = ketcherProvider.getKetcher();
+        ketcher.reinitializeIndigo(this.structService);
+        IndigoProvider.setIndigo(this.structService);
+        setStructServiceToStore(this.structService);
+      },
+      { once: true },
+    );
+
+    return this.structService;
+  }
+
   appendServiceMode(mode: ServiceMode) {
     this.serviceMode = mode;
   }
@@ -62,15 +97,22 @@ class KetcherBuilder {
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
     togglerComponent?: JSX.Element,
-  ): Promise<{ setKetcher: (ketcher: Ketcher) => void; ketcherId: string }> {
+  ): Promise<{
+    setKetcher: (ketcher: Ketcher) => void;
+    ketcherId: string;
+    cleanup: ReturnType<typeof initApp> | null;
+    setServer: (structService: StructService) => void;
+  }> {
     const { structService } = this;
+    let cleanup: ReturnType<typeof initApp> | null = null;
 
-    const { editor, setKetcher, ketcherId } = await new Promise<{
+    const { editor, setKetcher, ketcherId, setServer } = await new Promise<{
       editor: Editor;
       setKetcher: (ketcher: Ketcher) => void;
       ketcherId: string;
+      setServer: (structService: StructService) => void;
     }>((resolve) => {
-      initApp(
+      cleanup = initApp(
         element,
         appRoot,
         staticResourcesUrl,
@@ -94,7 +136,8 @@ class KetcherBuilder {
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
           () => {};
     this.formatterFactory = new FormatterFactory(structService!);
-    return { setKetcher, ketcherId };
+
+    return { setKetcher, ketcherId, cleanup, setServer };
   }
 
   build() {
@@ -119,6 +162,14 @@ class KetcherBuilder {
     );
     ketcher[this.serviceMode] = true;
 
+    const userInput = document.location.search;
+    if (
+      userInput === '__proto__' ||
+      userInput === 'constructor' ||
+      userInput === 'prototype'
+    ) {
+      return;
+    }
     const params = new URLSearchParams(document.location.search);
     const initialMol = params.get('moll');
     if (initialMol) {

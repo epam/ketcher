@@ -1,0 +1,351 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer3"
+            },
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "moleculeId": "mol0",
+                    "atomId": "2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer3",
+                    "attachmentPointId": "R2"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-A6OH___6-amino-hexanol"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.569026868881105,
+                    -8.00007432425331,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.299328564623972,
+                    -7.999589136255906,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.435815226243777,
+                    -7.49996679592889,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.299328564623972,
+                    -9.00053197490085,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.569026868881105,
+                    -9.00501996387684,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.437998572232097,
+                    -9.500033018228516,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    11.436424886110105,
+                    -6.499966981771483,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    6
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "SUP",
+                "atoms": [
+                    2,
+                    0,
+                    4,
+                    5,
+                    3,
+                    1,
+                    6
+                ],
+                "name": "",
+                "expanded": true,
+                "id": 0,
+                "attachmentPoints": [
+                    {
+                        "attachmentAtom": 2,
+                        "leavingAtom": 6,
+                        "attachmentId": "1"
+                    }
+                ]
+            }
+        ]
+    },
+    "monomer3": {
+        "type": "monomer",
+        "id": "3",
+        "position": {
+            "x": 14.959177716752537,
+            "y": -7.199999907078703
+        },
+        "alias": "A6OH",
+        "templateId": "A6OH___6-amino-hexanol"
+    },
+    "monomerTemplate-A6OH___6-amino-hexanol": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    3.1837706744863454,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.2373008012194098,
+                    0.4468046329222854,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3767468492510937,
+                    -0.14888838634135776,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.43027697598415804,
+                    0.2978465096318215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.43027697598415804,
+                    -0.2978465096318215,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.3766771123019876,
+                    0.14888838634135776,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.2373008012194098,
+                    -0.4468046329222854,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -3.1837706744863454,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    3.8717954143663618,
+                    0.47637309934323885,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -3.8717954143663618,
+                    -0.47637309934323885,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "A6OH___6-amino-hexanol",
+        "fullName": "6-amino-hexanol",
+        "alias": "A6OH",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            }
+        ]
+    }
+}

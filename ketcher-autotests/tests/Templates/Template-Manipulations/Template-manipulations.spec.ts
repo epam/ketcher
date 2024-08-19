@@ -44,6 +44,11 @@ import {
   openDropdown,
   selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  copyToClipboardByKeyboard,
+  waitForRender,
+  selectRingButton,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -158,8 +163,13 @@ test.describe('Template Manupulations', () => {
     await resetCurrentTool(page);
   });
 
-  test('Templates - Manipulations with Selection Tool', async ({ page }) => {
-    /*
+  test(
+    'Templates - Manipulations with Selection Tool',
+    {
+      tag: ['@FlakyTest'],
+    },
+    async ({ page }) => {
+      /*
     Test case: 1733
     Description:
     With Select Tool (Lasso or Rectangle) select any atom/bond/part of structure/whole structure, press and drag on the canvas.
@@ -167,17 +177,18 @@ test.describe('Template Manupulations', () => {
     Select any part of the structure (or whole structure) and click the 'Delete' keyboard button.
     with Ctrl+A hot key select all ojects on canvas and click the 'Delete' keyboard button.
     */
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    await page.getByTestId('canvas').getByText('F').first().click();
-    await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+x');
-    await page.keyboard.press('Control+z');
-  });
+      await selectAtomInToolbar(AtomButton.Fluorine, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+      await page.getByTestId('canvas').getByText('F').first().click();
+      await takeEditorScreenshot(page);
+      await page.keyboard.press('Control+a');
+      await page.keyboard.press('Control+a');
+      await cutToClipboardByKeyboard(page);
+      await page.keyboard.press('Control+z');
+    },
+  );
 
   test('Templates - Manipulations with Bond Tool', async ({ page }) => {
     /*
@@ -591,31 +602,35 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
   });
 
-  test('Templates - The preview of how the Template from the Templates toolbar will be merged, using Paste tool', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Templates - The preview of how the Template from the Templates toolbar will be merged, using Paste tool',
+    {
+      tag: ['@FlakyTest'],
+    },
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-18052
     Description:
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
-    const xOffsetFromCenter = 40;
-    await page.getByTestId('template-0').hover();
-    await page.getByTestId('template-0').click();
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    await page.getByTestId('select-rectangle').click();
-    await takePageScreenshot(page);
-    await page.getByTestId('select-rectangle').click();
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+x');
-    await page.keyboard.press('Control+v');
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('template-0').click();
-    await page.getByTestId('canvas').click();
-    await page.getByTestId('template-0').click();
-    await takePageScreenshot(page);
-  });
+      const xOffsetFromCenter = 40;
+      await selectRingButton(RingButton.Benzene, page);
+      await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await takePageScreenshot(page);
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+a');
+      });
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
+      await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+      await selectRingButton(RingButton.Benzene, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await selectRingButton(RingButton.Benzene, page);
+      await takePageScreenshot(page);
+    },
+  );
 
   test('Templates - The preview of how the Template from the Template library will be merged, using Paste tool', async ({
     page,
@@ -638,8 +653,8 @@ test.describe('Open Ketcher', () => {
     await takePageScreenshot(page);
     await page.getByTestId('select-rectangle').click();
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page);
   });

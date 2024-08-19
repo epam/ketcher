@@ -23,8 +23,13 @@ import {
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { MonomerItemType, SdfItem } from 'ketcher-core';
-import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
+import { KetMonomerClass, MonomerItemType, SdfItem } from 'ketcher-core';
+import {
+  LibraryNameType,
+  FAVORITE_ITEMS_UNIQUE_KEYS,
+  NoNaturalAnalogueGroupTitle,
+  NoNaturalAnalogueGroupCode,
+} from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
 
@@ -60,28 +65,14 @@ export const librarySlice: Slice = createSlice({
       state: RootState,
       action: PayloadAction<SdfItem[]>,
     ) => {
-      const newData = action.payload.map((monomer) => {
-        let monomerLeavingGroups: { [key: string]: string };
-        if (typeof monomer.props.MonomerCaps === 'string') {
-          const monomerLeavingGroupsArray =
-            monomer.props.MonomerCaps?.split(',');
-
-          monomerLeavingGroups = monomerLeavingGroupsArray?.reduce(
-            (acc, item) => {
-              const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
-              acc[attachmentPoint] = leavingGroup;
-              return acc;
-            },
-            {},
-          );
-          return {
-            ...monomer,
-            props: { ...monomer.props, MonomerCaps: monomerLeavingGroups },
-          };
-        }
-        return monomer;
+      const clonedMonomers = action.payload.map((monomer) => {
+        return {
+          ...monomer,
+          props: { ...monomer.props },
+        };
       });
-      state.monomers = newData;
+
+      state.monomers = clonedMonomers;
     },
 
     setFavoriteMonomersFromLocalStorage: (state: RootState) => {
@@ -160,6 +151,13 @@ export const selectMonomersInCategory = (
   category: LibraryNameType,
 ) => items.filter((item) => item.props?.MonomerType === category);
 
+export const selectUnsplitNucleotides = (items: MonomerItemType[]) =>
+  items.filter(
+    (item) =>
+      item.props?.MonomerClass === KetMonomerClass.RNA ||
+      item.props?.MonomerClass === KetMonomerClass.DNA,
+  );
+
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
@@ -193,28 +191,55 @@ export const selectMonomers = (state: RootState) => {
 };
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
-  const preparedData = monomers.reduce((result, monomerItem) => {
-    // separate monomers by NaturalAnalogCode
-    const code = monomerItem.props.MonomerNaturalAnalogCode;
-    if (!result[code]) {
-      result[code] = [];
-    }
-    result[code].push({
-      ...monomerItem,
-      label: monomerItem.props.MonomerName,
-    });
-    return result;
-  }, {});
+  const preparedData: Record<string, MonomerItemType[]> = monomers.reduce(
+    (result, monomerItem) => {
+      // separate monomers by NaturalAnalogCode
+      const code =
+        monomerItem.props.MonomerNaturalAnalogCode ||
+        NoNaturalAnalogueGroupCode;
+      if (!result[code]) {
+        result[code] = [];
+      }
+      result[code].push({
+        ...monomerItem,
+        label: monomerItem.props.MonomerName,
+      });
+      return result;
+    },
+    {},
+  );
+
+  const sortedPreparedData = Object.entries(preparedData).reduce(
+    (result, [code, monomers]) => {
+      const sortedMonomers = monomers.sort((a, b) =>
+        a.label.localeCompare(b.label),
+      );
+      const baseIndex = sortedMonomers.findIndex(
+        (monomer) => monomer.label === code,
+      );
+      if (baseIndex !== -1) {
+        const base = sortedMonomers.splice(baseIndex, 1);
+        sortedMonomers.unshift(base[0]);
+      }
+      result[code] = sortedMonomers;
+      return result;
+    },
+    {},
+  );
+
   // generate list of monomer groups
   const preparedGroups: Group[] = [];
-  return Object.keys(preparedData)
-    .sort()
+  return Object.keys(sortedPreparedData)
+    .sort((a, b) => a.localeCompare(b))
     .reduce((result, code) => {
       const group: Group = {
-        groupTitle: code,
+        groupTitle:
+          code === NoNaturalAnalogueGroupCode
+            ? NoNaturalAnalogueGroupTitle
+            : code,
         groupItems: [],
       };
-      preparedData[code].forEach((item: MonomerItemType) => {
+      sortedPreparedData[code].forEach((item: MonomerItemType) => {
         group.groupItems.push({
           ...item,
           props: { ...item.props },

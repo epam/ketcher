@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -8,10 +9,17 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  moveMouseAway,
   clickUndo,
+  selectRectangleSelectionTool,
+  selectPartOfMolecules,
+  waitForRender,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  getSequenceSymbolLocator,
+  selectSequenceRangeInEditMode,
+} from '@utils/macromolecules/sequence';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -39,15 +47,15 @@ test.describe('Sequence mode selection for view mode', () => {
 
   test('Select letters with Shift+Lclick', async ({ page }) => {
     await page.keyboard.down('Shift');
-    await page.getByText('G').first().click();
-    await page.getByText('T').first().click();
+    await getSequenceSymbolLocator(page, 'G').click();
+    await getSequenceSymbolLocator(page, 'G', 1).click();
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
   });
 
   test('Select entire chain with Ctrl+Lclick', async ({ page }) => {
     await page.keyboard.down('Control');
-    await page.getByText('G').first().click();
+    await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
     await takeEditorScreenshot(page);
   });
@@ -64,17 +72,16 @@ test.describe('Sequence mode selection for edit mode', () => {
     await selectSequenceLayoutModeTool(page);
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await page.getByText('G').first().click({ button: 'right' });
+    await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {
-    await page.getByText('G').first().hover();
-    await page.mouse.down();
+    const fromSymbol = await getSequenceSymbolLocator(page, 'G');
     const number = 5;
-    await page.getByText('G').nth(number).hover();
-    await page.mouse.up();
-    await moveMouseAway(page);
+    const toSymbol = await getSequenceSymbolLocator(page, 'G', number);
+
+    await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
     const blankAreaAxis = { x: 200, y: 200 };
@@ -114,6 +121,145 @@ test.describe('Sequence mode selection for edit mode', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Sequence mode selection for view mode', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const testData = [
+    {
+      description:
+        'Click on a single DNA symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'Molfiles-V3000/dna.mol',
+    },
+    {
+      description:
+        'Click on a single RNA symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'Molfiles-V3000/rna.mol',
+    },
+    {
+      description:
+        'Click on a single Peptide symbol using Select tool and verify that corresponding nucleotide is selected.',
+      file: 'KET/peptides-connected-with-bonds.ket',
+    },
+  ];
+
+  for (const data of testData) {
+    test(`Ensure that ${data.description}`, async ({ page }) => {
+      await openFileAndAddToCanvasMacro(data.file, page);
+      await selectSequenceLayoutModeTool(page);
+      await selectRectangleSelectionTool(page);
+      await page.getByText('G').locator('..').first().click();
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Use Select tool to draw an area on canvas encompassing multiple nucleotide symbols. Confirm that all nucleotides are highlighted.', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: All selected nucleotides are highlighted.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, and then press Esc button. Confirm that selection is cleared', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, then click outside selected area. Confirm that selection is cleared', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    const x = 500;
+    const y = 500;
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Select a nucleotide or a group of nucleotides, then click in the middle of the screen. Confirm that selection is cleared.', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check selection functionality with zoom in and zoom out', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is preserved after Zoom In/Zoom Out.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < 8; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < 5; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that Selection removed if user switches from view mode to text-editing mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3819
+    Description: Selection is cleared.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.getByText('G').first().click({ button: 'right' });
+    await page.getByTestId('edit_sequence').click();
     await takeEditorScreenshot(page);
   });
 });

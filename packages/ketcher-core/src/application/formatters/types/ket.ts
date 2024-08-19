@@ -1,3 +1,5 @@
+import { AttachmentPointName } from 'domain/types';
+
 export interface IKetMonomerNode {
   type: 'monomer';
   id: string;
@@ -6,7 +8,6 @@ export interface IKetMonomerNode {
     x: number;
     y: number;
   };
-  chemistryPosition?: { x: number; y: number };
   alias?: string;
   templateId: string;
 }
@@ -17,14 +18,38 @@ export interface IKetGroupNode {
 
 export type KetNode = IKetMonomerNode | IKetGroupNode;
 
-export interface IKetConnectionEndPoint {
-  monomerId?: string;
+export interface IKetConnectionMonomerEndPoint {
+  monomerId: string;
   attachmentPointId?: string;
   groupId?: string;
 }
 
+export interface IKetConnectionMoleculeEndPoint {
+  moleculeId: string;
+  atomId: string;
+}
+
+export type IKetConnectionEndPoint = IKetConnectionMonomerEndPoint &
+  IKetConnectionMoleculeEndPoint;
+
+export enum KetConnectionType {
+  SINGLE = 'single',
+  HYDROGEN = 'hydrogen',
+}
+
+export interface IKetTemplateConnectionEndPoint {
+  monomerTemplateId: string;
+  attachmentPointId: AttachmentPointName;
+}
+
+export interface IKetTemplateConnection {
+  connectionType: KetConnectionType;
+  endpoint1: IKetTemplateConnectionEndPoint;
+  endpoint2: IKetTemplateConnectionEndPoint;
+}
+
 export interface IKetConnection {
-  connectionType: 'single' | 'hydrogen';
+  connectionType: KetConnectionType;
   label?: string;
   endpoint1: IKetConnectionEndPoint;
   endpoint2: IKetConnectionEndPoint;
@@ -38,16 +63,18 @@ export type monomerClass =
   | 'DNA'
   | 'MODDNA';
 
-export type ketMonomerClass =
-  | 'AminoAcid'
-  | 'Sugar'
-  | 'Phosphate'
-  | 'Base'
-  | 'Terminator'
-  | 'Linker'
-  | 'Unknown'
-  | 'CHEM';
-
+export enum KetMonomerClass {
+  AminoAcid = 'AminoAcid',
+  Sugar = 'Sugar',
+  Phosphate = 'Phosphate',
+  Base = 'Base',
+  Terminator = 'Terminator',
+  Linker = 'Linker',
+  Unknown = 'Unknown',
+  CHEM = 'CHEM',
+  RNA = 'RNA',
+  DNA = 'DNA',
+}
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
 export interface IKetAttachmentPoint {
@@ -59,8 +86,22 @@ export interface IKetAttachmentPoint {
   label?: string;
 }
 
+export interface IKetIdtAliases {
+  base: string;
+  modifications?: {
+    internal?: string;
+    endpoint3?: string;
+    endpoint5?: string;
+  };
+}
+
+export enum KetTemplateType {
+  MONOMER_TEMPLATE = 'monomerTemplate',
+  MONOMER_GROUP_TEMPLATE = 'monomerGroupTemplate',
+}
+
 export interface IKetMonomerTemplate {
-  type: 'monomerTemplate';
+  type: KetTemplateType.MONOMER_TEMPLATE;
   class?: monomerClass;
   monomerSubClass?:
     | 'AminoAcid'
@@ -82,13 +123,31 @@ export interface IKetMonomerTemplate {
   };
   classHELM?: string;
   name?: string;
-}
-
-export interface IKetNodeRef {
-  $ref: string;
+  idtAliases?: IKetIdtAliases;
+  unresolved?: boolean;
+  atoms: [];
+  bonds: [];
 }
 
 export interface IKetMonomerTemplateRef {
+  $ref: string;
+}
+
+export enum KetMonomerGroupTemplateClass {
+  RNA = 'RNA',
+}
+
+export interface IKetMonomerGroupTemplate {
+  id: string;
+  name: string;
+  type: KetTemplateType;
+  class?: KetMonomerGroupTemplateClass;
+  templates: IKetMonomerTemplateRef[];
+  connections: IKetTemplateConnection[];
+  idtAliases?: IKetIdtAliases;
+}
+
+export interface IKetNodeRef {
   $ref: string;
 }
 
@@ -101,7 +160,7 @@ export interface IKetMacromoleculesContentRootProperty {
 }
 
 export interface IKetMacromoleculesContentOtherProperties {
-  [key: string]: KetNode | IKetMonomerTemplate;
+  [key: string]: KetNode | IKetMonomerTemplate | IKetMonomerGroupTemplate;
 }
 
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &

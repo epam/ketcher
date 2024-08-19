@@ -15,16 +15,50 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
+import {
+  AttachmentPointName,
+  CoreEditor,
+  IKetIdtAliases,
+  MonomerItemType,
+  PolymerBond,
+} from 'ketcher-core';
 import { RootState } from 'state';
-import { CoreEditor, MonomerItemType } from 'ketcher-core';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 
+interface MonomerPreviewState {
+  readonly monomer: MonomerItemType | undefined;
+  readonly attachmentPointsToBonds?: Partial<
+    Record<AttachmentPointName, PolymerBond | null>
+  >;
+  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
+}
+
+export enum PresetPosition {
+  Library = 'library',
+  ChainStart = 'chainStart',
+  ChainMiddle = 'chainMiddle',
+  ChainEnd = 'chainEnd',
+}
+
+export interface PresetPreviewState {
+  readonly preset: {
+    readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
+    readonly name?: string;
+    readonly idtAliases?: IKetIdtAliases;
+    readonly position: PresetPosition;
+  };
+  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
+}
+
+type EditorStatePreview = MonomerPreviewState | PresetPreviewState;
+
+// TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
-  preview: { monomer: undefined | MonomerItemType; style: string };
+  preview: EditorStatePreview;
 }
 
 const initialState: EditorState = {
@@ -69,14 +103,7 @@ export const editorSlice: Slice = createSlice({
     },
     showPreview: (
       state,
-      action: PayloadAction<
-        | {
-            monomer: undefined | MonomerItemType;
-            style: string;
-            nucleotide?: MonomerItemType[];
-          }
-        | undefined
-      >,
+      action: PayloadAction<EditorStatePreview | undefined>,
     ) => {
       state.preview = action.payload || { monomer: undefined, style: '' };
     },
@@ -97,8 +124,23 @@ export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
 export const selectShowPreview = (state: RootState) => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+// TODO: Specify the types.
+// export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
+//   state.editor.isReady;
+// export const selectShowPreview = (state: RootState): EditorState['preview'] =>
+//   state.editor.preview;
+// export const selectEditorActiveTool = (
+//   state: RootState,
+// ): EditorState['activeTool'] => state.editor.activeTool;
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;
+
+export const selectIsSequenceEditInRNABuilderMode = (
+  state: RootState,
+): boolean => state.editor.editor?.isSequenceEditInRNABuilderMode;
+
+export const selectIsSequenceMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceMode;
 
 export const editorReducer = editorSlice.reducer;

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
-import { StructRender } from 'ketcher-react';
+import { Icon, StructRender } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   AttachmentPointList,
   AttachmentPoint,
@@ -13,9 +13,11 @@ import {
   ConnectionSymbol,
   AttachmentPointsRow,
   ModalContent,
+  UnknownStructureContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 import { BaseMonomer, LeavingGroup } from 'ketcher-core';
+import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 interface IStyledButtonProps {
   disabled: boolean;
@@ -81,17 +83,35 @@ const MonomerConnection = ({
   isModalOpen,
   firstMonomer,
   secondMonomer,
+  polymerBond,
+  isReconnectionDialog,
 }: MonomerConnectionProps): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
+  const initialFirstMonomerAttachmentPointRef = useRef(
+    polymerBond?.firstMonomerAttachmentPoint,
+  );
+  const initialSecondMonomerAttachmentPointRef = useRef(
+    polymerBond?.secondMonomerAttachmentPoint,
+  );
+  const hasFreeAttachmentPointsRef = useRef(
+    firstMonomer?.hasFreeAttachmentPoint ||
+      secondMonomer?.hasFreeAttachmentPoint,
+  );
 
   if (!firstMonomer || !secondMonomer) {
     throw new Error('Monomers must exist!');
   }
 
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
+    useState<string | null>(
+      initialFirstMonomerAttachmentPointRef.current ||
+        getDefaultAttachmentPoint(firstMonomer),
+    );
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
+    useState<string | null>(
+      initialSecondMonomerAttachmentPointRef.current ||
+        getDefaultAttachmentPoint(secondMonomer),
+    );
   const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
@@ -109,6 +129,12 @@ const MonomerConnection = ({
       secondMonomer,
       firstSelectedAttachmentPoint,
       secondSelectedAttachmentPoint,
+      polymerBond,
+      isReconnection: isReconnectionDialog,
+      initialFirstMonomerAttachmentPoint:
+        initialFirstMonomerAttachmentPointRef.current,
+      initialSecondMonomerAttachmentPoint:
+        initialSecondMonomerAttachmentPointRef.current,
     });
 
     onClose();
@@ -116,7 +142,11 @@ const MonomerConnection = ({
 
   return (
     <StyledModal
-      title="Select connection points"
+      title={
+        isReconnectionDialog
+          ? 'Edit Connection Points'
+          : 'Select connection points'
+      }
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
       showExpandButton
@@ -160,9 +190,11 @@ const MonomerConnection = ({
           clickHandler={cancelBondCreationAndClose}
         />
         <ActionButtonRight
-          label="Connect"
+          label={isReconnectionDialog ? 'Reconnect' : 'Connect'}
           disabled={
-            !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
+            !firstSelectedAttachmentPoint ||
+            !secondSelectedAttachmentPoint ||
+            !hasFreeAttachmentPointsRef.current
           }
           clickHandler={connectMonomers}
         />
@@ -184,6 +216,7 @@ function AttachmentPointSelectionPanel({
   onSelectAttachmentPoint,
   expanded = false,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
+  const isUnresolvedMonomer = monomer.monomerItem.props.unresolved === true;
   const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
   const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
     () => getConnectedAttachmentPoints(bonds),
@@ -204,7 +237,7 @@ function AttachmentPointSelectionPanel({
       return 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
+    return hydrateLeavingGroup(leavingGroup) as LeavingGroup;
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
@@ -228,18 +261,25 @@ function AttachmentPointSelectionPanel({
 
   return (
     <>
-      <StyledStructRender
-        struct={monomer.monomerItem.struct}
-        options={{
-          connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-          currentlySelectedMonomerAttachmentPoint:
-            selectedAttachmentPoint ?? undefined,
-          labelInMonomerConnectionsModal: true,
-          needCache: false,
-        }}
-        update={expanded}
-        isExpanded={expanded}
-      />
+      {isUnresolvedMonomer ? (
+        <UnknownStructureContent>
+          <Icon name="questionMark" />
+          Unknown structure
+        </UnknownStructureContent>
+      ) : (
+        <StyledStructRender
+          struct={monomer.monomerItem.struct}
+          options={{
+            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+            currentlySelectedMonomerAttachmentPoint:
+              selectedAttachmentPoint ?? undefined,
+            labelInMonomerConnectionsModal: true,
+            needCache: false,
+          }}
+          update={expanded}
+          isExpanded={expanded}
+        />
+      )}
       <AttachmentPointList>
         {monomer.listOfAttachmentPoints.map((attachmentPoint) => {
           const disabled = Boolean(

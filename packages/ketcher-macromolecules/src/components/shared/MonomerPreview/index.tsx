@@ -13,46 +13,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { useMemo } from 'react';
-import { MonomerName, Container, StyledStructRender } from './styles';
+import {
+  MonomerName,
+  Container,
+  StyledStructRender,
+  InfoBlock,
+} from './styles';
 import { IPreviewProps } from './types';
 import { preview } from '../../../constants';
 import styled from '@emotion/styled';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
+import UnresolvedMonomerPreview from 'components/shared/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import { useAttachmentPoints } from '../../../hooks/useAttachmentPoints';
+import { AttachmentPoints } from 'components/shared/AttachmentPoints/AttachmentPoints';
+import { MonomerItemType } from 'ketcher-core';
+import { IDTAliases } from 'components/shared/IDTAliases';
+import useIDTAliasesTextForMonomer from '../../../hooks/useIDTAliasesTextForMonomer';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-  const ContainerDynamic = useMemo(
-    () => styled(Container)`
+
+  const ContainerDynamic = useMemo(() => {
+    if (!preview?.style) {
+      return styled(Container)``;
+    }
+
+    return styled(Container)`
       top: ${preview?.style?.top || ''};
       left: ${preview?.style?.left || ''};
       right: ${preview?.style?.right || ''};
-    `,
-    [preview],
-  );
+    `;
+  }, [preview]);
+
+  const idtAliases = (preview.monomer as MonomerItemType).props.idtAliases;
+
+  const { preparedAttachmentPointsData, connectedAttachmentPoints } =
+    useAttachmentPoints({
+      monomer: preview.monomer,
+      attachmentPointsToBonds: preview.attachmentPointsToBonds,
+    });
+
+  const idtAliasesText = useIDTAliasesTextForMonomer({
+    idtAliases,
+    attachmentPointsToBonds: preview.attachmentPointsToBonds,
+    monomerClass: preview?.monomer?.props.MonomerClass,
+  });
+
+  if (!preview?.monomer) {
+    return null;
+  }
+
+  const isUnresolved = preview.monomer.props?.unresolved;
+  const monomerName = isUnresolved
+    ? preview.monomer.label
+    : preview.monomer.struct.name;
 
   return (
-    preview?.monomer && (
-      <ContainerDynamic
-        className={className}
-        data-testid="polymer-library-preview"
-      >
-        <MonomerName>{preview.monomer.struct.name}</MonomerName>
+    <ContainerDynamic
+      className={className}
+      data-testid="polymer-library-preview"
+    >
+      {monomerName && <MonomerName>{monomerName}</MonomerName>}
+      {isUnresolved ? (
+        <UnresolvedMonomerPreview />
+      ) : (
         <StyledStructRender
-          struct={preview.monomer.struct}
-          options={{ needCache: false }}
+          struct={preview.monomer?.struct}
+          options={{
+            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+            labelInPreview: true,
+            needCache: false,
+          }}
         />
-      </ContainerDynamic>
-    )
+      )}
+      <InfoBlock>
+        <AttachmentPoints
+          preparedAttachmentPointsData={preparedAttachmentPointsData}
+        />
+        {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+      </InfoBlock>
+    </ContainerDynamic>
   );
 };
 
-const StyledPreview = styled(MonomerPreview)`
+const StyledPreview = styled(MonomerPreview)<IPreviewProps>`
   z-index: 5;
   position: absolute;
-  width: ${preview.width}px;
-  height: ${preview.height}px;
+  width: ${preview.width + 'px'};
+  height: ${preview.height + 'px'};
   transform: translate(-50%, 0);
 `;
 

@@ -38,11 +38,30 @@ test.describe('Import-Saving .seq Files', () => {
     });
   }
 
-  test('Import incorrect data', async ({ page }) => {
-    const randomText = 'asjfnsalkfl';
+  // Fail while performance issue on Indigo side
+  // test('Import incorrect data', async ({ page }) => {
+  //   const randomText = 'asjfnsalkfl';
+  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await page.getByTestId('paste-from-clipboard-button').click();
+  //   await page.getByTestId('open-structure-textarea').fill(randomText);
+  //   await chooseFileFormat(page, 'Sequence');
+  //   await page.getByTestId('add-to-canvas-button').click();
+  //   await takeEditorScreenshot(page);
+  // });
+
+  test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #3894
+    Description: File pasted to canvas.
+    */
+    const fileContent = await readFileContents(
+      'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
+    );
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(randomText);
+    await page.getByTestId('open-structure-textarea').fill(fileContent);
     await chooseFileFormat(page, 'Sequence');
     await page.getByTestId('add-to-canvas-button').click();
     await takeEditorScreenshot(page);
@@ -116,6 +135,7 @@ test.describe('Import-Saving .seq Files', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -187,4 +207,47 @@ test.describe('Import-Saving .seq Files', () => {
 
     await takeEditorScreenshot(page);
   });
+
+  test(
+    'RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard"',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4175
+    Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
+    The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4175 For now structures overlap each other.
+    When fix is made, you need to update screenshot.
+    */
+      const Rna = 'acgtu';
+      const Dna = 'acgtu';
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByTestId('paste-from-clipboard-button').click();
+      await page.getByTestId('open-structure-textarea').fill(Rna);
+      await chooseFileFormat(page, 'Sequence');
+      await page.getByTestId('add-to-canvas-button').click();
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByTestId('paste-from-clipboard-button').click();
+      await page.getByTestId('open-structure-textarea').fill(Dna);
+      await chooseFileFormat(page, 'Sequence');
+      await page.getByTestId('add-to-canvas-button').click();
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'RNA and DNA structures not overlay each other on canvas, when adding them through the “Open as file”',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4175
+    Description: RNA and DNA structures not overlay each other on canvas, when adding them through the "Paste from Clipboard".
+    The test doesn't work as it should because we have a bug https://github.com/epam/ketcher/issues/4175 For now structures overlap each other.
+    When fix is made, you need to update screenshot.
+    */
+      await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+      // Need open twice
+      await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
+      await takeEditorScreenshot(page);
+    },
+  );
 });

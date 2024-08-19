@@ -9,6 +9,7 @@ const SUGAR = 'rna-builder-slot--sugar';
 const BASE = 'rna-builder-slot--base';
 const PHOSPHATE = 'rna-builder-slot--phosphate';
 const BUTTON__ADD_TO_PRESETS = 'add-to-presets-btn';
+const LAYOUT_TOGGLER = 'layout-mode';
 
 export {
   PEPTIDES_TAB,
@@ -22,4 +23,5 @@ export {
   BASE,
   PHOSPHATE,
   BUTTON__ADD_TO_PRESETS,
+  LAYOUT_TOGGLER,
 };

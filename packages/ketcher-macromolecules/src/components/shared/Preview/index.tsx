@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import MonomerPreview from 'components/shared/MonomerPreview';
+import PresetPreview from 'components/shared/PresetPreview';
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
-import NucleotidePreview from '../NucleotidePreview';
-import MonomerPreview from '../MonomerPreview';
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
 
-  if (preview?.nucleotide) {
-    return <NucleotidePreview />;
+  if (!preview) {
+    return null;
   }
 
-  return <MonomerPreview className="polymer-library-preview" />;
+  if (preview.preset) {
+    return <PresetPreview />;
+  }
+
+  if (!preview?.monomer) {
+    return null;
+  }
+
+  return (
+    <MonomerPreview
+      className="polymer-library-preview"
+      unresolvedMonomer={preview.monomer.props.unresolved}
+    />
+  );
 };

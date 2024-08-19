@@ -32,6 +32,7 @@ import ReText from './retext';
 export * from './generalEnumTypes';
 export * from './reatom';
 export * from './rergroupAttachmentPoint';
+export * from './reImage';
 export {
   ReObject,
   ReAtom,

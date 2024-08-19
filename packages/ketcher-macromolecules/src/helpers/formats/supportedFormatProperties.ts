@@ -17,9 +17,11 @@
 export enum ChemicalMimeType {
   Ket = 'chemical/x-ket',
   Mol = 'chemical/x-mdl-molfile',
-  Helm = 'chemical/x-helm',
+  HELM = 'chemincal/x-helm',
   Fasta = 'chemical/x-fasta',
   Sequence = 'chemical/x-sequence',
+  Idt = 'chemical/x-idt',
+  Svg = 'image/svg+xml',
 }
 
 interface SupportedFormatPropertiesOptions {

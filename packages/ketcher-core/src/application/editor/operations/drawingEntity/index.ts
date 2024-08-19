@@ -1,6 +1,7 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
@@ -34,12 +35,26 @@ export class DrawingEntityMoveOperation implements Operation {
     this.wasInverted
       ? this.redoDrawingEntityChangeModel()
       : this.moveDrawingEntityChangeModel();
-    renderersManager.moveDrawingEntity(this.drawingEntity);
+    if (this.drawingEntity instanceof PolymerBond) {
+      renderersManager.redrawDrawingEntity(this.drawingEntity);
+    } else {
+      renderersManager.moveDrawingEntity(this.drawingEntity);
+    }
   }
 
   public invert(renderersManager: RenderersManager) {
     this.invertMoveDrawingEntityChangeModel();
-    renderersManager.moveDrawingEntity(this.drawingEntity);
+
+    // Redraw Polymer bonds instead of moving needed here because
+    // they have two drawing modes: straight and curved.
+    // During switching snake/flex layout modes and undo/redo
+    // we need to redraw them to apply the correct drawing mode.
+    if (this.drawingEntity instanceof PolymerBond) {
+      renderersManager.redrawDrawingEntity(this.drawingEntity);
+    } else {
+      renderersManager.moveDrawingEntity(this.drawingEntity);
+    }
+
     this.wasInverted = true;
   }
 }
@@ -51,11 +66,11 @@ export class DrawingEntityRedrawOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     const drawingEntity = this.drawingEntityRedrawModelChange();
-    renderersManager.redrawDrawingEntity(drawingEntity);
+    renderersManager.redrawDrawingEntity(drawingEntity, true);
   }
 
   public invert(renderersManager: RenderersManager) {
     const drawingEntity = this.invertDrawingEntityRedrawModelChange();
-    renderersManager.redrawDrawingEntity(drawingEntity);
+    renderersManager.redrawDrawingEntity(drawingEntity, true);
   }
 }

@@ -1431,19 +1431,6 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const { base: rnaBase, sugar, phosphate } = preset;
 
-    // if (!sugar) {
-    //   return;
-    // }
-
-    // const rnaPresetAddResult = editor.drawingEntitiesManager.addRnaPreset({
-    //   sugar,
-    //   sugarPosition: position,
-    //   rnaBase,
-    //   rnaBasePosition: position,
-    //   phosphate,
-    //   phosphatePosition: position,
-    // });
-
     assert(sugar);
 
     const sugarMonomer = editor.drawingEntitiesManager.createMonomer(
@@ -1467,16 +1454,6 @@ export class SequenceMode extends BaseMode {
       ) as Phosphate;
     }
 
-    // const sugarMonomer = rnaPresetAddResult.monomers.find(
-    //   (monomer) => monomer instanceof Sugar,
-    // ) as Sugar;
-    // const rnaBaseMonomer = rnaPresetAddResult.monomers.find(
-    //   (monomer) => monomer instanceof RNABase,
-    // ) as RNABase;
-    // const phosphateMonomer = rnaPresetAddResult.monomers.find(
-    //   (monomer) => monomer instanceof Phosphate,
-    // ) as Phosphate;
-
     let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
       null;
 
@@ -1492,20 +1469,7 @@ export class SequenceMode extends BaseMode {
       newPresetNode = new LinkerSequenceNode(sugarMonomer);
     }
 
-    // if (!rnaBase) {
-    //   newPresetNode = new LinkerSequenceNode(sugarMonomer);
-    // } else if (!phosphateMonomer) {
-    //   newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
-    // } else {
-    //   newPresetNode = new Nucleotide(
-    //     sugarMonomer,
-    //     rnaBaseMonomer,
-    //     phosphateMonomer,
-    //   );
-    // }
-
     return newPresetNode;
-    // rnaPresetAddModelChanges: rnaPresetAddResult.command,
   }
 
   private replaceSelectionWithPreset(

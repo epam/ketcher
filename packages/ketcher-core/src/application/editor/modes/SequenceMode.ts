@@ -1393,11 +1393,10 @@ export class SequenceMode extends BaseMode {
     } else {
       const newNodePosition = this.getNewNodePosition();
 
-      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+      const newMonomer = editor.drawingEntitiesManager.createMonomer(
         monomerItem,
         newNodePosition,
       );
-      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
       const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
       const { nodeCanBeInserted, missingAttachmentPoint } =
@@ -1409,6 +1408,12 @@ export class SequenceMode extends BaseMode {
         this.showMergeWarningModal(message);
         return;
       }
+
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        newNodePosition,
+        newMonomer,
+      );
 
       modelChanges.merge(monomerAddCommand);
       modelChanges.merge(
@@ -1426,47 +1431,81 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const { base: rnaBase, sugar, phosphate } = preset;
 
-    if (!sugar) {
-      return;
+    // if (!sugar) {
+    //   return;
+    // }
+
+    // const rnaPresetAddResult = editor.drawingEntitiesManager.addRnaPreset({
+    //   sugar,
+    //   sugarPosition: position,
+    //   rnaBase,
+    //   rnaBasePosition: position,
+    //   phosphate,
+    //   phosphatePosition: position,
+    // });
+
+    assert(sugar);
+
+    const sugarMonomer = editor.drawingEntitiesManager.createMonomer(
+      sugar,
+      position,
+    ) as Sugar;
+
+    let rnaBaseMonomer: RNABase | null = null;
+    if (rnaBase) {
+      rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
+        rnaBase,
+        position,
+      ) as RNABase;
     }
 
-    const rnaPresetAddResult = editor.drawingEntitiesManager.addRnaPreset({
-      sugar,
-      sugarPosition: position,
-      rnaBase,
-      rnaBasePosition: position,
-      phosphate,
-      phosphatePosition: position,
-    });
+    let phosphateMonomer: Phosphate | null = null;
+    if (phosphate) {
+      phosphateMonomer = editor.drawingEntitiesManager.createMonomer(
+        phosphate,
+        position,
+      ) as Phosphate;
+    }
 
-    const sugarMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof Sugar,
-    ) as Sugar;
-    const rnaBaseMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof RNABase,
-    ) as RNABase;
-    const phosphateMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof Phosphate,
-    ) as Phosphate;
+    // const sugarMonomer = rnaPresetAddResult.monomers.find(
+    //   (monomer) => monomer instanceof Sugar,
+    // ) as Sugar;
+    // const rnaBaseMonomer = rnaPresetAddResult.monomers.find(
+    //   (monomer) => monomer instanceof RNABase,
+    // ) as RNABase;
+    // const phosphateMonomer = rnaPresetAddResult.monomers.find(
+    //   (monomer) => monomer instanceof Phosphate,
+    // ) as Phosphate;
 
-    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
+    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
+      null;
 
-    if (!rnaBase) {
-      newPresetNode = new LinkerSequenceNode(sugarMonomer);
-    } else if (!phosphateMonomer) {
-      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
-    } else {
+    if (rnaBaseMonomer && sugarMonomer && phosphateMonomer) {
       newPresetNode = new Nucleotide(
         sugarMonomer,
         rnaBaseMonomer,
         phosphateMonomer,
       );
+    } else if (rnaBaseMonomer && sugarMonomer) {
+      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
+    } else {
+      newPresetNode = new LinkerSequenceNode(sugarMonomer);
     }
 
-    return {
-      newPresetNode,
-      rnaPresetAddModelChanges: rnaPresetAddResult.command,
-    };
+    // if (!rnaBase) {
+    //   newPresetNode = new LinkerSequenceNode(sugarMonomer);
+    // } else if (!phosphateMonomer) {
+    //   newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
+    // } else {
+    //   newPresetNode = new Nucleotide(
+    //     sugarMonomer,
+    //     rnaBaseMonomer,
+    //     phosphateMonomer,
+    //   );
+    // }
+
+    return newPresetNode;
+    // rnaPresetAddModelChanges: rnaPresetAddResult.command,
   }
 
   private replaceSelectionWithPreset(
@@ -1494,13 +1533,12 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const rnaAdditionResult = this.createRnaPresetNode(preset, position);
+    const newPresetNode = this.createRnaPresetNode(preset, position);
 
-    if (!rnaAdditionResult) {
-      return;
-    }
+    assert(newPresetNode);
 
-    const { newPresetNode, rnaPresetAddModelChanges } = rnaAdditionResult;
+    const rnaPresetAddModelChanges =
+      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
 
     modelChanges.merge(rnaPresetAddModelChanges);
     modelChanges.merge(
@@ -1625,17 +1663,12 @@ export class SequenceMode extends BaseMode {
     } else {
       const newNodePosition = this.getNewNodePosition();
 
-      const rnaAdditionResult = this.createRnaPresetNode(
-        preset,
-        newNodePosition,
-      );
+      const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
-      if (!rnaAdditionResult) {
-        return;
-      }
+      assert(newPresetNode);
 
       const { nodeCanBeInserted, missingAttachmentPoint } =
-        this.checkNodeInsertionPossibility(rnaAdditionResult.newPresetNode);
+        this.checkNodeInsertionPossibility(newPresetNode);
 
       if (!nodeCanBeInserted) {
         const message =
@@ -1645,10 +1678,11 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
-      modelChanges.merge(rnaAdditionResult.rnaPresetAddModelChanges);
-      modelChanges.merge(
-        this.insertNewSequenceFragment(rnaAdditionResult.newPresetNode),
-      );
+      const rnaPresetAddModelChanges =
+        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+      modelChanges.merge(rnaPresetAddModelChanges);
+      modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);

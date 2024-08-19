@@ -130,7 +130,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .append('path')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
-      .attr('class', 'selection-area snake-bond')
+      .attr('class', 'selection-area')
       .attr('d', this.path)
       .attr('fill-opacity', 0)
       .attr('pointer-events', 'stroke');

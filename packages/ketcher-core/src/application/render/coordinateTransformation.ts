@@ -4,7 +4,10 @@ import { Scale } from 'domain/helpers';
 
 const canvasToView = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
-  return point.sub(offset).scaled(render.options.zoom);
+  return point
+    .sub(offset)
+    .scaled(render.options.zoom)
+    .scaled(render.options.externalZoomScale ?? 1.0);
 };
 
 const modelToView = (vector: Vec2, render: Render) => {
@@ -14,7 +17,10 @@ const modelToView = (vector: Vec2, render: Render) => {
 
 const viewToCanvas = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
-  return point.scaled(1 / render.options.zoom).add(offset);
+  return point
+    .scaled(1 / render.options.zoom)
+    .scaled(1 / (render.options.externalZoomScale ?? 1.0))
+    .add(offset);
 };
 
 const pageToView = (

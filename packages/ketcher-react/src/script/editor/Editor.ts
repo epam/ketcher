@@ -733,39 +733,16 @@ function resetSelectionOnCanvasClick(
   }
 }
 
-function calculateLayerOffset(event) {
-  const target = event.target || event.srcElement;
-  const svgTarget = target?.closest('svg');
-  if (!svgTarget) {
-    return null;
-  }
-  const svgRect = svgTarget.getBoundingClientRect();
-  const offsetX = event.clientX - svgRect.left;
-  const offsetY = event.clientY - svgRect.top;
-  return { offsetX, offsetY };
-}
-
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
   if (events.includes(event.type)) {
     const clientAreaBoundingBox =
       editor.render.clientArea.getBoundingClientRect();
 
-    const pos = calculateLayerOffset(event);
-    if (pos != null) {
-      editor.lastCursorPosition = {
-        x:
-          pos.offsetX /
-            (editor.options().zoom ?? 1.0) /
-            (editor.options().externalZoomScale ?? 1.0) -
-          clientAreaBoundingBox.x,
-        y:
-          pos.offsetY /
-            (editor.options().zoom ?? 1.0) /
-            (editor.options().externalZoomScale ?? 1.0) -
-          clientAreaBoundingBox.y,
-      };
-    }
+    editor.lastCursorPosition = {
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
+    };
   }
 }
 

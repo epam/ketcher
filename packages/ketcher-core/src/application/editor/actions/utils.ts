@@ -63,9 +63,11 @@ export function findStereoAtoms(
   atomIds: number[] | undefined,
 ): number[] {
   let monomerAtoms = 0;
-  struct.sgroups.forEach((sgroup) => {
-    monomerAtoms += sgroup.atoms.length;
-  });
+  if (struct.sgroups && struct.sgroups.size > 0) {
+    struct.sgroups.forEach((sgroup) => {
+      monomerAtoms += sgroup.atoms.length;
+    });
+  }
 
   // no atoms, or only monomers present
   if (!atomIds || struct.atoms.size === monomerAtoms) {

@@ -38,7 +38,10 @@ const MeasureInput = ({
   ...rest
 }) => {
   const handleChange = (value) => {
-    onChange(value);
+    const isNumber = !isNaN(Number(value));
+    if (isNumber) {
+      onChange(value);
+    }
   };
 
   const handleMeasChange = (unit) => {

@@ -87655,10 +87655,10 @@
     "alias": "meO",
     "attachmentPoints": [
       {
-        "attachmentAtom": 1,
+        "attachmentAtom": 0,
         "leavingGroup": {
           "atoms": [
-            3
+            4
           ]
         },
         "type": "left"
@@ -87667,7 +87667,7 @@
         "attachmentAtom": 2,
         "leavingGroup": {
           "atoms": [
-            5
+            3
           ]
         },
         "type": "right"

@@ -1345,3 +1345,250 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
     });
   }
 }
+
+const twoSequences: ISequence[] = [
+  {
+    Id: 13,
+    FileName:
+      'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U) w_o phosphates.ket',
+    SequenceName:
+      'base to base connected two sequences of presets (U) w_o phosphates',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 14,
+    FileName:
+      'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U).ket',
+    SequenceName: 'base to base connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 15,
+    FileName:
+      'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U) w_o phosphate.ket',
+    SequenceName:
+      'base to sugar connected two sequences of presets (U) w_o phosphate',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 16,
+    FileName:
+      'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
+    SequenceName: 'base to sugar connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 17,
+    FileName:
+      'KET/Sequence-Mode-Replacement/phosphate to base connected two sequences of presets (U).ket',
+    SequenceName: 'phosphate to base connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 18,
+    FileName:
+      'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U) w_o base.ket',
+    SequenceName:
+      'phosphate to phosphate connected two sequences of presets (U) w_o base',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+  },
+  {
+    Id: 19,
+    FileName:
+      'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U).ket',
+    SequenceName:
+      'phosphate to phosphate connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 20,
+    FileName:
+      'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U) w_o base.ket',
+    SequenceName:
+      'phosphate to sugar connected two sequences of presets (U) w_o base',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+  },
+  {
+    Id: 21,
+    FileName:
+      'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U).ket',
+    SequenceName: 'phosphate to sugar connected two sequences of presets (U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 22,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequence of unsplit nucleotides (AmMC6T).ket',
+    SequenceName: 'two sequence of unsplit nucleotides (AmMC6T)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 23,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of bases (nC6n5U).ket',
+    SequenceName: 'two sequences of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 24,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of CHEMs (4aPEGMal).ket',
+    SequenceName: 'two sequences of CHEMs (4aPEGMal)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 25,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of peptides (D-gGlu).ket',
+    SequenceName: 'two sequences of peptides (D-gGlu)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 26,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of peptides w_o natural analog (Apm).ket',
+    SequenceName: 'two sequences of peptides w_o natural analog (Apm)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 27,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of phosphates (Test-6-Ph).ket',
+    SequenceName: 'two sequences of phosphates (Test-6-Ph)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 28,
+    FileName: 'KET/Sequence-Mode-Replacement/two sequences of sugars (5A6).ket',
+    SequenceName: 'two sequences of sugars (5A6)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+  {
+    Id: 29,
+    FileName:
+      'KET/Sequence-Mode-Replacement/two sequences of unresolved nucleotide (5Unres).ket',
+    SequenceName: 'two sequences of unresolved nucleotide (5Unres)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  },
+];
+
+const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
+  {
+    Id: 11,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Hcy',
+    MonomerTestId: 'Hcy___homocysteine',
+    MonomerDescription: 'peptide (Hcy)',
+  },
+  {
+    Id: 12,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Test-6-P',
+    MonomerTestId: 'Test-6-P___Test-6-AP-Peptide',
+    MonomerDescription: 'peptide w/o natural analog(Test-6-P)',
+  },
+  {
+    // Custom preset created at BeforeAll section
+    Id: 13,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: '25mo3r(nC6n5C)Test-6-Ph',
+    MonomerTestId: '25mo3r(nC6n5C)Test-6-Ph_nC6n5C_25mo3r_Test-6-Ph',
+    MonomerDescription: 'preset (25mo3r(nC6n5C)Test-6-Ph)',
+  },
+  {
+    // Custom preset created at BeforeAll section
+    Id: 14,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: '25mo3r(nC6n5C)',
+    MonomerTestId: '25mo3r(nC6n5C)_nC6n5C_25mo3r_.',
+    MonomerDescription: 'preset w/o phosphate (25mo3r(nC6n5C))',
+  },
+  {
+    // Custom preset created at BeforeAll section
+    Id: 15,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: '25mo3r()Test-6-Ph',
+    MonomerTestId: '25mo3r()Test-6-Ph_._25mo3r_Test-6-Ph',
+    MonomerDescription: 'preset without base (25mo3r()Test-6-Ph)',
+  },
+  {
+    Id: 16,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Sugars',
+    MonomerAlias: '5formD',
+    MonomerTestId: '5formD___5-Formyl-2-deoxyribose',
+    MonomerDescription: 'sugar (5formD)',
+  },
+  {
+    Id: 17,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Bases',
+    MonomerAlias: 'nC6n2G',
+    MonomerTestId: 'nC6n2G___6-Aminohexyl-2-aminoguanine',
+    MonomerDescription: 'base (nC6n2G)',
+  },
+  {
+    Id: 18,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Phosphates',
+    MonomerAlias: 'Test-6-Ph',
+    MonomerTestId: 'Test-6-Ph___Test-6-AP-Phosphate',
+    MonomerDescription: 'phosphate (Test-6-Ph)',
+  },
+  {
+    Id: 19,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Nucleotides',
+    MonomerAlias: 'AmMC6T',
+    MonomerTestId: 'AmMC6T___Amino Modifier C6 dT',
+    MonomerDescription: 'nucleotide (AmMC6T)',
+  },
+  {
+    Id: 20,
+    MonomerType: 'CHEM',
+    MonomerAlias: 'sDBL',
+    MonomerTestId: 'sDBL___Symmetric Doubler',
+    MonomerDescription: 'CHEM (sDBL)',
+  },
+];
+
+for (const replaceMonomer of withSideConnectionReplaceMonomers) {
+  for (const sequence of twoSequences) {
+    test(`17-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 17
+        Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) 
+                     in sequence with another monomer (of every type) in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select first symbol
+        4. Click on monomer from the library
+        5. Take screenshot to validate that replacement work in Sequence mode canvas
+        6. Switch to Flex mode
+        7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
+      */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbol(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}

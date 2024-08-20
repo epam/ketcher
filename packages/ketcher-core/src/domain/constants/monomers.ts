@@ -6,7 +6,7 @@ import {
   Phosphate,
   Peptide,
   Chem,
-} from 'domain/entities';
+} from 'domain/entities/internal';
 
 export enum RNA_DNA_NON_MODIFIED_PART {
   SUGAR_RNA = 'R',

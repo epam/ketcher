@@ -44199,6 +44199,12 @@
     "id": "SS3___Dipropanol-disulfide",
     "fullName": "Dipropanol-disulfide",
     "alias": "SS3",
+    "idtAliases": {
+      "base": "ThioMC3-D",
+      "modifications": {
+        "endpoint3": "3ThioMC3-D"
+      }
+    },
     "attachmentPoints": [
       {
         "attachmentAtom": 1,

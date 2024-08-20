@@ -1,5 +1,5 @@
 import { Selection } from 'd3';
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { BaseMonomerRenderer } from 'application/render/renderers';
 import { VariantMonomer } from 'domain/entities/VariantMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 

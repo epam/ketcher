@@ -728,7 +728,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           .attr('stroke', '#57FF8F')
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
-          .attr('d', this.path);
+          .attr('d', this.path)
+          .attr('class', 'dynamic-element');
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')

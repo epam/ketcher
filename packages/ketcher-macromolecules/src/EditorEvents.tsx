@@ -35,6 +35,7 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import { debounce } from 'lodash';
 import { Nucleoside, Nucleotide } from 'ketcher-core';
 import {
+  calculateBondPreviewPosition,
   calculateMonomerPreviewTop,
   calculateNucleoElementPreviewTop,
 } from 'helpers';
@@ -159,49 +160,11 @@ export const EditorEvents = () => {
     (e) => {
       const polymerBond = e.target.__data__?.polymerBond;
       if (polymerBond) {
-        const polymerCoordinates = e.target.getBoundingClientRect();
-        const firstMonomerCoordinates =
-          polymerBond.firstMonomer.renderer.rootBoundingClientRect;
-        const secondMonomerCoordinates =
-          polymerBond.secondMonomer.renderer.rootBoundingClientRect;
-        const minX = Math.min(
-          polymerCoordinates.left,
-          firstMonomerCoordinates.left,
-          secondMonomerCoordinates.left,
-        );
-        const minY = Math.min(
-          polymerCoordinates.top,
-          firstMonomerCoordinates.top,
-          secondMonomerCoordinates.top,
-        );
-        const maxX = Math.max(
-          polymerCoordinates.right,
-          firstMonomerCoordinates.right,
-          secondMonomerCoordinates.right,
-        );
-        const maxY = Math.max(
-          polymerCoordinates.bottom,
-          firstMonomerCoordinates.bottom,
-          secondMonomerCoordinates.bottom,
+        const style = calculateBondPreviewPosition(
+          polymerBond,
+          e.target.getBoundingClientRect(),
         );
 
-        // const { width, height, top, left } = polymerCoordinates;
-        const top = minY;
-        const left = minX;
-        const width = maxX - minX;
-        const height = maxY - minY;
-        let style = { top: '', left: '' };
-        if (width > height) {
-          style = {
-            top: `${top + height + 10}px`,
-            left: `${left + width / 2}px`,
-          };
-        } else {
-          style = {
-            top: `${top + height / 2}px`,
-            left: `${left + width + 179}px`,
-          };
-        }
         handleOpenBondPreview(polymerBond, style);
         return;
       }

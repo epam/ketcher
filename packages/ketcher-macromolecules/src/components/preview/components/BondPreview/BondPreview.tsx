@@ -7,6 +7,7 @@ import MonomerOverview from 'components/shared/ConnectionOverview/components/Mon
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import { Container } from './BondPreview.styles';
 import BondAttachmentPoints from 'components/preview/components/BondAttachmentPoints/BondAttachmentPoints';
+import { preview } from '../../../../constants';
 
 interface Props {
   className?: string;
@@ -95,8 +96,8 @@ const BondPreview = ({ className }: Props) => {
 const StyledPreview = styled(BondPreview)`
   z-index: 5;
   position: absolute;
-  width: 358px;
-  height: 268px;
+  width: ${preview.widthForBond}px;
+  height: ${preview.heightForBond}px;
   transform: translate(-50%, 0);
 `;
 

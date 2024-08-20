@@ -268,7 +268,9 @@ export const RnaEditorExpanded = ({
     }
     dispatch(savePreset(newPreset));
     dispatch(setActivePreset(newPreset));
-    editor.events.selectPreset.dispatch(newPreset);
+    if (!isSequenceMode) {
+      editor.events.selectPreset.dispatch(newPreset);
+    }
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
     }, 0);

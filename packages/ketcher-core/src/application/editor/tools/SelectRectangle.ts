@@ -27,7 +27,7 @@ import { Nucleotide } from 'domain/entities/Nucleotide';
 import { SequenceMode } from '../modes';
 import { isMacOs } from 'react-device-detect';
 import { EraserTool } from './Erase';
-import { PolymerBondRenderer } from 'application/render';
+import { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from 'application/render';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -271,7 +271,8 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
-    const renderer: PolymerBondRenderer = event.target.__data__;
+    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
 
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
@@ -282,7 +283,8 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseLeavePolymerBond(event) {
-    const renderer: PolymerBondRenderer = event.target.__data__;
+    const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
     if (!renderer.polymerBond) {
       return;
     }

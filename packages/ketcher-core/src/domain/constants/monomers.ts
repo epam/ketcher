@@ -1,10 +1,12 @@
 import { KetMonomerClass } from 'application/formatters';
-import { Chem } from 'domain/entities/Chem';
-import { Peptide } from 'domain/entities/Peptide';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { RNABase } from 'domain/entities/RNABase';
-import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
-import { Sugar } from 'domain/entities/Sugar';
+import {
+  Sugar,
+  UnsplitNucleotide,
+  RNABase,
+  Phosphate,
+  Peptide,
+  Chem,
+} from 'domain/entities';
 
 export enum RNA_DNA_NON_MODIFIED_PART {
   SUGAR_RNA = 'R',

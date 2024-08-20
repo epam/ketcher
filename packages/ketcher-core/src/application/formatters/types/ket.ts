@@ -112,7 +112,7 @@ export enum KetTemplateType {
   MONOMER_GROUP_TEMPLATE = 'monomerGroupTemplate',
 }
 
-export enum KetVariantMonomerTemplateType {
+export enum KetVariantMonomerTemplateSubType {
   ALTERNATIVES = 'alternatives',
   MIXTURE = 'mixture',
 }
@@ -155,7 +155,7 @@ export interface IKetMonomerTemplate {
 export interface IKetVariantMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
   id: string;
-  subtype: KetVariantMonomerTemplateType;
+  subtype: KetVariantMonomerTemplateSubType;
   options: KetVariantMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
 }

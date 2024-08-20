@@ -1,4 +1,8 @@
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  MonomerItemType,
+  VariantMonomerType,
+} from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -1503,9 +1507,10 @@ export class DrawingEntitiesManager {
       const monomerAddCommand =
         monomer instanceof VariantMonomer
           ? targetDrawingEntitiesManager.addVariantMonomer(
-              monomer.label,
+              {
+                ...monomer.variantMonomerItem,
+              },
               monomer.position,
-              monomer.monomers,
             )
           : targetDrawingEntitiesManager.addMonomer(
               monomer.monomerItem,
@@ -1837,11 +1842,17 @@ export class DrawingEntitiesManager {
   }
 
   private addVariantMonomerChangeModel(
-    label: string,
+    variantMonomerItem: VariantMonomerType,
     position: Vec2,
-    monomers: BaseMonomer[],
+    _monomer?: BaseMonomer,
   ) {
-    const monomer = new VariantMonomer(monomers, position, label);
+    if (_monomer) {
+      this.monomers.set(_monomer.id, _monomer);
+
+      return _monomer;
+    }
+
+    const monomer = new VariantMonomer(variantMonomerItem, position);
 
     this.monomers.set(monomer.id, monomer);
 
@@ -1849,13 +1860,16 @@ export class DrawingEntitiesManager {
   }
 
   public addVariantMonomer(
-    label: string,
+    variantMonomerItem: VariantMonomerType,
     position: Vec2,
-    monomers: BaseMonomer[],
   ) {
     const command = new Command();
     const operation = new MonomerAddOperation(
-      this.addVariantMonomerChangeModel.bind(this, label, position, monomers),
+      this.addVariantMonomerChangeModel.bind(
+        this,
+        variantMonomerItem,
+        position,
+      ),
       () => {},
     );
 

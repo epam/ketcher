@@ -67,7 +67,7 @@ export function variantMonomerToDrawingEntity(
   const monomers = monomerTemplates.map((monomerTemplate) => {
     const monomerItem = {
       label: monomerTemplate.alias,
-      struct: new Struct(),
+      struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,
     };
@@ -77,8 +77,13 @@ export function variantMonomerToDrawingEntity(
   });
 
   return drawingEntitiesManager.addVariantMonomer(
-    node.alias,
+    {
+      monomers,
+      subtype: template.subtype,
+      label: node.alias,
+      options: template.options,
+      idtAliases: template.idtAliases,
+    },
     position,
-    monomers,
   );
 }

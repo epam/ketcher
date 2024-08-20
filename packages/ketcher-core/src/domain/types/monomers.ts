@@ -10,6 +10,8 @@ import {
 import {
   IKetAttachmentPoint,
   IKetIdtAliases,
+  KetVariantMonomerTemplateOption,
+  KetVariantMonomerTemplateSubType,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 
@@ -42,6 +44,14 @@ export type MonomerItemType = {
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
+};
+
+export type VariantMonomerType = {
+  monomers: BaseMonomer[];
+  subtype: KetVariantMonomerTemplateSubType;
+  label: string;
+  options: KetVariantMonomerTemplateOption[];
+  idtAliases?: IKetIdtAliases;
 };
 
 export enum AttachmentPointName {

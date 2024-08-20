@@ -1207,6 +1207,15 @@
         "$ref": "monomerTemplate-DPhe4u___(2R)-2-amino-3-[4-(carbamoylamino)phenyl]propanoic acid"
       },
       {
+        "$ref": "monomerTemplate-meP___N-Methyl-Proline"
+      },
+      {
+        "$ref": "monomerTemplate-meU___N-Methyl-Selenocysteine"
+      },
+      {
+        "$ref": "monomerTemplate-meO___N-Methyl-Pyrrolysine"
+      },
+      {
         "$ref": "monomerTemplate-oC3o___1,3 Propanediol"
       },
       {
@@ -86980,6 +86989,691 @@
       }
     ],
     "naturalAnalogShort": "F"
+  },
+  "monomerTemplate-meP___N-Methyl-Proline": {
+    "type": "monomerTemplate",
+    "atoms": [
+      {
+        "label": "C",
+        "location": [
+          9.217508195019404,
+          -4.125260547796882,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          10.083533598803841,
+          -3.6252605477968816,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          8.351482791234965,
+          -3.625260547796882,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "O",
+        "location": [
+          9.217508195019404,
+          -5.125260547796882,
+          0
+        ]
+      },
+      {
+        "label": "N",
+        "location": [
+          7.437944395659082,
+          -4.031970052301672,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.768775938322349,
+          -3.288827424734712,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          7.268769733532283,
+          -2.4228127679619202,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          8.246934356308754,
+          -2.630758337643295,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          7.230036460169538,
+          -5.010118451247596,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          1
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          2
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          0,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          7
+        ],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [
+          7,
+          6
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          6,
+          5
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          5,
+          4
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          4,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          4,
+          8
+        ]
+      }
+    ],
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "meP___N-Methyl-Proline",
+    "fullName": "N-Methyl-Proline",
+    "alias": "meP",
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            1
+          ]
+        },
+        "type": "left"
+      }
+    ],
+    "naturalAnalogShort": "P"
+  },
+  "monomerTemplate-meU___N-Methyl-Selenocysteine": {
+    "type": "monomerTemplate",
+    "atoms": [
+      {
+        "label": "N",
+        "location": [
+          5.917508195019402,
+          -12.275260299444206,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.783533598803841,
+          -11.775260299444206,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "C",
+        "location": [
+          7.64955900258828,
+          -12.275260299444206,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          8.515584406372719,
+          -11.775260299444206,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          5.051482791234964,
+          -11.775260299444206,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          7.64955900258828,
+          -13.275260299444206,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          5.917508195019402,
+          -13.275260299444206,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.783533598803841,
+          -10.775260299444206,
+          0
+        ]
+      },
+      {
+        "label": "Se",
+        "location": [
+          5.917508195019403,
+          -10.275260299444206,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          5.917508195019404,
+          -9.275260299444206,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          1
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          4
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          6
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          7
+        ],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [
+          7,
+          8
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          8,
+          9
+        ]
+      }
+    ],
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "meU___N-Methyl-Selenocysteine",
+    "fullName": "N-Methyl-Selenocysteine",
+    "alias": "meU",
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            4
+          ]
+        },
+        "type": "left"
+      },
+      {
+        "attachmentAtom": 2,
+        "leavingGroup": {
+          "atoms": [
+            3
+          ]
+        },
+        "type": "right"
+      },
+      {
+        "attachmentAtom": 8,
+        "leavingGroup": {
+          "atoms": [
+            9
+          ]
+        },
+        "type": "side"
+      }
+    ],
+    "naturalAnalogShort": "U"
+  },
+  "monomerTemplate-meO___N-Methyl-Pyrrolysine": {
+    "type": "monomerTemplate",
+    "atoms": [
+      {
+        "label": "N",
+        "location": [
+          5.7425081950194015,
+          -7.7752604484558105,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.608533598803841,
+          -7.2752604484558105,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "C",
+        "location": [
+          7.474559002588279,
+          -7.775260448455811,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          8.340584406372718,
+          -7.275260448455812,
+          0
+        ]
+      },
+      {
+        "label": "H",
+        "location": [
+          4.876482791234963,
+          -7.2752604484558105,
+          0
+        ]
+      },
+      {
+        "label": "O",
+        "location": [
+          7.474559002588278,
+          -8.77526044845581,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          5.7425081950194015,
+          -8.77526044845581,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.608533598803842,
+          -6.2752604484558105,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          7.1085335988038425,
+          -5.409235044671372,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.608533598803843,
+          -4.543209640886933,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          7.108533598803843,
+          -3.6771842371024954,
+          0
+        ]
+      },
+      {
+        "label": "N",
+        "location": [
+          6.608533598803843,
+          -2.8111588333180566,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          7.108533598803844,
+          -1.9451334295336178,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.608533598803845,
+          -1.0791080257491794,
+          0
+        ],
+        "stereoLabel": "abs"
+      },
+      {
+        "label": "O",
+        "location": [
+          8.108533598803845,
+          -1.9451334295336182,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          5.6140313886502575,
+          -0.9745595908229676,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          5.406085818968884,
+          0.0036050319535043673,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          6.272100475741676,
+          0.5035988271634368,
+          0
+        ]
+      },
+      {
+        "label": "N",
+        "location": [
+          7.015243103308636,
+          -0.16556963017329673,
+          0
+        ]
+      },
+      {
+        "label": "C",
+        "location": [
+          4.944903635394974,
+          -1.7177069852364422,
+          0
+        ]
+      }
+    ],
+    "bonds": [
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          1
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          2
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          2,
+          3
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          4
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          2,
+          5
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          0,
+          6
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          1,
+          7
+        ],
+        "stereo": 1
+      },
+      {
+        "type": 1,
+        "atoms": [
+          7,
+          8
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          8,
+          9
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          9,
+          10
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          10,
+          11
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          11,
+          12
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          12,
+          13
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          12,
+          14
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          13,
+          18
+        ]
+      },
+      {
+        "type": 2,
+        "atoms": [
+          18,
+          17
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          17,
+          16
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          16,
+          15
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          15,
+          19
+        ]
+      },
+      {
+        "type": 1,
+        "atoms": [
+          13,
+          15
+        ],
+        "stereo": 1
+      }
+    ],
+    "class": "AminoAcid",
+    "classHELM": "PEPTIDE",
+    "id": "meO___N-Methyl-Pyrrolysine",
+    "fullName": "N-Methyl-Pyrrolysine",
+    "alias": "meO",
+    "attachmentPoints": [
+      {
+        "attachmentAtom": 0,
+        "leavingGroup": {
+          "atoms": [
+            4
+          ]
+        },
+        "type": "left"
+      },
+      {
+        "attachmentAtom": 2,
+        "leavingGroup": {
+          "atoms": [
+            3
+          ]
+        },
+        "type": "right"
+      }
+    ],
+    "naturalAnalogShort": "O"
   },
   "monomerTemplate-oC3o___1,3 Propanediol": {
     "type": "monomerTemplate",

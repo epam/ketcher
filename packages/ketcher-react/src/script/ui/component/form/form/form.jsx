@@ -348,8 +348,6 @@ const SelectOneOf = (props) => {
   );
 };
 
-//
-
 function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
   const ajv = new Ajv({ allErrors: true, verbose: true, strictSchema: false });
   const schemaCopy = cloneDeep(schema);
@@ -379,6 +377,7 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
     key: schema.key || '',
     serialize: (inst) => {
       validate(inst);
+
       return {
         instance: serializeRewrite(serialize, inst, schemaCopy),
         valid: validate(inst),

@@ -19,7 +19,9 @@ import utils from '../editor/shared/utils';
 import { ShowHydrogenLabels } from './restruct/reatom';
 import { RenderOptions } from './render.types';
 
-function defaultOptions(options: RenderOptions): RenderOptions {
+function defaultOptions(renderOptions: RenderOptions): RenderOptions {
+  const options = getOptionsWithConvertedUnits(renderOptions);
+
   const scaleFactorMicro = options.microModeScale || 100;
   const scaleFactorMacro = options.macroModeScale || 200;
 
@@ -62,12 +64,12 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     offset: new Vec2(),
 
     lineWidth: scaleFactorMicro / 20,
-    bondSpace: options.doubleBondWidth || scaleFactorMicro / 7,
-    stereoBond: options.stereoBondWidth || scaleFactorMicro / 7,
+    bondSpace: options.doubleBondWidthInPx || scaleFactorMicro / 7,
+    stereoBond: options.stereoBondWidthInPx || scaleFactorMicro / 7,
     subFontSize,
     font: '30px Arial',
-    fontsz: labelFontSize,
-    fontszsub: subFontSize,
+    fontszInPx: labelFontSize,
+    fontszsubInPx: subFontSize,
     fontRLabel: labelFontSize * 1.2,
     fontRLogic: labelFontSize * 0.7,
 
@@ -76,7 +78,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     /* styles */
     lineattr: {
       stroke: '#000',
-      'stroke-width': options.bondThickness || scaleFactorMicro / 20,
+      'stroke-width': options.bondThicknessInPx || scaleFactorMicro / 20,
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round',
     },
@@ -87,7 +89,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     bondSnappingStyle: {
       fill: '#365CFF',
       stroke: '#365CFF',
-      'stroke-width': options.bondThickness * 1.5,
+      'stroke-width': options.bondThicknessInPx * 1.5,
     },
     /* eslint-enable quote-props */
     selectionStyle: {
@@ -122,6 +124,52 @@ function defaultOptions(options: RenderOptions): RenderOptions {
   };
 
   return Object.assign({}, defaultOptions, options);
+}
+
+// TODO: Find where it's actually needed
+const measureMap = {
+  px: 1,
+  cm: 37.795278,
+  pt: 1.333333,
+  inch: 96,
+};
+
+function convertValue(
+  value: number,
+  measureFrom: keyof typeof measureMap,
+  measureTo: keyof typeof measureMap,
+) {
+  const convertedValue =
+    measureTo === 'px' || measureTo === 'pt'
+      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
+      : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3);
+
+  return Number(convertedValue);
+}
+
+export function getOptionsWithConvertedUnits(
+  options: RenderOptions,
+): RenderOptions {
+  return {
+    ...options,
+    fontszInPx: convertValue(options.fontsz, options.fontszUnit, 'px'),
+    fontszsubInPx: convertValue(options.fontszsub, options.fontszsubUnit, 'px'),
+    doubleBondWidthInPx: convertValue(
+      options.doubleBondWidth,
+      options.doubleBondWidthUnit,
+      'px',
+    ),
+    bondThicknessInPx: convertValue(
+      options.bondThickness,
+      options.bondThicknessUnit,
+      'px',
+    ),
+    stereoBondWidthInPx: convertValue(
+      options.stereoBondWidth,
+      options.stereoBondWidthUnit,
+      'px',
+    ),
+  };
 }
 
 export default defaultOptions;

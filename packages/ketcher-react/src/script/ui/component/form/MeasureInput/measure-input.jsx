@@ -39,6 +39,7 @@ const MeasureInput = ({
 }) => {
   const handleChange = (value) => {
     const isNumber = !isNaN(Number(value));
+
     if (isNumber) {
       onChange(value);
     }
@@ -65,22 +66,5 @@ const MeasureInput = ({
     </div>
   );
 };
-
-// TODO: Find where it's actually needed
-// const measureMap = {
-//   px: 1,
-//   cm: 37.795278,
-//   pt: 1.333333,
-//   inch: 96,
-// };
-//
-// function convertValue(value, measureFrom, measureTo) {
-//   if ((!value && value !== 0) || isNaN(value)) return null; // eslint-disable-line
-//
-//   return measureTo === MeasurementUnits.Px || measureTo === MeasurementUnits.Pt
-//     ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
-//     : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) -
-//         0;
-// }
 
 export default MeasureInput;

@@ -33,6 +33,12 @@ export const setMonomerTemplatePrefix = (templateName: string) =>
   `monomerTemplate-${templateName}`;
 export const setMonomerPrefix = (monomerId: number) => `monomer${monomerId}`;
 
+export const setVariantMonomerTemplatePrefix = (templateName: string) =>
+  `variantMonomerTemplate-${templateName}`;
+
+export const setVariantMonomerPrefix = (monomerId: number) =>
+  `variantMonomer${monomerId}`;
+
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
 };

@@ -1,4 +1,8 @@
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  MonomerItemType,
+  VariantMonomerType,
+} from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -6,6 +10,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
   BaseMonomer,
+  LinkerSequenceNode,
   Phosphate,
   Pool,
   RNABase,
@@ -57,6 +62,7 @@ import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { VariantMonomer } from 'domain/entities/VariantMonomer';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -71,6 +77,7 @@ type RnaPresetAdditionParams = {
   rnaBasePosition: Vec2 | undefined;
   phosphate: MonomerItemType | undefined;
   phosphatePosition: Vec2 | undefined;
+  existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
 };
 
 type NucleotideOrNucleoside = {
@@ -151,11 +158,15 @@ export class DrawingEntitiesManager {
       this.monomers.set(_monomer.id, _monomer);
       return _monomer;
     }
-    const [Monomer] = monomerFactory(monomerItem);
-    const monomer = new Monomer(monomerItem, position);
+    const monomer = this.createMonomer(monomerItem, position);
     monomer.moveAbsolute(position);
     this.monomers.set(monomer.id, monomer);
     return monomer;
+  }
+
+  public createMonomer(monomerItem: MonomerItemType, position: Vec2) {
+    const [Monomer] = monomerFactory(monomerItem);
+    return new Monomer(monomerItem, position);
   }
 
   public updateMonomerItem(
@@ -169,10 +180,25 @@ export class DrawingEntitiesManager {
     return initialMonomer;
   }
 
-  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
+  public addMonomer(
+    monomerItem: MonomerItemType,
+    position: Vec2,
+    _monomer?: BaseMonomer,
+  ) {
     const command = new Command();
+    let addMonomerChangeModelCallback = this.addMonomerChangeModel.bind(
+      this,
+      monomerItem,
+      position,
+    );
+    if (_monomer) {
+      addMonomerChangeModelCallback = addMonomerChangeModelCallback.bind(
+        this,
+        _monomer,
+      );
+    }
     const operation = new MonomerAddOperation(
-      this.addMonomerChangeModel.bind(this, monomerItem, position),
+      addMonomerChangeModelCallback,
       this.deleteMonomerChangeModel.bind(this),
     );
 
@@ -897,6 +923,62 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public addRnaPresetFromNode = (
+    node: Nucleotide | Nucleoside | LinkerSequenceNode,
+  ) => {
+    // TODO: Consider combining it with the method below to avoid code duplication
+    const command = new Command();
+    let previousMonomer: BaseMonomer | undefined;
+    const sugarMonomer = node.monomers.find(
+      (monomer) => monomer instanceof Sugar,
+    ) as Sugar;
+    const phosphateMonomer = node.monomers.find(
+      (monomer) => monomer instanceof Phosphate,
+    ) as Phosphate;
+    const rnaBaseMonomer = node.monomers.find(
+      (monomer) => monomer instanceof RNABase,
+    ) as RNABase;
+    const monomers = [rnaBaseMonomer, sugarMonomer, phosphateMonomer].filter(
+      (monomer) => monomer !== undefined,
+    ) as BaseMonomer[];
+
+    monomers.forEach((monomer) => {
+      const monomerAddOperation = new MonomerAddOperation(
+        this.addMonomerChangeModel.bind(
+          this,
+          monomer.monomerItem,
+          monomer.position,
+          monomer,
+        ),
+        this.deleteMonomerChangeModel.bind(this),
+      );
+
+      command.addOperation(monomerAddOperation);
+      if (previousMonomer) {
+        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
+
+        assert(attPointStart);
+        assert(attPointEnd);
+
+        const operation = new PolymerBondFinishCreationOperation(
+          this.finishPolymerBondCreationModelChange.bind(
+            this,
+            previousMonomer,
+            monomer,
+            attPointStart,
+            attPointEnd,
+          ),
+          this.deletePolymerBondChangeModel.bind(this),
+        );
+        command.addOperation(operation);
+      }
+      previousMonomer = monomer;
+    });
+
+    return command;
+  };
+
   public addRnaPreset({
     sugar,
     sugarPosition,
@@ -1422,10 +1504,18 @@ export class DrawingEntitiesManager {
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
-      const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
-        monomer.monomerItem,
-        monomer.position,
-      );
+      const monomerAddCommand =
+        monomer instanceof VariantMonomer
+          ? targetDrawingEntitiesManager.addVariantMonomer(
+              {
+                ...monomer.variantMonomerItem,
+              },
+              monomer.position,
+            )
+          : targetDrawingEntitiesManager.addMonomer(
+              monomer.monomerItem,
+              monomer.position,
+            );
 
       command.merge(monomerAddCommand);
 
@@ -1747,6 +1837,43 @@ export class DrawingEntitiesManager {
         }),
       ),
     );
+
+    return command;
+  }
+
+  private addVariantMonomerChangeModel(
+    variantMonomerItem: VariantMonomerType,
+    position: Vec2,
+    _monomer?: BaseMonomer,
+  ) {
+    if (_monomer) {
+      this.monomers.set(_monomer.id, _monomer);
+
+      return _monomer;
+    }
+
+    const monomer = new VariantMonomer(variantMonomerItem, position);
+
+    this.monomers.set(monomer.id, monomer);
+
+    return monomer;
+  }
+
+  public addVariantMonomer(
+    variantMonomerItem: VariantMonomerType,
+    position: Vec2,
+  ) {
+    const command = new Command();
+    const operation = new MonomerAddOperation(
+      this.addVariantMonomerChangeModel.bind(
+        this,
+        variantMonomerItem,
+        position,
+      ),
+      () => {},
+    );
+
+    command.addOperation(operation);
 
     return command;
   }

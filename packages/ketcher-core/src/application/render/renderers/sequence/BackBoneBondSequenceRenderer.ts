@@ -6,15 +6,15 @@ export class BackBoneBondSequenceRenderer extends BaseSequenceRenderer {
     super(polymerBond);
   }
 
-  public get isSnake() {
+  public get isSnake(): false {
     return false;
   }
 
-  public isMonomersOnSameHorizontalLine() {
+  public isMonomersOnSameHorizontalLine(): false {
     return false;
   }
 
-  public moveStart() {}
+  public moveStart(): void {}
 
-  public moveEnd() {}
+  public moveEnd(): void {}
 }

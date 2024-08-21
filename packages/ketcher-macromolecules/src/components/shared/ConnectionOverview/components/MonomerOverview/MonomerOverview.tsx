@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { BaseMonomer } from 'ketcher-core';
+import { MonomerItemType, UsageInMacromolecule } from 'ketcher-core';
 import {
   AttachmentPointList,
   StyledStructRender,
@@ -7,10 +7,12 @@ import {
 import UnresolvedMonomerPreview from 'components/preview/components/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
 
 interface Props {
-  monomer: BaseMonomer;
+  monomer: MonomerItemType;
   attachmentPoints: ReactNode;
+  usage: UsageInMacromolecule;
   connectedAttachmentPoints?: string[];
   selectedAttachmentPoint?: string | null;
+  needCache?: boolean;
   update?: boolean;
   expanded?: boolean;
 }
@@ -20,10 +22,12 @@ const MonomerOverview = ({
   attachmentPoints,
   connectedAttachmentPoints,
   selectedAttachmentPoint,
+  usage,
+  needCache,
   update,
   expanded,
 }: Props) => {
-  const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
+  const isUnresolvedMonomer = monomer.props.unresolved;
 
   return (
     <>
@@ -31,13 +35,14 @@ const MonomerOverview = ({
         <UnresolvedMonomerPreview />
       ) : (
         <StyledStructRender
-          struct={monomer.monomerItem.struct}
+          struct={monomer.struct}
           options={{
             connectedMonomerAttachmentPoints: connectedAttachmentPoints,
             currentlySelectedMonomerAttachmentPoint:
               selectedAttachmentPoint ?? undefined,
+            usageInMacromolecule: usage,
             labelInMonomerConnectionsModal: true,
-            needCache: false,
+            needCache: needCache ?? false,
           }}
           update={update}
           isExpanded={expanded}

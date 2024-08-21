@@ -16,10 +16,10 @@
 
 import { useMemo } from 'react';
 import {
-  MonomerName,
   Container,
-  StyledStructRender,
   InfoBlock,
+  MonomerName,
+  StyledStructRender,
 } from './MonomerPreview.styles';
 import styled from '@emotion/styled';
 import { MonomerPreviewState, selectShowPreview } from 'state/common';
@@ -30,6 +30,7 @@ import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMono
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import IDTAliases from '../IDTAliases/IDTAliases';
 import { preview } from '../../../../constants';
+import { UsageInMacromolecule } from 'ketcher-core';
 
 interface Props {
   className?: string;
@@ -86,6 +87,7 @@ const MonomerPreview = ({ className }: Props) => {
           struct={monomer.struct}
           options={{
             connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+            usageInMacromolecule: UsageInMacromolecule.MonomerPreview,
             labelInPreview: true,
             needCache: false,
           }}

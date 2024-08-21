@@ -10,7 +10,7 @@ import {
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
-import { BaseMonomer, LeavingGroup } from 'ketcher-core';
+import { BaseMonomer, LeavingGroup, UsageInMacromolecule } from 'ketcher-core';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
@@ -233,9 +233,10 @@ function AttachmentPointSelectionPanel({
 
   return (
     <MonomerOverview
-      monomer={monomer}
+      monomer={monomer.monomerItem}
       connectedAttachmentPoints={connectedAttachmentPoints}
       selectedAttachmentPoint={selectedAttachmentPoint}
+      usage={UsageInMacromolecule.MonomerConnectionsModal}
       update={expanded}
       expanded={expanded}
       attachmentPoints={monomer.listOfAttachmentPoints.map(

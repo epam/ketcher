@@ -8,6 +8,7 @@ import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import { Container } from './BondPreview.styles';
 import BondAttachmentPoints from 'components/preview/components/BondAttachmentPoints/BondAttachmentPoints';
 import { preview } from '../../../../constants';
+import { UsageInMacromolecule } from 'ketcher-core';
 
 interface Props {
   className?: string;
@@ -64,7 +65,8 @@ const BondPreview = ({ className }: Props) => {
         secondMonomer={secondMonomer}
         firstMonomerOverview={
           <MonomerOverview
-            monomer={firstMonomer}
+            monomer={firstMonomer.monomerItem}
+            usage={UsageInMacromolecule.BondPreview}
             connectedAttachmentPoints={firstMonomerConnectedAPs}
             selectedAttachmentPoint={firstMonomerAttachmentPoint}
             attachmentPoints={
@@ -77,7 +79,8 @@ const BondPreview = ({ className }: Props) => {
         }
         secondMonomerOverview={
           <MonomerOverview
-            monomer={secondMonomer}
+            monomer={secondMonomer.monomerItem}
+            usage={UsageInMacromolecule.BondPreview}
             connectedAttachmentPoints={secondMonomerConnectedAPs}
             selectedAttachmentPoint={secondMonomerAttachmentPoint}
             attachmentPoints={

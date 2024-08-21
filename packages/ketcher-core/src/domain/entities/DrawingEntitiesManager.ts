@@ -1,4 +1,8 @@
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  MonomerItemType,
+  VariantMonomerType,
+} from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -58,6 +62,7 @@ import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { VariantMonomer } from 'domain/entities/VariantMonomer';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1499,10 +1504,18 @@ export class DrawingEntitiesManager {
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
-      const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
-        monomer.monomerItem,
-        monomer.position,
-      );
+      const monomerAddCommand =
+        monomer instanceof VariantMonomer
+          ? targetDrawingEntitiesManager.addVariantMonomer(
+              {
+                ...monomer.variantMonomerItem,
+              },
+              monomer.position,
+            )
+          : targetDrawingEntitiesManager.addMonomer(
+              monomer.monomerItem,
+              monomer.position,
+            );
 
       command.merge(monomerAddCommand);
 
@@ -1824,6 +1837,43 @@ export class DrawingEntitiesManager {
         }),
       ),
     );
+
+    return command;
+  }
+
+  private addVariantMonomerChangeModel(
+    variantMonomerItem: VariantMonomerType,
+    position: Vec2,
+    _monomer?: BaseMonomer,
+  ) {
+    if (_monomer) {
+      this.monomers.set(_monomer.id, _monomer);
+
+      return _monomer;
+    }
+
+    const monomer = new VariantMonomer(variantMonomerItem, position);
+
+    this.monomers.set(monomer.id, monomer);
+
+    return monomer;
+  }
+
+  public addVariantMonomer(
+    variantMonomerItem: VariantMonomerType,
+    position: Vec2,
+  ) {
+    const command = new Command();
+    const operation = new MonomerAddOperation(
+      this.addVariantMonomerChangeModel.bind(
+        this,
+        variantMonomerItem,
+        position,
+      ),
+      () => {},
+    );
+
+    command.addOperation(operation);
 
     return command;
   }

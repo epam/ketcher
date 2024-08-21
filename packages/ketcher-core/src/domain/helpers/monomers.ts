@@ -8,6 +8,8 @@ import {
 } from 'domain/entities';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { IVariantMonomer } from 'domain/entities/types';
+import { KetMonomerClass } from 'application/formatters';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -185,3 +187,7 @@ export function isValidNucleoside(
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
   return !nextMonomerAfterPhosphate;
 }
+
+export const isRnaBaseVariantMonomer = (
+  monomer: BaseMonomer & IVariantMonomer,
+) => monomer.monomerClass === KetMonomerClass.Base;

@@ -164,7 +164,6 @@ test.describe('PPTX files', () => {
     Update screenshots after fix.
     */
       test.info().fixme();
-      test.fail();
       const maxTimeout = 210000;
       test.setTimeout(maxTimeout);
 

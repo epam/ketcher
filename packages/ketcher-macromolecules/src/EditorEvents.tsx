@@ -267,12 +267,14 @@ export const EditorEvents = () => {
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
+    editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
+      editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
       editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);

@@ -696,6 +696,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseOverPolymerBond.dispatch(event);
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMovePolymerBond.dispatch(event);
+      })
       .on('mouseout', (event) => {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);

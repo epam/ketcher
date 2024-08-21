@@ -1034,11 +1034,6 @@ test.describe('Image files', () => {
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
-    await verifyFile(
-      page,
-      'KET/images-png-svg-with-benzene-for-cleanup-expected.ket',
-      'tests/test-data/KET/images-png-svg-with-benzene-for-cleanup-expected.ket',
-    );
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements', async ({

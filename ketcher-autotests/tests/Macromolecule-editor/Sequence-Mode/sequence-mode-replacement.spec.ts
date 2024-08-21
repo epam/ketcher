@@ -76,7 +76,7 @@ test.afterAll(async ({ browser }) => {
 });
 
 interface IBugsInTests {
-  TestNameContains: string;
+  // TestNameContains?: string;
   BugNumber: string;
 }
 interface IReplaceMonomer {
@@ -101,16 +101,14 @@ interface ISequence {
   SequenceName: string;
   ReplacementPositions: IReplacementPosition;
   ConfirmationOnReplecement?: boolean;
-  KnownBugs?: boolean;
-  BugsInTests?: IBugsInTests[];
 }
 
-interface IFailedTest {
-  ReplaceMonomerId?: number;
+interface IFailedTestSequenceReplaceMonomer {
+  TestNameContains?: string;
   SequenceId?: number;
-  ReplacementSybolPosition?: number;
-  IssueNumber: string;
-  Description?: string;
+  ReplaceMonomerId?: number;
+  BugsInTests: string[];
+  // IBugsInTests[];
 }
 
 const replaceMonomers: IReplaceMonomer[] = [
@@ -231,17 +229,6 @@ const sequences: ISequence[] = [
     SequenceName: 'sequence of presets without base (SGNA()ibun)',
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-    ],
   },
   {
     Id: 6,
@@ -249,17 +236,6 @@ const sequences: ISequence[] = [
     SequenceName: 'sequence of sugars (UNA)',
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-    ],
   },
   {
     Id: 7,
@@ -267,17 +243,6 @@ const sequences: ISequence[] = [
     SequenceName: 'sequence of bases (nC6n5U)',
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-    ],
   },
   {
     Id: 8,
@@ -285,17 +250,6 @@ const sequences: ISequence[] = [
     SequenceName: 'sequence of phosphates (moen)',
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5236',
-      },
-    ],
   },
   {
     Id: 9,
@@ -311,17 +265,6 @@ const sequences: ISequence[] = [
     SequenceName:
       'sequence of unsplit nucleotides w/o natural analog (5NitInd)',
     ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
-      },
-    ],
   },
   {
     Id: 11,
@@ -329,17 +272,6 @@ const sequences: ISequence[] = [
     SequenceName: 'sequence of CHEMs (A6OH)',
     ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
     ConfirmationOnReplecement: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: 'in view mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
-      },
-      {
-        TestNameContains: 'in edit mode',
-        BugNumber: 'https://github.com/epam/ketcher/issues/5240',
-      },
-    ],
   },
   {
     Id: 12,
@@ -350,14 +282,288 @@ const sequences: ISequence[] = [
   },
 ];
 
-const FailedTests: IFailedTest[] = [
+const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
   {
+    TestNameContains: 'Case 1-',
     SequenceId: 5,
-    IssueNumber: 'https://github.com/epam/ketcher/issues/5236',
-    Description:
-      '@A@A@ should go to CCCA@A@ if we replace first sybol on A monomer - all monomers wrapped into @ have to be replaced',
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 1-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 1-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 1-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 1-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 1-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 2-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 3-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 4-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 5-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 6-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 13-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 5,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 6,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 7,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 8,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5236'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 10,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    TestNameContains: 'Case 14-',
+    SequenceId: 11,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5240'],
+  },
+  {
+    // Preset without base replaced wrong - losts phosphate
+    ReplaceMonomerId: 3,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5337'],
+  },
+  {
+    TestNameContains: 'Case 17-',
+    SequenceId: 13,
+    ReplaceMonomerId: 13,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5333'],
+  },
+  {
+    TestNameContains: 'Case 8-',
+    ReplaceMonomerId: 17,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5313'],
+  },
+  {
+    TestNameContains: 'Case 11-',
+    ReplaceMonomerId: 17,
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5313'],
   },
 ];
+
+function filterBugsInTests(
+  testName: string,
+  sequenceId: number,
+  replaceMonomerId: number,
+): string[] {
+  return FailedTestSequenceReplaceMonomers.filter((item) => {
+    const testNameMatch =
+      item.TestNameContains === undefined ||
+      testName.includes(item.TestNameContains);
+    const sequenceIdMatch =
+      item.SequenceId === undefined || item.SequenceId === sequenceId;
+    const replaceMonomerIdMatch =
+      item.ReplaceMonomerId === undefined ||
+      item.ReplaceMonomerId === replaceMonomerId;
+
+    return testNameMatch && sequenceIdMatch && replaceMonomerIdMatch;
+  }).flatMap((item) => item.BugsInTests || []);
+}
 
 async function createTestPresets(page: Page) {
   await goToRNATab(page);
@@ -379,6 +585,45 @@ async function createTestPresets(page: Page) {
   await moveMouseAway(page);
   await selectBaseSlot(page);
   await page.getByTestId('A___Adenine').click();
+  await moveMouseAway(page);
+  await pressAddToPresetsButton(page);
+
+  // Create preset 25mo3r(nC6n5C)Test-6-Ph
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await page
+    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
+    .click();
+  await moveMouseAway(page);
+  await selectBaseSlot(page);
+  await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
+  await moveMouseAway(page);
+  await selectPhosphateSlot(page);
+  await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
+  await moveMouseAway(page);
+  await pressAddToPresetsButton(page);
+
+  // Create preset 25mo3r(nC6n5C)
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await page
+    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
+    .click();
+  await moveMouseAway(page);
+  await selectBaseSlot(page);
+  await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
+  await moveMouseAway(page);
+  await pressAddToPresetsButton(page);
+
+  // Create preset 25mo3r()Test-6-Ph
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await page
+    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
+    .click();
+  await moveMouseAway(page);
+  await selectPhosphateSlot(page);
+  await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
   await moveMouseAway(page);
   await pressAddToPresetsButton(page);
 }
@@ -596,29 +841,22 @@ async function checkForKnownBugs(
   sequence: ISequence,
   replacementPosition: number,
 ) {
-  // Check if particular sequence has any known bugs that makes test case works wrong
-  const sequenceMatchingBugs =
-    sequence.BugsInTests?.filter((bug) =>
-      test.info().title.includes(bug.TestNameContains),
-    ) || [];
+  // Check if particular combination of test, sequence, replaceMonomer has any known bugs that makes test case works wrong
+  const testSequenceReplaceMonomersMatchingBugs = filterBugsInTests(
+    test.info().title,
+    sequence.Id,
+    replaceMonomer.Id,
+  );
 
-  const replaceMonomerMatchingBugs =
-    replaceMonomer.BugsInTests?.filter((bug) =>
-      test.info().title.includes(bug.TestNameContains),
-    ) || [];
-
-  const allMatchingBugs = [
-    ...sequenceMatchingBugs,
-    ...replaceMonomerMatchingBugs,
-  ];
+  const allMatchingBugs = [...testSequenceReplaceMonomersMatchingBugs];
 
   if (allMatchingBugs && allMatchingBugs.length > 0) {
     addAnnotation(`That test works wrong because of bug(s):`);
     allMatchingBugs.forEach((bug) => {
-      addAnnotation(`${bug.BugNumber}`);
+      addAnnotation(`${bug}`);
     });
     addAnnotation(
-      `If all bugs has been fixed - screenshots have to be updated, sequence at sequences have to be corrected.`,
+      `If all bugs has been fixed - screenshots have to be updated, propper items in FailedTestSequenceReplaceMonomers collection have to be removed.`,
     );
     addAnnotation(`SequenceId: ${sequence.Id}`);
     addAnnotation(`ReplaceMonomerId: ${replaceMonomer.Id}`);
@@ -642,7 +880,7 @@ async function closeErrorMessage(page: Page) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+    test(`Case 1-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 1
         Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in view mode
@@ -679,7 +917,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`2-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+    test(`Case 2-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 2
         Description: User can replace symbol (of every type) in the midle of sequence with another monomer (of every type) in view mode
@@ -716,7 +954,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`3-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+    test(`Case 3-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 3
           Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in view mode
@@ -753,7 +991,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`4-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+    test(`Case 4-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 4
           Description: User can replace first symbol (of every type) in sequence with another monomer (of every type) in edit mode
@@ -790,7 +1028,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`5-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+    test(`Case 5-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 5
           Description: User can replace symbol (of every type) in the middle of sequence with another monomer (of every type) in edit mode
@@ -827,7 +1065,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`6-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+    test(`Case 6-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
             Test case: https://github.com/epam/ketcher/issues/5290 - Test case 6
             Description: User can replace end symbol (of every type) in the sequence with another monomer (of every type) in edit mode
@@ -896,7 +1134,7 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 7
@@ -956,13 +1194,6 @@ const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     MonomerTestId: "5cGT___2-(methylamino)acetamide (GeneTools 5'-cap for PMO)",
     MonomerDescription: 'sugar w/o R1 (5cGT)',
     ShouldFail: true,
-    KnownBugs: true,
-    BugsInTests: [
-      {
-        TestNameContains: "Can't replace symbol in the center of",
-        BugNumber: 'https://github.com/epam/ketcher/issues/5313',
-      },
-    ],
   },
 ];
 
@@ -973,7 +1204,7 @@ const noR1orR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 8
@@ -1018,7 +1249,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 9
@@ -1063,7 +1294,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 10
@@ -1102,7 +1333,7 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 11
@@ -1147,7 +1378,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 12
@@ -1192,7 +1423,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`13-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+    test(`Case 13-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 13
         Description: User can replace all symbols (of every type) in sequence with another monomer (of every type) in view mode
@@ -1224,7 +1455,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const replaceMonomer of replaceMonomers) {
   for (const sequence of sequences) {
-    test(`14-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
+    test(`Case 14-${sequence.Id}-${replaceMonomer.Id}. Replace all symbols at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in view mode`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 14
         Description: User can replace all symbols (of every type) in sequence with another monomer (of every type) in edit mode
@@ -1260,7 +1491,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 15
@@ -1304,7 +1535,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 16
@@ -1368,21 +1599,21 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U) w_o phosphate.ket',
     SequenceName:
       'base to sugar connected two sequences of presets (U) w_o phosphate',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
   },
   {
     Id: 16,
     FileName:
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
     SequenceName: 'base to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
   },
   {
     Id: 17,
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to base connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to base connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
   },
   {
     Id: 18,
@@ -1390,7 +1621,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 2, Center: 4, RightEnd: 6 },
   },
   {
     Id: 19,
@@ -1398,7 +1629,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U).ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
   },
   {
     Id: 20,
@@ -1406,69 +1637,74 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to sugar connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 2, Center: 4, RightEnd: 6 },
+    ConfirmationOnReplecement: true,
   },
   {
     Id: 21,
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
   },
   {
     Id: 22,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequence of unsplit nucleotides (AmMC6T).ket',
     SequenceName: 'two sequence of unsplit nucleotides (AmMC6T)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
   },
   {
     Id: 23,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of bases (nC6n5U).ket',
     SequenceName: 'two sequences of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ConfirmationOnReplecement: true,
   },
   {
     Id: 24,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of CHEMs (4aPEGMal).ket',
     SequenceName: 'two sequences of CHEMs (4aPEGMal)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ConfirmationOnReplecement: true,
   },
   {
     Id: 25,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides (D-gGlu).ket',
     SequenceName: 'two sequences of peptides (D-gGlu)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
   },
   {
     Id: 26,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides w_o natural analog (Apm).ket',
     SequenceName: 'two sequences of peptides w_o natural analog (Apm)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
   },
   {
     Id: 27,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of phosphates (Test-6-Ph).ket',
     SequenceName: 'two sequences of phosphates (Test-6-Ph)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ConfirmationOnReplecement: true,
   },
   {
     Id: 28,
     FileName: 'KET/Sequence-Mode-Replacement/two sequences of sugars (5A6).ket',
     SequenceName: 'two sequences of sugars (5A6)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ConfirmationOnReplecement: true,
   },
   {
     Id: 29,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of unresolved nucleotide (5Unres).ket',
     SequenceName: 'two sequences of unresolved nucleotide (5Unres)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
   },
 ];
 
@@ -1557,7 +1793,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
 
 for (const replaceMonomer of withSideConnectionReplaceMonomers) {
   for (const sequence of twoSequences) {
-    test(`17-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
+    test(`Case 17-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 17
         Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) 
@@ -1572,6 +1808,8 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         7. Take screenshot to validate that replacement work in Flex mode canvas
         8. Add info to log if known bugs exist and skip test
       */
+      test.setTimeout(20000);
+
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceSymbol(
         page,

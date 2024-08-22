@@ -94,7 +94,6 @@ const PresetStyledPreview = styled(PresetPreview)`
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;
-  transform: translate(-50%, 0);
 `;
 
 export default PresetStyledPreview;

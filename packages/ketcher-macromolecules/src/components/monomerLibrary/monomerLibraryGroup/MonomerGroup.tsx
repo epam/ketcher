@@ -31,7 +31,6 @@ import {
   MonomerPreviewState,
   PreviewType,
   selectEditor,
-  selectShowPreview,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -51,7 +50,6 @@ const MonomerGroup = ({
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
-  const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
@@ -101,9 +99,6 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
-    if (preview.type === PreviewType.Monomer || !e.currentTarget) {
-      return;
-    }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
     const style = { right: '-88px', top };

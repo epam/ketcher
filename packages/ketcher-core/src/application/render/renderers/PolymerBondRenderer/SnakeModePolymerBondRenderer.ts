@@ -948,6 +948,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     this.isSnakeBond = true;
   }
+
+  public remove() {
+    super.remove();
+    if (this.polymerBond.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
+  }
 }
 
 function generateBend(

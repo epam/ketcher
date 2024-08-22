@@ -112,7 +112,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
         type: 'OPENED',
         data: { menuName, isSelected },
       }),
-    onFullscreen: () => dispatchAction('fullscreen'),
+    onFullscreen: (element: HTMLDivElement) =>
+      dispatch(onAction(action.fullscreen.action(element))),
     onHelp: () => dispatchAction('help'),
     onAbout: () => dispatchAction('about'),
     onToggleExplicitHydrogens: () => dispatchAction('explicit-hydrogens'),

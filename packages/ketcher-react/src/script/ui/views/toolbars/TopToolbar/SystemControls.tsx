@@ -16,6 +16,7 @@
 
 import styled from '@emotion/styled';
 import { shortcutStr } from 'ketcher-core';
+import { useRef, useCallback } from 'react';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
@@ -25,7 +26,7 @@ interface SystemControlsProps {
   onSettingsOpen: () => void;
   onAboutOpen: () => void;
   onHistoryClick: () => void;
-  onFullscreen: () => void;
+  onFullscreen: (element: HTMLDivElement) => void;
   onHelp: () => void;
 }
 
@@ -55,8 +56,15 @@ export const SystemControls = ({
   onAboutOpen,
   className,
 }: SystemControlsProps) => {
+  const controlPanelRef = useRef<HTMLDivElement>(null);
+  const onFullscreenCallback = useCallback(() => {
+    if (controlPanelRef.current) {
+      onFullscreen(controlPanelRef.current);
+    }
+  }, [controlPanelRef]);
+
   return (
-    <ControlsPanel className={className}>
+    <ControlsPanel className={className} ref={controlPanelRef}>
       {/* Uncomment upon History log implementation */}
       {/* <IconButton
         title="History"
@@ -92,7 +100,7 @@ export const SystemControls = ({
       />
       <TopToolbarIconButton
         title="Fullscreen mode"
-        onClick={onFullscreen}
+        onClick={onFullscreenCallback}
         iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
         disabled={disabledButtons.includes('fullscreen')}
         isHidden={hiddenButtons.includes('fullscreen')}

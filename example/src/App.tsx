@@ -64,7 +64,7 @@ if (enablePolymerEditor) {
   PolymerEditor = Editor as PolymerType;
 }
 
-const EXTERNAL_ZOOM_SCALE = 0.5;
+const EXTERNAL_ZOOM_SCALE = 1;
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();

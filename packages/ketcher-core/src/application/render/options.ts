@@ -126,7 +126,6 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
   return Object.assign({}, defaultOptions, options);
 }
 
-// TODO: Find where it's actually needed
 const measureMap = {
   px: 1,
   cm: 37.795278,
@@ -150,25 +149,61 @@ function convertValue(
 export function getOptionsWithConvertedUnits(
   options: RenderOptions,
 ): RenderOptions {
+  const convertedOptions: Partial<
+    Pick<
+      RenderOptions,
+      | 'fontszInPx'
+      | 'fontszsubInPx'
+      | 'doubleBondWidthInPx'
+      | 'bondThicknessInPx'
+      | 'stereoBondWidthInPx'
+    >
+  > = {};
+  const defaultUnit = 'px';
+
+  if (typeof options.fontsz !== 'undefined') {
+    convertedOptions.fontszInPx = convertValue(
+      options.fontsz,
+      options.fontszUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
+  if (typeof options.fontszsub !== 'undefined') {
+    convertedOptions.fontszsubInPx = convertValue(
+      options.fontszsub,
+      options.fontszsubUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
+  if (typeof options.doubleBondWidth !== 'undefined') {
+    convertedOptions.doubleBondWidthInPx = convertValue(
+      options.doubleBondWidth,
+      options.doubleBondWidthUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
+  if (typeof options.bondThickness !== 'undefined') {
+    convertedOptions.bondThicknessInPx = convertValue(
+      options.bondThickness,
+      options.bondThicknessUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
+  if (typeof options.stereoBondWidth !== 'undefined') {
+    convertedOptions.stereoBondWidthInPx = convertValue(
+      options.stereoBondWidth,
+      options.stereoBondWidthUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
   return {
     ...options,
-    fontszInPx: convertValue(options.fontsz, options.fontszUnit, 'px'),
-    fontszsubInPx: convertValue(options.fontszsub, options.fontszsubUnit, 'px'),
-    doubleBondWidthInPx: convertValue(
-      options.doubleBondWidth,
-      options.doubleBondWidthUnit,
-      'px',
-    ),
-    bondThicknessInPx: convertValue(
-      options.bondThickness,
-      options.bondThicknessUnit,
-      'px',
-    ),
-    stereoBondWidthInPx: convertValue(
-      options.stereoBondWidth,
-      options.stereoBondWidthUnit,
-      'px',
-    ),
+    ...convertedOptions,
   };
 }
 

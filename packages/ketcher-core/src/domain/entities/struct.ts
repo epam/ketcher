@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import { EditorSelection } from 'application/editor';
+import { EditorSelection, getStereoAtomsMap } from 'application/editor';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -1071,6 +1071,26 @@ export class Struct {
         }
       });
     }
+  }
+
+  public setStereoLabelsToAtoms() {
+    const stereAtomsMap = getStereoAtomsMap(
+      this,
+      Array.from(this.bonds.values()),
+    );
+
+    this.atoms.forEach((atom, id) => {
+      if (this?.atomGetNeighbors(id)?.length === 0) {
+        atom.stereoLabel = null;
+        atom.stereoParity = 0;
+      } else {
+        const stereoProp = stereAtomsMap.get(id);
+        if (stereoProp) {
+          atom.stereoLabel = stereoProp.stereoLabel;
+          atom.stereoParity = stereoProp.stereoParity;
+        }
+      }
+    });
   }
 
   atomGetNeighbors(aid: number): Array<Neighbor> | undefined {

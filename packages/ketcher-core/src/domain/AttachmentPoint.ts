@@ -151,6 +151,7 @@ export class AttachmentPoint {
     monomerCenter: Coordinates,
     attachmentPointCenter: Coordinates,
     angleDegrees: number,
+    hasBond: boolean,
   ) {
     if (!this.element) {
       return;
@@ -191,7 +192,7 @@ export class AttachmentPoint {
       .attr('stroke-width', '1px')
       .attr('fill', '#0097A8')
       .style('opacity', '0')
-      .style('pointer-events', 'auto')
+      .style('pointer-events', hasBond ? 'none' : 'auto')
       .attr(
         'transform',
         `translate(${attachmentPointCenter.x},${attachmentPointCenter.y})rotate(${rotation})`,
@@ -263,6 +264,7 @@ export class AttachmentPoint {
       attachmentToCenterCoordinates,
       attachmentPointCoordinates,
       angleDegrees,
+      Boolean(polymerBond),
     );
 
     this.hoverableArea = hoverableArea;

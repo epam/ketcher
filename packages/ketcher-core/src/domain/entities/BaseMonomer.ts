@@ -1,6 +1,10 @@
 import { DrawingEntity, DrawingEntityConfig } from './DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  AttachmentPointsToBonds,
+  MonomerItemType,
+} from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -22,17 +26,13 @@ export type BaseMonomerConfig = DrawingEntityConfig;
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
-  public attachmentPointsToBonds: Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > = {};
+  public attachmentPointsToBonds: AttachmentPointsToBonds = {};
 
   public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
   public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
   public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
-  public potentialAttachmentPointsToBonds: {
-    [key: string]: PolymerBond | null | undefined;
-  } = {};
+  public potentialAttachmentPointsToBonds: AttachmentPointsToBonds = {};
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
@@ -318,9 +318,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     return Boolean(this.getPotentialBondByAttachmentPoint(attachmentPointName));
   }
 
-  private getAttachmentPointDict(): Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > {
+  private getAttachmentPointDict(): AttachmentPointsToBonds {
     if (this.monomerItem.attachmentPoints) {
       const { attachmentPointDictionary } =
         BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
@@ -335,9 +333,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public static getAttachmentPointDictFromMonomerDefinition(
     attachmentPoints: IKetAttachmentPoint[],
   ): {
-    attachmentPointDictionary: Partial<
-      Record<AttachmentPointName, PolymerBond | null>
-    >;
+    attachmentPointDictionary: AttachmentPointsToBonds;
     attachmentPointsList: AttachmentPointName[];
   } {
     const attachmentPointDictionary = {};
@@ -440,9 +436,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     return superatomWithoutLabel.getAttachmentPoints();
   }
 
-  public getAttachmentPointDictFromAtoms(): Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > {
+  public getAttachmentPointDictFromAtoms(): AttachmentPointsToBonds {
     const attachmentPointNameToBond = {};
 
     this.superatomAttachmentPoints.forEach((superatomAttachmentPoint) => {

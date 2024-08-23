@@ -6,12 +6,14 @@ import {
   RNABase,
   Struct,
   Sugar,
+  PolymerBond,
 } from 'domain/entities';
 import {
   IKetAttachmentPoint,
   IKetIdtAliases,
   KetVariantMonomerTemplateOption,
   KetVariantMonomerTemplateSubType,
+  KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 
@@ -36,8 +38,7 @@ export type MonomerItemType = {
     MonomerCaps?: { [key: string]: string };
     MonomerCode?: string;
     MonomerType?: string;
-    // TODO: Specify the type. `readonly MonomerClass: KetMonomerClass`?
-    MonomerClass?: string;
+    MonomerClass?: KetMonomerClass;
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
@@ -92,3 +93,7 @@ export type AttachmentPointConstructorParams = {
 };
 
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
+
+export type AttachmentPointsToBonds = Partial<
+  Record<AttachmentPointName, PolymerBond | null>
+>;

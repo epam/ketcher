@@ -110,6 +110,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseOverPolymerBond.dispatch(event);
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMovePolymerBond.dispatch(event);
+      })
       .on('mouseout', (event) => {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
@@ -234,5 +237,12 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');
+  }
+
+  public remove() {
+    super.remove();
+    if (this.polymerBond.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
   }
 }

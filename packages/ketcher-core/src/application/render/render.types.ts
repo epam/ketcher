@@ -3,6 +3,12 @@ import { StereLabelStyleType } from 'application/render/restruct';
 
 type RenderOptionStyles = Record<string, string | number>;
 
+export enum UsageInMacromolecule {
+  MonomerConnectionsModal,
+  MonomerPreview,
+  BondPreview,
+}
+
 export type RenderOptions = {
   width?: number;
   height?: number;
@@ -73,6 +79,7 @@ export type RenderOptions = {
   currentlySelectedMonomerAttachmentPoint?: string;
   labelInMonomerConnectionsModal?: boolean;
   labelInPreview?: boolean;
+  usageInMacromolecule?: UsageInMacromolecule;
 };
 
 export interface RelativeBox {

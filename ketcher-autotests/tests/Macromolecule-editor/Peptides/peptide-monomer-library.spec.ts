@@ -28,7 +28,7 @@ test.describe('Peptide library testing', () => {
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
     await page.getByTestId('A___Alanine').hover();
-    await page.waitForSelector('.polymer-library-preview');
+    await page.waitForSelector('[data-testid="polymer-library-preview"]');
     await takeMonomerLibraryScreenshot(page);
   });
 

@@ -13,7 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-export interface IPreviewProps {
-  className?: string;
-  unresolvedMonomer?: boolean;
-}
+import { useAppSelector } from 'hooks';
+import { PreviewType, selectShowPreview } from 'state/common';
+import MonomerPreview from './components/MonomerPreview/MonomerPreview';
+import PresetPreview from './components/PresetPreview/PresetPreview';
+import BondPreview from './components/BondPreview/BondPreview';
+
+export const Preview = () => {
+  const preview = useAppSelector(selectShowPreview);
+
+  if (!preview) {
+    return null;
+  }
+
+  switch (preview.type) {
+    case PreviewType.Preset:
+      return <PresetPreview />;
+    case PreviewType.Monomer:
+      return <MonomerPreview />;
+    case PreviewType.Bond:
+      return <BondPreview />;
+    default:
+      return null;
+  }
+};

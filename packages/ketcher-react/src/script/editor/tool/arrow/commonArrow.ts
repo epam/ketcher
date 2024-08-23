@@ -29,6 +29,14 @@ export class CommonArrowTool extends ArrowTool implements Tool {
     return dragContext.closestItem.map === MULTITAIL_ARROW_KEY;
   }
 
+  static isDragContextReaction(
+    dragContext: CommonArrowDragContext<
+      MultitailArrowClosestItem | ReactionArrowClosestItem
+    >,
+  ): dragContext is CommonArrowDragContext<ReactionArrowClosestItem> {
+    return dragContext.closestItem.map === 'rxnArrows';
+  }
+
   private dragContext:
     | CommonArrowDragContext<
         MultitailArrowClosestItem | ReactionArrowClosestItem
@@ -101,13 +109,15 @@ export class CommonArrowTool extends ArrowTool implements Tool {
         event,
         this.dragContext,
       );
-    } else {
-      // Otherwise build fails during prod build but not dev
-      const dragContext = this
-        .dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
-      dragContext.action = this.reactionMoveTool.mousemove(event, dragContext);
+    } else if (CommonArrowTool.isDragContextReaction(this.dragContext)) {
+      this.dragContext.action = this.reactionMoveTool.mousemove(
+        event,
+        this.dragContext,
+      );
     }
-    this.editor.update(this.dragContext.action, true);
+    if (this.dragContext.action) {
+      this.editor.update(this.dragContext.action, true);
+    }
   }
 
   mouseup(event: PointerEvent) {
@@ -121,11 +131,11 @@ export class CommonArrowTool extends ArrowTool implements Tool {
           event,
           this.dragContext,
         );
-      } else {
-        // Otherwise build fails during prod build but not dev
-        const dragContext = this
-          .dragContext as CommonArrowDragContext<ReactionArrowClosestItem>;
-        dragContext.action = this.reactionMoveTool.mouseup(event, dragContext);
+      } else if (CommonArrowTool.isDragContextReaction(this.dragContext)) {
+        this.dragContext.action = this.reactionMoveTool.mouseup(
+          event,
+          this.dragContext,
+        );
       }
       const { action } = this.dragContext;
       if (action) {

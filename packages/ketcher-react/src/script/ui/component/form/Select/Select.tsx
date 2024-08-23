@@ -17,10 +17,11 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 export interface Option {
   value: string;
@@ -68,14 +69,21 @@ const Select = ({
     onChange(event.target.value);
   };
 
+  const element = useRef<HTMLDivElement>(null);
   return (
     <MuiSelect
+      ref={element}
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
       multiple={multiple}
       disabled={disabled}
-      MenuProps={{ className: styles.dropdownList }}
+      MenuProps={{
+        className: styles.dropdownList,
+        container: () =>
+          element.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+          document.documentElement,
+      }}
       IconComponent={ChevronIcon}
       data-testid={testId}
     >

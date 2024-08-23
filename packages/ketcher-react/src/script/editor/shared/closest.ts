@@ -757,6 +757,7 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
       const { distance, ref } = item.calculateDistanceToPoint(
         canvasScaledPosition,
         renderOptions,
+        maxDistance,
       );
       if (distance <= maxDistance && (!acc || acc.dist > distance)) {
         return { id, dist: distance, ref };

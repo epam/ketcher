@@ -35,6 +35,11 @@ export enum MeasurementUnits {
   Inch = 'inch',
 }
 
+export enum ImageResolution {
+  high = 600,
+  low = 72,
+}
+
 const editor: {
   resetToSelect: ExtendedSchema;
   rotationStep: ExtendedSchema;
@@ -85,6 +90,13 @@ const render: {
   bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
   stereoBondWidthUnit: ExtendedSchema;
+  bondLength: ExtendedSchema;
+  bondLengthUnit: ExtendedSchema;
+  reactionComponentMarginSize: ExtendedSchema;
+  reactionComponentMarginSizeUnit: ExtendedSchema;
+  hashSpacing: ExtendedSchema;
+  hashSpacingUnit: ExtendedSchema;
+  imageResolution: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -274,6 +286,51 @@ const render: {
     enum: Object.values(MeasurementUnits),
     enumNames: Object.values(MeasurementUnits),
     default: MeasurementUnits.Px,
+  },
+  bondLength: {
+    title: 'Bond length',
+    type: 'integer',
+    default: 2.1,
+    minimum: 1,
+    maximum: 96,
+  },
+  bondLengthUnit: {
+    title: 'Bond length unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  reactionComponentMarginSize: {
+    title: 'Reaction component margin size',
+    type: 'integer',
+    default: 2.3,
+    minimum: 1,
+    maximum: 96,
+  },
+  reactionComponentMarginSizeUnit: {
+    title: 'Reaction component margin size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  hashSpacing: {
+    title: 'Hash spacing',
+    type: 'integer',
+    default: 2.2,
+    minimum: 1,
+    maximum: 96,
+  },
+  hashSpacingUnit: {
+    title: 'Hash spacing unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  imageResolution: {
+    title: 'Image resolution',
+    enum: Object.keys(ImageResolution),
+    enumNames: Object.keys(ImageResolution),
+    default: ImageResolution.low,
   },
 };
 

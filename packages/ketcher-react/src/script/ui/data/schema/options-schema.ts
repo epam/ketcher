@@ -36,8 +36,8 @@ export enum MeasurementUnits {
 }
 
 export enum ImageResolution {
-  high = 600,
-  low = 72,
+  high = '600',
+  low = '72',
 }
 
 const editor: {
@@ -287,10 +287,15 @@ const render: {
     enumNames: Object.values(MeasurementUnits),
     default: MeasurementUnits.Px,
   },
+
+  /** TODO: default values can't be numbers with decimal point rn
+   * will be fixed in #5175
+   **/
+
   bondLength: {
     title: 'Bond length',
     type: 'integer',
-    default: 2.1,
+    default: 2, // 2.1
     minimum: 1,
     maximum: 96,
   },
@@ -303,7 +308,7 @@ const render: {
   reactionComponentMarginSize: {
     title: 'Reaction component margin size',
     type: 'integer',
-    default: 2.3,
+    default: 2, // 2.3
     minimum: 1,
     maximum: 96,
   },
@@ -316,7 +321,7 @@ const render: {
   hashSpacing: {
     title: 'Hash spacing',
     type: 'integer',
-    default: 2.2,
+    default: 2, // 2.2
     minimum: 1,
     maximum: 96,
   },
@@ -328,7 +333,7 @@ const render: {
   },
   imageResolution: {
     title: 'Image resolution',
-    enum: Object.keys(ImageResolution),
+    enum: Object.values(ImageResolution),
     enumNames: Object.keys(ImageResolution),
     default: ImageResolution.low,
   },

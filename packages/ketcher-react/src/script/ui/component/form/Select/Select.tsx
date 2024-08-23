@@ -69,10 +69,10 @@ const Select = ({
     onChange(event.target.value);
   };
 
-  const element = useRef<HTMLDivElement>(null);
+  const selectRef = useRef<HTMLDivElement>(null);
   return (
     <MuiSelect
-      ref={element}
+      ref={selectRef}
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
@@ -81,7 +81,7 @@ const Select = ({
       MenuProps={{
         className: styles.dropdownList,
         container: () =>
-          element.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+          selectRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
           document.documentElement,
       }}
       IconComponent={ChevronIcon}

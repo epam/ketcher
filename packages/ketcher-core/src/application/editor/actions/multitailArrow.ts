@@ -1,4 +1,4 @@
-import { ReStruct } from 'application/render';
+import { MultitailArrowReferencePosition, ReStruct } from 'application/render';
 import {
   Action,
   MultitailArrowDelete,
@@ -6,6 +6,8 @@ import {
   MultitailArrowMove,
   MultitailArrowAddTail,
   MultitailArrowRemoveTail,
+  MultitailArrowResizeTailHead,
+  MultitailArrowMoveHeadTail,
 } from 'application/editor';
 import { Vec2, MultitailArrow } from 'domain/entities';
 
@@ -52,5 +54,32 @@ export function fromMultitailArrowTailRemove(
   const action = new Action();
 
   action.addOp(new MultitailArrowRemoveTail(id, tailId));
+  return action.perform(reStruct);
+}
+
+export function fromMultitailArrowHeadTailsResize(
+  reStruct: ReStruct,
+  id: number,
+  ref: MultitailArrowReferencePosition,
+  offset: number,
+) {
+  const action = new Action();
+  action.addOp(
+    new MultitailArrowResizeTailHead(id, offset, ref.name === 'head'),
+  );
+  return action.perform(reStruct);
+}
+
+export function fromMultitailArrowHeadTailMove(
+  reStruct: ReStruct,
+  id: number,
+  ref: MultitailArrowReferencePosition,
+  offset: number,
+  normalize?: true,
+) {
+  const action = new Action();
+  action.addOp(
+    new MultitailArrowMoveHeadTail(id, offset, ref.name, ref.tailId, normalize),
+  );
   return action.perform(reStruct);
 }

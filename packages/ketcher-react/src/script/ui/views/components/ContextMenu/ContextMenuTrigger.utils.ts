@@ -116,11 +116,10 @@ export function getMenuPropsForClosestItem(
       const closestItemTyped = closestItem as unknown as ReturnType<
         ReMultitailArrow['calculateDistanceToPoint']
       >;
-      const tailId = ReMultitailArrow.getTailIdFromRef(closestItemTyped.ref);
       return {
         id: CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW,
         itemId: closestItem.id,
-        tailId,
+        tailId: closestItemTyped?.ref?.tailId || null,
       };
     }
 

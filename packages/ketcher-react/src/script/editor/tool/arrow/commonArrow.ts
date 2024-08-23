@@ -1,43 +1,52 @@
 import { Tool } from '../Tool';
 import Editor from '../../Editor';
 import {
-  Vec2,
-  RxnArrowMode,
-  Action,
-  fromArrowResizing,
-  fromMultipleMove,
   MULTITAIL_ARROW_KEY,
   MULTITAIL_ARROW_TOOL_NAME,
-  CoordinateTransformation,
-  fromMultitailArrowMove,
+  RxnArrowMode,
 } from 'ketcher-core';
-import { ArrowAddTool } from './arrow.types';
+import {
+  ArrowAddTool,
+  ArrowMoveTool,
+  CommonArrowDragContext,
+  MultitailArrowClosestItem,
+  ReactionArrowClosestItem,
+} from './arrow.types';
 import { ReactionArrowAddTool } from './reactionArrowAdd';
 import { MultitailArrowAddTool } from './multitailArrowAdd';
-import { ClosestItemWithMap } from '../../shared/closest.types';
-import assert from 'assert';
 import { handleMovingPosibilityCursor } from '../../utils';
+import { MultitailArrowMoveTool } from './multitailArrowMoveTool';
+import { ArrowTool } from './arrowTool';
+import { ReactionArrowMoveTool } from './reactionArrowMoveTool';
+import { getItemCursor } from '../../utils/getItemCursor';
 
-type ReactionArrowClosestItem = ClosestItemWithMap<Vec2, 'rxnArrows'>;
-type MultitailArrowClosestItem = ClosestItemWithMap<
-  unknown,
-  typeof MULTITAIL_ARROW_TOOL_NAME
->;
+export class CommonArrowTool extends ArrowTool implements Tool {
+  static isDragContextMultitail(
+    dragContext: CommonArrowDragContext<
+      MultitailArrowClosestItem | ReactionArrowClosestItem
+    >,
+  ): dragContext is CommonArrowDragContext<MultitailArrowClosestItem> {
+    return dragContext.closestItem.map === MULTITAIL_ARROW_KEY;
+  }
 
-interface CommonArrowDragContext {
-  originalPosition: Vec2;
-  action: Action | null;
-  closestItem: ReactionArrowClosestItem | MultitailArrowClosestItem;
-}
+  private dragContext:
+    | CommonArrowDragContext<
+        MultitailArrowClosestItem | ReactionArrowClosestItem
+      >
+    | 'add'
+    | null = null;
 
-export class CommonArrowTool implements Tool {
-  private dragContext: CommonArrowDragContext | 'add' | null = null;
   private addTool: ArrowAddTool;
+  private multitailMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
+  private reactionMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
   constructor(
-    private readonly editor: Editor,
+    editor: Editor,
     mode: RxnArrowMode | typeof MULTITAIL_ARROW_TOOL_NAME,
   ) {
+    super(editor);
+    this.multitailMoveTool = new MultitailArrowMoveTool(this.editor);
+    this.reactionMoveTool = new ReactionArrowMoveTool(this.editor);
     this.editor.selection(null);
     this.addTool =
       mode === MULTITAIL_ARROW_TOOL_NAME
@@ -45,40 +54,18 @@ export class CommonArrowTool implements Tool {
         : new ReactionArrowAddTool(this.editor, mode);
   }
 
-  private get render() {
-    return this.editor.render;
-  }
-
-  private get reStruct() {
-    return this.render.ctab;
-  }
-
-  private updateResizingState(
-    closestItem: CommonArrowDragContext['closestItem'],
-    isResizing: boolean,
-  ) {
-    if (closestItem.map === 'rxnArrows') {
-      const reArrow = this.reStruct.rxnArrows.get(closestItem.id);
-      assert(reArrow != null);
-      reArrow.isResizing = isResizing;
-    }
-  }
-
-  mousedown(event: MouseEvent) {
+  mousedown(event: PointerEvent) {
     const closestItem = this.editor.findItem(event, [
       'rxnArrows',
       MULTITAIL_ARROW_KEY,
     ]) as ReactionArrowClosestItem | MultitailArrowClosestItem;
 
     if (closestItem) {
-      this.dragContext = {
-        originalPosition: CoordinateTransformation.pageToModel(
-          event,
-          this.editor.render,
-        ),
-        action: null,
-        closestItem,
-      };
+      this.dragContext =
+        closestItem.map === MULTITAIL_ARROW_KEY
+          ? this.multitailMoveTool.mousedown(event, closestItem)
+          : this.reactionMoveTool.mousedown(event, closestItem);
+
       this.editor.hover(null);
       this.editor.selection({ [closestItem.map]: [closestItem.id] });
     } else {
@@ -90,68 +77,57 @@ export class CommonArrowTool implements Tool {
 
   mousemove(event: PointerEvent) {
     if (!this.dragContext) {
-      const items = this.editor.findItem(event, [
+      const closestItem = this.editor.findItem(event, [
         'rxnArrows',
         MULTITAIL_ARROW_KEY,
-      ]);
-      this.editor.hover(items, null, event);
+      ]) as ReactionArrowClosestItem | MultitailArrowClosestItem;
+      this.editor.hover(closestItem, null, event);
       handleMovingPosibilityCursor(
-        items,
-        this.editor.render.paper.canvas,
-        this.editor.render.options.movingStyle.cursor as string,
+        closestItem,
+        this.render.paper.canvas,
+        getItemCursor(this.render, closestItem),
       );
       return;
     }
     if (this.dragContext === 'add') {
       return this.addTool.mousemove(event);
     }
-    const current = CoordinateTransformation.pageToModel(event, this.render);
-    const offset = current.sub(this.dragContext.originalPosition);
 
-    const { action, closestItem } = this.dragContext;
-    if (action) {
-      action.perform(this.reStruct);
+    if (this.dragContext.action) {
+      this.dragContext.action.perform(this.reStruct);
     }
-    if (closestItem.map === 'rxnArrows') {
-      if (!closestItem.ref) {
-        this.dragContext.action = fromMultipleMove(
-          this.reStruct,
-          this.editor.selection() || {},
-          offset,
-        );
-      } else {
-        this.updateResizingState(closestItem, true);
-        const isSnappingEnabled = !event.ctrlKey;
-        this.dragContext.action = fromArrowResizing(
-          this.reStruct,
-          closestItem.id,
-          offset,
-          current,
-          closestItem.ref,
-          isSnappingEnabled,
-        );
-      }
+    if (CommonArrowTool.isDragContextMultitail(this.dragContext)) {
+      this.dragContext.action = this.multitailMoveTool.mousemove(
+        event,
+        this.dragContext,
+      );
     } else {
-      this.dragContext.action = fromMultitailArrowMove(
-        this.reStruct,
-        closestItem.id,
-        offset,
+      this.dragContext.action = this.reactionMoveTool.mousemove(
+        event,
+        this.dragContext as CommonArrowDragContext<ReactionArrowClosestItem>,
       );
     }
     this.editor.update(this.dragContext.action, true);
   }
 
-  mouseup(event: MouseEvent) {
+  mouseup(event: PointerEvent) {
     try {
       if (!this.dragContext) return;
       if (this.dragContext === 'add') {
         return this.addTool.mouseup(event);
       }
-
-      const { action, closestItem } = this.dragContext;
-      if (closestItem.map === 'rxnArrows' && action) {
-        this.updateResizingState(closestItem, false);
+      if (CommonArrowTool.isDragContextMultitail(this.dragContext)) {
+        this.dragContext.action = this.multitailMoveTool.mouseup(
+          event,
+          this.dragContext,
+        );
+      } else {
+        this.dragContext.action = this.reactionMoveTool.mouseup(
+          event,
+          this.dragContext as CommonArrowDragContext<ReactionArrowClosestItem>,
+        );
       }
+      const { action } = this.dragContext;
       if (action) {
         this.editor.update(true);
         this.editor.update(action);

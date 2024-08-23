@@ -116,14 +116,14 @@ class ReAtom extends ReObject {
 
   getLabeledSelectionContour(render: Render) {
     const { paper, ctab: restruct, options } = render;
-    const { fontsz, radiusScaleFactor } = options;
-    const padding = fontsz * radiusScaleFactor;
-    const radius = fontsz * radiusScaleFactor * 2;
+    const { fontszInPx, radiusScaleFactor } = options;
+    const padding = fontszInPx * radiusScaleFactor;
+    const radius = fontszInPx * radiusScaleFactor * 2;
     const box = this.getVBoxObj(restruct.render)!;
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
-    const height = fontsz * 1.23;
+    const height = fontszInPx * 1.23;
     return paper.rect(
       ps1.x - padding,
       ps1.y - padding,
@@ -325,7 +325,7 @@ class ReAtom extends ReObject {
       }
       index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
         font: options.font,
-        'font-size': options.fontszsub,
+        'font-size': options.fontszsubInPx,
         fill: '#070',
       });
       index.rbb = util.relBox(index.path.getBBox());
@@ -499,7 +499,7 @@ class ReAtom extends ReObject {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
-        'font-size': options.fontszsub,
+        'font-size': options.fontszsubInPx,
         fill:
           options.atomColoring && elem ? ElementColor[this.a.label] : '#000',
       });
@@ -843,7 +843,7 @@ function buildLabel(
   const {
     atomColoring,
     font,
-    fontsz,
+    fontszInPx,
     currentlySelectedMonomerAttachmentPoint,
     connectedMonomerAttachmentPoints,
     usageInMacromolecule,
@@ -890,14 +890,14 @@ function buildLabel(
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font,
-    'font-size': fontsz,
+    'font-size': fontszInPx,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {
-    const backgroundSize = fontsz * 2;
+    const backgroundSize = fontszInPx * 2;
 
     label.background = paper
       .rect(
@@ -984,7 +984,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
   hydroIndex.text = (implh + 1).toString();
   hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -1052,7 +1052,7 @@ function showIsotope(
   isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   isotope.rbb = util.relBox(isotope.path.getBBox());
@@ -1089,7 +1089,7 @@ function showCharge(
 
   charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   charge.rbb = util.relBox(charge.path.getBBox());
@@ -1138,7 +1138,7 @@ function showExplicitValence(
   valence.text = '(' + valence.text + ')';
   valence.path = render.paper.text(ps.x, ps.y, valence.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   valence.rbb = util.relBox(valence.path.getBBox());
@@ -1180,7 +1180,7 @@ function showHydrogen(
   hydrogen.text = 'H';
   hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
     font: options.font,
-    'font-size': options.fontsz,
+    'font-size': options.fontszInPx,
     fill: atom.color,
   });
   hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
@@ -1199,7 +1199,7 @@ function showHydrogen(
     hydroIndex.text = implh.toString();
     hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
       font: options.font,
-      'font-size': options.fontszsub,
+      'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
     hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());

@@ -139,7 +139,7 @@ function getCIPValuePath({
     .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
     .attr({
       font: options.font,
-      'font-size': options.fontsz,
+      'font-size': options.fontszInPx,
     });
   const box = text.getBBox();
   const path = paper.set();

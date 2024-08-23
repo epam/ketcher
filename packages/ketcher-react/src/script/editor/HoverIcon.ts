@@ -3,6 +3,7 @@ import {
   type AtomColor,
   Vec2,
   CoordinateTransformation,
+  getOptionsWithConvertedUnits,
 } from 'ketcher-core';
 import Editor from './Editor';
 
@@ -116,8 +117,10 @@ export class HoverIcon {
     const render = this.editor.render;
     const fillColor = this.fill ?? '#000000';
     const element = render.paper.text(0, 0, this.label || '');
+    const options = getOptionsWithConvertedUnits(this.editor.options());
+
     element.attr('fill', fillColor);
-    element.attr('font-size', this.editor.options().fontsz);
+    element.attr('font-size', options.fontszInPx);
     element.attr('opacity', HOVER_ICON_OPACITY);
 
     return {

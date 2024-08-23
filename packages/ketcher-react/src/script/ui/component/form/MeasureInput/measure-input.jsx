@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -29,7 +28,7 @@ const selectOptions = getSelectOptionsFromSchema({
 
 const MeasureInput = ({
   schema,
-  extraSchema,
+  extraSchema: _,
   value,
   extraValue,
   onChange,
@@ -38,39 +37,17 @@ const MeasureInput = ({
   className,
   ...rest
 }) => {
-  const [measure, setMeasure] = useState(
-    extraValue || extraSchema?.default || MeasurementUnits.Px,
-  );
-  const [cust, setCust] = useState(value || schema.default);
-
-  useEffect(() => {
-    if (measure === MeasurementUnits.Px && cust?.toFixed() - 0 !== value) {
-      setMeasure(MeasurementUnits.Px);
-      setCust(value);
-    } // Hack: Set init value (RESET)
-  }, []);
-
-  useEffect(() => {
-    setMeasure(extraValue);
-  }, [extraValue]);
-
   const handleChange = (value) => {
-    const convValue = convertValue(value, measure, MeasurementUnits.Px);
-    setCust(value);
-    onChange(convValue);
+    const isNumber = !isNaN(Number(value));
+
+    if (isNumber) {
+      onChange(value);
+    }
   };
 
   const handleMeasChange = (unit) => {
-    setCust((prev) => {
-      convertValue(prev, measure, unit);
-    });
-    setMeasure(unit);
     onExtraChange(unit);
   };
-
-  useEffect(() => {
-    setCust(convertValue(value, MeasurementUnits.Px, measure));
-  }, [value, measure]);
 
   const desc = schema || schema.properties[name];
 
@@ -78,41 +55,16 @@ const MeasureInput = ({
     <div className={clsx(styles.measureInput, className)} {...rest}>
       <span>{rest.title || desc.title}</span>
       <div style={{ display: 'flex' }}>
-        <Input
-          schema={schema}
-          step={
-            measure === MeasurementUnits.Px || measure === MeasurementUnits.Pt
-              ? '1'
-              : '0.001'
-          }
-          value={cust}
-          onChange={handleChange}
-        />
+        <Input schema={schema} step={1} value={value} onChange={handleChange} />
         <Select
           onChange={handleMeasChange}
           options={selectOptions}
-          value={measure}
+          value={extraValue}
           className={styles.select}
         />
       </div>
     </div>
   );
 };
-
-const measureMap = {
-  px: 1,
-  cm: 37.795278,
-  pt: 1.333333,
-  inch: 96,
-};
-
-function convertValue(value, measureFrom, measureTo) {
-  if ((!value && value !== 0) || isNaN(value)) return null; // eslint-disable-line
-
-  return measureTo === MeasurementUnits.Px || measureTo === MeasurementUnits.Pt
-    ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
-    : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) -
-        0;
-}
 
 export default MeasureInput;

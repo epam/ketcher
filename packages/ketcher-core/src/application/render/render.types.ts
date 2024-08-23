@@ -3,6 +3,13 @@ import { StereLabelStyleType } from 'application/render/restruct';
 
 type RenderOptionStyles = Record<string, string | number>;
 
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
 export enum UsageInMacromolecule {
   MonomerConnectionsModal,
   MonomerPreview,
@@ -15,8 +22,11 @@ export type RenderOptions = {
 
   rotationStep?: number;
   doubleBondWidth: number;
+  doubleBondWidthUnit: MeasurementUnits;
   stereoBondWidth: number;
+  stereoBondWidthUnit: MeasurementUnits;
   bondThickness: number;
+  bondThicknessUnit: MeasurementUnits;
 
   downScale?: boolean;
   rescaleAmount?: number;
@@ -53,6 +63,8 @@ export type RenderOptions = {
   subFontSize: number;
   font: string;
   fontsz: number;
+  fontszUnit: MeasurementUnits;
+  fontszsubUnit: MeasurementUnits;
   fontszsub: number;
   fontRLabel: number;
   fontRLogic: number;
@@ -79,6 +91,13 @@ export type RenderOptions = {
   currentlySelectedMonomerAttachmentPoint?: string;
   labelInMonomerConnectionsModal?: boolean;
   labelInPreview?: boolean;
+
+  // Converted
+  fontszInPx: number;
+  fontszsubInPx: number;
+  doubleBondWidthInPx: number;
+  bondThicknessInPx: number;
+  stereoBondWidthInPx: number;
   usageInMacromolecule?: UsageInMacromolecule;
 };
 

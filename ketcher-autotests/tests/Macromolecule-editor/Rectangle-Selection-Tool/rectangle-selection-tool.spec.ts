@@ -249,6 +249,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     await page.keyboard.up('Shift');
 
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

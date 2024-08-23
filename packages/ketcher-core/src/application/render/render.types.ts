@@ -10,6 +10,12 @@ export enum MeasurementUnits {
   Inch = 'inch',
 }
 
+export enum UsageInMacromolecule {
+  MonomerConnectionsModal,
+  MonomerPreview,
+  BondPreview,
+}
+
 export type RenderOptions = {
   width?: number;
   height?: number;
@@ -92,6 +98,7 @@ export type RenderOptions = {
   doubleBondWidthInPx: number;
   bondThicknessInPx: number;
   stereoBondWidthInPx: number;
+  usageInMacromolecule?: UsageInMacromolecule;
 };
 
 export interface RelativeBox {

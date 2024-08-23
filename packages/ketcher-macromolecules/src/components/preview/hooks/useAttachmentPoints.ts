@@ -1,10 +1,10 @@
-import { AttachmentPointName, MonomerItemType } from 'ketcher-core';
+import { AttachmentPointsToBonds, MonomerItemType } from 'ketcher-core';
 import { useMemo } from 'react';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 
 type Props = {
-  monomer: MonomerItemType;
-  attachmentPointsToBonds: Record<AttachmentPointName, unknown | null>;
+  monomer: MonomerItemType | undefined;
+  attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
 };
 
 export type PreparedAttachmentPointData = {

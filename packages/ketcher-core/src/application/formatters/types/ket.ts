@@ -125,7 +125,7 @@ export interface KetVariantMonomerTemplateOption {
 
 export interface IKetMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
-  class?: monomerClass;
+  class?: KetMonomerClass;
   monomerSubClass?:
     | 'AminoAcid'
     | 'Sugar'

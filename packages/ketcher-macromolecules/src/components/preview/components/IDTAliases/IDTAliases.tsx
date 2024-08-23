@@ -1,16 +1,17 @@
+import { memo } from 'react';
 import {
   IDTAliasesContainer,
   IDTAliasesList,
   IDTAliasesText,
   IDTTitle,
-} from './styles';
+} from './IDTAliases.styles';
 
 interface IDTAliasesProps {
   readonly idtAliasesText: string;
   readonly preset?: boolean;
 }
 
-const IDTAliases = ({ idtAliasesText, preset }: IDTAliasesProps) => {
+const IDTAliases = memo(({ idtAliasesText, preset }: IDTAliasesProps) => {
   return (
     <IDTAliasesContainer preset={preset}>
       <IDTAliasesText>
@@ -19,6 +20,6 @@ const IDTAliases = ({ idtAliasesText, preset }: IDTAliasesProps) => {
       </IDTAliasesText>
     </IDTAliasesContainer>
   );
-};
+});
 
-export { IDTAliases };
+export default IDTAliases;

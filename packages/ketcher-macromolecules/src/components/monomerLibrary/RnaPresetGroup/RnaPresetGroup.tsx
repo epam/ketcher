@@ -23,8 +23,8 @@ import {
   selectActivePreset,
   setActivePreset,
   setActivePresetForContextMenu,
-  setIsEditMode,
   setInvalidPresetError,
+  setIsEditMode,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
@@ -34,6 +34,8 @@ import {
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import {
   PresetPosition,
+  PresetPreviewState,
+  PreviewType,
   selectEditor,
   selectShowPreview,
   showPreview,
@@ -129,7 +131,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   ): void => {
     handleItemMouseLeave();
 
-    if (preview.preset || !e.currentTarget) {
+    if (preview.type === PreviewType.Preset || !e.currentTarget) {
       return;
     }
 
@@ -145,15 +147,15 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
       transform: 'translate(-100%, 0)',
     };
 
-    debouncedShowPreview({
-      preset: {
-        monomers,
-        name: preset.name,
-        idtAliases: preset.idtAliases,
-        position: PresetPosition.Library,
-      },
+    const previewData: PresetPreviewState = {
+      type: PreviewType.Preset,
+      monomers,
+      name: preset.name,
+      idtAliases: preset.idtAliases,
+      position: PresetPosition.Library,
       style,
-    });
+    };
+    debouncedShowPreview(previewData);
   };
   // endregion # Preview
 

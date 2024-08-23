@@ -1,16 +1,15 @@
 import {
-  AttachmentPointName,
+  AttachmentPointsToBonds,
   IKetIdtAliases,
   KetMonomerClass,
-  PolymerBond,
   Sugar,
 } from 'ketcher-core';
 import { useMemo } from 'react';
 
 type Props = {
   idtAliases: IKetIdtAliases | undefined;
-  attachmentPointsToBonds?: Record<AttachmentPointName, PolymerBond | null>;
-  monomerClass: KetMonomerClass;
+  attachmentPointsToBonds: AttachmentPointsToBonds | undefined;
+  monomerClass: KetMonomerClass | undefined;
 };
 
 const useIDTAliasesTextForMonomer = ({
@@ -36,7 +35,7 @@ const useIDTAliasesTextForMonomer = ({
       const { R1, R2 } = attachmentPointsToBonds;
       // Handle phosphate exclusively
       if (monomerClass === KetMonomerClass.Phosphate) {
-        if (R1 !== null && R1.firstMonomer instanceof Sugar) {
+        if (R1 && R1.firstMonomer instanceof Sugar) {
           return null;
         }
       }

@@ -16,22 +16,38 @@
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
-  AttachmentPointName,
   CoreEditor,
   IKetIdtAliases,
   MonomerItemType,
   PolymerBond,
+  AttachmentPointsToBonds,
 } from 'ketcher-core';
 import { RootState } from 'state';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 
-interface MonomerPreviewState {
+export enum PreviewType {
+  Monomer = 'monomer',
+  Preset = 'preset',
+  Bond = 'bond',
+}
+
+export interface PreviewStyle {
+  readonly top?: string;
+  readonly left?: string;
+  readonly right?: string;
+  readonly transform?: string;
+}
+
+interface BasePreviewState {
+  readonly type: PreviewType;
+  readonly style?: PreviewStyle;
+}
+
+export interface MonomerPreviewState extends BasePreviewState {
+  readonly type: PreviewType.Monomer;
   readonly monomer: MonomerItemType | undefined;
-  readonly attachmentPointsToBonds?: Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  >;
-  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
+  readonly attachmentPointsToBonds?: AttachmentPointsToBonds;
 }
 
 export enum PresetPosition {
@@ -41,17 +57,23 @@ export enum PresetPosition {
   ChainEnd = 'chainEnd',
 }
 
-export interface PresetPreviewState {
-  readonly preset: {
-    readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
-    readonly name?: string;
-    readonly idtAliases?: IKetIdtAliases;
-    readonly position: PresetPosition;
-  };
-  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
+export interface PresetPreviewState extends BasePreviewState {
+  readonly type: PreviewType.Preset;
+  readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
+  readonly position: PresetPosition;
+  readonly name?: string;
+  readonly idtAliases?: IKetIdtAliases;
 }
 
-type EditorStatePreview = MonomerPreviewState | PresetPreviewState;
+export interface BondPreviewState extends BasePreviewState {
+  readonly type: PreviewType.Bond;
+  readonly polymerBond: PolymerBond;
+}
+
+type EditorStatePreview =
+  | MonomerPreviewState
+  | PresetPreviewState
+  | BondPreviewState;
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
@@ -65,7 +87,11 @@ const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
-  preview: { monomer: undefined, style: '' },
+  preview: {
+    type: PreviewType.Monomer,
+    monomer: undefined,
+    style: {},
+  },
 };
 
 export const editorSlice: Slice = createSlice({
@@ -121,14 +147,13 @@ export const {
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
-export const selectShowPreview = (state: RootState) => state.editor.preview;
+export const selectShowPreview = (state: RootState): EditorStatePreview =>
+  state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
 // TODO: Specify the types.
 // export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
 //   state.editor.isReady;
-// export const selectShowPreview = (state: RootState): EditorState['preview'] =>
-//   state.editor.preview;
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;

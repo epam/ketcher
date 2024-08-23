@@ -276,10 +276,10 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     if (typeof second === 'number') {
       const originalValue = this.tailsYOffset.get(second) as number;
       let updatedHeight = Math.max(
-        MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+        MultitailArrow.MIN_TAIL_DISTANCE,
         Math.min(
           originalValue + offset,
-          this.height - MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+          this.height - MultitailArrow.MIN_TAIL_DISTANCE,
         ),
       );
       if (normalize) {

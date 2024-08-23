@@ -659,7 +659,6 @@ async function selectAndReplaceSymbol(
 async function selectAndReplaceSymbolWithError(
   page: Page,
   replaceMonomer: IReplaceMonomer,
-  sequence: ISequence,
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
@@ -798,7 +797,6 @@ async function selectAndReplaceSymbolInEditMode(
 async function selectAndReplaceSymbolInEditModeWithError(
   page: Page,
   replaceMonomer: IReplaceMonomer,
-  sequence: ISequence,
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
@@ -1126,7 +1124,6 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
       await selectAndReplaceSymbolWithError(
         page,
         noR2ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
 
@@ -1197,7 +1194,6 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       await selectAndReplaceSymbolWithError(
         page,
         noR1orR2ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.Center,
       );
 
@@ -1238,7 +1234,6 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       await selectAndReplaceSymbolWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.RightEnd,
       );
 
@@ -1277,7 +1272,6 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
       await selectAndReplaceSymbolInEditModeWithError(
         page,
         noR2ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
 
@@ -1318,7 +1312,6 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
       await selectAndReplaceSymbolWithError(
         page,
         noR1orR2ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.Center,
       );
 
@@ -1359,7 +1352,6 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
       await selectAndReplaceSymbolWithError(
         page,
         noR1ConnectionPointReplaceMonomer,
-        sequence,
         sequence.ReplacementPositions.RightEnd,
       );
 

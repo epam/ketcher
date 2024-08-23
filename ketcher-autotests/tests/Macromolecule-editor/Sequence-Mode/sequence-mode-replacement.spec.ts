@@ -497,6 +497,25 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     ReplaceMonomerId: [13],
     BugsInTests: ['https://github.com/epam/ketcher/issues/5344'],
   },
+  {
+    // Prelacement of any preset (side connected to another monomer) another type of monomer should cause
+    // confirm action dialog on side chain bond loss #5346
+    TestNameContains: ['Case 19-'],
+    SequenceId: [
+      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    ],
+    ReplaceMonomerId: [11, 12, 15, 17, 18, 19, 20],
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5346'],
+  },
+  {
+    // Prelacement of any preset side connected to another preset wrong - system losts side chain bond #5344
+    TestNameContains: ['Case 19-'],
+    SequenceId: [
+      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    ],
+    ReplaceMonomerId: [13, 14],
+    BugsInTests: ['https://github.com/epam/ketcher/issues/5344'],
+  },
 ];
 
 function filterBugsInTests(
@@ -773,7 +792,7 @@ async function selectAndReplaceSymbolInEditMode(
     await page.getByRole('button', { name: 'Yes' }).click();
   }
   await moveMouseToTheMiddleOfTheScreen(page);
-  await page.mouse.click(200, 200);
+  await page.mouse.click(400, 400);
 }
 
 async function selectAndReplaceSymbolInEditModeWithError(
@@ -1769,7 +1788,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 18
         Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection)
-                     in sequence with another monomer (of every type) in view mode
+                     in sequence with another monomer (of the same type!) in view mode
         Scenario:
         1. Clear canvas
         2. Load sequence from file (sequence contains monomers of necessary type)
@@ -1797,7 +1816,161 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       await checkForKnownBugs(
         replaceMonomer,
         sequence,
+        sequence.ReplacementPositions.Center,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of withSideConnectionReplaceMonomers) {
+  for (const sequence of twoSequences) {
+    test(`Case 19-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} (view mode)`, async () => {
+      /*
+        Test case: https://github.com/epam/ketcher/issues/5290 - Test case 19
+        Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection)
+                     in sequence with another monomer (of the same type!) in view mode
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains monomers of necessary type)
+        3. Select last symbol
+        4. Click on monomer from the library
+        5. Take screenshot to validate that replacement work in Sequence mode canvas
+        6. Switch to Flex mode
+        7. Take screenshot to validate that replacement work in Flex mode canvas
+        8. Add info to log if known bugs exist and skip test
+      */
+      test.setTimeout(20000);
+
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbol(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of withSideConnectionReplaceMonomers) {
+  for (const sequence of twoSequences) {
+    test(`Case 20-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+      /*
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 4
+          Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+                      with another monomer (of the same type!) in edit mode
+          Scenario:
+          1. Clear canvas
+          2. Load sequence from file (sequence contains monomers of necessary type)
+          3. Double click on first symbol (that turns sequence into edit mode)
+          4. Click on monomer from the library
+          5. Take screenshot to validate that replacement work in Sequence mode canvas
+          6. Switch to Flex mode
+          7. Take screenshot to validate that replacement work in Flex mode canvas
+          8. Add info to log if known bugs exist and skip test
+        */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolInEditMode(
+        page,
+        replaceMonomer,
+        sequence,
         sequence.ReplacementPositions.LeftEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.LeftEnd,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of withSideConnectionReplaceMonomers) {
+  for (const sequence of twoSequences) {
+    test(`Case 21-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+      /*
+          Test case: https://github.com/epam/ketcher/issues/5290 - Test case 5
+          Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection) in sequence 
+                       with another monomer (of the same type!) in view mode
+          Scenario:
+          1. Clear canvas
+          2. Load sequence from file (sequence contains monomers of necessary type)
+          3. Double click symbol in the middle of sequence (that turns sequence into edit mode)
+          4. Click on monomer from the library
+          5. Take screenshot to validate that replacement work in Sequence mode canvas
+          6. Switch to Flex mode
+          7. Take screenshot to validate that replacement work in Flex mode canvas
+          8. Add info to log if known bugs exist and skip test
+        */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolInEditMode(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.Center,
+      );
+    });
+  }
+}
+
+for (const replaceMonomer of withSideConnectionReplaceMonomers) {
+  for (const sequence of twoSequences) {
+    test(`Case 22-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
+      /*
+            Test case: https://github.com/epam/ketcher/issues/5290 - Test case 6
+            Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+                         with another monomer (of the same type!) in edit mode
+            Scenario:
+            1. Clear canvas
+            2. Load sequence from file (sequence contains monomers of necessary type)
+            3. Double click on the last symbol (that turns sequence into edit mode)
+            4. Click on monomer from the library
+            5. Take screenshot to validate that replacement work in Sequence mode canvas
+            6. Switch to Flex mode
+            7. Take screenshot to validate that replacement work in Flex mode canvas
+            8. Add info to log if known bugs exist and skip test
+          */
+      await openFileAndAddToCanvasMacro(sequence.FileName, page);
+      await selectAndReplaceSymbolInEditMode(
+        page,
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
+      );
+      await takeEditorScreenshot(page);
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(
+        replaceMonomer,
+        sequence,
+        sequence.ReplacementPositions.RightEnd,
       );
     });
   }

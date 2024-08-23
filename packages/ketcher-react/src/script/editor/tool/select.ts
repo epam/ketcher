@@ -371,7 +371,7 @@ class SelectTool implements Tool {
           this.dragCtx,
         );
       } else if (this.dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
-        this.dragCtx.action = this.reactionArrowMoveTool.mouseup(
+        this.dragCtx.action = this.multitailArrowMoveTool.mouseup(
           event,
           this.dragCtx,
         );

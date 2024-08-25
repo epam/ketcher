@@ -44,6 +44,15 @@ const ChevronIcon = ({ className }) => (
   <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
 );
 
+const isFullScreen = () => {
+  return !!(
+    document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  );
+};
+
 const Select = ({
   className,
   value,
@@ -80,9 +89,11 @@ const Select = ({
       disabled={disabled}
       MenuProps={{
         className: styles.dropdownList,
-        container: () =>
-          selectRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
-          document.body,
+        container: isFullScreen()
+          ? () =>
+              selectRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
+              document.body
+          : undefined,
       }}
       IconComponent={ChevronIcon}
       data-testid={testId}

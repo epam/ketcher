@@ -82,7 +82,7 @@ const Select = ({
         className: styles.dropdownList,
         container: () =>
           selectRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
-          document.documentElement,
+          document.body,
       }}
       IconComponent={ChevronIcon}
       data-testid={testId}

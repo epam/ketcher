@@ -1,12 +1,13 @@
 import ReObject from './reobject';
 import { Line, MultitailArrow } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
-import { ReStruct } from 'application/render';
+import { LayerMap, Render, ReStruct } from 'application/render';
 import { RenderOptions } from 'application/render/render.types';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
 import { Box2Abs, Pool, Vec2 } from 'domain/entities';
 import util from 'application/render/util';
+import { RaphaelPaper } from 'raphael';
 
 export enum MultitailArrowRefName {
   HEAD = 'head',
@@ -30,6 +31,7 @@ export interface MultitailArrowClosestReferencePosition {
 
 export class ReMultitailArrow extends ReObject {
   static TAILS_NAME = 'tails';
+  static CUBIC_BEZIER_OFFSET = 6;
 
   static isSelectable(): boolean {
     return true;
@@ -44,6 +46,10 @@ export class ReMultitailArrow extends ReObject {
 
   constructor(public multitailArrow: MultitailArrow) {
     super(MULTITAIL_ARROW_KEY);
+  }
+
+  getOffset(options: RenderOptions) {
+    return 1.4 * (options.microModeScale / 8);
   }
 
   getReferencePositions(
@@ -72,10 +78,125 @@ export class ReMultitailArrow extends ReObject {
     return this.multitailArrow.getReferenceLines(referencePositions);
   }
 
-  // Will be implemented in the next task
-  drawHover() {}
+  drawSingleLineHover(
+    builder: PathBuilder,
+    renderOptions: RenderOptions,
+    lineStart: Vec2,
+    lineEnd: Vec2,
+    verticalDirection: -1 | 1,
+    horizontalDirection: -1 | 1,
+  ): void {
+    const offset = this.getOffset(renderOptions);
+    const cubicBezierOffset =
+      horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
+    const start = lineStart.add(
+      new Vec2(offset * horizontalDirection, offset * verticalDirection),
+    );
+    const end = start.add(new Vec2(0, 2 * offset * -verticalDirection));
+    builder
+      .addLine(start)
+      .addLine(lineEnd.add(new Vec2(0, offset * verticalDirection)))
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * verticalDirection)),
+        lineEnd.add(new Vec2(cubicBezierOffset, 0)),
+      )
+      .addQuadraticBezierCurve(
+        lineEnd.add(new Vec2(cubicBezierOffset, offset * -verticalDirection)),
+        lineEnd.add(new Vec2(0, offset * -verticalDirection)),
+      )
+      .addLine(end);
+  }
 
-  makeSelectionPlate() {}
+  buildFrame(renderOptions: RenderOptions): string {
+    const offset = this.getOffset(renderOptions);
+    const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
+      this.getReferencePositions(renderOptions);
+    const builder = new PathBuilder();
+    const tailsPoints = Array.from(tails.values()).sort((a, b) => a.y - b.y);
+
+    const start = topSpine.add(new Vec2(offset, offset));
+
+    builder
+      .addMovement(start)
+      .addLine(
+        topSpine.add(
+          new Vec2(offset, -offset + ReMultitailArrow.CUBIC_BEZIER_OFFSET),
+        ),
+      )
+      .addQuadraticBezierCurve(
+        topSpine.add(new Vec2(offset, -offset)),
+        topSpine.add(
+          new Vec2(offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET, -offset),
+        ),
+      );
+    this.drawSingleLineHover(builder, renderOptions, topSpine, topTail, -1, -1);
+    tailsPoints.forEach((tailPoint) => {
+      this.drawSingleLineHover(
+        builder,
+        renderOptions,
+        new Vec2(topSpine.x, tailPoint.y),
+        tailPoint,
+        -1,
+        -1,
+      );
+    });
+    this.drawSingleLineHover(
+      builder,
+      renderOptions,
+      bottomSpine,
+      bottomTail,
+      -1,
+      -1,
+    );
+    builder
+      .addLine(
+        bottomSpine.add(
+          new Vec2(offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET, offset),
+        ),
+      )
+      .addQuadraticBezierCurve(
+        bottomSpine.add(new Vec2(offset, offset)),
+        bottomSpine.add(
+          new Vec2(offset, offset - ReMultitailArrow.CUBIC_BEZIER_OFFSET),
+        ),
+      );
+    this.drawSingleLineHover(
+      builder,
+      renderOptions,
+      new Vec2(topSpine.x, head.y),
+      head,
+      1,
+      1,
+    );
+    builder.addLine(start);
+    return builder.build();
+  }
+
+  drawHover(render: Render) {
+    const path = this.buildFrame(render.options);
+    const paths = render.ctab.render.paper
+      .path(path)
+      .attr({ ...render.options.hoverStyle });
+
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths);
+
+    return paths;
+  }
+
+  makeSelectionPlate(
+    reStruct: ReStruct,
+    paper: RaphaelPaper,
+    options: RenderOptions,
+  ) {
+    const path = this.buildFrame(options);
+    const selectionSet = paper.set();
+    const paths = reStruct.render.paper
+      .path(path)
+      .attr({ ...options.selectionStyle });
+
+    selectionSet.push(paths);
+    return selectionSet;
+  }
 
   show(reStruct: ReStruct, renderOptions: RenderOptions) {
     reStruct.clearVisel(this.visel);
@@ -100,9 +221,9 @@ export class ReMultitailArrow extends ReObject {
 
     const path = reStruct.render.paper.path(pathBuilder.build());
     const header = reStruct.render.paper.path(headPathBuilder.build());
-    path.attr(renderOptions.multitailArrow);
+    path.attr(renderOptions.lineattr);
     header.attr({
-      ...renderOptions.multitailArrow,
+      ...renderOptions.lineattr,
       fill: '#000',
     });
     this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));

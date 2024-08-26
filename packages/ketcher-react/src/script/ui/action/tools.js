@@ -256,7 +256,7 @@ const toolActions = {
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle'),
   },
   [MULTITAIL_ARROW_TOOL_NAME]: {
-    title: 'Multi-Tailed Arrow',
+    title: 'Multi-Tailed Arrow Tool',
     action: {
       tool: 'reactionarrow',
       opts: MULTITAIL_ARROW_TOOL_NAME,

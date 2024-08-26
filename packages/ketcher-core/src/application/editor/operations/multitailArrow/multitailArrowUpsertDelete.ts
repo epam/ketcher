@@ -17,7 +17,7 @@ export class MultitailArrowUpsert extends BaseOperation {
     const struct = reStruct.molecule;
 
     if (this.id === undefined) {
-      this.id = struct.images.newId();
+      this.id = struct.multitailArrows.newId();
     }
     const id = this.id;
     const item = this.multitailArrow.clone();

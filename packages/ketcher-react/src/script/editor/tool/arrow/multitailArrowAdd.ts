@@ -26,7 +26,7 @@ type MultitailArrowAddDragContext = InitialDragContext | ProgressDragContext;
 
 export class MultitailArrowAddTool implements ArrowAddTool {
   static MIN_HEIGHT = 2.5;
-  static MIN_WIDTH = 1.25;
+  static MIN_WIDTH = 1.2;
 
   // private dragContext: MultitailArrowAddDragContext | null = null;
 

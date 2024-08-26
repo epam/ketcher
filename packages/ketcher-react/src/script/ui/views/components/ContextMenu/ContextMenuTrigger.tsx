@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup } from 'ketcher-core';
+import { FunctionalGroup, MULTITAIL_ARROW_KEY } from 'ketcher-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import { ContextMenuProps, ContextMenuTriggerType } from './contextMenu.types';
 import {
-  getMenuPropsForClosestItem,
   getIsItemInSelection,
+  getMenuPropsForClosestItem,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
 import TemplateTool from 'src/script/editor/tool/template';
@@ -110,7 +110,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           !selection.atoms &&
           !selection.rgroupAttachmentPoints
         ) {
-          triggerType = ContextMenuTriggerType.None;
+          if (selection[MULTITAIL_ARROW_KEY]) {
+            triggerType = ContextMenuTriggerType.ClosestItem;
+          } else {
+            triggerType = ContextMenuTriggerType.None;
+          }
         } else {
           triggerType = ContextMenuTriggerType.Selection;
         }

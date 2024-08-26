@@ -450,7 +450,10 @@ function findClosestRxnArrow(restruct: ReStruct, pos: Vec2) {
       restruct.render.options.microModeScale,
     );
 
-    if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
+    if (
+      dist.minDist < SELECTION_DISTANCE_COEFFICIENT &&
+      (!ret || dist.minDist < minDist)
+    ) {
       minDist = dist.minDist;
       refPoint = dist.refPoint;
 

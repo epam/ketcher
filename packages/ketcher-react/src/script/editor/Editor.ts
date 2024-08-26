@@ -122,6 +122,7 @@ export interface Selection {
   rxnArrows?: Array<number>;
   texts?: Array<number>;
   rgroupAttachmentPoints?: Array<number>;
+  [MULTITAIL_ARROW_KEY]?: Array<number>;
 }
 
 class Editor implements KetcherEditor {
@@ -674,6 +675,7 @@ class Editor implements KetcherEditor {
       new Pile(selection.texts),
       null,
       new Pile(selection.images),
+      new Pile(selection[MULTITAIL_ARROW_KEY]),
     );
 
     // Copy by its own as Struct.clone doesn't support

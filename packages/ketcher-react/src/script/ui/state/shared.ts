@@ -25,6 +25,8 @@ import {
   Editor,
   KetcherLogger,
   SettingsManager,
+  MULTITAIL_ARROW_KEY,
+  IMAGE_KEY,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -110,6 +112,8 @@ export const getSelectionFromStruct = (struct) => {
     'texts',
     'rgroupAttachmentPoints',
     'simpleObjects',
+    IMAGE_KEY,
+    MULTITAIL_ARROW_KEY,
   ].forEach((selectionEntity) => {
     if (struct && struct[selectionEntity]) {
       const selected: number[] = [];

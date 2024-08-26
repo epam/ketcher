@@ -80,8 +80,8 @@ class ReStruct {
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   public simpleObjects: Map<number, ReSimpleObject> = new Map();
   public texts: Map<number, ReText> = new Map();
-  public images = new Pool<ReImage>();
-  public multitailArrows = new Pool<ReMultitailArrow>();
+  public images = new Map<number, ReImage>();
+  public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
   private layers: Array<any> = [];
@@ -97,8 +97,8 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
-  private imagesChanged = new Pool<ReImage>();
-  private multitailArrowsChanged = new Pool<ReMultitailArrow>();
+  private imagesChanged = new Map<number, ReImage>();
+  private multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
 
   constructor(
@@ -172,6 +172,8 @@ class ReStruct {
     molecule.multitailArrows.forEach((item, id) => {
       this.multitailArrows.set(id, new ReMultitailArrow(item));
     });
+
+    console.info(this.multitailArrows, JSON.stringify(this.multitailArrows));
   }
 
   get visibleRGroupAttachmentPoints() {

@@ -8,10 +8,19 @@ import {
   fromMultitailArrowTailAdd,
   fromMultitailArrowTailRemove,
   MultitailArrow,
+  Action,
 } from 'ketcher-core';
 import Editor from 'src/script/editor';
 
 type Params = ItemEventParams<MultitailArrowContextMenuProps>;
+
+function updateEditor(editor: unknown, action: Action) {
+  // returned Editor type does not match real editor
+  const typedEditor = editor as Editor;
+  typedEditor.update(action);
+  typedEditor.selection(null);
+  typedEditor.focusCliparea();
+}
 
 export const useMultitailArrowTailsAdd = () => {
   const { getKetcherInstance } = useAppContext();
@@ -23,7 +32,7 @@ export const useMultitailArrowTailsAdd = () => {
         editor.render.ctab,
         props?.itemId as number,
       );
-      editor.update(operation);
+      updateEditor(editor, operation);
     },
     [getKetcherInstance],
   );
@@ -58,7 +67,7 @@ export const useMultitailArrowTailsRemove = () => {
         props?.itemId as number,
         props?.tailId as number,
       );
-      editor.update(operation);
+      updateEditor(editor, operation);
     },
     [getKetcherInstance],
   );

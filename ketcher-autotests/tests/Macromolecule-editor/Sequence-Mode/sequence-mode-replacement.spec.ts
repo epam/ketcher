@@ -876,6 +876,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -913,6 +914,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -950,6 +952,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -987,6 +990,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1024,6 +1028,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1061,6 +1066,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1391,6 +1397,7 @@ for (const replaceMonomer of replaceMonomers) {
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1427,6 +1434,7 @@ for (const replaceMonomer of replaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1762,6 +1770,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1802,6 +1811,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1842,6 +1852,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1880,6 +1891,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1918,6 +1930,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists
@@ -1956,6 +1969,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
       );
       await takeEditorScreenshot(page);
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       // skip that test if bug(s) exists

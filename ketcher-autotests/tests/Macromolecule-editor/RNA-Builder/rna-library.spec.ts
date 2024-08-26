@@ -781,6 +781,7 @@ test.describe('RNA Library', () => {
     await drawThreeMonomersConnectedWithBonds(page);
     await selectEraseTool(page);
     await bondLine.click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

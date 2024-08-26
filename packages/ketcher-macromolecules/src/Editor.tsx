@@ -45,7 +45,7 @@ import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
-import { Snackbar } from '@mui/material';
+import { Box, Snackbar } from '@mui/material';
 import {
   StyledIconButton,
   StyledToast,
@@ -75,8 +75,8 @@ import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
-import { Preview } from 'components/preview/Preview';
-import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import { Preview } from 'components/shared/Preview';
+import { SequenceTypeGroupButton } from 'components/SequenceTypeGroupButton';
 import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
@@ -204,8 +204,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         >
           <TopMenuComponent />
           <TopMenuRightWrapper>
-            <SequenceTypeDropdown />
             <LayoutModeButton />
+            <Box sx={{ mr: 1, ml: 1 }}>
+              <SequenceTypeGroupButton />
+            </Box>
             <TogglerComponentWrapper
               className={
                 isSequenceEditInRNABuilderMode

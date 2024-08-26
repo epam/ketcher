@@ -21,7 +21,6 @@ export const ItemsContainer = styled.div<{ useLeftMargin?: boolean }>`
   grid-template-rows: auto;
   flex: 1;
   gap: 8px;
-  margin-bottom: 24px;
   margin-left: ${({ useLeftMargin }) => (useLeftMargin ? '22px' : '0')};
 
   &::after {

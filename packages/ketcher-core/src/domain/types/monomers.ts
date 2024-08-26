@@ -11,8 +11,8 @@ import {
 import {
   IKetAttachmentPoint,
   IKetIdtAliases,
-  KetVariantMonomerTemplateOption,
-  KetVariantMonomerTemplateSubType,
+  KetAmbiguousMonomerTemplateOption,
+  KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -45,15 +45,21 @@ export type MonomerItemType = {
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
+  isAmbiguous?: boolean;
 };
 
-export type VariantMonomerType = {
+export type AmbiguousMonomerType = {
+  id: string;
   monomers: BaseMonomer[];
-  subtype: KetVariantMonomerTemplateSubType;
+  subtype: KetAmbiguousMonomerTemplateSubType;
   label: string;
-  options: KetVariantMonomerTemplateOption[];
+  options: KetAmbiguousMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
+  isAmbiguous: true;
+  favorite?: boolean;
 };
+
+export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;
 
 export enum AttachmentPointName {
   R1 = 'R1',

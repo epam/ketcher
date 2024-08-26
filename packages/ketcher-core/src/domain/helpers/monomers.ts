@@ -6,7 +6,12 @@ import {
   Sugar,
   UnsplitNucleotide,
 } from 'domain/entities';
-import { AttachmentPointName, MonomerItemType } from 'domain/types';
+import {
+  AttachmentPointName,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+  AmbiguousMonomerType,
+} from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
@@ -191,3 +196,9 @@ export function isValidNucleoside(
 export const isRnaBaseVariantMonomer = (
   monomer: BaseMonomer & IVariantMonomer,
 ) => monomer.monomerClass === KetMonomerClass.Base;
+
+export function isAmbiguousMonomerLibraryItem(
+  monomer: MonomerOrAmbiguousType,
+): monomer is AmbiguousMonomerType {
+  return Boolean(monomer.isAmbiguous);
+}

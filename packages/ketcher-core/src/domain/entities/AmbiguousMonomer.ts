@@ -7,13 +7,16 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { KetMonomerClass } from 'application/formatters';
 import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
-import { VariantMonomerType } from 'domain/types';
+import { AmbiguousMonomerType } from 'domain/types';
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
-export class VariantMonomer extends BaseMonomer implements IVariantMonomer {
+export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
-  constructor(public variantMonomerItem: VariantMonomerType, position: Vec2) {
+  constructor(
+    public variantMonomerItem: AmbiguousMonomerType,
+    position?: Vec2,
+  ) {
     const variantMonomerLabel =
       variantMonomerItem.label || DEFAULT_VARIANT_MONOMER_LABEL;
     super(
@@ -24,15 +27,16 @@ export class VariantMonomer extends BaseMonomer implements IVariantMonomer {
           MonomerName: variantMonomerLabel,
           Name: variantMonomerLabel,
         },
-        attachmentPoints: VariantMonomer.getAttachmentPoints(
+        attachmentPoints: AmbiguousMonomer.getAttachmentPoints(
           variantMonomerItem.monomers,
         ),
         struct: new Struct(),
+        isAmbiguous: true,
       },
       position,
     );
     this.monomers = variantMonomerItem.monomers;
-    this.monomerClass = VariantMonomer.getMonomerClass(
+    this.monomerClass = AmbiguousMonomer.getMonomerClass(
       variantMonomerItem.monomers,
     );
   }

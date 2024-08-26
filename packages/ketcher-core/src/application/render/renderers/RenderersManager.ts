@@ -32,8 +32,8 @@ import {
   isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
-import { VariantMonomer } from 'domain/entities/VariantMonomer';
-import { VariantMonomerRenderer } from 'application/render/renderers/VariantMonomerRenderer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -42,7 +42,7 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 export class RenderersManager {
   // FIXME: Specify the types.
   private theme;
-  public monomers: Map<number, BaseMonomerRenderer | VariantMonomerRenderer> =
+  public monomers: Map<number, BaseMonomerRenderer | AmbiguousMonomerRenderer> =
     new Map();
 
   public polymerBonds = new Map<
@@ -82,13 +82,13 @@ export class RenderersManager {
   }
 
   public addMonomer(
-    monomer: BaseMonomer | VariantMonomer,
+    monomer: BaseMonomer | AmbiguousMonomer,
     callback?: () => void,
   ) {
     let monomerRenderer;
 
-    if (monomer instanceof VariantMonomer) {
-      monomerRenderer = new VariantMonomerRenderer(monomer);
+    if (monomer instanceof AmbiguousMonomer) {
+      monomerRenderer = new AmbiguousMonomerRenderer(monomer);
     } else {
       const MonomerRenderer = monomerFactory(monomer.monomerItem)[1];
       monomerRenderer = new MonomerRenderer(monomer);

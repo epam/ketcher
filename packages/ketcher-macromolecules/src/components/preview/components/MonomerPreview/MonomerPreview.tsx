@@ -72,34 +72,36 @@ const MonomerPreview = ({ className }: Props) => {
   }
 
   const isUnresolved = monomer.props.unresolved;
-  const monomerName = isUnresolved ? monomer.label : monomer.struct.name;
+  const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
 
   return (
-    <ContainerDynamic
-      className={className}
-      data-testid="polymer-library-preview"
-    >
-      {monomerName && <MonomerName>{monomerName}</MonomerName>}
-      {isUnresolved ? (
-        <UnresolvedMonomerPreview />
-      ) : (
-        <StyledStructRender
-          struct={monomer.struct}
-          options={{
-            connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+    (preview.monomer.struct || isUnresolved) && (
+      <ContainerDynamic
+        className={className}
+        data-testid="polymer-library-preview"
+      >
+        {monomerName && <MonomerName>{monomerName}</MonomerName>}
+        {isUnresolved ? (
+          <UnresolvedMonomerPreview />
+        ) : (
+          <StyledStructRender
+            struct={monomer.struct}
+            options={{
+              connectedMonomerAttachmentPoints: connectedAttachmentPoints,
             usageInMacromolecule: UsageInMacromolecule.MonomerPreview,
-            labelInPreview: true,
-            needCache: false,
-          }}
-        />
-      )}
-      <InfoBlock>
-        <AttachmentPoints
-          preparedAttachmentPointsData={preparedAttachmentPointsData}
-        />
-        {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
-      </InfoBlock>
-    </ContainerDynamic>
+              labelInPreview: true,
+              needCache: false,
+            }}
+          />
+        )}
+        <InfoBlock>
+          <AttachmentPoints
+            preparedAttachmentPointsData={preparedAttachmentPointsData}
+          />
+          {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
+        </InfoBlock>
+      </ContainerDynamic>
+    )
   );
 };
 

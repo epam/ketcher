@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import { EditorSelection, getStereoAtomsMap } from 'application/editor';
+import { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -39,6 +39,7 @@ import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { Image } from './image';
+import { getStereoAtomsMap } from 'application/editor/actions/helpers';
 
 export type Neighbor = {
   aid: number;

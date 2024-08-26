@@ -183,7 +183,11 @@ export const selectAmbiguousMonomersInCategory = (
       return false;
     }
 
-    const ambiguousMonomer = new AmbiguousMonomer(libraryItem);
+    const ambiguousMonomer = new AmbiguousMonomer(
+      libraryItem,
+      undefined,
+      false,
+    );
 
     return (
       LIBRARY_GROUP_NAME_TO_MONOMER_CLASS[libraryGroupName] ===

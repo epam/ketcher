@@ -68,7 +68,9 @@ export function createMonomersForVariantMonomer(
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
 
-    return new MonomerConstructor(monomerItem);
+    return new MonomerConstructor(monomerItem, undefined, {
+      generateId: false,
+    });
   });
 
   return monomers;

@@ -16,6 +16,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
+    generateId = true,
   ) {
     const variantMonomerLabel =
       variantMonomerItem.label || DEFAULT_VARIANT_MONOMER_LABEL;
@@ -34,6 +35,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         isAmbiguous: true,
       },
       position,
+      { generateId },
     );
     this.monomers = variantMonomerItem.monomers;
     this.monomerClass = AmbiguousMonomer.getMonomerClass(

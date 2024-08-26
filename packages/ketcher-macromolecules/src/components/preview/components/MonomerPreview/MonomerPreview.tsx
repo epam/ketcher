@@ -75,7 +75,7 @@ const MonomerPreview = ({ className }: Props) => {
   const monomerName = isUnresolved ? monomer.label : monomer.struct?.name;
 
   return (
-    (preview.monomer.struct || isUnresolved) && (
+    (monomer.struct || isUnresolved) && (
       <ContainerDynamic
         className={className}
         data-testid="polymer-library-preview"
@@ -88,7 +88,7 @@ const MonomerPreview = ({ className }: Props) => {
             struct={monomer.struct}
             options={{
               connectedMonomerAttachmentPoints: connectedAttachmentPoints,
-            usageInMacromolecule: UsageInMacromolecule.MonomerPreview,
+              usageInMacromolecule: UsageInMacromolecule.MonomerPreview,
               labelInPreview: true,
               needCache: false,
             }}

@@ -95,6 +95,10 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      return;
+    }
+
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
     const style = { right: '-88px', top };

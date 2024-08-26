@@ -132,13 +132,13 @@ async function setAtomAndBondSettings(page: Page) {
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .click();
   await page
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
 }

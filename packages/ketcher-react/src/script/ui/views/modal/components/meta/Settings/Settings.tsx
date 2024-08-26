@@ -165,6 +165,17 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
           extraName="fontszsubUnit"
         />
+        <Field
+          name="reactionComponentMarginSize"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="reactionComponentMarginSizeUnit"
+        />
+        <Field
+          name="imageResolution"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+        />
       </fieldset>
     ),
   };
@@ -229,6 +240,12 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field name="aromaticCircle" />
         <Field
+          name="bondLength"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="bondLengthUnit"
+        />
+        <Field
           name="doubleBondWidth"
           component={MeasureInput}
           labelPos={false}
@@ -245,6 +262,12 @@ const SettingsDialog = (props: Props) => {
           component={MeasureInput}
           labelPos={false}
           extraName="stereoBondWidthUnit"
+        />
+        <Field
+          name="hashSpacing"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="hashSpacingUnit"
         />
       </fieldset>
     ),

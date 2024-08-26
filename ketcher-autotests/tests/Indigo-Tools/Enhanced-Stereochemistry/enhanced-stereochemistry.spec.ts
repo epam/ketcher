@@ -518,7 +518,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: “IUPAC style” in Label display at stereogenic centers is selected by default.
     */
     const deltaX = 0;
-    const deltaY = 50;
+    const deltaY = 100;
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await page.getByText('Stereochemistry', { exact: true }).click();
     await page.mouse.wheel(deltaX, deltaY);

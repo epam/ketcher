@@ -44,6 +44,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
             <div
               onClick={handleAccordionChange(label)}
               className={classes.accordionSummaryWrapper}
+              data-testid={`${label}-accordion`}
             >
               <div className={classes.accordionSummary}>
                 <Icon

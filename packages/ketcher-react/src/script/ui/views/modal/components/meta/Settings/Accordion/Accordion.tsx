@@ -35,8 +35,6 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
     );
   };
 
-  console.log(tabs);
-
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {

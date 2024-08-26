@@ -172,8 +172,6 @@ class ReStruct {
     molecule.multitailArrows.forEach((item, id) => {
       this.multitailArrows.set(id, new ReMultitailArrow(item));
     });
-
-    console.info(this.multitailArrows, JSON.stringify(this.multitailArrows));
   }
 
   get visibleRGroupAttachmentPoints() {

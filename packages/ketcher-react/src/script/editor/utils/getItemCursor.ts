@@ -31,10 +31,11 @@ export function getItemCursor(
         : multitailReferencePositionToCursor[closestItem.name];
     }
     case IMAGE_KEY: {
-      const closestItem =
-        item.ref as ClosestItemWithMap<ImageReferencePositionInfo>;
-      return closestItem.ref
-        ? imageReferencePositionToCursor[closestItem.ref.name]
+      const closestItem = (
+        item as ClosestItemWithMap<ImageReferencePositionInfo>
+      ).ref;
+      return closestItem
+        ? imageReferencePositionToCursor[closestItem.name]
         : defaultCursor;
     }
     default:

@@ -35,6 +35,8 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
     );
   };
 
+  console.log(tabs);
+
   return (
     <div className={clsx(classes.accordionWrapper, className)}>
       {tabs.map(({ label, content, key }) => {
@@ -44,6 +46,7 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
             <div
               onClick={handleAccordionChange(label)}
               className={classes.accordionSummaryWrapper}
+              data-testid={`${label}-accordion`}
             >
               <div className={classes.accordionSummary}>
                 <Icon

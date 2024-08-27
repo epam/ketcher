@@ -1,0 +1,272 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer2929"
+            },
+            {
+                "$ref": "monomer2930"
+            },
+            {
+                "$ref": "monomer2932"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer2930",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2932",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer2932",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer2929",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-4Abz___4-Aminobenzoic acid"
+            }
+        ]
+    },
+    "monomer2929": {
+        "type": "monomer",
+        "id": "2929",
+        "position": {
+            "x": 13.575000000000005,
+            "y": -9.774999999999991
+        },
+        "alias": "4Abz",
+        "templateId": "4Abz___4-Aminobenzoic acid"
+    },
+    "monomerTemplate-4Abz___4-Aminobenzoic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -2.726507550695797,
+                    0.7888487202321172,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.227761046996566,
+                    -0.07779165594988006,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2273350208647744,
+                    -0.07985810096654357,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.7273886458655453,
+                    -0.9458318819818753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.27250410413291326,
+                    -0.9458318819818753,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.7724504791321425,
+                    -0.07985810096654357,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.27250410413291326,
+                    0.7860490205321216,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.7273886458655453,
+                    0.7860490205321216,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.7728765052639337,
+                    -0.07779165594988006,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.274356049146494,
+                    -0.9428988632485465,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.271623008963165,
+                    0.7888487202321172,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    10
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "4Abz___4-Aminobenzoic acid",
+        "fullName": "4-Aminobenzoic acid",
+        "alias": "4Abz",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "X"
+    },
+    "monomer2930": {
+        "type": "monomer",
+        "id": "2930",
+        "position": {
+            "x": 10.575000000000006,
+            "y": -9.774999999999991
+        },
+        "alias": "4Abz",
+        "templateId": "4Abz___4-Aminobenzoic acid"
+    },
+    "monomer2932": {
+        "type": "monomer",
+        "id": "2932",
+        "position": {
+            "x": 12.075000000000005,
+            "y": -9.774999999999991
+        },
+        "alias": "4Abz",
+        "templateId": "4Abz___4-Aminobenzoic acid"
+    }
+}

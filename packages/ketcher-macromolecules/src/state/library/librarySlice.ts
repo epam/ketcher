@@ -246,7 +246,7 @@ export const selectAmbiguousMonomersInCategory = (
     ];
   } else {
     groupedAmbiguousMonomerLibraryItems.push({
-      groupTitle: libraryGroupName,
+      groupTitle: `Ambiguous ${libraryGroupName}`,
       groupItems: ambiguousMonomerLibraryItems,
     });
   }

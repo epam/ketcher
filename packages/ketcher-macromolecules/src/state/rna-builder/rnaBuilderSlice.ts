@@ -21,6 +21,7 @@ import {
   MonomerItemType,
   MONOMER_CONST,
   LabeledNodesWithPositionInSequence,
+  IKetIdtAliases,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
@@ -30,6 +31,7 @@ import {
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
+import { PresetPosition, selectEditorPosition } from 'state/common';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -88,6 +90,69 @@ export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
   [MonomerGroups.SUGARS]: 'sugar',
   [MonomerGroups.PHOSPHATES]: 'phosphate',
+};
+type PresetWithIDT = IRnaPreset & {
+  idtText: string | null;
+};
+
+const generateIDTText = (
+  presetName: string | undefined,
+  position: PresetPosition,
+  idtAliases: IKetIdtAliases | undefined,
+): string | null => {
+  if (!presetName || !idtAliases) {
+    return null;
+  }
+
+  if (presetName.includes('MOE')) {
+    const { base, modifications } = idtAliases;
+
+    const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
+    const internal = modifications?.internal ?? `i${base}`;
+    const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
+
+    switch (position) {
+      case PresetPosition.Library:
+        return `${endpoint5}, ${internal}`;
+      case PresetPosition.ChainStart:
+        return endpoint5;
+      case PresetPosition.ChainMiddle:
+        return internal;
+      case PresetPosition.ChainEnd:
+        return endpoint3;
+    }
+  }
+
+  return idtAliases.base || null;
+};
+
+export const createPresetsWithIDTObject = (
+  state,
+  position: PresetPosition,
+): Record<string, PresetWithIDT> => {
+  const { presetsDefault = [], presetsCustom = [] } = state.rnaBuilder;
+
+  const idtPresetsObject: Record<string, PresetWithIDT> = {};
+
+  const allPresets = [...presetsDefault, ...presetsCustom];
+
+  allPresets.forEach((preset: IRnaPreset) => {
+    if (preset.idtAliases && preset.name) {
+      let idtText: string = preset.idtAliases.base || '';
+
+      if (preset.name.includes('MOE')) {
+        idtText =
+          generateIDTText(preset.name, position, preset.idtAliases) || '';
+      }
+
+      idtPresetsObject[preset.name] = {
+        ...preset,
+        idtText,
+      };
+    }
+  });
+
+  return idtPresetsObject;
 };
 
 export const rnaBuilderSlice = createSlice({
@@ -403,23 +468,78 @@ export const selectAllPresets = (
   const { presetsDefault = [], presetsCustom = [] } = state.rnaBuilder;
   return [...presetsDefault, ...presetsCustom];
 };
+
 export const selectFilteredPresets = (
-  state,
-): Array<IRnaPreset & { favorite: boolean }> => {
+  state: RootState,
+): Array<PresetWithIDT> => {
+  const position = selectEditorPosition(state) ?? PresetPosition.Library;
   const { searchFilter } = state.library;
-  const presetsAll = selectAllPresets(state);
-  return presetsAll.filter((item: IRnaPreset) => {
+  const searchText = searchFilter.toLowerCase();
+
+  const presetsWithIDTObject = createPresetsWithIDTObject(state, position);
+
+  return Object.values(presetsWithIDTObject).filter((item: PresetWithIDT) => {
     const name = item.name?.toLowerCase();
     const sugarName = item.sugar?.label?.toLowerCase();
     const phosphateName = item.phosphate?.label?.toLowerCase();
     const baseName = item.base?.label?.toLowerCase();
-    const searchText = searchFilter.toLowerCase();
-    const cond =
+    const idtText = item.idtText?.toLowerCase();
+
+    const matchesIdtAliases =
+      item.idtAliases?.base?.toLowerCase().includes(searchText) ||
+      (item.idtAliases?.modifications &&
+        Object.values(item.idtAliases.modifications).some((mod) =>
+          mod?.toLowerCase().includes(searchText),
+        ));
+
+    if ((searchText.match(/\//g) || []).length > 1) {
+      const parts = searchText.split('/');
+      if (parts.length > 2 && parts[2]) {
+        return false;
+      }
+    }
+
+    if (searchText.startsWith('/')) {
+      const afterSlash = searchText.slice(1).split('/')[0];
+      return (
+        idtText?.startsWith(afterSlash) ||
+        (item.idtAliases?.modifications &&
+          Object.values(item.idtAliases.modifications).some((mod) =>
+            mod?.toLowerCase().startsWith(afterSlash),
+          ))
+      );
+    }
+
+    if (searchText.endsWith('/')) {
+      const beforeSlash = searchText.slice(0, -1);
+      return (
+        idtText?.endsWith(beforeSlash) ||
+        (item.idtAliases?.modifications &&
+          Object.values(item.idtAliases.modifications).some((mod) =>
+            mod?.toLowerCase().endsWith(beforeSlash),
+          ))
+      );
+    }
+
+    let matchesIdtText = false;
+    if (idtText) {
+      if (Array.isArray(idtText)) {
+        matchesIdtText = idtText.some((text) =>
+          text.toLowerCase().includes(searchText),
+        );
+      } else {
+        matchesIdtText = idtText.includes(searchText);
+      }
+    }
+
+    return (
       name?.includes(searchText) ||
       sugarName?.includes(searchText) ||
       phosphateName?.includes(searchText) ||
-      baseName?.includes(searchText);
-    return cond;
+      baseName?.includes(searchText) ||
+      matchesIdtText ||
+      matchesIdtAliases
+    );
   });
 };
 

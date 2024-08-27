@@ -28,7 +28,11 @@ import {
   selectAmbiguousMonomersInCategory,
   selectAmbiguousMonomersInFavorites,
 } from 'state/library';
-import { MONOMER_LIBRARY_FAVORITES, MonomerGroups } from '../../../constants';
+import {
+  MONOMER_LIBRARY_FAVORITES,
+  MONOMER_LIBRARY_PEPTIDES,
+  MonomerGroups,
+} from '../../../constants';
 import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
 import {
@@ -110,18 +114,19 @@ const MonomerList = ({
         </>
       )}
       <>
-        {ambiguousMonomers.map((group) => {
-          return (
-            <MonomerGroup
-              key={group.groupTitle}
-              title={group.groupTitle}
-              items={group.groupItems}
-              libraryName={libraryName}
-              onItemClick={onItemClick || selectMonomer}
-              selectedMonomerUniqueKey={selectedMonomers}
-            />
-          );
-        })}
+        {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
+          ambiguousMonomers.map((group) => {
+            return (
+              <MonomerGroup
+                key={group.groupTitle}
+                title={group.groupTitle}
+                items={group.groupItems}
+                libraryName={libraryName}
+                onItemClick={onItemClick || selectMonomer}
+                selectedMonomerUniqueKey={selectedMonomers}
+              />
+            );
+          })}
       </>
     </MonomerListContainer>
   );

@@ -1,7 +1,7 @@
 import {
   AttachmentPointName,
   MonomerItemType,
-  VariantMonomerType,
+  AmbiguousMonomerType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
@@ -62,7 +62,7 @@ import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
-import { VariantMonomer } from 'domain/entities/VariantMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1505,7 +1505,7 @@ export class DrawingEntitiesManager {
     const mergedDrawingEntities = new DrawingEntitiesManager();
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
-        monomer instanceof VariantMonomer
+        monomer instanceof AmbiguousMonomer
           ? targetDrawingEntitiesManager.addVariantMonomer(
               {
                 ...monomer.variantMonomerItem,
@@ -1842,7 +1842,7 @@ export class DrawingEntitiesManager {
   }
 
   private addVariantMonomerChangeModel(
-    variantMonomerItem: VariantMonomerType,
+    variantMonomerItem: AmbiguousMonomerType,
     position: Vec2,
     _monomer?: BaseMonomer,
   ) {
@@ -1852,7 +1852,7 @@ export class DrawingEntitiesManager {
       return _monomer;
     }
 
-    const monomer = new VariantMonomer(variantMonomerItem, position);
+    const monomer = new AmbiguousMonomer(variantMonomerItem, position);
 
     this.monomers.set(monomer.id, monomer);
 
@@ -1860,7 +1860,7 @@ export class DrawingEntitiesManager {
   }
 
   public addVariantMonomer(
-    variantMonomerItem: VariantMonomerType,
+    variantMonomerItem: AmbiguousMonomerType,
     position: Vec2,
   ) {
     const command = new Command();

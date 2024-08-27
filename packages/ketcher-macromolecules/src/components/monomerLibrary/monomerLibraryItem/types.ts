@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerGroups, MonomerItemType } from 'ketcher-core';
+import { MonomerGroups, MonomerOrAmbiguousType } from 'ketcher-core';
 
 export interface IMonomerItemProps {
-  item: MonomerItemType;
+  item: MonomerOrAmbiguousType;
   groupName?: MonomerGroups;
   disabled?: boolean;
   isSelected?: boolean;

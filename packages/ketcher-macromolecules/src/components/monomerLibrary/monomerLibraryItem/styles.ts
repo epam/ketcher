@@ -19,6 +19,7 @@ export const Card = styled.div<{
   code?: string;
   selected?: boolean;
   disabled?: boolean;
+  isVariantMonomer?: boolean;
 }>`
   background: white;
   height: 48px;
@@ -69,6 +70,8 @@ export const Card = styled.div<{
     left: 0;
     width: 100%;
     height: 8px;
+    border-bottom: ${({ isVariantMonomer }) =>
+      isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
     background: ${({ code, theme, selected }) =>
       selected
         ? theme.ketcher.color.button.primary.active
@@ -104,4 +107,27 @@ export const Card = styled.div<{
       color: #faa500;
     }
   }
+`;
+
+export const NumberCircle = styled.div<{
+  selected?: boolean;
+  monomersAmount: number;
+}>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 15px;
+  width: ${({ monomersAmount }) => (monomersAmount >= 10 ? '20px' : '15px')};
+  border-radius: ${({ monomersAmount }) =>
+    monomersAmount >= 10 ? '20px' : '50%'};
+  border: 1px solid #cceaee;
+  position: absolute;
+  bottom: ${({ selected }) => (selected ? '4px' : '6px')};
+  left: ${({ selected }) => (selected ? '18px' : '20px')};
+  font-size: 12px;
+  line-height: 12px;
+`;
+
+export const CardTitle = styled.span`
+  font-size: 12px;
 `;

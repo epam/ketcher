@@ -2,8 +2,8 @@ import {
   IKetMacromoleculesContent,
   IKetMonomerNode,
   IKetMonomerTemplate,
-  IKetVariantMonomerNode,
-  IKetVariantMonomerTemplate,
+  IKetAmbiguousMonomerNode,
+  IKetAmbiguousMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -52,16 +52,11 @@ export function monomerToDrawingEntity(
   );
 }
 
-export function variantMonomerToDrawingEntity(
-  drawingEntitiesManager: DrawingEntitiesManager,
-  node: IKetVariantMonomerNode,
-  template: IKetVariantMonomerTemplate,
+export function createMonomersForVariantMonomer(
+  variantMonomerTemplate: IKetAmbiguousMonomerTemplate,
   parsedFileContent: IKetMacromoleculesContent,
 ) {
-  const position: Vec2 = switchIntoChemistryCoordSystem(
-    new Vec2(node.position.x, node.position.y),
-  );
-  const monomerTemplates = template.options.map((option) => {
+  const monomerTemplates = variantMonomerTemplate.options.map((option) => {
     return parsedFileContent[setMonomerTemplatePrefix(option.templateId)];
   }) as IKetMonomerTemplate[];
   const monomers = monomerTemplates.map((monomerTemplate) => {
@@ -73,16 +68,35 @@ export function variantMonomerToDrawingEntity(
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
 
-    return new MonomerConstructor(monomerItem);
+    return new MonomerConstructor(monomerItem, undefined, {
+      generateId: false,
+    });
   });
+
+  return monomers;
+}
+
+export function variantMonomerToDrawingEntity(
+  drawingEntitiesManager: DrawingEntitiesManager,
+  node: IKetAmbiguousMonomerNode,
+  template: IKetAmbiguousMonomerTemplate,
+  parsedFileContent: IKetMacromoleculesContent,
+) {
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(node.position.x, node.position.y),
+  );
+
+  const monomers = createMonomersForVariantMonomer(template, parsedFileContent);
 
   return drawingEntitiesManager.addVariantMonomer(
     {
       monomers,
+      id: template.id,
       subtype: template.subtype,
       label: node.alias,
       options: template.options,
       idtAliases: template.idtAliases,
+      isAmbiguous: true,
     },
     position,
   );

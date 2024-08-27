@@ -2,7 +2,7 @@ import { AttachmentPointName } from 'domain/types';
 
 export enum KetNodeType {
   MONOMER = 'monomer',
-  VARIANT_MONOMER = 'variantMonomer',
+  AMBIGUOUS_MONOMER = 'ambiguousMonomer',
 }
 
 export interface IKetMonomerNode {
@@ -17,8 +17,8 @@ export interface IKetMonomerNode {
   templateId: string;
 }
 
-export interface IKetVariantMonomerNode {
-  type: KetNodeType.VARIANT_MONOMER;
+export interface IKetAmbiguousMonomerNode {
+  type: KetNodeType.AMBIGUOUS_MONOMER;
   id: string;
   position: {
     x: number;
@@ -28,7 +28,7 @@ export interface IKetVariantMonomerNode {
   templateId: string;
 }
 
-export type KetNode = IKetMonomerNode | IKetVariantMonomerNode;
+export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;
 
 export interface IKetConnectionMonomerEndPoint {
   monomerId: string;
@@ -110,14 +110,15 @@ export interface IKetIdtAliases {
 export enum KetTemplateType {
   MONOMER_TEMPLATE = 'monomerTemplate',
   MONOMER_GROUP_TEMPLATE = 'monomerGroupTemplate',
+  AMBIGUOUS_MONOMER_TEMPLATE = 'ambiguousMonomerTemplate',
 }
 
-export enum KetVariantMonomerTemplateSubType {
+export enum KetAmbiguousMonomerTemplateSubType {
   ALTERNATIVES = 'alternatives',
   MIXTURE = 'mixture',
 }
 
-export interface KetVariantMonomerTemplateOption {
+export interface KetAmbiguousMonomerTemplateOption {
   templateId: string;
   ratio?: number;
   probability?: number;
@@ -152,12 +153,13 @@ export interface IKetMonomerTemplate {
   bonds: [];
 }
 
-export interface IKetVariantMonomerTemplate {
-  type: KetTemplateType.MONOMER_TEMPLATE;
+export interface IKetAmbiguousMonomerTemplate {
+  type: KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE;
   id: string;
-  subtype: KetVariantMonomerTemplateSubType;
-  options: KetVariantMonomerTemplateOption[];
+  subtype: KetAmbiguousMonomerTemplateSubType;
+  options: KetAmbiguousMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
+  alias?: string;
 }
 
 export interface IKetMonomerTemplateRef {
@@ -195,7 +197,7 @@ export interface IKetMacromoleculesContentOtherProperties {
     | KetNode
     | IKetMonomerTemplate
     | IKetMonomerGroupTemplate
-    | IKetVariantMonomerTemplate;
+    | IKetAmbiguousMonomerTemplate;
 }
 
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &

@@ -162,19 +162,69 @@ export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
 export const selectFilteredMonomers = createSelector(
-  (state) => state.library,
+  (state: RootState) => state.library,
   (state): Array<MonomerItemType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
+    const normalizedSearchFilter = searchFilter.toLowerCase();
 
     return monomers
       .filter((item: MonomerItemType) => {
-        const { Name = '', MonomerName = '' } = item.props;
+        const { Name = '', MonomerName = '', idtAliases } = item.props;
         const monomerName = Name.toLowerCase();
         const monomerNameFull = MonomerName.toLowerCase();
-        const normalizedSearchFilter = searchFilter.toLowerCase();
+
+        const idtBase = idtAliases?.base?.toLowerCase();
+
+        const idtModifications = idtAliases?.modifications
+          ? Object.values(idtAliases.modifications)
+              .map((mod) => mod.toLowerCase())
+              .join(' ')
+          : '';
+
+        if (normalizedSearchFilter === '/') {
+          return Boolean(idtBase || idtModifications);
+        }
+
+        if (normalizedSearchFilter.includes('/')) {
+          const parts = normalizedSearchFilter.split('/');
+
+          if (parts.length > 3 || (parts.length === 3 && parts[2] !== '')) {
+            return false;
+          }
+
+          const searchBeforeSlash = parts[0];
+          const searchAfterSlash = parts[1];
+
+          const matchesIdtBase =
+            idtBase &&
+            idtBase.startsWith(searchAfterSlash) &&
+            idtBase.endsWith(searchBeforeSlash);
+          const matchesIdtModifications = idtModifications
+            ? idtModifications
+                .split(' ')
+                .some(
+                  (mod) =>
+                    mod.startsWith(searchAfterSlash) &&
+                    mod.endsWith(searchBeforeSlash),
+                )
+            : false;
+
+          return matchesIdtBase || matchesIdtModifications;
+        }
+
+        const matchesIdtBase = idtBase
+          ? idtBase.includes(normalizedSearchFilter)
+          : false;
+        const matchesIdtModifications = idtModifications
+          ? idtModifications.includes(normalizedSearchFilter)
+          : false;
+
         const cond =
           monomerName.includes(normalizedSearchFilter) ||
-          monomerNameFull.includes(normalizedSearchFilter);
+          monomerNameFull.includes(normalizedSearchFilter) ||
+          matchesIdtBase ||
+          matchesIdtModifications;
+
         return cond;
       })
       .map((item: MonomerItemType) => {

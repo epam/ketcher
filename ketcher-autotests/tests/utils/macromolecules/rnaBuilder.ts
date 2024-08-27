@@ -40,3 +40,11 @@ export async function toggleNucleotidesAccordion(page: Page) {
 export async function pressNewPresetButton(page: Page) {
   await page.getByRole('button', { name: 'New Preset' }).click();
 }
+
+export async function expandCollapseRnaBuilder(page: Page) {
+  await page
+    .locator('div')
+    .filter({ hasText: /^RNA Builder$/ })
+    .getByRole('button')
+    .click();
+}

@@ -51,3 +51,11 @@ export async function selectPhosphateSlot(page: Page) {
 export async function pressAddToPresetsButton(page: Page) {
   await page.getByTestId('add-to-presets-btn').click();
 }
+
+export async function expandCollapseRnaBuilder(page: Page) {
+  await page
+    .locator('div')
+    .filter({ hasText: /^RNA Builder$/ })
+    .getByRole('button')
+    .click();
+}

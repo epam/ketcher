@@ -36,6 +36,8 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
+  expandCollapseRnaBuilder,
+  goToCHEMTab,
   gotoRNA,
   pressNewPresetButton,
   toggleBasesAccordion,

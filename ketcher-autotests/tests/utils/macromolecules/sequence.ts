@@ -67,3 +67,15 @@ export async function selectSequenceRangeInEditMode(
   await page.mouse.up();
   await moveMouseAway(page);
 }
+
+export async function pressCancelInConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Cancel' }).click();
+}
+
+export async function pressYesInConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Yes' }).click();
+}
+
+export async function CloseConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Close window' }).click();
+}

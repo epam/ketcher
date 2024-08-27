@@ -1,5 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
 import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -9,8 +12,15 @@ import {
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
+  receiveFileComparisonData,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
+  getMolfile,
+  getSequence,
+  getIdt,
+  getFasta,
+  getKet,
+  saveToFile,
 } from '@utils';
 
 import {
@@ -32,7 +42,10 @@ import {
 import {
   clickOnSequenceSymbolByIndex,
   doubleClickOnSequenceSymbolByIndex,
+  pressCancelInConfirmYourActionDialog,
+  pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -651,7 +664,7 @@ async function selectAndReplaceSymbol(
   await clickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await page.getByRole('button', { name: 'Yes' }).click();
+    await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseAway(page);
 }
@@ -691,8 +704,28 @@ async function selectAndReplaceAllSymbols(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await page.getByRole('button', { name: 'Yes' }).click();
+    await pressYesInConfirmYourActionDialog(page);
   }
+  await moveMouseAway(page);
+}
+
+async function selectAllSymbols(page: Page, sequence: ISequence) {
+  await selectSequenceLayoutModeTool(page);
+
+  await page.keyboard.down('Shift');
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.LeftEnd,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.Center,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.RightEnd,
+  );
+  await page.keyboard.up('Shift');
   await moveMouseAway(page);
 }
 
@@ -747,7 +780,7 @@ async function selectAndReplaceAllSymbolsInEditMode(
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await page.getByRole('button', { name: 'Yes' }).click();
+    await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseAway(page);
 }
@@ -788,7 +821,7 @@ async function selectAndReplaceSymbolInEditMode(
   await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
-    await page.getByRole('button', { name: 'Yes' }).click();
+    await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseToTheMiddleOfTheScreen(page);
   await page.mouse.click(400, 400);
@@ -1981,3 +2014,552 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     });
   }
 }
+
+test(`23. Verify functionality of 'Cancel' option in warning modal window`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 23
+        Description: Verify functionality of 'Cancel' option in warning modal window
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains bases wrapped into one @ symbol)
+        3. Click on the last symbol (to select it)
+        4. Go to Peptide tab
+        4. Click on monomer from the library (Cys_Bn) - Confirm you actions dialod opens
+        5. Check if Confirm you actions dialod opened
+        6. Click Cancel
+        7. Take screenshot to validate that dialog closed and nothing changed
+
+      */
+  const sequence: ISequence = {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.peptide_Cys_Bn,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Cys_Bn',
+    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerDescription: 'peptide (Cys_Bn)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectSequenceLayoutModeTool(page);
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.RightEnd,
+  );
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+
+  const fullDialogMessage = page.getByText(
+    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+  );
+  await expect(fullDialogMessage).toBeVisible();
+
+  pressCancelInConfirmYourActionDialog(page);
+
+  await takeEditorScreenshot(page);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`24. Verify functionality of 'Cancel' option for multiple selected monomers`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 24
+        Description: Verify functionality of 'Cancel' option for multiple selected monomers
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains bases wrapped into one @ symbol)
+        3. Select all symbol of target type (to select it)
+        4. Go to Peptide tab
+        4. Click on monomer from the library (Cys_Bn) - Confirm you actions dialod opens
+        5. Check if Confirm you actions dialod opened
+        6. Click Cancel
+        7. Take screenshot to validate that dialog closed and nothing changed
+
+      */
+  const sequence: ISequence = {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.peptide_Cys_Bn,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Cys_Bn',
+    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerDescription: 'peptide (Cys_Bn)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectSequenceLayoutModeTool(page);
+  await page.keyboard.down('Shift');
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.LeftEnd,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.Center,
+  );
+  await clickOnSequenceSymbolByIndex(
+    page,
+    sequence.ReplacementPositions.RightEnd,
+  );
+  await page.keyboard.up('Shift');
+  await clickOnMonomerFromLibrary(page, replaceMonomer);
+
+  const fullDialogMessage = page.getByText(
+    'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+  );
+  await expect(fullDialogMessage).toBeVisible();
+
+  pressCancelInConfirmYourActionDialog(page);
+
+  await takeEditorScreenshot(page);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`25. Verify undo/redo functionality after replacing monomers`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 25
+        Description: Verify undo/redo functionality after replacing monomers
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains bases wrapped into one @ symbol)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with peptide (Cys_Bn)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Press Undo button at toolbar
+        7. Take screenshot to validate that all changes has been rolled back
+      */
+  const sequence: ISequence = {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.peptide_Cys_Bn,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Cys_Bn',
+    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerDescription: 'peptide (Cys_Bn)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`26. Copy and paste replaced monomers`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 26
+        Description: Copy and paste replaced monomers
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains bases wrapped into one @ symbol)
+        3. Select all symbol of target type (to select it)
+        4. Go to Peptide tab
+        4. Click on monomer from the library (Cys_Bn) - Confirm you actions dialod opens
+        5. Press Yes button
+        6. Take screenshot to validate that symbols has been replaced
+        7. Select that symbols again
+        7. Press Ctrl+C to copy selected symbols
+        8. Press Ctrl+P to paste them on the canvas
+        9. Take screenshot to validate that all monomers appeared on the Sequence canvas
+        10. Switch to Flex mode
+        11. Take screenshot to validate that all monomers appeared on the Flex canvas
+      */
+  const sequence: ISequence = {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.peptide_Cys_Bn,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Cys_Bn',
+    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerDescription: 'peptide (Cys_Bn)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+  await selectAllSymbols(page, sequence);
+  await page.keyboard.press('Control+c');
+  await page.keyboard.press('Control+v');
+  await takeEditorScreenshot(page);
+  await selectFlexLayoutModeTool(page);
+  await takeEditorScreenshot(page);
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`27. Verify switching from Macro mode to Micro mode and back without data loss`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence contains bases wrapped into one @ symbol)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with peptide (Cys_Bn)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Switch to Molecules mode
+        7. Take screenshot to validate canvas looks correct
+        8. Switch to Macromolecules mode
+        9. Take screenshot to validate canvas looks correct
+      */
+  const sequence: ISequence = {
+    Id: 7,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
+    SequenceName: 'sequence of bases (nC6n5U)',
+    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ConfirmationOnReplecement: true,
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.peptide_Cys_Bn,
+    MonomerType: 'Peptide',
+    MonomerAlias: 'Cys_Bn',
+    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerDescription: 'peptide (Cys_Bn)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+  await turnOnMicromoleculesEditor(page);
+  await takeEditorScreenshot(page);
+  await turnOnMacromoleculesEditor(page);
+  await takeEditorScreenshot(page);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`28. Verify saving and reopening a structure with replaced monomers in KET`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence consists of preset_As)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with preset (C)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Save to KET
+        7. Compate result with the template
+      */
+  const sequence: ISequence = {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.preset_C,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: 'C',
+    MonomerTestId: 'C_C_R_P',
+    MonomerDescription: 'preset (C)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+
+  const expectedKetFile = await getKet(page);
+  await saveToFile(
+    'Common/Sequence-Mode-Replacement/replacement-expected.ket',
+    expectedKetFile,
+  );
+
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.ket',
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`29. Verify saving and reopening a structure with replaced monomers in MOL V3000`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence consists of preset_As)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with preset (C)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Save to Mol v3000
+        7. Compate result with the template
+        */
+  const sequence: ISequence = {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.preset_C,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: 'C',
+    MonomerTestId: 'C_C_R_P',
+    MonomerDescription: 'preset (C)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile(
+    'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
+    expectedFile,
+  );
+
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
+      fileFormat: 'v3000',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
+
+  expect(molFile).toEqual(molFileExpected);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`30. Verify saving and reopening a structure with replaced monomers in Sequence`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence consists of preset_As)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with preset (C)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Save to Sequence
+        7. Compate result with the template
+        */
+  const sequence: ISequence = {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.preset_C,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: 'C',
+    MonomerTestId: 'C_C_R_P',
+    MonomerDescription: 'preset (C)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+
+  const expectedFile = await getSequence(page);
+  await saveToFile(
+    'Common/Sequence-Mode-Replacement/replacement-expected.seq',
+    expectedFile,
+  );
+
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: sequenceFileExpected, file: sequenceFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.seq',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
+
+  expect(sequenceFile).toEqual(sequenceFileExpected);
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`31. Verify saving and reopening a structure with replaced monomers in FASTA`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence consists of preset_As)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with preset (C)
+        5. Take screenshot to validate that symbols has been replaced
+        9. Save to FASTA
+
+      */
+  const sequence: ISequence = {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.preset_C,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: 'C',
+    MonomerTestId: 'C_C_R_P',
+    MonomerDescription: 'preset (C)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+
+  const expectedFile = await getFasta(page);
+  await saveToFile(
+    'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
+    expectedFile,
+  );
+
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: fastaFileExpected, file: fastaFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.fasta',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
+
+  expect(fastaFile).toEqual(fastaFileExpected);
+
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});
+
+test(`32. Verify saving and reopening a structure with replaced monomers in IDT`, async () => {
+  /*
+        Test case: https://github.com/epam/ketcher/issues/5363 - Test case 27
+        Description: Verify switching from Macro mode to Micro mode and back without data loss
+        Scenario:
+        1. Clear canvas
+        2. Load sequence from file (sequence consists of preset_As)
+        3. Select all symbol of target type (to select it)
+        4. Replace them with preset (C)
+        5. Take screenshot to validate that symbols has been replaced
+        6. Save to KET
+        7. Save to Mol v3000
+        8. Save to Sequence
+        9. Save to FASTA
+        10. Save to IDT
+        11. Save to HELM
+      */
+  const sequence: ISequence = {
+    Id: 3,
+    FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
+    SequenceName: 'sequence of presets (A)',
+    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+  };
+
+  const replaceMonomer: IReplaceMonomer = {
+    Id: <number>monomerIDs.preset_C,
+    MonomerType: 'RNA',
+    MonomerSubType: 'Presets',
+    MonomerAlias: 'C',
+    MonomerTestId: 'C_C_R_P',
+    MonomerDescription: 'preset (C)',
+  };
+
+  await openFileAndAddToCanvasMacro(sequence.FileName, page);
+  await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
+  await takeEditorScreenshot(page);
+
+  const expectedFile = await getIdt(page);
+  await saveToFile(
+    'Common/Sequence-Mode-Replacement/replacement-expected.idt',
+    expectedFile,
+  );
+
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: idtFileExpected, file: idtFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.idt',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
+
+  expect(idtFile).toEqual(idtFileExpected);
+  await checkForKnownBugs(
+    replaceMonomer,
+    sequence,
+    sequence.ReplacementPositions.RightEnd,
+  );
+});

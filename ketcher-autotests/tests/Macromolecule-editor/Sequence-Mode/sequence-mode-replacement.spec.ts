@@ -46,6 +46,7 @@ import {
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -735,22 +736,7 @@ async function selectAndReplaceAllSymbolsWithError(
   sequence: ISequence,
 ) {
   await selectSequenceLayoutModeTool(page);
-
-  await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
-  await page.keyboard.up('Shift');
-
+  await selectAllSymbols(page, sequence);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
   await moveMouseAway(page);
@@ -1496,6 +1482,11 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
         6. Add info to log if known bugs exist and skip test
       */
       test.setTimeout(20000);
+      // const title = test.info().title;
+      // // If (for some reasons) on random test ErrorMessage doesn't work - use that dirty hack - page reload helps
+      // if (title.includes('Case 15-1-17.')) {
+      //   await pageReload(page);
+      // }
 
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceAllSymbolsWithError(
@@ -2287,6 +2278,9 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
         6. Save to KET
         7. Compate result with the template
       */
+
+  await pageReload(page);
+
   const sequence: ISequence = {
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',

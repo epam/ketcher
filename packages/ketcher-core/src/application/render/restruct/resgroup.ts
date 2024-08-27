@@ -95,11 +95,10 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SRU': {
-          let connectivity: string = sgroup.data.connectivity || 'eu';
-          if (connectivity === 'ht') connectivity = '';
+          const connectivity: string = sgroup.data.connectivity || 'eu';
           const subscript = sgroup.data.subscript || 'n';
           SGroupdrawBracketsOptions.lowerIndexText = subscript;
-          SGroupdrawBracketsOptions.upperIndexText = connectivity;
+          SGroupdrawBracketsOptions.upperIndexText = connectivity.toUpperCase();
           break;
         }
         case 'SUP': {

@@ -21,6 +21,7 @@ export function resetEditorEvents() {
     openMonomerConnectionModal: new Subscription(),
     mouseOverPolymerBond: new Subscription(),
     mouseLeavePolymerBond: new Subscription(),
+    mouseOnMovePolymerBond: new Subscription(),
     mouseOverMonomer: new Subscription(),
     mouseOnMoveMonomer: new Subscription(),
     mouseLeaveMonomer: new Subscription(),
@@ -56,6 +57,7 @@ resetEditorEvents();
 export const renderersEvents: ToolEventHandlerName[] = [
   'mouseOverPolymerBond',
   'mouseLeavePolymerBond',
+  'mouseOnMovePolymerBond',
   'mouseOverMonomer',
   'mouseOnMoveMonomer',
   'mouseOverAttachmentPoint',

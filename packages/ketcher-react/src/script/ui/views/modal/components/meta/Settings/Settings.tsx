@@ -166,15 +166,17 @@ const SettingsDialog = (props: Props) => {
           extraName="fontszsubUnit"
         />
         <Field
-          name="reactionComponentMarginSize"
+          name="reaction-component-margin-size"
           component={MeasureInput}
           labelPos={false}
-          extraName="reactionComponentMarginSizeUnit"
+          extraName="reaction-component-margin-size-unit"
         />
         <Field
-          name="imageResolution"
+          name="image-resolution"
           component={Select}
-          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          options={getSelectOptionsFromSchema(
+            settingsProps?.['image-resolution'],
+          )}
         />
       </fieldset>
     ),
@@ -240,10 +242,10 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field name="aromaticCircle" />
         <Field
-          name="bondLength"
+          name="bond-length"
           component={MeasureInput}
           labelPos={false}
-          extraName="bondLengthUnit"
+          extraName="bond-length-unit"
         />
         <Field name="bondSpacing" extraLabel="% of length" />
         <Field

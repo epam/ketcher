@@ -39,6 +39,28 @@ export async function hoverOnSequenceSymbol(
   await symbolLocator.hover();
 }
 
+export async function clickOnSequenceSymbolByIndex(
+  page: Page,
+  symbolIndex: number,
+) {
+  const symbolLocator = page
+    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .first();
+  await symbolLocator.hover();
+  await symbolLocator.click();
+}
+
+export async function doubleClickOnSequenceSymbolByIndex(
+  page: Page,
+  symbolIndex: number,
+) {
+  const symbolLocator = page
+    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .first();
+  await symbolLocator.hover();
+  await symbolLocator.dblclick();
+}
+
 export function getSequenceSymbolLocator(
   page: Page,
   symbolText: string,
@@ -68,4 +90,16 @@ export async function selectSequenceRangeInEditMode(
 
   await page.mouse.up();
   await moveMouseAway(page);
+}
+
+export async function pressCancelInConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Cancel' }).click();
+}
+
+export async function pressYesInConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Yes' }).click();
+}
+
+export async function CloseConfirmYourActionDialog(page: Page) {
+  await page.getByRole('button', { name: 'Close window' }).click();
 }

@@ -1,0 +1,370 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer565"
+            },
+            {
+                "$ref": "monomer566"
+            },
+            {
+                "$ref": "monomer567"
+            },
+            {
+                "$ref": "monomer577"
+            },
+            {
+                "$ref": "monomer578"
+            },
+            {
+                "$ref": "monomer579"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer565",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer566",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer566",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer567",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer577",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer578",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer578",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer579",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer566",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer578",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer567",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer579",
+                    "attachmentPointId": "R3"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer565",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer577",
+                    "attachmentPointId": "R3"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-D-gGlu___D-Gamma glutamic acid"
+            }
+        ]
+    },
+    "monomer565": {
+        "type": "monomer",
+        "id": "565",
+        "position": {
+            "x": 1.25,
+            "y": -1.25
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    },
+    "monomerTemplate-D-gGlu___D-Gamma glutamic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -2.1351647230664987,
+                    -0.7114105460735363,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.1354309596129628,
+                    -0.7089445361236844,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6368970562374661,
+                    0.15829117921347655,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.36336989855657864,
+                    0.157757987872968,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.8636366737887281,
+                    -0.7084113447831757,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.863903628582773,
+                    -0.7089445361236844,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.363903808144668,
+                    0.15675825410951447,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.363903808144668,
+                    -1.574647326356883,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.1371638314696155,
+                    1.0244605118696202,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.6371636519077204,
+                    1.890163302102819,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.136897594923152,
+                    1.0249937032101288,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    8,
+                    10
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "D-gGlu___D-Gamma glutamic acid",
+        "fullName": "D-Gamma glutamic acid",
+        "alias": "D-gGlu",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 8,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "E"
+    },
+    "monomer566": {
+        "type": "monomer",
+        "id": "566",
+        "position": {
+            "x": 2.75,
+            "y": -1.25
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    },
+    "monomer567": {
+        "type": "monomer",
+        "id": "567",
+        "position": {
+            "x": 4.25,
+            "y": -1.25
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    },
+    "monomer577": {
+        "type": "monomer",
+        "id": "577",
+        "position": {
+            "x": 1.25,
+            "y": -2.75
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    },
+    "monomer578": {
+        "type": "monomer",
+        "id": "578",
+        "position": {
+            "x": 2.75,
+            "y": -2.75
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    },
+    "monomer579": {
+        "type": "monomer",
+        "id": "579",
+        "position": {
+            "x": 4.25,
+            "y": -2.75
+        },
+        "alias": "D-gGlu",
+        "templateId": "D-gGlu___D-Gamma glutamic acid"
+    }
+}

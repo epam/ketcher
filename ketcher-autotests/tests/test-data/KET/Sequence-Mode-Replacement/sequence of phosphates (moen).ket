@@ -1,0 +1,533 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer241"
+            },
+            {
+                "$ref": "monomer258"
+            },
+            {
+                "$ref": "monomer324"
+            },
+            {
+                "$ref": "monomer325"
+            },
+            {
+                "$ref": "monomer326"
+            },
+            {
+                "$ref": "monomer327"
+            },
+            {
+                "$ref": "monomer328"
+            },
+            {
+                "$ref": "monomer329"
+            },
+            {
+                "$ref": "monomer330"
+            },
+            {
+                "$ref": "monomer331"
+            },
+            {
+                "$ref": "monomer332"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer324",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer325",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer325",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer326",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer326",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer241",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer241",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer327",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer327",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer328",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer328",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer329",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer329",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer258",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer258",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer330",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer330",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer331",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer331",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer332",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-A___Alanine"
+            },
+            {
+                "$ref": "monomerTemplate-moen___2-Methoxyethylamino"
+            }
+        ]
+    },
+    "monomer241": {
+        "type": "monomer",
+        "id": "241",
+        "position": {
+            "x": 13,
+            "y": -8.924999999999999
+        },
+        "alias": "A",
+        "templateId": "A___Alanine"
+    },
+    "monomerTemplate-A___Alanine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    -1.2549,
+                    -0.392,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.272,
+                    0.2633,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.3103,
+                    1.7393,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0523,
+                    -0.392,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.0829,
+                    -1.5722,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.0353,
+                    0.2633,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.3334,
+                    0.0905,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "A___Alanine",
+        "fullName": "Alanine",
+        "alias": "A",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        5
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    },
+    "monomer258": {
+        "type": "monomer",
+        "id": "258",
+        "position": {
+            "x": 19,
+            "y": -8.924999999999999
+        },
+        "alias": "A",
+        "templateId": "A___Alanine"
+    },
+    "monomer324": {
+        "type": "monomer",
+        "id": "324",
+        "position": {
+            "x": 8.5,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomerTemplate-moen___2-Methoxyethylamino": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    0.0004665388114715543,
+                    0.0002665936065551739,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.8664292213043152,
+                    0.4998630122909511,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    0.8664292213043152,
+                    1.4995890368728533,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.7328584426086304,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.5992876639129454,
+                    0.4998630122909511,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.465716885217261,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.331612919308466,
+                    0.4995964186843959,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "moen___2-Methoxyethylamino",
+        "fullName": "2-Methoxyethylamino",
+        "alias": "moen",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer325": {
+        "type": "monomer",
+        "id": "325",
+        "position": {
+            "x": 9.999999999999998,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer326": {
+        "type": "monomer",
+        "id": "326",
+        "position": {
+            "x": 11.499999999999998,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer327": {
+        "type": "monomer",
+        "id": "327",
+        "position": {
+            "x": 14.5,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer328": {
+        "type": "monomer",
+        "id": "328",
+        "position": {
+            "x": 16,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer329": {
+        "type": "monomer",
+        "id": "329",
+        "position": {
+            "x": 17.500000000000004,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer330": {
+        "type": "monomer",
+        "id": "330",
+        "position": {
+            "x": 20.5,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer331": {
+        "type": "monomer",
+        "id": "331",
+        "position": {
+            "x": 22.000000000000004,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    },
+    "monomer332": {
+        "type": "monomer",
+        "id": "332",
+        "position": {
+            "x": 23.5,
+            "y": -8.924999999999999
+        },
+        "alias": "moen",
+        "templateId": "moen___2-Methoxyethylamino"
+    }
+}

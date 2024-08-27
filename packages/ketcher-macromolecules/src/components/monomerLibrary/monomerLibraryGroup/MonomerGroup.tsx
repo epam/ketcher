@@ -17,12 +17,7 @@ import { useCallback } from 'react';
 import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
-import {
-  GroupContainerColumn,
-  GroupContainerRow,
-  GroupTitle,
-  ItemsContainer,
-} from './styles';
+import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
 import {
@@ -38,7 +33,6 @@ import {
   showPreview,
 } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
-import { NoNaturalAnalogueGroupTitle } from '../../../constants';
 
 const MonomerGroup = ({
   items,
@@ -124,16 +118,10 @@ const MonomerGroup = ({
     return selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
-  const groupWithNoNaturalAnalogue = title === NoNaturalAnalogueGroupTitle;
-  const StyledGroupContainer =
-    groupWithNoNaturalAnalogue || (title && title.length > 0)
-      ? GroupContainerColumn
-      : GroupContainerRow;
-
   return (
-    <StyledGroupContainer>
+    <GroupContainerColumn>
       {title && <GroupTitle>{title}</GroupTitle>}
-      <ItemsContainer useLeftMargin={groupWithNoNaturalAnalogue}>
+      <ItemsContainer>
         {items.map((monomer) => {
           return (
             <MonomerItem
@@ -149,7 +137,7 @@ const MonomerGroup = ({
           );
         })}
       </ItemsContainer>
-    </StyledGroupContainer>
+    </GroupContainerColumn>
   );
 };
 export { MonomerGroup };

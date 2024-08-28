@@ -30,7 +30,6 @@ export interface MultitailArrowClosestReferencePosition {
 }
 
 export class ReMultitailArrow extends ReObject {
-  static TAILS_NAME = 'tails';
   static CUBIC_BEZIER_OFFSET = 6;
 
   static isSelectable(): boolean {
@@ -50,6 +49,10 @@ export class ReMultitailArrow extends ReObject {
 
   getOffset(options: RenderOptions) {
     return 1.4 * (options.microModeScale / 8);
+  }
+
+  getSelectionPointOffset(options: RenderOptions) {
+    return 0.1 * options.microModeScale;
   }
 
   getReferencePositions(
@@ -183,11 +186,82 @@ export class ReMultitailArrow extends ReObject {
     return paths;
   }
 
+  selectionPointsFromReferencePoint(
+    point: Vec2,
+    topSpine: Vec2,
+    name: string,
+    spineOffset: number,
+  ) {
+    const spineOffsetWithDirection =
+      topSpine.x > point.x ? -spineOffset : spineOffset;
+    return {
+      [`${name}-resize`]: point,
+      [`${name}-move`]: new Vec2(
+        topSpine.x + spineOffsetWithDirection,
+        point.y,
+      ),
+    };
+  }
+
+  addTestSelectionPoints(
+    reStruct: ReStruct,
+    paper: RaphaelPaper,
+    renderOptions: RenderOptions,
+  ) {
+    const OFFSET = this.getSelectionPointOffset(renderOptions);
+    const { topTail, bottomTail, tails, head, topSpine } =
+      this.getReferencePositions(renderOptions);
+    const selectionPointSet = paper.set();
+    const points: Record<string, Vec2> = {
+      ...this.selectionPointsFromReferencePoint(
+        topTail,
+        topSpine,
+        'topTail',
+        OFFSET,
+      ),
+      ...this.selectionPointsFromReferencePoint(
+        bottomTail,
+        topSpine,
+        'bottomTail',
+        OFFSET,
+      ),
+      ...this.selectionPointsFromReferencePoint(head, topSpine, 'head', OFFSET),
+      ...Array.from(tails.entries()).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          ...this.selectionPointsFromReferencePoint(
+            value,
+            topSpine,
+            `${MultitailArrow.TAILS_NAME}-${key}`,
+            OFFSET,
+          ),
+        }),
+        {},
+      ),
+    };
+    Object.entries(points).forEach(([key, point]) => {
+      const element = paper.circle(point.x, point.y, 1).attr({
+        fill: 'none',
+        stroke: 'none',
+      });
+      if (element.node && element.node.setAttribute) {
+        element.node.setAttribute('data-testid', key);
+      }
+      selectionPointSet.push(element);
+    });
+    reStruct.addReObjectPath(
+      LayerMap.selectionPlate,
+      this.visel,
+      selectionPointSet,
+    );
+  }
+
   makeSelectionPlate(
     reStruct: ReStruct,
     paper: RaphaelPaper,
     options: RenderOptions,
   ) {
+    this.addTestSelectionPoints(reStruct, paper, options);
     const path = this.buildFrame(options);
     const selectionSet = paper.set();
     const paths = reStruct.render.paper
@@ -230,19 +304,19 @@ export class ReMultitailArrow extends ReObject {
     this.visel.add(header, Box2Abs.fromRelBox(util.relBox(header.getBBox())));
   }
 
-  private calculateDistanceToNamedEntity(
+  private getClosestArrowPartPosition(
     point: Vec2,
     entities: Array<[string, Vec2]>,
     isLine: false,
   ): MultitailArrowClosestReferencePosition;
 
-  private calculateDistanceToNamedEntity(
+  private getClosestArrowPartPosition(
     point: Vec2,
     entities: Array<[string, Line]>,
     isLine: true,
   ): MultitailArrowClosestReferencePosition;
 
-  private calculateDistanceToNamedEntity(
+  private getClosestArrowPartPosition(
     point: Vec2,
     entities: Array<[string, Vec2 | Line]>,
     isLine: boolean,
@@ -287,9 +361,9 @@ export class ReMultitailArrow extends ReObject {
     );
   }
 
-  private tailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {
+  private getTailArrayFromPool<T>(tails: Pool<T>): Array<[string, T]> {
     return Array.from(tails.entries()).map(([key, value]) => [
-      `${ReMultitailArrow.TAILS_NAME}-${key}`,
+      `${MultitailArrow.TAILS_NAME}-${key}`,
       value,
     ]);
   }
@@ -305,13 +379,17 @@ export class ReMultitailArrow extends ReObject {
       referencePositions,
     );
     const { tails, ...rest } = referenceLines;
-    const lines: Array<[string, Line]> = Object.entries(rest).concat(
-      this.tailArrayFromPool(tails),
+    const tailsAndHeadLines: Array<[string, Line]> = Object.entries(
+      rest,
+    ).concat(this.getTailArrayFromPool(tails));
+
+    const lineResult = this.getClosestArrowPartPosition(
+      point,
+      tailsAndHeadLines,
+      true,
     );
 
-    const lineRes = this.calculateDistanceToNamedEntity(point, lines, true);
-
-    if (lineRes.distance < maxDistanceToPoint) {
+    if (lineResult.distance < maxDistanceToPoint) {
       const {
         topSpine: _t,
         bottomSpine: _b,
@@ -319,24 +397,24 @@ export class ReMultitailArrow extends ReObject {
         ...validReferencePositions
       } = referencePositions;
 
-      const points: Array<[string, Vec2]> = Object.entries(
+      const tailsAnddHeadPoints: Array<[string, Vec2]> = Object.entries(
         validReferencePositions,
-      ).concat(this.tailArrayFromPool(tailsPoints));
+      ).concat(this.getTailArrayFromPool(tailsPoints));
 
-      const pointsRes = this.calculateDistanceToNamedEntity(
+      const pointsResult = this.getClosestArrowPartPosition(
         point,
-        points,
+        tailsAnddHeadPoints,
         false,
       );
       if (
-        pointsRes.distance < maxDistanceToPoint / 2 ||
-        (pointsRes.distance < maxDistanceToPoint &&
-          pointsRes.distance <= lineRes.distance)
+        pointsResult.distance < maxDistanceToPoint / 2 ||
+        (pointsResult.distance < maxDistanceToPoint &&
+          pointsResult.distance <= lineResult.distance)
       ) {
-        return pointsRes;
+        return pointsResult;
       }
     }
 
-    return lineRes;
+    return lineResult;
   }
 }

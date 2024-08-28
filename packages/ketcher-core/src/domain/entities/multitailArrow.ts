@@ -52,6 +52,10 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   static MIN_HEAD_LENGTH = 0.5;
   static MIN_TAIL_LENGTH = 0.4;
   static MIN_TOP_BOTTOM_OFFSET = 0.15;
+  static MIN_HEIGHT = 0.5;
+  static TOP_TAIL_NAME = 'topTail';
+  static BOTTOM_TAIL_NAME = 'bottomTail';
+  static TAILS_NAME = 'tails';
 
   static canAddTail(distance: TailDistance['distance']): boolean {
     return distance >= 2 * MultitailArrow.MIN_TAIL_DISTANCE;
@@ -69,6 +73,51 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       spineX - topLeft.x,
       new Pool<number>(),
     );
+  }
+
+  static validateKetNode(ketFileData: KetFileMultitailArrowNode): boolean {
+    const { head, spine, tails } = ketFileData;
+    const [spineStart, spineEnd] = spine.pos;
+    if (
+      spineStart.x !== spineEnd.x ||
+      spineStart.y < spineEnd.y - MultitailArrow.MIN_HEIGHT
+    ) {
+      return false;
+    }
+    const headPoint = head.position;
+    if (
+      headPoint.x < spineStart.x + MultitailArrow.MIN_HEAD_LENGTH ||
+      headPoint.y - MultitailArrow.MIN_TOP_BOTTOM_OFFSET < spineEnd.y ||
+      headPoint.y + MultitailArrow.MIN_TOP_BOTTOM_OFFSET > spineStart.y
+    ) {
+      return false;
+    }
+    const tailsPositions = [...tails.pos].sort((a, b) => b.y - a.y);
+
+    if (
+      tailsPositions.at(0)?.y !== spineStart.y ||
+      tailsPositions.at(-1)?.y !== spineEnd.y
+    ) {
+      return false;
+    }
+
+    const firstTailX = tails.pos[0].x;
+    if (firstTailX > spineStart.x - MultitailArrow.MIN_TAIL_LENGTH) {
+      return false;
+    }
+
+    return tails.pos.every((tail, index, allTails) => {
+      if (
+        index > 0 &&
+        allTails[index - 1].y < tail.y - MultitailArrow.MIN_TAIL_DISTANCE
+      ) {
+        return false;
+      }
+
+      return (
+        tail.x === firstTailX && tail.y >= spineEnd.y && tail.y <= spineStart.y
+      );
+    });
   }
 
   static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {
@@ -259,19 +308,62 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return realOffset;
   }
 
+  normalizeTailPosition(proposedPosition: number, tailId: number): number {
+    const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
+      .filter(([key]) => key !== tailId)
+      .map(([_, value]) => value);
+    const tailMinDistance = this.getTailsDistance(tailsWithoutCurrent)
+      .filter((item) => {
+        console.info(item);
+        return MultitailArrow.canAddTail(item.distance);
+      })
+      .sort(
+        (a, b) =>
+          Math.abs(a.center - proposedPosition) -
+          Math.abs(b.center - proposedPosition),
+      )
+      .at(0) as TailDistance;
+    const maxDistanceFromCenter =
+      tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE;
+    if (
+      Math.abs(tailMinDistance.center - proposedPosition) >=
+      tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE
+    ) {
+      const distanceFromCenter =
+        tailMinDistance.center > proposedPosition
+          ? -maxDistanceFromCenter
+          : maxDistanceFromCenter;
+      return tailMinDistance.center + distanceFromCenter;
+    }
+    return proposedPosition;
+  }
+
   moveTail(offset: number, id: number, normalize?: true): number;
-  moveTail(offset: number, name: 'topTail' | 'bottomTail'): number;
+  moveTail(
+    offset: number,
+    name:
+      | typeof MultitailArrow.TOP_TAIL_NAME
+      | typeof MultitailArrow.BOTTOM_TAIL_NAME,
+  ): number;
 
   moveTail(offset: number, second: number | string, normalize?: true): number {
-    const minHeight =
-      MultitailArrow.MIN_TAIL_DISTANCE * (this.tailsYOffset.size + 1);
+    const minHeight = Math.max(
+      MultitailArrow.MIN_TAIL_DISTANCE * (this.tailsYOffset.size + 1),
+      MultitailArrow.MIN_HEIGHT,
+    );
     const tailsOffset = Array.from(this.tailsYOffset.values()).sort(
       (a, b) => a - b,
     );
     const lastTail = tailsOffset.at(-1) || 0;
     const firstTail = tailsOffset.at(0) || Infinity;
-    const closestTopElement = Math.min(firstTail, this.headOffset.y);
-    const closestBottomElement = Math.max(lastTail, this.headOffset.y);
+    const closestTopLimit = Math.min(
+      firstTail - MultitailArrow.MIN_TAIL_DISTANCE,
+      this.headOffset.y - MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+    );
+    const closestBottomLimit = Math.max(
+      lastTail + MultitailArrow.MIN_TAIL_DISTANCE,
+      this.headOffset.y + MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+    );
 
     if (typeof second === 'number') {
       const originalValue = this.tailsYOffset.get(second) as number;
@@ -283,33 +375,17 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         ),
       );
       if (normalize) {
-        const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
-          .filter(([key]) => key !== second)
-          .map(([_, value]) => value);
-        const tailMinDistance = this.getTailsDistance(tailsWithoutCurrent)
-          .filter((item) => MultitailArrow.canAddTail(item.distance))
-          .sort(
-            (a, b) =>
-              Math.abs(a.center - updatedHeight) -
-              Math.abs(b.center - updatedHeight),
-          )
-          .at(0) as TailDistance;
-        if (
-          Math.abs(tailMinDistance.center - updatedHeight) >
-          tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE
-        ) {
-          updatedHeight = tailMinDistance.center;
-        }
+        updatedHeight = this.normalizeTailPosition(updatedHeight, second);
       }
 
       const realOffset = updatedHeight - originalValue;
       this.tailsYOffset.set(second, updatedHeight);
       return realOffset;
-    } else if (second === 'bottomTail') {
+    } else if (second === MultitailArrow.BOTTOM_TAIL_NAME) {
       const updatedHeight = Math.max(
         minHeight,
         this.height + offset,
-        closestBottomElement + MultitailArrow.MIN_TAIL_DISTANCE,
+        closestBottomLimit,
       );
       const realOffset = updatedHeight - this.height;
       this.height = updatedHeight;
@@ -317,7 +393,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     } else {
       const realOffset = Math.min(
         offset,
-        closestTopElement - MultitailArrow.MIN_TAIL_DISTANCE,
+        closestTopLimit,
         this.height - minHeight,
       );
       if (realOffset !== 0) {

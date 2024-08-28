@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
+  AmbiguousMonomerPreviewState,
   BondPreviewState,
   MonomerPreviewState,
   PresetPosition,
@@ -33,8 +34,14 @@ import {
 } from 'components/modal/modalContainer';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { debounce } from 'lodash';
-import { Nucleoside, Nucleotide } from 'ketcher-core';
 import {
+  AmbiguousMonomer,
+  BaseMonomer,
+  Nucleoside,
+  Nucleotide,
+} from 'ketcher-core';
+import {
+  calculateAmbiguousMonomerPreviewTop,
   calculateBondPreviewPosition,
   calculateMonomerPreviewTop,
   calculateNucleoElementPreviewTop,
@@ -173,7 +180,25 @@ export const EditorEvents = () => {
       const cardCoordinates = e.target.getBoundingClientRect();
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       const sequenceNode = e.target.__data__?.node;
-      const monomer = e.target.__data__?.monomer || sequenceNode?.monomer;
+      const monomer: BaseMonomer | AmbiguousMonomer =
+        e.target.__data__?.monomer || sequenceNode?.monomer;
+
+      if (monomer instanceof AmbiguousMonomer) {
+        const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
+          type: PreviewType.AmbiguousMonomer,
+          monomer: monomer.variantMonomerItem,
+          style: {
+            left,
+            top: calculateAmbiguousMonomerPreviewTop(
+              monomer.variantMonomerItem,
+            )(cardCoordinates),
+          },
+        };
+
+        debouncedShowPreview(ambiguousMonomerPreviewData);
+        return;
+      }
+
       const monomerItem = monomer.monomerItem;
       const attachmentPointsToBonds = { ...monomer.attachmentPointsToBonds };
       const isNucleotideOrNucleoside =

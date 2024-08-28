@@ -21,6 +21,7 @@ import {
   MonomerItemType,
   PolymerBond,
   AttachmentPointsToBonds,
+  AmbiguousMonomerType,
 } from 'ketcher-core';
 import { RootState } from 'state';
 import { ThemeType } from 'theming/defaultTheme';
@@ -30,6 +31,7 @@ export enum PreviewType {
   Monomer = 'monomer',
   Preset = 'preset',
   Bond = 'bond',
+  AmbiguousMonomer = 'ambiguousMonomer',
 }
 
 export interface PreviewStyle {
@@ -70,10 +72,17 @@ export interface BondPreviewState extends BasePreviewState {
   readonly polymerBond: PolymerBond;
 }
 
+export interface AmbiguousMonomerPreviewState extends BasePreviewState {
+  readonly type: PreviewType.AmbiguousMonomer;
+  readonly monomer: AmbiguousMonomerType;
+  readonly preset?: boolean;
+}
+
 type EditorStatePreview =
   | MonomerPreviewState
   | PresetPreviewState
-  | BondPreviewState;
+  | BondPreviewState
+  | AmbiguousMonomerPreviewState;
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {

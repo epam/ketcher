@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { PolymerBond } from 'ketcher-core';
+import { AmbiguousMonomerType, PolymerBond } from 'ketcher-core';
 import { preview } from '../constants';
 import { PreviewStyle } from 'state/common';
 import assert from 'assert';
@@ -42,6 +42,22 @@ function createCalculatePreviewTopFunction(
     return `${top}px`;
   };
 }
+
+const calculateAmbiguousPreviewHeight = (monomersCount: number) => {
+  const headingHeight = 16;
+  const monomersHeight = 24 * monomersCount;
+  return headingHeight + monomersHeight;
+};
+
+export const calculateAmbiguousMonomerPreviewTop = (
+  monomer: AmbiguousMonomerType,
+) => {
+  const shouldHaveOneLine = monomer.label === 'X' || monomer.label === 'N';
+  const monomersCount = shouldHaveOneLine ? 1 : monomer.monomers.length;
+  const monomersCountToUse = Math.max(5, monomersCount);
+  const height = calculateAmbiguousPreviewHeight(monomersCountToUse);
+  return createCalculatePreviewTopFunction(height);
+};
 
 export const calculateBondPreviewPosition = (
   bond: PolymerBond,

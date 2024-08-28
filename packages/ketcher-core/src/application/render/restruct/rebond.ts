@@ -128,8 +128,8 @@ class ReBond extends ReObject {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
     const bond: Bond = this.b;
     const { ctab: restruct, options } = render;
-    const { bondThickness, doubleBondWidth, stereoBondWidth } = options;
-    const regularSelectionThikness = doubleBondWidth + bondThickness;
+    const { bondThickness, bondSpacingInPx, stereoBondWidth } = options;
+    const regularSelectionThikness = bondSpacingInPx + bondThickness;
 
     // get half-bond positions, this is where the actual bond
     // image on the screen is drawn, it may be different e.g. if the

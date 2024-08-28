@@ -84,8 +84,7 @@ const render: {
   showValence: ExtendedSchema;
   showHydrogenLabels: ExtendedSchema;
   aromaticCircle: ExtendedSchema;
-  doubleBondWidth: ExtendedSchema;
-  doubleBondWidthUnit: ExtendedSchema;
+  bondSpacing: ExtendedSchema;
   bondThickness: ExtendedSchema;
   bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
@@ -248,18 +247,12 @@ const render: {
     description: 'slider',
     default: true,
   },
-  doubleBondWidth: {
-    title: 'Double bond width',
+  bondSpacing: {
+    title: 'Bond spacing',
     type: 'integer',
-    default: 6,
+    default: 18,
     minimum: 1,
-    maximum: 96,
-  },
-  doubleBondWidthUnit: {
-    title: 'Double bond width unit',
-    enum: Object.values(MeasurementUnits),
-    enumNames: Object.values(MeasurementUnits),
-    default: MeasurementUnits.Px,
+    maximum: 100,
   },
   bondThickness: {
     title: 'Bond thickness',

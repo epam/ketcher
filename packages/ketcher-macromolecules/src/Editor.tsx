@@ -45,7 +45,7 @@ import { closeErrorTooltip, selectErrorTooltipText } from 'state/modal';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { DeepPartial } from './types';
 import { EditorClassName } from 'ketcher-react';
-import { Box, Snackbar } from '@mui/material';
+import { Snackbar } from '@mui/material';
 import {
   StyledIconButton,
   StyledToast,
@@ -205,9 +205,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           <TopMenuComponent />
           <TopMenuRightWrapper>
             <LayoutModeButton />
-            <Box sx={{ mr: 1, ml: 1 }}>
-              <SequenceTypeGroupButton />
-            </Box>
+
+            <SequenceTypeGroupButton />
             <TogglerComponentWrapper
               className={
                 isSequenceEditInRNABuilderMode

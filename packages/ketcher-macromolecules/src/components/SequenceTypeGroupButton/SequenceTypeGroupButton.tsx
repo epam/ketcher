@@ -22,8 +22,7 @@ import {
 } from 'state/common';
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
-import { ButtonGroup, Button } from '@mui/material';
-import { useTheme } from '@emotion/react';
+import { ButtonGroup, Button, Box } from '@mui/material';
 
 const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
   color:
@@ -62,8 +61,6 @@ const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
-  const theme = useTheme();
-  console.log('theme', theme);
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(
@@ -103,37 +100,39 @@ export const SequenceTypeGroupButton = () => {
 
   return isSequenceMode ? (
     <>
-      <ButtonGroup disabled={isDisabled}>
-        <SequenceTypeButtons
-          title="RNA (Ctrl+Alt+R)"
-          variant={
-            activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
-          }
-          onClick={() => handleSelectSequenceType(SequenceType.RNA)}
-        >
-          RNA
-        </SequenceTypeButtons>
-        <SequenceTypeButtons
-          title="DNA (Ctrl+Alt+D)"
-          variant={
-            activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
-          }
-          onClick={() => handleSelectSequenceType(SequenceType.DNA)}
-        >
-          DNA
-        </SequenceTypeButtons>
-        <SequenceTypeButtons
-          title="Peptides (Ctrl+Alt+P)"
-          variant={
-            activeSequenceType === SequenceType.PEPTIDE
-              ? 'contained'
-              : 'outlined'
-          }
-          onClick={() => handleSelectSequenceType(SequenceType.PEPTIDE)}
-        >
-          PEP
-        </SequenceTypeButtons>
-      </ButtonGroup>
+      <Box sx={{ mr: 1, ml: 1 }}>
+        <ButtonGroup disabled={isDisabled}>
+          <SequenceTypeButtons
+            title="RNA (Ctrl+Alt+R)"
+            variant={
+              activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
+            }
+            onClick={() => handleSelectSequenceType(SequenceType.RNA)}
+          >
+            RNA
+          </SequenceTypeButtons>
+          <SequenceTypeButtons
+            title="DNA (Ctrl+Alt+D)"
+            variant={
+              activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
+            }
+            onClick={() => handleSelectSequenceType(SequenceType.DNA)}
+          >
+            DNA
+          </SequenceTypeButtons>
+          <SequenceTypeButtons
+            title="Peptides (Ctrl+Alt+P)"
+            variant={
+              activeSequenceType === SequenceType.PEPTIDE
+                ? 'contained'
+                : 'outlined'
+            }
+            onClick={() => handleSelectSequenceType(SequenceType.PEPTIDE)}
+          >
+            PEP
+          </SequenceTypeButtons>
+        </ButtonGroup>
+      </Box>
     </>
   ) : null;
 };

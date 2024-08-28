@@ -55,6 +55,7 @@ import {
   setSugarValidations,
   setBaseValidations,
   setPhosphateValidations,
+  selectFilteredPresetsWithIDT,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -82,6 +83,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
   const presets = useAppSelector(selectFilteredPresets);
+  const presetsWithIDT = useAppSelector(selectFilteredPresetsWithIDT);
   const nucleotideItems = selectUnsplitNucleotides(monomers);
   const nucleotideGroups = selectMonomerGroups(nucleotideItems);
   const isEditMode = useAppSelector(selectIsEditMode);
@@ -92,6 +94,12 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
+
+  const uniquePresets = new Map();
+  [...presets, ...presetsWithIDT].forEach((preset) => {
+    uniquePresets.set(preset.name, preset);
+  });
+  const allPresets = Array.from(uniquePresets.values());
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
@@ -116,7 +124,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     {
       groupName: RnaBuilderPresetsItem.Presets,
       iconName: 'preset',
-      groups: [{ groupItems: presets }],
+      groups: [{ groupItems: allPresets }],
     },
     {
       groupName: MonomerGroups.SUGARS,
@@ -225,7 +233,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}
-                presets={presets}
+                presets={allPresets}
               />
               {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>

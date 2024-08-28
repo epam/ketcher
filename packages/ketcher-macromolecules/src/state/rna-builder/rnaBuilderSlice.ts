@@ -470,6 +470,26 @@ export const selectAllPresets = (
 };
 
 export const selectFilteredPresets = (
+  state,
+): Array<IRnaPreset & { favorite: boolean }> => {
+  const { searchFilter } = state.library;
+  const presetsAll = selectAllPresets(state);
+  return presetsAll.filter((item: IRnaPreset) => {
+    const name = item.name?.toLowerCase();
+    const sugarName = item.sugar?.label?.toLowerCase();
+    const phosphateName = item.phosphate?.label?.toLowerCase();
+    const baseName = item.base?.label?.toLowerCase();
+    const searchText = searchFilter.toLowerCase();
+    const cond =
+      name?.includes(searchText) ||
+      sugarName?.includes(searchText) ||
+      phosphateName?.includes(searchText) ||
+      baseName?.includes(searchText);
+    return cond;
+  });
+};
+
+export const selectFilteredPresetsWithIDT = (
   state: RootState,
 ): Array<PresetWithIDT> => {
   const position = selectEditorPosition(state) ?? PresetPosition.Library;

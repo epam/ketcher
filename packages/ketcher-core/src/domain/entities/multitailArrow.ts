@@ -308,21 +308,24 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     return realOffset;
   }
 
-  normalizeTailPosition(proposedPosition: number, tailId: number): number {
+  normalizeTailPosition(
+    proposedPosition: number,
+    tailId: number,
+  ): number | null {
     const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
       .filter(([key]) => key !== tailId)
       .map(([_, value]) => value);
     const tailMinDistance = this.getTailsDistance(tailsWithoutCurrent)
-      .filter((item) => {
-        console.info(item);
-        return MultitailArrow.canAddTail(item.distance);
-      })
+      .filter((item) => MultitailArrow.canAddTail(item.distance))
       .sort(
         (a, b) =>
           Math.abs(a.center - proposedPosition) -
           Math.abs(b.center - proposedPosition),
       )
-      .at(0) as TailDistance;
+      .at(0);
+    if (!tailMinDistance) {
+      return null;
+    }
     const maxDistanceFromCenter =
       tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE;
     if (
@@ -375,7 +378,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         ),
       );
       if (normalize) {
-        updatedHeight = this.normalizeTailPosition(updatedHeight, second);
+        const result = this.normalizeTailPosition(updatedHeight, second);
+        if (result === null) {
+          return 0;
+        }
+        updatedHeight = result;
       }
 
       const realOffset = updatedHeight - originalValue;

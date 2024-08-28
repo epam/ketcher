@@ -2,10 +2,13 @@ import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import { monomerFactory } from 'application/editor';
+import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
 const NUMBER_OF_MONOMERS_CIRCLE_Y_OFFSET = 7;
 
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
+  private monomerRenderer: BaseMonomerRenderer;
   private monomerSymbolElementsIds: {
     selected: string;
     hover: string;
@@ -25,7 +28,13 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       scale,
     );
 
+    const [, MonomerRenderer] = monomerFactory(
+      this.monomer.monomers[0].monomerItem,
+    );
+
+    this.monomerRenderer = new MonomerRenderer(new EmptyMonomer());
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
+    this.CHAIN_BEGINNING = this.monomerRenderer.CHAIN_BEGINNING;
   }
 
   protected appendBody(
@@ -45,12 +54,12 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       .attr('paint-order', 'fill');
   }
 
-  protected get enumerationElementPosition() {
-    return undefined;
+  public get enumerationElementPosition() {
+    return this.monomerRenderer.enumerationElementPosition;
   }
 
-  protected get beginningElementPosition() {
-    return undefined;
+  public get beginningElementPosition() {
+    return this.monomerRenderer.beginningElementPosition;
   }
 
   private appendNumberOfMonomers() {
@@ -100,5 +109,9 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   public show(theme) {
     super.show(theme);
     this.appendNumberOfMonomers();
+    if (this.CHAIN_BEGINNING) {
+      this.appendEnumeration();
+      this.appendChainBeginning();
+    }
   }
 }

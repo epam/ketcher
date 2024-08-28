@@ -72,11 +72,11 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 7, y: 7 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

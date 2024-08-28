@@ -31,11 +31,11 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       .attr('fill', this.getMonomerColor(theme));
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return undefined;
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

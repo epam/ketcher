@@ -36,11 +36,11 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     this.appendEnumeration();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 11, y: 5 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

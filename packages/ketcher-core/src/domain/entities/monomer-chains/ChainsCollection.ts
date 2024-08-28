@@ -1,5 +1,6 @@
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
+  AmbiguousMonomer,
   BaseMonomer,
   Chem,
   IsChainCycled,
@@ -15,6 +16,7 @@ import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isMonomerConnectedToR2RnaBase,
+  isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
@@ -120,6 +122,7 @@ export class ChainsCollection {
       | typeof RNABase
       | typeof UnresolvedMonomer
       | typeof UnsplitNucleotide
+      | typeof AmbiguousMonomer
     > = [
       Peptide,
       Chem,
@@ -128,6 +131,7 @@ export class ChainsCollection {
       RNABase,
       UnresolvedMonomer,
       UnsplitNucleotide,
+      AmbiguousMonomer,
     ],
   ) {
     const monomersList = monomers.filter((monomer) =>
@@ -164,7 +168,7 @@ export class ChainsCollection {
 
       const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
       const isRnaBaseConnectedToSugar =
-        monomer instanceof RNABase &&
+        isRnaBaseOrAmbiguousRnaBase(monomer) &&
         R1ConnectedMonomer instanceof Sugar &&
         getRnaBaseFromSugar(R1ConnectedMonomer) === monomer;
 

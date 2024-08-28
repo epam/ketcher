@@ -41,11 +41,11 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     this.appendChainBeginning();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 10, y: -1 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return { x: -6, y: 10 };
   }
 }

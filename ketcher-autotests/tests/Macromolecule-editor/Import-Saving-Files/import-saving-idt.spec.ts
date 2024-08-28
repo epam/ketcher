@@ -97,7 +97,7 @@ test.beforeAll(async ({ browser }) => {
   await turnOnMacromoleculesEditor(page);
 });
 
-test.afterEach(async (_, testInfo) => {
+test.afterEach(async ({ context: _ }, testInfo) => {
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);

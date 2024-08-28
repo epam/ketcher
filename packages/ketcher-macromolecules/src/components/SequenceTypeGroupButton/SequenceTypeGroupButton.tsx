@@ -23,11 +23,12 @@ import {
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
+import { useTheme } from '@emotion/react';
 
 const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
   color:
     variant === 'outlined'
-      ? theme.ketcher.color.text.dark
+      ? theme.ketcher.color.text.primary
       : theme.ketcher.color.button.text.primary,
   boxShadow: 'none',
   transition: 'none',
@@ -41,17 +42,24 @@ const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
   background:
     variant === 'outlined'
       ? theme.ketcher.color.background.primary
-      : theme.ketcher.color.button.primary.active,
+      : theme.ketcher.color.button.group.active,
   borderRadius: theme.ketcher.border.radius.regular,
   textTransform: 'none',
-  fontSize: theme.ketcher.font.size.small,
+  fontSize: theme.ketcher.font.size.regular,
   fontWeight: theme.ketcher.font.weight.regular,
 
   ':hover': {
-    color: theme.ketcher.color.button.text.primary,
-    background: theme.ketcher.color.button.primary.hover,
+    color:
+      variant === 'outlined'
+        ? theme.ketcher.color.text.dark
+        : theme.ketcher.color.button.text.primary,
+    background:
+      variant === 'outlined'
+        ? theme.ketcher.color.background.primary
+        : theme.ketcher.color.button.group.hover,
     outline: '1px solid #585858',
     border: 'none',
+    boxShadow: 'none',
   },
   ':disabled': {
     cursor: 'auto',
@@ -61,6 +69,8 @@ const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
+  const theme = useTheme();
+  console.log('theme', theme);
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(

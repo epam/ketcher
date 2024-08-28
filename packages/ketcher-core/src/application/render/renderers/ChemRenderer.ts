@@ -30,11 +30,11 @@ export class ChemRenderer extends BaseMonomerRenderer {
       .attr('stroke', theme.monomer.color.CHEM.regular);
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return undefined;
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

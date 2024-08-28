@@ -4,10 +4,12 @@ import { SnakeModePolymerBondRenderer } from 'application/render/renderers/Polym
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities/vec2';
-import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
+import {
+  isMonomerConnectedToR2RnaBase,
+  isRnaBaseOrAmbiguousRnaBase,
+} from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 
@@ -113,19 +115,19 @@ export class PolymerBond extends DrawingEntity {
         )
       ) ||
         (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
-          this.secondMonomer instanceof RNABase) ||
+          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer)) ||
         (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
-          this.firstMonomer instanceof RNABase) ||
+          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
         firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
       !(
         (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          this.firstMonomer instanceof RNABase &&
+          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer) &&
           secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
           this.secondMonomer instanceof Sugar) ||
         (firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
           this.firstMonomer instanceof Sugar &&
           secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          this.secondMonomer instanceof RNABase)
+          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer))
       )
     );
   }

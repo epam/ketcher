@@ -2,6 +2,7 @@ import {
   AttachmentPointName,
   MonomerItemType,
   AmbiguousMonomerType,
+  MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Command } from 'domain/entities/Command';
@@ -49,6 +50,7 @@ import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
   getPhosphateFromSugar,
+  isAmbiguousMonomerLibraryItem,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -164,9 +166,14 @@ export class DrawingEntitiesManager {
     return monomer;
   }
 
-  public createMonomer(monomerItem: MonomerItemType, position: Vec2) {
-    const [Monomer] = monomerFactory(monomerItem);
-    return new Monomer(monomerItem, position);
+  public createMonomer(monomerItem: MonomerOrAmbiguousType, position: Vec2) {
+    if (isAmbiguousMonomerLibraryItem(monomerItem)) {
+      return new AmbiguousMonomer(monomerItem, position);
+    } else {
+      const [Monomer] = monomerFactory(monomerItem);
+
+      return new Monomer(monomerItem, position);
+    }
   }
 
   public updateMonomerItem(

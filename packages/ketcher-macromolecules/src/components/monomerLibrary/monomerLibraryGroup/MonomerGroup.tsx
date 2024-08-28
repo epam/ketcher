@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback } from 'react';
-import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateMonomerPreviewTop,
+  EmptyFunction,
+} from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -26,7 +30,7 @@ import {
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  MonomerPreviewState,
+  PreviewStyle,
   PreviewType,
   selectEditor,
   selectTool,
@@ -89,18 +93,30 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    let style: PreviewStyle;
+    let previewType: PreviewType;
+    let top: string;
+
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      return;
+      top = monomer
+        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
+        : '';
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+      previewType = PreviewType.AmbiguousMonomer;
+      style = { left, top };
+    } else {
+      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+      style = { right: '-88px', top };
+      previewType = PreviewType.Monomer;
     }
 
-    const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
-    const style = { right: '-88px', top };
-    const previewData: MonomerPreviewState = {
-      type: PreviewType.Monomer,
+    const previewData = {
+      type: previewType,
       monomer,
       style,
     };
+
     debouncedShowPreview(previewData);
   };
 

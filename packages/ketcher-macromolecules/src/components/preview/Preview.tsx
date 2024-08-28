@@ -18,6 +18,7 @@ import { PreviewType, selectShowPreview } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
+import AmbiguousMonomerPreview from './components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
@@ -33,6 +34,8 @@ export const Preview = () => {
       return <MonomerPreview />;
     case PreviewType.Bond:
       return <BondPreview />;
+    case PreviewType.AmbiguousMonomer:
+      return <AmbiguousMonomerPreview />;
     default:
       return null;
   }

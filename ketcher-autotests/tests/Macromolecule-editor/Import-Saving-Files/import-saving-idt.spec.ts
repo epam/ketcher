@@ -207,7 +207,7 @@ test.describe('Import-Saving .idt Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('IDT/idt-empty.idt', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   test('Check IDT aliases, where defined in the preview window for Phosphates section', async ({

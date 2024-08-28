@@ -3,7 +3,6 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import {
   PeptideRenderer,
   PhosphateRenderer,
-  RNABaseRenderer,
   SugarRenderer,
   UnsplitNucleotideRenderer,
 } from 'application/render';
@@ -13,13 +12,7 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import {
-  Peptide,
-  Phosphate,
-  RNABase,
-  Sugar,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { Peptide, Phosphate, Sugar, UnsplitNucleotide } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -30,6 +23,8 @@ import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   isMonomerBeginningOfChain,
+  isPeptideOrAmbiguousPeptide,
+  isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
@@ -230,7 +225,7 @@ export class RenderersManager {
         const rnaBaseMonomer = getRnaBaseFromSugar(
           monomerRenderer.monomer as Sugar,
         );
-        if (rnaBaseMonomer instanceof RNABase) {
+        if (isRnaBaseOrAmbiguousRnaBase(rnaBaseMonomer)) {
           rnaBaseMonomer.renderer?.setEnumeration(currentEnumeration);
           rnaBaseMonomer.renderer?.redrawEnumeration();
           currentEnumeration++;
@@ -280,7 +275,6 @@ export class RenderersManager {
       peptideRenderer.setEnumeration(null);
       peptideRenderer.redrawEnumeration();
     }
-
     if (
       !isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide]) &&
       !firstMonomers.includes(peptideRenderer.monomer)
@@ -317,7 +311,10 @@ export class RenderersManager {
       ]);
 
     this.monomers.forEach((monomerRenderer) => {
-      if (monomerRenderer instanceof PeptideRenderer) {
+      if (
+        monomerRenderer instanceof PeptideRenderer ||
+        monomerRenderer instanceof AmbiguousMonomerRenderer
+      ) {
         this.recalculatePeptideEnumeration(
           monomerRenderer as PeptideRenderer,
           firstMonomersInCyclicChains,
@@ -327,7 +324,8 @@ export class RenderersManager {
       if (
         monomerRenderer instanceof UnsplitNucleotideRenderer ||
         monomerRenderer instanceof PhosphateRenderer ||
-        monomerRenderer instanceof SugarRenderer
+        monomerRenderer instanceof SugarRenderer ||
+        monomerRenderer instanceof AmbiguousMonomerRenderer
       ) {
         this.recalculateRnaEnumeration(
           monomerRenderer as BaseMonomerRenderer,
@@ -336,7 +334,7 @@ export class RenderersManager {
       }
 
       if (
-        monomerRenderer instanceof RNABaseRenderer &&
+        isRnaBaseOrAmbiguousRnaBase(monomerRenderer.monomer) &&
         !monomerRenderer.monomer.isAttachmentPointUsed(AttachmentPointName.R1)
       ) {
         monomerRenderer.setEnumeration(null);
@@ -355,7 +353,7 @@ export class RenderersManager {
 
   private recalculateMonomersBeginning() {
     this.monomers.forEach((monomerRenderer) => {
-      if (monomerRenderer instanceof PeptideRenderer) {
+      if (isPeptideOrAmbiguousPeptide(monomerRenderer.monomer)) {
         if (monomerRenderer.enumeration === 1) {
           monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
         } else {
@@ -368,7 +366,7 @@ export class RenderersManager {
           monomerRenderer.monomer as Sugar,
         );
         if (
-          rnaBaseMonomer instanceof RNABase &&
+          isRnaBaseOrAmbiguousRnaBase(rnaBaseMonomer) &&
           rnaBaseMonomer.renderer?.enumeration === 1 &&
           !this.isOnlyPartOfRnaChain(monomerRenderer.monomer)
         ) {

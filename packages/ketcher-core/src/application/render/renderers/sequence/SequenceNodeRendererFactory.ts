@@ -24,6 +24,8 @@ import {
 } from 'application/render';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -49,6 +51,9 @@ export class SequenceNodeRendererFactory {
         break;
       case LinkerSequenceNode:
         RendererClass = ChemSequenceItemRenderer;
+        break;
+      case AmbiguousMonomerSequenceNode:
+        RendererClass = AmbiguousSequenceItemRenderer;
         break;
       default:
         switch (node.monomer.constructor) {

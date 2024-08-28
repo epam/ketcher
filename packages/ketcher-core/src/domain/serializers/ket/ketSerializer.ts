@@ -72,7 +72,7 @@ import {
   populateStructWithSelection,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
-  setVariantMonomerTemplatePrefix,
+  setAmbiguousMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -465,7 +465,7 @@ export class KetSerializer implements Serializer<Struct> {
         }
         case KetNodeType.AMBIGUOUS_MONOMER: {
           const template = parsedFileContent[
-            setVariantMonomerTemplatePrefix(nodeDefinition.templateId)
+            setAmbiguousMonomerTemplatePrefix(nodeDefinition.templateId)
           ] as IKetAmbiguousMonomerTemplate;
           assert(template);
 
@@ -636,7 +636,8 @@ export class KetSerializer implements Serializer<Struct> {
     variantMonomer: AmbiguousMonomer,
     fileContent: IKetMacromoleculesContentRootProperty,
   ) {
-    const templateNameWithPrefix = setVariantMonomerTemplatePrefix(templateId);
+    const templateNameWithPrefix =
+      setAmbiguousMonomerTemplatePrefix(templateId);
 
     if (fileContent[templateNameWithPrefix]) {
       return;

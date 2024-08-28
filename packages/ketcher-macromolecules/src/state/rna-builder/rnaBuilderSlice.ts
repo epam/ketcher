@@ -514,7 +514,7 @@ export const selectFilteredPresetsWithIDT = (
 
     if ((searchText.match(/\//g) || []).length > 1) {
       const parts = searchText.split('/');
-      if (parts.length > 2 && parts[2]) {
+      if (parts.length > 2 || (parts.length === 2 && parts[1] === '')) {
         return false;
       }
     }

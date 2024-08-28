@@ -25,9 +25,15 @@ import {
   selectMonomersInCategory,
   selectMonomersInFavorites,
   getMonomerUniqueKey,
+  selectAmbiguousMonomersInCategory,
+  selectAmbiguousMonomersInFavorites,
 } from 'state/library';
-import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import {
+  MONOMER_LIBRARY_FAVORITES,
+  MONOMER_LIBRARY_PEPTIDES,
+  MonomerGroups,
+} from '../../../constants';
+import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
 import {
   selectFilteredPresets,
@@ -72,10 +78,11 @@ const MonomerList = ({
       ? (items as Favorites).monomers
       : (items as MonomerItemType[]),
   );
-
+  const ambiguousMonomers = isFavoriteTab
+    ? selectAmbiguousMonomersInFavorites(monomers)
+    : selectAmbiguousMonomersInCategory(monomers, MonomerGroups.PEPTIDES);
   const [selectedMonomers, setSelectedMonomers] = useState('');
-
-  const selectMonomer = (monomer: MonomerItemType) => {
+  const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
     setSelectedMonomers(getMonomerUniqueKey(monomer));
   };
 
@@ -110,6 +117,21 @@ const MonomerList = ({
           />
         </>
       )}
+      <>
+        {(libraryName === MONOMER_LIBRARY_PEPTIDES || isFavoriteTab) &&
+          ambiguousMonomers.map((group) => {
+            return (
+              <MonomerGroup
+                key={group.groupTitle}
+                title={group.groupTitle}
+                items={group.groupItems}
+                libraryName={libraryName}
+                onItemClick={onItemClick || selectMonomer}
+                selectedMonomerUniqueKey={selectedMonomers}
+              />
+            );
+          })}
+      </>
     </MonomerListContainer>
   );
 };

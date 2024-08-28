@@ -23,12 +23,23 @@ import {
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { KetMonomerClass, MonomerItemType, SdfItem } from 'ketcher-core';
+import {
+  KetMonomerClass,
+  MonomerItemType,
+  MonomerOrAmbiguousType,
+  SdfItem,
+  AmbiguousMonomer,
+  MonomerGroups,
+  AmbiguousMonomerType,
+  isAmbiguousMonomerLibraryItem,
+} from 'ketcher-core';
 import {
   LibraryNameType,
   FAVORITE_ITEMS_UNIQUE_KEYS,
   NoNaturalAnalogueGroupTitle,
   NoNaturalAnalogueGroupCode,
+  DNA_TEMPLATE_NAME_PART,
+  RNA_TEMPLATE_NAME_PART,
 } from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
@@ -40,6 +51,16 @@ interface LibraryState {
   selectedTabIndex: number;
 }
 
+export type GroupedAmbiguousMonomerLibraryItemType = {
+  groupTitle: string;
+  groupItems: AmbiguousMonomerType[];
+};
+
+const LIBRARY_GROUP_NAME_TO_MONOMER_CLASS = {
+  [MonomerGroups.PEPTIDES]: KetMonomerClass.AminoAcid,
+  [MonomerGroups.BASES]: KetMonomerClass.Base,
+};
+
 const initialState: LibraryState = {
   monomers: [],
   favorites: {},
@@ -47,8 +68,10 @@ const initialState: LibraryState = {
   selectedTabIndex: 1,
 };
 
-export function getMonomerUniqueKey(monomer: MonomerItemType) {
-  return `${monomer.props.MonomerName}___${monomer.props.Name}`;
+export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {
+  return isAmbiguousMonomerLibraryItem(monomer)
+    ? monomer.id || monomer.label
+    : `${monomer.props.MonomerName}___${monomer.props?.Name}`;
 }
 
 export function getPresetUniqueKey(preset: IRnaPreset) {
@@ -151,6 +174,105 @@ export const selectMonomersInCategory = (
   category: LibraryNameType,
 ) => items.filter((item) => item.props?.MonomerType === category);
 
+export const selectAmbiguousMonomersInCategory = (
+  libraryItems: MonomerOrAmbiguousType[],
+  libraryGroupName: MonomerGroups,
+) => {
+  const ambiguousMonomerLibraryItems = libraryItems.filter((libraryItem) => {
+    if (!isAmbiguousMonomerLibraryItem(libraryItem)) {
+      return false;
+    }
+
+    const ambiguousMonomer = new AmbiguousMonomer(
+      libraryItem,
+      undefined,
+      false,
+    );
+
+    return (
+      LIBRARY_GROUP_NAME_TO_MONOMER_CLASS[libraryGroupName] ===
+      ambiguousMonomer.monomerClass
+    );
+  }) as AmbiguousMonomerType[];
+
+  if (ambiguousMonomerLibraryItems.length === 0) {
+    return [];
+  }
+
+  let groupedAmbiguousMonomerLibraryItems: GroupedAmbiguousMonomerLibraryItemType[] =
+    [];
+
+  if (libraryGroupName === MonomerGroups.BASES) {
+    groupedAmbiguousMonomerLibraryItems = [
+      {
+        groupTitle: 'Ambiguous DNA Bases',
+        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
+          return (
+            isAmbiguousMonomerLibraryItem(libraryItem) &&
+            libraryItem.options.find((option) =>
+              option.templateId.toLowerCase().includes(DNA_TEMPLATE_NAME_PART),
+            )
+          );
+        }),
+      },
+      {
+        groupTitle: 'Ambiguous RNA Bases',
+        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
+          return (
+            isAmbiguousMonomerLibraryItem(libraryItem) &&
+            libraryItem.options.find((option) =>
+              option.templateId.toLowerCase().includes(RNA_TEMPLATE_NAME_PART),
+            )
+          );
+        }),
+      },
+      {
+        groupTitle: 'Ambiguous Bases',
+        groupItems: ambiguousMonomerLibraryItems.filter((libraryItem) => {
+          return (
+            isAmbiguousMonomerLibraryItem(libraryItem) &&
+            libraryItem.options.every(
+              (option) =>
+                !option.templateId
+                  .toLowerCase()
+                  .includes(DNA_TEMPLATE_NAME_PART) &&
+                !option.templateId
+                  .toLowerCase()
+                  .includes(RNA_TEMPLATE_NAME_PART),
+            )
+          );
+        }),
+      },
+    ];
+  } else {
+    groupedAmbiguousMonomerLibraryItems.push({
+      groupTitle: `Ambiguous ${libraryGroupName}`,
+      groupItems: ambiguousMonomerLibraryItems,
+    });
+  }
+
+  const firstAmbiguousMonomersInLibrary = ['X', 'N'];
+
+  groupedAmbiguousMonomerLibraryItems.forEach((group) => {
+    group.groupItems.sort(
+      (ambiguousMonomerLibraryItem, ambiguousMonomerLibraryItemToCompare) =>
+        ambiguousMonomerLibraryItem.label.localeCompare(
+          ambiguousMonomerLibraryItemToCompare.label,
+        ),
+    );
+
+    group.groupItems.sort((ambiguousMonomerLibraryItem) =>
+      firstAmbiguousMonomersInLibrary.includes(
+        ambiguousMonomerLibraryItem.label,
+      )
+        ? -1
+        : 1,
+    );
+  });
+
+  return groupedAmbiguousMonomerLibraryItems;
+};
+
 export const selectUnsplitNucleotides = (items: MonomerItemType[]) =>
   items.filter(
     (item) =>
@@ -158,8 +280,32 @@ export const selectUnsplitNucleotides = (items: MonomerItemType[]) =>
       item.props?.MonomerClass === KetMonomerClass.DNA,
   );
 
-export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
-  items.filter((item) => item.favorite);
+export const selectMonomersInFavorites = (items: MonomerOrAmbiguousType[]) =>
+  items.filter((item) => item.favorite && !item.isAmbiguous);
+
+export const selectAmbiguousMonomersInFavorites = (
+  items: MonomerOrAmbiguousType[],
+) => {
+  let favoritesAmbiguousMonomers: GroupedAmbiguousMonomerLibraryItemType[] = [];
+
+  for (const groupName in MonomerGroups) {
+    const ambiguousMonomers = selectAmbiguousMonomersInCategory(
+      items,
+      MonomerGroups[groupName],
+    );
+
+    favoritesAmbiguousMonomers = [
+      ...favoritesAmbiguousMonomers,
+      ...ambiguousMonomers,
+    ];
+  }
+
+  favoritesAmbiguousMonomers.forEach((group) => {
+    group.groupItems = group.groupItems.filter((item) => item.favorite);
+  });
+
+  return favoritesAmbiguousMonomers.filter((group) => group.groupItems.length);
+};
 
 export const selectFilteredMonomers = createSelector(
   (state: RootState) => state.library,

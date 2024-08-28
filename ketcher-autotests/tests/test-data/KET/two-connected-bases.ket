@@ -1,0 +1,572 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer58"
+            },
+            {
+                "$ref": "monomer60"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer58",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer60",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-A___Adenine"
+            },
+            {
+                "$ref": "monomerTemplate-2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine"
+            }
+        ]
+    },
+    "monomer58": {
+        "type": "monomer",
+        "id": "58",
+        "position": {
+            "x": 12.350000000000005,
+            "y": -9.274999999999993
+        },
+        "alias": "A",
+        "templateId": "A___Adenine"
+    },
+    "monomerTemplate-A___Adenine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.714136278170078,
+                    0.17229210188032207,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.054625838546523246,
+                    -0.52004901848584,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.0385116805492431,
+                    -0.20043268537398554,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.2537043778537287,
+                    0.8115247681040308,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.4849422611371274,
+                    1.5038658884701928,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.4990125528839592,
+                    1.1842495553583385,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.6464310504344146,
+                    -1.0369253241268062,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.038235792475776,
+                    -1.8738317949898275,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.054280978454689134,
+                    -1.5540775178412394,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.5013828958089872,
+                    -0.08338717020548814,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.474095270836282,
+                    -1.0369253241268062,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            }
+        ],
+        "class": "Base",
+        "classHELM": "RNA",
+        "id": "A___Adenine",
+        "fullName": "Adenine",
+        "alias": "A",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 6,
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    },
+    "monomer60": {
+        "type": "monomer",
+        "id": "60",
+        "position": {
+            "x": 15.225000000000009,
+            "y": -9.300000000000022
+        },
+        "alias": "2imen2",
+        "templateId": "2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine"
+    },
+    "monomerTemplate-2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    1.7313716753519912,
+                    2.004110583634483,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.5974911732295127,
+                    2.5065559648173217,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.596090117193815,
+                    3.507844011662633,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.8666532335101678,
+                    -0.5003771556063324,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.8666532335101678,
+                    0.5003771556063324,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0,
+                    1.000754311212665,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.8666532335101678,
+                    0.5003771556063324,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.8666532335101678,
+                    -0.5003771556063324,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0,
+                    -1.000754311212665,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.8179035647948465,
+                    0.809610237771046,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.406146948925651,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.8179035647948465,
+                    -0.809610237771046,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    0,
+                    -2.00150862242533,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.7327727313876888,
+                    1.0028225367891712,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.127069930005479,
+                    1.761394304688371,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    3.403698846342435,
+                    4.08434521187521,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.0911299164736796,
+                    5.035061807527241,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.0903756052610145,
+                    5.031525808960956,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.7844116538462624,
+                    4.078674270778338,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    16,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    17,
+                    18
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    18
+                ]
+            }
+        ],
+        "class": "Base",
+        "classHELM": "RNA",
+        "id": "2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine",
+        "fullName": "N2-[(Imidazo-2-yl)ethylamino]adenine",
+        "alias": "2imen2",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 9,
+                "leavingGroup": {
+                    "atoms": [
+                        14
+                    ]
+                },
+                "type": "left"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    }
+}

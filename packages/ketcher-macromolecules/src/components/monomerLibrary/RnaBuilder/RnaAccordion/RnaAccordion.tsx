@@ -29,6 +29,7 @@ import {
   selectMonomerGroups,
   selectMonomersInCategory,
   selectUnsplitNucleotides,
+  selectAmbiguousMonomersInCategory,
 } from 'state/library';
 import {
   DetailsContainer,
@@ -45,17 +46,16 @@ import {
   RnaBuilderPresetsItem,
   selectActivePreset,
   selectActiveRnaBuilderItem,
-  selectCurrentMonomerGroup,
   selectFilteredPresets,
+  selectFilteredPresetsWithIDT,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
-  setIsEditMode,
-  setSugarValidations,
   setBaseValidations,
+  setIsEditMode,
   setPhosphateValidations,
-  selectFilteredPresetsWithIDT,
+  setSugarValidations,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -68,7 +68,7 @@ import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPres
 import { getValidations } from 'helpers/rnaValidations';
 
 interface IGroupsDataItem {
-  groupName: RnaBuilderItem;
+  groupName: MonomerGroups | RnaBuilderPresetsItem;
   iconName: string;
   groups: {
     groupItems: IRnaPreset[] | MonomerItemType[];
@@ -104,6 +104,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
   const [newPreset, setNewPreset] = useState(activePreset);
+  const [activeMonomerKey, setActiveMonomerKey] = useState('');
 
   const dispatch = useDispatch();
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
@@ -163,13 +164,15 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
       ),
     },
     {
-      groupName: 'Nucleotides',
+      groupName: MonomerGroups.NUCLEOTIDES,
       iconName: 'nucleotide',
       groups: nucleotideGroups,
     },
   ];
 
   const selectItem = (monomer, groupName) => {
+    setActiveMonomerKey(getMonomerUniqueKey(monomer));
+
     if (!isSequenceEditInRNABuilderMode && !isEditMode) {
       editor.events.selectMonomer.dispatch(monomer);
     }
@@ -212,7 +215,11 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     <RnaAccordionContainer data-testid="rna-accordion">
       {groupsData.map((groupData) => {
         const expanded = expandedAccordion === groupData.groupName;
-        const quantity = groupData.groups.reduce(
+        const variantMonomers = selectAmbiguousMonomersInCategory(
+          monomers,
+          groupData.groupName as MonomerGroups,
+        );
+        const quantity = [...groupData.groups, ...variantMonomers].reduce(
           (acc, group) => acc + group.groupItems.length || 0,
           0,
         );
@@ -239,26 +246,38 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
             </DetailsContainer>
           ) : (
             <DetailsContainer>
-              {groupData.groups.map(({ groupItems, groupTitle }) => {
-                const monomer = selectCurrentMonomerGroup(
-                  activePreset,
-                  groupData.groupName,
-                );
-                return (
-                  <MonomerGroup
-                    key={groupTitle}
-                    title={groupData.groups.length > 1 ? groupTitle : undefined}
-                    groupName={groupData.groupName as MonomerGroups}
-                    items={groupItems as MonomerItemType[]}
-                    selectedMonomerUniqueKey={
-                      monomer ? getMonomerUniqueKey(monomer) : undefined
-                    }
-                    onItemClick={(monomer) =>
-                      selectItem(monomer, groupData.groupName)
-                    }
-                  />
-                );
-              })}
+              <>
+                {groupData.groups.map(({ groupItems, groupTitle }) => {
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={
+                        groupData.groups.length > 1 ? groupTitle : undefined
+                      }
+                      groupName={groupData.groupName as MonomerGroups}
+                      items={groupItems as MonomerItemType[]}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        selectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
+                {variantMonomers.map((group) => {
+                  return (
+                    <MonomerGroup
+                      key={group.groupTitle}
+                      title={group.groupTitle}
+                      items={group.groupItems}
+                      libraryName={libraryName}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        selectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
+              </>
             </DetailsContainer>
           );
         const presetsExpanded =

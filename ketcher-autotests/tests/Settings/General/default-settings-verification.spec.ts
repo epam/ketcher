@@ -11,12 +11,7 @@ import {
 
 async function generalDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
-  const deltaX = 0;
-  const deltaY = 150;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
-  await page.mouse.wheel(deltaX, deltaY);
+  await page.getByTestId('General-accordion').click();
 }
 
 async function resetSelectToolOff(page: Page) {

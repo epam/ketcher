@@ -233,7 +233,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     if (!MultitailArrow.canAddTail(distance)) {
       throw new Error('Cannot add tail because no minimal distance found');
     }
-    if (id) {
+    if (typeof id === 'number') {
       this.tailsYOffset.set(id, center);
       return id;
     } else {

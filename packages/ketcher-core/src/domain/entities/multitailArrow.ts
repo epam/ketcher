@@ -15,6 +15,12 @@ export interface MultitailArrowsReferencePositions {
   tails: Pool<Vec2>;
 }
 
+enum MultitailValidationErrors {
+  INCORRECT_SPINE = 'INCORRECT_SPINE',
+  INCORRECT_HEAD = 'INCORRECT_HEAD',
+  INCORRECT_TAILS = 'INCORRECT_TAILS',
+}
+
 export type MultitailArrowReferencePositionsNames =
   keyof MultitailArrowsReferencePositions;
 
@@ -79,14 +85,16 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     );
   }
 
-  static validateKetNode(ketFileData: KetFileMultitailArrowNode): boolean {
+  static validateKetNode(
+    ketFileData: KetFileMultitailArrowNode,
+  ): string | null {
     const { head, spine, tails } = ketFileData;
     const [spineStart, spineEnd] = spine.pos;
     if (
       spineStart.x !== spineEnd.x ||
       spineStart.y < spineEnd.y - MultitailArrow.MIN_HEIGHT
     ) {
-      return false;
+      return MultitailValidationErrors.INCORRECT_SPINE;
     }
     const headPoint = head.position;
     if (
@@ -94,7 +102,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       headPoint.y - MultitailArrow.MIN_TOP_BOTTOM_OFFSET < spineEnd.y ||
       headPoint.y + MultitailArrow.MIN_TOP_BOTTOM_OFFSET > spineStart.y
     ) {
-      return false;
+      return MultitailValidationErrors.INCORRECT_HEAD;
     }
     const tailsPositions = [...tails.pos].sort((a, b) => b.y - a.y);
 
@@ -102,15 +110,15 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       tailsPositions.at(0)?.y !== spineStart.y ||
       tailsPositions.at(-1)?.y !== spineEnd.y
     ) {
-      return false;
+      return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
-    const firstTailX = tails.pos[0].x;
+    const firstTailX = tailsPositions[0].x;
     if (firstTailX > spineStart.x - MultitailArrow.MIN_TAIL_LENGTH) {
-      return false;
+      return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
-    return tails.pos.every((tail, index, allTails) => {
+    const result = tailsPositions.every((tail, index, allTails) => {
       if (
         index > 0 &&
         allTails[index - 1].y < tail.y - MultitailArrow.MIN_TAIL_DISTANCE
@@ -122,6 +130,8 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         tail.x === firstTailX && tail.y >= spineEnd.y && tail.y <= spineStart.y
       );
     });
+
+    return !result ? MultitailValidationErrors.INCORRECT_TAILS : null;
   }
 
   static fromKetNode(ketFileNode: KetFileNode<KetFileMultitailArrowNode>) {

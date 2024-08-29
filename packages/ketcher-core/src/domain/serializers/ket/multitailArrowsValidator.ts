@@ -7,8 +7,15 @@ export const validateMultitailArrows = (json: any): boolean => {
   const nodes: Array<KetFileNode<unknown | KetFileMultitailArrowNode>> =
     json.root.nodes;
   return nodes.every((node) => {
-    return node.type === MULTITAIL_ARROW_SERIALIZE_KEY
-      ? MultitailArrow.validateKetNode(node.data as KetFileMultitailArrowNode)
-      : true;
+    if (node.type === MULTITAIL_ARROW_SERIALIZE_KEY) {
+      const result = MultitailArrow.validateKetNode(
+        node.data as KetFileMultitailArrowNode,
+      );
+      if (result !== null) {
+        console.info(result);
+        return null;
+      }
+    }
+    return true;
   });
 };

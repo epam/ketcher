@@ -311,22 +311,29 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Check that system does not let importing empty .mol file', async () => {
-    /*
+  test.fixme(
+    'Check that system does not let importing empty .mol file',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     Test case: Import/Saving files
     Description: System does not let importing empty .mol file
-    */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('Molfiles-V2000/empty-file.mol', page);
-    await page.getByText('Add to Canvas').isDisabled();
 
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
+    IMPORTANT: Test fails because of the bug - https://github.com/epam/ketcher/issues/5382
+    */
+      test.setTimeout(20);
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile('Molfiles-V2000/empty-file.mol', page);
+      await expect(page.getByText('Add to Canvas')).toBeDisabled();
+
+      // Closing page since test expects it to have closed at the end
+      const context = page.context();
+      await page.close();
+      page = await context.newPage();
+      await waitForPageInit(page);
+      await turnOnMacromoleculesEditor(page);
+    },
+  );
 
   test('Check that system does not let uploading corrupted .mol file', async () => {
     /*

@@ -3,10 +3,9 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
+import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   openStructurePasteFromClipboard,

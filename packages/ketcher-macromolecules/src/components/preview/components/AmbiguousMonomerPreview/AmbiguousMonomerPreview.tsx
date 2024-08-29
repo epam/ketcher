@@ -19,7 +19,7 @@ const AmbiguousMonomerPreview = ({ className }: Props) => {
     selectShowPreview,
   ) as AmbiguousMonomerPreviewState;
 
-  const { monomer, style } = preview;
+  const { monomer, presetMonomers, style } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
 
@@ -52,12 +52,23 @@ const AmbiguousMonomerPreview = ({ className }: Props) => {
       const option = options.find(
         (option) => option.templateId === monomer.monomerItem.props.id,
       );
+
+      let monomerName: string;
+      if (presetMonomers) {
+        const [sugar, , phosphate] = presetMonomers;
+        const sugarName = sugar?.label ?? '';
+        const phosphateName = phosphate?.label ?? '';
+        monomerName = `${sugarName}(${monomer.label})${phosphateName}`;
+      } else {
+        monomerName = monomer.monomerItem.props.Name;
+      }
+
       return {
-        monomerName: monomer.monomerItem.props.Name,
+        monomerName,
         ratio: option?.ratio,
       };
     });
-  }, [fallback, monomers, options]);
+  }, [fallback, monomers, presetMonomers, options]);
 
   const preparedPreviewData = useMemo(() => {
     const sortedData = previewData.sort((a, b) => {

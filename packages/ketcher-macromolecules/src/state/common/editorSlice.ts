@@ -75,7 +75,7 @@ export interface BondPreviewState extends BasePreviewState {
 export interface AmbiguousMonomerPreviewState extends BasePreviewState {
   readonly type: PreviewType.AmbiguousMonomer;
   readonly monomer: AmbiguousMonomerType;
-  readonly preset?: boolean;
+  readonly presetMonomers?: ReadonlyArray<MonomerItemType | undefined>;
 }
 
 type EditorStatePreview =

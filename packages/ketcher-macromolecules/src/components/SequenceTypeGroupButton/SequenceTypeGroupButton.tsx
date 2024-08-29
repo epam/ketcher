@@ -23,7 +23,6 @@ import {
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
-import { useTheme } from '@emotion/react';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -69,8 +68,6 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
 }));
 
 export const SequenceTypeGroupButton = () => {
-  const theme = useTheme();
-  console.log('theme', theme);
   const editor = useAppSelector(selectEditor);
 
   const [activeSequenceType, setActiveSequenceType] = useState<SequenceType>(

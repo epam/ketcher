@@ -190,6 +190,7 @@ test.describe('Sequence edit mode', () => {
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -212,6 +213,7 @@ test.describe('Sequence edit mode', () => {
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -594,6 +596,7 @@ test.describe('Sequence edit mode', () => {
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }

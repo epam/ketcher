@@ -1,4 +1,5 @@
 import {
+  AmbiguousMonomer,
   BaseMonomer,
   Peptide,
   Phosphate,
@@ -15,6 +16,7 @@ import {
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
+import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -37,10 +39,10 @@ export function isR2R1ConnectionFromRnaBase(polymerBond: PolymerBond) {
     polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond);
 
   return (
-    (polymerBond.firstMonomer instanceof RNABase &&
+    (isRnaBaseOrAmbiguousRnaBase(polymerBond.firstMonomer) &&
       firstMonomerAttachmentPoint === AttachmentPointName.R2 &&
       secondMonomerAttachmentPoint === AttachmentPointName.R1) ||
-    (polymerBond.secondMonomer instanceof RNABase &&
+    (isRnaBaseOrAmbiguousRnaBase(polymerBond.secondMonomer) &&
       secondMonomerAttachmentPoint === AttachmentPointName.R2 &&
       firstMonomerAttachmentPoint === AttachmentPointName.R1)
   );
@@ -55,7 +57,7 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
 
   return (
-    R1ConnectedMonomer instanceof RNABase &&
+    isRnaBaseOrAmbiguousRnaBase(R1ConnectedMonomer) &&
     getSugarFromRnaBase(R1ConnectedMonomer) &&
     R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
       R1ConnectedMonomer,
@@ -92,7 +94,7 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   const r3ConnectedMonomer = r3PolymerBond?.getAnotherMonomer(monomer);
 
   if (!r3ConnectedMonomer) {
-    return false;
+    return undefined;
   }
 
   const r1PolymerBondOfConnectedMonomer =
@@ -100,13 +102,14 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   const r1ConnectedMonomer =
     r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer);
 
-  return r3ConnectedMonomer instanceof RNABase && r1ConnectedMonomer === monomer
+  return isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer) &&
+    r1ConnectedMonomer === monomer
     ? r3ConnectedMonomer
     : undefined;
 }
 
 export function getSugarFromRnaBase(monomer?: BaseMonomer) {
-  if (!monomer || !(monomer instanceof RNABase)) return undefined;
+  if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return undefined;
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
   const r1ConnectedMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
 
@@ -143,7 +146,13 @@ export function isMonomerBeginningOfChain(
   const previousMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
   const isPreviousMonomerPartOfChain =
     previousMonomer &&
-    !MonomerTypes.some((MonomerType) => previousMonomer instanceof MonomerType);
+    !MonomerTypes.some(
+      (MonomerType) =>
+        previousMonomer instanceof MonomerType ||
+        (previousMonomer instanceof AmbiguousMonomer &&
+          MONOMER_CLASS_TO_CONSTRUCTOR[previousMonomer.monomerClass] ===
+            MonomerType),
+    );
   const previousConnectionNotR2 =
     r1PolymerBond &&
     previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
@@ -201,4 +210,24 @@ export function isAmbiguousMonomerLibraryItem(
   monomer: MonomerOrAmbiguousType,
 ): monomer is AmbiguousMonomerType {
   return Boolean(monomer.isAmbiguous);
+}
+
+export function isPeptideOrAmbiguousPeptide(
+  monomer?: BaseMonomer,
+): monomer is Peptide | AmbiguousMonomer {
+  return (
+    monomer instanceof Peptide ||
+    (monomer instanceof AmbiguousMonomer &&
+      monomer.monomerClass === KetMonomerClass.AminoAcid)
+  );
+}
+
+export function isRnaBaseOrAmbiguousRnaBase(
+  monomer?: BaseMonomer,
+): monomer is RNABase | AmbiguousMonomer {
+  return (
+    monomer instanceof RNABase ||
+    (monomer instanceof AmbiguousMonomer &&
+      monomer.monomerClass === KetMonomerClass.Base)
+  );
 }

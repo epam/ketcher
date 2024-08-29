@@ -43,6 +43,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
   public beginning: string | null = null;
 
+  public CHAIN_BEGINNING = '';
+
   static isSelectable() {
     return true;
   }
@@ -419,12 +421,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       });
   }
 
-  protected abstract get enumerationElementPosition(): {
+  public abstract get enumerationElementPosition(): {
     x: number;
     y: number;
   } | void;
 
-  protected abstract get beginningElementPosition(): {
+  public abstract get beginningElementPosition(): {
     x: number;
     y: number;
   } | void;
@@ -451,7 +453,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawEnumeration() {
-    assert(this.enumerationElement);
+    if (!this.enumerationElement) return;
+
     this.enumerationElement.text(this.enumeration);
   }
 

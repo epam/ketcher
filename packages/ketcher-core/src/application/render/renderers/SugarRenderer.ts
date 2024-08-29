@@ -37,11 +37,11 @@ export class SugarRenderer extends BaseMonomerRenderer {
     this.appendChainBeginning();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return undefined;
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return { x: -5, y: 7 };
   }
 }

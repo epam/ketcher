@@ -36,7 +36,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.000001 });
   });
 
   test('Operation with a structure without stereo properties', async ({

@@ -580,7 +580,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('C');
     await page.keyboard.press('2');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.000001 });
 
     await page.getByRole('banner').getByRole('button').click();
 

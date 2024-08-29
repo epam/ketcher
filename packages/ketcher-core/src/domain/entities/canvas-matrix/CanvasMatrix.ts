@@ -2,7 +2,6 @@ import {
   BaseMonomer,
   Nucleoside,
   Nucleotide,
-  RNABase,
   SubChainNode,
 } from 'domain/entities';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
@@ -11,6 +10,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
+import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 
 interface MatrixConfig {
   initialMatrix: Matrix<Cell>;
@@ -180,7 +180,7 @@ export class CanvasMatrix {
         node.monomers.forEach((monomer) => {
           if (
             (node instanceof Nucleotide || node instanceof Nucleoside) &&
-            monomer instanceof RNABase
+            isRnaBaseOrAmbiguousRnaBase(monomer)
           ) {
             const cell = new Cell(
               node,

@@ -6,29 +6,9 @@ import {
 import { ArrowAddTool } from './arrow.types';
 import Editor from '../../Editor';
 
-/*
-interface BaseDragContext {
-  originalPosition: Vec2;
-}
-
-interface InitialDragContext extends BaseDragContext {
-  action: null;
-  itemId: null;
-}
-
-interface ProgressDragContext extends BaseDragContext {
-  action: Action;
-  itemId: number;
-}
-
-type MultitailArrowAddDragContext = InitialDragContext | ProgressDragContext;
- */
-
 export class MultitailArrowAddTool implements ArrowAddTool {
   static MIN_HEIGHT = 2.5;
   static MIN_WIDTH = 1.2;
-
-  // private dragContext: MultitailArrowAddDragContext | null = null;
 
   // eslint-disable-next-line no-useless-constructor
   constructor(private editor: Editor) {}
@@ -42,14 +22,7 @@ export class MultitailArrowAddTool implements ArrowAddTool {
   }
 
   mousedown() {
-    /* this.dragContext = {
-      originalPosition: CoordinateTransformation.pageToModel(
-        event,
-        this.render,
-      ),
-      action: null,
-      itemId: null,
-    }; */
+    // should be empty
   }
 
   mousemove() {

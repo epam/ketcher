@@ -31,6 +31,8 @@ export interface MultitailArrowClosestReferencePosition {
 
 export class ReMultitailArrow extends ReObject {
   static CUBIC_BEZIER_OFFSET = 6;
+  static FRAME_OFFSET = 0.35;
+  static SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
 
   static isSelectable(): boolean {
     return true;
@@ -47,12 +49,15 @@ export class ReMultitailArrow extends ReObject {
     super(MULTITAIL_ARROW_KEY);
   }
 
-  getOffset(options: RenderOptions) {
-    return 1.4 * (options.microModeScale / 8);
+  getFrameOffset(options: RenderOptions) {
+    return ReMultitailArrow.FRAME_OFFSET * options.microModeScale;
   }
 
   getSelectionPointOffset(options: RenderOptions) {
-    return 0.1 * options.microModeScale;
+    return (
+      ReMultitailArrow.SELECTION_POINT_OFFSET_FROM_SPINE *
+      options.microModeScale
+    );
   }
 
   getReferencePositions(
@@ -89,7 +94,7 @@ export class ReMultitailArrow extends ReObject {
     verticalDirection: -1 | 1,
     horizontalDirection: -1 | 1,
   ): void {
-    const offset = this.getOffset(renderOptions);
+    const offset = this.getFrameOffset(renderOptions);
     const cubicBezierOffset =
       horizontalDirection * ReMultitailArrow.CUBIC_BEZIER_OFFSET;
     const start = lineStart.add(
@@ -111,7 +116,7 @@ export class ReMultitailArrow extends ReObject {
   }
 
   buildFrame(renderOptions: RenderOptions): string {
-    const offset = this.getOffset(renderOptions);
+    const offset = this.getFrameOffset(renderOptions);
     const { topSpine, bottomSpine, topTail, bottomTail, head, tails } =
       this.getReferencePositions(renderOptions);
     const builder = new PathBuilder();
@@ -186,7 +191,7 @@ export class ReMultitailArrow extends ReObject {
     return paths;
   }
 
-  selectionPointsFromReferencePoint(
+  getSelectionPointsFromReferencePoint(
     point: Vec2,
     topSpine: Vec2,
     name: string,
@@ -213,23 +218,28 @@ export class ReMultitailArrow extends ReObject {
       this.getReferencePositions(renderOptions);
     const selectionPointSet = paper.set();
     const points: Record<string, Vec2> = {
-      ...this.selectionPointsFromReferencePoint(
+      ...this.getSelectionPointsFromReferencePoint(
         topTail,
         topSpine,
         'topTail',
         OFFSET,
       ),
-      ...this.selectionPointsFromReferencePoint(
+      ...this.getSelectionPointsFromReferencePoint(
         bottomTail,
         topSpine,
         'bottomTail',
         OFFSET,
       ),
-      ...this.selectionPointsFromReferencePoint(head, topSpine, 'head', OFFSET),
+      ...this.getSelectionPointsFromReferencePoint(
+        head,
+        topSpine,
+        'head',
+        OFFSET,
+      ),
       ...Array.from(tails.entries()).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          ...this.selectionPointsFromReferencePoint(
+          ...this.getSelectionPointsFromReferencePoint(
             value,
             topSpine,
             `${MultitailArrow.TAILS_NAME}-${key}`,

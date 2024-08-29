@@ -112,7 +112,8 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Sequence/sequence-empty.seq', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    // await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   test('Check that system does not let uploading corrupted .seq file', async ({
@@ -124,6 +125,9 @@ test.describe('Import-Saving .seq Files', () => {
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
+
+    const errorDialog = page.getByLabel('Unsupported symbols').first();
+    await errorDialog.waitFor({ state: 'visible' });
     await takeEditorScreenshot(page);
   });
 

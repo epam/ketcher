@@ -18,6 +18,7 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
@@ -34,6 +35,9 @@ test.describe('Import-Saving .fasta Files', () => {
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async ({ page }) => {
+      if (fileType === 'DNA') {
+        await pageReload(page);
+      }
       await openFileAndAddToCanvasMacro(
         `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
         page,
@@ -99,7 +103,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('FASTA/fasta-empty.fasta', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   // Fail while performance issue on Indigo side

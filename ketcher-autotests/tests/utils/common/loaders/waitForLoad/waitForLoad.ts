@@ -29,8 +29,15 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
+  const roleDialog = await page.locator('[role=dialog]');
 
-  if (await page.locator('[role=dialog]').isVisible()) {
+  if (await roleDialog.isVisible()) {
+    // if you see here that "locator resolved to 2 elements. Proceeding with the first one:..."
+    // That means that another dialog (error one) appeared over first one
+    // for example:
+    // Error: locator.isVisible: Error: strict mode violation: locator('[role=dialog]') resolved to 2 elements:
+    // 1) <div role="dialog" aria-labelledby=":r2:" class="MuiP…>…</div> aka getByLabel('Open Structure')
+    // 2) <div role="dialog" aria-labelledby=":r0:" class="MuiP…>…</div> aka getByLabel('Unsupported symbols')
     await page.waitForSelector('[role=dialog]', { state: 'detached' });
   }
 

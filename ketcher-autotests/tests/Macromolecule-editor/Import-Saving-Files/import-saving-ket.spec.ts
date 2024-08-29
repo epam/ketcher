@@ -219,7 +219,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('KET/empty-file.ket', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   test('Check that system does not let uploading corrupted .ket file', async ({

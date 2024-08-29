@@ -250,7 +250,7 @@ const render: {
   bondSpacing: {
     title: 'Bond spacing',
     type: 'integer',
-    default: 18,
+    default: 15,
     minimum: 1,
     maximum: 100,
   },
@@ -283,9 +283,8 @@ const render: {
   bondLength: {
     title: 'Bond length',
     type: 'number',
-    default: 2.1,
+    default: 40,
     minimum: 1,
-    maximum: 96,
   },
   bondLengthUnit: {
     title: 'Bond length unit',
@@ -296,9 +295,8 @@ const render: {
   reactionComponentMarginSize: {
     title: 'Reaction component margin size',
     type: 'number',
-    default: 2.3,
+    default: 20, // half of bond length
     minimum: 1,
-    maximum: 96,
   },
   reactionComponentMarginSizeUnit: {
     title: 'Reaction component margin size unit',
@@ -309,9 +307,8 @@ const render: {
   hashSpacing: {
     title: 'Hash spacing',
     type: 'number',
-    default: 2.2,
-    minimum: 1,
-    maximum: 96,
+    default: 1.2,
+    minimum: 0,
   },
   hashSpacingUnit: {
     title: 'Hash spacing unit',

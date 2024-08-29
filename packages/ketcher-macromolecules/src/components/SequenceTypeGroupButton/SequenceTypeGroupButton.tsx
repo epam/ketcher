@@ -25,7 +25,7 @@ import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
 import { useTheme } from '@emotion/react';
 
-const SequenceTypeButtons = styled(Button)(({ theme, variant }) => ({
+const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
     variant === 'outlined'
       ? theme.ketcher.color.text.primary
@@ -112,7 +112,8 @@ export const SequenceTypeGroupButton = () => {
     <>
       <Box sx={{ mr: 1, ml: 1 }}>
         <ButtonGroup disabled={isDisabled}>
-          <SequenceTypeButtons
+          <SequenceTypeButton
+            data-testid={`${SequenceType.RNA}Btn`}
             title="RNA (Ctrl+Alt+R)"
             variant={
               activeSequenceType === SequenceType.RNA ? 'contained' : 'outlined'
@@ -120,8 +121,9 @@ export const SequenceTypeGroupButton = () => {
             onClick={() => handleSelectSequenceType(SequenceType.RNA)}
           >
             RNA
-          </SequenceTypeButtons>
-          <SequenceTypeButtons
+          </SequenceTypeButton>
+          <SequenceTypeButton
+            data-testid={`${SequenceType.DNA}Btn`}
             title="DNA (Ctrl+Alt+D)"
             variant={
               activeSequenceType === SequenceType.DNA ? 'contained' : 'outlined'
@@ -129,8 +131,9 @@ export const SequenceTypeGroupButton = () => {
             onClick={() => handleSelectSequenceType(SequenceType.DNA)}
           >
             DNA
-          </SequenceTypeButtons>
-          <SequenceTypeButtons
+          </SequenceTypeButton>
+          <SequenceTypeButton
+            data-testid={`${SequenceType.PEPTIDE}Btn`}
             title="Peptides (Ctrl+Alt+P)"
             variant={
               activeSequenceType === SequenceType.PEPTIDE
@@ -140,7 +143,7 @@ export const SequenceTypeGroupButton = () => {
             onClick={() => handleSelectSequenceType(SequenceType.PEPTIDE)}
           >
             PEP
-          </SequenceTypeButtons>
+          </SequenceTypeButton>
         </ButtonGroup>
       </Box>
     </>

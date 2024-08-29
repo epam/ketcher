@@ -9,7 +9,7 @@ import {
   selectSnakeLayoutModeTool,
   SequenceType,
   startNewSequence,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takePageScreenshot,
   typePeptideAlphabet,
@@ -66,16 +66,20 @@ test.describe('Sequence edit mode', () => {
     await page.getByTestId('start_new_sequence').click();
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await takeEditorScreenshot(page);
   });
 
   test('Add/edit sequence', async ({ page }) => {
     await startNewSequence(page);
     await typeRNADNAAlphabet(page);
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await typeRNADNAAlphabet(page);
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await typePeptideAlphabet(page);
     await page.keyboard.press('Enter');
     await typePeptideAlphabet(page);
@@ -135,7 +139,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for DNA are present on the canvas.
     */
     await startNewSequence(page);
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
@@ -146,7 +150,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, O, X, U, Z
     */
     await startNewSequence(page);
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await enterSequence(page, 'abcdefghijklmnopqrstuvwxyz');
     await takeEditorScreenshot(page);
   });
@@ -175,7 +179,11 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the end of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
@@ -193,7 +201,11 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the middle of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
@@ -227,7 +239,11 @@ test.describe('Sequence edit mode', () => {
     by entering symbols before the phosphate.
     */
     await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
@@ -521,7 +537,7 @@ test.describe('Sequence edit mode', () => {
     turning on "text edit" mode and placing of the caret after the first monomer.
     */
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);
       await takeEditorScreenshot(page);
@@ -537,7 +553,7 @@ test.describe('Sequence edit mode', () => {
     Description: Nothing happens. Monomer not added to canvas.
     */
     const sequenceSymbols = ['d', 'e', 'f'];
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);
       await takeEditorScreenshot(page);
@@ -575,7 +591,7 @@ test.describe('Sequence edit mode', () => {
       'w',
       'y',
     ];
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);
       await takeEditorScreenshot(page);
@@ -591,7 +607,7 @@ test.describe('Sequence edit mode', () => {
     Description: Nothing happens. Monomer not added to canvas.
     */
     const sequenceSymbols = ['b', 'j', 'u', 'z'];
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);
       await takeEditorScreenshot(page);

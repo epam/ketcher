@@ -4,6 +4,10 @@ import {
   MOLECULES_MODE,
   POLYMER_TOGGLER,
   LAYOUT_TOGGLER,
+  RNA_TAB,
+  PEPTIDES_TAB,
+  FAVORITES_TAB,
+  CHEM_TAB,
 } from '@constants/testIdConstants';
 import {
   moveMouseToTheMiddleOfTheScreen,
@@ -66,6 +70,20 @@ export async function chooseFileFormat(
   await waitForSpinnerFinishedWork(page, async () => {
     await page.getByRole('option', { name: fileFomat }).click();
   });
+}
+
+export const Tabs = {
+  Favorites: { displayName: 'Favorites', testId: FAVORITES_TAB },
+  Peptides: { displayName: 'Peptides', testId: PEPTIDES_TAB },
+  Rna: { displayName: 'RNA', testId: RNA_TAB },
+  Chem: { displayName: 'CHEM', testId: CHEM_TAB },
+};
+
+export async function chooseTab(
+  page: Page,
+  tab: (typeof Tabs)[keyof typeof Tabs],
+) {
+  await page.getByTestId(tab.testId).click();
 }
 
 export async function enterSequence(page: Page, sequence: string) {

@@ -748,12 +748,12 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'rgroups',
     'rgroupAttachmentPoints',
     'rxnArrows',
+    MULTITAIL_ARROW_KEY,
     'rxnPluses',
     'enhancedFlags',
     'simpleObjects',
     'texts',
     IMAGE_KEY,
-    MULTITAIL_ARROW_KEY,
     ...(selectFragment ? ['frags'] : ['atoms', 'bonds']),
   ];
 }

@@ -763,7 +763,7 @@ function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
         maxDistance,
       );
       if (distance <= maxDistance && (!acc || acc.dist > distance)) {
-        return { id, dist: distance, ref };
+        return { id, dist: distance / renderOptions.microModeScale, ref };
       }
       return acc;
     },

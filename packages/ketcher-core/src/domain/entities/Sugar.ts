@@ -5,7 +5,7 @@ import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
-import { isRnaBaseVariantMonomer } from 'domain/helpers/monomers';
+import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 
 export class Sugar extends BaseMonomer {
@@ -44,17 +44,13 @@ export class Sugar extends BaseMonomer {
     // If other monomer is neither a Phosphate nor RNABase, open modal
     if (
       !(otherMonomer instanceof Phosphate) &&
-      !(otherMonomer instanceof RNABase) &&
-      !isRnaBaseVariantMonomer(otherMonomer)
+      !isRnaBaseOrAmbiguousRnaBase(otherMonomer)
     ) {
       return;
     }
 
     // If other monomer is RNABase, attach it to R3 or open modal
-    if (
-      otherMonomer instanceof RNABase ||
-      isRnaBaseVariantMonomer(otherMonomer)
-    ) {
+    if (isRnaBaseOrAmbiguousRnaBase(otherMonomer)) {
       if (this.isAttachmentPointExistAndFree(AttachmentPointName.R3)) {
         return AttachmentPointName.R3;
       } else return;

@@ -2272,10 +2272,76 @@
         "$ref": "monomerTemplate-B7___Biotin"
       },
       {
-        "$ref": "monomerTemplate-flsQ___P-quinonoid fluorescein"
+        "$ref": "monomerTemplate-flsQ___P-quinoid fluorescein"
       },
       {
         "$ref": "monomerTemplate-flsL___LactoneFluorescein"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_D___Aspartic acid_N___Asparagine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_L___Leucine_I___Isoleucine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P___Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_E___Glutamic acid_Q___Glutamine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_G___Guanine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_G___Guanine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_G___Guanine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_G___Guanine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_C___Cytosine_T___Thymine"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_C___Cytosine_U___Uracil"
+      },
+      {
+        "$ref": "ambiguousMonomerTemplate-_A___Adenine_G___Guanine"
       }
     ]
   },
@@ -175858,12 +175924,12 @@
       }
     ]
   },
-  "monomerTemplate-flsQ___P-quinonoid fluorescein": {
+  "monomerTemplate-flsQ___P-quinoid fluorescein": {
     "type": "monomerTemplate",
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "flsQ___P-quinonoid fluorescein",
-    "fullName": "P-quinonoid fluorescein",
+    "id": "flsQ___P-quinoid fluorescein",
+    "fullName": "P-quinoid fluorescein",
     "alias": "flsQ",
     "atoms": [
       {
@@ -176730,6 +176796,407 @@
           ]
         },
         "type": "left"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_D___Aspartic acid_N___Asparagine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_D___Aspartic acid_N___Asparagine",
+    "alias": "B",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "D___Aspartic acid"
+      },
+      {
+        "templateId": "N___Asparagine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_L___Leucine_I___Isoleucine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_L___Leucine_I___Isoleucine",
+    "alias": "J",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "L___Leucine"
+      },
+      {
+        "templateId": "I___Isoleucine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_E___Glutamic acid_Q___Glutamine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_E___Glutamic acid_Q___Glutamine",
+    "alias": "Z",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "E___Glutamic acid"
+      },
+      {
+        "templateId": "Q___Glutamine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P___Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P___Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine",
+    "alias": "X",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Alanine"
+      },
+      {
+        "templateId": "C___Cysteine"
+      },
+      {
+        "templateId": "D___Aspartic acid"
+      },
+      {
+        "templateId": "E___Glutamic acid"
+      },
+      {
+        "templateId": "F___Phenylalanine"
+      },
+      {
+        "templateId": "G___Glycine"
+      },
+      {
+        "templateId": "H___Histidine"
+      },
+      {
+        "templateId": "I___Isoleucine"
+      },
+      {
+        "templateId": "K___Lysine"
+      },
+      {
+        "templateId": "L___Leucine"
+      },
+      {
+        "templateId": "M___Methionine"
+      },
+      {
+        "templateId": "N___Asparagine"
+      },
+      {
+        "templateId": "O___Pyrrolysine"
+      },
+      {
+        "templateId": "P___Proline"
+      },
+      {
+        "templateId": "Q___Glutamine"
+      },
+      {
+        "templateId": "R___Arginine"
+      },
+      {
+        "templateId": "S___Serine"
+      },
+      {
+        "templateId": "T___Threonine"
+      },
+      {
+        "templateId": "U___Selenocysteine"
+      },
+      {
+        "templateId": "V___Valine"
+      },
+      {
+        "templateId": "W___Tryptophan"
+      },
+      {
+        "templateId": "Y___Tyrosine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine_G___Guanine_T___Thymine",
+    "alias": "N",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine_G___Guanine_U___Uracil",
+    "alias": "N",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_G___Guanine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine_G___Guanine",
+    "alias": "V",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine_T___Thymine",
+    "alias": "H",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine_U___Uracil",
+    "alias": "H",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_G___Guanine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_G___Guanine_T___Thymine",
+    "alias": "D",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_G___Guanine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_G___Guanine_U___Uracil",
+    "alias": "D",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_C___Cytosine_G___Guanine_T___Thymine",
+    "alias": "B",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_C___Cytosine_G___Guanine_U___Uracil",
+    "alias": "B",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_C___Cytosine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_C___Cytosine",
+    "alias": "M",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "C___Cytosine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_G___Guanine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_G___Guanine_T___Thymine",
+    "alias": "K",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_G___Guanine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_G___Guanine_U___Uracil",
+    "alias": "K",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "G___Guanine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_T___Thymine",
+    "alias": "W",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_U___Uracil",
+    "alias": "W",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_C___Cytosine_G___Guanine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_C___Cytosine_G___Guanine",
+    "alias": "S",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "G___Guanine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_C___Cytosine_T___Thymine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_C___Cytosine_T___Thymine",
+    "alias": "Y",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "T___Thymine"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_C___Cytosine_U___Uracil": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_C___Cytosine_U___Uracil",
+    "alias": "Y",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "C___Cytosine"
+      },
+      {
+        "templateId": "U___Uracil"
+      }
+    ]
+  },
+  "ambiguousMonomerTemplate-_A___Adenine_G___Guanine": {
+    "type": "ambiguousMonomerTemplate",
+    "id": "_A___Adenine_G___Guanine",
+    "alias": "R",
+    "subtype": "alternatives",
+    "options": [
+      {
+        "templateId": "A___Adenine"
+      },
+      {
+        "templateId": "G___Guanine"
       }
     ]
   }

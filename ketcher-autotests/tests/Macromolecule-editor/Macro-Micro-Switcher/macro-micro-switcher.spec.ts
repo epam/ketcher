@@ -813,6 +813,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
+      test.fail();
       await openFileAndAddToCanvas(
         'KET/two-benzene-and-plus.ket',
         page,

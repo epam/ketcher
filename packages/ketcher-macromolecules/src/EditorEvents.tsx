@@ -218,6 +218,23 @@ export const EditorEvents = () => {
                 sequenceNode.rnaBase.monomerItem,
               ];
 
+        if (sequenceNode.rnaBase instanceof AmbiguousMonomer) {
+          const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
+            type: PreviewType.AmbiguousMonomer,
+            monomer: sequenceNode.rnaBase.variantMonomerItem,
+            presetMonomers: monomers,
+            style: {
+              left,
+              top: calculateAmbiguousMonomerPreviewTop(
+                sequenceNode.rnaBase.variantMonomerItem,
+              )(cardCoordinates),
+            },
+          };
+
+          debouncedShowPreview(ambiguousMonomerPreviewData);
+          return;
+        }
+
         const existingPreset = presets.find((preset) => {
           const presetMonomers = [preset.sugar, preset.base, preset.phosphate];
           return monomers.every((monomer, index) => {

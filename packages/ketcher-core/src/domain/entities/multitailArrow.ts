@@ -63,7 +63,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   static fromTwoPoints(topLeft: Vec2, bottomRight: Vec2) {
     const center = Vec2.centre(topLeft, bottomRight);
-    const spineX = topLeft.x + (bottomRight.x - topLeft.x) / 3;
+    const tailLength = Math.max(
+      (bottomRight.x - topLeft.x) / 3,
+      MultitailArrow.MIN_TAIL_LENGTH,
+    );
+    const spineX = topLeft.x + tailLength;
     const spineTop = new Vec2(spineX, topLeft.y);
     const headOffset = new Vec2(bottomRight.x, center.y).sub(spineTop);
     return new MultitailArrow(

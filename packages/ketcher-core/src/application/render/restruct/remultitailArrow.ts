@@ -31,7 +31,7 @@ export interface MultitailArrowClosestReferencePosition {
 
 export class ReMultitailArrow extends ReObject {
   static CUBIC_BEZIER_OFFSET = 6;
-  static FRAME_OFFSET = 0.35;
+  static FRAME_OFFSET = 0.175;
   static SELECTION_POINT_OFFSET_FROM_SPINE = 0.1;
 
   static isSelectable(): boolean {

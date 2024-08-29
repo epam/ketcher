@@ -46,8 +46,8 @@ const findMaps = {
   rgroupAttachmentPoints: findClosestRgroupAttachmentPoints,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText,
-  [IMAGE_KEY]: findClosestImage,
   [MULTITAIL_ARROW_KEY]: findClosestMultitailArrow,
+  [IMAGE_KEY]: findClosestImage,
 };
 
 type ClosestReturnType<T = Vec2> = ClosestItem<T> | null;

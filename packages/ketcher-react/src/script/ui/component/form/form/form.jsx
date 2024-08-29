@@ -171,7 +171,7 @@ function Field(props) {
     />
   ) : (
     <Input
-      className={`${extraLabel ? classes.inputWithExtraLabel : ''}`}
+      {...(extraLabel && { className: classes.inputWithExtraLabel })}
       name={name}
       schema={desc}
       {...fieldOpts}

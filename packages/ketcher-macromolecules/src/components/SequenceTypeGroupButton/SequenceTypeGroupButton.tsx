@@ -31,13 +31,12 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
       : theme.ketcher.color.button.text.primary,
   boxShadow: 'none',
   transition: 'none',
-  border: '0',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
   padding: '4px 8px',
-  outline: '1px solid #585858',
+  border: variant === 'outlined' ? theme.ketcher.outline.small : 'none',
   background:
     variant === 'outlined'
       ? theme.ketcher.color.background.primary
@@ -56,8 +55,6 @@ const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
       variant === 'outlined'
         ? theme.ketcher.color.background.primary
         : theme.ketcher.color.button.group.hover,
-    outline: '1px solid #585858',
-    border: 'none',
     boxShadow: 'none',
   },
   ':disabled': {

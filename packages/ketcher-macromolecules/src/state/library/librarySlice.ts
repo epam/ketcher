@@ -338,8 +338,70 @@ export const selectFilteredMonomers = createSelector(
             return false;
           }
 
+          if (parts.length === 3 && parts[1] !== '') {
+            const textBetweenSlashes = parts[1];
+
+            const matchesIdtBase =
+              idtBase &&
+              idtBase.length === textBetweenSlashes.length &&
+              Array.from(idtBase).every(
+                (char, index) => char === textBetweenSlashes[index],
+              );
+
+            const matchesIdtModifications = idtModifications
+              ? idtModifications
+                  .split(' ')
+                  .some(
+                    (mod) =>
+                      mod.length === textBetweenSlashes.length &&
+                      Array.from(mod).every(
+                        (char, index) => char === textBetweenSlashes[index],
+                      ),
+                  )
+              : false;
+
+            return matchesIdtBase || matchesIdtModifications;
+          }
+
           const searchBeforeSlash = parts[0];
           const searchAfterSlash = parts[1];
+
+          if (
+            normalizedSearchFilter.startsWith('/') &&
+            normalizedSearchFilter.length > 1
+          ) {
+            const aliasRest = normalizedSearchFilter.slice(1);
+            return (
+              (idtBase && idtBase.startsWith(aliasRest)) ||
+              (idtModifications &&
+                idtModifications
+                  .split(' ')
+                  .some((mod) => mod.startsWith(aliasRest)))
+            );
+          }
+
+          if (
+            normalizedSearchFilter.endsWith('/') &&
+            normalizedSearchFilter.length > 1
+          ) {
+            const aliasRest = normalizedSearchFilter.slice(0, -1);
+            const aliasLastSymbol =
+              normalizedSearchFilter[normalizedSearchFilter.length - 2];
+
+            return (
+              (idtBase &&
+                idtBase.endsWith(aliasRest) &&
+                idtBase[idtBase.length - 1] === aliasLastSymbol) ||
+              (idtModifications &&
+                idtModifications
+                  .split(' ')
+                  .some(
+                    (mod) =>
+                      mod.endsWith(aliasRest) &&
+                      mod[mod.length - 1] === aliasLastSymbol,
+                  ))
+            );
+          }
 
           const matchesIdtBase =
             idtBase &&

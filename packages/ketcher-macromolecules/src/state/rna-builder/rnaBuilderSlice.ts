@@ -446,7 +446,9 @@ export const selectFilteredPresets = (
     }
 
     const slashCount = (searchText.match(/\//g) || []).length;
-    if (slashCount > 1 && searchText.split('/')[2]) {
+    const parts = searchText.split('/');
+
+    if (slashCount >= 2 && parts[2] !== undefined && parts[2] !== '') {
       return false;
     }
 

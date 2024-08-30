@@ -16,6 +16,7 @@ import {
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
+import { UsageInMacromolecule } from "application/render";
 
 export type MonomerColorScheme = {
   regular: string;
@@ -97,6 +98,13 @@ export type AttachmentPointConstructorParams = {
   angle: number;
   isSnake: boolean;
 };
+
+export type PreviewAttachmentPointConstructorParams =
+  AttachmentPointConstructorParams & {
+    selected: boolean;
+    connected: boolean;
+    usage: UsageInMacromolecule;
+  };
 
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
 

@@ -32,25 +32,31 @@ export class AttachmentPoint {
     strokePotentially: '#167782',
   };
 
-  private rootElement: D3SvgElementSelection<SVGGElement, void>;
-  private attachmentPoint: D3SvgElementSelection<SVGGElement, this> | null;
+  protected rootElement: D3SvgElementSelection<SVGGElement, void>;
+  protected attachmentPoint: D3SvgElementSelection<SVGGElement, this> | null;
   public monomer: BaseMonomer;
-  private bodyWidth: number;
-  private bodyHeight: number;
-  private attachmentPointName: AttachmentPointName;
-  private canvasOffset: Coordinates;
-  private centerOfMonomer: Coordinates;
-  private element: Selection<SVGGElement, this, HTMLElement, never> | undefined;
+  protected bodyWidth: number;
+  protected bodyHeight: number;
+  protected attachmentPointName: AttachmentPointName;
+  protected canvasOffset: Coordinates;
+  protected centerOfMonomer: Coordinates;
+  protected element:
+    | Selection<SVGGElement, this, HTMLElement, never>
+    | undefined;
+
   private hoverableArea:
     | Selection<SVGGElement, this, HTMLElement, never>
     | undefined;
 
-  private initialAngle = 0;
+  protected initialAngle = 0;
   private isUsed: boolean;
   private isSnake;
   private editorEvents: typeof editorEvents;
 
-  constructor(constructorParams: AttachmentPointConstructorParams) {
+  constructor(
+    constructorParams: AttachmentPointConstructorParams,
+    skipInit?: boolean,
+  ) {
     this.rootElement = constructorParams.rootElement;
     this.monomer = constructorParams.monomer;
     this.bodyWidth = constructorParams.bodyWidth;
@@ -67,7 +73,9 @@ export class AttachmentPoint {
     this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
-    this.appendAttachmentPoint();
+    if (!skipInit) {
+      this.appendAttachmentPoint();
+    }
   }
 
   private get fill() {
@@ -82,7 +90,7 @@ export class AttachmentPoint {
     }
   }
 
-  private get stroke() {
+  protected get stroke() {
     if (
       this.monomer.isAttachmentPointPotentiallyUsed(this.attachmentPointName)
     ) {
@@ -98,7 +106,7 @@ export class AttachmentPoint {
     this.element?.remove();
   }
 
-  private renderAttachmentPointByCoordinates(
+  protected renderAttachmentPointByCoordinates(
     attachmentOnBorder: Coordinates,
     attachmentPointCoordinates: Coordinates,
     labelCoordinatesOnMonomer: Coordinates,
@@ -297,7 +305,7 @@ export class AttachmentPoint {
     return angleRadians;
   }
 
-  private getCoordinates(angleDegrees) {
+  protected getCoordinates(angleDegrees) {
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
 

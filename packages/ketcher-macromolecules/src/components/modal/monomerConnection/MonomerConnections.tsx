@@ -233,7 +233,7 @@ function AttachmentPointSelectionPanel({
 
   return (
     <MonomerOverview
-      monomer={monomer.monomerItem}
+      monomer={monomer}
       connectedAttachmentPoints={connectedAttachmentPoints}
       selectedAttachmentPoint={selectedAttachmentPoint}
       usage={UsageInMacromolecule.MonomerConnectionsModal}

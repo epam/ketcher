@@ -131,9 +131,36 @@ export async function selectImageTool(page: Page) {
   await bondToolButton.click();
 }
 
-export async function selectClearCanvasTool(page: Page) {
-  const bondToolButton = page.getByTestId('clear-canvas');
-  await bondToolButton.click();
+/**
+ * Attempts to click the 'Clear Canvas' button until the click becomes possible.
+ * It limits the attempts by a specified maximum number and presses the 'Escape' key to possibly close any modal overlays.
+ * If the maximum number of attempts is not provided, it defaults to 10.
+ *
+ * @param {Page} page - The Playwright page instance where the button is located.
+ * @param {number} [maxAttempts=5] - The maximum number of retry attempts to click the button.
+ * @throws {Error} Throws an error if the button cannot be clicked after the specified number of attempts.
+ */
+export async function selectClearCanvasTool(
+  page: Page,
+  maxAttempts: number = 10,
+) {
+  const clearCanvasButton = page.getByTestId('clear-canvas');
+  let attempts = 0;
+
+  while (attempts < maxAttempts) {
+    try {
+      await clearCanvasButton.click({ force: false, timeout: 1000 });
+      return;
+    } catch (error) {
+      attempts++;
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(100);
+    }
+  }
+
+  throw new Error(
+    `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
+  );
 }
 
 export async function selectRectangleSelectionTool(page: Page) {

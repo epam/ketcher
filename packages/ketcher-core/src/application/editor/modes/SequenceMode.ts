@@ -11,6 +11,7 @@ import {
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import {
+  AmbiguousMonomer,
   BaseMonomer,
   LinkerSequenceNode,
   Phosphate,
@@ -1438,7 +1439,7 @@ export class SequenceMode extends BaseMode {
       position,
     ) as Sugar;
 
-    let rnaBaseMonomer: RNABase | null = null;
+    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null = null;
     if (rnaBase) {
       rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
         rnaBase,

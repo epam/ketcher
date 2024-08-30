@@ -40,6 +40,7 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
   const options = {
     mol: 'MDL Molfile V3000',
     fasta: 'FASTA',
+    seq: 'Sequence',
   };
   const optionText = (options as any)[extention];
   const selector = page.getByTestId('dropdown-select');

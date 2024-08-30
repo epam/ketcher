@@ -352,9 +352,10 @@ export const selectIsEditMode = (state: RootState): boolean => {
 
 export const selectPresetFullName = (preset: IRnaPreset): string => {
   if (!preset) return '';
-  const sugar = preset.sugar?.props.MonomerName || '';
-  const base = preset.base?.props.MonomerName || '';
-  const phosphate = preset.phosphate?.props.MonomerName || '';
+  const sugar = preset.sugar?.label || preset.sugar?.props.MonomerName || '';
+  const base = preset.base?.label || preset.base?.props.MonomerName || '';
+  const phosphate =
+    preset.phosphate?.label || preset.phosphate?.props.MonomerName || '';
   let fullName = sugar;
 
   if (sugar && phosphate) {

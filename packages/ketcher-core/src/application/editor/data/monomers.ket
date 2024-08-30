@@ -2272,7 +2272,7 @@
         "$ref": "monomerTemplate-B7___Biotin"
       },
       {
-        "$ref": "monomerTemplate-flsQ___P-quinonoid fluorescein"
+        "$ref": "monomerTemplate-flsQ___P-quinoid fluorescein"
       },
       {
         "$ref": "monomerTemplate-flsL___LactoneFluorescein"
@@ -87212,7 +87212,7 @@
             1
           ]
         },
-        "type": "left"
+        "type": "right"
       }
     ],
     "naturalAnalogShort": "P"
@@ -175924,12 +175924,12 @@
       }
     ]
   },
-  "monomerTemplate-flsQ___P-quinonoid fluorescein": {
+  "monomerTemplate-flsQ___P-quinoid fluorescein": {
     "type": "monomerTemplate",
     "class": "CHEM",
     "classHELM": "CHEM",
-    "id": "flsQ___P-quinonoid fluorescein",
-    "fullName": "P-quinonoid fluorescein",
+    "id": "flsQ___P-quinoid fluorescein",
+    "fullName": "P-quinoid fluorescein",
     "alias": "flsQ",
     "atoms": [
       {

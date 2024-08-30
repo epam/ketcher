@@ -7,8 +7,9 @@ import {
   PhosphateRenderer,
   UnresolvedMonomerRenderer,
   UnsplitNucleotideRenderer,
+  AmbiguousMonomerRenderer,
 } from 'application/render/renderers';
-import { MonomerItemType } from 'domain/types';
+import { MonomerOrAmbiguousType } from 'domain/types';
 import {
   Peptide,
   Chem,
@@ -17,8 +18,10 @@ import {
   RNABase,
   UnresolvedMonomer,
   UnsplitNucleotide,
+  AmbiguousMonomer,
 } from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
+import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 export const MONOMER_CONST = {
@@ -43,7 +46,7 @@ type Monomer =
   | typeof Phosphate;
 
 export const monomerFactory = (
-  monomer: MonomerItemType,
+  monomer: MonomerOrAmbiguousType,
 ): [
   Monomer: Monomer,
   MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
@@ -53,7 +56,11 @@ export const monomerFactory = (
   let MonomerRenderer;
   let ketMonomerClass: KetMonomerClass;
 
-  if (monomer.props.unresolved) {
+  if (isAmbiguousMonomerLibraryItem(monomer)) {
+    Monomer = AmbiguousMonomer;
+    MonomerRenderer = AmbiguousMonomerRenderer;
+    ketMonomerClass = AmbiguousMonomer.getMonomerClass(monomer.monomers);
+  } else if (monomer.props.unresolved) {
     Monomer = UnresolvedMonomer;
     MonomerRenderer = UnresolvedMonomerRenderer;
     ketMonomerClass = KetMonomerClass.CHEM;

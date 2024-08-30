@@ -170,6 +170,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -223,6 +224,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -475,6 +477,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'cgatu');
     await page.keyboard.press('Escape');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -486,6 +489,7 @@ test.describe('Sequence Mode', () => {
     Description: Position of first monomer defines "top left" corner on canvas.
     */
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Enter');
@@ -497,6 +501,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -511,6 +516,7 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cactt');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

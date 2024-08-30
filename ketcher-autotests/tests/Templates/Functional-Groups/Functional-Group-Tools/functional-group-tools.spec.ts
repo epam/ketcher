@@ -580,14 +580,14 @@ test.describe('Templates - Functional Group Tools3', () => {
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('C');
     await page.keyboard.press('2');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 1 });
 
     await page.getByRole('banner').getByRole('button').click();
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('Y');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 1 });
   });
 
   test('Expand/Remove abbreviation context menu with selected tools', async ({

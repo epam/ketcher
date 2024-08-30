@@ -187,7 +187,7 @@ export class RenderersManager {
       const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
 
       if (
-        !(nextMonomer instanceof Peptide) ||
+        !isPeptideOrAmbiguousPeptide(nextMonomer) ||
         nextMonomer === peptideRenderer.monomer
       ) {
         return;
@@ -311,10 +311,7 @@ export class RenderersManager {
       ]);
 
     this.monomers.forEach((monomerRenderer) => {
-      if (
-        monomerRenderer instanceof PeptideRenderer ||
-        monomerRenderer instanceof AmbiguousMonomerRenderer
-      ) {
+      if (isPeptideOrAmbiguousPeptide(monomerRenderer.monomer)) {
         this.recalculatePeptideEnumeration(
           monomerRenderer as PeptideRenderer,
           firstMonomersInCyclicChains,

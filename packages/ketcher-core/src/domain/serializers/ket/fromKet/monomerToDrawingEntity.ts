@@ -88,7 +88,7 @@ export function variantMonomerToDrawingEntity(
 
   const monomers = createMonomersForVariantMonomer(template, parsedFileContent);
 
-  return drawingEntitiesManager.addVariantMonomer(
+  return drawingEntitiesManager.addAmbiguousMonomer(
     {
       monomers,
       id: template.id,

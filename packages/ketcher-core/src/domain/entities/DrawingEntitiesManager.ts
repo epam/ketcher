@@ -51,6 +51,7 @@ import {
   getNextMonomerInChain,
   getPhosphateFromSugar,
   isAmbiguousMonomerLibraryItem,
+  isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -85,7 +86,7 @@ type RnaPresetAdditionParams = {
 type NucleotideOrNucleoside = {
   sugar: Sugar;
   phosphate?: Phosphate;
-  rnaBase: RNABase;
+  rnaBase: RNABase | AmbiguousMonomer;
   baseMonomer: Sugar | Phosphate;
 };
 
@@ -938,27 +939,38 @@ export class DrawingEntitiesManager {
     let previousMonomer: BaseMonomer | undefined;
     const sugarMonomer = node.monomers.find(
       (monomer) => monomer instanceof Sugar,
-    ) as Sugar;
+    ) as Sugar | AmbiguousMonomer;
     const phosphateMonomer = node.monomers.find(
       (monomer) => monomer instanceof Phosphate,
-    ) as Phosphate;
-    const rnaBaseMonomer = node.monomers.find(
-      (monomer) => monomer instanceof RNABase,
-    ) as RNABase;
+    ) as Phosphate | AmbiguousMonomer;
+    const rnaBaseMonomer = node.monomers.find((monomer) =>
+      isRnaBaseOrAmbiguousRnaBase(monomer),
+    ) as RNABase | AmbiguousMonomer;
     const monomers = [rnaBaseMonomer, sugarMonomer, phosphateMonomer].filter(
       (monomer) => monomer !== undefined,
     ) as BaseMonomer[];
 
     monomers.forEach((monomer) => {
-      const monomerAddOperation = new MonomerAddOperation(
-        this.addMonomerChangeModel.bind(
-          this,
-          monomer.monomerItem,
-          monomer.position,
-          monomer,
-        ),
-        this.deleteMonomerChangeModel.bind(this),
-      );
+      const monomerAddOperation =
+        monomer instanceof AmbiguousMonomer
+          ? new MonomerAddOperation(
+              this.addAmbiguousMonomerChangeModel.bind(
+                this,
+                monomer.variantMonomerItem,
+                monomer.position,
+                monomer,
+              ),
+              this.deleteMonomerChangeModel.bind(this),
+            )
+          : new MonomerAddOperation(
+              this.addMonomerChangeModel.bind(
+                this,
+                monomer.monomerItem,
+                monomer.position,
+                monomer,
+              ),
+              this.deleteMonomerChangeModel.bind(this),
+            );
 
       command.addOperation(monomerAddOperation);
       if (previousMonomer) {
@@ -1513,7 +1525,7 @@ export class DrawingEntitiesManager {
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
         monomer instanceof AmbiguousMonomer
-          ? targetDrawingEntitiesManager.addVariantMonomer(
+          ? targetDrawingEntitiesManager.addAmbiguousMonomer(
               {
                 ...monomer.variantMonomerItem,
               },
@@ -1848,7 +1860,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addVariantMonomerChangeModel(
+  private addAmbiguousMonomerChangeModel(
     variantMonomerItem: AmbiguousMonomerType,
     position: Vec2,
     _monomer?: BaseMonomer,
@@ -1866,13 +1878,13 @@ export class DrawingEntitiesManager {
     return monomer;
   }
 
-  public addVariantMonomer(
+  public addAmbiguousMonomer(
     variantMonomerItem: AmbiguousMonomerType,
     position: Vec2,
   ) {
     const command = new Command();
     const operation = new MonomerAddOperation(
-      this.addVariantMonomerChangeModel.bind(
+      this.addAmbiguousMonomerChangeModel.bind(
         this,
         variantMonomerItem,
         position,

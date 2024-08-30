@@ -644,7 +644,7 @@ export class KetSerializer implements Serializer<Struct> {
     }
 
     fileContent[templateNameWithPrefix] = {
-      type: 'variantMonomerTemplate',
+      type: 'ambiguousMonomerTemplate',
       id: templateId,
       alias: variantMonomer.label,
       idtAliases: variantMonomer.variantMonomerItem.idtAliases,

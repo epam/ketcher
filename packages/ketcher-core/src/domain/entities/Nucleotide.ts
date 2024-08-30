@@ -17,11 +17,12 @@ import {
 } from 'domain/helpers/rna';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class Nucleotide {
   constructor(
     public sugar: Sugar,
-    public rnaBase: RNABase,
+    public rnaBase: RNABase | AmbiguousMonomer,
     public phosphate: Phosphate,
   ) {}
 

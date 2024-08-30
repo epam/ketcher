@@ -17,9 +17,13 @@ import {
   getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 export class Nucleoside {
-  constructor(public sugar: Sugar, public rnaBase: RNABase) {}
+  constructor(
+    public sugar: Sugar,
+    public rnaBase: RNABase | AmbiguousMonomer,
+  ) {}
 
   static fromSugar(sugar: Sugar, needValidation = true) {
     if (needValidation) {

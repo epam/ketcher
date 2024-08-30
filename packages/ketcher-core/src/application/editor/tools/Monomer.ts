@@ -57,7 +57,7 @@ class MonomerTool implements BaseTool {
       ),
     );
     if (isAmbiguousMonomerLibraryItem(this.monomer)) {
-      modelChanges = this.editor.drawingEntitiesManager.addVariantMonomer(
+      modelChanges = this.editor.drawingEntitiesManager.addAmbiguousMonomer(
         this.monomer,
         position,
       );

@@ -2,6 +2,7 @@ import omit from 'lodash/omit';
 import {
   IRnaLabeledPreset,
   IRnaPreset,
+  setAmbiguousMonomerTemplatePrefix,
   setMonomerTemplatePrefix,
 } from 'ketcher-core';
 
@@ -15,9 +16,15 @@ export const transformRnaPresetToRnaLabeledPreset = (rnaPreset: IRnaPreset) => {
 
   rnaLabeledPreset.templates = [];
   for (const monomerName of fieldsToLabel) {
-    if (!rnaPreset[monomerName]?.props?.id) continue;
+    const monomerLibraryItem = rnaPreset[monomerName];
+    const templateId = monomerLibraryItem?.props?.id || monomerLibraryItem?.id;
+
+    if (!templateId) continue;
+
     rnaLabeledPreset.templates.push({
-      $ref: setMonomerTemplatePrefix(rnaPreset[monomerName].props.id),
+      $ref: monomerLibraryItem.isAmbiguous
+        ? setAmbiguousMonomerTemplatePrefix(templateId)
+        : setMonomerTemplatePrefix(templateId),
     });
   }
 

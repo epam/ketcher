@@ -21,7 +21,6 @@ import {
   MonomerItemType,
   MONOMER_CONST,
   LabeledNodesWithPositionInSequence,
-  IKetIdtAliases,
 } from 'ketcher-core';
 import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS, MonomerGroups } from 'src/constants';
@@ -90,69 +89,6 @@ export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
   [MonomerGroups.SUGARS]: 'sugar',
   [MonomerGroups.PHOSPHATES]: 'phosphate',
-};
-type PresetWithIDT = IRnaPreset & {
-  idtText: string | null;
-};
-
-const generateIDTText = (
-  presetName: string | undefined,
-  position: PresetPosition,
-  idtAliases: IKetIdtAliases | undefined,
-): string | null => {
-  if (!presetName || !idtAliases) {
-    return null;
-  }
-
-  if (presetName.includes('MOE')) {
-    const { base, modifications } = idtAliases;
-
-    const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
-    const internal = modifications?.internal ?? `i${base}`;
-    const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
-
-    switch (position) {
-      case PresetPosition.Library:
-        return `${endpoint5}, ${internal}`;
-      case PresetPosition.ChainStart:
-        return endpoint5;
-      case PresetPosition.ChainMiddle:
-        return internal;
-      case PresetPosition.ChainEnd:
-        return endpoint3;
-    }
-  }
-
-  return idtAliases.base || null;
-};
-
-export const createPresetsWithIDTObject = (
-  state,
-  position: PresetPosition,
-): Record<string, PresetWithIDT> => {
-  const { presetsDefault = [], presetsCustom = [] } = state.rnaBuilder;
-
-  const idtPresetsObject: Record<string, PresetWithIDT> = {};
-
-  const allPresets = [...presetsDefault, ...presetsCustom];
-
-  allPresets.forEach((preset: IRnaPreset) => {
-    if (preset.idtAliases && preset.name) {
-      let idtText: string = preset.idtAliases.base || '';
-
-      if (preset.name.includes('MOE')) {
-        idtText =
-          generateIDTText(preset.name, position, preset.idtAliases) || '';
-      }
-
-      idtPresetsObject[preset.name] = {
-        ...preset,
-        idtText,
-      };
-    }
-  });
-
-  return idtPresetsObject;
 };
 
 export const rnaBuilderSlice = createSlice({
@@ -474,92 +410,88 @@ export const selectFilteredPresets = (
 ): Array<IRnaPreset & { favorite: boolean }> => {
   const { searchFilter } = state.library;
   const presetsAll = selectAllPresets(state);
+  const position = selectEditorPosition(state) ?? PresetPosition.Library;
+  const searchText = searchFilter.toLowerCase();
+
   return presetsAll.filter((item: IRnaPreset) => {
     const name = item.name?.toLowerCase();
     const sugarName = item.sugar?.label?.toLowerCase();
     const phosphateName = item.phosphate?.label?.toLowerCase();
     const baseName = item.base?.label?.toLowerCase();
-    const searchText = searchFilter.toLowerCase();
+    const idtName = item.idtAliases?.base?.toLowerCase();
+    const modifications = item.idtAliases?.modifications;
+    let transformedIdtText = idtName;
+
+    if (item.name?.includes('MOE') && idtName) {
+      const base = idtName;
+      const endpoint5 = modifications?.endpoint5 ?? `5${base}`;
+      const internal = modifications?.internal ?? `i${base}`;
+      const endpoint3 = modifications?.endpoint3 ?? `3${base}`;
+
+      switch (position) {
+        case PresetPosition.Library:
+          transformedIdtText = `${endpoint5}, ${internal}`;
+          break;
+        case PresetPosition.ChainStart:
+          transformedIdtText = endpoint5;
+          break;
+        case PresetPosition.ChainMiddle:
+          transformedIdtText = internal;
+          break;
+        case PresetPosition.ChainEnd:
+          transformedIdtText = endpoint3;
+          break;
+      }
+    }
+
+    const slashCount = (searchText.match(/\//g) || []).length;
+    if (slashCount > 1 && searchText.split('/')[2]) {
+      return false;
+    }
+
+    if (searchText.startsWith('/') && searchText.length > 1) {
+      const aliasRest = searchText.slice(1);
+      return (
+        transformedIdtText?.toLowerCase().startsWith(aliasRest) ||
+        idtName?.startsWith(aliasRest) ||
+        (modifications &&
+          Object.values(modifications).some((mod) =>
+            mod?.toLowerCase().startsWith(aliasRest),
+          ))
+      );
+    }
+
+    if (searchText.endsWith('/') && searchText.length > 1) {
+      const aliasRest = searchText.slice(0, -1);
+      const aliasLastSymbol = searchText[searchText.length - 2];
+
+      return (
+        (transformedIdtText?.toLowerCase().endsWith(aliasRest) &&
+          transformedIdtText[transformedIdtText.length - 1] ===
+            aliasLastSymbol) ||
+        (idtName?.endsWith(aliasRest) &&
+          idtName[idtName.length - 1] === aliasLastSymbol) ||
+        (modifications &&
+          Object.values(modifications).some(
+            (mod) =>
+              mod?.toLowerCase().endsWith(aliasRest) &&
+              mod[mod.length - 1] === aliasLastSymbol,
+          ))
+      );
+    }
+
+    if (searchText === '/') {
+      return !!item.idtAliases;
+    }
+
     const cond =
       name?.includes(searchText) ||
       sugarName?.includes(searchText) ||
       phosphateName?.includes(searchText) ||
-      baseName?.includes(searchText);
-    return cond;
-  });
-};
-
-export const selectFilteredPresetsWithIDT = (
-  state: RootState,
-): Array<PresetWithIDT> => {
-  const position = selectEditorPosition(state) ?? PresetPosition.Library;
-  const { searchFilter } = state.library;
-  const searchText = searchFilter.toLowerCase();
-
-  const presetsWithIDTObject = createPresetsWithIDTObject(state, position);
-
-  return Object.values(presetsWithIDTObject).filter((item: PresetWithIDT) => {
-    const name = item.name?.toLowerCase();
-    const sugarName = item.sugar?.label?.toLowerCase();
-    const phosphateName = item.phosphate?.label?.toLowerCase();
-    const baseName = item.base?.label?.toLowerCase();
-    const idtText = item.idtText?.toLowerCase();
-
-    const matchesIdtAliases =
-      item.idtAliases?.base?.toLowerCase().includes(searchText) ||
-      (item.idtAliases?.modifications &&
-        Object.values(item.idtAliases.modifications).some((mod) =>
-          mod?.toLowerCase().includes(searchText),
-        ));
-
-    if ((searchText.match(/\//g) || []).length > 1) {
-      const parts = searchText.split('/');
-      if (parts.length > 2 || (parts.length === 2 && parts[1] === '')) {
-        return false;
-      }
-    }
-
-    if (searchText.startsWith('/')) {
-      const afterSlash = searchText.slice(1).split('/')[0];
-      return (
-        idtText?.startsWith(afterSlash) ||
-        (item.idtAliases?.modifications &&
-          Object.values(item.idtAliases.modifications).some((mod) =>
-            mod?.toLowerCase().startsWith(afterSlash),
-          ))
-      );
-    }
-
-    if (searchText.endsWith('/')) {
-      const beforeSlash = searchText.slice(0, -1);
-      return (
-        idtText?.endsWith(beforeSlash) ||
-        (item.idtAliases?.modifications &&
-          Object.values(item.idtAliases.modifications).some((mod) =>
-            mod?.toLowerCase().endsWith(beforeSlash),
-          ))
-      );
-    }
-
-    let matchesIdtText = false;
-    if (idtText) {
-      if (Array.isArray(idtText)) {
-        matchesIdtText = idtText.some((text) =>
-          text.toLowerCase().includes(searchText),
-        );
-      } else {
-        matchesIdtText = idtText.includes(searchText);
-      }
-    }
-
-    return (
-      name?.includes(searchText) ||
-      sugarName?.includes(searchText) ||
-      phosphateName?.includes(searchText) ||
       baseName?.includes(searchText) ||
-      matchesIdtText ||
-      matchesIdtAliases
-    );
+      transformedIdtText?.toLowerCase().includes(searchText);
+
+    return cond;
   });
 };
 

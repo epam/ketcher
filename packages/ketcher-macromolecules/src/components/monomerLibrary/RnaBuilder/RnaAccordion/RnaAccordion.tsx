@@ -47,7 +47,6 @@ import {
   selectActivePreset,
   selectActiveRnaBuilderItem,
   selectFilteredPresets,
-  selectFilteredPresetsWithIDT,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
   setActivePresetMonomerGroup,
@@ -76,45 +75,13 @@ interface IGroupsDataItem {
   }[];
 }
 
-const checkIdtAliasConditions = (searchText: string): boolean => {
-  if (searchText.startsWith('/') && searchText.endsWith('/')) {
-    return true;
-  }
-
-  const parts = searchText.split('/');
-  if (parts.length === 2) {
-    const [beforeSlash, afterSlash] = parts;
-    return Boolean(beforeSlash && afterSlash);
-  }
-
-  return false;
-};
-
 export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
-  const searchText = useAppSelector((state) =>
-    state.library.searchFilter.toLowerCase(),
-  );
-  const filteredPresets = useAppSelector(selectFilteredPresets);
-  const filteredPresetsWithIDT = useAppSelector(selectFilteredPresetsWithIDT);
-
-  let allPresets = filteredPresets;
-
-  if (
-    allPresets.length === 0 ||
-    searchText.includes('/') ||
-    checkIdtAliasConditions(searchText)
-  ) {
-    allPresets = filteredPresetsWithIDT.map((preset) => ({
-      ...preset,
-      favorite: preset.favorite ?? false,
-    }));
-  }
-
   const monomers = useAppSelector(selectFilteredMonomers);
   const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
+  const presets = useAppSelector(selectFilteredPresets);
   const nucleotideItems = selectUnsplitNucleotides(monomers);
   const nucleotideGroups = selectMonomerGroups(nucleotideItems);
   const isEditMode = useAppSelector(selectIsEditMode);
@@ -126,19 +93,12 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     selectIsSequenceEditInRNABuilderMode,
   );
 
-  const uniquePresets = new Map();
-  allPresets.forEach((preset) => {
-    uniquePresets.set(preset.name, preset);
-  });
-  const finalPresets = Array.from(uniquePresets.values());
-
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
   const [newPreset, setNewPreset] = useState(activePreset);
   const [activeMonomerKey, setActiveMonomerKey] = useState('');
 
   const dispatch = useDispatch();
-
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
@@ -146,6 +106,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
       setExpandedAccordion(rnaBuilderItem);
       const { sugarValidations, phosphateValidations, baseValidations } =
         getValidations(newPreset);
+
       dispatch(setSugarValidations(sugarValidations));
       dispatch(setPhosphateValidations(phosphateValidations));
       dispatch(setBaseValidations(baseValidations));
@@ -156,7 +117,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     {
       groupName: RnaBuilderPresetsItem.Presets,
       iconName: 'preset',
-      groups: [{ groupItems: finalPresets }],
+      groups: [{ groupItems: presets }],
     },
     {
       groupName: MonomerGroups.SUGARS,
@@ -265,11 +226,13 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
         const details =
           groupData.groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer>
-              <StyledButton onClick={onClickNewPreset}>New Preset</StyledButton>
+              <StyledButton onClick={() => onClickNewPreset()}>
+                New Preset
+              </StyledButton>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
                 editPreset={editPreset}
-                presets={finalPresets}
+                presets={presets}
               />
               {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>

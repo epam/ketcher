@@ -37,7 +37,6 @@ import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
 import {
   selectFilteredPresets,
-  selectFilteredPresetsWithIDT,
   selectPresetsInFavorites,
 } from 'state/rna-builder';
 import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
@@ -61,16 +60,14 @@ const MonomerList = ({
 }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const presets = useAppSelector(selectFilteredPresets);
-  const presetsWithIDT = useAppSelector(selectFilteredPresetsWithIDT);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
-  const allPresets = [...presets, ...presetsWithIDT];
 
   const items = !isFavoriteTab
     ? selectMonomersInCategory(monomers, libraryName)
     : ({
         monomers: selectMonomersInFavorites(monomers),
-        presets: selectPresetsInFavorites(allPresets),
+        presets: selectPresetsInFavorites(presets),
       } as Favorites);
 
   const monomerGroups = selectMonomerGroups(

@@ -265,5 +265,6 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 });

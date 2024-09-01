@@ -6,10 +6,10 @@ export const Container = styled.div`
   align-items: start;
   gap: 16px;
   padding: 8px;
-  background: ${(props) => props.theme.ketcher.color.background.primary};
-  border: ${(props) => props.theme.ketcher.border.regular};
-  border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
-  box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
+  background: #ffffff;
+  border: 1px solid #cad3dd;
+  border-radius: 4px;
+  box-shadow: 0px 1px 1px rgba(197, 203, 207, 0.7);
 `;
 
 export const Header = styled.div`
@@ -27,6 +27,7 @@ export const ContentLine = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 `;
 
 interface RatioBarProps {

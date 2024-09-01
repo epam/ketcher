@@ -1,5 +1,4 @@
-import { useAppSelector } from 'hooks';
-import { AmbiguousMonomerPreviewState, selectShowPreview } from 'state/common';
+import { AmbiguousMonomerPreviewState } from '../../../../state/common';
 import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import {
@@ -12,13 +11,10 @@ import {
 
 interface Props {
   className?: string;
+  preview: AmbiguousMonomerPreviewState;
 }
 
-const AmbiguousMonomerPreview = ({ className }: Props) => {
-  const preview = useAppSelector(
-    selectShowPreview,
-  ) as AmbiguousMonomerPreviewState;
-
+const AmbiguousMonomerPreview = ({ className, preview }: Props) => {
   const { monomer, presetMonomers, style } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
@@ -32,6 +28,7 @@ const AmbiguousMonomerPreview = ({ className }: Props) => {
       top: ${style?.top || ''};
       left: ${style?.left || ''};
       right: ${style?.right || ''};
+      transform: ${style.transform || ''};
     `;
   }, [style]);
 
@@ -109,7 +106,6 @@ const AmbiguousMonomerPreview = ({ className }: Props) => {
 const StyledPreview = styled(AmbiguousMonomerPreview)`
   z-index: 5;
   position: absolute;
-  transform: translate(-50%, 0);
 `;
 
 export default StyledPreview;

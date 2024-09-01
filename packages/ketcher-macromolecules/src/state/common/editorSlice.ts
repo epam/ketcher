@@ -16,30 +16,17 @@
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
+  AmbiguousMonomerType,
+  AttachmentPointsToBonds,
   CoreEditor,
   IKetIdtAliases,
   MonomerItemType,
   PolymerBond,
-  AttachmentPointsToBonds,
-  AmbiguousMonomerType,
 } from 'ketcher-core';
 import { RootState } from 'state';
+import { PreviewStyle, PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
-
-export enum PreviewType {
-  Monomer = 'monomer',
-  Preset = 'preset',
-  Bond = 'bond',
-  AmbiguousMonomer = 'ambiguousMonomer',
-}
-
-export interface PreviewStyle {
-  readonly top?: string;
-  readonly left?: string;
-  readonly right?: string;
-  readonly transform?: string;
-}
 
 interface BasePreviewState {
   readonly type: PreviewType;
@@ -78,7 +65,7 @@ export interface AmbiguousMonomerPreviewState extends BasePreviewState {
   readonly presetMonomers?: ReadonlyArray<MonomerItemType | undefined>;
 }
 
-type EditorStatePreview =
+export type EditorStatePreview =
   | MonomerPreviewState
   | PresetPreviewState
   | BondPreviewState

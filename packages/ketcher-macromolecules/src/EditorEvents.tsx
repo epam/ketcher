@@ -20,8 +20,6 @@ import {
   MonomerPreviewState,
   PresetPosition,
   PresetPreviewState,
-  PreviewStyle,
-  PreviewType,
   selectEditor,
   selectEditorActiveTool,
   selectTool,
@@ -41,6 +39,7 @@ import {
   Nucleotide,
 } from 'ketcher-core';
 import {
+  calculateAmbiguousMonomerPreviewLeft,
   calculateAmbiguousMonomerPreviewTop,
   calculateBondPreviewPosition,
   calculateMonomerPreviewTop,
@@ -48,6 +47,7 @@ import {
 } from 'helpers';
 import { selectAllPresets } from 'state/rna-builder';
 import { PolymerBond } from 'ketcher-core/dist/domain/entities/PolymerBond';
+import { PreviewStyle, PreviewType } from 'state/types';
 
 const noPreviewTools = ['bond-single'];
 
@@ -188,7 +188,9 @@ export const EditorEvents = () => {
           type: PreviewType.AmbiguousMonomer,
           monomer: monomer.variantMonomerItem,
           style: {
-            left,
+            left: `${calculateAmbiguousMonomerPreviewLeft(
+              cardCoordinates.left,
+            )}px`,
             top: calculateAmbiguousMonomerPreviewTop(
               monomer.variantMonomerItem,
             )(cardCoordinates),
@@ -224,7 +226,9 @@ export const EditorEvents = () => {
             monomer: sequenceNode.rnaBase.variantMonomerItem,
             presetMonomers: monomers,
             style: {
-              left,
+              left: `${calculateAmbiguousMonomerPreviewLeft(
+                cardCoordinates.left,
+              )}px`,
               top: calculateAmbiguousMonomerPreviewTop(
                 sequenceNode.rnaBase.variantMonomerItem,
               )(cardCoordinates),

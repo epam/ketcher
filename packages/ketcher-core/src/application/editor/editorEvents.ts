@@ -2,6 +2,7 @@ import { Subscription } from 'subscription';
 import { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
+import { SequenceType } from 'domain/entities';
 
 export let editorEvents;
 
@@ -88,6 +89,24 @@ export const renderersEvents: ToolEventHandlerName[] = [
 ];
 
 export const hotkeysConfiguration = {
+  RNASequenceType: {
+    shortcut: ['Control+Alt+r'],
+    handler: (editor: CoreEditor) => {
+      editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
+    },
+  },
+  DNASequenceType: {
+    shortcut: ['Control+Alt+d'],
+    handler: (editor: CoreEditor) => {
+      editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.DNA);
+    },
+  },
+  PEPTIDESequenceTYpe: {
+    shortcut: ['Control+Alt+p'],
+    handler: (editor: CoreEditor) => {
+      editor.events.changeSequenceTypeEnterMode.dispatch(SequenceType.PEPTIDE);
+    },
+  },
   exit: {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {

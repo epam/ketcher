@@ -22,8 +22,6 @@ import {
   Struct,
   SGroup,
   CoordinateTransformation,
-  MonomerMicromolecule,
-  AmbiguousMonomer,
 } from 'ketcher-core';
 
 import SGroupDataRender from './SGroupDataRender';
@@ -32,9 +30,6 @@ import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { StructRender } from 'components';
 import classes from './InfoPanel.module.less';
-import { calculateAmbiguousMonomerPreviewTop } from 'src/../../ketcher-macromolecules/src/helpers/calculatePreviewPosition';
-import { PreviewType } from 'src/../../ketcher-macromolecules/src/state/types';
-import AmbiguousMonomerPreview from 'src/../../ketcher-macromolecules/src/components/preview/components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;
@@ -133,29 +128,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     !SGroup.isDataSGroup(sGroup) &&
     !SGroup.isQuerySGroup(sGroup);
 
-  const isAmbiguousMonomer =
-    sGroup instanceof MonomerMicromolecule &&
-    sGroup.monomer instanceof AmbiguousMonomer;
-
-  return isAmbiguousMonomer ? (
-    <AmbiguousMonomerPreview
-      preview={{
-        type: PreviewType.AmbiguousMonomer,
-        monomer: sGroup.monomer.variantMonomerItem,
-        style: {
-          left: `${clientX - 50}px`,
-          top: calculateAmbiguousMonomerPreviewTop(
-            sGroup.monomer.variantMonomerItem,
-          )({
-            left: clientX - 50,
-            top: clientY - 65,
-            bottom: clientY - 25,
-          }),
-          transform: 'translate(-50%, 0)',
-        },
-      }}
-    />
-  ) : showMolecule ? (
+  return showMolecule ? (
     <div
       style={{
         left: x + 'px',

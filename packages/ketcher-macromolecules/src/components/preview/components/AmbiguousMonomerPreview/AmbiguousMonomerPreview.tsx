@@ -17,7 +17,7 @@ interface Props {
   preview: AmbiguousMonomerPreviewState;
 }
 
-const AmbiguousMonomerPreview = ({ className, preview }: Props) => {
+const UnstyledAmbiguousMonomerPreview = ({ className, preview }: Props) => {
   const { monomer, presetMonomers, style } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
@@ -106,9 +106,7 @@ const AmbiguousMonomerPreview = ({ className, preview }: Props) => {
   );
 };
 
-const StyledPreview = styled(AmbiguousMonomerPreview)`
+export const AmbiguousMonomerPreview = styled(UnstyledAmbiguousMonomerPreview)`
   z-index: 5;
   position: absolute;
 `;
-
-export default StyledPreview;

@@ -18,7 +18,7 @@ import { selectShowPreview } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
-import AmbiguousMonomerPreview from './components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
+import { AmbiguousMonomerPreview } from './components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
 import { PreviewType } from 'state';
 
 export const Preview = () => {

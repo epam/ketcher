@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useAppSelector } from 'hooks';
-import { BondPreviewState, selectShowPreview } from 'state/common';
+import { selectShowPreview } from 'state/common';
 import ConnectionOverview from 'components/shared/ConnectionOverview/ConnectionOverview';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
@@ -9,6 +9,7 @@ import { Container } from './BondPreview.styles';
 import BondAttachmentPoints from 'components/preview/components/BondAttachmentPoints/BondAttachmentPoints';
 import { preview } from '../../../../constants';
 import { UsageInMacromolecule } from 'ketcher-core';
+import { BondPreviewState } from 'state';
 
 interface Props {
   className?: string;

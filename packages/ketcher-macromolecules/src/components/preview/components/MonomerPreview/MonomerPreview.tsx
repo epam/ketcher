@@ -22,7 +22,7 @@ import {
   StyledStructRender,
 } from './MonomerPreview.styles';
 import styled from '@emotion/styled';
-import { MonomerPreviewState, selectShowPreview } from 'state/common';
+import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
@@ -31,6 +31,7 @@ import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import IDTAliases from '../IDTAliases/IDTAliases';
 import { preview } from '../../../../constants';
 import { UsageInMacromolecule } from 'ketcher-core';
+import { MonomerPreviewState } from 'state';
 
 interface Props {
   className?: string;

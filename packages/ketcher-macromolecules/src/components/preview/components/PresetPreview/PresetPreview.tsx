@@ -25,7 +25,7 @@ import {
 import { preview } from '../../../../constants';
 import styled from '@emotion/styled';
 import { PresetPreviewState, selectShowPreview } from 'state/common';
-import { IconName } from 'ketcher-react/dist/components/Icon/types';
+import { IconName } from 'ketcher-react';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import { useAppSelector } from 'hooks';
 import IDTAliases from '../IDTAliases/IDTAliases';

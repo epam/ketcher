@@ -29,14 +29,9 @@ import {
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import {
-  PreviewStyle,
-  PreviewType,
-  selectEditor,
-  selectTool,
-  showPreview,
-} from 'state/common';
+import { selectEditor, selectTool, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
+import { PreviewStyle, PreviewType } from 'state';
 
 const MonomerGroup = ({
   items,

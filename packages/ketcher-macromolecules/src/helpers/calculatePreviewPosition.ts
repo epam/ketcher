@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { AmbiguousMonomerType, PolymerBond } from 'ketcher-core';
+import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
 import { preview } from '../constants';
-import { PreviewStyle } from 'state/common';
+import { PreviewStyle } from '../state/types';
 import assert from 'assert';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
@@ -24,16 +24,29 @@ export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
 export const calculateNucleoElementPreviewTop =
   createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
-function calculateTop(target: DOMRect, height: number): number {
-  return target.top > height + preview.gap + preview.topPadding
-    ? target.top - preview.gap - height
+type CalculatePreviewTopPayload = { left: number; top: number; bottom: number };
+
+function calculateTop(
+  target: CalculatePreviewTopPayload,
+  height: number,
+): number {
+  const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
+  const canvasWrapperTopOffset = canvasWrapperBoundingClientRect?.top || 0;
+
+  return target.top - canvasWrapperTopOffset >
+    height + preview.gap + preview.topPadding
+    ? target.top - preview.gap - height - preview.topPadding
     : target.bottom + preview.gap;
 }
 
 function createCalculatePreviewTopFunction(
   height: number,
-): (target?: DOMRect) => string {
-  return function calculatePreviewTop(target?: DOMRect): string {
+): (target?: CalculatePreviewTopPayload) => string {
+  return function calculatePreviewTop(
+    target?: CalculatePreviewTopPayload,
+  ): string {
     if (!target) {
       return '';
     }
@@ -45,7 +58,7 @@ function createCalculatePreviewTopFunction(
 
 const calculateAmbiguousPreviewHeight = (monomersCount: number) => {
   const headingHeight = 16;
-  const monomersHeight = 24 * monomersCount;
+  const monomersHeight = 35 * monomersCount;
   return headingHeight + monomersHeight;
 };
 
@@ -54,10 +67,26 @@ export const calculateAmbiguousMonomerPreviewTop = (
 ) => {
   const shouldHaveOneLine = monomer.label === 'X' || monomer.label === 'N';
   const monomersCount = shouldHaveOneLine ? 1 : monomer.monomers.length;
-  const monomersCountToUse = Math.max(5, monomersCount);
+  const monomersCountToUse = Math.min(5, monomersCount);
   const height = calculateAmbiguousPreviewHeight(monomersCountToUse);
+
   return createCalculatePreviewTopFunction(height);
 };
+
+export function calculateAmbiguousMonomerPreviewLeft(initialLeft: number) {
+  const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
+  const PREVIEW_WIDTH = 70;
+  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
+  const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
+
+  return initialLeft + PREVIEW_WIDTH / 2 > canvasWrapperRight
+    ? canvasWrapperRight - PREVIEW_WIDTH
+    : initialLeft - PREVIEW_WIDTH / 2 < canvasWrapperLeft
+    ? canvasWrapperLeft
+    : initialLeft - PREVIEW_WIDTH / 2;
+}
 
 export const calculateBondPreviewPosition = (
   bond: PolymerBond,

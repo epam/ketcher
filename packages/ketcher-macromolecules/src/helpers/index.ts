@@ -16,6 +16,6 @@
 
 export {};
 export * from './emptyFunction';
-export * from './calculatePreviewTop';
+export * from './calculatePreviewPosition';
 export * from './getPreset';
 export * from './getConnectedAttachmentPoints';

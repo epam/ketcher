@@ -42,7 +42,7 @@ import {
   receiveFileComparisonData,
   getMolfile,
   selectSequenceLayoutModeTool,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -1970,7 +1970,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });
@@ -2003,7 +2003,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });

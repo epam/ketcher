@@ -113,6 +113,13 @@ export async function switchSequenceEnteringType(
   await page.getByRole('option').getByText(sequenceEnteringType).click();
 }
 
+export async function switchSequenceEnteringButtonType(
+  page: Page,
+  sequenceEnteringType: SequenceType,
+) {
+  await page.getByTestId(`${sequenceEnteringType}Btn`).click();
+}
+
 export async function selectFlexLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
   const flexModeButton = page.getByTestId('flex-layout-mode').first();

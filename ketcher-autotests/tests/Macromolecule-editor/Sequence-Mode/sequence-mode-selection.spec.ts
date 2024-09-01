@@ -154,7 +154,11 @@ test.describe('Sequence mode selection for view mode', () => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
       await selectRectangleSelectionTool(page);
-      await page.getByText('G').locator('..').first().click();
+      await page
+        .locator('g.drawn-structures')
+        .locator('g', { has: page.locator('text="G"') })
+        .first()
+        .click();
       await takeEditorScreenshot(page);
     });
   }

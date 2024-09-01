@@ -352,6 +352,7 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSequenceLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectSnakeLayoutModeTool(page);
@@ -384,6 +385,7 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSequenceLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectSnakeLayoutModeTool(page);

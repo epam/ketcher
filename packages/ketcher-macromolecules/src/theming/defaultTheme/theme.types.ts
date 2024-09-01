@@ -62,6 +62,10 @@ export type EditorTheme = {
         clicked: string;
         disabled: string;
       };
+      group: {
+        active: string;
+        hover: string;
+      };
       transparent: {
         active: string;
       };

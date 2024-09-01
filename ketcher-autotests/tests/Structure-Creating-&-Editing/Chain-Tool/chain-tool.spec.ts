@@ -73,7 +73,7 @@ test.describe('Chain Tool drawing', () => {
 
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('O');
+    await page.keyboard.press('o');
   });
 
   test('Change the bond type', async ({ page }) => {

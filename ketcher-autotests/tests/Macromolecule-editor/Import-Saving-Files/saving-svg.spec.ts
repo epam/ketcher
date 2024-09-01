@@ -9,7 +9,7 @@ import {
   selectRectangleArea,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -152,7 +152,7 @@ test.describe('Saving in .svg files', () => {
     }) => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
-      await switchSequenceEnteringType(page, SequenceType.RNA);
+      await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'SVG Document');
@@ -194,7 +194,7 @@ test.describe('Saving in .svg files', () => {
     }) => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
-      await switchSequenceEnteringType(page, SequenceType.DNA);
+      await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'SVG Document');
@@ -236,7 +236,7 @@ test.describe('Saving in .svg files', () => {
     }) => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
-      await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+      await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'SVG Document');

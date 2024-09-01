@@ -79,6 +79,10 @@ export const defaultTheme: EditorTheme = {
         clicked: '#AEAEAE',
         disabled: 'rgba(113, 113, 113, 0.4)',
       },
+      group: {
+        active: '#167782',
+        hover: '#2E858F',
+      },
       transparent: {
         active: 'transparent',
       },

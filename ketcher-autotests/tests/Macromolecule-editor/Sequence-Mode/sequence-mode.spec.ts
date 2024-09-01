@@ -13,10 +13,8 @@ import {
   startNewSequence,
   moveMouseAway,
   waitForRender,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
-  takeLayoutSwitcherScreenshot,
-  takePageScreenshot,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import {
@@ -31,7 +29,7 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Open monomers chains and switch to sequence mode', async ({ page }) => {
-    /* 
+    /*
     Test case: #3648 - Open monomers chains and switch to sequence mode
     Description: Sequence mode tool
     */
@@ -49,7 +47,7 @@ test.describe('Sequence Mode', () => {
   test('Switch from flex view to sequence view to snake view and back to flex.', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: Switching between modes occurs with a visual change in monomers and their compounds depending on the mode.
     */
@@ -72,7 +70,7 @@ test.describe('Sequence Mode', () => {
   test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: Nucleotides are connected through R2-R1 bonds, these bonds are not visually represented,
     and nucleotides are depicted as symbols forming a word.
@@ -88,9 +86,9 @@ test.describe('Sequence Mode', () => {
   test('All phosphates not part of nucleotides are displayed as "p" symbols, including last phosphate connected to last nucleoside.', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
-    Description: All phosphates not part of nucleotides are displayed as "p" symbols, 
+    Description: All phosphates not part of nucleotides are displayed as "p" symbols,
     including last phosphate connected to last nucleoside.
     */
     await openFileAndAddToCanvasMacro(
@@ -101,34 +99,13 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a dropdown menu is displayed in toolbar when sequence mode is ON', async ({
-    page,
-  }) => {
-    /*
-    Test case: #3861
-    Description: Dropdown menu is displayed in toolbar when sequence mode is ON.
-    */
-    await selectSequenceLayoutModeTool(page);
-    await takeLayoutSwitcherScreenshot(page);
-  });
-
-  test('Select drop-down menu', async ({ page }) => {
-    /*
-    Test case: #3861
-    Description: Dropdown menu is expanded.
-    */
-    await selectSequenceLayoutModeTool(page);
-    await page.getByTestId('sequence-type-dropdown').click();
-    await takePageScreenshot(page);
-  });
-
   test('Test sequence display for long DNA/RNA', async ({ page }) => {
-    /* 
+    /*
     Test case: #3648
-    Description: Sequence of letters is divided into groups of tens, and enumeration 
+    Description: Sequence of letters is divided into groups of tens, and enumeration
     is displayed only for every ten nucleotides and the last nucleotide.
     Sequence contains up to 30 nucleotides, it is aligned in one line.
-    Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
+    Sequence is longer than 30 nucleotides, lengths of the line are adjusted
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
@@ -138,12 +115,12 @@ test.describe('Sequence Mode', () => {
   });
 
   test('Test sequence display for long Peptides chains', async ({ page }) => {
-    /* 
+    /*
     Test case: #3648
-    Description: Sequence of letters is divided into groups of tens, and enumeration 
+    Description: Sequence of letters is divided into groups of tens, and enumeration
     is displayed only for every ten nucleotides and the last nucleotide.
     Sequence contains up to 30 nucleotides, it is aligned in one line.
-    Sequence is longer than 30 nucleotides, lengths of the line are adjusted 
+    Sequence is longer than 30 nucleotides, lengths of the line are adjusted
     according to the canvas size at 100% zoom rate, and symbols are transferred to next line in tens.
     */
     await openFileAndAddToCanvasMacro('KET/50-peptides-and-2-chems.ket', page);
@@ -154,7 +131,7 @@ test.describe('Sequence Mode', () => {
   test('Confirm that if system encounters Peptide it is appears as letter for natural analog', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: Peptide appears as letter for natural analog
     */
@@ -170,7 +147,7 @@ test.describe('Sequence Mode', () => {
   test('Confirm that if system encounters Sugar, Base or CHEM it is appears as @ symbol', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: Sugar, Base or CHEM appears as @ symbol
     */
@@ -185,7 +162,7 @@ test.describe('Sequence Mode', () => {
   test('Open RNA in sequence mode, switch to flex mode and confirm that RNA chain layout is left-to-right', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: RNA opened in sequence mode and RNA chain layout is left-to-right.
     */
@@ -193,15 +170,15 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
   test('Press Undo button and verify that layout returns to unarranged state', async ({
     page,
   }) => {
-    /* 
-    Test case: #3648
+    /*
+    Test case: #3648W
     Description: After press 'Undo' button layout returns to unarranged state.
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
@@ -213,7 +190,7 @@ test.describe('Sequence Mode', () => {
   test('Press CTRL+Z hotkey button and verify that layout returns to unarranged state', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: After press CTRL+Z hotkey layout returns to unarranged state.
     */
@@ -226,7 +203,7 @@ test.describe('Sequence Mode', () => {
   test('Confirm that length of each row is limited to 30 nucleotides', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3648
     Description: Length of each row is limited to 30 nucleotides after switch to sequence mode.
     */
@@ -307,7 +284,11 @@ test.describe('Sequence Mode', () => {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
-      await page.getByText('G').locator('..').first().hover();
+      await page
+        .locator('g.drawn-structures')
+        .locator('g', { has: page.locator('text="G"') })
+        .first()
+        .hover();
       await takeEditorScreenshot(page);
     });
   }
@@ -496,6 +477,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'cgatu');
     await page.keyboard.press('Escape');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -507,17 +489,19 @@ test.describe('Sequence Mode', () => {
     Description: Position of first monomer defines "top left" corner on canvas.
     */
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Enter');
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Enter');
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await enterSequence(page, 'acfrtp');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -532,6 +516,7 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cactt');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -546,7 +531,11 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cagtt');
     await page.keyboard.press('Escape');
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('Delete');
     await page.keyboard.press('Backspace');
@@ -563,7 +552,11 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
@@ -581,7 +574,7 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
@@ -620,14 +613,18 @@ test.describe('Sequence Mode', () => {
       */
       await selectSequenceLayoutModeTool(page);
       if (testCase.name === 'Preview for DNA') {
-        await switchSequenceEnteringType(page, SequenceType.DNA);
+        await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       } else if (testCase.name === 'Preview for Peptide') {
-        await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+        await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       }
       await startNewSequence(page);
       await enterSequence(page, testCase.sequence);
       await page.keyboard.press('Escape');
-      await page.getByText(testCase.hoverText).locator('..').first().hover();
+      await page
+        .locator('g.drawn-structures')
+        .locator('g', { has: page.locator(`text="${testCase.hoverText}"`) })
+        .first()
+        .hover();
       await takeEditorScreenshot(page);
     });
   }

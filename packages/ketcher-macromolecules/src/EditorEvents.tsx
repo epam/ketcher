@@ -15,11 +15,6 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
-  AmbiguousMonomerPreviewState,
-  BondPreviewState,
-  MonomerPreviewState,
-  PresetPosition,
-  PresetPreviewState,
   selectEditor,
   selectEditorActiveTool,
   selectTool,
@@ -37,6 +32,7 @@ import {
   BaseMonomer,
   Nucleoside,
   Nucleotide,
+  PolymerBond,
 } from 'ketcher-core';
 import {
   calculateAmbiguousMonomerPreviewLeft,
@@ -46,8 +42,15 @@ import {
   calculateNucleoElementPreviewTop,
 } from 'helpers';
 import { selectAllPresets } from 'state/rna-builder';
-import { PolymerBond } from 'ketcher-core/dist/domain/entities/PolymerBond';
-import { PreviewStyle, PreviewType } from 'state/types';
+import {
+  AmbiguousMonomerPreviewState,
+  BondPreviewState,
+  MonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewStyle,
+  PreviewType,
+} from 'state/types';
 
 const noPreviewTools = ['bond-single'];
 

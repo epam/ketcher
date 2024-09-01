@@ -35,19 +35,17 @@ import {
   GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import {
-  AmbiguousMonomerPreviewState,
-  PresetPosition,
-  PresetPreviewState,
-  selectEditor,
-  selectShowPreview,
-  showPreview,
-} from 'state/common';
+import { selectEditor, selectShowPreview, showPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
-import { PreviewType } from 'state';
+import {
+  AmbiguousMonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewType,
+} from 'state';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);

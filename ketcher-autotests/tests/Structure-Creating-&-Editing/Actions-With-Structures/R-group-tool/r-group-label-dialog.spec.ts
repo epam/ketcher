@@ -368,10 +368,6 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
     });
-
-    await waitForRender(page, async () => {
-      await moveMouseAway(page);
-    });
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {

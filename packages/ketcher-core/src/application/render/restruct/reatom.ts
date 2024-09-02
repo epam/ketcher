@@ -39,7 +39,10 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
-import { RenderOptions } from 'application/render/render.types';
+import {
+  RenderOptions,
+  UsageInMacromolecule,
+} from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -113,14 +116,14 @@ class ReAtom extends ReObject {
 
   getLabeledSelectionContour(render: Render) {
     const { paper, ctab: restruct, options } = render;
-    const { fontsz, radiusScaleFactor } = options;
-    const padding = fontsz * radiusScaleFactor;
-    const radius = fontsz * radiusScaleFactor * 2;
+    const { fontszInPx, radiusScaleFactor } = options;
+    const padding = fontszInPx * radiusScaleFactor;
+    const radius = fontszInPx * radiusScaleFactor * 2;
     const box = this.getVBoxObj(restruct.render)!;
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
-    const height = fontsz * 1.23;
+    const height = fontszInPx * 1.23;
     return paper.rect(
       ps1.x - padding,
       ps1.y - padding,
@@ -322,7 +325,7 @@ class ReAtom extends ReObject {
       }
       index.path = render.paper.text(idPos.x, idPos.y, index.text).attr({
         font: options.font,
-        'font-size': options.fontszsub,
+        'font-size': options.fontszsubInPx,
         fill: '#070',
       });
       index.rbb = util.relBox(index.path.getBBox());
@@ -496,7 +499,7 @@ class ReAtom extends ReObject {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
-        'font-size': options.fontszsub,
+        'font-size': options.fontszsubInPx,
         fill:
           options.atomColoring && elem ? ElementColor[this.a.label] : '#000',
       });
@@ -778,6 +781,53 @@ function addTooltip(node, text: string) {
   node.childNodes[0].setAttribute('data-tooltip', util.escapeHtml(tooltip));
 }
 
+function useLabelStyles(
+  attachmentPointSelected: boolean,
+  attachmentPointUsed: boolean,
+  usageInMacromolecule: UsageInMacromolecule,
+): {
+  color: string;
+  fill: string;
+  stroke: string;
+} {
+  let color = '#585858';
+  let fill = '#FFF';
+  let stroke = '#7C7C7F';
+
+  switch (usageInMacromolecule) {
+    case UsageInMacromolecule.MonomerPreview:
+      stroke = 'none';
+      if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.MonomerConnectionsModal:
+      if (attachmentPointSelected) {
+        fill = '#167782';
+        color = '#FFF';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+        stroke = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.BondPreview:
+      if (attachmentPointSelected) {
+        fill = '#CDF1FC';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      stroke = 'none';
+      break;
+    default:
+      break;
+  }
+
+  return { color, fill, stroke };
+}
+
 function buildLabel(
   atom: ReAtom,
   paper: any,
@@ -793,11 +843,10 @@ function buildLabel(
   const {
     atomColoring,
     font,
-    fontsz,
+    fontszInPx,
     currentlySelectedMonomerAttachmentPoint,
     connectedMonomerAttachmentPoints,
-    labelInMonomerConnectionsModal,
-    labelInPreview,
+    usageInMacromolecule,
   } = options;
   // eslint-disable-line max-statements
   const label: any = {
@@ -815,19 +864,21 @@ function buildLabel(
     }
   }
 
-  const shouldStyleLabel = labelInMonomerConnectionsModal || labelInPreview;
+  const shouldStyleLabel = usageInMacromolecule !== undefined;
   const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
   const isMonomerAttachmentPointSelected =
     currentlySelectedMonomerAttachmentPoint === label.text;
   const isMonomerAttachmentPointUsed =
     connectedMonomerAttachmentPoints?.includes(label.text);
 
+  const { color, fill, stroke } = useLabelStyles(
+    isMonomerAttachmentPointSelected,
+    isMonomerAttachmentPointUsed,
+    usageInMacromolecule,
+  );
+
   if (isMonomerAttachmentPoint && shouldStyleLabel) {
-    atom.color = isMonomerAttachmentPointSelected
-      ? '#FFF'
-      : isMonomerAttachmentPointUsed
-      ? '#B4B9D6'
-      : '#585858';
+    atom.color = color;
   }
 
   if (label.text?.length > MAX_LABEL_LENGTH) {
@@ -839,19 +890,14 @@ function buildLabel(
 
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font,
-    'font-size': fontsz,
+    'font-size': fontszInPx,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   if (isMonomerAttachmentPoint && shouldStyleLabel) {
-    const fill = isMonomerAttachmentPointSelected
-      ? '#167782'
-      : isMonomerAttachmentPointUsed
-      ? '#E1E5EA'
-      : '#FFF';
-    const backgroundSize = fontsz * 2;
+    const backgroundSize = fontszInPx * 2;
 
     label.background = paper
       .rect(
@@ -862,13 +908,7 @@ function buildLabel(
         10,
       )
       .attr({ fill })
-      .attr({
-        stroke: labelInPreview
-          ? 'none'
-          : isMonomerAttachmentPointUsed
-          ? '#B4B9D6'
-          : '#7C7C7F',
-      });
+      .attr({ stroke });
   }
   if (tooltip) {
     addTooltip(label.path.node, tooltip);
@@ -944,7 +984,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
   hydroIndex.text = (implh + 1).toString();
   hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());
@@ -1012,7 +1052,7 @@ function showIsotope(
   isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   isotope.rbb = util.relBox(isotope.path.getBBox());
@@ -1049,7 +1089,7 @@ function showCharge(
 
   charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   charge.rbb = util.relBox(charge.path.getBBox());
@@ -1098,7 +1138,7 @@ function showExplicitValence(
   valence.text = '(' + valence.text + ')';
   valence.path = render.paper.text(ps.x, ps.y, valence.text).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: atom.color,
   });
   valence.rbb = util.relBox(valence.path.getBBox());
@@ -1140,7 +1180,7 @@ function showHydrogen(
   hydrogen.text = 'H';
   hydrogen.path = render.paper.text(ps.x, ps.y, hydrogen.text).attr({
     font: options.font,
-    'font-size': options.fontsz,
+    'font-size': options.fontszInPx,
     fill: atom.color,
   });
   hydrogen.rbb = util.relBox(hydrogen.path.getBBox());
@@ -1159,7 +1199,7 @@ function showHydrogen(
     hydroIndex.text = implh.toString();
     hydroIndex.path = render.paper.text(ps.x, ps.y, hydroIndex.text).attr({
       font: options.font,
-      'font-size': options.fontszsub,
+      'font-size': options.fontszsubInPx,
       fill: atom.color,
     });
     hydroIndex.rbb = util.relBox(hydroIndex.path.getBBox());

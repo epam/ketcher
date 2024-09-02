@@ -67,14 +67,12 @@ function modifiers(name, event, shift) {
   return name;
 }
 
-function rusToEng(name, event) {
-  return name
-    .replace(/[а-я]/, KN.base[event.keyCode])
-    .replace(/[А-Я]/, KN.shift[event.keyCode]);
+function symbolByEvent(event) {
+  return event.shiftKey ? KN.shift[event.keyCode] : KN.base[event.keyCode];
 }
 
 function normalizeKeyEvent(event, base = false) {
-  const name = rusToEng(KN.keyName(event), event);
+  const name = symbolByEvent(event);
   const isChar = name.length === 1 && name !== ' ';
 
   return isChar && !base
@@ -122,15 +120,17 @@ export function initHotKeys(actions) {
 }
 
 function lookup(map, event) {
-  let name = rusToEng(KN.keyName(event), event);
+  let name = symbolByEvent(event);
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
   const isChar = name.length === 1 && name !== ' ';
+
   let res = map[modifiers(name, event, !isChar)];
   let baseName;
 
-  if (event.shiftKey && isChar && (baseName = KN.base[event.keyCode]))
+  if (event.shiftKey && isChar && (baseName = KN.base[event.keyCode])) {
     res = map[modifiers(baseName, event, true)] || res;
+  }
 
   return res;
 }

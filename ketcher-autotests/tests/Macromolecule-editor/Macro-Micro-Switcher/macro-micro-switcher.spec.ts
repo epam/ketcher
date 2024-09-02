@@ -42,7 +42,7 @@ import {
   receiveFileComparisonData,
   getMolfile,
   selectSequenceLayoutModeTool,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -132,13 +132,13 @@ async function setAtomAndBondSettings(page: Page) {
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .click();
   await page
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
 }
@@ -813,6 +813,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
+      test.fail();
       await openFileAndAddToCanvas(
         'KET/two-benzene-and-plus.ket',
         page,
@@ -1969,7 +1970,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });
@@ -2002,7 +2003,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });

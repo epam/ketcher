@@ -1,4 +1,5 @@
-import { BaseMonomer, Peptide } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Peptide } from 'domain/entities/Peptide';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';

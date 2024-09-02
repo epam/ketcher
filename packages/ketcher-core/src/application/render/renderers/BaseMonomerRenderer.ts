@@ -1,23 +1,23 @@
-import { BaseRenderer } from './BaseRenderer';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { D3SvgElementSelection } from 'application/render/types';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor, SelectRectangle } from 'application/editor/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
+import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import {
-  attachmentPointNumberToAngle,
-  anglesToSector,
-  sectorsList,
-  checkFor0and360,
-} from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
+import {
+  anglesToSector,
+  attachmentPointNumberToAngle,
+  checkFor0and360,
+  sectorsList,
+} from 'domain/helpers/attachmentPointCalculations';
 import {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
-import { Coordinates } from 'application/editor/shared/coordinates';
+import { BaseRenderer } from './BaseRenderer';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
@@ -32,7 +32,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmenPoint: AttachmentPointName | null = null;
+  private hoveredAttachmentPoint: AttachmentPointName | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
@@ -42,6 +42,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
   public beginning: string | null = null;
+
+  public CHAIN_BEGINNING = '';
 
   static isSelectable() {
     return true;
@@ -74,16 +76,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     };
   }
 
+  // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
-  ) {
-    return (
-      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
-        ?.isSnake &&
-      !this.monomer.attachmentPointsToBonds[
-        attachmentPointName
-      ]?.renderer?.isMonomersOnSameHorizontalLine()
-    );
+  ): boolean {
+    const renderer =
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
+    if (!renderer) return false;
+    if ('isSnake' in renderer) {
+      return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
+    }
+    return false;
   }
 
   public get center() {
@@ -118,8 +121,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
-  public redrawAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  public redrawAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -129,8 +132,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
-  public updateAttachmentPoints() {
-    this.hoveredAttachmenPoint = null;
+  public updateAttachmentPoints(): void {
+    this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;
     if (this.attachmentPoints.length > 0) {
       this.attachmentPoints.forEach((point) => {
@@ -179,20 +182,17 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
       const attachmentPoint = this.appendAttachmentPoint(item);
-      const angle = attachmentPoint.getAngle();
+      const angle: number = attachmentPoint.getAngle();
 
       this.attachmentPoints.push(attachmentPoint as never);
 
-      if (typeof angle === 'number') {
-        // remove this sector from list of free sectors
-        const newList = this.freeSectorsList.filter((item) => {
-          return (
-            anglesToSector[item].min > angle ||
-            anglesToSector[item].max <= angle
-          );
-        });
-        this.freeSectorsList = checkFor0and360(newList);
-      }
+      // remove this sector from list of free sectors
+      const newList = this.freeSectorsList.filter((item) => {
+        return (
+          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
+        );
+      });
+      this.freeSectorsList = checkFor0and360(newList);
     });
 
     const unrenderedAtPoints: AttachmentPointName[] = [];
@@ -248,9 +248,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
       isPotentiallyUsed:
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
-        this.hoveredAttachmenPoint === attachmentPointName,
+        this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle || rotation,
-      isSnake: !!this.isSnakeBondForAttachmentPoint(attachmentPointName),
+      // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
+      isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
 
     const attPointInstance = new AttachmentPoint(attachmentPointParams);
@@ -265,8 +266,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmenPoint(attachmentPointName: AttachmentPointName) {
-    this.hoveredAttachmenPoint = attachmentPointName;
+  public hoverAttachmentPoint(attachmentPointName: AttachmentPointName): void {
+    this.hoveredAttachmentPoint = attachmentPointName;
   }
 
   private appendRootElement(
@@ -420,12 +421,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       });
   }
 
-  protected abstract get enumerationElementPosition(): {
+  public abstract get enumerationElementPosition(): {
     x: number;
     y: number;
   } | void;
 
-  protected abstract get beginningElementPosition(): {
+  public abstract get beginningElementPosition(): {
     x: number;
     y: number;
   } | void;
@@ -452,7 +453,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawEnumeration() {
-    assert(this.enumerationElement);
+    if (!this.enumerationElement) return;
+
     this.enumerationElement.text(this.enumeration);
   }
 

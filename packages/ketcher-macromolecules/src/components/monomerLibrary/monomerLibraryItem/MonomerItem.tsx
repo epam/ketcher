@@ -17,10 +17,11 @@ import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
 import { useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
-import { Card } from './styles';
+import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
 import { MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
+import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 
 const MonomerItem = ({
   item,
@@ -33,11 +34,13 @@ const MonomerItem = ({
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
-  const isDisabled = useDisabledForSequenceMode(item, groupName) || disabled;
-  const colorCode =
-    item.props.MonomerType === MONOMER_TYPES.CHEM
-      ? item.props.MonomerType
-      : item.props.MonomerNaturalAnalogCode;
+  const isDisabled =
+    useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
+  const colorCode = isAmbiguousMonomerLibraryItem(item)
+    ? ''
+    : item.props.MonomerType === MONOMER_TYPES.CHEM
+    ? item.props.MonomerType
+    : item.props.MonomerNaturalAnalogCode;
 
   const monomerKey: string = getMonomerUniqueKey(item);
 
@@ -47,12 +50,13 @@ const MonomerItem = ({
       disabled={isDisabled}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
+      isVariantMonomer={item.isAmbiguous}
       code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
       {...(!isDisabled ? { onClick } : {})}
     >
-      <span>{item.label}</span>
+      <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
         <div
           onClick={(event) => {
@@ -64,6 +68,14 @@ const MonomerItem = ({
         >
           ★
         </div>
+      )}
+      {isAmbiguousMonomerLibraryItem(item) && (
+        <NumberCircle
+          selected={isSelected}
+          monomersAmount={item.monomers.length}
+        >
+          {item.monomers.length}
+        </NumberCircle>
       )}
     </Card>
   );

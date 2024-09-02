@@ -44,14 +44,18 @@ import {
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
   IKetMonomerTemplate,
+  IKetAmbiguousMonomerTemplate,
   KetConnectionType,
+  KetNodeType,
   KetTemplateType,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { CoreEditor, EditorSelection } from 'application/editor/internal';
 import {
+  createMonomersForVariantMonomer,
   monomerToDrawingEntity,
   templateToMonomerProps,
+  variantMonomerToDrawingEntity,
 } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
@@ -68,6 +72,7 @@ import {
   populateStructWithSelection,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
+  setAmbiguousMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -75,11 +80,12 @@ import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
-import { MonomerItemType } from 'domain/types';
+import { MonomerItemType, AmbiguousMonomerType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { imageToKet } from 'domain/serializers/ket/toKet/imageToKet';
 import { imageToStruct } from 'domain/serializers/ket/fromKet/imageToStruct';
 import { IMAGE_SERIALIZE_KEY } from 'domain/constants';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -129,10 +135,10 @@ export class KetSerializer implements Serializer<Struct> {
       throw new Error('Cannot deserialize input JSON.');
     }
 
-    return this.fillStruct(ket);
+    return KetSerializer.fillStruct(ket);
   }
 
-  fillStruct(ket) {
+  private static fillStruct(ket) {
     const resultingStruct = new Struct();
     const nodes = ket.root.nodes;
 
@@ -287,8 +293,8 @@ export class KetSerializer implements Serializer<Struct> {
           const nodeDefinition = parsedFileContent[node.$ref];
 
           return (
-            nodeDefinition?.type !== 'monomer' &&
-            nodeDefinition?.type !== 'group'
+            nodeDefinition?.type !== KetNodeType.MONOMER &&
+            nodeDefinition?.type !== KetNodeType.AMBIGUOUS_MONOMER
           );
         }),
       },
@@ -296,8 +302,8 @@ export class KetSerializer implements Serializer<Struct> {
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
       if (
-        nodeDefinition?.type === 'monomer' ||
-        nodeDefinition?.type === 'group'
+        nodeDefinition?.type === KetNodeType.MONOMER ||
+        nodeDefinition?.type === KetNodeType.AMBIGUOUS_MONOMER
       ) {
         fileContentForMicromolecules[node.$ref] = undefined;
       }
@@ -323,10 +329,10 @@ export class KetSerializer implements Serializer<Struct> {
       : template.attachmentPoints;
   }
 
-  public convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
+  public static convertMonomerTemplateToStruct(template: IKetMonomerTemplate) {
     const attachmentPoints = template.attachmentPoints || [];
 
-    return this.fillStruct({
+    return KetSerializer.fillStruct({
       root: {
         nodes: [{ $ref: 'mol0' }],
       },
@@ -369,7 +375,7 @@ export class KetSerializer implements Serializer<Struct> {
   ): MonomerItemType {
     const monomerLibraryItem = {
       label: template.alias || template.id,
-      struct: this.convertMonomerTemplateToStruct(template),
+      struct: KetSerializer.convertMonomerTemplateToStruct(template),
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
     };
@@ -433,12 +439,12 @@ export class KetSerializer implements Serializer<Struct> {
       const nodeDefinition = parsedFileContent[node.$ref];
 
       switch (nodeDefinition?.type) {
-        case 'monomer': {
+        case KetNodeType.MONOMER: {
           const template = parsedFileContent[
             setMonomerTemplatePrefix(nodeDefinition.templateId)
           ] as IKetMonomerTemplate;
           assert(template);
-          const struct = this.convertMonomerTemplateToStruct(template);
+          const struct = KetSerializer.convertMonomerTemplateToStruct(template);
           const monomerAdditionCommand = monomerToDrawingEntity(
             nodeDefinition,
             template,
@@ -453,6 +459,26 @@ export class KetSerializer implements Serializer<Struct> {
             template,
             monomer.monomerItem,
           );
+
+          command.merge(monomerAdditionCommand);
+          break;
+        }
+        case KetNodeType.AMBIGUOUS_MONOMER: {
+          const template = parsedFileContent[
+            setAmbiguousMonomerTemplatePrefix(nodeDefinition.templateId)
+          ] as IKetAmbiguousMonomerTemplate;
+          assert(template);
+
+          const monomerAdditionCommand = variantMonomerToDrawingEntity(
+            drawingEntitiesManager,
+            nodeDefinition,
+            template,
+            parsedFileContent,
+          );
+          const monomer = monomerAdditionCommand.operations[0]
+            .monomer as BaseMonomer;
+
+          monomerIdsMap[node.$ref] = monomer?.id;
 
           command.merge(monomerAdditionCommand);
           break;
@@ -570,6 +596,73 @@ export class KetSerializer implements Serializer<Struct> {
     };
   }
 
+  private serializeMonomerTemplate(
+    templateId: string,
+    monomer: BaseMonomer,
+    fileContent: IKetMacromoleculesContentRootProperty,
+  ) {
+    const [, , monomerClass] = monomerFactory(monomer.monomerItem);
+    const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
+
+    if (fileContent[templateNameWithPrefix]) {
+      return;
+    }
+
+    fileContent[templateNameWithPrefix] = {
+      ...JSON.parse(
+        this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
+      ).mol0,
+      type: 'monomerTemplate',
+      class: monomer.monomerItem.props.MonomerClass || monomerClass,
+      classHELM: monomer.monomerItem.props.MonomerType,
+      id: templateId,
+      fullName: monomer.monomerItem.props.Name,
+      alias: monomer.monomerItem.label,
+      attachmentPoints: monomer.monomerItem.attachmentPoints,
+      idtAliases: monomer.monomerItem.props.idtAliases,
+      unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
+    };
+    // CHEMs do not have natural analog
+    if (monomer.monomerItem.props.MonomerType !== 'CHEM') {
+      fileContent[templateNameWithPrefix].naturalAnalogShort =
+        monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    }
+
+    fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
+  }
+
+  private serializeVariantMonomerTemplate(
+    templateId: string,
+    variantMonomer: AmbiguousMonomer,
+    fileContent: IKetMacromoleculesContentRootProperty,
+  ) {
+    const templateNameWithPrefix =
+      setAmbiguousMonomerTemplatePrefix(templateId);
+
+    if (fileContent[templateNameWithPrefix]) {
+      return;
+    }
+
+    fileContent[templateNameWithPrefix] = {
+      type: 'ambiguousMonomerTemplate',
+      id: templateId,
+      alias: variantMonomer.label,
+      idtAliases: variantMonomer.variantMonomerItem.idtAliases,
+      subtype: variantMonomer.variantMonomerItem.subtype,
+      options: variantMonomer.variantMonomerItem.options,
+    };
+
+    fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
+
+    variantMonomer.monomers.forEach((monomer) => {
+      const monomerTemplateId =
+        monomer.monomerItem.props.id ||
+        getMonomerUniqueKey(monomer.monomerItem);
+
+      this.serializeMonomerTemplate(monomerTemplateId, monomer, fileContent);
+    });
+  }
+
   serializeMacromolecules(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -599,15 +692,29 @@ export class KetSerializer implements Serializer<Struct> {
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
       } else {
-        const templateId =
-          monomer.monomerItem.props.id ||
-          getMonomerUniqueKey(monomer.monomerItem);
+        let templateId;
         const monomerName = setMonomerPrefix(monomer.id);
         const position: Vec2 = switchIntoChemistryCoordSystem(
           new Vec2(monomer.position.x, monomer.position.y),
         );
+
+        if (monomer instanceof AmbiguousMonomer) {
+          templateId = monomer.monomers.reduce(
+            (templateId, monomer) =>
+              templateId + '_' + getMonomerUniqueKey(monomer.monomerItem),
+            '',
+          );
+        } else {
+          templateId =
+            monomer.monomerItem.props.id ||
+            getMonomerUniqueKey(monomer.monomerItem);
+        }
+
         fileContent[monomerName] = {
-          type: 'monomer',
+          type:
+            monomer instanceof AmbiguousMonomer
+              ? KetNodeType.AMBIGUOUS_MONOMER
+              : KetNodeType.MONOMER,
           id: monomer.id.toString(),
           position: {
             x: position.x,
@@ -618,32 +725,19 @@ export class KetSerializer implements Serializer<Struct> {
           seqid: monomer.monomerItem.seqId,
         };
         fileContent.root.nodes.push(getKetRef(monomerName));
-        const [, , monomerClass] = monomerFactory(monomer.monomerItem);
-        const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
-        if (!fileContent[templateNameWithPrefix]) {
-          fileContent[templateNameWithPrefix] = {
-            ...JSON.parse(
-              this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
-            ).mol0,
-            type: 'monomerTemplate',
-            class: monomer.monomerItem.props.MonomerClass || monomerClass,
-            classHELM: monomer.monomerItem.props.MonomerType,
-            id: templateId,
-            fullName: monomer.monomerItem.props.Name,
-            alias: monomer.monomerItem.label,
-            attachmentPoints: monomer.monomerItem.attachmentPoints,
-            idtAliases: monomer.monomerItem.props.idtAliases,
-            unresolved: monomer instanceof UnresolvedMonomer ? true : undefined,
-          };
-          // CHEMs do not have natural analog
-          if (monomer.monomerItem.props.MonomerType !== 'CHEM') {
-            fileContent[templateNameWithPrefix].naturalAnalogShort =
-              monomer.monomerItem.props.MonomerNaturalAnalogCode;
-          }
-          fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
+
+        if (monomer instanceof AmbiguousMonomer) {
+          this.serializeVariantMonomerTemplate(
+            templateId,
+            monomer,
+            fileContent,
+          );
+        } else {
+          this.serializeMonomerTemplate(templateId, monomer, fileContent);
         }
       }
     });
+
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
       fileContent.root.connections.push({
@@ -774,20 +868,42 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {
-    const library: MonomerItemType[] = [];
+    const library: MonomerItemType[] & AmbiguousMonomerType[] = [];
 
     monomersLibrary.root.templates.forEach((templateRef) => {
       const template = monomersLibrary[templateRef.$ref];
 
-      if (template.type !== KetTemplateType.MONOMER_TEMPLATE) {
-        return;
-      }
+      switch (template.type) {
+        case KetTemplateType.MONOMER_TEMPLATE: {
+          library.push(
+            this.convertMonomerTemplateToLibraryItem(
+              template as IKetMonomerTemplate,
+            ),
+          );
 
-      library.push(
-        this.convertMonomerTemplateToLibraryItem(
-          template as IKetMonomerTemplate,
-        ),
-      );
+          break;
+        }
+        case KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE: {
+          const variantMonomerTemplate =
+            template as IKetAmbiguousMonomerTemplate;
+          const variantMonomerLibraryItem: AmbiguousMonomerType = {
+            id: variantMonomerTemplate.id,
+            label: variantMonomerTemplate.alias || '%',
+            idtAliases: variantMonomerTemplate.idtAliases,
+            isAmbiguous: true,
+            monomers: createMonomersForVariantMonomer(
+              variantMonomerTemplate,
+              monomersLibrary,
+            ),
+            options: variantMonomerTemplate.options,
+            subtype: variantMonomerTemplate.subtype,
+          };
+
+          library.push(variantMonomerLibraryItem);
+
+          break;
+        }
+      }
     });
 
     return library;

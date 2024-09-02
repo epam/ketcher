@@ -13,24 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { Chem } from 'domain/entities/Chem';
-import { Peptide } from 'domain/entities/Peptide';
-import { Sugar } from 'domain/entities/Sugar';
-import { RNABase } from 'domain/entities/RNABase';
-import { Phosphate } from 'domain/entities/Phosphate';
-import { Coordinates } from '../shared/coordinates';
-import { AttachmentPointName } from 'domain/types';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { UnresolvedMonomer } from 'domain/entities';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
+import { Peptide } from 'domain/entities/Peptide';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
+import { Sugar } from 'domain/entities/Sugar';
+import { AttachmentPointName } from 'domain/types';
+// FIXME: If we replace '../shared/coordinates' by 'application/editor' to make it shorter,
+//  we get `Uncaught ReferenceError: Cannot access 'PolymerBond' before initialization`,
+//  which probably due to a circular dependency
+//  because of using uncontrolled `index.ts` files.
+import { Coordinates } from '../shared/coordinates';
+
+type FlexModeOrSnakeModePolymerBondRenderer =
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 class PolymerBond implements BaseTool {
-  private bondRenderer?: PolymerBondRenderer;
+  private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
   history: EditorHistory;
 
@@ -102,8 +112,10 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseLeavePolymerBond(event) {
-    const renderer: PolymerBondRenderer = event.target.__data__;
+  // FIXME: Specify the types.
+  public mouseLeavePolymerBond(event): void {
+    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
     if (this.bondRenderer || !renderer.polymerBond) return;
 
     const modelChanges =
@@ -114,10 +126,12 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
+  // FIXME: Specify the types.
   public mouseOverPolymerBond(event) {
     if (this.bondRenderer) return;
 
-    const renderer: PolymerBondRenderer = event.target.__data__;
+    const renderer: FlexModeOrSnakeModePolymerBondRenderer =
+      event.target.__data__;
     const modelChanges =
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
@@ -490,6 +504,14 @@ class PolymerBond implements BaseTool {
 
     // Modal: Any or both monomers are Chems
     if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+      return true;
+    }
+
+    // Modal: Any or both monomers are unresolved
+    if (
+      firstMonomer instanceof UnresolvedMonomer ||
+      secondMonomer instanceof UnresolvedMonomer
+    ) {
       return true;
     }
 

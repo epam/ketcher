@@ -47,5 +47,20 @@ export const RNABaseAvatar = () => (
         fill="none"
       />
     </symbol>
+    <symbol id="rna-base-variant" viewBox="-16 0 65 65" width="65" height="94">
+      <rect
+        width="21.5"
+        height="21.5"
+        data-actual-width="30"
+        data-actual-height="30"
+        stroke="#585858"
+        strokeWidth="0.5"
+        rx="1"
+        x="-10.25"
+        y="-10.25"
+        transform="rotate(45)"
+        className="monomer-body"
+      />
+    </symbol>
   </>
 );

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { PolymerBond } from 'ketcher-core';
 import { preview } from '../constants';
+import { PreviewStyle } from 'state/common';
+import assert from 'assert';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,
@@ -39,3 +42,73 @@ function createCalculatePreviewTopFunction(
     return `${top}px`;
   };
 }
+
+export const calculateBondPreviewPosition = (
+  bond: PolymerBond,
+  bondCoordinates: DOMRect,
+): PreviewStyle => {
+  const { firstMonomer, secondMonomer } = bond;
+
+  assert(secondMonomer);
+
+  const firstMonomerCoordinates = firstMonomer.renderer?.rootBoundingClientRect;
+  const secondMonomerCoordinates =
+    secondMonomer.renderer?.rootBoundingClientRect;
+
+  assert(firstMonomerCoordinates);
+  assert(secondMonomerCoordinates);
+
+  const left = Math.min(
+    bondCoordinates.left,
+    firstMonomerCoordinates.left,
+    secondMonomerCoordinates.left,
+  );
+  const top = Math.min(
+    bondCoordinates.top,
+    firstMonomerCoordinates.top,
+    secondMonomerCoordinates.top,
+  );
+  const right = Math.max(
+    bondCoordinates.right,
+    firstMonomerCoordinates.right,
+    secondMonomerCoordinates.right,
+  );
+  const bottom = Math.max(
+    bondCoordinates.bottom,
+    firstMonomerCoordinates.bottom,
+    secondMonomerCoordinates.bottom,
+  );
+
+  const width = right - left;
+  const height = bottom - top;
+
+  let style: PreviewStyle = {};
+
+  if (width > height) {
+    let topValue: number;
+    if (top > preview.height + preview.gap) {
+      topValue = top - preview.heightForBond - preview.gap;
+    } else {
+      topValue = bottom + preview.gap;
+    }
+
+    style = {
+      top: `${topValue}px`,
+      left: `${left + width / 2}px`,
+    };
+  } else {
+    let leftValue: number;
+    if (left > preview.widthForBond + preview.gap) {
+      leftValue = left - preview.widthForBond / 2 - preview.gap;
+    } else {
+      leftValue = right + preview.widthForBond / 2 + preview.gap;
+    }
+
+    style = {
+      top: `${top + height / 2}px`,
+      left: `${leftValue}px`,
+    };
+  }
+
+  return style;
+};

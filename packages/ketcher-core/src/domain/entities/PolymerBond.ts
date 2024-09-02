@@ -1,21 +1,27 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import { Vec2 } from 'domain/entities/vec2';
-import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { AttachmentPointName } from 'domain/types';
+import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Sugar } from 'domain/entities/Sugar';
-import { RNABase } from 'domain/entities/RNABase';
-import { isMonomerConnectedToR2RnaBase } from 'domain/helpers/monomers';
+import { Vec2 } from 'domain/entities/vec2';
+import {
+  isMonomerConnectedToR2RnaBase,
+  isRnaBaseOrAmbiguousRnaBase,
+} from 'domain/helpers/monomers';
+import { AttachmentPointName } from 'domain/types';
+import { BaseMonomer } from './BaseMonomer';
+
+type FlexOrSequenceOrSnakeModePolymerBondRenderer =
+  | BackBoneBondSequenceRenderer
+  | FlexModePolymerBondRenderer
+  | PolymerBondSequenceRenderer
+  | SnakeModePolymerBondRenderer;
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
-  public renderer?:
-    | PolymerBondRenderer
-    | BackBoneBondSequenceRenderer
-    | PolymerBondSequenceRenderer = undefined;
+  public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
   public endPosition: Vec2 = new Vec2();
 
@@ -34,11 +40,8 @@ export class PolymerBond extends DrawingEntity {
   }
 
   public setRenderer(
-    renderer:
-      | PolymerBondRenderer
-      | BackBoneBondSequenceRenderer
-      | PolymerBondSequenceRenderer,
-  ) {
+    renderer: FlexOrSequenceOrSnakeModePolymerBondRenderer,
+  ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }
@@ -112,19 +115,19 @@ export class PolymerBond extends DrawingEntity {
         )
       ) ||
         (isMonomerConnectedToR2RnaBase(this.firstMonomer) &&
-          this.secondMonomer instanceof RNABase) ||
+          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer)) ||
         (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
-          this.firstMonomer instanceof RNABase) ||
+          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
         firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
       !(
         (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          this.firstMonomer instanceof RNABase &&
+          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer) &&
           secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
           this.secondMonomer instanceof Sugar) ||
         (firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
           this.firstMonomer instanceof Sugar &&
           secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          this.secondMonomer instanceof RNABase)
+          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer))
       )
     );
   }

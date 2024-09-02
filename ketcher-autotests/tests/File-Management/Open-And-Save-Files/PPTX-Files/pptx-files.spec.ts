@@ -163,6 +163,7 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1766 issue.
     Update screenshots after fix.
     */
+      test.info().fixme();
       const maxTimeout = 210000;
       test.setTimeout(maxTimeout);
 

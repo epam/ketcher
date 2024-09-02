@@ -1387,7 +1387,7 @@ function bondMark(
 ) {
   const path = paper.text(point.x, point.y, mark).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: '#000',
   });
   const rbb = util.relBox(path.getBBox());
@@ -1652,7 +1652,7 @@ function rgroupAttachmentPointLabel(
     .text(labelPosition.x, labelPosition.y, labelText)
     .attr({
       font: options.font,
-      'font-size': options.fontsz * 0.9,
+      'font-size': options.fontszInPx * 0.9,
       fill,
     });
   return labelPath;

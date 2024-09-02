@@ -2,10 +2,15 @@ import { Selection } from 'd3';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { UnsplitNucleotide } from 'domain/entities';
 import { D3SvgElementSelection } from 'application/render/types';
+import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import { KetMonomerClass } from 'application/formatters';
 
-const NUCLEOTIDE_SELECTED_ELEMENT_ID = '#nucleotide-selection';
-const NUCLEOTIDE_HOVERED_ELEMENT_ID = '#nucleotide-hover';
-const NUCLEOTIDE_SYMBOL_ELEMENT_ID = '#nucleotide';
+const NUCLEOTIDE_SELECTED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].selected;
+const NUCLEOTIDE_HOVERED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
+const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   constructor(public monomer: UnsplitNucleotide, scale?: number) {
@@ -67,11 +72,11 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
       .attr('y', this.height / 2 + Y_OFFSET_FROM_MIDDLE);
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 7, y: 7 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

@@ -2,11 +2,13 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-ehm7r7"
+  class="css-1ryq5kx"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >
-  <span>
+  <span
+    class="css-uahybi"
+  >
     R
   </span>
   <div
@@ -23,7 +25,7 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1jn33hb"
+        class="css-1fansin"
       >
         <div
           class="css-a0lsh8"
@@ -31,14 +33,16 @@ Object {
           Mock title
         </div>
         <div
-          class="css-1yj2br2"
+          class="css-1i18rk1"
         >
           <div
-            class="css-oypk73"
+            class="css-1xxd22g"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               R
             </span>
             <div
@@ -48,11 +52,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-qogw85"
+            class="css-1g1231o"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               m
             </span>
             <div
@@ -62,11 +68,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-cnzlx6"
+            class="css-1e1rmgc"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               d
             </span>
             <div
@@ -76,11 +84,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-oypk73"
+            class="css-1xxd22g"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               ar
             </span>
             <div
@@ -90,11 +100,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-qogw85"
+            class="css-1g1231o"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               Ld
             </span>
             <div
@@ -109,7 +121,7 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1jn33hb"
+      class="css-1fansin"
     >
       <div
         class="css-a0lsh8"
@@ -117,14 +129,16 @@ Object {
         Mock title
       </div>
       <div
-        class="css-1yj2br2"
+        class="css-1i18rk1"
       >
         <div
-          class="css-oypk73"
+          class="css-1xxd22g"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             R
           </span>
           <div
@@ -134,11 +148,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-qogw85"
+          class="css-1g1231o"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             m
           </span>
           <div
@@ -148,11 +164,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-cnzlx6"
+          class="css-1e1rmgc"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             d
           </span>
           <div
@@ -162,11 +180,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-oypk73"
+          class="css-1xxd22g"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             ar
           </span>
           <div
@@ -176,11 +196,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-qogw85"
+          class="css-1g1231o"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             Ld
           </span>
           <div
@@ -252,17 +274,19 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1jn33hb"
+        class="css-1fansin"
       >
         <div
-          class="css-1yj2br2"
+          class="css-1i18rk1"
         >
           <div
-            class="css-oypk73"
+            class="css-1xxd22g"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               R
             </span>
             <div
@@ -272,11 +296,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-qogw85"
+            class="css-1g1231o"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               m
             </span>
             <div
@@ -286,11 +312,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-cnzlx6"
+            class="css-1e1rmgc"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               d
             </span>
             <div
@@ -300,11 +328,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-oypk73"
+            class="css-1xxd22g"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               ar
             </span>
             <div
@@ -314,11 +344,13 @@ Object {
             </div>
           </div>
           <div
-            class="css-qogw85"
+            class="css-1g1231o"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
           >
-            <span>
+            <span
+              class="css-uahybi"
+            >
               Ld
             </span>
             <div
@@ -333,17 +365,19 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1jn33hb"
+      class="css-1fansin"
     >
       <div
-        class="css-1yj2br2"
+        class="css-1i18rk1"
       >
         <div
-          class="css-oypk73"
+          class="css-1xxd22g"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             R
           </span>
           <div
@@ -353,11 +387,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-qogw85"
+          class="css-1g1231o"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             m
           </span>
           <div
@@ -367,11 +403,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-cnzlx6"
+          class="css-1e1rmgc"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             d
           </span>
           <div
@@ -381,11 +419,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-oypk73"
+          class="css-1xxd22g"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             ar
           </span>
           <div
@@ -395,11 +435,13 @@ Object {
           </div>
         </div>
         <div
-          class="css-qogw85"
+          class="css-1g1231o"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
         >
-          <span>
+          <span
+            class="css-uahybi"
+          >
             Ld
           </span>
           <div

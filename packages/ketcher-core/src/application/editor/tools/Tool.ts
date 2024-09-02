@@ -22,6 +22,8 @@ interface ToolEventHandler {
 
   mouseLeavePolymerBond?(event: Event): void;
 
+  mouseOnMovePolymerBond?(event: Event): void;
+
   mouseOverMonomer?(event: Event): void;
 
   mouseOverAttachmentPoint?(event: Event): void;

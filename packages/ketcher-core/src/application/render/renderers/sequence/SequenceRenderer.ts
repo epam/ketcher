@@ -4,7 +4,6 @@ import {
   BaseMonomer,
   Nucleotide,
   Phosphate,
-  RNABase,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -14,6 +13,7 @@ import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
+  isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
@@ -246,7 +246,10 @@ export class SequenceRenderer {
             // If side connection comes from rna base then take connected sugar and draw side connection from it
             // because for rna we display only one letter instead of three
             const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
-            if (anotherMonomer instanceof RNABase && connectedSugarToBase) {
+            if (
+              isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
+              connectedSugarToBase
+            ) {
               bondRenderer = new PolymerBondSequenceRenderer(
                 new PolymerBond(node.monomer, connectedSugarToBase),
               );
@@ -592,8 +595,8 @@ export class SequenceRenderer {
     );
   }
 
-  public static get nextNodeInSameChain() {
-    if (SequenceRenderer.nextCaretPosition !== SequenceRenderer.caretPosition) {
+  public static get nextNodeInSameChain(): SubChainNode | undefined {
+    if (SequenceRenderer.nextCaretPosition === SequenceRenderer.caretPosition) {
       return;
     }
 
@@ -653,7 +656,9 @@ export class SequenceRenderer {
     );
   }
 
-  public static getPreviousNodeInSameChain(nodeToCompare: SubChainNode) {
+  public static getPreviousNodeInSameChain(
+    nodeToCompare: SubChainNode,
+  ): SubChainNode | undefined {
     let previousNode;
     let previousNodeChainIndex = -1;
     let nodeToReturn;
@@ -669,7 +674,9 @@ export class SequenceRenderer {
     return nodeToReturn;
   }
 
-  public static getNextNodeInSameChain(nodeToCompare: SubChainNode) {
+  public static getNextNodeInSameChain(
+    nodeToCompare: SubChainNode,
+  ): SubChainNode {
     let previousNode;
     let previousNodeChainIndex = -1;
     let nodeToReturn;

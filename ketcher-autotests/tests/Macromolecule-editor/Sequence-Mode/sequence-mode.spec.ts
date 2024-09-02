@@ -13,10 +13,8 @@ import {
   startNewSequence,
   moveMouseAway,
   waitForRender,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
-  takeLayoutSwitcherScreenshot,
-  takePageScreenshot,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import {
@@ -101,27 +99,6 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that a dropdown menu is displayed in toolbar when sequence mode is ON', async ({
-    page,
-  }) => {
-    /*
-    Test case: #3861
-    Description: Dropdown menu is displayed in toolbar when sequence mode is ON.
-    */
-    await selectSequenceLayoutModeTool(page);
-    await takeLayoutSwitcherScreenshot(page);
-  });
-
-  test('Select drop-down menu', async ({ page }) => {
-    /*
-    Test case: #3861
-    Description: Dropdown menu is expanded.
-    */
-    await selectSequenceLayoutModeTool(page);
-    await page.getByTestId('sequence-type-dropdown').click();
-    await takePageScreenshot(page);
-  });
-
   test('Test sequence display for long DNA/RNA', async ({ page }) => {
     /* 
     Test case: #3648
@@ -193,6 +170,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -246,6 +224,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -305,7 +284,11 @@ test.describe('Sequence Mode', () => {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
-      await page.getByText('G').locator('..').first().hover();
+      await page
+        .locator('g.drawn-structures')
+        .locator('g', { has: page.locator('text="G"') })
+        .first()
+        .hover();
       await takeEditorScreenshot(page);
     });
   }
@@ -494,6 +477,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'cgatu');
     await page.keyboard.press('Escape');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -505,17 +489,19 @@ test.describe('Sequence Mode', () => {
     Description: Position of first monomer defines "top left" corner on canvas.
     */
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Enter');
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Enter');
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await enterSequence(page, 'acfrtp');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -530,6 +516,7 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cactt');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -544,7 +531,11 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cagtt');
     await page.keyboard.press('Escape');
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('Delete');
     await page.keyboard.press('Backspace');
@@ -561,7 +552,11 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
@@ -578,7 +573,7 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
@@ -617,14 +612,18 @@ test.describe('Sequence Mode', () => {
       */
       await selectSequenceLayoutModeTool(page);
       if (testCase.name === 'Preview for DNA') {
-        await switchSequenceEnteringType(page, SequenceType.DNA);
+        await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       } else if (testCase.name === 'Preview for Peptide') {
-        await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+        await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       }
       await startNewSequence(page);
       await enterSequence(page, testCase.sequence);
       await page.keyboard.press('Escape');
-      await page.getByText(testCase.hoverText).locator('..').first().hover();
+      await page
+        .locator('g.drawn-structures')
+        .locator('g', { has: page.locator(`text="${testCase.hoverText}"`) })
+        .first()
+        .hover();
       await takeEditorScreenshot(page);
     });
   }

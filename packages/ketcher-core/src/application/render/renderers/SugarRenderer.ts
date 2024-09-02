@@ -1,9 +1,12 @@
 import { Selection } from 'd3';
 import { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import { KetMonomerClass } from 'application/formatters';
 
-const SUGAR_SELECTED_ELEMENT_ID = '#sugar-selection';
-const SUGAR_SYMBOL_ELEMENT_ID = '#sugar';
+const SUGAR_SELECTED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].selected;
+const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].body;
 
 export class SugarRenderer extends BaseMonomerRenderer {
   public CHAIN_BEGINNING = '’5';
@@ -34,11 +37,11 @@ export class SugarRenderer extends BaseMonomerRenderer {
     this.appendChainBeginning();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return undefined;
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return { x: -5, y: 7 };
   }
 }

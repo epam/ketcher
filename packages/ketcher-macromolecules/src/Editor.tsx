@@ -18,7 +18,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
-import { NodeSelection, PolymerBondRenderer } from 'ketcher-core';
+import {
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  NodeSelection,
+} from 'ketcher-core';
 import { store } from 'state';
 import {
   defaultTheme,
@@ -72,8 +75,8 @@ import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
-import { Preview } from 'components/shared/Preview';
-import { SequenceTypeDropdown } from 'components/SequenceTypeButton';
+import { Preview } from 'components/preview/Preview';
+import { SequenceTypeGroupButton } from 'components/SequenceTypeGroupButton';
 import { TopMenuComponent } from 'components/TopMenuComponent';
 import { LeftMenuComponent } from 'components/LeftMenuComponent';
 import { ZoomControls } from 'components/ZoomControls/ZoomControls';
@@ -161,7 +164,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      (event, polymerBondRenderer: PolymerBondRenderer) => {
+      (
+        event,
+        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ): void => {
         showPolymerBondContextMenu({
           event,
           props: {
@@ -198,8 +204,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         >
           <TopMenuComponent />
           <TopMenuRightWrapper>
-            <SequenceTypeDropdown />
             <LayoutModeButton />
+
+            <SequenceTypeGroupButton />
             <TogglerComponentWrapper
               className={
                 isSequenceEditInRNABuilderMode

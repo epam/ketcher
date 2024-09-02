@@ -62,6 +62,7 @@ const MonomerList = ({
   const presets = useAppSelector(selectFilteredPresets);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
+
   const items = !isFavoriteTab
     ? selectMonomersInCategory(monomers, libraryName)
     : ({

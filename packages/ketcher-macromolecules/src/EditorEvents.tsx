@@ -34,13 +34,6 @@ import {
   Nucleotide,
   PolymerBond,
 } from 'ketcher-core';
-import {
-  calculateAmbiguousMonomerPreviewLeft,
-  calculateAmbiguousMonomerPreviewTop,
-  calculateBondPreviewPosition,
-  calculateMonomerPreviewTop,
-  calculateNucleoElementPreviewTop,
-} from 'helpers';
 import { selectAllPresets } from 'state/rna-builder';
 import {
   AmbiguousMonomerPreviewState,
@@ -51,6 +44,13 @@ import {
   PreviewStyle,
   PreviewType,
 } from 'state/types';
+import {
+  calculateAmbiguousMonomerPreviewLeft,
+  calculateAmbiguousMonomerPreviewTop,
+  calculateBondPreviewPosition,
+  calculateMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
 
 const noPreviewTools = ['bond-single'];
 

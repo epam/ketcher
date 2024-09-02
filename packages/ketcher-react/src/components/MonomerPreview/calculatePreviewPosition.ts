@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
-import { preview } from '../constants';
-import { PreviewStyle } from '../state/types';
+import { preview } from './constants';
+import { PreviewStyle } from './AmbiguousMonomerPreview/types';
 import assert from 'assert';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(

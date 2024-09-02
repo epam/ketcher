@@ -14,10 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  calculateAmbiguousMonomerPreviewTop,
-  calculateNucleoElementPreviewTop,
-} from 'helpers';
 import { useAppSelector } from 'hooks';
 import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { debounce } from 'lodash';
@@ -46,6 +42,10 @@ import {
   PresetPreviewState,
   PreviewType,
 } from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);

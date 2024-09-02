@@ -18,8 +18,8 @@ import { selectShowPreview } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
-import { AmbiguousMonomerPreview } from './components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
 import { PreviewType } from 'state';
+import { AmbiguousMonomerPreview } from 'ketcher-react';
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);

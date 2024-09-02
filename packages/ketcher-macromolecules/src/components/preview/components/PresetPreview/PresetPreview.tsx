@@ -22,10 +22,9 @@ import {
   PresetContainer,
   PresetName,
 } from './PresetPreview.styles';
-import { preview } from '../../../../constants';
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
-import { IconName } from 'ketcher-react';
+import { IconName, preview } from 'ketcher-react';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import { useAppSelector } from 'hooks';
 import IDTAliases from '../IDTAliases/IDTAliases';

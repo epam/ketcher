@@ -14,11 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback } from 'react';
-import {
-  calculateAmbiguousMonomerPreviewTop,
-  calculateMonomerPreviewTop,
-  EmptyFunction,
-} from 'helpers';
+import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -32,6 +28,10 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectEditor, selectTool, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
 import { PreviewStyle, PreviewType } from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateMonomerPreviewTop,
+} from 'ketcher-react';
 
 const MonomerGroup = ({
   items,
@@ -99,7 +99,7 @@ const MonomerGroup = ({
         : '';
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       previewType = PreviewType.AmbiguousMonomer;
-      style = { left, top };
+      style = { left, top, transform: 'translate(-50%, 0)' };
     } else {
       top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
       style = { right: '-88px', top };

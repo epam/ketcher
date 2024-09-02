@@ -7,10 +7,7 @@ import {
   Header,
   RatioBar,
 } from './AmbiguousMonomerPreview.styles';
-// Usage of aliases instead of relative import path causes error in the following import
-// because this component used directly from ketcher-react package and there are no such aliases in that package.
-// It needs to create shared components library and use it in both packages.
-import { AmbiguousMonomerPreviewState } from '../../../../state/types';
+import { AmbiguousMonomerPreviewState } from './types';
 
 interface Props {
   className?: string;

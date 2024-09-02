@@ -121,7 +121,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     const result = tailsPositions.every((tail, index, allTails) => {
       if (
         index > 0 &&
-        allTails[index - 1].y < tail.y - MultitailArrow.MIN_TAIL_DISTANCE
+        allTails[index - 1].y < tail.y + MultitailArrow.MIN_TAIL_DISTANCE
       ) {
         return false;
       }

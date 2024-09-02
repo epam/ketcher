@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   TopPanelButton,
   openFileAndAddToCanvasMacro,
@@ -11,18 +11,35 @@ import {
   selectSequenceLayoutModeTool,
   switchSequenceEnteringButtonType,
   SequenceType,
+  selectClearCanvasTool,
 } from '@utils';
+import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  markResetToDefaultState,
+  processResetToDefaultState,
+} from '@utils/testAnnotations/resetToDefaultState';
+
+let page: Page;
+
+test.beforeAll(async ({ browser }) => {
+  const context = await browser.newContext();
+  page = await context.newPage();
+  await waitForPageInit(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
+test.afterEach(async ({ context: _ }, testInfo) => {
+  await selectClearCanvasTool(page);
+  await processResetToDefaultState(testInfo, page);
+});
+
+test.afterAll(async ({ browser }) => {
+  await Promise.all(browser.contexts().map((context) => context.close()));
+});
 
 test.describe('Saving in .svg files', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-
-  test('Should convert .ket file to .svg format in save modal', async ({
-    page,
-  }) => {
+  test('Should convert .ket file to .svg format in save modal', async () => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     // Coordinates for rectangle selection
     const startX = 100;
@@ -66,9 +83,7 @@ test.describe('Saving in .svg files', () => {
   ];
 
   for (const { filename, description } of testData) {
-    test(`Export to SVG: Verify it is possible to export Flex mode canvas with ${description} to SVG`, async ({
-      page,
-    }) => {
+    test(`Export to SVG: Verify it is possible to export Flex mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -106,9 +121,7 @@ test.describe('Saving in .svg files', () => {
   ];
 
   for (const { filename, description } of testData1) {
-    test(`Export to SVG: Verify it is possible to export Snake mode canvas with ${description} to SVG`, async ({
-      page,
-    }) => {
+    test(`Export to SVG: Verify it is possible to export Snake mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);
@@ -147,9 +160,7 @@ test.describe('Saving in .svg files', () => {
   ];
 
   for (const { filename, description } of testData2) {
-    test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async ({
-      page,
-    }) => {
+    test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
@@ -189,9 +200,7 @@ test.describe('Saving in .svg files', () => {
   ];
 
   for (const { filename, description } of testData3) {
-    test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async ({
-      page,
-    }) => {
+    test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
@@ -231,9 +240,9 @@ test.describe('Saving in .svg files', () => {
   ];
 
   for (const { filename, description } of testData4) {
-    test(`Export to SVG: Verify it is possible to export Sequence-Peptide mode canvas with ${description} to SVG`, async ({
-      page,
-    }) => {
+    test(`Export to SVG: Verify it is possible to export Sequence-Peptide mode canvas with ${description} to SVG`, async () => {
+      markResetToDefaultState('defaultLayout');
+
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
@@ -248,33 +257,42 @@ test.describe('Saving in .svg files', () => {
     {
       filename: 'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       description: 'unsplit-nucleotides-connected-with-nucleotides',
+      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-chems.ket',
       description: 'connection nucleotides with chems',
+      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-bases.ket',
       description: 'unsplit-nucleotides-connected-with-bases',
+      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-sugars.ket',
       description: 'unsplit-nucleotides-connected-with-sugars',
+      requiresPageReload: true,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       description: 'unsplit-nucleotides-connected-with-phosphates',
+      requiresPageReload: true,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-peptides.ket',
       description: 'unsplit-nucleotides-connected-with-peptides',
+      requiresPageReload: false,
     },
   ];
 
-  for (const { filename, description } of testData5) {
-    test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async ({
-      page,
-    }) => {
+  for (const { filename, description, requiresPageReload } of testData5) {
+    test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async () => {
+      // Reload needed for some tests as screenshots may have minor differences (up to 1 pixel)
+      if (requiresPageReload) {
+        await pageReload(page);
+      }
+
       await openFileAndAddToCanvasMacro(filename, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);

@@ -15,3 +15,26 @@ export async function pageReload(page: Page) {
   await waitForIndigoToLoad(page);
   await turnOnMacromoleculesEditor(page);
 }
+
+export async function closeErrorMessage(page: Page) {
+  const errorMessage = page.getByText('Error message', {
+    exact: true,
+  });
+  const closeWindowButton = page.getByRole('button', {
+    name: 'Close window',
+  });
+
+  await closeWindowButton.click();
+  await errorMessage.waitFor({ state: 'hidden' });
+}
+
+export async function closeOpenStructure(page: Page) {
+  const closeWindowButton = page.getByRole('button', {
+    name: 'Close window',
+  });
+  const openStructure = page.getByText('Open Structure', {
+    exact: true,
+  });
+  await closeWindowButton.click();
+  await openStructure.waitFor({ state: 'hidden' });
+}

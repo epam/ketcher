@@ -81,6 +81,7 @@ interface EditorState {
   activeTool: string;
   editor: CoreEditor | undefined;
   preview: EditorStatePreview;
+  position: PresetPosition | undefined;
 }
 
 const initialState: EditorState = {
@@ -92,6 +93,7 @@ const initialState: EditorState = {
     monomer: undefined,
     style: {},
   },
+  position: undefined,
 };
 
 export const editorSlice: Slice = createSlice({
@@ -109,6 +111,9 @@ export const editorSlice: Slice = createSlice({
     },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
+    },
+    setPosition: (state, action: PayloadAction<PresetPosition>) => {
+      state.position = action.payload;
     },
 
     createEditor: (
@@ -144,6 +149,7 @@ export const {
   createEditor,
   showPreview,
   destroyEditor,
+  setPosition,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
@@ -151,6 +157,9 @@ export const selectShowPreview = (state: RootState): EditorStatePreview =>
   state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+export const selectEditorPosition = (
+  state: RootState,
+): PresetPosition | undefined => state.editor.position;
 // TODO: Specify the types.
 // export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
 //   state.editor.isReady;

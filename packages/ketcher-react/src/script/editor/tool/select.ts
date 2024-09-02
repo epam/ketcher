@@ -139,12 +139,12 @@ class SelectTool implements Tool {
       return true;
     }
 
-    if (ci.map === MULTITAIL_ARROW_KEY) {
+    if (ci.map === MULTITAIL_ARROW_KEY && ci.ref) {
       this.dragCtx = this.multitailArrowMoveTool.mousedown(
         event,
         ci as MultitailArrowClosestItem,
       );
-    } else if (ci.map === 'rxnArrows') {
+    } else if (ci.map === 'rxnArrows' && ci.ref) {
       this.dragCtx = this.reactionArrowMoveTool.mousedown(
         event,
         ci as ReactionArrowClosestItem,
@@ -377,18 +377,15 @@ class SelectTool implements Tool {
         );
       }
       if (this.dragCtx.action) {
-        this.editor.update(true);
         this.editor.update(this.dragCtx.action);
+        this.editor.update(true);
       }
-      this.dragCtx = null;
-      return;
     }
 
     if (this.dragCtx?.item) {
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
         dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       }
-      delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
       this.selectElementsOnCanvas(newSelected, editor, event);
@@ -399,6 +396,7 @@ class SelectTool implements Tool {
       )
         editor.selection(null);
     }
+    this.dragCtx = null;
     editor.event.message.dispatch({
       info: false,
     });

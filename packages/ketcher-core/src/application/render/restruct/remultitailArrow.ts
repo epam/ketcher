@@ -19,7 +19,6 @@ export enum MultitailArrowRefName {
 
 export interface MultitailArrowReferencePosition {
   name: MultitailArrowRefName;
-  offset: Vec2;
   isLine: boolean;
   tailId: number | null;
 }
@@ -355,12 +354,14 @@ export class ReMultitailArrow extends ReObject {
         return distance < acc.distance
           ? {
               distance,
-              ref: {
-                name: refName,
-                offset: new Vec2(0, 0),
-                isLine,
-                tailId,
-              },
+              ref:
+                refName !== MultitailArrowRefName.SPINE
+                  ? {
+                      name: refName,
+                      isLine,
+                      tailId,
+                    }
+                  : null,
             }
           : acc;
       },

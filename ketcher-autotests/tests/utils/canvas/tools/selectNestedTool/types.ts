@@ -67,37 +67,37 @@ export const ArrowTool: toolType = {
     9,
     'reaction-arrow-equilibrium-filled-triangle',
   ],
-  ARROW_EQUILIBRIUM_OPEN_ANGLE: [9, 'reaction-arrow-equilibrium-open-angle'],
+  ARROW_EQUILIBRIUM_OPEN_ANGLE: [10, 'reaction-arrow-equilibrium-open-angle'],
   ARROW_UNBALANCED_EQUILIBRIUM_FILLED_HALF_BOW: [
-    10,
+    11,
     'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
   ],
   ARROW_UNBALANCED_EQUILIBRIUM_OPEN_HALF_ANGLE: [
-    11,
+    12,
     'reaction-arrow-unbalanced-equilibrium-open-half-angle',
   ],
   ARROW_UNBALANCED_EQUILIBRIUM_LARGE_FILLED_HALF_BOW: [
-    12,
+    13,
     'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
   ],
   ARROW_UNBALANCED_EQUILIBRIUM_FILLED_HALF_TRIANGLE: [
-    13,
+    14,
     'reaction-arrow-unbalanced-equilibrium-filled-half-triangle',
   ],
   ARROW_ELLIPTICAL_ARC_FILLED_BOW: [
-    14,
+    15,
     'reaction-arrow-elliptical-arc-arrow-filled-bow',
   ],
   ARROW_ELLIPTICAL_ARC_FILLED_TRIANGLE: [
-    15,
+    16,
     'reaction-arrow-elliptical-arc-arrow-filled-triangle',
   ],
   ARROW_ELLIPTICAL_ARC_OPEN_ANGLE: [
-    16,
+    17,
     'reaction-arrow-elliptical-arc-arrow-open-angle',
   ],
   ARROW_ELLIPTICAL_ARC_OPEN_HALF_ANGLE: [
-    17,
+    18,
     'reaction-arrow-elliptical-arc-arrow-open-half-angle',
   ],
 };

@@ -41,7 +41,7 @@ jobs:
             ${{ runner.os }}-npm-
 
       - name: Install Dependencies
-        run: npm install --loglevel verbose
+        run: npm install
 
       - name: Run audit
         run: npm audit --all --audit-level=critical

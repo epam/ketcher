@@ -32,9 +32,9 @@ import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { StructRender } from 'components';
 import classes from './InfoPanel.module.less';
-import { calculateAmbiguousMonomerPreviewTop } from 'src/../../ketcher-macromolecules/src/helpers/calculatePreviewPosition';
-import { PreviewType } from 'src/../../ketcher-macromolecules/src/state/types';
-import { AmbiguousMonomerPreview } from 'src/../../ketcher-macromolecules/src/components/preview/components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
+import { calculateAmbiguousMonomerPreviewTop } from '../../../../../../../ketcher-macromolecules/src/helpers/calculatePreviewPosition';
+import { PreviewType } from '../../../../../../../ketcher-macromolecules/src/state/types';
+import { AmbiguousMonomerPreview } from '../../../../../../../ketcher-macromolecules/src/components/preview/components/AmbiguousMonomerPreview/AmbiguousMonomerPreview';
 
 const HOVER_PANEL_PADDING = 20;
 const MAX_INFO_PANEL_SIZE = 200;

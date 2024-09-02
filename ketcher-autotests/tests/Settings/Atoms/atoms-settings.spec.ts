@@ -32,8 +32,9 @@ async function selectExtendedTableElements(page: Page, element: string) {
 }
 async function atomDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
+  await page.getByText('General', { exact: true }).click();
   await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
+  // await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
 }
 
 async function ringBondCountQuery(page: Page, menuItem: string) {

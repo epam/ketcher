@@ -20,6 +20,7 @@ import {
   selectOptionInTypeDropdown,
   getFasta,
   getIdt,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import {
   hideMonomerPreview,
@@ -524,10 +525,17 @@ test.describe('Signle Bond Tool', () => {
       });
 
     expect(sequenceFile).toEqual(sequenceFileExpected);
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('Sequence/two-peptides-connected-expected.seq', page);
-    await selectOptionInTypeDropdown('Peptide', page);
-    await pressButton(page, 'Open as New');
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'Sequence/two-peptides-connected-expected.seq',
+      page,
+      'Peptide',
+    );
+
+    // await selectTopPanelButton(TopPanelButton.Open, page);
+    // await openFile('Sequence/two-peptides-connected-expected.seq', page);
+    // await selectOptionInTypeDropdown('Peptide', page);
+    // await pressButton(page, 'Open as New');
     await selectSingleBondTool(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);

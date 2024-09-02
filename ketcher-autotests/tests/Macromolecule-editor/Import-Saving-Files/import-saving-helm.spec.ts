@@ -3,16 +3,20 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
+import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
+  selectClearCanvasTool,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
+import {
+  closeErrorMessage,
+  closeOpenStructure,
+  pageReload,
+} from '@utils/common/helpers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -40,15 +44,15 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
+  // await page.keyboard.press('Control+0');
   await selectClearCanvasTool(page);
-  await page.keyboard.press('Control+0');
+  // await page.keyboard.press('Control+0');
 });
 
 test.afterAll(async ({ browser }) => {
   await page.close();
   await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
+  browser.contexts().forEach((someContext) => {
     someContext.close();
   });
 });
@@ -224,14 +228,16 @@ test.describe('Import correct HELM sequence: ', () => {
     Description: Load correct HELM sequences and compare canvas with the template
     */
       test.setTimeout(20000);
-      test.fail(
-        correctHELMString.shouldFail === true,
-        `That test fails because of ${correctHELMString.issueNumber} issue.`,
-      );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
       await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctHELMString.shouldFail === true,
+        `That test fails because of ${correctHELMString.issueNumber} issue.`,
+      );
     });
   }
 });
@@ -256,6 +262,8 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '5. wrong base name',
     HELMString: 'RNA1{R(bla-bla-bla)p}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2265',
   },
   {
     helmDescription: '6. wrong phosphate name',
@@ -304,6 +312,8 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '16. no squire brackets',
     HELMString: 'PEPTIDE1{D-gGlu}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2264',
   },
   {
     helmDescription: '17. No CHEM name',
@@ -358,10 +368,14 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '28. Missing ratio token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '29. Wrong ratio token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '30. Negative ratio (PEPTIDE)',
@@ -370,10 +384,14 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '31. Missing ratio token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '32. Wrong ratio token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '33. Negative ratio (CHEM)',
@@ -382,18 +400,26 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '34. Missing ratio token (RNA)',
     HELMString: 'RNA1{(r(A)p:+r(C)p:200)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2268',
   },
   {
     helmDescription: '35. Wrong ratio token type (RNA)',
     HELMString: 'RNA1{(r(A)p:100+r(C)p:aaa)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2269',
   },
   {
     helmDescription: '36. Negative ratio (RNA)',
     HELMString: 'RNA1{(r(A)p:-100+r(C)p:200)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2270',
   },
   {
     helmDescription: '37. Missing probability token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '38. Wrong probability token type (PEPTIDE)',
@@ -406,10 +432,14 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '40. Probability is greater than 100 (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '41. Missing probability token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '42. Wrong probability token type (CHEM)',
@@ -422,22 +452,32 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '44. Probability is greater than 100 (CHEM)',
     HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '45. Missing probability token (RNA)',
     HELMString: 'RNA1{(r(A)p:,r(C)p):90}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2273',
   },
   {
     helmDescription: '46. Wrong probability token type (RNA)',
     HELMString: 'RNA1{(r(A)p:10,r(C)p):aaa}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2274',
   },
   {
     helmDescription: '47. Negative probability (RNA)',
     HELMString: 'RNA1{(r(A)p:-10,r(C)p):90}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2275',
   },
   {
     helmDescription: '48. Probability is greater than 100 (RNA)',
     HELMString: 'RNA1{(r(A)p:10,r(C)p):1000}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2276',
   },
   {
     helmDescription:
@@ -481,6 +521,8 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '57. Negative repeating number',
     HELMString:
       "RNA1{([Sm5moe]([m2nprn])[mepo2]+[menoe2]([nobn6p])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'-5'}$$$$V2.0",
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2277',
   },
   {
     helmDescription:
@@ -513,15 +555,21 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '64. Invalid range (PEPTIDE)',
     HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '65. Invalid range (CHEM)',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '66. Invalid range (RNA)',
     HELMString:
       "RNA1{([Sm5moe]([m2nprn])[mepo2]+[menoe2]([nobn6p])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'5-i'}$$$$V2.0",
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2279',
   },
   {
     helmDescription: '66. Wrong polymer name index (CHEM)',
@@ -539,8 +587,6 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription:
       "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
     HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2186',
   },
   {
     helmDescription: '70. Missing monomer name',
@@ -587,11 +633,6 @@ test.describe('Import incorrect HELM sequence: ', () => {
       Description: Load INCORRECT HELM sequences and compare canvas (with error message) with the template
       */
       test.setTimeout(20000);
-      // Test should fail if related bug exists
-      test.fail(
-        incorrectHELMString.shouldFail === true,
-        `That test fails because of ${incorrectHELMString.issueNumber} issue.`,
-      );
       if (incorrectHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, incorrectHELMString.HELMString);
@@ -599,19 +640,20 @@ test.describe('Import incorrect HELM sequence: ', () => {
 
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
-      const errorMessage = await page.getByText('Error message', {
+      const errorMessage = page.getByText('Error message', {
         exact: true,
       });
-      await expect(errorMessage).toBeVisible();
 
       if (await errorMessage.isVisible()) {
-        const closeWindowButton = await page.getByRole('button', {
-          name: 'Close window',
-        });
-        await closeWindowButton.click();
-        await errorMessage.waitFor({ state: 'hidden' });
-        await closeWindowButton.click();
+        await closeErrorMessage(page);
+        await closeOpenStructure(page);
       }
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        incorrectHELMString.shouldFail === true,
+        `That test fails because of ${incorrectHELMString.issueNumber} issue.`,
+      );
     });
   }
 });

@@ -86,6 +86,14 @@ export async function selectOptionInTypeDropdown(
   }
 }
 
+export async function selectOptionInTypeDropdown2(
+  typeDropdownOption: TypeDropdownOptions,
+  page: Page,
+) {
+  await page.getByTestId('dropdown-select-type').getByRole('combobox').click();
+  await page.getByText(typeDropdownOption, { exact: true }).click();
+}
+
 /**
  * Open file and put in center of canvas
  * Should be used to prevent extra delay() calls in test cases
@@ -134,6 +142,26 @@ export async function openFileAndAddToCanvasMacro(
 
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
+  });
+}
+
+export async function openFileAndAddToCanvasAsNewProjectMacro(
+  filename: string,
+  page: Page,
+  typeDropdownOption?: TypeDropdownOptions,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(filename, page);
+
+  // to stabilize the test
+  await selectOptionInDropdown(filename, page);
+
+  if (typeDropdownOption) {
+    await selectOptionInTypeDropdown2(typeDropdownOption, page);
+  }
+
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Open as New');
   });
 }
 

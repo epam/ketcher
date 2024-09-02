@@ -587,8 +587,6 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription:
       "69. Wrong connection point (R4 doesn't exist for A6OH chem)",
     HELMString: 'CHEM1{[A6OH]}|PEPTIDE1{A}$CHEM1,PEPTIDE1,1:R4-1:R1$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2186',
   },
   {
     helmDescription: '70. Missing monomer name',

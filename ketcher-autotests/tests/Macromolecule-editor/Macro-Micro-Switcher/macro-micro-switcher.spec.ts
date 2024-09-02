@@ -1682,72 +1682,61 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
-    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1994
-    After the fix, you need to update test.
+                 CDX does not support R-groups, so R1 converts to H (hydrogen)
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getCdx(page);
-      await saveToFile(
-        'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      });
 
-      const { fileExpected: cdxFileExpected, file: cdxFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-        });
+    expect(cdxFile).toEqual(cdxFileExpected);
+    await openCdxFile(page);
+    await takeEditorScreenshot(page);
+    await pageReload(page);
+  });
 
-      expect(cdxFile).toEqual(cdxFileExpected);
-      await openCdxFile(page);
-      await takeEditorScreenshot(page);
-      await pageReload(page);
-    },
-  );
-
-  test(
-    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
-    Saved structure not opens because we have bug https://github.com/epam/Indigo/issues/1993
-    After the fix, you need to update test.
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
-        'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      });
 
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-        });
-
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
-      await openCdxmlFile(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openCdxmlFile(page);
+    await takeEditorScreenshot(page);
+  });
 
   test(
     'Verify presence and correctness of attachment points (atomRefs) in the SuperatomSgroup segment of CML molecular structure files',

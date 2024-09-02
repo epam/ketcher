@@ -34,11 +34,19 @@ function calculateTop(
     .node()
     ?.getBoundingClientRect();
   const canvasWrapperTopOffset = canvasWrapperBoundingClientRect?.top || 0;
+  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
+  const canvasWrapperHeight = canvasWrapperBoundingClientRect?.height || 0;
+  const topPreviewPosition =
+    target.top - preview.gap - height - preview.topPadding;
+  const bottomPreviewPosition = target.bottom + preview.gap;
 
   return target.top - canvasWrapperTopOffset >
     height + preview.gap + preview.topPadding
-    ? target.top - preview.gap - height - preview.topPadding
-    : target.bottom + preview.gap;
+    ? topPreviewPosition
+    : target.top + height > canvasWrapperBottom - canvasWrapperTopOffset &&
+      target.top > canvasWrapperHeight / 2
+    ? topPreviewPosition
+    : bottomPreviewPosition;
 }
 
 function createCalculatePreviewTopFunction(

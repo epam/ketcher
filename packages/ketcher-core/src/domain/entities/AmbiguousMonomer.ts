@@ -7,7 +7,7 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { KetMonomerClass } from 'application/formatters';
 import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
-import { AmbiguousMonomerType } from 'domain/types';
+import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
@@ -81,6 +81,30 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
         attachmentAtom: -1,
       };
     });
+  }
+
+  public get monomerCaps() {
+    let monomerCaps: Partial<Record<AttachmentPointName, string>> | undefined;
+
+    this.monomers.forEach((monomer) => {
+      if (monomer.monomerItem.props.MonomerCaps) {
+        if (!monomerCaps) {
+          monomerCaps = { ...monomer.monomerItem.props.MonomerCaps };
+        } else {
+          for (const [attachmentPointName, label] of Object.entries(
+            monomer.monomerItem.props.MonomerCaps,
+          )) {
+            if (!monomerCaps[attachmentPointName]) {
+              delete monomerCaps[attachmentPointName];
+            } else if (monomerCaps[attachmentPointName] !== label) {
+              monomerCaps[attachmentPointName] = '';
+            }
+          }
+        }
+      }
+    });
+
+    return monomerCaps;
   }
 
   public getValidSourcePoint(_secondMonomer?: BaseMonomer) {

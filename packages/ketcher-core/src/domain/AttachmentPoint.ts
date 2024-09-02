@@ -52,6 +52,7 @@ export class AttachmentPoint {
   private isUsed: boolean;
   private isSnake;
   private editorEvents: typeof editorEvents;
+  private applyZoomForPositionCalculation: boolean;
 
   constructor(
     constructorParams: AttachmentPointConstructorParams,
@@ -70,6 +71,8 @@ export class AttachmentPoint {
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
     this.initialAngle = constructorParams.angle;
+    this.applyZoomForPositionCalculation =
+      constructorParams.applyZoomForPositionCalculation;
     this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
@@ -390,9 +393,13 @@ export class AttachmentPoint {
       this.monomer,
     );
 
+    const applyZoomForPositionCalculation =
+      this.applyZoomForPositionCalculation;
+
     const pointOnBorder = findPointOnMonomerBorder(
       currentMonomerCenter,
       (this.bodyWidth + this.bodyHeight) / 2,
+      applyZoomForPositionCalculation,
     );
 
     const [labelPoint, pointOfAttachment] = findLabelPoint(

@@ -145,12 +145,15 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
       canvas: params.canvas,
+      applyZoomForPositionCalculation: false,
     });
   }
 
   public showExternal(params: PreviewAttachmentPointParams) {
     this.rootElement = this.appendRootElement(params.canvas);
-    this.appendBody(this.rootElement);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.bodyElement = this.appendBody(this.rootElement);
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();
     this.drawAttachmentPoints(

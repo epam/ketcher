@@ -1,4 +1,3 @@
-import { Container } from 'components/shared/ConnectionOverview/components/MonomerMiniature/MonomerMiniature.styles';
 import { select } from 'd3';
 import {
   AmbiguousMonomer,
@@ -9,6 +8,8 @@ import {
   Vec2,
 } from 'ketcher-core';
 import { useLayoutEffect, useRef } from 'react';
+
+import { Container } from './MonomerMiniature.styles';
 
 interface Props {
   monomer: BaseMonomer;
@@ -42,6 +43,8 @@ const MonomerMiniature = ({
         );
         const renderer = new AmbiguousMonomerRenderer(variantMonomer);
         renderer.showExternal({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           canvas: svgElement,
           usage,
           selectedAttachmentPoint,
@@ -50,7 +53,7 @@ const MonomerMiniature = ({
       }
       // TODO: Use factory here for any other monomer if it will be required (e.g. unresolved monomers)?
     }
-  }, [selectedAttachmentPoint]);
+  }, [selectedAttachmentPoint, connectedAttachmentPoints]);
 
   return (
     <Container expanded={expanded}>

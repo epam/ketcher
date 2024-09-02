@@ -42,7 +42,7 @@ const BondPreview = ({ className }: Props) => {
     preparedAttachmentPointsData: firstMonomerPreparedAPsData,
     connectedAttachmentPoints: firstMonomerConnectedAPs,
   } = useAttachmentPoints({
-    monomer: firstMonomer.monomerItem,
+    monomerCaps: firstMonomer.monomerCaps,
     attachmentPointsToBonds: firstMonomer.attachmentPointsToBonds,
   });
 
@@ -50,7 +50,7 @@ const BondPreview = ({ className }: Props) => {
     preparedAttachmentPointsData: secondMonomerPreparedAPsData,
     connectedAttachmentPoints: secondMonomerConnectedAPs,
   } = useAttachmentPoints({
-    monomer: secondMonomer?.monomerItem,
+    monomerCaps: secondMonomer?.monomerCaps,
     attachmentPointsToBonds: secondMonomer?.attachmentPointsToBonds,
   });
 

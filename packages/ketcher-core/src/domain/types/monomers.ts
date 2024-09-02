@@ -23,6 +23,17 @@ export type MonomerColorScheme = {
   hover: string;
 };
 
+export enum AttachmentPointName {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
+
 export type MonomerItemType = {
   label: string;
   colorScheme?: MonomerColorScheme;
@@ -36,7 +47,7 @@ export type MonomerItemType = {
     Name: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
-    MonomerCaps?: { [key: string]: string };
+    MonomerCaps?: Partial<Record<AttachmentPointName, string>>;
     MonomerCode?: string;
     MonomerType?: string;
     MonomerClass?: KetMonomerClass;
@@ -62,17 +73,6 @@ export type AmbiguousMonomerType = {
 
 export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;
 
-export enum AttachmentPointName {
-  R1 = 'R1',
-  R2 = 'R2',
-  R3 = 'R3',
-  R4 = 'R4',
-  R5 = 'R5',
-  R6 = 'R6',
-  R7 = 'R7',
-  R8 = 'R8',
-}
-
 export const attachmentPointNames = [
   'R1',
   'R2',
@@ -97,6 +97,7 @@ export type AttachmentPointConstructorParams = {
   isPotentiallyUsed: boolean;
   angle: number;
   isSnake: boolean;
+  applyZoomForPositionCalculation: boolean;
 };
 
 export type PreviewAttachmentPointConstructorParams =

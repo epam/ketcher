@@ -3,6 +3,7 @@ import { Coordinates } from 'domain/helpers/attachmentPointCalculations';
 import { PreviewAttachmentPointConstructorParams } from 'domain/types';
 import { UsageInMacromolecule } from 'application/render';
 import util from 'application/render/util';
+import { Vec2 } from 'domain/entities';
 
 export class PreviewAttachmentPoint extends AttachmentPoint {
   private connected: boolean;
@@ -50,10 +51,21 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
 
     const labelGroup = this.attachmentPoint?.append('g');
 
+    const angleInRadians = Vec2.degrees_to_radians(this.initialAngle);
+    const cos = Math.cos(angleInRadians);
+    const sin = Math.sin(angleInRadians);
+
+    const centerX = attachmentPointCoordinates.x - 10;
+    const centerY = attachmentPointCoordinates.y - 8;
+    const rectX = centerX - 10 * cos;
+    const rectY = centerY - 10 * sin;
+    const labelX = attachmentPointCoordinates.x - 10 * cos;
+    const labelY = attachmentPointCoordinates.y - 10 * sin;
+
     labelGroup
       .append('rect')
-      .attr('x', attachmentPointCoordinates.x - 10)
-      .attr('y', attachmentPointCoordinates.y - 8)
+      .attr('x', rectX)
+      .attr('y', rectY)
       .attr('rx', 4)
       .attr('ry', 4)
       .attr('width', 20)
@@ -64,8 +76,8 @@ export class PreviewAttachmentPoint extends AttachmentPoint {
 
     labelGroup
       .append('text')
-      .attr('x', attachmentPointCoordinates.x)
-      .attr('y', attachmentPointCoordinates.y)
+      .attr('x', labelX)
+      .attr('y', labelY)
       .attr('fill', color)
       .attr('font-size', '10px')
       .attr('text-anchor', 'middle')

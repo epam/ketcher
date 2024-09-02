@@ -258,6 +258,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
         this.hoveredAttachmentPoint === attachmentPointName,
       angle: customAngle ?? rotation,
+      applyZoomForPositionCalculation: true,
       // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
       isSnake: this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };

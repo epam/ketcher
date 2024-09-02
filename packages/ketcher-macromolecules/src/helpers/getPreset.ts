@@ -6,6 +6,8 @@ import {
   setMonomerTemplatePrefix,
   KetMonomerClass,
   IRnaLabeledPreset,
+  isAmbiguousMonomerLibraryItem,
+  setAmbiguousMonomerTemplatePrefix,
 } from 'ketcher-core';
 import { getMonomerUniqueKey } from 'state/library';
 
@@ -20,7 +22,9 @@ export const getPresets = (
 ): IRnaPreset[] => {
   const monomerLibraryItemByMonomerIDMap = new Map<string, MonomerItemType>(
     monomers.map((monomer) => {
-      const monomerID = setMonomerTemplatePrefix(getMonomerUniqueKey(monomer));
+      const monomerID = isAmbiguousMonomerLibraryItem(monomer)
+        ? setAmbiguousMonomerTemplatePrefix(monomer.id)
+        : setMonomerTemplatePrefix(getMonomerUniqueKey(monomer));
       return [monomerID, monomer];
     }),
   );
@@ -37,6 +41,7 @@ export const getPresets = (
             rnaPartsMonomerTemplateRef.$ref,
           ) as MonomerItemType;
           const [, , monomerClass] = monomerFactory(monomer);
+
           return [monomerClass, monomer];
         }),
       );
@@ -53,16 +58,12 @@ export const getPresets = (
       ) as MonomerItemType;
 
       const result: IRnaPreset = {
-        base: rnaBase
-          ? { ...rnaBase, label: rnaBase.props.MonomerName }
-          : undefined,
+        base: rnaBase ? { ...rnaBase, label: rnaBase.label } : undefined,
         name: rnaPresetsTemplate.name,
         phosphate: phosphate
-          ? { ...phosphate, label: phosphate.props.MonomerName }
+          ? { ...phosphate, label: phosphate.label }
           : undefined,
-        sugar: ribose
-          ? { ...ribose, label: ribose.props.MonomerName }
-          : undefined,
+        sugar: ribose ? { ...ribose, label: ribose.label } : undefined,
         favorite: rnaPresetsTemplate.favorite,
         default: isDefault || rnaPresetsTemplate.default,
       };

@@ -58,7 +58,11 @@ import {
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
-import { KetMonomerClass, MonomerItemType } from 'ketcher-core';
+import {
+  isAmbiguousMonomerLibraryItem,
+  KetMonomerClass,
+  MonomerItemType,
+} from 'ketcher-core';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
@@ -173,7 +177,9 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
       return;
     }
 
-    const monomerClass = monomer.props.MonomerClass.toLowerCase();
+    const monomerClass = isAmbiguousMonomerLibraryItem(monomer)
+      ? monomer.monomers[0].monomerItem.props.MonomerClass?.toLowerCase()
+      : monomer.props.MonomerClass.toLowerCase();
     const currentPreset = {
       ...newPreset,
       [monomerClass]: monomer,

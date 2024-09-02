@@ -1,13 +1,41 @@
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { Nucleoside, Nucleotide } from 'domain/entities';
+import {
+  AmbiguousMonomer,
+  Nucleoside,
+  Nucleotide,
+  Vec2,
+} from 'domain/entities';
+import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 
 export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
-  get symbolToDisplay(): string {
-    return (
-      this.node.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
-        this.node.monomer,
-      )?.monomerItem?.props.MonomerNaturalAnalogCode || '@'
+  constructor(
+    public node: Nucleoside | Nucleotide,
+    _firstNodeInChainPosition: Vec2,
+    _monomerIndexInChain: number,
+    _isLastMonomerInChain: boolean,
+    _subChain: BaseSubChain,
+    _isEditingSymbol: boolean,
+    public monomerSize: { width: number; height: number },
+    public scaledMonomerPosition: Vec2,
+  ) {
+    super(
+      node,
+      _firstNodeInChainPosition,
+      _monomerIndexInChain,
+      _isLastMonomerInChain,
+      _subChain,
+      _isEditingSymbol,
+      monomerSize,
+      scaledMonomerPosition,
     );
+  }
+
+  get symbolToDisplay(): string {
+    return this.node.rnaBase instanceof AmbiguousMonomer
+      ? this.node.monomer.label
+      : this.node.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
+          this.node.monomer,
+        )?.monomerItem?.props.MonomerNaturalAnalogCode || '@';
   }
 
   protected drawCommonModification(node: Nucleoside | Nucleotide) {

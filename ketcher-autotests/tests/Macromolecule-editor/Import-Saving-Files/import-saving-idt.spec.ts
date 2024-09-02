@@ -232,7 +232,7 @@ test.describe('Import-Saving .idt Files', () => {
   test('Check that system does not let importing empty .idt file', async () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('IDT/idt-empty.idt', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   test('Check IDT aliases, where defined in the preview window for Phosphates section', async () => {
@@ -352,9 +352,11 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSequenceLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectSnakeLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -383,9 +385,11 @@ test.describe('Import-Saving .idt Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSequenceLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectSnakeLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }

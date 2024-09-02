@@ -265,6 +265,7 @@ test.describe('Sequence-edit mode', () => {
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

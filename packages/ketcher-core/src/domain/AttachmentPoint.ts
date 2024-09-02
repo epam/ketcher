@@ -403,6 +403,7 @@ export class AttachmentPoint {
       AttachmentPoint.labelSize,
       this.isUsed,
     );
+
     return [pointOnBorder, pointOfAttachment, labelPoint];
   }
 

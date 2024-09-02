@@ -19,7 +19,11 @@ import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { ReStruct, LayerMap } from './restruct';
 import Visel from './restruct/visel';
-import { RelativeBox, RenderOptions, UsageInMacromolecule } from "./render.types";
+import {
+  RelativeBox,
+  RenderOptions,
+  UsageInMacromolecule,
+} from './render.types';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {

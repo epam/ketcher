@@ -41,7 +41,8 @@ const MonomerMiniature = ({
           positionInAngstrom,
         );
         const renderer = new AmbiguousMonomerRenderer(variantMonomer);
-        renderer.showExternal(svgElement, {
+        renderer.showExternal({
+          canvas: svgElement,
           usage,
           selectedAttachmentPoint,
           connectedAttachmentPoints,

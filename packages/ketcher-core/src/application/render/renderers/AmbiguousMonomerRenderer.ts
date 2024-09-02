@@ -7,10 +7,12 @@ import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import { UsageInMacromolecule } from 'application/render';
+import { D3SvgElementSelection } from 'application/render/types';
 
 const NUMBER_OF_MONOMERS_CIRCLE_Y_OFFSET = 7;
 
 type PreviewAttachmentPointParams = {
+  canvas: D3SvgElementSelection<SVGSVGElement, void>;
   usage: UsageInMacromolecule;
   selectedAttachmentPoint: string | null | undefined;
   connectedAttachmentPoints: string[] | undefined;
@@ -142,11 +144,12 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
         connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
       selected: selectedAttachmentPoint === attachmentPointName,
       usage,
+      canvas: params.canvas,
     });
   }
 
-  public showExternal(canvas, params: PreviewAttachmentPointParams) {
-    this.rootElement = this.appendRootElement(canvas);
+  public showExternal(params: PreviewAttachmentPointParams) {
+    this.rootElement = this.appendRootElement(params.canvas);
     this.appendBody(this.rootElement);
     this.appendLabel(this.rootElement);
     this.appendNumberOfMonomers();

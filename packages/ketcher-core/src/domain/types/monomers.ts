@@ -16,7 +16,7 @@ import {
   KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
-import { UsageInMacromolecule } from "application/render";
+import { UsageInMacromolecule } from 'application/render';
 
 export type MonomerColorScheme = {
   regular: string;

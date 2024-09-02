@@ -21,7 +21,6 @@ import {
   selectBond,
   waitForRender,
   waitForPageInit,
-  moveMouseAway,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';

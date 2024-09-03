@@ -19,6 +19,7 @@ import {
   BondDelete,
   CalcImplicitH,
   ImageDelete,
+  MultitailArrowDelete,
   RGroupAttachmentPointRemove,
   RxnArrowDelete,
   RxnPlusDelete,
@@ -40,7 +41,7 @@ import { fromFragmentSplit } from './fragment';
 import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 import { ReStruct } from 'application/render';
 import { isNumber } from 'lodash';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
@@ -220,6 +221,10 @@ export function fromFragmentDeletion(restruct, rawSelection) {
 
   selection[IMAGE_KEY].forEach((id) => {
     action.addOp(new ImageDelete(id));
+  });
+
+  selection[MULTITAIL_ARROW_KEY].forEach((id) => {
+    action.addOp(new MultitailArrowDelete(id));
   });
 
   const actionToDeleteRGroupAttachmentPoints = new Action();

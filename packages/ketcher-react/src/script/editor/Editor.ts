@@ -29,6 +29,7 @@ import {
   provideEditorSettings,
   ReStruct,
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -42,7 +43,7 @@ import { isEqual } from 'lodash/fp';
 import { toolsMap } from './tool';
 import { Highlighter } from './highlighter';
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
-import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
+import { ContextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
 import { HoverIcon } from './HoverIcon';
 import RotateController from './tool/rotate-controller';
 import {
@@ -68,6 +69,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'simpleObjects',
   'texts',
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ];
 
 const highlightTargets = [
@@ -86,6 +88,7 @@ const highlightTargets = [
   'simpleObjects',
   'texts',
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ];
 
 function selectStereoFlagsIfNecessary(
@@ -119,6 +122,7 @@ export interface Selection {
   rxnArrows?: Array<number>;
   texts?: Array<number>;
   rgroupAttachmentPoints?: Array<number>;
+  [MULTITAIL_ARROW_KEY]?: Array<number>;
 }
 
 class Editor implements KetcherEditor {
@@ -132,7 +136,7 @@ class Editor implements KetcherEditor {
   highlights: Highlighter;
   hoverIcon: HoverIcon;
   lastCursorPosition: { x: number; y: number };
-  contextMenu: contextMenuInfo;
+  contextMenu: ContextMenuInfo;
   rotateController: RotateController;
   event: {
     message: Subscription;
@@ -671,6 +675,7 @@ class Editor implements KetcherEditor {
       new Pile(selection.texts),
       null,
       new Pile(selection.images),
+      new Pile(selection[MULTITAIL_ARROW_KEY]),
     );
 
     // Copy by its own as Struct.clone doesn't support
@@ -746,7 +751,7 @@ function updateLastCursorPosition(editor: Editor, event) {
   }
 }
 
-function isContextMenuClosed(contextMenu: contextMenuInfo) {
+function isContextMenuClosed(contextMenu: ContextMenuInfo) {
   return !Object.values(contextMenu).some(Boolean);
 }
 

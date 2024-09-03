@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
 export const SgContexts = {
   Fragment: 'Fragment',
@@ -36,6 +36,7 @@ export const selectionKeys = [
   'simpleObjects',
   'texts',
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
 ] as const;
 
 export const defaultBondThickness = 2;

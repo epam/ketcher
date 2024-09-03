@@ -191,6 +191,7 @@ export function serverCall(editor, server, method, options, struct) {
     null,
     null,
     null,
+    null,
     bidMap,
   );
   const expSel = editor.explicitSelected();

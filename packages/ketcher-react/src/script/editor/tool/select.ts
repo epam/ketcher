@@ -23,7 +23,6 @@ import {
   getHoverToFuse,
   FunctionalGroup,
   fromSimpleObjectResizing,
-  fromArrowResizing,
   ReStruct,
   ReSGroup,
   Vec2,
@@ -34,9 +33,8 @@ import {
   KetcherLogger,
   CoordinateTransformation,
   IMAGE_KEY,
-  imageReferencePositionToCursor,
-  ImageReferencePositionInfo,
   fromImageResize,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -55,6 +53,14 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
+import { getItemCursor } from '../utils/getItemCursor';
+import {
+  ArrowMoveTool,
+  MultitailArrowClosestItem,
+  ReactionArrowClosestItem,
+} from './arrow/arrow.types';
+import { MultitailArrowMoveTool } from './arrow/multitailArrowMoveTool';
+import { ReactionArrowMoveTool } from './arrow/reactionArrowMoveTool';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 
@@ -70,12 +76,16 @@ class SelectTool implements Tool {
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
   private dragCtx: any;
-  private previousMouseMoveEvent?: MouseEvent;
+  private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
   readonly isMoving = false;
+  private multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
+  private reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
+    this.multitailArrowMoveTool = new MultitailArrowMoveTool(editor);
+    this.reactionArrowMoveTool = new ReactionArrowMoveTool(editor);
     this.#mode = mode;
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
@@ -88,7 +98,7 @@ class SelectTool implements Tool {
     return this.#lassoHelper.running();
   }
 
-  mousedown(event) {
+  mousedown(event: PointerEvent) {
     this.isMouseDown = true;
     const rnd = this.editor.render;
     const ctab = rnd.ctab;
@@ -114,22 +124,40 @@ class SelectTool implements Tool {
     if (newSelected.atoms?.length || newSelected.bonds?.length) {
       this.editor.selection(newSelected);
     }
-
-    this.dragCtx = {
-      item: ci,
-      xy0: rnd.page2obj(event),
-    };
-
-    if (!ci || ci.map === 'atoms') {
-      atomLongtapEvent(this, rnd);
-    }
+    const currentPosition = CoordinateTransformation.pageToModel(
+      event,
+      this.editor.render,
+    );
 
     if (!ci) {
       //  ci.type == 'Canvas'
       if (!event.shiftKey) this.editor.selection(null);
-      delete this.dragCtx.item;
+      this.dragCtx = {
+        xy0: currentPosition,
+      };
       if (!this.#lassoHelper.fragment) this.#lassoHelper.begin(event);
       return true;
+    }
+
+    if (ci.map === MULTITAIL_ARROW_KEY && ci.ref) {
+      this.dragCtx = this.multitailArrowMoveTool.mousedown(
+        event,
+        ci as MultitailArrowClosestItem,
+      );
+    } else if (ci.map === 'rxnArrows' && ci.ref) {
+      this.dragCtx = this.reactionArrowMoveTool.mousedown(
+        event,
+        ci as ReactionArrowClosestItem,
+      );
+    } else {
+      this.dragCtx = {
+        item: ci,
+        xy0: currentPosition,
+      };
+    }
+
+    if (!ci || ci.map === 'atoms') {
+      atomLongtapEvent(this, rnd);
     }
 
     let sel = closestToSel(ci);
@@ -172,13 +200,35 @@ class SelectTool implements Tool {
     return true;
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     this.previousMouseMoveEvent = event;
     const editor = this.editor;
     const rnd = editor.render;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
+
+    if (dragCtx?.closestItem) {
+      if (dragCtx.action) {
+        dragCtx.action.perform(rnd.ctab);
+      }
+
+      if (dragCtx.closestItem.map === 'rxnArrows') {
+        this.dragCtx.action = this.reactionArrowMoveTool.mousemove(
+          event,
+          this.dragCtx,
+        );
+      } else if (dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
+        this.dragCtx.action = this.multitailArrowMoveTool.mousemove(
+          event,
+          this.dragCtx,
+        );
+      }
+      if (dragCtx.action) {
+        editor.update(dragCtx.action, true);
+        return true;
+      }
+    }
 
     if (dragCtx?.item) {
       const atoms = restruct.molecule.atoms;
@@ -219,18 +269,6 @@ class SelectTool implements Tool {
         if (dragCtx.action) dragCtx.action.perform(rnd.ctab);
         const props = getResizingProps(editor, dragCtx, event);
         dragCtx.action = fromSimpleObjectResizing(...props, event.shiftKey);
-        editor.update(dragCtx.action, true);
-        return true;
-      }
-      /* end + fullstop */
-
-      /* handle rxnArrows */
-      if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
-        if (dragCtx?.action) dragCtx.action.perform(rnd.ctab);
-        const props = getResizingProps(editor, dragCtx, event);
-        this.updateArrowResizingState(dragCtx.item.id, true);
-        const isSnappingEnabled = !event.ctrlKey;
-        dragCtx.action = fromArrowResizing(...props, isSnappingEnabled);
         editor.update(dragCtx.action, true);
         return true;
       }
@@ -278,26 +316,16 @@ class SelectTool implements Tool {
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
-    if (item?.map === IMAGE_KEY && item.ref) {
-      const referencePositionInfo = item.ref as ImageReferencePositionInfo;
-      handleMovingPosibilityCursor(
-        item,
-        this.editor.render.paper.canvas,
-        // Casting is safe because we've checked for item map
-        imageReferencePositionToCursor[referencePositionInfo.name],
-      );
-    } else {
-      handleMovingPosibilityCursor(
-        item,
-        this.editor.render.paper.canvas,
-        this.editor.render.options.movingStyle.cursor as string,
-      );
-    }
+    handleMovingPosibilityCursor(
+      item,
+      this.editor.render.paper.canvas,
+      getItemCursor(this.editor.render, item),
+    );
 
     return true;
   }
 
-  mouseup(event) {
+  mouseup(event: PointerEvent) {
     if (!this.isMouseDown) {
       return;
     }
@@ -336,26 +364,39 @@ class SelectTool implements Tool {
       delete this.dragCtx;
     }
     /* end */
-
-    if (this.dragCtx?.item) {
-      if (this.dragCtx.item.map === 'rxnArrows') {
-        this.updateArrowResizingState(this.dragCtx.item.id, false);
+    if (this.dragCtx?.closestItem) {
+      if (this.dragCtx.closestItem.map === 'rxnArrows') {
+        this.dragCtx.action = this.reactionArrowMoveTool.mouseup(
+          event,
+          this.dragCtx,
+        );
+      } else if (this.dragCtx.closestItem.map === MULTITAIL_ARROW_KEY) {
+        this.dragCtx.action = this.multitailArrowMoveTool.mouseup(
+          event,
+          this.dragCtx,
+        );
+      }
+      if (this.dragCtx.action) {
+        this.editor.update(this.dragCtx.action);
         this.editor.update(true);
       }
+    }
+
+    if (this.dragCtx?.item) {
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
         dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       }
-      delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
       this.selectElementsOnCanvas(newSelected, editor, event);
     } else if (this.#lassoHelper.fragment) {
       if (
         !event.shiftKey &&
-        this.editor.render.clientArea.contains(event.target)
+        this.editor.render.clientArea.contains(event.target as Node)
       )
         editor.selection(null);
     }
+    this.dragCtx = null;
     editor.event.message.dispatch({
       info: false,
     });
@@ -540,14 +581,7 @@ class SelectTool implements Tool {
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond;
   }
 
-  private updateArrowResizingState(itemId: number, isResizing: boolean) {
-    const reArrow = this.editor.render.ctab.rxnArrows.get(itemId);
-    if (reArrow) {
-      reArrow.isResizing = isResizing;
-    }
-  }
-
-  private isCloseToEdgeOfCanvas(event: MouseEvent) {
+  private isCloseToEdgeOfCanvas(event: PointerEvent) {
     const EDGE_OFFSET = 50;
     const mousePositionInCanvas = CoordinateTransformation.pageToCanvas(
       event,
@@ -712,6 +746,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'rgroups',
     'rgroupAttachmentPoints',
     'rxnArrows',
+    MULTITAIL_ARROW_KEY,
     'rxnPluses',
     'enhancedFlags',
     'simpleObjects',

@@ -29,11 +29,12 @@ import {
   BondAttr,
   AtomAttr,
   ImageUpsert,
+  MultitailArrowUpsert,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
-import { SGroup, Struct, Vec2 } from 'domain/entities';
+import { MultitailArrow, SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
@@ -197,6 +198,14 @@ export function fromPaste(
     action.addOp(new ImageUpsert(clonedImage).perform(restruct));
   });
 
+  pstruct.multitailArrows.forEach((multitailArrow: MultitailArrow) => {
+    const clonedMultitailArrow = multitailArrow.clone();
+    clonedMultitailArrow.move(offset);
+    action.addOp(
+      new MultitailArrowUpsert(clonedMultitailArrow).perform(restruct),
+    );
+  });
+
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((__frag, frid) => {
       action.addOp(
@@ -248,6 +257,9 @@ function getStructCenter(struct: Struct): Vec2 {
   if (struct.texts.size > 0) return struct.texts.get(0)!.position;
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.images.size > 0) return struct.images.get(0)!.center();
+  if (struct.multitailArrows.size > 0)
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    return struct.multitailArrows.get(0)!.center();
 
   return new Vec2(0, 0);
 }

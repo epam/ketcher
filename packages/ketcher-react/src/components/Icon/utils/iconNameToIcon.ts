@@ -91,6 +91,7 @@ import ReactionArrowUnbalancedEquilibriumFilledHalfBow from '../../../assets/ico
 import ReactionArrowUnbalancedEquilibriumFilledHalfTriangle from '../../../assets/icons/files/reaction-arrow-unbalanced-equilibrium-filled-half-triangle.svg';
 import ReactionArrowUnbalancedEquilibriumLargeFilledHalfBow from '../../../assets/icons/files/reaction-arrow-unbalanced-equilibrium-large-filled-half-bow.svg';
 import ReactionArrowUnbalancedEquilibriumOpenHalfAngle from '../../../assets/icons/files/reaction-arrow-unbalanced-equilibrium-open-half-angle.svg';
+import ReactionArrowMultitail from '../../../assets/icons/files/reaction-arrow-multitail.svg';
 import ReactionAutomapIcon from '../../../assets/icons/files/reaction-automap.svg';
 import ReactionMapIcon from '../../../assets/icons/files/reaction-map.svg';
 import ReactionPlusIcon from '../../../assets/icons/files/reaction-plus.svg';
@@ -225,7 +226,7 @@ import SnakeLayoutIcon from '../../../assets/icons/files/snake-layout-mode.svg';
 import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode.svg';
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
-import { IMAGE_KEY } from 'ketcher-core';
+import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 
 export const iconNameToIcon = {
   α,
@@ -363,6 +364,7 @@ export const iconNameToIcon = {
     ReactionArrowUnbalancedEquilibriumLargeFilledHalfBow,
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle':
     ReactionArrowUnbalancedEquilibriumFilledHalfTriangle,
+  [MULTITAIL_ARROW_TOOL_NAME]: ReactionArrowMultitail,
   'reaction-automap': ReactionAutomapIcon,
   'reaction-map': ReactionMapIcon,
   'reaction-plus': ReactionPlusIcon,

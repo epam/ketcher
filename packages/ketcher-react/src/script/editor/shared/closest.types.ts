@@ -6,6 +6,7 @@ export interface ClosestItem<T = Vec2> {
   ref?: T | null;
 }
 
-export interface ClosestItemWithMap<T = unknown> extends ClosestItem<T> {
-  map: string;
+export interface ClosestItemWithMap<T = unknown, Map extends string = string>
+  extends ClosestItem<T> {
+  map: Map;
 }

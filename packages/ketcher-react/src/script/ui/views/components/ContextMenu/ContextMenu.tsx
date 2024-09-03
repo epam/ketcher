@@ -27,6 +27,7 @@ import SelectionMenuItems from './menuItems/SelectionMenuItems';
 import RGroupAttachmentPointMenuItems from './menuItems/RGroupAttachmentPointMenuItems';
 import { createPortal } from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -213,6 +214,15 @@ const ContextMenu: React.FC = () => {
             }
           >
             <RGroupAttachmentPointMenuItems />
+          </Menu>
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW}
+            onVisibilityChange={(visible) =>
+              trackVisibility(CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW, visible)
+            }
+          >
+            <MultitailArrowMenuItems />
           </Menu>
         </>,
         ketcherEditorRootElement,

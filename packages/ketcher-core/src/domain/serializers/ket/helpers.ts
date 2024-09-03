@@ -26,7 +26,7 @@ const customizer = (value: any) => {
   }
 };
 
-export const getNodeWithInvertedYCoord = (node: object) =>
+export const getNodeWithInvertedYCoord = <T>(node: T): T =>
   cloneDeepWith(node, customizer);
 
 export const setMonomerTemplatePrefix = (templateName: string) =>

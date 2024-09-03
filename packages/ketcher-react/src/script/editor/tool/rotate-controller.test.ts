@@ -6,6 +6,10 @@ import SelectTool from './select';
 import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {
+  beforeAll(() => {
+    global.window.PointerEvent = MouseEvent as any;
+  });
+
   /**
    * Steps to check manually:
    * Select one atom / functional group using Select Tool
@@ -210,7 +214,7 @@ describe('Rotate controller', () => {
 
     editor.rotateController.revert();
     const selectTool = new SelectTool(editor, 'rectangle');
-    selectTool.mouseup(new MouseEvent('mouseup'));
+    selectTool.mouseup(new PointerEvent('mouseup'));
 
     expect(updateRender).toBeCalled();
     expect(selectTool.isMouseDown).toBe(false);

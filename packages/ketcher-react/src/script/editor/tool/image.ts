@@ -9,12 +9,12 @@ import {
   fromImageMove,
   fromImageResize,
   ImageReferencePositionInfo,
-  imageReferencePositionToCursor,
 } from 'ketcher-core';
 import { Tool } from './Tool';
 import type Editor from '../Editor';
 import { ClosestItemWithMap } from '../shared/closest.types';
 import { handleMovingPosibilityCursor } from '../utils';
+import { getItemCursor } from '../utils/getItemCursor';
 
 const TAG = 'tool/image.ts';
 const supportedMimes = ['png', 'svg+xml'];
@@ -98,21 +98,11 @@ export class ImageTool implements Tool {
         IMAGE_KEY,
       ]) as ClosestItemWithMap<ImageReferencePositionInfo>;
       const render = this.editor.render;
-
-      if (item?.ref) {
-        handleMovingPosibilityCursor(
-          item,
-          render.paper.canvas,
-          imageReferencePositionToCursor[item.ref.name],
-        );
-      } else {
-        handleMovingPosibilityCursor(
-          item,
-          render.paper.canvas,
-          render.options.movingStyle.cursor as string,
-        );
-      }
-
+      handleMovingPosibilityCursor(
+        item,
+        render.paper.canvas,
+        getItemCursor(render, item),
+      );
       this.editor.hover(item, null, event);
     }
   }

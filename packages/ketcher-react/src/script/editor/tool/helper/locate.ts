@@ -21,6 +21,7 @@ import {
   Struct,
   Vec2,
   ReStruct,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 
 function getElementsInRectangle(restruct: ReStruct, p0, p1) {
@@ -39,6 +40,13 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
   const topRightPosition = new Vec2(x1, y0);
   const bottomRightPosition = new Vec2(x1, y1);
   const bottomLeftPosition = new Vec2(x0, y1);
+
+  const polygon = [
+    topLeftPosition,
+    topRightPosition,
+    bottomRightPosition,
+    bottomLeftPosition,
+  ];
 
   restruct.bonds.forEach((bond, bid) => {
     if (struct.isBondFromMacromolecule(bid)) {
@@ -177,22 +185,22 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
 
   const reImages = Array.from(restruct.images.entries()).reduce(
     (acc: Array<number>, [id, item]): Array<number> => {
-      if (
-        Object.values(item.image.getReferencePositions()).some((point) =>
-          point.isInsidePolygon([
-            topLeftPosition,
-            topRightPosition,
-            bottomRightPosition,
-            bottomLeftPosition,
-          ]),
-        )
-      ) {
-        return acc.concat(id);
-      }
-      return acc;
+      const isPointInside = Object.values(
+        item.image.getReferencePositions(),
+      ).some((point) => point.isInsidePolygon(polygon));
+      return isPointInside ? acc.concat(id) : acc;
     },
     [],
   );
+
+  const reMultitailArrows = Array.from(
+    restruct.multitailArrows.entries(),
+  ).reduce((acc: Array<number>, [id, item]): Array<number> => {
+    const isPointInside = item.multitailArrow
+      .getReferencePositionsArray()
+      .some((point) => point.isInsidePolygon(polygon));
+    return isPointInside ? acc.concat(id) : acc;
+  }, []);
 
   return {
     atoms: atomList,
@@ -205,6 +213,7 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
     [IMAGE_KEY]: reImages,
+    [MULTITAIL_ARROW_KEY]: reMultitailArrows,
   };
 }
 
@@ -337,17 +346,22 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
 
   const reImages = Array.from(restruct.images.entries()).reduce(
     (acc: Array<number>, [id, item]) => {
-      if (
-        Object.values(item.image.getReferencePositions()).some((point) =>
-          isPointInPolygon(r, point),
-        )
-      ) {
-        return acc.concat(id);
-      }
-      return acc;
+      const isPointInside = Object.values(
+        item.image.getReferencePositions(),
+      ).some((point) => isPointInPolygon(r, point));
+      return isPointInside ? acc.concat(id) : acc;
     },
     [],
   );
+
+  const reMultitailArrows = Array.from(
+    restruct.multitailArrows.entries(),
+  ).reduce((acc: Array<number>, [id, item]) => {
+    const isPointInside = item.multitailArrow
+      .getReferencePositionsArray()
+      .some((point) => isPointInPolygon(r, point));
+    return isPointInside ? acc.concat(id) : acc;
+  }, []);
 
   return {
     atoms: atomList,
@@ -360,6 +374,7 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     texts: textsList,
     rgroupAttachmentPoints: rgroupAttachmentPointList,
     [IMAGE_KEY]: reImages,
+    [MULTITAIL_ARROW_KEY]: reMultitailArrows,
   };
 }
 

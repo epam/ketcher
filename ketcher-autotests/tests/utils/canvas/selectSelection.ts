@@ -3,7 +3,7 @@ import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
-import { waitForRender } from '..';
+import { moveMouseAway, waitForRender } from '..';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -94,6 +94,7 @@ export async function copyAndPaste(page: Page) {
   await page.getByTestId('select-rectangle').first().click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
+  await moveMouseAway(page);
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
   });

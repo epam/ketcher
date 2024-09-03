@@ -35,6 +35,7 @@ export * from './vec2';
 export * from './box2Abs';
 export * from './pool';
 export * from './image';
+export * from './multitailArrow';
 export * from './highlight';
 export * from './sGroupAttachmentPoint';
 export * from './monomerMicromolecule';

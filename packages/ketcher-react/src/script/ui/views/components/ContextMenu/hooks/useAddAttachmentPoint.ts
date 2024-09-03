@@ -9,14 +9,16 @@ import {
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import { ItemEventParams } from '../contextMenu.types';
+import { AtomContextMenuProps, ItemEventParams } from '../contextMenu.types';
 import { isNumber } from 'lodash';
+
+type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useAddAttachmentPoint = () => {
   const { getKetcherInstance } = useAppContext();
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
+    async ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const restruct = editor.render.ctab;
       const struct = editor.struct();

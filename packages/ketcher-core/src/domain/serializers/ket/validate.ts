@@ -16,9 +16,11 @@
 
 import Ajv from 'ajv';
 import schema from './schema.json';
+import { validateMultitailArrows } from './multitailArrowsValidator';
 
 export function validate(ket: any): boolean {
   const ajv = new Ajv();
   const validate = ajv.compile(schema);
-  return validate(ket);
+  const result = validate(ket);
+  return result ? validateMultitailArrows(ket) : result;
 }

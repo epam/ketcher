@@ -20,6 +20,7 @@ import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
+import { PresetPosition } from 'ketcher-react';
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {

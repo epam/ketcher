@@ -93,6 +93,10 @@ export function prepareStructForKet(struct: Struct) {
     ketNodes.push(image.toKetNode());
   });
 
+  struct.multitailArrows.forEach((multitailArrow) => {
+    ketNodes.push(multitailArrow.toKetNode());
+  });
+
   ketNodes.forEach((ketNode) => {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());

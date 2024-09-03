@@ -3,12 +3,14 @@ import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import tools from 'src/script/ui/action/tools';
-import { ItemEventParams } from '../contextMenu.types';
+import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
+
+type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondTypeChange = () => {
   const { getKetcherInstance } = useAppContext();
   const handler = useCallback(
-    ({ id, props }: ItemEventParams) => {
+    ({ id, props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds || [];
@@ -24,7 +26,7 @@ const useBondTypeChange = () => {
     [getKetcherInstance],
   );
 
-  const disabled = useCallback(({ props }: ItemEventParams) => {
+  const disabled = useCallback(({ props }: Params) => {
     const selectedBondIds = props?.bondIds;
     const editor = getKetcherInstance().editor;
 

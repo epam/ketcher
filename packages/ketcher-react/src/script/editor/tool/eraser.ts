@@ -28,6 +28,8 @@ import {
   FunctionalGroup,
   SGroup,
   IMAGE_KEY,
+  MULTITAIL_ARROW_KEY,
+  fromMultitailArrowDeletion,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -55,6 +57,7 @@ class EraserTool implements Tool {
       'texts',
       'rgroupAttachmentPoints',
       IMAGE_KEY,
+      MULTITAIL_ARROW_KEY,
     ];
     this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
@@ -373,6 +376,8 @@ class EraserTool implements Tool {
       this.editor.update(fromRGroupAttachmentPointDeletion(restruct, ci.id));
     } else if (ci.map === IMAGE_KEY) {
       this.editor.update(fromImageDeletion(restruct, ci.id));
+    } else if (ci.map === MULTITAIL_ARROW_KEY) {
+      this.editor.update(fromMultitailArrowDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

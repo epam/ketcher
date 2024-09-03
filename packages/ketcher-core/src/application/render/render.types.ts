@@ -71,6 +71,7 @@ export type RenderOptions = {
 
   /* styles */
   lineattr: RenderOptionStyles;
+  multitailArrow: RenderOptionStyles;
   arrowSnappingStyle: RenderOptionStyles;
   bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;

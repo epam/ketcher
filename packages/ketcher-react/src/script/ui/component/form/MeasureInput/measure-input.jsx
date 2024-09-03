@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
 
 import Input from '../Input/Input';
@@ -37,11 +38,28 @@ const MeasureInput = ({
   className,
   ...rest
 }) => {
+  const [internalValue, setInternalValue] = useState(value);
+
+  useEffect(() => {
+    const parsedInternalValue = parseFloat(internalValue);
+
+    if (!isNaN(parsedInternalValue)) {
+      onChange(parsedInternalValue);
+    }
+  }, [internalValue]);
+
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+
   const handleChange = (value) => {
-    const isNumber = !isNaN(Number(value));
+    const endorcedValue = value || 0;
+    const isNumber = !isNaN(parseFloat(endorcedValue));
+
+    console.log(parseFloat(endorcedValue));
 
     if (isNumber) {
-      onChange(value);
+      setInternalValue(endorcedValue);
     }
   };
 
@@ -55,7 +73,7 @@ const MeasureInput = ({
     <div className={clsx(styles.measureInput, className)} {...rest}>
       <span>{rest.title || desc.title}</span>
       <div style={{ display: 'flex' }}>
-        <Input schema={schema} step={1} value={value} onChange={handleChange} />
+        <Input schema={schema} value={internalValue} onChange={handleChange} />
         <Select
           onChange={handleMeasChange}
           options={selectOptions}

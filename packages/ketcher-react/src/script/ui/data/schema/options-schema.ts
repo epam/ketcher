@@ -191,7 +191,7 @@ const render: {
   },
   fontsz: {
     title: 'Font size',
-    type: 'integer',
+    type: 'number',
     default: 13,
     minimum: 1,
     maximum: 96,

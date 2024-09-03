@@ -77,13 +77,21 @@ export function GenericInput({
 
 GenericInput.val = function (ev, schema) {
   const input = ev.target;
+  const isInteger = schema && schema.type === 'integer';
+  const isFloat = schema && schema.type === 'number';
+
   const isNumber =
-    input.type === 'number' ||
-    input.type === 'range' ||
-    (schema && (schema.type === 'number' || schema.type === 'integer'));
+    input.type === 'number' || input.type === 'range' || isInteger || isFloat;
+
   const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-  return isNumber && !isNaN(value - 0) ? value - 0 : value; // eslint-disable-line
+  if (isInteger) {
+    return Number(value) || 0;
+  }
+
+  // When the value can be a float the validation is passed to the parent component
+  // because it's more complicated
+  return value;
 };
 
 function TextArea({

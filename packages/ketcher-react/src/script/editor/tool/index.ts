@@ -27,7 +27,7 @@ import HandTool from './hand';
 import PasteTool from './paste';
 import RGroupAtomTool from './rgroupatom';
 import RGroupFragmentTool from './rgroupfragment';
-import ReactionArrowTool from './reactionarrow';
+import { CommonArrowTool } from './arrow/commonArrow';
 import ReactionMapTool from './reactionmap';
 import ReactionPlusTool from './reactionplus';
 import ReactionUnmapTool from './reactionunmap';
@@ -54,7 +54,7 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   rgroupfragment: RGroupFragmentTool,
   apoint: APointTool,
   attach: AttachTool,
-  reactionarrow: ReactionArrowTool,
+  reactionarrow: CommonArrowTool,
   reactionplus: ReactionPlusTool,
   reactionmap: ReactionMapTool,
   reactionunmap: ReactionUnmapTool,

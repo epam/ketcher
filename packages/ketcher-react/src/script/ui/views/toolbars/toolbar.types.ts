@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'domain/constants';
 
 type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
@@ -120,6 +120,7 @@ type LeftToolbarItemVariant =
   | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
   | 'reaction-arrow-elliptical-arc-arrow-open-angle'
   | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
+  | typeof MULTITAIL_ARROW_TOOL_NAME
   // mapping
   | 'reaction-mapping-tools'
   | 'reaction-automap'

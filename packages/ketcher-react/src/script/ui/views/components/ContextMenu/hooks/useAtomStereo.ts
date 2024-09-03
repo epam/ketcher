@@ -3,15 +3,17 @@ import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import EnhancedStereoTool from 'src/script/editor/tool/enhanced-stereo';
-import { ItemEventParams } from '../contextMenu.types';
+import { AtomContextMenuProps, ItemEventParams } from '../contextMenu.types';
 import { noOperation } from '../utils';
+
+type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useAtomStereo = () => {
   const { getKetcherInstance } = useAppContext();
   const stereoAtomIdsRef = useRef<number[] | undefined>();
 
   const handler = useCallback(
-    async ({ props }: ItemEventParams) => {
+    async ({ props }: Params) => {
       if (!props || !stereoAtomIdsRef.current) {
         return;
       }
@@ -34,7 +36,7 @@ const useAtomStereo = () => {
   );
 
   const disabled = useCallback(
-    ({ props }: ItemEventParams) => {
+    ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),

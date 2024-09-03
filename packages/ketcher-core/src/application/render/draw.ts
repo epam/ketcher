@@ -22,6 +22,7 @@ import svgPath from 'svgpath';
 import util from './util';
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { tfx } from 'utilities';
+import { PathBuilder } from './pathBuilder';
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
@@ -417,19 +418,11 @@ function arrowOpenAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const width = 5;
-  const length = 7;
-
-  const endX = start.x + arrowLength;
-
-  const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - length)},${tfx(start.y - width)}` +
-    `M${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - length)}, ${tfx(start.y + width)}`;
-
-  const transformedPath = svgPath(path)
+  const pathBuilder = new PathBuilder().addOpenArrowPathParts(
+    start,
+    arrowLength,
+  );
+  const transformedPath = svgPath(pathBuilder.build())
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 

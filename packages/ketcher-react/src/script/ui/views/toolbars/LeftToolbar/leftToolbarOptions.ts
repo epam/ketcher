@@ -1,3 +1,4 @@
+import { MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
 import { makeItems } from '../ToolbarGroupItem/utils';
 import { ToolbarItem } from '../toolbar.types';
@@ -39,6 +40,7 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-elliptical-arc-arrow-filled-triangle',
   'reaction-arrow-elliptical-arc-arrow-open-angle',
   'reaction-arrow-elliptical-arc-arrow-open-half-angle',
+  MULTITAIL_ARROW_TOOL_NAME,
 ]);
 
 const mappingOptions: ToolbarItem[] = makeItems([

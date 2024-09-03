@@ -81,6 +81,8 @@ const formatsForSave = [
   },
 ];
 
+const OFFSET_FROM_ARROW = 30;
+
 test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
@@ -370,8 +372,8 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the reaction arrow and move it', async ({ page }) => {
-      await page.mouse.move(point.x + 60, point.y);
-      await dragMouseTo(point.x + 60, point.y - 40, page);
+      await page.mouse.move(point.x + OFFSET_FROM_ARROW, point.y);
+      await dragMouseTo(point.x + OFFSET_FROM_ARROW, point.y - 40, page);
     });
 
     test('Select the reaction arrow with any reaction component(s) and move them', async ({
@@ -393,7 +395,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await waitForRender(page, async () => {
-        await page.mouse.click(point.x + 60, point.y);
+        await page.mouse.click(point.x + OFFSET_FROM_ARROW, point.y);
       });
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
@@ -416,7 +418,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await waitForRender(page, async () => {
-        await page.mouse.click(point.x + 60, point.y);
+        await page.mouse.click(point.x + OFFSET_FROM_ARROW, point.y);
       });
 
       await copyToClipboardByKeyboard(page);
@@ -430,7 +432,7 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      await clickOnTheCanvas(page, -60, 0);
+      await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);

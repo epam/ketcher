@@ -4,7 +4,12 @@ import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
-import { ItemEventParams } from '../contextMenu.types';
+import {
+  FunctionalGroupsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
+
+type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract
@@ -14,7 +19,7 @@ const useFunctionalGroupEoc = () => {
   const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: ItemEventParams, toExpand: boolean) => {
+    ({ props }: Params, toExpand: boolean) => {
       const editor = getKetcherInstance().editor as Editor;
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
@@ -35,17 +40,14 @@ const useFunctionalGroupEoc = () => {
     [dispatch, getKetcherInstance],
   );
 
-  const hidden = useCallback(
-    ({ props }: ItemEventParams, toExpand: boolean) => {
-      return Boolean(
-        props?.functionalGroups?.every((functionalGroup) =>
-          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
-        ),
-      );
-    },
-    [],
-  );
-  const disabled = useCallback(({ props }: ItemEventParams) => {
+  const hidden = useCallback(({ props }: Params, toExpand: boolean) => {
+    return Boolean(
+      props?.functionalGroups?.every((functionalGroup) =>
+        toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+      ),
+    );
+  }, []);
+  const disabled = useCallback(({ props }: Params) => {
     const editor = getKetcherInstance().editor as Editor;
     const molecule = editor.render.ctab.molecule;
     return Boolean(

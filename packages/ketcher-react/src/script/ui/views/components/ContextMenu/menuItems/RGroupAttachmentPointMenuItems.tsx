@@ -1,10 +1,15 @@
 import { FC } from 'react';
 import { Item } from 'react-contexify';
-import { MenuItemsProps } from '../contextMenu.types';
+import {
+  MenuItemsProps,
+  RGroupAttachmentPointContextMenuProps,
+} from '../contextMenu.types';
 import useRGroupAttachmentPointRemove from '../hooks/useRGroupAttachmentPointRemove';
 import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
 
-const RGroupAttachmentPointMenuItems: FC<MenuItemsProps> = (props) => {
+const RGroupAttachmentPointMenuItems: FC<
+  MenuItemsProps<RGroupAttachmentPointContextMenuProps>
+> = (props) => {
   const handleRemove = useRGroupAttachmentPointRemove();
   const [
     handleEditRGroupAttachmentPoint,

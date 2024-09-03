@@ -3,7 +3,7 @@ import { Item, Submenu } from 'react-contexify';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
-import { MenuItemsProps } from '../contextMenu.types';
+import { AtomContextMenuProps, MenuItemsProps } from '../contextMenu.types';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -95,7 +95,7 @@ const atomPropertiesForSubMenu: {
   })),
 ];
 
-const AtomMenuItems: FC<MenuItemsProps> = (props) => {
+const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleAddAttachmentPoint] = useAddAttachmentPoint();
   const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();

@@ -42,7 +42,8 @@ import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { ReImage } from 'application/render/restruct/reImage';
-import { IMAGE_KEY } from 'domain/constants';
+import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
+import { ReMultitailArrow } from './remultitailArrow';
 
 class ReStruct {
   public static readonly maps = {
@@ -60,6 +61,7 @@ class ReStruct {
     simpleObjects: ReSimpleObject,
     texts: ReText,
     [IMAGE_KEY]: ReImage,
+    [MULTITAIL_ARROW_KEY]: ReMultitailArrow,
   } as const;
 
   public render: Render;
@@ -77,8 +79,10 @@ class ReStruct {
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   public simpleObjects: Map<number, ReSimpleObject> = new Map();
-  public images: Map<number, ReImage> = new Map();
   public texts: Map<number, ReText> = new Map();
+  public images = new Map<number, ReImage>();
+  public multitailArrows = new Map<number, ReMultitailArrow>();
+
   private initialized = false;
   private layers: Array<any> = [];
   public connectedComponents: Pool = new Pool();
@@ -93,7 +97,8 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
-  private imagesChanged: Map<number, ReImage> = new Map();
+  private imagesChanged = new Map<number, ReImage>();
+  private multitailArrowsChanged = new Map<number, ReMultitailArrow>();
   private snappingBonds: number[] = [];
 
   constructor(
@@ -163,6 +168,9 @@ class ReStruct {
     });
     molecule.images.forEach((item, id) => {
       this.images.set(id, new ReImage(item));
+    });
+    molecule.multitailArrows.forEach((item, id) => {
+      this.multitailArrows.set(id, new ReMultitailArrow(item));
     });
   }
 
@@ -524,6 +532,7 @@ class ReStruct {
     this.showSimpleObjects();
     this.showTexts();
     this.showImages();
+    this.showMultitailArrows();
     this.clearMarks();
 
     return true;
@@ -728,6 +737,15 @@ class ReStruct {
       const image = this.images.get(id);
       if (image) {
         image.show(this, options);
+      }
+    });
+  }
+
+  showMultitailArrows() {
+    this.multitailArrowsChanged.forEach((_, id) => {
+      const multitailArrow = this.multitailArrows.get(id);
+      if (multitailArrow) {
+        multitailArrow.show(this, this.render.options);
       }
     });
   }

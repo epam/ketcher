@@ -138,6 +138,11 @@ const toolActions = {
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
     hidden: (options) => isHidden(options, 'reaction-arrow-failed'),
   },
+  'reaction-arrow-retrosynthetic': {
+    title: 'Retrosynthetic Arrow Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.Retrosynthetic },
+    hidden: (options) => isHidden(options, 'reaction-arrow-retrosynthetic'),
+  },
   'reaction-arrow-both-ends-filled-triangle': {
     title: 'Arrow Both Ends Filled Triangle Tool',
     action: {

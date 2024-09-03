@@ -140,6 +140,16 @@ function arrow(
         shouldApplySnappingStyle,
       );
     }
+    case RxnArrowMode.Retrosynthetic: {
+      return arrowRetrosynthetic(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle,
+      );
+    }
     case RxnArrowMode.BothEndsFilledTriangle: {
       return arrowBothEndsFilledTriangle(
         paper,
@@ -581,6 +591,61 @@ function arrowFailed(
     ...options.lineattr,
     fill: '#000',
     ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
+  });
+}
+
+function arrowRetrosynthetic(
+  paper: RaphaelPaper,
+  { pos: [start] }: ArrowItem,
+  arrowLength: number,
+  arrowAngle: number,
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean,
+) {
+  const width = 5;
+  const length = 7;
+  const arrowheadLength = 0.1;
+  const lineOffset = 4;
+
+  const endX = start.x + arrowLength;
+
+  const path: string[] = [];
+
+  // First arrow and arrowhead base
+  path.push(
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`,
+  );
+
+  // First Arrowhead line
+  path.push(
+    `M${tfx(endX - length)},${tfx(start.y - width - lineOffset)}` +
+      `L${tfx(endX + length)},${tfx(start.y - arrowheadLength)}`,
+  );
+
+  // Second arrow and arrowhead base
+  path.push(
+    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y + width + lineOffset)}`,
+  );
+
+  // Second Arrowhead line
+  path.push(
+    `M${tfx(endX - length)},${tfx(start.y + width + lineOffset)}` +
+      `L${tfx(endX + length)},${tfx(start.y + arrowheadLength)}`,
+  );
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, start.x, start.y)
+    .toString();
+
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke,
+    }),
   });
 }
 

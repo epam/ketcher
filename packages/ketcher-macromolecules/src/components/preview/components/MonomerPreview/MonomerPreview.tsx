@@ -22,15 +22,16 @@ import {
   StyledStructRender,
 } from './MonomerPreview.styles';
 import styled from '@emotion/styled';
-import { MonomerPreviewState, selectShowPreview } from 'state/common';
+import { selectShowPreview } from 'state/common';
 import { useAppSelector } from 'hooks';
 import { useAttachmentPoints } from '../../hooks/useAttachmentPoints';
 import useIDTAliasesTextForMonomer from '../../hooks/useIDTAliasesTextForMonomer';
 import UnresolvedMonomerPreview from '../UnresolvedMonomerPreview/UnresolvedMonomerPreview';
 import AttachmentPoints from '../AttachmentPoints/AttachmentPoints';
 import IDTAliases from '../IDTAliases/IDTAliases';
-import { preview } from '../../../../constants';
 import { UsageInMacromolecule } from 'ketcher-core';
+import { MonomerPreviewState } from 'state';
+import { preview } from 'ketcher-react';
 
 interface Props {
   className?: string;

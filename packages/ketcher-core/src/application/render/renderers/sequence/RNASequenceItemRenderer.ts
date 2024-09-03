@@ -32,10 +32,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
 
   get symbolToDisplay(): string {
     return this.node.rnaBase instanceof AmbiguousMonomer
-      ? this.node.monomer.label
-      : this.node.monomer.attachmentPointsToBonds.R3?.getAnotherMonomer(
-          this.node.monomer,
-        )?.monomerItem?.props.MonomerNaturalAnalogCode || '@';
+      ? this.node.rnaBase.label
+      : this.node.rnaBase.monomerItem?.props.MonomerNaturalAnalogCode || '@';
   }
 
   protected drawCommonModification(node: Nucleoside | Nucleotide) {

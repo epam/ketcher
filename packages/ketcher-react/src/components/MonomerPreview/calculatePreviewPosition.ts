@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { PolymerBond } from 'ketcher-core';
-import { preview } from '../constants';
-import { PreviewStyle } from 'state/common';
+import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
+import { preview } from './constants';
+import { PreviewStyle } from './AmbiguousMonomerPreview/types';
 import assert from 'assert';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
@@ -24,16 +24,37 @@ export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
 export const calculateNucleoElementPreviewTop =
   createCalculatePreviewTopFunction(preview.heightForNucleotide);
 
-function calculateTop(target: DOMRect, height: number): number {
-  return target.top > height + preview.gap + preview.topPadding
-    ? target.top - preview.gap - height
-    : target.bottom + preview.gap;
+type CalculatePreviewTopPayload = { left: number; top: number; bottom: number };
+
+function calculateTop(
+  target: CalculatePreviewTopPayload,
+  height: number,
+): number {
+  const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
+  const canvasWrapperTopOffset = canvasWrapperBoundingClientRect?.top || 0;
+  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
+  const canvasWrapperHeight = canvasWrapperBoundingClientRect?.height || 0;
+  const topPreviewPosition =
+    target.top - preview.gap - height - preview.topPadding;
+  const bottomPreviewPosition = target.bottom + preview.gap;
+
+  return target.top - canvasWrapperTopOffset >
+    height + preview.gap + preview.topPadding
+    ? topPreviewPosition
+    : target.top + height > canvasWrapperBottom - canvasWrapperTopOffset &&
+      target.top > canvasWrapperHeight / 2
+    ? topPreviewPosition
+    : bottomPreviewPosition;
 }
 
 function createCalculatePreviewTopFunction(
   height: number,
-): (target?: DOMRect) => string {
-  return function calculatePreviewTop(target?: DOMRect): string {
+): (target?: CalculatePreviewTopPayload) => string {
+  return function calculatePreviewTop(
+    target?: CalculatePreviewTopPayload,
+  ): string {
     if (!target) {
       return '';
     }
@@ -41,6 +62,38 @@ function createCalculatePreviewTopFunction(
     const top = calculateTop(target, height);
     return `${top}px`;
   };
+}
+
+const calculateAmbiguousPreviewHeight = (monomersCount: number) => {
+  const headingHeight = 16;
+  const monomersHeight = 35 * monomersCount;
+  return headingHeight + monomersHeight;
+};
+
+export const calculateAmbiguousMonomerPreviewTop = (
+  monomer: AmbiguousMonomerType,
+) => {
+  const shouldHaveOneLine = monomer.label === 'X' || monomer.label === 'N';
+  const monomersCount = shouldHaveOneLine ? 1 : monomer.monomers.length;
+  const monomersCountToUse = Math.min(5, monomersCount);
+  const height = calculateAmbiguousPreviewHeight(monomersCountToUse);
+
+  return createCalculatePreviewTopFunction(height);
+};
+
+export function calculateAmbiguousMonomerPreviewLeft(initialLeft: number) {
+  const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
+  const PREVIEW_WIDTH = 70;
+  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
+  const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
+
+  return initialLeft + PREVIEW_WIDTH / 2 > canvasWrapperRight
+    ? canvasWrapperRight - PREVIEW_WIDTH
+    : initialLeft - PREVIEW_WIDTH / 2 < canvasWrapperLeft
+    ? canvasWrapperLeft
+    : initialLeft - PREVIEW_WIDTH / 2;
 }
 
 export const calculateBondPreviewPosition = (

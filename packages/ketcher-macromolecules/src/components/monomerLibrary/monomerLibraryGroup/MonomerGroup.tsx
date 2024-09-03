@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useCallback } from 'react';
-import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
+import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
@@ -25,14 +25,13 @@ import {
   MonomerOrAmbiguousType,
 } from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import {
-  MonomerPreviewState,
-  PreviewType,
-  selectEditor,
-  selectTool,
-  showPreview,
-} from 'state/common';
+import { selectEditor, selectTool, showPreview } from 'state/common';
 import { selectGroupItemValidations } from 'state/rna-builder';
+import { PreviewStyle, PreviewType } from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateMonomerPreviewTop,
+} from 'ketcher-react';
 
 const MonomerGroup = ({
   items,
@@ -89,18 +88,30 @@ const MonomerGroup = ({
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    let style: PreviewStyle;
+    let previewType: PreviewType;
+    let top: string;
+
     if (isAmbiguousMonomerLibraryItem(monomer)) {
-      return;
+      top = monomer
+        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
+        : '';
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+      previewType = PreviewType.AmbiguousMonomer;
+      style = { left, top, transform: 'translate(-50%, 0)' };
+    } else {
+      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+      style = { right: '-88px', top };
+      previewType = PreviewType.Monomer;
     }
 
-    const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
-    const style = { right: '-88px', top };
-    const previewData: MonomerPreviewState = {
-      type: PreviewType.Monomer,
+    const previewData = {
+      type: previewType,
       monomer,
       style,
     };
+
     debouncedShowPreview(previewData);
   };
 

@@ -1,6 +1,7 @@
 import { IKetIdtAliases } from 'ketcher-core';
 import { useMemo } from 'react';
-import { PresetPosition } from 'state/common';
+
+import { PresetPosition } from 'state';
 
 type Props = {
   presetName: string | undefined;

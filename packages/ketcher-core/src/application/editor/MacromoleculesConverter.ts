@@ -1,4 +1,5 @@
 import {
+  AmbiguousMonomer,
   Atom,
   Bond,
   FunctionalGroup,
@@ -88,14 +89,15 @@ export class MacromoleculesConverter {
     const attachmentPoint =
       monomer.monomerItem.attachmentPoints?.[attachmentPointIndex];
     const atomIdMap = monomerToAtomIdMap.get(monomer);
+    const attachmentPointAtomId =
+      monomer instanceof AmbiguousMonomer ? 0 : attachmentPoint?.attachmentAtom;
 
     return {
       globalAttachmentAtomId:
-        isNumber(attachmentPoint?.attachmentAtom) &&
-        atomIdMap?.get(attachmentPoint?.attachmentAtom as number),
+        isNumber(attachmentPointAtomId) &&
+        atomIdMap?.get(attachmentPointAtomId as number),
       attachmentAtomId:
-        isNumber(attachmentPoint?.attachmentAtom) &&
-        attachmentPoint?.attachmentAtom,
+        isNumber(attachmentPointAtomId) && attachmentPointAtomId,
       attachmentPointNumber,
     };
   }
@@ -132,8 +134,16 @@ export class MacromoleculesConverter {
           monomerMicromolecule.id,
           new ReSGroup(monomerMicromolecule),
         );
+        const monomerAtoms =
+          monomer instanceof AmbiguousMonomer
+            ? monomer.monomers[0].monomerItem.struct.atoms
+            : monomer.monomerItem.struct.atoms;
+        const monomerBonds =
+          monomer instanceof AmbiguousMonomer
+            ? monomer.monomers[0].monomerItem.struct.bonds
+            : monomer.monomerItem.struct.bonds;
 
-        monomer.monomerItem.struct.atoms.forEach((oldAtom, oldAtomId) => {
+        monomerAtoms.forEach((oldAtom, oldAtomId) => {
           const { atom, atomId } = this.addMonomerAtomToStruct(
             oldAtom,
             monomer,
@@ -162,9 +172,10 @@ export class MacromoleculesConverter {
               );
             },
           ) || [],
+          false,
         );
         struct.sGroupForest.insert(monomerMicromolecule);
-        monomer.monomerItem.struct.bonds.forEach((bond) => {
+        monomerBonds.forEach((bond) => {
           const bondClone = bond.clone();
           bondClone.begin = atomIdsMap.get(bondClone.begin) as number;
           bondClone.end = atomIdsMap.get(bondClone.end) as number;
@@ -224,10 +235,16 @@ export class MacromoleculesConverter {
     sgroupToMonomer: Map<SGroup, BaseMonomer>,
   ) {
     const command = new Command();
-    const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
-      monomerMicromolecule.monomer.monomerItem,
-      monomerMicromolecule.pp as Vec2,
-    );
+    const monomerAdditionCommand =
+      monomerMicromolecule.monomer instanceof AmbiguousMonomer
+        ? drawingEntitiesManager.addAmbiguousMonomer(
+            monomerMicromolecule.monomer.variantMonomerItem,
+            monomerMicromolecule.monomer.position,
+          )
+        : drawingEntitiesManager.addMonomer(
+            monomerMicromolecule.monomer.monomerItem,
+            monomerMicromolecule.pp as Vec2,
+          );
     command.merge(monomerAdditionCommand);
     sgroupToMonomer.set(
       monomerMicromolecule,

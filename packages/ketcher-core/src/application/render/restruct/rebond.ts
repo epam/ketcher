@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  AmbiguousMonomer,
   Atom,
   Bond,
   FunctionalGroup,
@@ -64,7 +65,8 @@ class ReBond extends ReObject {
     atomId: number,
     sgroup?: SGroup,
   ) {
-    return sgroup instanceof MonomerMicromolecule
+    return sgroup instanceof MonomerMicromolecule &&
+      !(sgroup.monomer instanceof AmbiguousMonomer)
       ? (sgroup.getAttachmentAtomId() as number)
       : sgroup?.isContracted()
       ? sgroup?.getContractedPosition(struct).atomId

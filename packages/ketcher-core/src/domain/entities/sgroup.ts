@@ -243,14 +243,17 @@ export class SGroup {
     return this.getConnectionPointsCount(struct) >= 1;
   }
 
-  addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
+  addAttachmentPoint(
+    attachmentPoint: SGroupAttachmentPoint,
+    validateUniqueness = true,
+  ): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
       ({ atomId, leaveAtomId }) =>
         attachmentPoint.atomId === atomId &&
         attachmentPoint.leaveAtomId === leaveAtomId,
     );
 
-    if (isAttachmentPointAlreadyExist) {
+    if (isAttachmentPointAlreadyExist && validateUniqueness) {
       throw new Error(
         'The same attachment point cannot be added to an S-group more than once',
       );
@@ -263,9 +266,10 @@ export class SGroup {
     attachmentPoints:
       | ReadonlyArray<SGroupAttachmentPoint>
       | SGroupAttachmentPoint[],
+    validateUniqueness = true,
   ): void {
     for (const attachmentPoint of attachmentPoints) {
-      this.addAttachmentPoint(attachmentPoint);
+      this.addAttachmentPoint(attachmentPoint, validateUniqueness);
     }
   }
 

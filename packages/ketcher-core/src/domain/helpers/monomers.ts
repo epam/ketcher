@@ -207,9 +207,9 @@ export const isRnaBaseVariantMonomer = (
 ) => monomer.monomerClass === KetMonomerClass.Base;
 
 export function isAmbiguousMonomerLibraryItem(
-  monomer: MonomerOrAmbiguousType,
+  monomer?: MonomerOrAmbiguousType,
 ): monomer is AmbiguousMonomerType {
-  return Boolean(monomer.isAmbiguous);
+  return Boolean(monomer && monomer.isAmbiguous);
 }
 
 export function isPeptideOrAmbiguousPeptide(

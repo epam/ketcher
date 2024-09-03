@@ -30,7 +30,8 @@ import {
   toggleCachedCustomRnaPresetFavorites,
 } from 'helpers/manipulateCachedRnaPresets';
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
-import { PresetPosition, selectEditorPosition } from 'state/common';
+import { selectEditorPosition } from 'state/common';
+import { PresetPosition } from 'ketcher-react';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',

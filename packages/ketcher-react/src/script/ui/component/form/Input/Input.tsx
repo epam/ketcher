@@ -63,7 +63,6 @@ export function GenericInput({
       <input
         type={type}
         value={value ?? ''}
-        onInput={onChange}
         onChange={onChange}
         className={clsx(classes.input, classes.genericInput)}
         ref={inputRef}

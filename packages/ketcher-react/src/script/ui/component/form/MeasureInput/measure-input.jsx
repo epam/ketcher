@@ -27,6 +27,48 @@ const selectOptions = getSelectOptionsFromSchema({
   enum: Object.values(MeasurementUnits),
 });
 
+/**
+ * @param {string} value
+ * @returns {isNewFloat: boolean, float: string}
+ * */
+const getNewFloat = (value) => {
+  const [int, float] = value.split('.');
+  const isNewFloat = float?.length > 1;
+
+  return {
+    isNewFloat,
+    ...(isNewFloat && { float: `${int}.${float[float.length - 1]}` }),
+  };
+};
+
+/**
+ * @param {string} prevValue
+ * @param {string} endorcedValue
+ * @returns {string}
+ * */
+const getNewInternalValue = (prevValue, endorcedValue) => {
+  const newValueEndsWithDot = endorcedValue?.endsWith('.');
+  const prevValueHasDot = prevValue?.includes('.');
+  const isDotDeleted = prevValueHasDot && newValueEndsWithDot;
+  const isDotAdded = !prevValueHasDot && newValueEndsWithDot;
+
+  if (isDotDeleted) {
+    return endorcedValue.replace(/\.$/, '');
+  }
+
+  if (isDotAdded) {
+    return endorcedValue + '0';
+  }
+
+  const { isNewFloat, float } = getNewFloat(endorcedValue);
+
+  if (isNewFloat) {
+    return float;
+  }
+
+  return endorcedValue;
+};
+
 const MeasureInput = ({
   schema,
   extraSchema: _,
@@ -38,33 +80,49 @@ const MeasureInput = ({
   className,
   ...rest
 }) => {
-  const [internalValue, setInternalValue] = useState(value);
+  const [internalValue, setInternalValue] = useState(String(value));
+
+  // NOTE: onChange handler in the Input comopnent (packages/ketcher-react/src/script/ui/component/form/Input/Input.tsx)
+  // is mapped to the internal function via constructor
+  // therefore the referencies to the MeasureInput's state are not updated
+  // so we need to sync the props and the internal value through useEffects and use callbacks with
+  // previous state to have the latest value
 
   useEffect(() => {
-    const parsedInternalValue = parseFloat(internalValue);
+    setInternalValue((prevValue) => {
+      if (prevValue !== String(value)) {
+        return String(value);
+      }
 
-    if (!isNaN(parsedInternalValue)) {
-      onChange(parsedInternalValue);
+      return prevValue;
+    });
+  }, [value]);
+
+  useEffect(() => {
+    if (internalValue !== String(value)) {
+      const isNewInternalValueValid = !isNaN(parseFloat(internalValue));
+
+      if (isNewInternalValueValid) {
+        onChange(parseFloat(internalValue));
+      }
     }
   }, [internalValue]);
 
-  useEffect(() => {
-    setInternalValue(value);
-  }, [value]);
-
   const handleChange = (value) => {
-    const endorcedValue = value || 0;
-    const isNumber = !isNaN(parseFloat(endorcedValue));
+    const stringifiedValue = String(value);
+    const startsWithZero =
+      stringifiedValue !== '0' && stringifiedValue.startsWith('0');
 
-    console.log(parseFloat(endorcedValue));
+    const endorcedValue = startsWithZero
+      ? stringifiedValue.replace(/^0+/, '')
+      : stringifiedValue || '0';
+    const isNumber = !isNaN(endorcedValue);
 
     if (isNumber) {
-      setInternalValue(endorcedValue);
+      setInternalValue((prevValue) =>
+        getNewInternalValue(prevValue, endorcedValue),
+      );
     }
-  };
-
-  const handleMeasChange = (unit) => {
-    onExtraChange(unit);
   };
 
   const desc = schema || schema.properties[name];
@@ -75,7 +133,7 @@ const MeasureInput = ({
       <div style={{ display: 'flex' }}>
         <Input schema={schema} value={internalValue} onChange={handleChange} />
         <Select
-          onChange={handleMeasChange}
+          onChange={onExtraChange}
           options={selectOptions}
           value={extraValue}
           className={styles.select}

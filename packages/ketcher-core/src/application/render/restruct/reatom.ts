@@ -39,10 +39,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
-import {
-  RenderOptions,
-  UsageInMacromolecule,
-} from 'application/render/render.types';
+import { RenderOptions } from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -781,53 +778,6 @@ function addTooltip(node, text: string) {
   node.childNodes[0].setAttribute('data-tooltip', util.escapeHtml(tooltip));
 }
 
-function useLabelStyles(
-  attachmentPointSelected: boolean,
-  attachmentPointUsed: boolean,
-  usageInMacromolecule: UsageInMacromolecule,
-): {
-  color: string;
-  fill: string;
-  stroke: string;
-} {
-  let color = '#585858';
-  let fill = '#FFF';
-  let stroke = '#7C7C7F';
-
-  switch (usageInMacromolecule) {
-    case UsageInMacromolecule.MonomerPreview:
-      stroke = 'none';
-      if (attachmentPointUsed) {
-        fill = '#E1E5EA';
-        color = '#B4B9D6';
-      }
-      break;
-    case UsageInMacromolecule.MonomerConnectionsModal:
-      if (attachmentPointSelected) {
-        fill = '#167782';
-        color = '#FFF';
-      } else if (attachmentPointUsed) {
-        fill = '#E1E5EA';
-        color = '#B4B9D6';
-        stroke = '#B4B9D6';
-      }
-      break;
-    case UsageInMacromolecule.BondPreview:
-      if (attachmentPointSelected) {
-        fill = '#CDF1FC';
-      } else if (attachmentPointUsed) {
-        fill = '#E1E5EA';
-        color = '#B4B9D6';
-      }
-      stroke = 'none';
-      break;
-    default:
-      break;
-  }
-
-  return { color, fill, stroke };
-}
-
 function buildLabel(
   atom: ReAtom,
   paper: any,
@@ -871,7 +821,7 @@ function buildLabel(
   const isMonomerAttachmentPointUsed =
     connectedMonomerAttachmentPoints?.includes(label.text);
 
-  const { color, fill, stroke } = useLabelStyles(
+  const { color, fill, stroke } = util.useLabelStyles(
     isMonomerAttachmentPointSelected,
     isMonomerAttachmentPointUsed,
     usageInMacromolecule,

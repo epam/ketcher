@@ -104,6 +104,7 @@ export function getSearchFunction(
   return function findPointOnMonomerBorder(
     coordStart: Coordinates,
     length: number,
+    applyZoomForPositionCalculation: boolean,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -123,15 +124,14 @@ export function getSearchFunction(
     const newLength = Math.round(diff.length() / 1.4);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
-    const zoomedCoordinateOfSecondPoint = CoordinatesTool.canvasToView(
-      new Vec2(secondPoint),
-    );
+    const zoomedCoordinateOfSecondPoint = applyZoomForPositionCalculation
+      ? CoordinatesTool.canvasToView(new Vec2(secondPoint))
+      : new Vec2(secondPoint);
 
     const newPointCoord = {
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    let newAngle: number = initialAngle;
 
     const elementsAtPoint = document.elementsFromPoint(
       newPointCoord.x,
@@ -141,13 +141,20 @@ export function getSearchFunction(
     const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
       (element) => element === monomer.renderer?.bodyElement?.node(),
     );
+
+    let newAngle: number;
     if (isCurrentMonomerAtNewPoint) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;
     }
 
-    return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
+    return findPointOnMonomerBorder(
+      newCoordStart,
+      newLength,
+      applyZoomForPositionCalculation,
+      newAngle,
+    );
   };
 }
 

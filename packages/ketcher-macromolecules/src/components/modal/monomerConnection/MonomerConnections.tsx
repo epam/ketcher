@@ -10,7 +10,12 @@ import {
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
-import { BaseMonomer, LeavingGroup, UsageInMacromolecule } from 'ketcher-core';
+import {
+  AmbiguousMonomer,
+  BaseMonomer,
+  LeavingGroup,
+  UsageInMacromolecule,
+} from 'ketcher-core';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 import { getConnectedAttachmentPoints } from 'helpers';
 import MonomerOverview from 'components/shared/ConnectionOverview/components/MonomerOverview/MonomerOverview';
@@ -203,13 +208,14 @@ function AttachmentPointSelectionPanel({
     setConnectedAttachmentPoints(newConnectedAttachmentPoints);
   }, [bonds]);
 
-  const getLeavingGroup = (attachmentPoint): LeavingGroup => {
-    const { MonomerCaps } = monomer.monomerItem.props;
+  const getLeavingGroup = (attachmentPoint): LeavingGroup | null => {
+    const MonomerCaps = monomer.monomerCaps;
+    const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
     if (!MonomerCaps) {
-      return 'H';
+      return isAmbiguousMonomer ? null : 'H';
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
-    return hydrateLeavingGroup(leavingGroup) as LeavingGroup;
+    return hydrateLeavingGroup(leavingGroup);
   };
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
@@ -233,7 +239,7 @@ function AttachmentPointSelectionPanel({
 
   return (
     <MonomerOverview
-      monomer={monomer.monomerItem}
+      monomer={monomer}
       connectedAttachmentPoints={connectedAttachmentPoints}
       selectedAttachmentPoint={selectedAttachmentPoint}
       usage={UsageInMacromolecule.MonomerConnectionsModal}

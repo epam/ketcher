@@ -5,6 +5,7 @@ import {
   ConnectionSymbol,
   MonomerName,
 } from './ConnectionOverview.styles';
+import getMonomerName from 'helpers/getMonomerName';
 
 interface Props {
   firstMonomer: BaseMonomer;
@@ -21,18 +22,17 @@ const ConnectionOverview = ({
   firstMonomerOverview,
   secondMonomerOverview,
 }: Props) => {
+  const firstMonomerName = getMonomerName(firstMonomer);
+  const secondMonomerName = getMonomerName(secondMonomer);
+
   return (
     <AttachmentPointsRow>
-      <MonomerName isExpanded={expanded}>
-        {firstMonomer.monomerItem.props.Name}
-      </MonomerName>
+      <MonomerName isExpanded={expanded}>{firstMonomerName}</MonomerName>
       {firstMonomerOverview}
       <span />
       <ConnectionSymbol />
       <span />
-      <MonomerName isExpanded={expanded}>
-        {secondMonomer.monomerItem.props.Name}
-      </MonomerName>
+      <MonomerName isExpanded={expanded}>{secondMonomerName}</MonomerName>
       {secondMonomerOverview}
     </AttachmentPointsRow>
   );

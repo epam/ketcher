@@ -19,7 +19,11 @@ import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { ReStruct, LayerMap } from './restruct';
 import Visel from './restruct/visel';
-import { RelativeBox, RenderOptions } from './render.types';
+import {
+  RelativeBox,
+  RenderOptions,
+  UsageInMacromolecule,
+} from './render.types';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
@@ -205,6 +209,53 @@ function escapeHtml(str) {
   return str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function useLabelStyles(
+  attachmentPointSelected: boolean,
+  attachmentPointUsed: boolean,
+  usageInMacromolecule: UsageInMacromolecule,
+): {
+  color: string;
+  fill: string;
+  stroke: string;
+} {
+  let color = '#585858';
+  let fill = '#FFF';
+  let stroke = '#7C7C7F';
+
+  switch (usageInMacromolecule) {
+    case UsageInMacromolecule.MonomerPreview:
+      stroke = 'none';
+      if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.MonomerConnectionsModal:
+      if (attachmentPointSelected) {
+        fill = '#167782';
+        color = '#FFF';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+        stroke = '#B4B9D6';
+      }
+      break;
+    case UsageInMacromolecule.BondPreview:
+      if (attachmentPointSelected) {
+        fill = '#CDF1FC';
+      } else if (attachmentPointUsed) {
+        fill = '#E1E5EA';
+        color = '#B4B9D6';
+      }
+      stroke = 'none';
+      break;
+    default:
+      break;
+  }
+
+  return { color, fill, stroke };
+}
+
 const util = {
   relBox,
   shiftRayBox,
@@ -212,6 +263,7 @@ const util = {
   drawCIPLabel,
   updateHalfBondCoordinates,
   escapeHtml,
+  useLabelStyles,
 };
 
 export default util;

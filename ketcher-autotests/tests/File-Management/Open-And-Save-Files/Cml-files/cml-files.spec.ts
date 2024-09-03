@@ -6,6 +6,14 @@ import {
   saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  setReactionMarginSizeOptionUnit,
+  bondsDefaultSettings,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
+  pressButton,
+  selectTopPanelButton,
+  TopPanelButton,
+  setReactionMarginSizeValue,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -322,5 +330,237 @@ test.describe('CML files', () => {
       page,
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('The Bond length setting with px option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Bond length setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'px-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-catalyst-inch-bond-lengh-px-bond-lengh.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-catalyst-px-bond-lengh.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Bond length setting with pt option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Bond length setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'pt-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-diagonally-arrow-pt-bond-lengh.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-diagonally-arrow-pt-bond-lengh.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Bond length setting with cm option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Bond length setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'cm-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-dif-elements-cm-bond-lengh.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-dif-elements-cm-bond-lengh.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Bond length setting with inch option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Bond length setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'inch-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-long-molecule-inch-bond-lengh.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-long-molecule-inch-bond-lengh.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-catalyst-px-margin-size.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-catalyst-px-margin-size.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-diagonally-arrow-pt-margin-size.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-diagonally-arrow-pt-margin-size.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-dif-elements-cm-margin-size.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
+
+  test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-long-molecule-inch-margin-size.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-long-molecule-inch-margin-size.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
   });
 });

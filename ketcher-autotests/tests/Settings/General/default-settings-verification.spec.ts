@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
 import {
   selectTopPanelButton,
@@ -8,9 +9,15 @@ import {
   copyAndPaste,
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
+  resetAllSettingsToDefault,
+  setFontSizeOptionUnit,
+  setFontSizeValue,
+  setSubFontSizeOptionUnit,
+  setSubFontSizeValue,
+  setReactionMarginSizeOptionUnit,
+  setReactionMarginSizeValue,
+  moveMouseAway,
 } from '@utils';
-
-/* eslint-disable no-magic-numbers */
 
 async function generalDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -29,16 +36,6 @@ async function resetSelectToolOff(page: Page) {
   await pressButton(page, 'Apply');
 }
 
-async function resetAppliedSettings(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
-  await page.getByRole('button', { name: 'Reset' }).click();
-  await page.getByTestId('OK').click();
-}
-
-async function clickOnCancelOption(page: Page) {
-  await page.getByTestId('Cancel').click();
-}
-
 test.describe('General Settings', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -46,7 +43,7 @@ test.describe('General Settings', () => {
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
-    await resetAppliedSettings(page);
+    await resetAllSettingsToDefault(page);
   });
 
   test('Verify Ketcher settings panel', async ({ page }) => {
@@ -86,18 +83,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('15.6');
+    await setFontSizeOptionUnit(page, 'px-option');
+    await setFontSizeValue(page, '17.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -114,20 +101,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0.9');
+    await setFontSizeOptionUnit(page, 'cm-option');
+    await setFontSizeValue(page, '0.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -144,20 +119,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('18.9');
+    await setFontSizeOptionUnit(page, 'pt-option');
+    await setFontSizeValue(page, '19.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -174,20 +137,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('42.9');
+    await setFontSizeOptionUnit(page, 'inch-option');
+    await setFontSizeValue(page, '2.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -204,18 +155,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('16');
+    await setFontSizeOptionUnit(page, 'px-option');
+    await setFontSizeValue(page, '18');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -232,20 +173,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('2');
+    await setFontSizeOptionUnit(page, 'cm-option');
+    await setFontSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -262,20 +191,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('18');
+    await setFontSizeOptionUnit(page, 'pt-option');
+    await setFontSizeValue(page, '18');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -292,20 +209,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('32');
+    await setFontSizeOptionUnit(page, 'inch-option');
+    await setFontSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -322,18 +227,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('15.62');
+    await setFontSizeOptionUnit(page, 'px-option');
+    await setFontSizeValue(page, '17.83');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -350,20 +245,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0.97');
+    await setFontSizeOptionUnit(page, 'cm-option');
+    await setFontSizeValue(page, '0.83');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -380,20 +263,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('18.91');
+    await setFontSizeOptionUnit(page, 'pt-option');
+    await setFontSizeValue(page, '17.89');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -410,20 +281,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('42.95');
+    await setFontSizeOptionUnit(page, 'inch-option');
+    await setFontSizeValue(page, '0.38');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -440,18 +299,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('15.6');
+    await setSubFontSizeOptionUnit(page, 'px-option');
+    await setSubFontSizeValue(page, '14.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -468,20 +317,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('34.9');
+    await setSubFontSizeOptionUnit(page, 'cm-option');
+    await setSubFontSizeValue(page, '1.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -498,20 +335,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('18.9');
+    await setSubFontSizeOptionUnit(page, 'pt-option');
+    await setSubFontSizeValue(page, '16.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -528,20 +353,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('42.9');
+    await setSubFontSizeOptionUnit(page, 'inch-option');
+    await setSubFontSizeValue(page, '4.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -558,18 +371,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('16');
+    await setSubFontSizeOptionUnit(page, 'px-option');
+    await setSubFontSizeValue(page, '15');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -586,20 +389,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('2');
+    await setSubFontSizeOptionUnit(page, 'cm-option');
+    await setSubFontSizeValue(page, '1');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -616,20 +407,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('13');
+    await setSubFontSizeOptionUnit(page, 'pt-option');
+    await setSubFontSizeValue(page, '17');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -646,20 +425,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('42.9');
+    await setSubFontSizeOptionUnit(page, 'inch-option');
+    await setSubFontSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -676,18 +443,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('15.64');
+    await setSubFontSizeOptionUnit(page, 'px-option');
+    await setSubFontSizeValue(page, '14.58');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -704,20 +461,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('34.93');
+    await setSubFontSizeOptionUnit(page, 'cm-option');
+    await setSubFontSizeValue(page, '1.59');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -734,20 +479,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('18.94');
+    await setSubFontSizeOptionUnit(page, 'pt-option');
+    await setSubFontSizeValue(page, '14.54');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -764,20 +497,8 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(1).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('42.96');
+    await setSubFontSizeOptionUnit(page, 'inch-option');
+    await setSubFontSizeValue(page, '1.35');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
   });
@@ -801,20 +522,11 @@ test.describe('General Settings', () => {
     expect(ReactionComponentMarginSize).toHaveText(
       'Reaction component margin size',
     );
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.6');
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '12.3');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 1 decimal places in cm option in the setting Reaction component margin size', async ({
@@ -830,22 +542,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.6');
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1.3');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 1 decimal places in pt option in the setting Reaction component margin size', async ({
@@ -861,22 +562,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.6');
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '16.3');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 1 decimal places in inch option in the setting Reaction component margin size', async ({
@@ -892,22 +582,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.6');
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '1.3');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify the whole value in px option the setting Reaction component margin size', async ({
@@ -923,20 +602,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('12');
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '13');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify the whole value in cm option in the setting Reaction component margin size', async ({
@@ -952,22 +622,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('14');
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify the whole value in pt option in the setting Reaction component margin size', async ({
@@ -983,22 +642,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('19');
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '14');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify the whole value in inch option in the setting Reaction component margin size', async ({
@@ -1014,22 +662,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('17');
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 2 decimal places in px option the setting Reaction component margin size', async ({
@@ -1045,20 +682,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.68');
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '14.57');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 2 decimal places in cm option in the setting Reaction component margin size', async ({
@@ -1074,22 +702,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.66');
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1.83');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 2 decimal places in pt option in the setting Reaction component margin size', async ({
@@ -1105,22 +722,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.62');
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '14.94');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
   test('Verify value with up to 2 decimal places in inch option in the setting Reaction component margin size', async ({
@@ -1136,22 +742,11 @@ test.describe('General Settings', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('15.69');
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '1.48');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });
 
@@ -1162,7 +757,6 @@ test.describe('Negative cases for General Settings', () => {
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
-    await clickOnCancelOption(page);
   });
 
   test('Verify negative value with px option in the setting Font size', async ({
@@ -1172,23 +766,9 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('-23.6');
+    await setFontSizeOptionUnit(page, 'px-option');
+    await setFontSizeValue(page, '-17.8');
     await page.getByTestId('OK').isDisabled;
   });
 
@@ -1199,26 +779,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('-37.9');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'cm-option');
+    await setFontSizeValue(page, '-1.8');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with pt option in the setting Font size', async ({
@@ -1228,26 +795,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('-16.3');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'pt-option');
+    await setFontSizeValue(page, '-17.8');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with inch option in the setting Font size', async ({
@@ -1257,26 +811,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('-42.9');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'inch-option');
+    await setFontSizeValue(page, '-1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with px option in the setting Font size', async ({ page }) => {
@@ -1284,24 +825,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'px-option');
+    await setFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with cm option in the setting Font size', async ({ page }) => {
@@ -1309,26 +839,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'cm-option');
+    await setFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with pt option in the setting Font size', async ({ page }) => {
@@ -1336,26 +853,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'pt-option');
+    await setFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with inch option in the setting Font size', async ({
@@ -1365,26 +869,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be applyed
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(1)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setFontSizeOptionUnit(page, 'inch-option');
+    await setFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with px option in the setting Sub font size', async ({
@@ -1394,24 +885,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('-15.6');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'px-option');
+    await setSubFontSizeValue(page, '-15.8');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with cm option in the setting Sub font size', async ({
@@ -1421,26 +901,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('-27.9');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'cm-option');
+    await setSubFontSizeValue(page, '-1.5');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with pt option in the setting Sub font size', async ({
@@ -1450,26 +917,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('-14.9');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'pt-option');
+    await setSubFontSizeValue(page, '-18.5');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value with inch option in the setting Sub font size', async ({
@@ -1479,26 +933,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('-47.9');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'inch-option');
+    await setSubFontSizeValue(page, '-1.5');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with px option in the setting Sub font size', async ({
@@ -1508,24 +949,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'px-option');
+    await setSubFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with cm option in the setting Sub font size', async ({
@@ -1535,26 +965,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'cm-option');
+    await setSubFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with pt option in the setting Sub font size', async ({
@@ -1564,26 +981,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'pt-option');
+    await setSubFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 with inch option in the setting Sub font size', async ({
@@ -1593,26 +997,13 @@ test.describe('Negative cases for General Settings', () => {
     Test case: https://github.com/epam/ketcher/issues/5175
     Description: 0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').first().click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(2)
-      .fill('0');
-    await page.getByTestId('OK').isDisabled;
+    await setSubFontSizeOptionUnit(page, 'inch-option');
+    await setSubFontSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value in px option the setting Reaction component margin size', async ({
@@ -1623,25 +1014,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('-15.6');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '-14.7');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value in cm option in the setting Reaction component margin size', async ({
@@ -1652,27 +1031,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('-15.6');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '-3.4');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value in pt option in the setting Reaction component margin size', async ({
@@ -1683,27 +1048,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('-15.6');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '-14.2');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify negative value in inch option in the setting Reaction component margin size', async ({
@@ -1714,27 +1065,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     a negative value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('-15.6');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '-1.6');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 in px option the setting Reaction component margin size', async ({
@@ -1745,25 +1082,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 value should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('0');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 in cm option in the setting Reaction component margin size', async ({
@@ -1774,27 +1099,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('cm-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('0');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 in pt option in the setting Reaction component margin size', async ({
@@ -1805,27 +1116,13 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('pt-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('0');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 
   test('Verify 0 in inch option in the setting Reaction component margin size', async ({
@@ -1836,26 +1133,12 @@ test.describe('Negative cases for General Settings', () => {
     Description: add new setting Reaction component margin size
     0 should not be allowed to be entered
     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
-      page,
-    );
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByText('px').nth(2).click();
-    await page.getByTestId('inch-option').click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .click();
-    await page
-      .locator('fieldset')
-      .filter({ hasText: 'Reset to Select ToolAfter' })
-      .getByRole('textbox')
-      .nth(3)
-      .fill('0');
-    await takeEditorScreenshot(page);
-    await pressButton(page, 'Apply');
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 });

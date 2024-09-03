@@ -7,6 +7,14 @@ import {
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
+  selectTopPanelButton,
+  TopPanelButton,
+  pressButton,
+  setReactionMarginSizeValue,
+  setReactionMarginSizeOptionUnit,
+  bondsDefaultSettings,
+  setBondLengthValue,
+  setBondLengthOptionUnit,
 } from '@utils';
 import { getCdx } from '@utils/formats';
 
@@ -275,6 +283,243 @@ test.describe('CDX files without screenshots', () => {
         page,
         expectedFileName:
           'tests/test-data/CDX/unsplit-nucleotides-connected-with-peptides.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Bond length setting with px option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Bond length setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'px-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-catalyst-px-bond-lengh.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-catalyst-px-bond-lengh.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Bond length setting with pt option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Bond length setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'pt-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-diagonally-arrow-pt-bond-lengh.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-diagonally-arrow-pt-bond-lengh.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Bond length setting with cm option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Bond length setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'cm-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-dif-elements-cm-bond-lengh.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-dif-elements-cm-bond-lengh.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Bond length setting with inch option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Bond length setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await bondsDefaultSettings(page);
+    await setBondLengthOptionUnit(page, 'inch-option');
+    await setBondLengthValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-long-molecule-inch-bond-lengh.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-long-molecule-inch-bond-lengh.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-catalyst-px-margin-size.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-catalyst-px-margin-size.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-diagonally-arrow-pt-margin-size.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-diagonally-arrow-pt-margin-size.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/layout-with-dif-elements-cm-margin-size.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-dif-elements-cm-margin-size.cdx',
+      });
+
+    expect(cdxFile).toEqual(cdxFileExpected);
+  });
+
+  test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to CDX specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await bondsDefaultSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getCdx(page);
+    await saveToFile('CDX/layout-with-long-molecule.cdx', expectedFile);
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDX/layout-with-long-molecule-inch-margin-size.cdx',
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);

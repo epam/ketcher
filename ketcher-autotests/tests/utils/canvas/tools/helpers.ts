@@ -269,3 +269,146 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
+
+export async function bondsDefaultSettings(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await page.getByText('Bonds', { exact: true }).click();
+  // await waitForRender(page, async () => {
+  //   await scrollSettingBar(page, 200);
+  // });
+}
+
+export async function setBondLengthOptionUnit(page: Page, unitName: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('combobox')
+    .first()
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setBondLengthValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .first()
+    .fill(value);
+}
+
+export async function setBondThicknessOptionUnit(page: Page, unitName: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('combobox')
+    .nth(1)
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setBondThicknessValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .nth(2)
+    .fill(value);
+}
+
+export async function setStereoBondWidthOptionUnit(
+  page: Page,
+  unitName: string,
+) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('combobox')
+    .nth(2)
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setStereoBondWidthValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .nth(3)
+    .fill(value);
+}
+
+export async function setHashSpacingOptionUnit(page: Page, unitName: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('combobox')
+    .nth(3)
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setHashSpacingValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .nth(4)
+    .fill(value);
+}
+
+export async function setBondSpacingValue(page: Page, value: string) {
+  await page.getByTestId('bondSpacing-input').fill(value);
+}
+
+export async function setFontSizeOptionUnit(page: Page, unitName: string) {
+  await page
+    .locator('div > .MuiInputBase-root > .MuiSelect-select')
+    .first()
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setFontSizeValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Reset to Select ToolAfter' })
+    .getByRole('textbox')
+    .nth(1)
+    .fill(value);
+}
+
+export async function setSubFontSizeOptionUnit(page: Page, unitName: string) {
+  await page
+    .locator('div:nth-child(7) > div > .MuiInputBase-root > .MuiSelect-select')
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setSubFontSizeValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Reset to Select ToolAfter' })
+    .getByRole('textbox')
+    .nth(2)
+    .fill(value);
+}
+
+export async function setReactionMarginSizeOptionUnit(
+  page: Page,
+  unitName: string,
+) {
+  await page
+    .locator('div:nth-child(8) > div > .MuiInputBase-root > .MuiSelect-select')
+    .click();
+  await page.getByTestId(unitName).click();
+}
+
+export async function setReactionMarginSizeValue(page: Page, value: string) {
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Reset to Select ToolAfter' })
+    .getByRole('textbox')
+    .nth(3)
+    .fill(value);
+}

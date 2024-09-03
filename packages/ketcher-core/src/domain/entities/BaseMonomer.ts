@@ -506,4 +506,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     });
     return sideConnections;
   }
+
+  public get monomerCaps() {
+    return this.monomerItem.props.MonomerCaps;
+  }
 }

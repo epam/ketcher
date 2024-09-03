@@ -57,7 +57,7 @@ const MonomerPreview = ({ className }: Props) => {
 
   const { preparedAttachmentPointsData, connectedAttachmentPoints } =
     useAttachmentPoints({
-      monomer,
+      monomerCaps: monomer?.props.MonomerCaps,
       attachmentPointsToBonds,
     });
 

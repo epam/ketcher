@@ -4,8 +4,19 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { monomerFactory } from 'application/editor';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
+import { AttachmentPointName } from 'domain/types';
+import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
+import { UsageInMacromolecule } from 'application/render';
+import { D3SvgElementSelection } from 'application/render/types';
 
 const NUMBER_OF_MONOMERS_CIRCLE_Y_OFFSET = 7;
+
+type PreviewAttachmentPointParams = {
+  canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  usage: UsageInMacromolecule;
+  selectedAttachmentPoint: string | null | undefined;
+  connectedAttachmentPoints: string[] | undefined;
+};
 
 export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   private monomerRenderer: BaseMonomerRenderer;
@@ -113,5 +124,42 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     if (this.CHAIN_BEGINNING) {
       this.appendChainBeginning();
     }
+  }
+
+  private appendPreviewAttachmentPoint(
+    params: PreviewAttachmentPointParams,
+    attachmentPointName: AttachmentPointName,
+    customAngle?: number,
+  ) {
+    const { selectedAttachmentPoint, connectedAttachmentPoints, usage } =
+      params;
+    const attachmentPointParams = this.prepareAttachmentPointsParams(
+      attachmentPointName,
+      customAngle,
+    );
+
+    return new PreviewAttachmentPoint({
+      ...attachmentPointParams,
+      connected:
+        connectedAttachmentPoints?.includes(attachmentPointName) ?? false,
+      selected: selectedAttachmentPoint === attachmentPointName,
+      usage,
+      canvas: params.canvas,
+      applyZoomForPositionCalculation: false,
+    });
+  }
+
+  public showExternal(params: PreviewAttachmentPointParams) {
+    this.rootElement = this.appendRootElement(params.canvas);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.bodyElement = this.appendBody(this.rootElement);
+    this.appendLabel(this.rootElement);
+    this.appendNumberOfMonomers();
+    this.drawAttachmentPoints(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.appendPreviewAttachmentPoint.bind(this, params),
+    );
   }
 }

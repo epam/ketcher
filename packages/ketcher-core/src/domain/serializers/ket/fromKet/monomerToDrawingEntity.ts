@@ -67,6 +67,10 @@ export function createMonomersForVariantMonomer(
       attachmentPoints: monomerTemplate.attachmentPoints,
     };
     const [MonomerConstructor] = monomerFactory(monomerItem);
+    KetSerializer.fillStructRgLabelsByMonomerTemplate(
+      monomerTemplate,
+      monomerItem,
+    );
 
     return new MonomerConstructor(monomerItem, undefined, {
       generateId: false,

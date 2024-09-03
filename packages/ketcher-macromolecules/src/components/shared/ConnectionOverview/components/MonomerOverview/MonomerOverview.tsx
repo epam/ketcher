@@ -1,13 +1,18 @@
 import { ReactNode } from 'react';
-import { MonomerItemType, UsageInMacromolecule } from 'ketcher-core';
+import {
+  AmbiguousMonomer,
+  BaseMonomer,
+  UsageInMacromolecule,
+} from 'ketcher-core';
 import {
   AttachmentPointList,
   StyledStructRender,
 } from './MonomerOverview.styles';
 import UnresolvedMonomerPreview from 'components/preview/components/UnresolvedMonomerPreview/UnresolvedMonomerPreview';
+import MonomerMiniature from 'components/shared/ConnectionOverview/components/MonomerMiniature/MonomerMiniature';
 
 interface Props {
-  monomer: MonomerItemType;
+  monomer: BaseMonomer;
   attachmentPoints: ReactNode;
   usage: UsageInMacromolecule;
   connectedAttachmentPoints?: string[];
@@ -27,15 +32,24 @@ const MonomerOverview = ({
   update,
   expanded,
 }: Props) => {
-  const isUnresolvedMonomer = monomer.props.unresolved;
+  const isAmbiguousMonomer = monomer instanceof AmbiguousMonomer;
+  const isUnresolvedMonomer = monomer.monomerItem.props.unresolved;
 
   return (
     <>
-      {isUnresolvedMonomer ? (
+      {isAmbiguousMonomer ? (
+        <MonomerMiniature
+          monomer={monomer}
+          expanded={expanded}
+          selectedAttachmentPoint={selectedAttachmentPoint}
+          connectedAttachmentPoints={connectedAttachmentPoints}
+          usage={usage}
+        />
+      ) : isUnresolvedMonomer ? (
         <UnresolvedMonomerPreview />
       ) : (
         <StyledStructRender
-          struct={monomer.struct}
+          struct={monomer.monomerItem.struct}
           options={{
             connectedMonomerAttachmentPoints: connectedAttachmentPoints,
             currentlySelectedMonomerAttachmentPoint:

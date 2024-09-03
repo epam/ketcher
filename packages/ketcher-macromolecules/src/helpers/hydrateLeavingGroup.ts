@@ -1,4 +1,6 @@
-const hydrateLeavingGroup = (leavingGroup: string) => {
+import { LeavingGroup } from 'ketcher-core';
+
+const hydrateLeavingGroup = (leavingGroup: LeavingGroup) => {
   return leavingGroup === 'O' ? 'OH' : leavingGroup;
 };
 

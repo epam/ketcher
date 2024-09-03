@@ -391,12 +391,15 @@ export class KetSerializer implements Serializer<Struct> {
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
     };
-    this.fillStructRgLabelsByMonomerTemplate(template, monomerLibraryItem);
+    KetSerializer.fillStructRgLabelsByMonomerTemplate(
+      template,
+      monomerLibraryItem,
+    );
 
     return monomerLibraryItem;
   }
 
-  public fillStructRgLabelsByMonomerTemplate(
+  public static fillStructRgLabelsByMonomerTemplate(
     template: IKetMonomerTemplate,
     monomerItem: MonomerItemType,
   ) {
@@ -467,7 +470,7 @@ export class KetSerializer implements Serializer<Struct> {
             .monomer as BaseMonomer;
           monomerIdsMap[node.$ref] = monomer?.id;
 
-          this.fillStructRgLabelsByMonomerTemplate(
+          KetSerializer.fillStructRgLabelsByMonomerTemplate(
             template,
             monomer.monomerItem,
           );

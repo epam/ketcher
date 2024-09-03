@@ -84,6 +84,7 @@ import ReactionArrowEquilibriumFilledHalfBow from '../../../assets/icons/files/r
 import ReactionArrowEquilibriumFilledTriangle from '../../../assets/icons/files/reaction-arrow-equilibrium-filled-triangle.svg';
 import ReactionArrowEquilibriumOpenAngle from '../../../assets/icons/files/reaction-arrow-equilibrium-open-angle.svg';
 import ReactionArrowFailed from '../../../assets/icons/files/reaction-arrow-failed.svg';
+import ReactionArrowRetrosynthetic from '../../../assets/icons/files/reaction-arrow-retrosynthetic-arrow.svg';
 import ReactionArrowFilledBow from '../../../assets/icons/files/reaction-arrow-filled-bow.svg';
 import ReactionArrowFilledTriangle from '../../../assets/icons/files/reaction-arrow-filled-triangle.svg';
 import ReactionArrowOpenAngleIcon from '../../../assets/icons/files/reaction-arrow-open-angle.svg';
@@ -349,6 +350,7 @@ export const iconNameToIcon = {
   'reaction-arrow-filled-bow': ReactionArrowFilledBow,
   'reaction-arrow-dashed-open-angle': ReactionArrowDashedOpenAngle,
   'reaction-arrow-failed': ReactionArrowFailed,
+  'reaction-arrow-retrosynthetic': ReactionArrowRetrosynthetic,
   'reaction-arrow-both-ends-filled-triangle':
     ReactionArrowBothEndsFilledTriangle,
   'reaction-arrow-equilibrium-filled-half-bow':

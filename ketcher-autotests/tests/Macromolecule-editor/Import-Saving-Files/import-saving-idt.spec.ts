@@ -782,35 +782,29 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Connect unresolved IDT monomer to known monomers through R2/R1 connections',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Connect unresolved IDT monomer to known monomers through R2/R1 connections', async () => {
+    /*
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
-    Test working not a proper way because we have a bug https://github.com/epam/ketcher/issues/5184
     */
-      test.fail();
-      const x = 650;
-      const y = 400;
-      const firstMonomer = await page.getByText('iMe-dC').locator('..');
-      const secondMonomer = await page.getByText('1Nal').locator('..').first();
-      await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-      await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-      await page.mouse.click(x, y);
-      await bondTwoMonomersPointToPoint(
-        page,
-        firstMonomer,
-        secondMonomer,
-        'R2',
-        'R1',
-      );
-      await selectSingleBondTool(page);
-      await page.getByText('iMe').locator('..').hover();
-      await takeEditorScreenshot(page);
-    },
-  );
+    const x = 650;
+    const y = 400;
+    const firstMonomer = await page.getByText('iMe-dC').locator('..');
+    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await page.mouse.click(x, y);
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      'R2',
+      'R1',
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('iMe').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
 
   test('Connect unresolved IDT monomer to known monomers through R3/R4 connections', async () => {
     /*

@@ -22,13 +22,13 @@ import {
   PresetContainer,
   PresetName,
 } from './PresetPreview.styles';
-import { preview } from '../../../../constants';
 import styled from '@emotion/styled';
-import { PresetPreviewState, selectShowPreview } from 'state/common';
-import { IconName } from 'ketcher-react/dist/components/Icon/types';
+import { selectShowPreview } from 'state/common';
+import { IconName, preview } from 'ketcher-react';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import { useAppSelector } from 'hooks';
 import IDTAliases from '../IDTAliases/IDTAliases';
+import { PresetPreviewState } from 'state';
 
 const icons: Extract<IconName, 'sugar' | 'base' | 'phosphate'>[] = [
   'sugar',

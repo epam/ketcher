@@ -14,10 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 import { useAppSelector } from 'hooks';
-import { PreviewType, selectShowPreview } from 'state/common';
+import { selectShowPreview } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
 import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
+import { PreviewType } from 'state';
+import { AmbiguousMonomerPreview } from 'ketcher-react';
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
@@ -33,6 +35,8 @@ export const Preview = () => {
       return <MonomerPreview />;
     case PreviewType.Bond:
       return <BondPreview />;
+    case PreviewType.AmbiguousMonomer:
+      return <AmbiguousMonomerPreview preview={preview} />;
     default:
       return null;
   }

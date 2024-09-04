@@ -21,8 +21,9 @@ export type RenderOptions = {
   height?: number;
 
   rotationStep?: number;
-  doubleBondWidth: number;
-  doubleBondWidthUnit: MeasurementUnits;
+  bondSpacing: number;
+  bondLength: number;
+  bondLengthUnit: MeasurementUnits;
   stereoBondWidth: number;
   stereoBondWidthUnit: MeasurementUnits;
   bondThickness: number;
@@ -96,7 +97,7 @@ export type RenderOptions = {
   // Converted
   fontszInPx: number;
   fontszsubInPx: number;
-  doubleBondWidthInPx: number;
+  bondSpacingInPx: number;
   bondThicknessInPx: number;
   stereoBondWidthInPx: number;
   usageInMacromolecule?: UsageInMacromolecule;

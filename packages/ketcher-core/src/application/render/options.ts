@@ -64,7 +64,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     offset: new Vec2(),
 
     lineWidth: scaleFactorMicro / 20,
-    bondSpace: options.doubleBondWidthInPx || scaleFactorMicro / 7,
+    bondSpace: options.bondSpacingInPx || scaleFactorMicro / 7,
     stereoBond: options.stereoBondWidthInPx || scaleFactorMicro / 7,
     subFontSize,
     font: '30px Arial',
@@ -154,7 +154,7 @@ export function getOptionsWithConvertedUnits(
       RenderOptions,
       | 'fontszInPx'
       | 'fontszsubInPx'
-      | 'doubleBondWidthInPx'
+      | 'bondSpacingInPx'
       | 'bondThicknessInPx'
       | 'stereoBondWidthInPx'
     >
@@ -177,12 +177,19 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
-  if (typeof options.doubleBondWidth !== 'undefined') {
-    convertedOptions.doubleBondWidthInPx = convertValue(
-      options.doubleBondWidth,
-      options.doubleBondWidthUnit || defaultUnit,
+  if (
+    typeof options.bondSpacing !== 'undefined' &&
+    typeof options.bondLength !== 'undefined'
+  ) {
+    const convertedBondLength = convertValue(
+      options.bondLength,
+      options.bondLengthUnit || defaultUnit,
       defaultUnit,
     );
+
+    // bondSpacing is a percentage of bondLength
+    convertedOptions.bondSpacingInPx =
+      (options.bondSpacing / 100) * convertedBondLength;
   }
 
   if (typeof options.bondThickness !== 'undefined') {

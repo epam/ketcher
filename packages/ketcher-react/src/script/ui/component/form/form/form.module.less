@@ -17,6 +17,15 @@
 @import '../../../../../style/variables.less';
 @import '../../../../../style/mixins.less';
 
+.inputWithExtraLabel {
+  width: 54px !important;
+}
+
+.extraLabel {
+  margin-left: 6px;
+  margin-top: 12px;
+}
+
 .dataError {
   .inputWrapper {
     position: relative;
@@ -44,18 +53,18 @@
   }
 }
 
-.inputWithEditButtonWrapper{
+.inputWithEditButtonWrapper {
   display: flex;
   align-items: center;
   gap: 3px;
 
-  & > input{
-    width: 114px!important;
+  &>input {
+    width: 114px !important;
   }
 
-  & > .editButton{
-    width: 20px!important;
-    height: 20px!important;
+  &>.editButton {
+    width: 20px !important;
+    height: 20px !important;
     min-width: 16px;
     min-height: 16px;
   }

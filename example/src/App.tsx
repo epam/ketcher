@@ -8,6 +8,8 @@ import {
   StructServiceProvider,
 } from 'ketcher-core';
 import { ModeControl } from './ModeControl';
+import { processCustomAction } from './CustomButtons/processCustomAction';
+import { customButtons } from './CustomButtons/customButtons';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -94,10 +96,12 @@ const App = () => {
           setErrorMessage(message.toString());
         }}
         buttons={hiddenButtonsConfig}
+        customButtons={customButtons}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
+          ketcher.eventBus.on('CUSTOM', processCustomAction);
 
           window.parent.postMessage(
             {

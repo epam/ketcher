@@ -15,11 +15,14 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { IconButton } from 'components';
+import { IconButton, IconButtonCustomIcon } from 'components';
+import { css } from '@emotion/react';
 
-export const TopToolbarIconButton = styled(IconButton)`
+const TopToolbarIconStyles = css`
   border-radius: 4px;
   padding: 2px;
+  width: 28px;
+  height: 28px;
 
   @media only screen {
     @container (min-width: 1024px) {
@@ -35,4 +38,12 @@ export const TopToolbarIconButton = styled(IconButton)`
       padding: 5px;
     }
   }
+`;
+
+export const TopToolbarIconButton = styled(IconButton)`
+  ${TopToolbarIconStyles}
+`;
+
+export const TopToolbarCustomIconButton = styled(IconButtonCustomIcon)`
+  ${TopToolbarIconStyles}
 `;

@@ -14,14 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StyledIcon } from './styles';
-import { IIconButtonProps } from './types';
-import { IconButtonBase } from './IconButtonBase';
+import { CustomButtonsName } from './customButtons';
 
-export const IconButton = ({ iconName, ...props }: IIconButtonProps) => {
-  return (
-    <IconButtonBase {...props}>
-      <StyledIcon name={iconName} />
-    </IconButtonBase>
-  );
-};
+export function processCustomAction(name: string) {
+  const ketcher = window.ketcher;
+  switch (name) {
+    case CustomButtonsName.Zoom350:
+      ketcher.editor.zoom(3.5);
+      break;
+    case CustomButtonsName.SelectAll:
+      ketcher.editor.selection('all');
+      break;
+  }
+}

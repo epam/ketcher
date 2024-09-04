@@ -22,8 +22,10 @@ export type RenderOptions = {
 
   rotationStep?: number;
   bondSpacing: number;
-  bondLength: number;
-  bondLengthUnit: MeasurementUnits;
+
+  'bond-length-unit': MeasurementUnits;
+  'bond-length': number;
+
   stereoBondWidth: number;
   stereoBondWidthUnit: MeasurementUnits;
   bondThickness: number;

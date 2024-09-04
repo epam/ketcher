@@ -179,11 +179,11 @@ export function getOptionsWithConvertedUnits(
 
   if (
     typeof options.bondSpacing !== 'undefined' &&
-    typeof options.bondLength !== 'undefined'
+    typeof options['bond-length'] !== 'undefined'
   ) {
     const convertedBondLength = convertValue(
-      options.bondLength,
-      options.bondLengthUnit || defaultUnit,
+      options['bond-length'],
+      options['bond-length-unit'] || defaultUnit,
       defaultUnit,
     );
 

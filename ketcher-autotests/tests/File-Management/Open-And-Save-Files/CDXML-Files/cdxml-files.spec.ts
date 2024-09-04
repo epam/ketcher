@@ -447,4 +447,78 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
   });
+
+  test(
+    'Validate that the schema with vertical retrosynthetic arrow could be saved to Cdxml file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2219
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCdxml(page);
+      await saveToFile(
+        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
+        expectedFile,
+      );
+
+      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
+        });
+
+      expect(cdxmlFile).toEqual(cdxmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
+        page,
+      );
+    },
+  );
+
+  test(
+    'Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdxml file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2221
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCdxml(page);
+      await saveToFile(
+        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
+        expectedFile,
+      );
+
+      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
+        });
+
+      expect(cdxmlFile).toEqual(cdxmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
+        page,
+      );
+    },
+  );
 });

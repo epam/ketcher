@@ -772,4 +772,41 @@ test.describe('Plus and Arrows tools ', () => {
       await clickInTheMiddleOfTheScreen(page);
     });
   }
+
+  test('Resizing retrosynthetic arrow', async ({ page }) => {
+    /**
+     * Test case: #4985
+     * Description: Retrosynthetic Arrow is resized correctly
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await dragMouseTo(x + 200, y + 200, page);
+  });
+
+  test('Copy/paste retrosynthetic arrow', async ({ page }) => {
+    /**
+    Test case: #4985
+    Description: Retrosynthetic Arrow Copy/paste
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickInTheMiddleOfTheScreen(page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    // await cutAndPaste(page);
+    // await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test('Cut/paste retrosynthetic arrow', async ({ page }) => {
+    /**
+    Test case: #4985
+    Description: Retrosynthetic Arrow Cut/paste
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickInTheMiddleOfTheScreen(page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
 });

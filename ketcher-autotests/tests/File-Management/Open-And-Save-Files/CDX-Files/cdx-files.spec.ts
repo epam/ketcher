@@ -391,4 +391,68 @@ test.describe('CDX files without screenshots', () => {
 
     expect(cdxFile).toEqual(cdxFileExpected);
   });
+
+  test(
+    'Validate that the schema with vertical retrosynthetic arrow and pluses could be saved to Cdx file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2219
+    After fix we need update file.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCdx(page);
+      await saveToFile(
+        'CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
+        expectedFile,
+      );
+
+      const { fileExpected: cdxFileExpected, file: cdxFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
+        });
+
+      expect(cdxFile).toEqual(cdxFileExpected);
+    },
+  );
+
+  test(
+    'Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdx file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #4985
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2221
+    After fix we need update file.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCdx(page);
+      await saveToFile(
+        'CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
+        expectedFile,
+      );
+
+      const { fileExpected: cdxFileExpected, file: cdxFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
+        });
+
+      expect(cdxFile).toEqual(cdxFileExpected);
+    },
+  );
 });

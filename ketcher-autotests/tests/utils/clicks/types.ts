@@ -107,4 +107,5 @@ export type DropdownToolIds =
   | 'reaction-arrow-elliptical-arc-arrow-filled-bow'
   | 'reaction-arrow-elliptical-arc-arrow-filled-triangle'
   | 'reaction-arrow-elliptical-arc-arrow-open-angle'
-  | 'reaction-arrow-elliptical-arc-arrow-open-half-angle';
+  | 'reaction-arrow-elliptical-arc-arrow-open-half-angle'
+  | 'reaction-arrow-retrosynthetic';

@@ -23,7 +23,7 @@ const fieldGroups = {
   showValence: 'Atoms',
   showHydrogenLabels: 'Atoms',
   aromaticCircle: 'Bonds',
-  doubleBondWidth: 'Bonds',
+  bondSpacing: 'Bonds',
   bondThickness: 'Bonds',
   stereoBondWidth: 'Bonds',
   'smart-layout': 'Server',

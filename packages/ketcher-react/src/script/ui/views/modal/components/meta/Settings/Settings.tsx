@@ -245,12 +245,7 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
           extraName="bondLengthUnit"
         />
-        <Field
-          name="doubleBondWidth"
-          component={MeasureInput}
-          labelPos={false}
-          extraName="doubleBondWidthUnit"
-        />
+        <Field name="bondSpacing" extraLabel="% of length" />
         <Field
           name="bondThickness"
           component={MeasureInput}

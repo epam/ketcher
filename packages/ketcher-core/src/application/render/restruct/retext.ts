@@ -168,7 +168,7 @@ class ReText extends ReObject {
           )
           .attr({
             font: options.font,
-            'font-size': options.fontsz,
+            'font-size': options.fontszInPx,
             'text-anchor': 'start',
             fill: '#000000',
             ...styles,
@@ -245,8 +245,8 @@ class ReText extends ReObject {
 
     return ranges.reduce(
       (styles: any, textRange: CustomRawDraftInlineStyleRange) => {
-        const fontsz = customFontSize || options.fontsz;
-        const fontszsub = (customFontSize || options.fontszsub) * 0.5;
+        const fontsz = customFontSize || options.fontszInPx;
+        const fontszsub = (customFontSize || options.fontszsubInPx) * 0.5;
         switch (textRange.style) {
           case TextCommand.Bold:
             styles['font-weight'] = 'bold';

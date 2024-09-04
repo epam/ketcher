@@ -3,12 +3,15 @@ import { test } from '@playwright/test';
 import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  selectClearCanvasTool,
+  selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
   startNewSequence,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   takeEditorScreenshot,
+  takePageScreenshot,
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
@@ -17,7 +20,18 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import {
+  expandCollapseRnaBuilder,
+  toggleBasesAccordion,
+  toggleNucleotidesAccordion,
+  togglePhosphatesAccordion,
+  toggleSugarsAccordion,
+} from '@utils/macromolecules/rnaBuilder';
+import {
+  clickOnSequenceSymbol,
+  doubleClickOnSequenceSymbol,
+  hoverOnSequenceSymbol,
+} from '@utils/macromolecules/sequence';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,16 +66,20 @@ test.describe('Sequence edit mode', () => {
     await page.getByTestId('start_new_sequence').click();
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await takeEditorScreenshot(page);
   });
 
   test('Add/edit sequence', async ({ page }) => {
     await startNewSequence(page);
     await typeRNADNAAlphabet(page);
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await typeRNADNAAlphabet(page);
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await typePeptideAlphabet(page);
     await page.keyboard.press('Enter');
     await typePeptideAlphabet(page);
@@ -121,7 +139,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for DNA are present on the canvas.
     */
     await startNewSequence(page);
-    await switchSequenceEnteringType(page, SequenceType.DNA);
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
@@ -132,7 +150,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, O, X, U, Z
     */
     await startNewSequence(page);
-    await switchSequenceEnteringType(page, SequenceType.PEPTIDE);
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await enterSequence(page, 'abcdefghijklmnopqrstuvwxyz');
     await takeEditorScreenshot(page);
   });
@@ -161,13 +179,18 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the end of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-sequence.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -179,13 +202,18 @@ test.describe('Sequence edit mode', () => {
     Description: Added 'U' in the middle of sequence.
     */
     await openFileAndAddToCanvasMacro('KET/rna-seq-g.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -213,7 +241,11 @@ test.describe('Sequence edit mode', () => {
     by entering symbols before the phosphate.
     */
     await openFileAndAddToCanvasMacro('KET/rna-g.ket', page);
-    await page.getByText('G').locator('..').first().click({ button: 'right' });
+    await page
+      .locator('g.drawn-structures')
+      .locator('g', { has: page.locator('text="G"') })
+      .first()
+      .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowRight');
     await enterSequence(page, 'u');
@@ -259,5 +291,330 @@ test.describe('Sequence edit mode', () => {
 
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
+  });
+
+  test('Validate that attachment point on preview tooltip marked gray if an attachment point participates in a bond', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await hoverOnSequenceSymbol(page, 'A');
+    await takeEditorScreenshot(page);
+    await hoverOnSequenceSymbol(page, 'K');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer on the canvas (flex mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await hoverOnSequenceSymbol(page, 'A');
+    await takeEditorScreenshot(page);
+    await hoverOnSequenceSymbol(page, 'Aad');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer Sugar/Base/Phosphate/Nucleotide/CHEM (flex mode)', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+
+    const sequenceSymbols = ['25d3r', '4ime6A', 'bP', 'A6OH'];
+
+    for (const symbol of sequenceSymbols) {
+      await hoverOnSequenceSymbol(page, symbol);
+      await takeEditorScreenshot(page);
+      await moveMouseAway(page);
+    }
+    await page.getByText('5HydMe').locator('..').locator('..').first().click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Peptide type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Peptide type of monomer in the library appears.
+    */
+    await page.getByTestId('A___Alanine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Sugar type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Sugar type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleSugarsAccordion(page);
+    await page.getByTestId('25d3r___3-Deoxyribose (2,5 connectivity)').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Base type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Base type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleBasesAccordion(page);
+    await page.getByTestId('c7A___7-Deazaadenine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Phosphate type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Phosphate type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await togglePhosphatesAccordion(page);
+    await page.getByTestId('ibun___Isobutylamino').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for Nucleotide type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for Nucleotide type of monomer in the library appears.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await toggleNucleotidesAccordion(page);
+    await page.getByTestId('Super T___5-hydroxybutynl-2’-deoxyuridine').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for CHEM type of monomer in the library', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Preview tooltip for CHEM type of monomer in the library appears.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('DOTA___Tetraxetan').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that preview tooltip for each type of monomer in sequence mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4880
+    Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
+    */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
+
+    const sequenceSymbols = ['A', 'C', '@'];
+
+    for (const symbol of sequenceSymbols) {
+      await hoverOnSequenceSymbol(page, symbol);
+      await takePageScreenshot(page);
+      await moveMouseAway(page);
+    }
+  });
+
+  test('Check that system show full set of IDT aliases at preview tooltip', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4928
+    Description: System show full set of IDT aliases at preview tooltip.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await expandCollapseRnaBuilder(page);
+    await page.getByTestId('dR(U)P_U_dR_P').hover();
+    await takePageScreenshot(page);
+  });
+
+  test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4887
+    Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
+    */
+    await enterSequence(page, 'aaaaaaaaaa');
+    await page.getByTestId('ketcher-canvas').locator('div').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Hover mouse over any letter in sequence, verify that the cursor should be displayed as a arrow', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
+    */
+    await enterSequence(page, 'aaaaaaaaaa');
+    await hoverOnSequenceSymbol(page, 'A', 0);
+    await takePageScreenshot(page);
+  });
+
+  test('Hover mouse between two letters in sequence, verify that the cursor should be displayed as a caret', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
+    */
+    await enterSequence(page, 'aaaagaaaaaa');
+    await clickOnSequenceSymbol(page, 'G');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Double-click on any symbol of sequence, verify that the edit mode turned on and the symbol highlighted', async ({
+    page,
+  }) => {
+    /*
+    Test case: #4888
+    Description: Double-click on any symbol of sequence, the edit mode turned on AND cursor (blinking line) 
+    placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
+    */
+    await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
+    await doubleClickOnSequenceSymbol(page, 'G');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Switch to RNA mode and type any RNA symbol - A, C, G, U, T', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Clear canvas, switch to RNA mode, type any non-RNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['d', 'e', 'f'];
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to DNA mode and type any DNA symbol - A, C, G, U, T', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Clear canvas, switch to DNA mode, type any non-DNA symbol  (i.e. any but A, C, G, U, T) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['d', 'e', 'f'];
+    await switchSequenceEnteringButtonType(page, SequenceType.DNA);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to Peptide mode and type any Peptide symbol - A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Result in adding the monomer represented by that symbol as the first (and only) monomer in the sequence, 
+    turning on "text edit" mode and placing of the caret after the first monomer.
+    */
+    const sequenceSymbols = [
+      'a',
+      'c',
+      'd',
+      'e',
+      'f',
+      'g',
+      'h',
+      'i',
+      'k',
+      'l',
+      'm',
+      'n',
+      'p',
+      'q',
+      'r',
+      's',
+      't',
+      'v',
+      'w',
+      'y',
+    ];
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
+
+  test('Switch to Peptide mode, type any non-Peptide symbol  (i.e. any but A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) Verify that nothing happens', async ({
+    page,
+  }) => {
+    /*
+    Test case: #5136
+    Description: Nothing happens. Monomer not added to canvas.
+    */
+    const sequenceSymbols = ['b', 'j', 'u', 'z'];
+    await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
+    for (const symbol of sequenceSymbols) {
+      await enterSequence(page, symbol);
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
   });
 });

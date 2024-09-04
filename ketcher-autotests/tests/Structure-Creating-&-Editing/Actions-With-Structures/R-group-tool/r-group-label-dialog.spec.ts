@@ -364,7 +364,9 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {

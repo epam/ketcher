@@ -15,43 +15,12 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import {
-  AttachmentPointName,
-  CoreEditor,
-  IKetIdtAliases,
-  MonomerItemType,
-  PolymerBond,
-} from 'ketcher-core';
-import { RootState } from 'state';
+import { CoreEditor } from 'ketcher-core';
+import { EditorStatePreview, RootState } from 'state';
+import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
-
-interface MonomerPreviewState {
-  readonly monomer: MonomerItemType | undefined;
-  readonly attachmentPointsToBonds?: Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  >;
-  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
-}
-
-export enum PresetPosition {
-  Library = 'library',
-  ChainStart = 'chainStart',
-  ChainMiddle = 'chainMiddle',
-  ChainEnd = 'chainEnd',
-}
-
-export interface PresetPreviewState {
-  readonly preset: {
-    readonly monomers: ReadonlyArray<MonomerItemType | undefined>;
-    readonly name?: string;
-    readonly idtAliases?: IKetIdtAliases;
-    readonly position: PresetPosition;
-  };
-  readonly style: string; // TODO: Specify the type. An object with `right` and `top` properties is not a string.
-}
-
-type EditorStatePreview = MonomerPreviewState | PresetPreviewState;
+import { PresetPosition } from 'ketcher-react';
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
@@ -59,13 +28,19 @@ interface EditorState {
   activeTool: string;
   editor: CoreEditor | undefined;
   preview: EditorStatePreview;
+  position: PresetPosition | undefined;
 }
 
 const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
-  preview: { monomer: undefined, style: '' },
+  preview: {
+    type: PreviewType.Monomer,
+    monomer: undefined,
+    style: {},
+  },
+  position: undefined,
 };
 
 export const editorSlice: Slice = createSlice({
@@ -83,6 +58,9 @@ export const editorSlice: Slice = createSlice({
     },
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
+    },
+    setPosition: (state, action: PayloadAction<PresetPosition>) => {
+      state.position = action.payload;
     },
 
     createEditor: (
@@ -118,17 +96,20 @@ export const {
   createEditor,
   showPreview,
   destroyEditor,
+  setPosition,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
-export const selectShowPreview = (state: RootState) => state.editor.preview;
+export const selectShowPreview = (state: RootState): EditorStatePreview =>
+  state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+export const selectEditorPosition = (
+  state: RootState,
+): PresetPosition | undefined => state.editor.position;
 // TODO: Specify the types.
 // export const selectEditorIsReady = (state: RootState): EditorState['isReady'] =>
 //   state.editor.isReady;
-// export const selectShowPreview = (state: RootState): EditorState['preview'] =>
-//   state.editor.preview;
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;

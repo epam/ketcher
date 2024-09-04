@@ -14,17 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { calculateNucleoElementPreviewTop } from 'helpers';
 import { useAppSelector } from 'hooks';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, isAmbiguousMonomerLibraryItem } from 'ketcher-core';
 import { debounce } from 'lodash';
 import React, { ReactElement, useCallback } from 'react';
 import {
   selectActivePreset,
   setActivePreset,
   setActivePresetForContextMenu,
-  setIsEditMode,
   setInvalidPresetError,
+  setIsEditMode,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
@@ -32,16 +31,21 @@ import {
   GroupContainerRow,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import {
-  PresetPosition,
-  selectEditor,
-  selectShowPreview,
-  showPreview,
-} from 'state/common';
+import { selectEditor, selectShowPreview, showPreview } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { useContextMenu } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
+import {
+  AmbiguousMonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewType,
+} from 'state';
+import {
+  calculateAmbiguousMonomerPreviewTop,
+  calculateNucleoElementPreviewTop,
+} from 'ketcher-react';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
@@ -129,7 +133,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   ): void => {
     handleItemMouseLeave();
 
-    if (preview.preset || !e.currentTarget) {
+    if (preview.type === PreviewType.Preset || !e.currentTarget) {
       return;
     }
 
@@ -141,19 +145,28 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const style = {
       left: `${cardCoordinates.left + cardCoordinates.width}px`,
-      top: preset ? calculateNucleoElementPreviewTop(cardCoordinates) : '',
+      top: isAmbiguousMonomerLibraryItem(preset.base)
+        ? calculateAmbiguousMonomerPreviewTop(preset.base)(cardCoordinates)
+        : calculateNucleoElementPreviewTop(cardCoordinates),
       transform: 'translate(-100%, 0)',
     };
-
-    debouncedShowPreview({
-      preset: {
-        monomers,
-        name: preset.name,
-        idtAliases: preset.idtAliases,
-        position: PresetPosition.Library,
-      },
-      style,
-    });
+    const previewData: PresetPreviewState | AmbiguousMonomerPreviewState =
+      isAmbiguousMonomerLibraryItem(preset.base)
+        ? {
+            type: PreviewType.AmbiguousMonomer,
+            monomer: preset.base,
+            presetMonomers: monomers,
+            style,
+          }
+        : {
+            type: PreviewType.Preset,
+            monomers,
+            name: preset.name,
+            idtAliases: preset.idtAliases,
+            position: PresetPosition.Library,
+            style,
+          };
+    debouncedShowPreview(previewData);
   };
   // endregion # Preview
 

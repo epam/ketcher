@@ -1,10 +1,15 @@
 import { Selection } from 'd3';
 import { Peptide } from 'domain/entities/Peptide';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import { KetMonomerClass } from 'application/formatters';
 
-const PEPTIDE_SELECTED_ELEMENT_ID = '#peptide-selection';
-const PEPTIDE_HOVERED_ELEMENT_ID = '#peptide-hover';
-const PEPTIDE_SYMBOL_ELEMENT_ID = '#peptide';
+const PEPTIDE_SELECTED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].selected;
+const PEPTIDE_HOVERED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].hover;
+const PEPTIDE_SYMBOL_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   public CHAIN_BEGINNING = 'N';
@@ -36,11 +41,11 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     this.appendChainBeginning();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 10, y: -1 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return { x: -6, y: 10 };
   }
 }

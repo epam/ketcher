@@ -5,16 +5,18 @@ import { AttachmentPointName } from 'domain/types';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
+import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
+import { IVariantMonomer } from 'domain/entities/types';
 
 export class Sugar extends BaseMonomer {
-  public getValidSourcePoint(secondMonomer: BaseMonomer) {
+  public getValidSourcePoint(secondMonomer: BaseMonomer & IVariantMonomer) {
     return this.getValidPoint(
       secondMonomer,
       secondMonomer.potentialSecondAttachmentPointForBond,
     );
   }
 
-  public getValidTargetPoint(firstMonomer: BaseMonomer) {
+  public getValidTargetPoint(firstMonomer: BaseMonomer & IVariantMonomer) {
     // same implementation for both source and target attachment points
     return this.getValidPoint(
       firstMonomer,
@@ -23,7 +25,7 @@ export class Sugar extends BaseMonomer {
   }
 
   private getValidPoint(
-    otherMonomer: BaseMonomer,
+    otherMonomer: BaseMonomer & IVariantMonomer,
     potentialPointOnOther: string | null,
   ) {
     // If we chose specific start AP on this monomer, return it
@@ -42,13 +44,13 @@ export class Sugar extends BaseMonomer {
     // If other monomer is neither a Phosphate nor RNABase, open modal
     if (
       !(otherMonomer instanceof Phosphate) &&
-      !(otherMonomer instanceof RNABase)
+      !isRnaBaseOrAmbiguousRnaBase(otherMonomer)
     ) {
       return;
     }
 
     // If other monomer is RNABase, attach it to R3 or open modal
-    if (otherMonomer instanceof RNABase) {
+    if (isRnaBaseOrAmbiguousRnaBase(otherMonomer)) {
       if (this.isAttachmentPointExistAndFree(AttachmentPointName.R3)) {
         return AttachmentPointName.R3;
       } else return;

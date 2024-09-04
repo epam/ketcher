@@ -4,14 +4,19 @@ import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import { highlightFG } from 'src/script/ui/state/functionalGroups';
-import { ItemEventParams } from '../contextMenu.types';
+import {
+  FunctionalGroupsContextMenuProps,
+  ItemEventParams,
+} from '../contextMenu.types';
+
+type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
 
 const useFunctionalGroupRemove = () => {
   const { getKetcherInstance } = useAppContext();
   const dispatch = useDispatch();
 
   const handler = useCallback(
-    ({ props }: ItemEventParams) => {
+    ({ props }: Params) => {
       const editor = getKetcherInstance().editor as Editor;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();

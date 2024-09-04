@@ -13,31 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useEffect, useState } from 'react';
-import { calculateMonomerPreviewTop, EmptyFunction } from 'helpers';
+import { useCallback } from 'react';
+import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
-import {
-  GroupContainerColumn,
-  GroupContainerRow,
-  GroupTitle,
-  ItemsContainer,
-} from './styles';
+import { GroupContainerColumn, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
-import { MonomerItemType } from 'ketcher-core';
+import {
+  isAmbiguousMonomerLibraryItem,
+  MonomerOrAmbiguousType,
+} from 'ketcher-core';
 import { useAppDispatch, useAppSelector } from 'hooks';
+import { selectEditor, selectTool, showPreview } from 'state/common';
+import { selectGroupItemValidations } from 'state/rna-builder';
+import { PreviewStyle, PreviewType } from 'state';
 import {
-  showPreview,
-  selectShowPreview,
-  selectEditor,
-  selectTool,
-} from 'state/common';
-import {
-  selectActiveRnaBuilderItem,
-  selectGroupItemValidations,
-} from 'state/rna-builder';
-import { NoNaturalAnalogueGroupTitle } from '../../../constants';
+  calculateAmbiguousMonomerPreviewTop,
+  calculateMonomerPreviewTop,
+} from 'ketcher-react';
 
 const MonomerGroup = ({
   items,
@@ -49,19 +43,21 @@ const MonomerGroup = ({
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
-  const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
-  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
 
-  const isMonomerDisabled = (monomer: MonomerItemType) => {
+  const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     let monomerDisabled = false;
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      return false;
+    }
+
     if (disabled) {
       monomerDisabled = disabled;
     } else {
       const monomerValidations =
-        activeGroupItemValidations[`${monomer.props.MonomerClass}s`];
-      if (monomerValidations?.length > 0 && monomer.props.MonomerCaps) {
+        activeGroupItemValidations[`${monomer.props?.MonomerClass}s`];
+      if (monomerValidations?.length > 0 && monomer.props?.MonomerCaps) {
         for (let i = 0; i < monomerValidations.length; i++) {
           if (!(monomerValidations[i] in monomer.props.MonomerCaps)) {
             monomerDisabled = true;
@@ -71,13 +67,6 @@ const MonomerGroup = ({
     }
     return monomerDisabled;
   };
-
-  const [selectedItemInGroup, setSelectedItemInGroup] =
-    useState<MonomerItemType | null>(null);
-
-  useEffect(() => {
-    setSelectedItemInGroup(null);
-  }, [activeMonomerGroup]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -95,22 +84,39 @@ const MonomerGroup = ({
   };
 
   const handleItemMouseMove = (
-    monomer: MonomerItemType,
+    monomer: MonomerOrAmbiguousType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     handleItemMouseLeave();
-    if (preview.monomer || !e.currentTarget) {
-      return;
-    }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
-    const top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
-    const style = { right: '-88px', top };
-    debouncedShowPreview({ monomer, style });
+    let style: PreviewStyle;
+    let previewType: PreviewType;
+    let top: string;
+
+    if (isAmbiguousMonomerLibraryItem(monomer)) {
+      top = monomer
+        ? calculateAmbiguousMonomerPreviewTop(monomer)(cardCoordinates)
+        : '';
+      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
+      previewType = PreviewType.AmbiguousMonomer;
+      style = { left, top, transform: 'translate(-50%, 0)' };
+    } else {
+      top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
+      style = { right: '-88px', top };
+      previewType = PreviewType.Monomer;
+    }
+
+    const previewData = {
+      type: previewType,
+      monomer,
+      style,
+    };
+
+    debouncedShowPreview(previewData);
   };
 
-  const selectMonomer = (monomer: MonomerItemType) => {
+  const selectMonomer = (monomer: MonomerOrAmbiguousType) => {
     dispatch(selectTool('monomer'));
-    setSelectedItemInGroup(monomer);
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor.events.selectMonomer.dispatch(monomer);
@@ -119,29 +125,18 @@ const MonomerGroup = ({
     onItemClick(monomer);
   };
 
-  const isMonomerSelected = (monomer: MonomerItemType) => {
-    return selectedItemInGroup
-      ? getMonomerUniqueKey(selectedItemInGroup) ===
-          getMonomerUniqueKey(monomer)
-      : selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
+  const isMonomerSelected = (monomer: MonomerOrAmbiguousType) => {
+    return selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
-  const groupWithNoNaturalAnalogue = title === NoNaturalAnalogueGroupTitle;
-  const StyledGroupContainer = groupWithNoNaturalAnalogue
-    ? GroupContainerColumn
-    : GroupContainerRow;
-
   return (
-    <StyledGroupContainer>
+    <GroupContainerColumn>
       {title && <GroupTitle>{title}</GroupTitle>}
-      <ItemsContainer useLeftMargin={groupWithNoNaturalAnalogue}>
+      <ItemsContainer>
         {items.map((monomer) => {
-          const key = monomer.props
-            ? `${monomer.props.MonomerName + monomer.props.Name}`
-            : monomer.label;
           return (
             <MonomerItem
-              key={key}
+              key={getMonomerUniqueKey(monomer)}
               disabled={isMonomerDisabled(monomer)}
               item={monomer}
               groupName={groupName}
@@ -153,7 +148,7 @@ const MonomerGroup = ({
           );
         })}
       </ItemsContainer>
-    </StyledGroupContainer>
+    </GroupContainerColumn>
   );
 };
 export { MonomerGroup };

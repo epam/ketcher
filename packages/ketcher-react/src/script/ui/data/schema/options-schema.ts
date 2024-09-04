@@ -28,6 +28,18 @@ type ExtendedSchema = SchemaObject & {
   default?: any;
 };
 
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
+export enum ImageResolution {
+  high = '600',
+  low = '72',
+}
+
 const editor: {
   resetToSelect: ExtendedSchema;
   rotationStep: ExtendedSchema;
@@ -64,15 +76,27 @@ const render: {
   orFlagLabel: ExtendedSchema;
   font: ExtendedSchema;
   fontsz: ExtendedSchema;
+  fontszUnit: ExtendedSchema;
   fontszsub: ExtendedSchema;
+  fontszsubUnit: ExtendedSchema;
   carbonExplicitly: ExtendedSchema;
   showCharge: ExtendedSchema;
   showValence: ExtendedSchema;
   showHydrogenLabels: ExtendedSchema;
   aromaticCircle: ExtendedSchema;
   doubleBondWidth: ExtendedSchema;
+  doubleBondWidthUnit: ExtendedSchema;
   bondThickness: ExtendedSchema;
+  bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
+  stereoBondWidthUnit: ExtendedSchema;
+  bondLength: ExtendedSchema;
+  bondLengthUnit: ExtendedSchema;
+  reactionComponentMarginSize: ExtendedSchema;
+  reactionComponentMarginSizeUnit: ExtendedSchema;
+  hashSpacing: ExtendedSchema;
+  hashSpacingUnit: ExtendedSchema;
+  imageResolution: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -173,12 +197,24 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  fontszUnit: {
+    title: 'Font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   fontszsub: {
     title: 'Sub font size',
     type: 'integer',
     default: 13,
     minimum: 1,
     maximum: 96,
+  },
+  fontszsubUnit: {
+    title: 'Sub font size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
   },
   // Atom
   carbonExplicitly: {
@@ -219,6 +255,12 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  doubleBondWidthUnit: {
+    title: 'Double bond width unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   bondThickness: {
     title: 'Bond thickness',
     type: 'integer',
@@ -226,12 +268,69 @@ const render: {
     minimum: 1,
     maximum: 96,
   },
+  bondThicknessUnit: {
+    title: 'Bond thickness unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
   stereoBondWidth: {
     title: 'Stereo (Wedge) bond width',
     type: 'integer',
     default: 6,
     minimum: 1,
     maximum: 96,
+  },
+  stereoBondWidthUnit: {
+    title: 'Stereo (Wedge) bond width unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  bondLength: {
+    title: 'Bond length',
+    type: 'number',
+    default: 2.1,
+    minimum: 1,
+    maximum: 96,
+  },
+  bondLengthUnit: {
+    title: 'Bond length unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  reactionComponentMarginSize: {
+    title: 'Reaction component margin size',
+    type: 'number',
+    default: 2.3,
+    minimum: 1,
+    maximum: 96,
+  },
+  reactionComponentMarginSizeUnit: {
+    title: 'Reaction component margin size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  hashSpacing: {
+    title: 'Hash spacing',
+    type: 'number',
+    default: 2.2,
+    minimum: 1,
+    maximum: 96,
+  },
+  hashSpacingUnit: {
+    title: 'Hash spacing unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  imageResolution: {
+    title: 'Image resolution',
+    enum: Object.values(ImageResolution),
+    enumNames: Object.keys(ImageResolution),
+    default: ImageResolution.low,
   },
 };
 

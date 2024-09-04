@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
-  PresetPosition,
   selectEditor,
   selectEditorActiveTool,
   selectTool,
@@ -28,12 +27,30 @@ import {
 } from 'components/modal/modalContainer';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { debounce } from 'lodash';
-import { Nucleoside, Nucleotide } from 'ketcher-core';
 import {
+  AmbiguousMonomer,
+  BaseMonomer,
+  Nucleoside,
+  Nucleotide,
+  PolymerBond,
+} from 'ketcher-core';
+import { selectAllPresets } from 'state/rna-builder';
+import {
+  AmbiguousMonomerPreviewState,
+  BondPreviewState,
+  MonomerPreviewState,
+  PresetPosition,
+  PresetPreviewState,
+  PreviewStyle,
+  PreviewType,
+} from 'state/types';
+import {
+  calculateAmbiguousMonomerPreviewLeft,
+  calculateAmbiguousMonomerPreviewTop,
+  calculateBondPreviewPosition,
   calculateMonomerPreviewTop,
   calculateNucleoElementPreviewTop,
-} from 'helpers';
-import { selectAllPresets } from 'state/rna-builder';
+} from 'ketcher-react';
 
 const noPreviewTools = ['bond-single'];
 
@@ -136,13 +153,57 @@ export const EditorEvents = () => {
     };
   }, [editor]);
 
+  const handleOpenBondPreview = useCallback(
+    (polymerBond: PolymerBond, style: PreviewStyle) => {
+      const previewData: BondPreviewState = {
+        type: PreviewType.Bond,
+        polymerBond,
+        style,
+      };
+
+      debouncedShowPreview(previewData);
+    },
+    [debouncedShowPreview],
+  );
+
   const handleOpenPreview = useCallback(
     (e) => {
+      const polymerBond = e.target.__data__?.polymerBond;
+      if (polymerBond) {
+        const style = calculateBondPreviewPosition(
+          polymerBond,
+          e.target.getBoundingClientRect(),
+        );
+
+        handleOpenBondPreview(polymerBond, style);
+        return;
+      }
+
+      // TODO: Split to separate functions for monomers and presets
       const cardCoordinates = e.target.getBoundingClientRect();
       const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
-
       const sequenceNode = e.target.__data__?.node;
-      const monomer = e.target.__data__?.monomer || sequenceNode?.monomer;
+      const monomer: BaseMonomer | AmbiguousMonomer =
+        e.target.__data__?.monomer || sequenceNode?.monomer;
+
+      if (monomer instanceof AmbiguousMonomer) {
+        const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
+          type: PreviewType.AmbiguousMonomer,
+          monomer: monomer.variantMonomerItem,
+          style: {
+            left: `${calculateAmbiguousMonomerPreviewLeft(
+              cardCoordinates.left,
+            )}px`,
+            top: calculateAmbiguousMonomerPreviewTop(
+              monomer.variantMonomerItem,
+            )(cardCoordinates),
+          },
+        };
+
+        debouncedShowPreview(ambiguousMonomerPreviewData);
+        return;
+      }
+
       const monomerItem = monomer.monomerItem;
       const attachmentPointsToBonds = { ...monomer.attachmentPointsToBonds };
       const isNucleotideOrNucleoside =
@@ -162,6 +223,25 @@ export const EditorEvents = () => {
                 sequenceNode.rnaBase.monomerItem,
               ];
 
+        if (sequenceNode.rnaBase instanceof AmbiguousMonomer) {
+          const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
+            type: PreviewType.AmbiguousMonomer,
+            monomer: sequenceNode.rnaBase.variantMonomerItem,
+            presetMonomers: monomers,
+            style: {
+              left: `${calculateAmbiguousMonomerPreviewLeft(
+                cardCoordinates.left,
+              )}px`,
+              top: calculateAmbiguousMonomerPreviewTop(
+                sequenceNode.rnaBase.variantMonomerItem,
+              )(cardCoordinates),
+            },
+          };
+
+          debouncedShowPreview(ambiguousMonomerPreviewData);
+          return;
+        }
+
         const existingPreset = presets.find((preset) => {
           const presetMonomers = [preset.sugar, preset.base, preset.phosphate];
           return monomers.every((monomer, index) => {
@@ -180,13 +260,12 @@ export const EditorEvents = () => {
           position = PresetPosition.ChainMiddle;
         }
 
-        debouncedShowPreview({
-          preset: {
-            monomers,
-            name: existingPreset?.name,
-            idtAliases: existingPreset?.idtAliases,
-            position,
-          },
+        const presetPreviewData: PresetPreviewState = {
+          type: PreviewType.Preset,
+          monomers,
+          name: existingPreset?.name,
+          idtAliases: existingPreset?.idtAliases,
+          position,
           style: {
             left,
             top: monomerItem
@@ -194,20 +273,25 @@ export const EditorEvents = () => {
               : '',
             transform: 'translate(-50%, 0)',
           },
-        });
+        };
+
+        debouncedShowPreview(presetPreviewData);
         return;
       }
 
-      debouncedShowPreview({
+      const monomerPreviewData: MonomerPreviewState = {
+        type: PreviewType.Monomer,
         monomer: monomerItem,
         attachmentPointsToBonds,
         style: {
           left,
           top: monomerItem ? calculateMonomerPreviewTop(cardCoordinates) : '',
         },
-      });
+      };
+
+      debouncedShowPreview(monomerPreviewData);
     },
-    [debouncedShowPreview, presets],
+    [handleOpenBondPreview, debouncedShowPreview, presets],
   );
 
   const handleClosePreview = useCallback(() => {
@@ -220,6 +304,8 @@ export const EditorEvents = () => {
     editor?.events.mouseLeaveMonomer.add(handleClosePreview);
     editor?.events.mouseOverSequenceItem.add(handleOpenPreview);
     editor?.events.mouseLeaveSequenceItem.add(handleClosePreview);
+    editor?.events.mouseOverPolymerBond.add(handleOpenPreview);
+    editor?.events.mouseLeavePolymerBond.add(handleClosePreview);
 
     const onMoveHandler = (e) => {
       handleClosePreview();
@@ -230,14 +316,18 @@ export const EditorEvents = () => {
     };
     editor?.events.mouseOnMoveMonomer.add(onMoveHandler);
     editor?.events.mouseOnMoveSequenceItem.add(onMoveHandler);
+    editor?.events.mouseOnMovePolymerBond.add(onMoveHandler);
 
     return () => {
       editor?.events.mouseOverMonomer.remove(handleOpenPreview);
       editor?.events.mouseLeaveMonomer.remove(handleClosePreview);
       editor?.events.mouseOnMoveMonomer.remove(onMoveHandler);
       editor?.events.mouseOnMoveSequenceItem.remove(onMoveHandler);
+      editor?.events.mouseOnMovePolymerBond.remove(onMoveHandler);
       editor?.events.mouseOverSequenceItem.remove(handleOpenPreview);
       editor?.events.mouseLeaveSequenceItem.remove(handleClosePreview);
+      editor?.events.mouseOverPolymerBond.remove(handleOpenPreview);
+      editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
 

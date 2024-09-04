@@ -19,6 +19,7 @@ import {
   SimpleObjectMode,
   findStereoAtoms,
   IMAGE_KEY,
+  MULTITAIL_ARROW_TOOL_NAME,
 } from 'ketcher-core';
 
 import { bond as bondSchema } from '../data/schema/struct-schema';
@@ -137,6 +138,11 @@ const toolActions = {
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
     hidden: (options) => isHidden(options, 'reaction-arrow-failed'),
   },
+  'reaction-arrow-retrosynthetic': {
+    title: 'Retrosynthetic Arrow Tool',
+    action: { tool: 'reactionarrow', opts: RxnArrowMode.Retrosynthetic },
+    hidden: (options) => isHidden(options, 'reaction-arrow-retrosynthetic'),
+  },
   'reaction-arrow-both-ends-filled-triangle': {
     title: 'Arrow Both Ends Filled Triangle Tool',
     action: {
@@ -253,6 +259,14 @@ const toolActions = {
     },
     hidden: (options) =>
       isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle'),
+  },
+  [MULTITAIL_ARROW_TOOL_NAME]: {
+    title: 'Multi-Tailed Arrow Tool',
+    action: {
+      tool: 'reactionarrow',
+      opts: MULTITAIL_ARROW_TOOL_NAME,
+    },
+    hidden: (options) => isHidden(options, MULTITAIL_ARROW_TOOL_NAME),
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',

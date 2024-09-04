@@ -153,8 +153,29 @@ const SettingsDialog = (props: Props) => {
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
         <Field name="font" component={SystemFonts} data-testid="font" />
-        <Field name="fontsz" component={MeasureInput} labelPos={false} />
-        <Field name="fontszsub" component={MeasureInput} labelPos={false} />
+        <Field
+          name="fontsz"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszUnit"
+        />
+        <Field
+          name="fontszsub"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="fontszsubUnit"
+        />
+        <Field
+          name="reactionComponentMarginSize"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="reactionComponentMarginSizeUnit"
+        />
+        <Field
+          name="imageResolution"
+          component={Select}
+          options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+        />
       </fieldset>
     ),
   };
@@ -219,15 +240,34 @@ const SettingsDialog = (props: Props) => {
       <fieldset>
         <Field name="aromaticCircle" />
         <Field
+          name="bondLength"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="bondLengthUnit"
+        />
+        <Field
           name="doubleBondWidth"
           component={MeasureInput}
           labelPos={false}
+          extraName="doubleBondWidthUnit"
         />
-        <Field name="bondThickness" component={MeasureInput} labelPos={false} />
+        <Field
+          name="bondThickness"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="bondThicknessUnit"
+        />
         <Field
           name="stereoBondWidth"
           component={MeasureInput}
           labelPos={false}
+          extraName="stereoBondWidthUnit"
+        />
+        <Field
+          name="hashSpacing"
+          component={MeasureInput}
+          labelPos={false}
+          extraName="hashSpacingUnit"
         />
       </fieldset>
     ),

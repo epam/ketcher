@@ -16,3 +16,4 @@
 
 export * from './store';
 export * from './rootSaga';
+export * from 'state/types';

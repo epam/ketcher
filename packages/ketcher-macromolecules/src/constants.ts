@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES';
+export const MONOMER_LIBRARY_PEPTIDES = 'PEPTIDE';
 
 export const MONOMER_TYPES = {
   PEPTIDE: 'PEPTIDE',
@@ -25,18 +26,12 @@ export type LibraryNameType =
   | typeof MONOMER_LIBRARY_FAVORITES
   | keyof typeof MONOMER_TYPES;
 
-export const preview = {
-  width: 345,
-  height: 345,
-  gap: 5,
-  topPadding: 16,
-  heightForNucleotide: 105,
-} as const;
-
 export enum MonomerGroups {
   SUGARS = 'Sugars',
   BASES = 'Bases',
   PHOSPHATES = 'Phosphates',
+  PEPTIDES = 'Amino acids',
+  NUCLEOTIDES = 'Nucleotides',
 }
 
 export enum MonomerGroupCodes {
@@ -67,3 +62,6 @@ export const CUSTOM_PRESETS = 'ketcher_custom_presets';
 // It's set as Z, so it will always be put in the end when alphabetically sorting groups by code
 export const NoNaturalAnalogueGroupCode = 'Z';
 export const NoNaturalAnalogueGroupTitle = 'No natural analogue';
+
+export const DNA_TEMPLATE_NAME_PART = 'thymine';
+export const RNA_TEMPLATE_NAME_PART = 'uracil';

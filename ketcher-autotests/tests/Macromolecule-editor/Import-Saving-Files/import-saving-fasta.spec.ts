@@ -18,8 +18,9 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { getSequenceSymbolLocator } from '@utils/macromolecules/sequence';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
@@ -34,6 +35,9 @@ test.describe('Import-Saving .fasta Files', () => {
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async ({ page }) => {
+      if (fileType === 'DNA') {
+        await pageReload(page);
+      }
       await openFileAndAddToCanvasMacro(
         `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
         page,
@@ -99,7 +103,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('FASTA/fasta-empty.fasta', page);
-    await page.getByText('Add to Canvas').isDisabled();
+    await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
 
   // Fail while performance issue on Indigo side
@@ -312,7 +316,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await page.getByText('Peptide', { exact: true }).click();
     await pressButton(page, 'Add to Canvas');
     await selectSequenceLayoutModeTool(page);
-    await getSequenceSymbolLocator(page, 'C').click();
+    await clickOnSequenceSymbol(page, 'U');
     await takeEditorScreenshot(page);
   });
 

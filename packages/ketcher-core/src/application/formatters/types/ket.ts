@@ -1,22 +1,34 @@
 import { AttachmentPointName } from 'domain/types';
 
+export enum KetNodeType {
+  MONOMER = 'monomer',
+  AMBIGUOUS_MONOMER = 'ambiguousMonomer',
+}
+
 export interface IKetMonomerNode {
-  type: 'monomer';
+  type: KetNodeType.MONOMER;
   id: string;
   seqid?: number;
   position: {
     x: number;
     y: number;
   };
-  alias?: string;
+  alias: string;
   templateId: string;
 }
 
-export interface IKetGroupNode {
-  type: 'group';
+export interface IKetAmbiguousMonomerNode {
+  type: KetNodeType.AMBIGUOUS_MONOMER;
+  id: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  alias: string;
+  templateId: string;
 }
 
-export type KetNode = IKetMonomerNode | IKetGroupNode;
+export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;
 
 export interface IKetConnectionMonomerEndPoint {
   monomerId: string;
@@ -98,11 +110,23 @@ export interface IKetIdtAliases {
 export enum KetTemplateType {
   MONOMER_TEMPLATE = 'monomerTemplate',
   MONOMER_GROUP_TEMPLATE = 'monomerGroupTemplate',
+  AMBIGUOUS_MONOMER_TEMPLATE = 'ambiguousMonomerTemplate',
+}
+
+export enum KetAmbiguousMonomerTemplateSubType {
+  ALTERNATIVES = 'alternatives',
+  MIXTURE = 'mixture',
+}
+
+export interface KetAmbiguousMonomerTemplateOption {
+  templateId: string;
+  ratio?: number;
+  probability?: number;
 }
 
 export interface IKetMonomerTemplate {
   type: KetTemplateType.MONOMER_TEMPLATE;
-  class?: monomerClass;
+  class?: KetMonomerClass;
   monomerSubClass?:
     | 'AminoAcid'
     | 'Sugar'
@@ -115,7 +139,7 @@ export interface IKetMonomerTemplate {
   naturalAnalogShort: string;
   id: string;
   fullName?: string;
-  alias?: string;
+  alias: string;
   naturalAnalog?: string;
   attachmentPoints?: IKetAttachmentPoint[];
   root: {
@@ -127,6 +151,15 @@ export interface IKetMonomerTemplate {
   unresolved?: boolean;
   atoms: [];
   bonds: [];
+}
+
+export interface IKetAmbiguousMonomerTemplate {
+  type: KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE;
+  id: string;
+  subtype: KetAmbiguousMonomerTemplateSubType;
+  options: KetAmbiguousMonomerTemplateOption[];
+  idtAliases?: IKetIdtAliases;
+  alias?: string;
 }
 
 export interface IKetMonomerTemplateRef {
@@ -160,7 +193,11 @@ export interface IKetMacromoleculesContentRootProperty {
 }
 
 export interface IKetMacromoleculesContentOtherProperties {
-  [key: string]: KetNode | IKetMonomerTemplate | IKetMonomerGroupTemplate;
+  [key: string]:
+    | KetNode
+    | IKetMonomerTemplate
+    | IKetMonomerGroupTemplate
+    | IKetAmbiguousMonomerTemplate;
 }
 
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &

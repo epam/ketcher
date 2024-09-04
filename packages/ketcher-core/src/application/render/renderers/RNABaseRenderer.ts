@@ -1,9 +1,13 @@
 import { Selection } from 'd3';
 import { RNABase } from 'domain/entities/RNABase';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
+import { KetMonomerClass } from 'application/formatters';
 
-const RNABASE_SELECTED_ELEMENT_ID = '#rna-base-selection';
-const RNABASE_SYMBOL_ELEMENT_ID = '#rna-base';
+const RNABASE_SELECTED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].selected;
+const RNABASE_SYMBOL_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].body;
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
   constructor(public monomer: RNABase, scale?: number) {
@@ -32,11 +36,11 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     this.appendEnumeration();
   }
 
-  protected get enumerationElementPosition() {
+  public get enumerationElementPosition() {
     return { x: 11, y: 5 };
   }
 
-  protected get beginningElementPosition() {
+  public get beginningElementPosition() {
     return undefined;
   }
 }

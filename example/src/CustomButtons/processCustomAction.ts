@@ -14,10 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Ketcher } from 'ketcher-core';
 import { CustomButtonsName } from './customButtons';
 
 export function processCustomAction(name: string) {
-  const ketcher = window.ketcher;
+  const ketcher = window.ketcher as Ketcher;
   switch (name) {
     case CustomButtonsName.Zoom350:
       ketcher.editor.zoom(3.5);

@@ -131,8 +131,16 @@ function Label({ labelPos, title, children, ...props }) {
 }
 
 function Field(props) {
-  const { name, extraName, onChange, component, labelPos, className, ...rest } =
-    props;
+  const {
+    name,
+    extraName,
+    onChange,
+    component,
+    labelPos,
+    className,
+    extraLabel,
+    ...rest
+  } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const handlePopoverOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
@@ -163,6 +171,7 @@ function Field(props) {
     />
   ) : (
     <Input
+      {...(extraLabel && { className: classes.inputWithExtraLabel })}
       name={name}
       schema={desc}
       {...fieldOpts}
@@ -197,6 +206,7 @@ function Field(props) {
           onClose={handlePopoverClose}
         />
       )}
+      {extraLabel && <Label className={classes.extraLabel}>{extraLabel}</Label>}
     </Label>
   );
 }

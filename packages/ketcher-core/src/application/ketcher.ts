@@ -501,6 +501,6 @@ export class Ketcher {
   }
 
   public sendCustomAction(name: string) {
-    this.eventBus.emit('CUSTOM', name);
+    this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
   }
 }

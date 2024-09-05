@@ -141,8 +141,8 @@ export function load(struct: Struct, options?) {
     let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
       ...otherOptions,
-      'dearomatize-on-load': editor.options()['dearomatize-on-load'],
       ignoreChiralFlag: editor.options().ignoreChiralFlag,
+      ...state.options.getServerSettings(),
     };
 
     dispatch(setAnalyzingFile(true));

@@ -1,7 +1,8 @@
-import { Struct } from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
 import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
 import ReAtom from './restruct/reatom';
+import { Coordinates } from 'application/editor';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -58,11 +59,11 @@ export class RenderStruct {
   }
 
   static render(
-    el: HTMLElement | null,
+    wrapperElement: HTMLElement | null,
     struct: Struct | null,
     options: any = {},
   ) {
-    if (el && struct) {
+    if (wrapperElement && struct) {
       const { cachePrefix = '', needCache = true } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
@@ -72,22 +73,51 @@ export class RenderStruct {
       }
 
       if (renderCache.has(cacheKey) && needCache) {
-        el.innerHTML = renderCache.get(cacheKey);
+        wrapperElement.innerHTML = renderCache.get(cacheKey);
         return;
       }
 
-      const preparedStruct = this.prepareStruct(struct);
+      const preparedStruct = this.prepareStruct(struct.clone());
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();
       preparedStruct.markFragments();
-
-      const rnd = new Render(el, {
+      const structureSize = preparedStruct.getCoordBoundingBox();
+      const structureSizeInPixels = Coordinates.modelToCanvas(
+        new Vec2(
+          structureSize.max.x - structureSize.min.x,
+          structureSize.max.y - structureSize.min.y,
+        ),
+      );
+      const wrapperElementBoundingRect = wrapperElement.getBoundingClientRect();
+      const isStructureLessThanWrapper =
+        structureSizeInPixels.x < wrapperElementBoundingRect.width &&
+        structureSizeInPixels.y < wrapperElementBoundingRect.height;
+      const structureRectangleSize = Math.max(
+        structureSizeInPixels.x,
+        structureSizeInPixels.y,
+      );
+      const svgSize = isStructureLessThanWrapper
+        ? Math.min(
+            structureRectangleSize,
+            wrapperElementBoundingRect.width,
+            wrapperElementBoundingRect.height,
+          )
+        : undefined;
+      const extendedOptions = {
         autoScale: true,
         ...options,
-      });
+        width: svgSize,
+        height: svgSize,
+      };
 
-      preparedStruct.rescale();
+      if (window.isPolymerEditorTurnedOn) {
+        extendedOptions.fontsz = 40;
+        extendedOptions.fontszsub = 30;
+      }
+
+      const rnd = new Render(wrapperElement, extendedOptions);
+
       rnd.setMolecule(preparedStruct);
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 

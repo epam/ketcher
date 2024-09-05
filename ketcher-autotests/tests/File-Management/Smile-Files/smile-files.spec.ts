@@ -679,7 +679,7 @@ test.describe('SMILES files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     */
 
@@ -711,7 +711,7 @@ test.describe('SMILES files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     */
 
@@ -743,7 +743,7 @@ test.describe('SMILES files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     */
 
@@ -775,7 +775,7 @@ test.describe('SMILES files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     */
 
@@ -807,7 +807,7 @@ test.describe('SMILES files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     */
 
@@ -840,7 +840,7 @@ test.describe('SMILES files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2315
     After fix we need update file and screenshot.

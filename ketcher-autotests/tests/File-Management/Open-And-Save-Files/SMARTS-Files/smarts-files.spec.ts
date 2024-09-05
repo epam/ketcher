@@ -236,7 +236,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -268,7 +268,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -300,7 +300,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -332,7 +332,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -364,7 +364,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 
@@ -396,7 +396,7 @@ test.describe('Loading SMARTS files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMARTS file and loaded back
     */
 

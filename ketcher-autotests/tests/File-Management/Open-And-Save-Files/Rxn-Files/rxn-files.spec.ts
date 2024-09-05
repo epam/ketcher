@@ -692,7 +692,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -772,7 +772,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -852,7 +852,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -932,7 +932,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -1012,7 +1012,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 
@@ -1092,7 +1092,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn2000 file and loaded back
     */
 

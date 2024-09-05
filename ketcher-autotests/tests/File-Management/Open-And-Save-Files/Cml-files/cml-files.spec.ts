@@ -329,7 +329,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.
@@ -366,7 +366,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.
@@ -403,7 +403,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.
@@ -440,7 +440,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.
@@ -477,7 +477,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.
@@ -514,7 +514,7 @@ test.describe('CML files', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
     After fix we need update file and screenshot.

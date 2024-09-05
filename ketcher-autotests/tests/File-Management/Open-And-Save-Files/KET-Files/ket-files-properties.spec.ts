@@ -74,7 +74,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(
@@ -100,7 +100,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(
@@ -126,7 +126,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(
@@ -152,7 +152,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(
@@ -178,7 +178,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(
@@ -204,7 +204,7 @@ test.describe('Import-Saving .ket Files', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2071
     Description: .ket file with macro structures is exported and imported correctly .
     */
     await openFileAndAddToCanvas(

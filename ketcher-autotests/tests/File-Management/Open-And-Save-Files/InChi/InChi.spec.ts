@@ -193,6 +193,22 @@ test.describe('', () => {
       await clickInTheMiddleOfTheScreen(page);
     },
   );
+
+  test('Validate that the simple schema with retrosynthetic arrow can not save', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    */
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await clickOnFileFormatDropdown(page);
+    await selectInChiOption(page);
+  });
 });
 
 test.describe('Open and Save InChI file', () => {

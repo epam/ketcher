@@ -318,7 +318,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
     */
 
@@ -351,7 +351,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
 
     Valence is not displayed. After fixing https://github.com/epam/Indigo/issues/2205 need to update a screenshot.
@@ -386,7 +386,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
     */
 
@@ -420,7 +420,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2311 
     After fix we need update screenshot
@@ -457,7 +457,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2219
     After fix we need update file and screenshot.
@@ -494,7 +494,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2221
     After fix we need update file and screenshot.

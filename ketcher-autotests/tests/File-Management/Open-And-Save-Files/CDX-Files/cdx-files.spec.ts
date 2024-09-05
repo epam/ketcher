@@ -284,7 +284,7 @@ test.describe('CDX files without screenshots', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
@@ -312,7 +312,7 @@ test.describe('CDX files without screenshots', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
@@ -340,7 +340,7 @@ test.describe('CDX files without screenshots', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
@@ -368,7 +368,7 @@ test.describe('CDX files without screenshots', () => {
     page,
   }) => {
     /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
@@ -397,7 +397,7 @@ test.describe('CDX files without screenshots', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2219
     After fix we need update file.
@@ -429,7 +429,7 @@ test.describe('CDX files without screenshots', () => {
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
-    Test case: #4985
+    Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2221
     After fix we need update file.

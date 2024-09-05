@@ -144,13 +144,10 @@ export async function selectImageTool(page: Page) {
  * If the maximum number of attempts is not provided, it defaults to 10.
  *
  * @param {Page} page - The Playwright page instance where the button is located.
- * @param {number} [maxAttempts=5] - The maximum number of retry attempts to click the button.
+ * @param {number} [maxAttempts=10] - The maximum number of retry attempts to click the button.
  * @throws {Error} Throws an error if the button cannot be clicked after the specified number of attempts.
  */
-export async function selectClearCanvasTool(
-  page: Page,
-  maxAttempts: number = 10,
-) {
+export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
   const clearCanvasButton = page.getByTestId('clear-canvas');
   let attempts = 0;
 

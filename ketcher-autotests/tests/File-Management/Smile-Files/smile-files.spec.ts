@@ -835,35 +835,39 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMILE file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMILE file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4985
     Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2315
+    After fix we need update file and screenshot.
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
-      page,
-    );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
-      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      expectedFile,
-    );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      });
+      );
+      const expectedFile = await getSmiles(page);
+      await saveToFile(
+        'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        expectedFile,
+      );
+      const { fileExpected: smilesFileExpected, file: smilesFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        });
 
-    expect(smilesFile).toEqual(smilesFileExpected);
+      expect(smilesFile).toEqual(smilesFileExpected);
 
-    await openFileAndAddToCanvasAsNewProject(
-      'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      page,
-    );
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        page,
+      );
+    },
+  );
 });

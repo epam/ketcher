@@ -796,8 +796,6 @@ test.describe('Plus and Arrows tools ', () => {
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    // await cutAndPaste(page);
-    // await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 

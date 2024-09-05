@@ -415,38 +415,42 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
   });
 
-  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to Cdxml file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #4985
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2311 
+    After fix we need update screenshot
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
-        expectedFileName:
-          'tests/test-data/CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
-      });
+      );
+      const expectedFile = await getCdxml(page);
+      await saveToFile(
+        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
+        expectedFile,
+      );
 
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
+        });
 
-    await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
-      page,
-    );
-  });
+      expect(cdxmlFile).toEqual(cdxmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
+        page,
+      );
+    },
+  );
 
   test(
     'Validate that the schema with vertical retrosynthetic arrow could be saved to Cdxml file and loaded back',

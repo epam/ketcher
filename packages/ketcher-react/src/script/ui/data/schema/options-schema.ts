@@ -193,7 +193,7 @@ const render: {
     title: 'Font size',
     type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   fontszUnit: {
@@ -206,7 +206,7 @@ const render: {
     title: 'Sub font size',
     type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   fontszsubUnit: {
@@ -258,7 +258,7 @@ const render: {
     title: 'Bond thickness',
     type: 'number',
     default: defaultBondThickness,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   bondThicknessUnit: {
@@ -271,7 +271,7 @@ const render: {
     title: 'Stereo (Wedge) bond width',
     type: 'number',
     default: 6,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   stereoBondWidthUnit: {

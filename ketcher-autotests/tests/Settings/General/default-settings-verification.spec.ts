@@ -42,7 +42,6 @@ test.describe('General Settings', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
     await resetAllSettingsToDefault(page);
   });
 
@@ -51,11 +50,13 @@ test.describe('General Settings', () => {
     Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
     */
     await selectTopPanelButton(TopPanelButton.Settings, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify settings menu', async ({ page }) => {
     // Test case: EPMLSOPKET-10077
     await generalDefaultSettings(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Actions when switch "reset to Select tool" is"Off"', async ({
@@ -69,6 +70,7 @@ test.describe('General Settings', () => {
     await copyAndPaste(page);
     await page.mouse.click(pointX, pointY);
     await page.keyboard.press('Control+z');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places px in the setting Font size', async ({
@@ -87,6 +89,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '17.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places cm in the setting Font size', async ({
@@ -105,6 +108,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '0.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places pt in the setting Font size', async ({
@@ -120,9 +124,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'pt-option');
-    await setFontSizeValue(page, '19.8');
+    await setFontSizeValue(page, '10.8');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places inch in the setting Font size', async ({
@@ -138,9 +143,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'inch-option');
-    await setFontSizeValue(page, '2.8');
+    await setFontSizeValue(page, '1.1');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in px option in the setting Font size', async ({
@@ -156,9 +162,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'px-option');
-    await setFontSizeValue(page, '18');
+    await setFontSizeValue(page, '9');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in cm option in the setting Font size', async ({
@@ -177,6 +184,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in pt option in the setting Font size', async ({
@@ -195,6 +203,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '18');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in inch option in the setting Font size', async ({
@@ -210,9 +219,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'inch-option');
-    await setFontSizeValue(page, '2');
+    await setFontSizeValue(page, '1');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places px in the setting Font size', async ({
@@ -231,6 +241,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '17.83');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places cm in the setting Font size', async ({
@@ -249,6 +260,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '0.83');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places pt in the setting Font size', async ({
@@ -264,9 +276,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'pt-option');
-    await setFontSizeValue(page, '17.89');
+    await setFontSizeValue(page, '21.89');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places inch in the setting Font size', async ({
@@ -285,6 +298,7 @@ test.describe('General Settings', () => {
     await setFontSizeValue(page, '0.38');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places px in the setting Sub font size', async ({
@@ -303,6 +317,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '14.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places cm in the setting Sub font size', async ({
@@ -321,6 +336,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '1.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places pt in the setting Sub font size', async ({
@@ -339,6 +355,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '16.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places inch in the setting Sub font size', async ({
@@ -354,9 +371,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'inch-option');
-    await setSubFontSizeValue(page, '4.5');
+    await setSubFontSizeValue(page, '3.5');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in px option in the setting Sub font size', async ({
@@ -375,6 +393,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '15');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in cm option in the setting Sub font size', async ({
@@ -393,6 +412,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '1');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in pt option in the setting Sub font size', async ({
@@ -408,9 +428,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'pt-option');
-    await setSubFontSizeValue(page, '17');
+    await setSubFontSizeValue(page, '36');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in inch option in the setting Sub font size', async ({
@@ -429,6 +450,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '2');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places px in the setting Sub font size', async ({
@@ -447,6 +469,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '14.58');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places cm in the setting Sub font size', async ({
@@ -465,6 +488,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '1.59');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places pt in the setting Sub font size', async ({
@@ -483,6 +507,7 @@ test.describe('General Settings', () => {
     await setSubFontSizeValue(page, '14.54');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places inch in the setting Sub font size', async ({
@@ -498,9 +523,10 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'inch-option');
-    await setSubFontSizeValue(page, '1.35');
+    await setSubFontSizeValue(page, '.35');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places in px option the setting Reaction component margin size', async ({
@@ -527,6 +553,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places in cm option in the setting Reaction component margin size', async ({
@@ -547,6 +574,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places in pt option in the setting Reaction component margin size', async ({
@@ -567,6 +595,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 1 decimal places in inch option in the setting Reaction component margin size', async ({
@@ -587,6 +616,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in px option the setting Reaction component margin size', async ({
@@ -607,6 +637,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in cm option in the setting Reaction component margin size', async ({
@@ -627,6 +658,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in pt option in the setting Reaction component margin size', async ({
@@ -647,6 +679,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify the whole value in inch option in the setting Reaction component margin size', async ({
@@ -667,6 +700,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places in px option the setting Reaction component margin size', async ({
@@ -687,6 +721,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places in cm option in the setting Reaction component margin size', async ({
@@ -707,6 +742,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places in pt option in the setting Reaction component margin size', async ({
@@ -727,6 +763,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify value with up to 2 decimal places in inch option in the setting Reaction component margin size', async ({
@@ -747,16 +784,97 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000 value in px option the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    require a number input should allow entering the whole value 1000
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '1000');
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the 1000 value in cm option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    require a number input should allow entering the whole value 1000
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1000');
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the 1000 value in pt option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    require a number input should allow entering the whole value 1000
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '1000');
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the 1000 value in inch option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    require a number input should allow entering the whole value 1000
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '1000');
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Negative cases for General Settings', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with px option in the setting Font size', async ({
@@ -769,7 +887,10 @@ test.describe('Negative cases for General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '-17.8');
-    await page.getByTestId('OK').isDisabled;
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with cm option in the setting Font size', async ({
@@ -786,6 +907,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with pt option in the setting Font size', async ({
@@ -802,6 +924,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with inch option in the setting Font size', async ({
@@ -818,6 +941,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with px option in the setting Font size', async ({ page }) => {
@@ -832,6 +956,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with cm option in the setting Font size', async ({ page }) => {
@@ -846,6 +971,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with pt option in the setting Font size', async ({ page }) => {
@@ -860,6 +986,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with inch option in the setting Font size', async ({
@@ -876,6 +1003,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with px option in the setting Sub font size', async ({
@@ -892,6 +1020,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with cm option in the setting Sub font size', async ({
@@ -908,6 +1037,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with pt option in the setting Sub font size', async ({
@@ -924,6 +1054,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value with inch option in the setting Sub font size', async ({
@@ -940,6 +1071,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with px option in the setting Sub font size', async ({
@@ -956,6 +1088,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with cm option in the setting Sub font size', async ({
@@ -972,6 +1105,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with pt option in the setting Sub font size', async ({
@@ -988,6 +1122,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 with inch option in the setting Sub font size', async ({
@@ -1004,6 +1139,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value in px option the setting Reaction component margin size', async ({
@@ -1021,6 +1157,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value in cm option in the setting Reaction component margin size', async ({
@@ -1038,6 +1175,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value in pt option in the setting Reaction component margin size', async ({
@@ -1055,6 +1193,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify negative value in inch option in the setting Reaction component margin size', async ({
@@ -1072,6 +1211,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 in px option the setting Reaction component margin size', async ({
@@ -1089,6 +1229,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 in cm option in the setting Reaction component margin size', async ({
@@ -1106,6 +1247,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 in pt option in the setting Reaction component margin size', async ({
@@ -1123,6 +1265,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify 0 in inch option in the setting Reaction component margin size', async ({
@@ -1140,5 +1283,94 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 value in px option the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    1000.1 should not be allowed to be entered
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 value in cm option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    1000.1 should not be allowed to be entered
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the 1000.1 value in pt option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    1000.1 should not be allowed to be entered
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'pt-option');
+    await setReactionMarginSizeValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the 1000.1 value in inch option in the setting Reaction component margin size', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5152
+    Description: add new setting Reaction component margin size
+    1000.1 should not be allowed to be entered
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await setReactionMarginSizeOptionUnit(page, 'inch-option');
+    await setReactionMarginSizeValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
   });
 });

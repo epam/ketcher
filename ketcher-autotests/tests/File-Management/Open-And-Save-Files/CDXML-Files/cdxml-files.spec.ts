@@ -21,10 +21,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Paste CDXML', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2956
@@ -32,6 +28,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas('CDXML/cdxml-2956.cdxml', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Open CDXML by Open Structure', async ({ page }) => {
@@ -41,6 +38,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas('CDXML/cdxml-3086.cdxml', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Open/Import structure while opening a CDXML file', async ({ page }) => {
@@ -62,6 +60,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open structure in another editor', async ({ page }) => {
@@ -70,6 +69,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Open/Import structure while openning a CDXML file
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4713.cdxml', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Save as .cdxml file', async ({ page }) => {
@@ -80,6 +80,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await openFileAndAddToCanvas('CDXML/cdxml-4714.cdxml', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Delete file', async ({ page }) => {
@@ -90,6 +91,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await openFileAndAddToCanvas('CDXML/cdxml-4715.cdxml', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Structure is opened from .cdxml file', async ({
@@ -106,6 +108,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Functional Groups - Open from .cdxml file with contracted and expanded function', async ({
@@ -117,6 +120,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4717.cdxml', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Open/save/open cdxml file with structure', async ({ page }) => {
@@ -126,6 +130,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4718-structures.cdxml', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Save/Open file - Save *.cdxml file', async ({ page }) => {
@@ -144,6 +149,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdxml file and loaded back', async ({
@@ -172,6 +178,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back', async ({
@@ -200,6 +207,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to Cdxml file and loaded back', async ({
@@ -228,6 +236,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to Cdxml file and loaded back', async ({
@@ -256,6 +265,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdxml file and loaded back', async ({
@@ -284,6 +294,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to Cdxml file and loaded back', async ({
@@ -312,6 +323,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the simple schema with retrosynthetic arrow could be saved to Cdxml file and loaded back', async ({
@@ -345,6 +357,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdxml file and loaded back', async ({
@@ -380,6 +393,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to Cdxml file and loaded back', async ({
@@ -413,6 +427,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -449,6 +464,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
         page,
       );
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -486,6 +502,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
         page,
       );
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -523,6 +540,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
         page,
       );
+      await takeEditorScreenshot(page);
     },
   );
 });

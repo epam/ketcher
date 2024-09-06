@@ -7,20 +7,15 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  selectTopPanelButton,
-  TopPanelButton,
+  clickOnSaveFileAndOpenDropdown,
+  selectFormatForSaving,
 } from '@utils';
-import { clickOnFileFormatDropdown, getSdf } from '@utils/formats';
+import { getSdf } from '@utils/formats';
 
 test.describe('CDF files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open SDF v2000 file and save it', async ({ page }) => {
     await waitForPageInit(page);
 
@@ -42,6 +37,7 @@ test.describe('CDF files', () => {
       });
 
     expect(sdfFile).toEqual(sdfFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open SDF v3000 file and save it', async ({ page }) => {
@@ -63,11 +59,13 @@ test.describe('CDF files', () => {
       });
 
     expect(sdfFile).toEqual(sdfFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open SDF V2000 file and place it on canvas', async ({ page }) => {
     await openFileAndAddToCanvas('SDF/sdf-v2000-to-open.sdf', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Open SDF V3000 file and place it on canvas', async ({ page }) => {
@@ -75,6 +73,7 @@ test.describe('CDF files', () => {
 
     await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
     // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with another nucleotides could be saved to sdf 3000 file and loaded back', async ({
@@ -112,6 +111,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to sdf 3000 file and loaded back', async ({
@@ -151,6 +151,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to sdf 3000 file and loaded back', async ({
@@ -190,6 +191,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to sdf 3000 file and loaded back', async ({
@@ -229,6 +231,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to sdf 3000 file and loaded back', async ({
@@ -268,6 +271,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to sdf 3000 file and loaded back', async ({
@@ -307,6 +311,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with another nucleotides could be saved to sdf 2000 file and loaded back', async ({
@@ -346,6 +351,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to sdf 2000 file and loaded back', async ({
@@ -387,6 +393,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to sdf 2000 file and loaded back', async ({
@@ -428,6 +435,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to sdf 2000 file and loaded back', async ({
@@ -469,6 +477,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to sdf 2000 file and loaded back', async ({
@@ -510,6 +519,7 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to sdf 2000 file and loaded back', async ({
@@ -551,79 +561,104 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the simple schema with retrosynthetic arrow to SDF V2000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V2000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V2000');
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the schema with retrosynthetic, angel arrows and plus to SDF V2000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V2000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V2000');
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the schema with two retrosynthetic arrows to SDF V2000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V2000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V2000');
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the simple schema with retrosynthetic arrow to SDF V3000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V3000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V3000');
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the schema with retrosynthetic, angel arrows and plus to SDF V3000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V3000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V3000');
+    await takeEditorScreenshot(page);
   });
 
   test(`Verify it is not possible to export the schema with two retrosynthetic arrows to SDF V3000`, async ({
     page,
   }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    */
     await openFileAndAddToCanvas(
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SDF V3000' }).click();
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SDF V3000');
+    await takeEditorScreenshot(page);
   });
 });

@@ -96,6 +96,7 @@ const render: {
   hashSpacing: ExtendedSchema;
   hashSpacingUnit: ExtendedSchema;
   imageResolution: ExtendedSchema;
+  isACSStyle: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -321,6 +322,12 @@ const render: {
     enum: Object.values(ImageResolution),
     enumNames: Object.keys(ImageResolution),
     default: ImageResolution.low,
+  },
+  isACSStyle: {
+    title: 'ACS Style',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
   },
 };
 

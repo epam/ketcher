@@ -143,6 +143,7 @@ const SettingsDialog = (props: Props) => {
     label: 'General',
     content: (
       <fieldset>
+        <Field name="isACSStyle" />
         <Field
           name="resetToSelect"
           component={Select}

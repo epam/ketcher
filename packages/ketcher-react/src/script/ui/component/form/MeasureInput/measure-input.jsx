@@ -112,10 +112,12 @@ const MeasureInput = ({
     const stringifiedValue = String(value);
     const startsWithZero =
       stringifiedValue !== '0' && stringifiedValue.startsWith('0');
+    const zeroWithDot = startsWithZero && stringifiedValue.includes('.');
 
-    const endorcedValue = startsWithZero
-      ? stringifiedValue.replace(/^0+/, '')
-      : stringifiedValue || '0';
+    const endorcedValue =
+      startsWithZero && !zeroWithDot
+        ? stringifiedValue.replace(/^0/, '')
+        : stringifiedValue || '0';
     const isNumber = !isNaN(endorcedValue);
 
     if (isNumber) {

@@ -3,6 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Pool } from 'domain/entities/pool';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
+import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
 
 export type Line = [Vec2, Vec2];
 
@@ -54,34 +55,61 @@ interface TailDistance {
 }
 
 export class MultitailArrow extends BaseMicromoleculeEntity {
-  static MIN_TAIL_DISTANCE = 0.35;
-  static MIN_HEAD_LENGTH = 0.5;
-  static MIN_TAIL_LENGTH = 0.4;
-  static MIN_TOP_BOTTOM_OFFSET = 0.15;
-  static MIN_HEIGHT = 0.5;
+  static MIN_TAIL_DISTANCE =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.35);
+
+  static MIN_HEAD_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
+  static MIN_TAIL_LENGTH = FixedPrecisionCoordinates.fromFloatingPrecision(0.4);
+  static MIN_TOP_BOTTOM_OFFSET =
+    FixedPrecisionCoordinates.fromFloatingPrecision(0.15);
+
+  static MIN_HEIGHT = FixedPrecisionCoordinates.fromFloatingPrecision(0.5);
   static TOP_TAIL_NAME = 'topTail';
   static BOTTOM_TAIL_NAME = 'bottomTail';
   static TAILS_NAME = 'tails';
 
   static canAddTail(distance: TailDistance['distance']): boolean {
-    return distance >= 2 * MultitailArrow.MIN_TAIL_DISTANCE;
+    return (
+      distance >=
+      MultitailArrow.MIN_TAIL_DISTANCE.multiply(2).getFloatingPrecision()
+    );
   }
 
   static fromTwoPoints(topLeft: Vec2, bottomRight: Vec2) {
     const center = Vec2.centre(topLeft, bottomRight);
-    const tailLength = Math.max(
-      (bottomRight.x - topLeft.x) / 3,
-      MultitailArrow.MIN_TAIL_LENGTH,
+    const tailLength = FixedPrecisionCoordinates.fromFloatingPrecision(
+      Math.max(
+        (bottomRight.x - topLeft.x) / 3,
+        MultitailArrow.MIN_TAIL_LENGTH.getFloatingPrecision(),
+      ),
     );
-    const spineX = topLeft.x + tailLength;
-    const spineTop = new Vec2(spineX, topLeft.y);
-    const headOffset = new Vec2(bottomRight.x, center.y).sub(spineTop);
+    const topSpineX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      topLeft.x,
+    ).add(tailLength);
+    const topSpineY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      topLeft.y,
+    );
+    const height = FixedPrecisionCoordinates.fromFloatingPrecision(
+      Math.max(
+        bottomRight.y - topLeft.y,
+        MultitailArrow.MIN_HEIGHT.getFloatingPrecision(),
+      ),
+    );
+    const headOffsetX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      bottomRight.x,
+    ).sub(topSpineX);
+    const headOffsetY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      center.y,
+    ).sub(topSpineY);
+
     return new MultitailArrow(
-      spineTop,
-      bottomRight.y - topLeft.y,
-      headOffset,
-      spineX - topLeft.x,
-      new Pool<number>(),
+      topSpineX,
+      topSpineY,
+      height,
+      headOffsetX,
+      headOffsetY,
+      tailLength,
+      new Pool<FixedPrecisionCoordinates>(),
     );
   }
 
@@ -90,44 +118,71 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   ): string | null {
     const { head, spine, tails } = ketFileData;
     const [spineStart, spineEnd] = spine.pos;
+    const spineStartX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineStart.x,
+    );
+    const spineStartY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineStart.y,
+    );
+    const spineEndX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineEnd.x,
+    );
+    const spineEndY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineEnd.y,
+    );
+    const headX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      head.position.x,
+    );
+    const headY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      head.position.y,
+    );
+    const tailsFixedPrecision = tails.pos
+      .map((tail) => ({
+        x: FixedPrecisionCoordinates.fromFloatingPrecision(tail.x),
+        y: FixedPrecisionCoordinates.fromFloatingPrecision(tail.y),
+      }))
+      .sort((a, b) => b.y.value - a.y.value);
+
     if (
-      spineStart.x !== spineEnd.x ||
-      spineStart.y < spineEnd.y - MultitailArrow.MIN_HEIGHT
+      spineStartX.value !== spineEndX.value ||
+      spineStartY.value < spineEndY.sub(MultitailArrow.MIN_HEIGHT).value
     ) {
       return MultitailValidationErrors.INCORRECT_SPINE;
     }
-    const headPoint = head.position;
     if (
-      headPoint.x < spineStart.x + MultitailArrow.MIN_HEAD_LENGTH ||
-      headPoint.y - MultitailArrow.MIN_TOP_BOTTOM_OFFSET < spineEnd.y ||
-      headPoint.y + MultitailArrow.MIN_TOP_BOTTOM_OFFSET > spineStart.y
+      headX.value < spineStartX.add(MultitailArrow.MIN_HEAD_LENGTH).value ||
+      headY.sub(MultitailArrow.MIN_TOP_BOTTOM_OFFSET).value < spineEndY.value ||
+      headY.add(MultitailArrow.MIN_TOP_BOTTOM_OFFSET).value > spineStartY.value
     ) {
       return MultitailValidationErrors.INCORRECT_HEAD;
     }
-    const tailsPositions = [...tails.pos].sort((a, b) => b.y - a.y);
-
     if (
-      tailsPositions.at(0)?.y !== spineStart.y ||
-      tailsPositions.at(-1)?.y !== spineEnd.y
+      tailsFixedPrecision.at(0)?.y.value !== spineStartY.value ||
+      tailsFixedPrecision.at(-1)?.y.value !== spineEndY.value
     ) {
       return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
-    const firstTailX = tailsPositions[0].x;
-    if (firstTailX > spineStart.x - MultitailArrow.MIN_TAIL_LENGTH) {
+    const firstTailX = tailsFixedPrecision[0].x;
+    if (
+      firstTailX.value > spineStartX.sub(MultitailArrow.MIN_TAIL_LENGTH).value
+    ) {
       return MultitailValidationErrors.INCORRECT_TAILS;
     }
 
-    const result = tailsPositions.every((tail, index, allTails) => {
+    const result = tailsFixedPrecision.every((tail, index, allTails) => {
       if (
         index > 0 &&
-        allTails[index - 1].y < tail.y + MultitailArrow.MIN_TAIL_DISTANCE
+        allTails[index - 1].y.value <
+          tail.y.add(MultitailArrow.MIN_TAIL_DISTANCE).value
       ) {
         return false;
       }
 
       return (
-        tail.x === firstTailX && tail.y >= spineEnd.y && tail.y <= spineStart.y
+        tail.x.value === firstTailX.value &&
+        tail.y.value >= spineEndY.value &&
+        tail.y.value <= spineStartY.value
       );
     });
 
@@ -139,53 +194,115 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       ketFileNode.data,
     ) as KetFileMultitailArrowNode;
     const [spineStart, spineEnd] = data.spine.pos;
-    const spineTop = new Vec2(spineStart);
-    const headOffset = new Vec2(data.head.position).sub(spineStart);
+    const head = data.head.position;
+    const spineTopX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineStart.x,
+    );
+    const spineTopY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineStart.y,
+    );
+    const height = FixedPrecisionCoordinates.fromFloatingPrecision(
+      spineEnd.y,
+    ).sub(spineTopY);
+    const headOffsetX = FixedPrecisionCoordinates.fromFloatingPrecision(
+      head.x,
+    ).sub(spineTopX);
+    const headOffsetY = FixedPrecisionCoordinates.fromFloatingPrecision(
+      head.y,
+    ).sub(spineTopY);
+
+    const tailsYOffset = new Pool<FixedPrecisionCoordinates>();
     const tails = data.tails.pos.sort((a, b) => a.y - b.y);
-    const tailsLength = spineTop.x - tails[0].x;
-    const tailsYOffset = new Pool<number>();
+    const tailsLength = spineTopX.sub(
+      FixedPrecisionCoordinates.fromFloatingPrecision(tails[0].x),
+    );
     tails.slice(1, -1).forEach((tail) => {
-      tailsYOffset.add(tail.y - spineTop.y);
+      tailsYOffset.add(
+        FixedPrecisionCoordinates.fromFloatingPrecision(tail.y).sub(spineTopY),
+      );
     });
 
-    const height = spineEnd.y - spineTop.y;
-
     return new MultitailArrow(
-      spineTop,
+      spineTopX,
+      spineTopY,
       height,
-      headOffset,
+      headOffsetX,
+      headOffsetY,
       tailsLength,
       tailsYOffset,
     );
   }
 
+  static fromFloatingPointCoordinates(
+    spineTop: Vec2,
+    height: number,
+    headOffset: Vec2,
+    tailLength: number,
+    tailsYOffset: Pool<number>,
+  ) {
+    const tailsYOffsetFixedPrecision = tailsYOffset.clone();
+    tailsYOffsetFixedPrecision.forEach((item, key, map) => {
+      const pool = map as unknown as Pool<FixedPrecisionCoordinates>;
+      pool.set(key, FixedPrecisionCoordinates.fromFloatingPrecision(item));
+    });
+    return new MultitailArrow(
+      FixedPrecisionCoordinates.fromFloatingPrecision(spineTop.x),
+      FixedPrecisionCoordinates.fromFloatingPrecision(spineTop.y),
+      FixedPrecisionCoordinates.fromFloatingPrecision(height),
+      FixedPrecisionCoordinates.fromFloatingPrecision(headOffset.x),
+      FixedPrecisionCoordinates.fromFloatingPrecision(headOffset.y),
+      FixedPrecisionCoordinates.fromFloatingPrecision(tailLength),
+      tailsYOffsetFixedPrecision as unknown as Pool<FixedPrecisionCoordinates>,
+    );
+  }
+
   constructor(
-    private spineTop: Vec2,
-    private height: number,
-    private headOffset: Vec2,
-    private tailLength: number,
-    private tailsYOffset: Pool<number>,
+    private spineTopX: FixedPrecisionCoordinates,
+    private spineTopY: FixedPrecisionCoordinates,
+    private height: FixedPrecisionCoordinates,
+    private headOffsetX: FixedPrecisionCoordinates,
+    private headOffsetY: FixedPrecisionCoordinates,
+    private tailLength: FixedPrecisionCoordinates,
+    private tailsYOffset: Pool<FixedPrecisionCoordinates>,
   ) {
     super();
   }
 
   getReferencePositions(): MultitailArrowsReferencePositions {
-    const tailX = this.spineTop.x - this.tailLength;
-    const bottomY = this.spineTop.y + this.height;
+    const tailX = this.spineTopX.sub(this.tailLength);
+    const bottomY = this.spineTopY.add(this.height);
     const tails = new Pool<Vec2>();
     this.tailsYOffset.forEach((tailYOffset, key) => {
-      tails.set(key, new Vec2(tailX, this.spineTop.y + tailYOffset));
+      tails.set(
+        key,
+        new Vec2(
+          tailX.getFloatingPrecision(),
+          this.spineTopY.add(tailYOffset).getFloatingPrecision(),
+        ),
+      );
     });
 
     return {
       head: new Vec2(
-        this.spineTop.x + this.headOffset.x,
-        this.spineTop.y + this.headOffset.y,
+        this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
+        this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
       ),
-      topTail: new Vec2(tailX, this.spineTop.y),
-      bottomTail: new Vec2(tailX, bottomY),
-      topSpine: new Vec2(this.spineTop),
-      bottomSpine: new Vec2(this.spineTop.x, bottomY),
+      topTail: new Vec2(
+        tailX.getFloatingPrecision(),
+        this.spineTopY.getFloatingPrecision(),
+      ),
+      bottomTail: new Vec2(
+        tailX.getFloatingPrecision(),
+        bottomY.getFloatingPrecision(),
+      ),
+      topSpine: new Vec2(
+        this.spineTopX.getFloatingPrecision(),
+        this.spineTopY.getFloatingPrecision(),
+      ),
+      bottomSpine: new Vec2(
+        this.spineTopX.getFloatingPrecision(),
+        bottomY.getFloatingPrecision(),
+      ),
       tails,
     };
   }
@@ -217,17 +334,23 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     };
   }
 
-  getTailsDistance(tailsYOffsets: Array<number>): Array<TailDistance> {
+  getTailsDistance(
+    tailsYOffsets: Array<FixedPrecisionCoordinates>,
+  ): Array<TailDistance> {
     const allTailsOffsets = tailsYOffsets
-      .concat([0, this.height])
-      .sort((a, b) => a - b);
+      .concat([new FixedPrecisionCoordinates(0), this.height])
+      .sort((a, b) => a.sub(b).getFloatingPrecision());
     return allTailsOffsets.reduce(
       (acc: Array<TailDistance>, item, index, array) => {
         if (index === 0) {
           return acc;
         }
-        const distance = item - array[index - 1];
-        return acc.concat({ distance, center: item - distance / 2 });
+        const distance = item.sub(array[index - 1]);
+        const centerFloatingPoint = item.sub(distance.divide(2));
+        return acc.concat({
+          distance: distance.getFloatingPrecision(),
+          center: centerFloatingPoint.getFloatingPrecision(),
+        });
       },
       [],
     );
@@ -247,11 +370,13 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     if (!MultitailArrow.canAddTail(distance)) {
       throw new Error('Cannot add tail because no minimal distance found');
     }
+    const centerFixedPrecision =
+      FixedPrecisionCoordinates.fromFloatingPrecision(center);
     if (typeof id === 'number') {
-      this.tailsYOffset.set(id, center);
+      this.tailsYOffset.set(id, centerFixedPrecision);
       return id;
     } else {
-      return this.tailsYOffset.add(center);
+      return this.tailsYOffset.add(centerFixedPrecision);
     }
   }
 
@@ -261,71 +386,92 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
 
   center(): Vec2 {
     return Vec2.centre(
-      new Vec2(this.spineTop.x - this.tailLength, this.spineTop.y),
       new Vec2(
-        this.spineTop.x + this.headOffset.x,
-        this.spineTop.y + this.height,
+        this.spineTopX.sub(this.tailLength).getFloatingPrecision(),
+        this.spineTopY.getFloatingPrecision(),
+      ),
+      new Vec2(
+        this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
+        this.spineTopY.add(this.height).getFloatingPrecision(),
       ),
     );
   }
 
   clone(): MultitailArrow {
     return new MultitailArrow(
-      new Vec2(this.spineTop),
+      this.spineTopX,
+      this.spineTopY,
       this.height,
-      new Vec2(this.headOffset),
+      this.headOffsetX,
+      this.headOffsetY,
       this.tailLength,
-      this.tailsYOffset.clone(),
+      this.tailsYOffset,
     );
   }
 
   rescaleSize(scale: number) {
-    this.spineTop = this.spineTop.scaled(scale);
-    this.headOffset = this.headOffset.scaled(scale);
-    this.height = this.height * scale;
-    this.tailLength = this.tailLength * scale;
+    this.spineTopX = this.spineTopX.multiply(scale);
+    this.spineTopY = this.spineTopY.multiply(scale);
+    this.headOffsetX = this.headOffsetX.multiply(scale);
+    this.headOffsetY = this.headOffsetY.multiply(scale);
+    this.height = this.height.multiply(scale);
+    this.tailLength = this.tailLength.multiply(scale);
     this.tailsYOffset.forEach((item, index) => {
-      this.tailsYOffset.set(index, item * scale);
+      this.tailsYOffset.set(index, item.multiply(scale));
     });
   }
 
   resizeHead(offset: number): number {
-    const headOffsetX = Math.max(
-      this.headOffset.x + offset,
-      MultitailArrow.MIN_HEAD_LENGTH,
+    const fixedPrecisionOffset =
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset);
+    const headOffsetX = new FixedPrecisionCoordinates(
+      Math.max(
+        this.headOffsetX.add(fixedPrecisionOffset).value,
+        MultitailArrow.MIN_HEAD_LENGTH.value,
+      ),
     );
-    const realOffset = headOffsetX - this.headOffset.x;
-    this.headOffset = new Vec2(headOffsetX, this.headOffset.y);
-    return realOffset;
+    const realOffset = headOffsetX.sub(this.headOffsetX);
+    this.headOffsetX = headOffsetX;
+    return realOffset.getFloatingPrecision();
   }
 
   moveHead(offset: number): number {
-    const headOffsetY = Math.min(
-      Math.max(
-        MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
-        this.headOffset.y + offset,
+    const fixedPrecisionOffset =
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset);
+    const headOffsetY = new FixedPrecisionCoordinates(
+      Math.min(
+        Math.max(
+          MultitailArrow.MIN_TOP_BOTTOM_OFFSET.value,
+          this.headOffsetY.add(fixedPrecisionOffset).value,
+        ),
+        this.height.sub(MultitailArrow.MIN_TOP_BOTTOM_OFFSET).value,
       ),
-      this.height - MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
     );
-    const realOffset = headOffsetY - this.headOffset.y;
-    this.headOffset = new Vec2(this.headOffset.x, headOffsetY);
-    return realOffset;
+    const realOffset = headOffsetY.sub(this.headOffsetY);
+    this.headOffsetY = headOffsetY;
+    return realOffset.getFloatingPrecision();
   }
 
   resizeTails(offset: number): number {
-    const updatedLength = Math.max(
-      this.tailLength - offset,
-      MultitailArrow.MIN_TAIL_LENGTH,
+    const fixedPrecisionOffset =
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset);
+    const updatedLength = new FixedPrecisionCoordinates(
+      Math.max(
+        this.tailLength.sub(fixedPrecisionOffset).value,
+        MultitailArrow.MIN_TAIL_LENGTH.value,
+      ),
     );
-    const realOffset = this.tailLength - updatedLength;
+    const realOffset = this.tailLength.sub(updatedLength);
     this.tailLength = updatedLength;
-    return realOffset;
+    return realOffset.getFloatingPrecision();
   }
 
   normalizeTailPosition(
-    proposedPosition: number,
+    proposedPosition: FixedPrecisionCoordinates,
     tailId: number,
-  ): number | null {
+  ): FixedPrecisionCoordinates {
+    const proposedPositionFloatingPrecision =
+      proposedPosition.getFloatingPrecision();
     const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
       .filter(([key]) => key !== tailId)
       .map(([_, value]) => value);
@@ -333,24 +479,28 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       .filter((item) => MultitailArrow.canAddTail(item.distance))
       .sort(
         (a, b) =>
-          Math.abs(a.center - proposedPosition) -
-          Math.abs(b.center - proposedPosition),
+          Math.abs(a.center - proposedPositionFloatingPrecision) -
+          Math.abs(b.center - proposedPositionFloatingPrecision),
       )
-      .at(0);
-    if (!tailMinDistance) {
-      return null;
-    }
-    const maxDistanceFromCenter =
-      tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE;
+      .at(0) as TailDistance;
+    const positionCenter = FixedPrecisionCoordinates.fromFloatingPrecision(
+      tailMinDistance.center,
+    );
+    const positionDistance = FixedPrecisionCoordinates.fromFloatingPrecision(
+      tailMinDistance.distance,
+    );
+    const maxDistanceFromCenter = positionDistance
+      .divide(2)
+      .sub(MultitailArrow.MIN_TAIL_DISTANCE);
     if (
-      Math.abs(tailMinDistance.center - proposedPosition) >=
-      tailMinDistance.distance / 2 - MultitailArrow.MIN_TAIL_DISTANCE
+      Math.abs(positionCenter.sub(positionCenter).value) >=
+      maxDistanceFromCenter.value
     ) {
       const distanceFromCenter =
-        tailMinDistance.center > proposedPosition
-          ? -maxDistanceFromCenter
+        positionCenter.value > proposedPosition.value
+          ? maxDistanceFromCenter.multiply(-1)
           : maxDistanceFromCenter;
-      return tailMinDistance.center + distanceFromCenter;
+      return positionCenter.add(distanceFromCenter);
     }
     return proposedPosition;
   }
@@ -364,91 +514,119 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   ): number;
 
   moveTail(offset: number, second: number | string, normalize?: true): number {
-    const minHeight = Math.max(
-      MultitailArrow.MIN_TAIL_DISTANCE * (this.tailsYOffset.size + 1),
-      MultitailArrow.MIN_HEIGHT,
+    const offsetFixedPrecision =
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset);
+    const minHeight = new FixedPrecisionCoordinates(
+      Math.max(
+        MultitailArrow.MIN_TAIL_DISTANCE.multiply(this.tailsYOffset.size + 1)
+          .value,
+        MultitailArrow.MIN_HEIGHT.value,
+      ),
     );
     const tailsOffset = Array.from(this.tailsYOffset.values()).sort(
-      (a, b) => a - b,
+      (a, b) => a.value - b.value,
     );
-    const lastTail = tailsOffset.at(-1) || 0;
-    const firstTail = tailsOffset.at(0) || Infinity;
-    const closestTopLimit = Math.min(
-      firstTail - MultitailArrow.MIN_TAIL_DISTANCE,
-      this.headOffset.y - MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+    const lastTail = tailsOffset.at(-1) || new FixedPrecisionCoordinates(0);
+    const firstTail =
+      tailsOffset.at(0) || new FixedPrecisionCoordinates(Infinity);
+    const closestTopLimit = new FixedPrecisionCoordinates(
+      Math.min(
+        firstTail.sub(MultitailArrow.MIN_TAIL_DISTANCE).value,
+        this.headOffsetY.sub(MultitailArrow.MIN_TOP_BOTTOM_OFFSET).value,
+      ),
     );
-    const closestBottomLimit = Math.max(
-      lastTail + MultitailArrow.MIN_TAIL_DISTANCE,
-      this.headOffset.y + MultitailArrow.MIN_TOP_BOTTOM_OFFSET,
+    const closestBottomLimit = new FixedPrecisionCoordinates(
+      Math.max(
+        lastTail.add(MultitailArrow.MIN_TAIL_DISTANCE).value,
+        this.headOffsetY.add(MultitailArrow.MIN_TOP_BOTTOM_OFFSET).value,
+      ),
     );
 
     if (typeof second === 'number') {
-      const originalValue = this.tailsYOffset.get(second) as number;
-      let updatedHeight = Math.max(
-        MultitailArrow.MIN_TAIL_DISTANCE,
-        Math.min(
-          originalValue + offset,
-          this.height - MultitailArrow.MIN_TAIL_DISTANCE,
+      const originalValue = this.tailsYOffset.get(
+        second,
+      ) as FixedPrecisionCoordinates;
+      let updatedHeight = new FixedPrecisionCoordinates(
+        Math.max(
+          MultitailArrow.MIN_TAIL_DISTANCE.value,
+          Math.min(
+            originalValue.add(offsetFixedPrecision).value,
+            this.height.sub(MultitailArrow.MIN_TAIL_DISTANCE).value,
+          ),
         ),
       );
       if (normalize) {
-        const result = this.normalizeTailPosition(updatedHeight, second);
-        if (result === null) {
-          return 0;
-        }
-        updatedHeight = result;
+        updatedHeight = this.normalizeTailPosition(updatedHeight, second);
       }
 
-      const realOffset = updatedHeight - originalValue;
+      const realOffset = updatedHeight.sub(originalValue);
       this.tailsYOffset.set(second, updatedHeight);
-      return realOffset;
+      return realOffset.getFloatingPrecision();
     } else if (second === MultitailArrow.BOTTOM_TAIL_NAME) {
-      const updatedHeight = Math.max(
-        minHeight,
-        this.height + offset,
-        closestBottomLimit,
+      const updatedHeight = new FixedPrecisionCoordinates(
+        Math.max(
+          minHeight.value,
+          this.height.add(offsetFixedPrecision).value,
+          closestBottomLimit.value,
+        ),
       );
-      const realOffset = updatedHeight - this.height;
+      const realOffset = updatedHeight.sub(this.height);
       this.height = updatedHeight;
-      return realOffset;
+      return realOffset.getFloatingPrecision();
     } else {
-      const realOffset = Math.min(
-        offset,
-        closestTopLimit,
-        this.height - minHeight,
+      const realOffset = new FixedPrecisionCoordinates(
+        Math.min(
+          offsetFixedPrecision.value,
+          closestTopLimit.value,
+          this.height.sub(minHeight).value,
+        ),
       );
-      if (realOffset !== 0) {
-        const vectorOffset = new Vec2(0, realOffset);
-        this.spineTop = this.spineTop.add(vectorOffset);
-        this.headOffset = this.headOffset.sub(vectorOffset);
-        this.height -= realOffset;
+      if (realOffset.value !== 0) {
+        this.spineTopY = this.spineTopY.add(realOffset);
+        this.headOffsetY = this.headOffsetY.sub(realOffset);
+        this.height = this.height.sub(realOffset);
         const updatedTails = this.tailsYOffset.clone();
         updatedTails.forEach((item, key) => {
-          updatedTails.set(key, item - realOffset);
+          updatedTails.set(key, item.sub(realOffset));
         });
         this.tailsYOffset = updatedTails;
       }
-      return realOffset;
+      return realOffset.getFloatingPrecision();
     }
   }
 
   move(offset: Vec2): void {
-    this.spineTop = this.spineTop.add(offset);
+    this.spineTopX = this.spineTopX.add(
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset.x),
+    );
+    this.spineTopY = this.spineTopY.add(
+      FixedPrecisionCoordinates.fromFloatingPrecision(offset.y),
+    );
   }
 
   toKetNode(): KetFileNode<KetFileMultitailArrowNode> {
-    const head = this.spineTop.add(this.headOffset);
-    const bottomY = this.spineTop.y + this.height;
-    const spine: [Vec2, Vec2] = [
-      this.spineTop,
-      new Vec2(this.spineTop.x, bottomY),
-    ];
-    const tailX = this.spineTop.x - this.tailLength;
-    const nonBorderTails = Array.from(this.tailsYOffset.values()).map(
-      (yOffset) => this.spineTop.y + yOffset,
+    const head = new Vec2(
+      this.spineTopX.add(this.headOffsetX).getFloatingPrecision(),
+      this.spineTopY.add(this.headOffsetY).getFloatingPrecision(),
     );
-    const convertTail = (y: number) => new Vec2(tailX, y);
-    const tails = [this.spineTop.y]
+    const bottomY = this.spineTopY.add(this.height);
+    const spine: [Vec2, Vec2] = [
+      new Vec2(
+        this.spineTopX.getFloatingPrecision(),
+        this.spineTopY.getFloatingPrecision(),
+      ),
+      new Vec2(
+        this.spineTopX.getFloatingPrecision(),
+        bottomY.getFloatingPrecision(),
+      ),
+    ];
+    const tailX = this.spineTopX.sub(this.tailLength);
+    const nonBorderTails = Array.from(this.tailsYOffset.values()).map(
+      (yOffset) => this.spineTopY.add(yOffset),
+    );
+    const convertTail = (y: FixedPrecisionCoordinates) =>
+      new Vec2(tailX.getFloatingPrecision(), y.getFloatingPrecision());
+    const tails = [this.spineTopY]
       .concat(nonBorderTails)
       .concat(bottomY)
       .map(convertTail);

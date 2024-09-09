@@ -19,22 +19,21 @@ import {
   moveMouseAway,
 } from '@utils';
 
-async function generalDefaultSettings(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
-  const deltaX = 0;
-  const deltaY = 150;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
-  await page.mouse.wheel(deltaX, deltaY);
-}
-
 async function resetSelectToolOff(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByTestId('reset-to-select-input-span').click();
   await page.getByTestId('off-option').click();
   await pressButton(page, 'Apply');
 }
+
+test('Verify Ketcher settings panel', async ({ page }) => {
+  /*
+  Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
+  */
+  await waitForPageInit(page);
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await takeEditorScreenshot(page);
+});
 
 test.describe('General Settings', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,20 +42,6 @@ test.describe('General Settings', () => {
 
   test.afterEach(async ({ page }) => {
     await resetAllSettingsToDefault(page);
-  });
-
-  test('Verify Ketcher settings panel', async ({ page }) => {
-    /*
-    Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
-    */
-    await selectTopPanelButton(TopPanelButton.Settings, page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Verify settings menu', async ({ page }) => {
-    // Test case: EPMLSOPKET-10077
-    await generalDefaultSettings(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Actions when switch "reset to Select tool" is"Off"', async ({
@@ -87,6 +72,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '17.8');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -106,6 +92,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.8');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -125,6 +112,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '10.8');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -144,6 +132,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '1.1');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -163,6 +152,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '9');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -182,6 +172,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '2');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -201,6 +192,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '18');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -220,6 +212,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'inch-option');
     await setFontSizeValue(page, '1');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -239,6 +232,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '17.83');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -258,6 +252,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.83');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -277,6 +272,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'pt-option');
     await setFontSizeValue(page, '21.89');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -295,7 +291,8 @@ test.describe('General Settings', () => {
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setFontSizeOptionUnit(page, 'inch-option');
-    await setFontSizeValue(page, '0.38');
+    await setFontSizeValue(page, '0.45');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -315,6 +312,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '14.5');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -334,6 +332,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1.5');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -353,6 +352,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '16.5');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -372,6 +372,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '3.5');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -391,6 +392,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '15');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -410,6 +412,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -429,6 +432,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '36');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -448,6 +452,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '2');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -467,6 +472,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'px-option');
     await setSubFontSizeValue(page, '14.58');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -486,6 +492,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'cm-option');
     await setSubFontSizeValue(page, '1.59');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -505,6 +512,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'pt-option');
     await setSubFontSizeValue(page, '14.54');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -524,6 +532,7 @@ test.describe('General Settings', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setSubFontSizeOptionUnit(page, 'inch-option');
     await setSubFontSizeValue(page, '.35');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -538,7 +547,7 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -549,7 +558,8 @@ test.describe('General Settings', () => {
       'Reaction component margin size',
     );
     await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '12.3');
+    await setReactionMarginSizeValue(page, '30.3');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -565,12 +575,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '1.3');
+    await setReactionMarginSizeValue(page, '0.9');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -586,12 +597,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
-    await setReactionMarginSizeValue(page, '16.3');
+    await setReactionMarginSizeValue(page, '56.3');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -607,12 +619,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '1.3');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -628,12 +641,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '13');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -649,12 +663,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '1');
+    await setReactionMarginSizeValue(page, '4');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -670,12 +685,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
-    await setReactionMarginSizeValue(page, '14');
+    await setReactionMarginSizeValue(page, '144');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -691,12 +707,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole values
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
-    await setReactionMarginSizeValue(page, '2');
+    await setReactionMarginSizeValue(page, '12');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -712,12 +729,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place, two decimal place should rounding up
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '14.57');
+    await setReactionMarginSizeValue(page, '94.57');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -733,12 +751,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place, two decimal place should rounding up
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '1.83');
+    await setReactionMarginSizeValue(page, '5.83');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -754,12 +773,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place, two decimal place should rounding up
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '14.94');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -775,12 +795,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering values with one decimal place, two decimal place should rounding up
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
-    await setReactionMarginSizeValue(page, '1.48');
+    await setReactionMarginSizeValue(page, '19.48');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -796,12 +817,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '1000');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -817,12 +839,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '1000');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -838,12 +861,14 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '1000');
+    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -859,12 +884,13 @@ test.describe('General Settings', () => {
     require a number input should allow entering the whole value 1000
     */
     await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/layout-with-catalyst.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '1000');
+    await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);

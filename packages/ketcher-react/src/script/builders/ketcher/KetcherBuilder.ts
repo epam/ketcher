@@ -32,6 +32,7 @@ import { initApp } from '../../ui';
 import { Root } from 'react-dom/client';
 import { IndigoProvider } from 'src/script/providers';
 import { STRUCT_SERVICE_INITIALIZED_EVENT } from '../../../constants';
+import { CustomButton } from './CustomButtons';
 
 class KetcherBuilder {
   private structService: StructService | null;
@@ -97,6 +98,7 @@ class KetcherBuilder {
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
     togglerComponent?: JSX.Element,
+    customButtons?: Array<CustomButton>,
   ): Promise<{
     setKetcher: (ketcher: Ketcher) => void;
     ketcherId: string;
@@ -122,6 +124,7 @@ class KetcherBuilder {
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || '',
+          customButtons: customButtons || [],
         },
         structService!,
         resolve,

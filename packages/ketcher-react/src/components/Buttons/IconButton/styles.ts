@@ -18,6 +18,7 @@ import styled from '@emotion/styled';
 import Icon from '../../Icon/Icon';
 import { style } from 'src/components/styles';
 import { IStyledButtonProps } from './types';
+import { css } from '@emotion/react';
 
 export const StyledButton = styled('button', {
   shouldForwardProp: (prop) => prop !== 'isActive',
@@ -53,7 +54,15 @@ export const StyledButton = styled('button', {
   },
 }));
 
-export const StyledIcon = styled(Icon)({
-  width: '100%',
-  height: '100%',
-});
+const IconStyles = css`
+  width: 100%;
+  height: 100%;
+`;
+
+export const StyledIcon = styled(Icon)`
+  ${IconStyles};
+`;
+
+export const StyledCustomIcon = styled('img')`
+  ${IconStyles};
+`;

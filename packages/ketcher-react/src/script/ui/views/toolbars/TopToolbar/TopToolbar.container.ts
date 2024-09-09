@@ -26,6 +26,8 @@ import { createSelector } from 'reselect';
 
 const getActionState = (state) => state.actionState || {};
 
+const selectCustomButtons = (state) => state?.options?.customButtons || [];
+
 const disabledButtonsSelector = createSelector(
   [getActionState],
   (actionState) =>
@@ -61,6 +63,7 @@ const mapStateToProps = (state: any) => {
     currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
     disabledButtons: disabledButtonsSelector(state),
     hiddenButtons: hiddenButtonsSelector(state),
+    customButtons: selectCustomButtons(state),
     shortcuts,
     status: state.actionState || {},
     opened: state.toolbar.opened,

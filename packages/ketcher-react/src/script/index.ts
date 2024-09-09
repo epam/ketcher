@@ -18,6 +18,7 @@ import { Root } from 'react-dom/client';
 import { ButtonsConfig, KetcherBuilder } from './builders';
 
 import { StructServiceProvider } from 'ketcher-core';
+import { CustomButton } from './builders/ketcher/CustomButtons';
 
 interface Config {
   element: HTMLDivElement | null;
@@ -25,6 +26,7 @@ interface Config {
   staticResourcesUrl: string;
   structServiceProvider: StructServiceProvider;
   buttons?: ButtonsConfig;
+  customButtons?: Array<CustomButton>;
   errorHandler: (message: string) => void;
   togglerComponent?: JSX.Element;
 }
@@ -37,6 +39,7 @@ async function buildKetcherAsync({
   buttons,
   errorHandler,
   togglerComponent,
+  customButtons,
 }: Config) {
   const builder = new KetcherBuilder();
 
@@ -50,6 +53,7 @@ async function buildKetcherAsync({
       errorHandler,
       buttons,
       togglerComponent,
+      customButtons,
     );
 
   const ketcher = builder.build();

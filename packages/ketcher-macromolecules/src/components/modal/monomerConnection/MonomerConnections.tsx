@@ -6,7 +6,7 @@ import { selectEditor } from 'state/common';
 import { useEffect, useRef, useState } from 'react';
 import {
   AttachmentPoint,
-  AttachmentPointName,
+  AttachmentPointName as AttachmentPointNameComponent,
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
@@ -15,6 +15,7 @@ import {
   BaseMonomer,
   LeavingGroup,
   UsageInMacromolecule,
+  AttachmentPointName,
 } from 'ketcher-core';
 import hydrateLeavingGroup from 'helpers/hydrateLeavingGroup';
 import { getConnectedAttachmentPoints } from 'helpers';
@@ -97,12 +98,14 @@ const MonomerConnection = ({
 
   const cancelBondCreationAndClose = () => {
     if (isReconnectionDialog) {
-      polymerBond.firstMonomer.attachmentPointsToBonds[
-        initialFirstMonomerAttachmentPointRef.current
-      ] = polymerBond;
-      polymerBond.secondMonomer.attachmentPointsToBonds[
-        initialSecondMonomerAttachmentPointRef.current
-      ] = polymerBond;
+      polymerBond?.firstMonomer.setBond(
+        initialFirstMonomerAttachmentPointRef.current as AttachmentPointName,
+        polymerBond,
+      );
+      polymerBond?.secondMonomer?.setBond(
+        initialSecondMonomerAttachmentPointRef.current as AttachmentPointName,
+        polymerBond,
+      );
       onClose();
     } else {
       editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
@@ -275,12 +278,12 @@ function AttachmentPointSelectionPanel({
                 }
                 disabled={disabled}
               />
-              <AttachmentPointName
+              <AttachmentPointNameComponent
                 data-testid="leaving-group-value"
                 disabled={disabled}
               >
                 {getLeavingGroup(attachmentPoint)}
-              </AttachmentPointName>
+              </AttachmentPointNameComponent>
             </AttachmentPoint>
           );
         },

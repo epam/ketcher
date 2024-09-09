@@ -493,7 +493,7 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
       .divide(2)
       .sub(MultitailArrow.MIN_TAIL_DISTANCE);
     if (
-      Math.abs(positionCenter.sub(positionCenter).value) >=
+      Math.abs(positionCenter.sub(proposedPosition).value) >=
       maxDistanceFromCenter.value
     ) {
       const distanceFromCenter =

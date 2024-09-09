@@ -96,8 +96,18 @@ const MonomerConnection = ({
   const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
-    editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
-    onClose();
+    if (isReconnectionDialog) {
+      polymerBond.firstMonomer.attachmentPointsToBonds[
+        initialFirstMonomerAttachmentPointRef.current
+      ] = polymerBond;
+      polymerBond.secondMonomer.attachmentPointsToBonds[
+        initialSecondMonomerAttachmentPointRef.current
+      ] = polymerBond;
+      onClose();
+    } else {
+      editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
+      onClose();
+    }
   };
 
   const connectMonomers = () => {

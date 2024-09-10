@@ -107,13 +107,13 @@ export class RenderStruct {
       const extendedOptions = {
         autoScale: true,
         ...options,
-        width: svgSize,
-        height: svgSize,
       };
 
       if (window.isPolymerEditorTurnedOn) {
         extendedOptions.fontsz = 40;
         extendedOptions.fontszsub = 30;
+        extendedOptions.width = svgSize;
+        extendedOptions.height = svgSize;
       }
 
       const rnd = new Render(wrapperElement, extendedOptions);

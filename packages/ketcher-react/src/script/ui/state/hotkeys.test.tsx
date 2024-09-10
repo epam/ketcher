@@ -60,7 +60,7 @@ function renderWithMockStore(component) {
           sgroups: new Pool<SGroup>(),
         };
       },
-      render: { ctab: {} },
+      render: { ctab: {}, options: { viewOnlyMode: false } },
       zoom: jest.fn(),
       _tool: { mode: '' },
       rotateController: { isRotating: false },

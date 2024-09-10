@@ -144,7 +144,7 @@ interface UiAction {
 }
 
 type Tools = {
-  [key in ToolVariant]?: UiAction;
+  [key in ToolVariant]: UiAction;
 };
 
 export type { Tools, UiAction, UiActionAction };

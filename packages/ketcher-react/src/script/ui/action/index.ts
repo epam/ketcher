@@ -54,7 +54,7 @@ const updateConfigItem = (item: UiAction): UiAction => {
   }
 };
 
-const config: Tools = {
+const config: Record<string, UiAction> = {
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     title: 'Clear Canvas',
@@ -273,6 +273,10 @@ const config: Tools = {
     action: { dialog: 'info-modal' },
     hidden: (options) => isHidden(options, 'info-modal'),
   },
+};
+
+const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
+  ...config,
   ...server,
   ...debug,
   ...tools,
@@ -282,15 +286,13 @@ const config: Tools = {
   ...functionalGroups,
   ...fullscreen,
   ...help,
-};
-
-const configWithNonViewOnlyActionsDisabled = Object.entries(config).reduce(
+}).reduce(
   (acc, [key, item]) => ({
     ...acc,
-    [key]: updateConfigItem(item),
+    [key]: updateConfigItem(item as UiAction),
   }),
   {},
-);
+) as Tools;
 
 function hasSelection(editor) {
   const selection = editor.selection();

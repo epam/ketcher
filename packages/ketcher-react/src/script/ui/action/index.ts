@@ -28,10 +28,33 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
+import { GetActionState, Tools, UiAction } from './action.types';
+import Editor from '../../editor/Editor';
 
 export * from './action.types';
 
-const config = {
+const disableIfViewOnly = (editor: Editor): boolean =>
+  !!editor.render.options.viewOnlyMode;
+
+const updateConfigItem = (item: UiAction): UiAction => {
+  if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
+    return item;
+  } else if (typeof item.disabled === 'function') {
+    const originalDisabled = item.disabled as GetActionState;
+    return {
+      ...item,
+      disabled: (...props) =>
+        disableIfViewOnly(props[0]) || originalDisabled(...props),
+    };
+  } else {
+    return {
+      ...item,
+      disabled: disableIfViewOnly,
+    };
+  }
+};
+
+const config: Tools = {
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     title: 'Clear Canvas',
@@ -101,12 +124,15 @@ const config = {
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'cut'),
   },
+  // This is some dirty trick for `ClipboardControls.tsx` component
   copies: {
+    enabledInViewOnly: true,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  },
+  } as UiAction,
   copy: {
     shortcut: 'Mod+c',
+    enabledInViewOnly: true,
     title: 'Copy',
     action: {
       thunk: (dispatch, _) => {
@@ -122,6 +148,7 @@ const config = {
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
+    enabledInViewOnly: true,
     title: 'Copy Image',
     action: () => {
       copyImageToClipboard();
@@ -131,6 +158,7 @@ const config = {
   },
   'copy-mol': {
     shortcut: 'Mod+m',
+    enabledInViewOnly: true,
     title: 'Copy as MOL',
     action: () => {
       copyAs('mol');
@@ -140,6 +168,7 @@ const config = {
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
+    enabledInViewOnly: true,
     title: 'Copy as KET',
     action: () => {
       copyAs('ket');
@@ -179,7 +208,7 @@ const config = {
     title: 'Reaction Auto-Mapping Tool',
     action: { dialog: 'automap' },
     hidden: (options) => isHidden(options, 'reaction-automap'),
-    disabled: (editor, server, options) =>
+    disabled: (editor, _server, options) =>
       !options.app.server || !editor.struct().hasRxnArrow(),
   },
   'period-table': {
@@ -194,6 +223,7 @@ const config = {
   },
   'select-all': {
     title: 'Select All',
+    enabledInViewOnly: true,
     shortcut: 'Mod+a',
     action: {
       thunk: (dispatch, getState) => {
@@ -254,6 +284,14 @@ const config = {
   ...help,
 };
 
+const configWithNonViewOnlyActionsDisabled = Object.entries(config).reduce(
+  (acc, [key, item]) => ({
+    ...acc,
+    [key]: updateConfigItem(item),
+  }),
+  {},
+);
+
 function hasSelection(editor) {
   const selection = editor.selection();
   return (
@@ -263,4 +301,4 @@ function hasSelection(editor) {
   );
 }
 
-export default config;
+export default configWithNonViewOnlyActionsDisabled;

@@ -65,6 +65,7 @@ const config = {
   },
   check: {
     shortcut: 'Alt+s',
+    enabledInViewOnly: true,
     title: 'Check Structure',
     action: { dialog: 'check' },
     disabled: (editor, server, options) => !options.app.server,
@@ -72,6 +73,7 @@ const config = {
   },
   analyse: {
     shortcut: 'Alt+c',
+    enabledInViewOnly: true,
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
     disabled: (editor, server, options) => !options.app.server,
@@ -87,6 +89,7 @@ const config = {
   },
   miew: {
     title: '3D Viewer',
+    enabledInViewOnly: true,
     action: { dialog: 'miew' },
     hidden: (options) => isHidden(options, 'miew'),
   },

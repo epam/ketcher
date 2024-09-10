@@ -17,6 +17,7 @@
 import { Dispatch } from 'redux';
 
 type ToolVariant =
+  | 'any-atom'
   | 'about'
   | 'analyse'
   | 'arom'
@@ -36,6 +37,9 @@ type ToolVariant =
   | 'bond-triple'
   | 'bond-up'
   | 'bond-updown'
+  | 'copies'
+  | 'copy-mol'
+  | 'copy-ket'
   | 'chain'
   | 'charge-minus'
   | 'charge-plus'
@@ -48,12 +52,15 @@ type ToolVariant =
   | 'cut'
   | 'dearom'
   | 'dropdown'
+  | 'deselect-all'
   | 'enhanced-stereo'
   | 'erase'
+  | 'extended-table'
   | 'fullscreen'
   | 'functional-groups'
   | 'generic-groups'
   | 'help'
+  | 'info-modal'
   | 'layout'
   | 'logo'
   | 'miew'
@@ -75,6 +82,8 @@ type ToolVariant =
   | 'select-fragment'
   | 'select-lasso'
   | 'select-rectangle'
+  | 'select-all'
+  | 'select-descriptors'
   | 'settings'
   | 'sgroup'
   | 'template-0'
@@ -115,7 +124,7 @@ type ActionFn = (editor: Editor) => void;
 type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
-type GetActionState = (
+export type GetActionState = (
   editor: Editor,
   server?: Server,
   options?: Options,
@@ -125,7 +134,8 @@ type IsActionState = boolean | GetActionState;
 
 interface UiAction {
   title?: string;
-  shortcut?: string;
+  shortcut?: string | Array<string>;
+  enabledInViewOnly?: true;
   action: UiActionAction;
   selected?: IsActionState;
   disabled?: IsActionState;
@@ -134,7 +144,7 @@ interface UiAction {
 }
 
 type Tools = {
-  [ket in keyof ToolVariant]?: UiAction;
+  [key in ToolVariant]?: UiAction;
 };
 
 export type { Tools, UiAction, UiActionAction };

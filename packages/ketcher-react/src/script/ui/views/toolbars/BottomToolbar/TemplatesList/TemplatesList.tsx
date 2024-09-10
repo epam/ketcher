@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { UiAction, UiActionAction } from '../../../../action';
+import action, { Tools, UiAction, UiActionAction } from '../../../../action';
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton';
 import templates from '../../../../data/templates';
@@ -29,6 +29,7 @@ interface TemplatesListProps {
   };
   disableableButtons: string[];
   indigoVerification: boolean;
+  status: Tools;
 }
 
 interface TemplatesListCallProps {
@@ -38,7 +39,8 @@ interface TemplatesListCallProps {
 type Props = TemplatesListProps & TemplatesListCallProps;
 
 const TemplatesList = (props: Props) => {
-  const { active, disableableButtons, indigoVerification, onAction } = props;
+  const { active, disableableButtons, indigoVerification, onAction, status } =
+    props;
 
   const isTemplate = active && active.tool === 'template';
 
@@ -60,7 +62,7 @@ const TemplatesList = (props: Props) => {
               action={makeAction(struct, index)}
               onAction={onAction}
               selected={isTemplate && active && active.opts.struct === struct}
-              status={action[`template-${index}`]}
+              status={status[`template-${index}`]}
               disableableButtons={disableableButtons}
               indigoVerification={indigoVerification}
             />

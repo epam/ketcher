@@ -312,7 +312,10 @@ class Editor implements KetcherEditor {
   setOptions(opts: string) {
     const options = JSON.parse(opts);
     this.event.apiSettings.dispatch({ ...options });
-    return this.render.updateOptions(opts);
+    const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
+    const result = this.render.updateOptions(opts);
+    this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
+    return result;
   }
 
   options(value?: any) {
@@ -323,15 +326,24 @@ class Editor implements KetcherEditor {
     const struct = this.render.ctab.molecule;
     const zoom = this.render.options.zoom;
     this.render.clientArea.innerHTML = '';
+    const wasViewOnlyEnabled = !!this.render.options.viewOnlyMode;
 
     this.render = new Render(
       this.render.clientArea,
       Object.assign({ microModeScale: SCALE }, value),
     );
+    this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.struct(struct);
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;
+  }
+
+  private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
+    const isViewOnlyEnabled = this.render.options.viewOnlyMode;
+    if (!wasViewOnlyEnabled && isViewOnlyEnabled === true) {
+      this.tool('select');
+    }
   }
 
   zoom(value?: any, event?: WheelEvent) {

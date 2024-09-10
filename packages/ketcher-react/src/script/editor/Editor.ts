@@ -342,7 +342,7 @@ class Editor implements KetcherEditor {
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
     const isViewOnlyEnabled = this.render.options.viewOnlyMode;
     if (!wasViewOnlyEnabled && isViewOnlyEnabled === true) {
-      this.tool('select');
+      this.event.change.dispatch('force');
     }
   }
 

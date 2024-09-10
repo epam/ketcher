@@ -32,12 +32,19 @@ import { range } from 'lodash/fp';
 import { recognize } from '../../../../../state/server';
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
 import { Icon, StructRender } from 'components';
+import { ketcherProvider } from 'ketcher-core';
 
 function isImage(file) {
   return file?.type?.includes('image');
 }
 
-function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
+function FooterContent({
+  onImage,
+  structStr,
+  openHandler,
+  copyHandler,
+  isAddToCanvasDisabled,
+}) {
   return (
     <div className={classes.footerContent}>
       <OpenButton
@@ -59,7 +66,7 @@ function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
         />
         <DialogActionButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.primaryButton}
           label="Add to Canvas"
@@ -94,6 +101,7 @@ function RecognizeDialog(prop) {
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
       : null;
+  const ketcher = ketcherProvider.getKetcher();
 
   useEffect(() => {
     onRecognize(file, version);
@@ -126,6 +134,7 @@ function RecognizeDialog(prop) {
           openHandler={openHandler}
           structStr={structStr}
           copyHandler={copyHandler}
+          isAddToCanvasDisabled={ketcher.editor.render.options.viewOnlyMode}
         />
       }
       buttons={[]}

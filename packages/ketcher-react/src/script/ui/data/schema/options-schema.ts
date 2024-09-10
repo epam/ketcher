@@ -259,7 +259,7 @@ const render: {
     title: 'Bond thickness',
     type: 'integer',
     default: defaultBondThickness,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   bondThicknessUnit: {

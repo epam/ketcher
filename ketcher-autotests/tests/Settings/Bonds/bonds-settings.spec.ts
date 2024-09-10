@@ -6,7 +6,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   pressButton,
   resetAllSettingsToDefault,
-  selectTopPanelButton,
   setBondLengthOptionUnit,
   setBondLengthValue,
   setBondSpacingValue,
@@ -17,7 +16,6 @@ import {
   setStereoBondWidthOptionUnit,
   setStereoBondWidthValue,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 
@@ -59,7 +57,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +78,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -103,7 +99,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -125,7 +120,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -147,7 +141,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -169,7 +162,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -191,7 +183,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -213,7 +204,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -235,7 +225,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -257,7 +246,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -279,7 +267,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -301,7 +288,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -321,7 +307,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -341,7 +326,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -361,7 +345,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 
@@ -381,7 +364,6 @@ test.describe('Bonds Settings', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
 

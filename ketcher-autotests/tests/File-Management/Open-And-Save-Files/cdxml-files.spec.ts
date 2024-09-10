@@ -151,23 +151,22 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Bond length setting with px option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Bond length setting with px option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied, click on layout and it should be save to KET specification
+  The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await bondsDefaultSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
-      'CDXML/layout-with-catalyst-px-bond-lengh.cdxml',
+      'CDXML/layout-with-long-molecule-px-bond-lengh.cdxml',
       expectedFile,
     );
 
@@ -175,26 +174,25 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/CDXML/layout-with-catalyst-px-bond-lengh.cdxml',
+          'tests/test-data/CDXML/layout-with-long-molecule-px-bond-lengh.cdxml',
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Bond length setting with pt option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Bond length setting with pt option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied, click on layout and it should be save to KET specification
+  The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await bondsDefaultSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
       'CDXML/layout-with-diagonally-arrow-pt-bond-lengh.cdxml',
@@ -211,20 +209,19 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Bond length setting with cm option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Bond length setting with cm option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied, click on layout and it should be save to KET specification
+  The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await bondsDefaultSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
       'CDXML/layout-with-dif-elements-cm-bond-lengh.cdxml',
@@ -241,20 +238,19 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Bond length setting with inch option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Bond length setting with inch option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied, click on layout and it should be save to KET specification
+  The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await bondsDefaultSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
       'CDXML/layout-with-long-molecule-inch-bond-lengh.cdxml',
@@ -271,13 +267,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await bondsDefaultSettings(page);
@@ -301,13 +297,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await bondsDefaultSettings(page);
@@ -331,13 +327,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await bondsDefaultSettings(page);
@@ -361,13 +357,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to KET specification', async ({
+  test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to CDXML format', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await bondsDefaultSettings(page);

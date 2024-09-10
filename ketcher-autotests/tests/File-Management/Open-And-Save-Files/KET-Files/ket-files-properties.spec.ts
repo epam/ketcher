@@ -83,7 +83,6 @@ test('The Bond length setting with px option is applied, click on layout and it 
   await setBondLengthOptionUnit(page, 'px-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
   const expectedFile = await getKet(page);
   await saveToFile('KET/layout-with-catalyst-px-bond-lengh.ket', expectedFile);
@@ -111,7 +110,6 @@ test('The Bond length setting with pt option is applied, click on layout and it 
   await setBondLengthOptionUnit(page, 'pt-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
   const expectedFile = await getKet(page);
   await saveToFile(
@@ -142,7 +140,6 @@ test('The Bond length setting with cm option is applied, click on layout and it 
   await setBondLengthOptionUnit(page, 'cm-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
   const expectedFile = await getKet(page);
   await saveToFile(
@@ -173,7 +170,6 @@ test('The Bond length setting with inch option is applied, click on layout and i
   await setBondLengthOptionUnit(page, 'inch-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
   const expectedFile = await getKet(page);
   await saveToFile(

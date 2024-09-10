@@ -87,7 +87,7 @@ class ReEnhancedFlag extends ReObject {
         )
         .attr({
           font: options.font,
-          'font-size': options.fontsz,
+          'font-size': options.fontszInPx,
           fill: '#000',
         });
     }

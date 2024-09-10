@@ -16,23 +16,23 @@
         <color r="1" g="0" b="1"/>
         <color r="0.5" g="0.5" b="0.5"/>
     </colortable>
-    <page HeightPages="1" WidthPages="1">
+    <page HeightPages="1" WidthPages="1" BoundingBox="317.009064 270.000000 564.990906 210.000000">
         <fragment id="4">
             <n id="21" NodeType="Fragment">
                 <fragment id="23">
-                    <n id="5" p="55.981895 60.749989"/>
-                    <n id="6" Element="1" p="30.000000 75.749931">
-                        <t p="30.000000 75.749931" LabelJustification="Left">
+                    <n id="5" p="25.981894 30.749989"/>
+                    <n id="6" Element="1" p="0.000000 45.749931">
+                        <t p="0.000000 45.749931" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
-                    <n id="7" Element="8" NumHydrogens="1" p="81.961754 75.749931">
-                        <t p="81.961754 75.749931" LabelJustification="Left">
+                    <n id="7" Element="8" NumHydrogens="1" p="51.961754 45.749931">
+                        <t p="51.961754 45.749931" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
-                    <n id="8" Element="8" NumHydrogens="0" p="55.981895 30.750145">
-                        <t p="55.981895 30.750145" LabelJustification="Left">
+                    <n id="8" Element="8" NumHydrogens="0" p="25.981894 0.750146">
+                        <t p="25.981894 0.750146" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
@@ -46,27 +46,27 @@
             </n>
             <n id="22" NodeType="Fragment">
                 <fragment id="24">
-                    <n id="9" Element="16" NumHydrogens="0" p="247.981857 60.000000">
-                        <t p="247.981857 60.000000" LabelJustification="Left">
+                    <n id="9" Element="16" NumHydrogens="0" p="217.981857 30.000000">
+                        <t p="217.981857 30.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">S</s>
                         </t>
                     </n>
-                    <n id="10" Element="8" NumHydrogens="0" p="247.981857 30.000000">
+                    <n id="10" Element="8" NumHydrogens="0" p="217.981857 -0.000000">
+                        <t p="217.981857 -0.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="11" Element="8" NumHydrogens="0" p="217.981857 60.000000">
+                        <t p="217.981857 60.000000" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="12" Element="8" NumHydrogens="1" p="247.981857 30.000000">
                         <t p="247.981857 30.000000" LabelJustification="Left">
-                            <s font="3" size="10" face="96">O</s>
-                        </t>
-                    </n>
-                    <n id="11" Element="8" NumHydrogens="0" p="247.981857 90.000000">
-                        <t p="247.981857 90.000000" LabelJustification="Left">
-                            <s font="3" size="10" face="96">O</s>
-                        </t>
-                    </n>
-                    <n id="12" Element="8" NumHydrogens="1" p="277.981842 60.000000">
-                        <t p="277.981842 60.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
-                    <n id="13" p="217.981857 60.000000"/>
+                    <n id="13" p="187.981857 30.000000"/>
                     <b id="17" B="9" E="10" Order="2"/>
                     <b id="18" B="9" E="11" Order="2"/>
                     <b id="19" B="9" E="12"/>

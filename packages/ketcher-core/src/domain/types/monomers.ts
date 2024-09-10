@@ -6,17 +6,33 @@ import {
   RNABase,
   Struct,
   Sugar,
+  PolymerBond,
 } from 'domain/entities';
 import {
   IKetAttachmentPoint,
   IKetIdtAliases,
+  KetAmbiguousMonomerTemplateOption,
+  KetAmbiguousMonomerTemplateSubType,
+  KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
+import { UsageInMacromolecule } from 'application/render';
 
 export type MonomerColorScheme = {
   regular: string;
   hover: string;
 };
+
+export enum AttachmentPointName {
+  R1 = 'R1',
+  R2 = 'R2',
+  R3 = 'R3',
+  R4 = 'R4',
+  R5 = 'R5',
+  R6 = 'R6',
+  R7 = 'R7',
+  R8 = 'R8',
+}
 
 export type MonomerItemType = {
   label: string;
@@ -31,29 +47,31 @@ export type MonomerItemType = {
     Name: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
-    MonomerCaps?: { [key: string]: string };
+    MonomerCaps?: Partial<Record<AttachmentPointName, string>>;
     MonomerCode?: string;
     MonomerType?: string;
-    // TODO: Specify the type. `readonly MonomerClass: KetMonomerClass`?
-    MonomerClass?: string;
+    MonomerClass?: KetMonomerClass;
     isMicromoleculeFragment?: boolean;
     idtAliases?: IKetIdtAliases;
     unresolved?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
+  isAmbiguous?: boolean;
 };
 
-export enum AttachmentPointName {
-  R1 = 'R1',
-  R2 = 'R2',
-  R3 = 'R3',
-  R4 = 'R4',
-  R5 = 'R5',
-  R6 = 'R6',
-  R7 = 'R7',
-  R8 = 'R8',
-}
+export type AmbiguousMonomerType = {
+  id: string;
+  monomers: BaseMonomer[];
+  subtype: KetAmbiguousMonomerTemplateSubType;
+  label: string;
+  options: KetAmbiguousMonomerTemplateOption[];
+  idtAliases?: IKetIdtAliases;
+  isAmbiguous: true;
+  favorite?: boolean;
+};
+
+export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;
 
 export const attachmentPointNames = [
   'R1',
@@ -79,6 +97,18 @@ export type AttachmentPointConstructorParams = {
   isPotentiallyUsed: boolean;
   angle: number;
   isSnake: boolean;
+  applyZoomForPositionCalculation: boolean;
 };
 
+export type PreviewAttachmentPointConstructorParams =
+  AttachmentPointConstructorParams & {
+    selected: boolean;
+    connected: boolean;
+    usage: UsageInMacromolecule;
+  };
+
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
+
+export type AttachmentPointsToBonds = Partial<
+  Record<AttachmentPointName, PolymerBond | null>
+>;

@@ -179,6 +179,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
     await selectSequenceLayoutModeTool(page);
+    await moveMouseAway(page);
   });
 
   test('Selecting "Modify in RNA Builder" option from context menu after right-clicking on selected monomers switches RNA Builder to edit mode', async ({
@@ -348,6 +349,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await page.getByText('Yes').click();
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

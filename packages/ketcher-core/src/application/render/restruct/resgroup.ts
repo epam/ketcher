@@ -170,10 +170,10 @@ class ReSGroup extends ReObject {
 
   getContractedSelectionContour(render: Render): any {
     const { paper, options } = render;
-    const { fontsz, radiusScaleFactor } = options;
-    const radius = fontsz * radiusScaleFactor * 2;
+    const { fontszInPx, radiusScaleFactor } = options;
+    const radius = fontszInPx * radiusScaleFactor * 2;
     const { startX, startY, width, height } = this.getTextHighlightDimensions(
-      fontsz / 2,
+      fontszInPx / 2,
       render,
     );
     return paper.rect(startX, startY, width, height, radius);
@@ -345,7 +345,7 @@ function SGroupdrawBrackets({
     const indexPos = new Vec2(path.x, path.y);
     const indexPath = render.paper.text(indexPos.x, indexPos.y, text).attr({
       font: render.options.font,
-      'font-size': render.options.fontszsub,
+      'font-size': render.options.fontszsubInPx,
     });
     if (indexAttribute) indexPath.attr(indexAttribute);
     const indexBox = Box2Abs.fromRelBox(util.relBox(indexPath.getBBox()));
@@ -378,7 +378,7 @@ function showValue(
 ): any {
   const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
     font: options.font,
-    'font-size': options.fontsz,
+    'font-size': options.fontszInPx,
   });
   const box = text.getBBox();
   let rect = paper.rect(

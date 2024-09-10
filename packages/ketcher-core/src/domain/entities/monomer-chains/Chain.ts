@@ -12,6 +12,7 @@ import {
   MonomerSequenceNode,
   EmptySequenceNode,
   LinkerSequenceNode,
+  AmbiguousMonomer,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
@@ -19,6 +20,7 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
@@ -58,6 +60,11 @@ export class Chain {
       monomer instanceof UnresolvedMonomer
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));
+      return;
+    }
+
+    if (monomer instanceof AmbiguousMonomer) {
+      this.lastSubChain.add(new AmbiguousMonomerSequenceNode(monomer));
       return;
     }
 

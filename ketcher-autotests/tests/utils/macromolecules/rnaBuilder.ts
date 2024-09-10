@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 import { turnOnMacromoleculesEditor } from '.';
-import { CHEM_TAB, RNA_TAB } from '@constants/testIdConstants';
+import { RNA_TAB } from '@constants/testIdConstants';
 
 export async function toggleRnaBuilderAccordion(page: Page) {
   await page.getByText('RNA Builder').locator('button').click();
@@ -10,11 +10,6 @@ export async function gotoRNA(page: Page) {
   await turnOnMacromoleculesEditor(page);
   await page.getByTestId(RNA_TAB).click();
   await toggleRnaBuilderAccordion(page);
-}
-
-export async function goToCHEMTab(page: Page) {
-  await turnOnMacromoleculesEditor(page);
-  await page.getByTestId(CHEM_TAB).click();
 }
 
 export async function toggleSugarsAccordion(page: Page) {
@@ -39,4 +34,28 @@ export async function toggleNucleotidesAccordion(page: Page) {
 
 export async function pressNewPresetButton(page: Page) {
   await page.getByRole('button', { name: 'New Preset' }).click();
+}
+
+export async function selectSugarSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--sugar').click();
+}
+
+export async function selectBaseSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--base').click();
+}
+
+export async function selectPhosphateSlot(page: Page) {
+  await page.getByTestId('rna-builder-slot--phosphate').click();
+}
+
+export async function pressAddToPresetsButton(page: Page) {
+  await page.getByTestId('add-to-presets-btn').click();
+}
+
+export async function expandCollapseRnaBuilder(page: Page) {
+  await page
+    .locator('div')
+    .filter({ hasText: /^RNA Builder$/ })
+    .getByRole('button')
+    .click();
 }

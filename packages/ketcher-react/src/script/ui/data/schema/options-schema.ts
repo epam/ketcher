@@ -35,6 +35,11 @@ export enum MeasurementUnits {
   Inch = 'inch',
 }
 
+export enum ImageResolution {
+  high = '600',
+  low = '72',
+}
+
 const editor: {
   resetToSelect: ExtendedSchema;
   rotationStep: ExtendedSchema;
@@ -79,12 +84,18 @@ const render: {
   showValence: ExtendedSchema;
   showHydrogenLabels: ExtendedSchema;
   aromaticCircle: ExtendedSchema;
-  doubleBondWidth: ExtendedSchema;
-  doubleBondWidthUnit: ExtendedSchema;
+  bondSpacing: ExtendedSchema;
   bondThickness: ExtendedSchema;
   bondThicknessUnit: ExtendedSchema;
   stereoBondWidth: ExtendedSchema;
   stereoBondWidthUnit: ExtendedSchema;
+  bondLength: ExtendedSchema;
+  bondLengthUnit: ExtendedSchema;
+  reactionComponentMarginSize: ExtendedSchema;
+  reactionComponentMarginSizeUnit: ExtendedSchema;
+  hashSpacing: ExtendedSchema;
+  hashSpacingUnit: ExtendedSchema;
+  imageResolution: ExtendedSchema;
 } = {
   showValenceWarnings: {
     title: 'Show valence warnings',
@@ -236,18 +247,12 @@ const render: {
     description: 'slider',
     default: true,
   },
-  doubleBondWidth: {
-    title: 'Double bond width',
+  bondSpacing: {
+    title: 'Bond spacing',
     type: 'integer',
-    default: 6,
+    default: 15,
     minimum: 1,
-    maximum: 96,
-  },
-  doubleBondWidthUnit: {
-    title: 'Double bond width unit',
-    enum: Object.values(MeasurementUnits),
-    enumNames: Object.values(MeasurementUnits),
-    default: MeasurementUnits.Px,
+    maximum: 100,
   },
   bondThickness: {
     title: 'Bond thickness',
@@ -274,6 +279,48 @@ const render: {
     enum: Object.values(MeasurementUnits),
     enumNames: Object.values(MeasurementUnits),
     default: MeasurementUnits.Px,
+  },
+  bondLength: {
+    title: 'Bond length',
+    type: 'number',
+    default: 40,
+    minimum: 1,
+  },
+  bondLengthUnit: {
+    title: 'Bond length unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  reactionComponentMarginSize: {
+    title: 'Reaction component margin size',
+    type: 'number',
+    default: 20, // half of bond length
+    minimum: 1,
+  },
+  reactionComponentMarginSizeUnit: {
+    title: 'Reaction component margin size unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  hashSpacing: {
+    title: 'Hash spacing',
+    type: 'number',
+    default: 1.2,
+    minimum: 0,
+  },
+  hashSpacingUnit: {
+    title: 'Hash spacing unit',
+    enum: Object.values(MeasurementUnits),
+    enumNames: Object.values(MeasurementUnits),
+    default: MeasurementUnits.Px,
+  },
+  imageResolution: {
+    title: 'Image resolution',
+    enum: Object.values(ImageResolution),
+    enumNames: Object.keys(ImageResolution),
+    default: ImageResolution.low,
   },
 };
 

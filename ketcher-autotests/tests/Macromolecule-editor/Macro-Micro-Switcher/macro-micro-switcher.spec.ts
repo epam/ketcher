@@ -42,7 +42,7 @@ import {
   receiveFileComparisonData,
   getMolfile,
   selectSequenceLayoutModeTool,
-  switchSequenceEnteringType,
+  switchSequenceEnteringButtonType,
   SequenceType,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -132,13 +132,13 @@ async function setAtomAndBondSettings(page: Page) {
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .click();
   await page
     .locator('fieldset')
     .filter({ hasText: 'Aromatic Bonds as' })
     .getByRole('textbox')
-    .nth(1)
+    .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
 }
@@ -813,6 +813,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
+      test.fail();
       await openFileAndAddToCanvas(
         'KET/two-benzene-and-plus.ket',
         page,
@@ -1681,72 +1682,61 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
-    Saved structure opens like blank canvas because we have bug https://github.com/epam/Indigo/issues/1994
-    After the fix, you need to update test.
+                 CDX does not support R-groups, so R1 converts to H (hydrogen)
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdx(page);
+    await saveToFile(
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxFileExpected, file: cdxFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getCdx(page);
-      await saveToFile(
-        'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      });
 
-      const { fileExpected: cdxFileExpected, file: cdxFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-        });
+    expect(cdxFile).toEqual(cdxFileExpected);
+    await openCdxFile(page);
+    await takeEditorScreenshot(page);
+    await pageReload(page);
+  });
 
-      expect(cdxFile).toEqual(cdxFileExpected);
-      await openCdxFile(page);
-      await takeEditorScreenshot(page);
-      await pageReload(page);
-    },
-  );
-
-  test(
-    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
-    Saved structure not opens because we have bug https://github.com/epam/Indigo/issues/1993
-    After the fix, you need to update test.
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
-        'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      });
 
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-        });
-
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
-      await openCdxmlFile(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openCdxmlFile(page);
+    await takeEditorScreenshot(page);
+  });
 
   test(
     'Verify presence and correctness of attachment points (atomRefs) in the SuperatomSgroup segment of CML molecular structure files',
@@ -1969,7 +1959,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });
@@ -2002,7 +1992,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectSequenceLayoutModeTool(page);
 
       if (data.sequenceType) {
-        await switchSequenceEnteringType(page, data.sequenceType);
+        await switchSequenceEnteringButtonType(page, data.sequenceType);
       }
 
       await clickOnSequenceSymbol(page, '@', { button: 'right' });

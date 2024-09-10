@@ -40,6 +40,7 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
   const options = {
     mol: 'MDL Molfile V3000',
     fasta: 'FASTA',
+    seq: 'Sequence',
   };
   const optionText = (options as any)[extention];
   const selector = page.getByTestId('dropdown-select');
@@ -83,6 +84,14 @@ export async function selectOptionInTypeDropdown(
       .getByRole('combobox')
       .allInnerTexts();
   }
+}
+
+export async function selectOptionInTypeDropdown2(
+  typeDropdownOption: TypeDropdownOptions,
+  page: Page,
+) {
+  await page.getByTestId('dropdown-select-type').getByRole('combobox').click();
+  await page.getByText(typeDropdownOption, { exact: true }).click();
 }
 
 /**
@@ -133,6 +142,26 @@ export async function openFileAndAddToCanvasMacro(
 
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
+  });
+}
+
+export async function openFileAndAddToCanvasAsNewProjectMacro(
+  filename: string,
+  page: Page,
+  typeDropdownOption?: TypeDropdownOptions,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(filename, page);
+
+  // to stabilize the test
+  await selectOptionInDropdown(filename, page);
+
+  if (typeDropdownOption) {
+    await selectOptionInTypeDropdown2(typeDropdownOption, page);
+  }
+
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Open as New');
   });
 }
 

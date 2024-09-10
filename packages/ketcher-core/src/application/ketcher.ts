@@ -499,4 +499,8 @@ export class Ketcher {
     this.structService = structService;
     this._indigo = new Indigo(structService);
   }
+
+  public sendCustomAction(name: string) {
+    this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
+  }
 }

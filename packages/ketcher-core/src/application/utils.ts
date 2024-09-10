@@ -57,6 +57,7 @@ export async function prepareStructToRender(
   struct.initHalfBonds();
   struct.initNeighbors();
   struct.setImplicitHydrogen();
+  struct.setStereoLabelsToAtoms();
   struct.markFragments();
 
   return struct;

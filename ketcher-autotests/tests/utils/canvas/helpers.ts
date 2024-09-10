@@ -248,10 +248,6 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await takeElementScreenshot(page, 'top-toolbar');
 }
 
-export async function takeLayoutSwitcherScreenshot(page: Page) {
-  await takeElementScreenshot(page, 'sequence-type-dropdown');
-}
-
 export async function takePolymerEditorScreenshot(page: Page) {
   const maxTimeout = 3000;
   const editor = page.locator('.Ketcher-polymer-editor-root');

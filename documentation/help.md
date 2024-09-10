@@ -415,7 +415,7 @@ This tool flips the objects horizontally or vertically.
 
 To draw/edit reactions you can:
 
-- draw reagents and products as described above;
+- draw reagents and products as described above
 - use options of the _Reaction Arrow Tool_ <img src = images/34_reacarrow_icon.png width = "42" /> to draw an
   arrow. Select the arrow needed from the list <img src = images/35_reacarrows_menu.png height = "42" />
 - draw pluses in the reaction equation using the _Reaction Plus Tool_ <img src = images/38_reactplus_icon.png width = "42" />
@@ -428,6 +428,16 @@ To draw/edit reactions you can:
 2 – Reaction Mapping Tool
 
 3 – Reaction Unmapping Tool
+
+# Drawing pathway reactions
+
+To draw pathway reactions you can:
+* draw reagents and products as described above
+* use <img src = images/70_add_multitailed-arrow.png width = "42" />  _Multi-Tailed Arrow Tool_ option from _Reaction Arrow Tool_
+* click anywhere on the canvas to add new multi-tailed arrow
+* adjust the length of the head or tail by grabbing its end and moving the cursor left and right
+* reposition the head or tail vertically by grabbing its end and moving the cursos up and down
+
 
 # Drawing graphical objects
 

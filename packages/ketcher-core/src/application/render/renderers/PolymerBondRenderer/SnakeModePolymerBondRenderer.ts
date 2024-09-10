@@ -696,6 +696,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseOverPolymerBond.dispatch(event);
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMovePolymerBond.dispatch(event);
+      })
       .on('mouseout', (event) => {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
@@ -728,7 +731,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           .attr('stroke', '#57FF8F')
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
-          .attr('d', this.path);
+          .attr('d', this.path)
+          .attr('class', 'dynamic-element');
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
@@ -943,6 +947,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
 
     this.isSnakeBond = true;
+  }
+
+  public remove() {
+    super.remove();
+    if (this.polymerBond.hovered) {
+      this.editorEvents.mouseLeaveMonomer.dispatch();
+    }
   }
 }
 

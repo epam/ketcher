@@ -11,6 +11,7 @@ import {
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
 import {
+  AmbiguousMonomer,
   BaseMonomer,
   LinkerSequenceNode,
   Phosphate,
@@ -1301,17 +1302,58 @@ export class SequenceMode extends BaseMode {
     );
   }
 
+  private checkNodeInsertionPossibility(newNode: SubChainNode) {
+    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
+    const currentNode = SequenceRenderer.currentEdittingNode;
+    const currentNodeIsNotEmpty = !(currentNode instanceof EmptySequenceNode);
+
+    let missingAttachmentPoint: AttachmentPointName | null = null;
+
+    const previousMonomerHasR2 = Boolean(
+      previousNodeInSameChain?.lastMonomerInNode.hasAttachmentPoint(
+        AttachmentPointName.R2,
+      ),
+    );
+    const newMonomerHasR1 = newNode.firstMonomerInNode.hasAttachmentPoint(
+      AttachmentPointName.R1,
+    );
+    const rightSideInsertImpossible =
+      Boolean(previousNodeInSameChain) &&
+      (!previousMonomerHasR2 || !newMonomerHasR1);
+    if (rightSideInsertImpossible && !newMonomerHasR1) {
+      missingAttachmentPoint = AttachmentPointName.R1;
+    }
+
+    const nextMonomerHasR1 = Boolean(
+      currentNode?.firstMonomerInNode.hasAttachmentPoint(
+        AttachmentPointName.R1,
+      ),
+    );
+    const newMonomerHasR2 = newNode.lastMonomerInNode.hasAttachmentPoint(
+      AttachmentPointName.R2,
+    );
+    const leftSideInsertImpossible =
+      Boolean(currentNode) &&
+      currentNodeIsNotEmpty &&
+      (!nextMonomerHasR1 || !newMonomerHasR2);
+    if (leftSideInsertImpossible && !newMonomerHasR2) {
+      missingAttachmentPoint = AttachmentPointName.R2;
+    }
+
+    const nodeCanBeInserted =
+      !rightSideInsertImpossible && !leftSideInsertImpossible;
+
+    return {
+      nodeCanBeInserted,
+      missingAttachmentPoint,
+    };
+  }
+
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
-    const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
-    const nextNodeInSameChain = SequenceRenderer.nextNodeInSameChain;
-    const newMonomerAttachmentPoints =
-      BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
-        monomerItem.attachmentPoints || [],
-      );
 
     if (selections.length > 0) {
       if (
@@ -1349,32 +1391,30 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else if (
-      (previousNodeInSameChain &&
-        (!previousNodeInSameChain?.lastMonomerInNode.hasAttachmentPoint(
-          AttachmentPointName.R2,
-        ) ||
-          !newMonomerAttachmentPoints.attachmentPointsList.includes(
-            AttachmentPointName.R1,
-          ))) ||
-      (nextNodeInSameChain &&
-        (!nextNodeInSameChain?.firstMonomerInNode.hasAttachmentPoint(
-          AttachmentPointName.R1,
-        ) ||
-          !newMonomerAttachmentPoints.attachmentPointsList.includes(
-            AttachmentPointName.R2,
-          )))
-    ) {
-      this.showMergeWarningModal();
     } else {
       const newNodePosition = this.getNewNodePosition();
+
+      const newMonomer = editor.drawingEntitiesManager.createMonomer(
+        monomerItem,
+        newNodePosition,
+      );
+      const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
+
+      const { nodeCanBeInserted, missingAttachmentPoint } =
+        this.checkNodeInsertionPossibility(newMonomerSequenceNode);
+      if (!nodeCanBeInserted) {
+        const message =
+          missingAttachmentPoint &&
+          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
+        return;
+      }
 
       const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
         monomerItem,
         newNodePosition,
+        newMonomer,
       );
-      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-      const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
 
       modelChanges.merge(monomerAddCommand);
       modelChanges.merge(
@@ -1392,47 +1432,45 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const { base: rnaBase, sugar, phosphate } = preset;
 
-    if (!sugar) {
-      return;
+    assert(sugar);
+
+    const sugarMonomer = editor.drawingEntitiesManager.createMonomer(
+      sugar,
+      position,
+    ) as Sugar;
+
+    let rnaBaseMonomer: RNABase | AmbiguousMonomer | null = null;
+    if (rnaBase) {
+      rnaBaseMonomer = editor.drawingEntitiesManager.createMonomer(
+        rnaBase,
+        position,
+      ) as RNABase;
     }
 
-    const rnaPresetAddResult = editor.drawingEntitiesManager.addRnaPreset({
-      sugar,
-      sugarPosition: position,
-      rnaBase,
-      rnaBasePosition: position,
-      phosphate,
-      phosphatePosition: position,
-    });
+    let phosphateMonomer: Phosphate | null = null;
+    if (phosphate) {
+      phosphateMonomer = editor.drawingEntitiesManager.createMonomer(
+        phosphate,
+        position,
+      ) as Phosphate;
+    }
 
-    const sugarMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof Sugar,
-    ) as Sugar;
-    const rnaBaseMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof RNABase,
-    ) as RNABase;
-    const phosphateMonomer = rnaPresetAddResult.monomers.find(
-      (monomer) => monomer instanceof Phosphate,
-    ) as Phosphate;
+    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode | null =
+      null;
 
-    let newPresetNode: Nucleotide | Nucleoside | LinkerSequenceNode;
-
-    if (!rnaBase) {
-      newPresetNode = new LinkerSequenceNode(sugarMonomer);
-    } else if (!phosphateMonomer) {
-      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
-    } else {
+    if (rnaBaseMonomer && sugarMonomer && phosphateMonomer) {
       newPresetNode = new Nucleotide(
         sugarMonomer,
         rnaBaseMonomer,
         phosphateMonomer,
       );
+    } else if (rnaBaseMonomer && sugarMonomer) {
+      newPresetNode = new Nucleoside(sugarMonomer, rnaBaseMonomer);
+    } else {
+      newPresetNode = new LinkerSequenceNode(sugarMonomer);
     }
 
-    return {
-      newPresetNode,
-      rnaPresetAddModelChanges: rnaPresetAddResult.command,
-    };
+    return newPresetNode;
   }
 
   private replaceSelectionWithPreset(
@@ -1460,13 +1498,12 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const rnaAdditionResult = this.createRnaPresetNode(preset, position);
+    const newPresetNode = this.createRnaPresetNode(preset, position);
 
-    if (!rnaAdditionResult) {
-      return;
-    }
+    assert(newPresetNode);
 
-    const { newPresetNode, rnaPresetAddModelChanges } = rnaAdditionResult;
+    const rnaPresetAddModelChanges =
+      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
 
     modelChanges.merge(rnaPresetAddModelChanges);
     modelChanges.merge(
@@ -1591,19 +1628,26 @@ export class SequenceMode extends BaseMode {
     } else {
       const newNodePosition = this.getNewNodePosition();
 
-      const rnaAdditionResult = this.createRnaPresetNode(
-        preset,
-        newNodePosition,
-      );
+      const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
-      if (!rnaAdditionResult) {
+      assert(newPresetNode);
+
+      const { nodeCanBeInserted, missingAttachmentPoint } =
+        this.checkNodeInsertionPossibility(newPresetNode);
+
+      if (!nodeCanBeInserted) {
+        const message =
+          missingAttachmentPoint &&
+          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+        this.showMergeWarningModal(message);
         return;
       }
 
-      modelChanges.merge(rnaAdditionResult.rnaPresetAddModelChanges);
-      modelChanges.merge(
-        this.insertNewSequenceFragment(rnaAdditionResult.newPresetNode),
-      );
+      const rnaPresetAddModelChanges =
+        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+      modelChanges.merge(rnaPresetAddModelChanges);
+      modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
@@ -1656,12 +1700,13 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
-  private showMergeWarningModal() {
+  private showMergeWarningModal(message?: string | null) {
     const editor = CoreEditor.provideEditorInstance();
 
     editor.events.openErrorModal.dispatch({
       errorTitle: 'Error Message',
       errorMessage:
+        message ??
         'It is impossible to merge fragments. Attachment point to establish bonds are not available.',
     });
   }

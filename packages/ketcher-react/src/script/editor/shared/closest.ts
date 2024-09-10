@@ -25,6 +25,7 @@ import {
   Bond,
   IMAGE_KEY,
   ImageReferencePositionInfo,
+  MULTITAIL_ARROW_KEY,
 } from 'ketcher-core';
 import { ClosestItem, ClosestItemWithMap } from './closest.types';
 
@@ -45,6 +46,7 @@ const findMaps = {
   rgroupAttachmentPoints: findClosestRgroupAttachmentPoints,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText,
+  [MULTITAIL_ARROW_KEY]: findClosestMultitailArrow,
   [IMAGE_KEY]: findClosestImage,
 };
 
@@ -734,6 +736,31 @@ function findClosestImage(reStruct: ReStruct, cursorPosition: Vec2) {
           dist: dist / renderOptions.microModeScale,
           ref: includeRef ? closestPosition.ref : null,
         };
+      }
+      return acc;
+    },
+    null,
+  );
+}
+
+function findClosestMultitailArrow(reStruct: ReStruct, cursorPosition: Vec2) {
+  const renderOptions = reStruct.render.options;
+  const canvasScaledPosition = Scale.modelToCanvas(
+    cursorPosition,
+    renderOptions,
+  );
+  const maxDistance =
+    renderOptions.microModeScale * SELECTION_DISTANCE_COEFFICIENT;
+
+  return Array.from(reStruct.multitailArrows.entries()).reduce(
+    (acc: ClosestReturnType<unknown>, [id, item]) => {
+      const { distance, ref } = item.calculateDistanceToPoint(
+        canvasScaledPosition,
+        renderOptions,
+        maxDistance,
+      );
+      if (distance <= maxDistance && (!acc || acc.dist > distance)) {
+        return { id, dist: distance / renderOptions.microModeScale, ref };
       }
       return acc;
     },

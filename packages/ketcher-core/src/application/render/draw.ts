@@ -22,6 +22,7 @@ import svgPath from 'svgpath';
 import util from './util';
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { tfx } from 'utilities';
+import { PathBuilder } from './pathBuilder';
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
@@ -131,6 +132,16 @@ function arrow(
     }
     case RxnArrowMode.Failed: {
       return arrowFailed(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle,
+      );
+    }
+    case RxnArrowMode.Retrosynthetic: {
+      return arrowRetrosynthetic(
         paper,
         item,
         length,
@@ -407,19 +418,11 @@ function arrowOpenAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const width = 5;
-  const length = 7;
-
-  const endX = start.x + arrowLength;
-
-  const path =
-    `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - length)},${tfx(start.y - width)}` +
-    `M${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - length)}, ${tfx(start.y + width)}`;
-
-  const transformedPath = svgPath(path)
+  const pathBuilder = new PathBuilder().addOpenArrowPathParts(
+    start,
+    arrowLength,
+  );
+  const transformedPath = svgPath(pathBuilder.build())
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
@@ -588,6 +591,61 @@ function arrowFailed(
     ...options.lineattr,
     fill: '#000',
     ...(shouldApplySnappingStyle && options.arrowSnappingStyle),
+  });
+}
+
+function arrowRetrosynthetic(
+  paper: RaphaelPaper,
+  { pos: [start] }: ArrowItem,
+  arrowLength: number,
+  arrowAngle: number,
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean,
+) {
+  const width = 5;
+  const length = 7;
+  const arrowheadLength = 0.1;
+  const lineOffset = 4;
+
+  const endX = start.x + arrowLength;
+
+  const path: string[] = [];
+
+  // First arrow and arrowhead base
+  path.push(
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`,
+  );
+
+  // First Arrowhead line
+  path.push(
+    `M${tfx(endX - length)},${tfx(start.y - width - lineOffset)}` +
+      `L${tfx(endX + length)},${tfx(start.y - arrowheadLength)}`,
+  );
+
+  // Second arrow and arrowhead base
+  path.push(
+    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y + width + lineOffset)}`,
+  );
+
+  // Second Arrowhead line
+  path.push(
+    `M${tfx(endX - length)},${tfx(start.y + width + lineOffset)}` +
+      `L${tfx(endX + length)},${tfx(start.y + arrowheadLength)}`,
+  );
+
+  const transformedPath = svgPath(path.join(''))
+    .rotate(arrowAngle, start.x, start.y)
+    .toString();
+
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke,
+    }),
   });
 }
 
@@ -1322,7 +1380,7 @@ function bondMark(
 ) {
   const path = paper.text(point.x, point.y, mark).attr({
     font: options.font,
-    'font-size': options.fontszsub,
+    'font-size': options.fontszsubInPx,
     fill: '#000',
   });
   const rbb = util.relBox(path.getBBox());
@@ -1587,7 +1645,7 @@ function rgroupAttachmentPointLabel(
     .text(labelPosition.x, labelPosition.y, labelText)
     .attr({
       font: options.font,
-      'font-size': options.fontsz * 0.9,
+      'font-size': options.fontszInPx * 0.9,
       fill,
     });
   return labelPath;

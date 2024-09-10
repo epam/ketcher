@@ -29,6 +29,7 @@ import {
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  moveMouseAway,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -592,6 +593,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await moveMouseAway(page);
   });
 
   test('Cut and Paste reaction with changed arrow and edit', async ({
@@ -688,6 +690,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await moveMouseAway(page);
   });
 
   test('Cut and Paste Mapped reaction and edit', async ({ page }) => {

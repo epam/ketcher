@@ -39,6 +39,8 @@ import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { isNumber } from 'lodash';
 import { Image } from './image';
+import { getStereoAtomsMap } from 'application/editor/actions/helpers';
+import { MultitailArrow } from './multitailArrow';
 
 export type Neighbor = {
   aid: number;
@@ -74,10 +76,11 @@ export class Struct {
   abbreviation?: string;
   sGroupForest: SGroupForest;
   simpleObjects: Pool<SimpleObject>;
-  images: Pool<Image>;
   texts: Pool<Text>;
   functionalGroups: Pool<FunctionalGroup>;
   highlights: Pool<Highlight>;
+  images = new Pool<Image>();
+  multitailArrows = new Pool<MultitailArrow>();
 
   constructor() {
     this.atoms = new Pool<Atom>();
@@ -98,7 +101,6 @@ export class Struct {
     this.texts = new Pool<Text>();
     this.functionalGroups = new Pool<FunctionalGroup>();
     this.highlights = new Pool<Highlight>();
-    this.images = new Pool<Image>();
   }
 
   hasRxnProps(): boolean {
@@ -127,7 +129,8 @@ export class Struct {
       this.rxnPluses.size === 0 &&
       this.simpleObjects.size === 0 &&
       this.texts.size === 0 &&
-      this.images.size === 0
+      this.images.size === 0 &&
+      this.multitailArrows.size === 0
     );
   }
 
@@ -146,6 +149,7 @@ export class Struct {
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
     imagesSet?: Pile<number> | null,
+    multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
@@ -159,6 +163,7 @@ export class Struct {
       textsSet,
       rgroupAttachmentPointSet,
       imagesSet,
+      multitailArrowsSet,
       bidMap,
     );
   }
@@ -204,6 +209,7 @@ export class Struct {
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
       copyNonFragmentObjects ? undefined : new Pile(),
+      copyNonFragmentObjects ? undefined : new Pile(),
     );
   }
 
@@ -218,6 +224,7 @@ export class Struct {
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
     imagesSet?: Pile<number> | null,
+    multitailArrowsSet?: Pile<number> | null,
     bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
@@ -226,6 +233,8 @@ export class Struct {
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
     imagesSet = imagesSet || new Pile<number>(this.images.keys());
+    multitailArrowsSet =
+      multitailArrowsSet || new Pile<number>(this.multitailArrows.keys());
     rgroupAttachmentPointSet =
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
@@ -340,6 +349,10 @@ export class Struct {
 
     imagesSet.forEach((id) => {
       cp.images.add(this.images.get(id)!.clone());
+    });
+
+    multitailArrowsSet.forEach((id) => {
+      cp.multitailArrows.add(this.multitailArrows.get(id)!.clone());
     });
 
     rgroupAttachmentPointSet.forEach((id) => {
@@ -841,6 +854,9 @@ export class Struct {
     });
 
     this.images.forEach((image) => image.rescaleSize(scale));
+    this.multitailArrows.forEach((multitailArrow) =>
+      multitailArrow.rescaleSize(scale),
+    );
   }
 
   rescale() {
@@ -1071,6 +1087,26 @@ export class Struct {
         }
       });
     }
+  }
+
+  public setStereoLabelsToAtoms() {
+    const stereAtomsMap = getStereoAtomsMap(
+      this,
+      Array.from(this.bonds.values()),
+    );
+
+    this.atoms.forEach((atom, id) => {
+      if (this?.atomGetNeighbors(id)?.length === 0) {
+        atom.stereoLabel = null;
+        atom.stereoParity = 0;
+      } else {
+        const stereoProp = stereAtomsMap.get(id);
+        if (stereoProp) {
+          atom.stereoLabel = stereoProp.stereoLabel;
+          atom.stereoParity = stereoProp.stereoParity;
+        }
+      }
+    });
   }
 
   atomGetNeighbors(aid: number): Array<Neighbor> | undefined {

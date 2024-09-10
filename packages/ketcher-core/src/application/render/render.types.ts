@@ -3,14 +3,31 @@ import { StereLabelStyleType } from 'application/render/restruct';
 
 type RenderOptionStyles = Record<string, string | number>;
 
+export enum MeasurementUnits {
+  Px = 'px',
+  Cm = 'cm',
+  Pt = 'pt',
+  Inch = 'inch',
+}
+
+export enum UsageInMacromolecule {
+  MonomerConnectionsModal,
+  MonomerPreview,
+  BondPreview,
+}
+
 export type RenderOptions = {
   width?: number;
   height?: number;
 
   rotationStep?: number;
-  doubleBondWidth: number;
+  bondSpacing: number;
+  bondLength: number;
+  bondLengthUnit: MeasurementUnits;
   stereoBondWidth: number;
+  stereoBondWidthUnit: MeasurementUnits;
   bondThickness: number;
+  bondThicknessUnit: MeasurementUnits;
 
   downScale?: boolean;
   rescaleAmount?: number;
@@ -47,12 +64,15 @@ export type RenderOptions = {
   subFontSize: number;
   font: string;
   fontsz: number;
+  fontszUnit: MeasurementUnits;
+  fontszsubUnit: MeasurementUnits;
   fontszsub: number;
   fontRLabel: number;
   fontRLogic: number;
 
   /* styles */
   lineattr: RenderOptionStyles;
+  multitailArrow: RenderOptionStyles;
   arrowSnappingStyle: RenderOptionStyles;
   bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;
@@ -73,6 +93,14 @@ export type RenderOptions = {
   currentlySelectedMonomerAttachmentPoint?: string;
   labelInMonomerConnectionsModal?: boolean;
   labelInPreview?: boolean;
+
+  // Converted
+  fontszInPx: number;
+  fontszsubInPx: number;
+  bondSpacingInPx: number;
+  bondThicknessInPx: number;
+  stereoBondWidthInPx: number;
+  usageInMacromolecule?: UsageInMacromolecule;
 };
 
 export interface RelativeBox {

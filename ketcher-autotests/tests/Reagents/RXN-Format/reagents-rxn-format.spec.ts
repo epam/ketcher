@@ -11,6 +11,7 @@ import {
   saveToFile,
   waitForLoad,
   waitForPageInit,
+  moveMouseAway,
 } from '@utils';
 import { clickOnFileFormatDropdown, getRxn } from '@utils/formats';
 
@@ -211,6 +212,7 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 
   test('Open from file in "RXN V3000" format', async ({ page }) => {
@@ -223,6 +225,7 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 
   test('Paste from clipboard in "RXN V2000" format', async ({ page }) => {
@@ -235,6 +238,7 @@ test.describe('Reagents RXN format', () => {
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 
   test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
@@ -261,5 +265,6 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
   });
 });

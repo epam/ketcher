@@ -273,9 +273,6 @@ export async function saveToTemplates(page: Page, templateName: string) {
 export async function bondsDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Bonds', { exact: true }).click();
-  // await waitForRender(page, async () => {
-  //   await scrollSettingBar(page, 200);
-  // });
 }
 
 export async function setBondLengthOptionUnit(page: Page, unitName: string) {

@@ -69,6 +69,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
+import { BondAddOperation } from 'application/editor/operations/coreBond/bond';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1918,6 +1919,22 @@ export class DrawingEntitiesManager {
       this.addAtomChangeModel.bind(this, position),
     );
     command.addOperation(atomAddOperation);
+    return command;
+  }
+
+  private addBondChangeModel(firstAtom: Atom, secondAtom: Atom, type: number) {
+    const bond = new Bond(firstAtom, secondAtom, type);
+    this.bonds.set(bond.id, bond);
+    return bond;
+  }
+
+  public addBond(firstAtom: Atom, secondAtom: Atom, type: number) {
+    const command = new Command();
+    const bondAddOperation = new BondAddOperation(
+      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type),
+      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type),
+    );
+    command.addOperation(bondAddOperation);
     return command;
   }
 }

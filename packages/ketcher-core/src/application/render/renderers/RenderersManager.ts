@@ -35,6 +35,8 @@ type FlexModeOrSnakeModePolymerBondRenderer =
   | SnakeModePolymerBondRenderer;
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { Bond } from 'domain/entities/CoreBond';
 
 export class RenderersManager {
   // FIXME: Specify the types.
@@ -436,6 +438,19 @@ export class RenderersManager {
   public addAtom(atom: Atom) {
     const atomRenderer = new AtomRenderer(atom);
     atomRenderer.show();
+  }
+
+  public deleteAtom(atom: Atom) {
+    atom.renderer.remove();
+  }
+
+  public addBond(bond: Bond) {
+    const bondRenderer = new BondRenderer(bond);
+    bondRenderer.show();
+  }
+
+  public deleteBond(bond: Bond) {
+    bond.renderer.remove();
   }
 
   public runPostRenderMethods() {

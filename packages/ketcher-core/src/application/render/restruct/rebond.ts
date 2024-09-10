@@ -919,7 +919,7 @@ function getBondDoubleStereoBoldPath(
   );
 }
 
-function getBondLineShift(cos: number, sin: number): number {
+export function getBondLineShift(cos: number, sin: number): number {
   if (sin < 0 || Math.abs(cos) > 0.9) return 0;
   return sin / (1 - cos);
 }

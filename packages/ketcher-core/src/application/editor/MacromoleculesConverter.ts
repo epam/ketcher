@@ -461,9 +461,22 @@ export class MacromoleculesConverter {
       }
     });
 
-    struct.atoms.forEach((atom) => {
-      command.merge(drawingEntitiesManager.addAtom(atom.pp))
-    })
+    const atomsMap: { [atomId: number]: Atom } = {};
+    struct.atoms.forEach((atom, atomId) => {
+      const atomAddCommand = drawingEntitiesManager.addAtom(atom.pp);
+      atomsMap[atomId] = atomAddCommand.operations[0].atom;
+      command.merge(atomAddCommand);
+    });
+
+    struct.bonds.forEach((bond) => {
+      command.merge(
+        drawingEntitiesManager.addBond(
+          atomsMap[bond.begin],
+          atomsMap[bond.end],
+          bond.type,
+        ),
+      );
+    });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
 

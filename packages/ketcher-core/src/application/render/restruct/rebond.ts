@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import {
-  AmbiguousMonomer,
   Atom,
   Bond,
   FunctionalGroup,
@@ -65,10 +64,7 @@ class ReBond extends ReObject {
     atomId: number,
     sgroup?: SGroup,
   ) {
-    return sgroup instanceof MonomerMicromolecule &&
-      !(sgroup.monomer instanceof AmbiguousMonomer)
-      ? (sgroup.getAttachmentAtomId() as number)
-      : sgroup?.isContracted()
+    return sgroup?.isContracted()
       ? sgroup?.getContractedPosition(struct).atomId
       : atomId;
   }
@@ -92,15 +88,22 @@ class ReBond extends ReObject {
     ) {
       return;
     }
-    const p1 =
-      sgroup1 instanceof MonomerMicromolecule
-        ? (sgroup1.pp as Vec2)
-        : beginAtom.a.pp;
 
-    const p2 =
-      sgroup2 instanceof MonomerMicromolecule
-        ? (sgroup2.pp as Vec2)
-        : endAtom.a.pp;
+    let p1: Vec2;
+    let p2: Vec2;
+
+    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+      p1 = sgroup1.isContracted() ? (sgroup1.pp as Vec2) : beginAtom.a.pp;
+    } else {
+      p1 = beginAtom.a.pp;
+    }
+
+    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+      p2 = sgroup2.isContracted() ? (sgroup2.pp as Vec2) : endAtom.a.pp;
+    } else {
+      p2 = endAtom.a.pp;
+    }
+
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 

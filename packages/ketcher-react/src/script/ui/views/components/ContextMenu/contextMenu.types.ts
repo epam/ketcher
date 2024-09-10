@@ -9,6 +9,7 @@ export enum CONTEXT_MENU_ID {
   FOR_FUNCTIONAL_GROUPS = 'context-menu-for-functional-groups',
   FOR_R_GROUP_ATTACHMENT_POINT = 'context-menu-for-rgroup-attachment-point',
   FOR_MULTITAIL_ARROW = 'context-menu-for-multiple-arrowed',
+  FOR_MACROMOLECULE = 'context-menu-for-macromolecule',
 }
 
 export type ItemData = unknown;
@@ -47,6 +48,12 @@ export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
   functionalGroups: FunctionalGroup[];
 }
 
+export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
+  id: CONTEXT_MENU_ID.FOR_MACROMOLECULE;
+  functionalGroups: FunctionalGroup[];
+  // sGroups: SGroup[];
+}
+
 export interface RGroupAttachmentPointContextMenuProps
   extends BaseContextMenuProps,
     WithExtraItems {
@@ -67,7 +74,8 @@ export type ContextMenuProps =
   | SelectionContextMenuProps
   | FunctionalGroupsContextMenuProps
   | RGroupAttachmentPointContextMenuProps
-  | MultitailArrowContextMenuProps;
+  | MultitailArrowContextMenuProps
+  | MacromoleculeContextMenuProps;
 
 export interface MenuItemsProps<T extends ContextMenuProps> {
   triggerEvent?: TriggerEvent;

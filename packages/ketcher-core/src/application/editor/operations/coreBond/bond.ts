@@ -18,26 +18,26 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Bond } from 'domain/entities/CoreBond';
 
-export class AtomAddOperation implements Operation {
-  public atom: Atom;
+export class BondAddOperation implements Operation {
+  public bond: Bond;
   constructor(
-    public addAtomChangeModel: (atom?: Atom) => Atom,
-    public deleteAtomChangeModel: () => void,
+    public addBondChangeModel: (bond?: Bond) => Bond,
+    public deleteBondChangeModel: (bond?: Bond) => void,
   ) {
-    this.atom = this.addAtomChangeModel();
+    this.bond = this.addBondChangeModel();
   }
 
   public execute(renderersManager: RenderersManager) {
-    this.atom = this.addAtomChangeModel(this.atom);
-    renderersManager.addAtom(this.atom);
+    this.bond = this.addBondChangeModel(this.bond);
+    renderersManager.addBond(this.bond);
   }
 
   public invert(renderersManager: RenderersManager) {
-    if (this.atom) {
-      this.deleteAtomChangeModel(this.atom);
-      renderersManager.deleteAtom(this.atom);
+    if (this.bond) {
+      this.deleteBondChangeModel(this.bond);
+      renderersManager.deleteBond(this.bond);
     }
   }
 }

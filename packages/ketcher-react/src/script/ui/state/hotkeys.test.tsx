@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import createStore from '../state';
 import { initKeydownListener } from './hotkeys';
 import { act } from 'react-dom/test-utils';
-import { Pool, SGroup } from 'ketcher-core';
 
 jest.mock('react-intersection-observer', () => {
   return {
@@ -55,10 +54,7 @@ function renderWithMockStore(component) {
       },
       selection: jest.fn(),
       struct: () => {
-        return {
-          atoms: { keys: () => new Set() },
-          sgroups: new Pool<SGroup>(),
-        };
+        return { atoms: { keys: () => new Set() } };
       },
       render: { ctab: {} },
       zoom: jest.fn(),

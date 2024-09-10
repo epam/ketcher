@@ -8,8 +8,7 @@ import { AttachmentPointName } from 'domain/types';
 import { PreviewAttachmentPoint } from 'domain/PreviewAttachmentPoint';
 import { UsageInMacromolecule } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
-
-const NUMBER_OF_MONOMERS_CIRCLE_Y_OFFSET = 7;
+import { KetMonomerClass } from 'application/formatters';
 
 type PreviewAttachmentPointParams = {
   canvas: D3SvgElementSelection<SVGSVGElement, void>;
@@ -86,7 +85,7 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
         }, ${
           this.center.y -
           this.scaledMonomerPosition.y +
-          NUMBER_OF_MONOMERS_CIRCLE_Y_OFFSET
+          (this.monomer.monomerClass === KetMonomerClass.Base ? 7 : 8)
         })`,
       )
       .attr('pointer-events', 'none');

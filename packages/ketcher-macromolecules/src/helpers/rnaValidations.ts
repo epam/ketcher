@@ -2,6 +2,7 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 export const getValidations = (
   newPreset: IRnaPreset,
+  isEditMode: boolean,
 ): {
   sugarValidations: string[];
   phosphateValidations: string[];
@@ -10,6 +11,14 @@ export const getValidations = (
   const sugarValidations: string[] = [];
   const phosphateValidations: string[] = [];
   const baseValidations: string[] = [];
+
+  if (!isEditMode) {
+    return {
+      sugarValidations,
+      phosphateValidations,
+      baseValidations,
+    };
+  }
 
   if (newPreset?.phosphate) {
     sugarValidations.push('R2');

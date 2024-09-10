@@ -225,7 +225,7 @@ export const RnaEditorExpanded = ({
     dispatch(setActiveRnaBuilderItem(selectedGroup));
 
     const { sugarValidations, phosphateValidations, baseValidations } =
-      getValidations(newPreset);
+      getValidations(newPreset, isEditMode);
 
     dispatch(setSugarValidations(sugarValidations));
     dispatch(setPhosphateValidations(phosphateValidations));

@@ -31,10 +31,14 @@ import {
   selectIsEditMode,
   selectPresetFullName,
   setActiveRnaBuilderItem,
+  setBaseValidations,
   setIsEditMode,
+  setPhosphateValidations,
+  setSugarValidations,
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import { getValidations } from 'helpers/rnaValidations';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -65,6 +69,15 @@ export const RnaEditor = ({ duplicatePreset }) => {
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset]);
+
+  useEffect(() => {
+    const { sugarValidations, phosphateValidations, baseValidations } =
+      getValidations(activePreset, isEditMode);
+
+    dispatch(setSugarValidations(sugarValidations));
+    dispatch(setPhosphateValidations(phosphateValidations));
+    dispatch(setBaseValidations(baseValidations));
+  }, [isEditMode]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

@@ -109,7 +109,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     } else {
       setExpandedAccordion(rnaBuilderItem);
       const { sugarValidations, phosphateValidations, baseValidations } =
-        getValidations(newPreset);
+        getValidations(newPreset, isEditMode);
 
       dispatch(setSugarValidations(sugarValidations));
       dispatch(setPhosphateValidations(phosphateValidations));

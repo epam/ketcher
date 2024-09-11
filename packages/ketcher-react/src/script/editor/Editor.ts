@@ -342,6 +342,8 @@ class Editor implements KetcherEditor {
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {
     const isViewOnlyEnabled = this.render.options.viewOnlyMode;
     if (!wasViewOnlyEnabled && isViewOnlyEnabled === true) {
+      // We need to reset the tool to make sure it was recreated
+      this.tool('select');
       this.event.change.dispatch('force');
     }
   }

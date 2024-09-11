@@ -74,6 +74,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
 
       const editor = getKetcherInstance().editor as Editor;
 
+      if (editor.render.options.viewOnlyMode) {
+        return;
+      }
+
       const currentTool = editor.tool();
       if (currentTool instanceof TemplateTool) {
         currentTool.cancel();

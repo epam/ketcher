@@ -2,7 +2,7 @@
 import { Vec2 } from 'ketcher-core';
 import Editor from '../Editor';
 import RotateTool from './rotate';
-import SelectTool from './select';
+import SelectTool from './select/select';
 import RotateController, { getDifference } from './rotate-controller';
 
 describe('Rotate controller', () => {

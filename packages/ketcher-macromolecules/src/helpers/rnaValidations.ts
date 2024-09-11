@@ -12,7 +12,10 @@ export const getValidations = (
   const phosphateValidations: string[] = [];
   const baseValidations: string[] = [];
 
-  if (!isEditMode) {
+  if (
+    !isEditMode ||
+    (!newPreset?.sugar && !newPreset?.phosphate && !newPreset?.base)
+  ) {
     return {
       sugarValidations,
       phosphateValidations,

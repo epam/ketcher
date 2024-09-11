@@ -37,4 +37,12 @@ export class ChemRenderer extends BaseMonomerRenderer {
   public get beginningElementPosition() {
     return undefined;
   }
+
+  public show(theme?) {
+    if (this.monomer.monomerItem.props.isMicromoleculeFragment) {
+      return;
+    }
+
+    super.show(theme);
+  }
 }

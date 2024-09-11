@@ -320,8 +320,8 @@ export class DrawingEntitiesManager {
     } else {
       assert(offset);
       drawingEntity.moveRelative(offset);
-      if (drawingEntity instanceof BaseMonomer)
-        this.moveChemAtomsPoint(drawingEntity, offset);
+      // if (drawingEntity instanceof BaseMonomer)
+      // this.moveChemAtomsPoint(drawingEntity, offset);
     }
 
     return drawingEntity;
@@ -1065,7 +1065,7 @@ export class DrawingEntitiesManager {
   public rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {
     if (monomer.monomerItem.props.isMicromoleculeFragment) {
       const offset = newPosition.sub(monomer.position);
-      this.moveChemAtomsPoint(monomer, offset);
+      // this.moveChemAtomsPoint(monomer, offset);
     }
 
     monomer.moveAbsolute(newPosition);

@@ -323,4 +323,226 @@ test.describe('CML files', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test(
+    'Validate that the simple schema with retrosynthetic arrow could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/simple-schema-with-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/simple-schema-with-retrosynthetic-arrow.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/simple-schema-with-retrosynthetic-arrow.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/simple-schema-with-retrosynthetic-arrow.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Validate that the simple schema with retrosynthetic, angel arrows and plus could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Validate that the simple schema with two retrosynthetic arrows could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-two-retrosynthetic-arrows.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/schema-with-two-retrosynthetic-arrows.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/schema-with-two-retrosynthetic-arrows.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/schema-with-two-retrosynthetic-arrows.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Validate that the simple schema with reverse retrosynthetic arrow and pluses could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Validate that the simple schema with vertical retrosynthetic arrow could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/schema-with-vertical-retrosynthetic-arrow.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Validate that the simple schema with diagonal retrosynthetic arrow could be saved to CML file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2206
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+        page,
+      );
+      const expectedFile = await getCml(page);
+      await saveToFile(
+        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
+        expectedFile,
+      );
+      const { fileExpected: cmlFileExpected, file: cmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CML/schema-with-diagonal-retrosynthetic-arrow.cml',
+        });
+
+      expect(cmlFile).toEqual(cmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 });

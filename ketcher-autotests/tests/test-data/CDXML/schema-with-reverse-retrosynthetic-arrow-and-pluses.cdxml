@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" p="172.164627 217.531082"/>
+            <n id="6" p="224.073669 217.516541"/>
+            <n id="7" Element="7" NumHydrogens="0" p="198.168289 202.527863">
+                <t p="198.168289 202.527863" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="8" p="224.073669 247.544830"/>
+            <n id="9" p="172.164627 247.679474"/>
+            <n id="10" Element="7" NumHydrogens="0" p="198.233765 262.529846">
+                <t p="198.233765 262.529846" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <b id="36" B="7" E="5" Order="2"/>
+            <b id="37" B="5" E="9"/>
+            <b id="38" B="9" E="10" Order="2"/>
+            <b id="39" B="10" E="8"/>
+            <b id="40" B="8" E="6" Order="2"/>
+            <b id="41" B="6" E="7"/>
+        </fragment>
+        <fragment id="11">
+            <n id="12" p="270.869141 201.028870"/>
+            <n id="13" p="285.869141 227.009628"/>
+            <n id="14" p="315.869141 227.009628"/>
+            <n id="15" p="330.869141 252.990387"/>
+            <n id="16" p="360.869141 252.990387"/>
+            <n id="17" p="375.869141 278.971130"/>
+            <b id="42" B="12" E="13"/>
+            <b id="43" B="13" E="14"/>
+            <b id="44" B="14" E="15"/>
+            <b id="45" B="15" E="16"/>
+            <b id="46" B="16" E="17"/>
+        </fragment>
+        <fragment id="18">
+            <n id="19" p="458.350372 250.002960"/>
+            <n id="20" p="488.387939 250.002960"/>
+            <n id="21" Element="16" NumHydrogens="0" p="473.370667 224.054749">
+                <t p="473.370667 224.054749" LabelJustification="Left">
+                    <s font="3" size="10" face="96">S</s>
+                </t>
+            </n>
+            <b id="47" B="19" E="20"/>
+            <b id="48" B="20" E="21"/>
+            <b id="49" B="21" E="19"/>
+        </fragment>
+        <fragment id="22">
+            <n id="23" p="709.835327 254.955307"/>
+            <n id="24" Element="8" NumHydrogens="0" p="709.724304 225.102402">
+                <t p="709.724304 225.102402" LabelJustification="Left">
+                    <s font="3" size="10" face="96">O</s>
+                </t>
+            </n>
+            <n id="25" Element="8" NumHydrogens="0" p="679.478027 254.567963">
+                <t p="679.478027 254.567963" LabelJustification="Left">
+                    <s font="3" size="10" face="96">O</s>
+                </t>
+            </n>
+            <n id="26" p="679.402954 225.102402"/>
+            <b id="50" B="23" E="24"/>
+            <b id="51" B="24" E="26"/>
+            <b id="52" B="26" E="25"/>
+            <b id="53" B="25" E="23"/>
+        </fragment>
+        <arrow id="27" BoundingBox="549.105469 245.278839 631.619141 245.278839" FillType="None" ArrowheadHead="Full" ArrowheadType="Angle" HeadSize="600" ArrowheadCenterSize="600" ArrowheadWidth="150" ArrowShaftSpacing="600" Head3D="631.119141 245.278839 0.000000" Tail3D="549.605469 245.278839 0.000000"/>
+        <graphic id="54" SupersededBy="27" GraphicType="Line" ArrowType="RetroSynthetic" HeadSize="600" BoundingBox="631.119141 245.278839 549.605469 245.278839"/>
+        <graphic id="30" BoundingBox="249.119141 236.278854 249.119141 228.778854" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="33" BoundingBox="406.619141 242.278870 406.619141 234.778870" GraphicType="Symbol" SymbolType="Plus"/>
+        <scheme>
+            <step ReactionStepReactants="22" ReactionStepProducts="4 11 18" ReactionStepArrows="54"/>
+        </scheme>
+    </page>
+</CDXML>

@@ -239,7 +239,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.hoverAreaElement.attr('stroke', 'transparent');
   }
 
-  public remove() {
+  public remove(): void {
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();

@@ -949,7 +949,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.isSnakeBond = true;
   }
 
-  public remove() {
+  public remove(): void {
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();

@@ -11,7 +11,6 @@ import {
 
 export class SelectViewOnlyTool implements Tool {
   private readonly lassoHelper: LassoHelper;
-  // eslint-disable-next-line no-useless-constructor
   constructor(private readonly editor: Editor, private mode: SelectMode) {
     this.lassoHelper = new LassoHelper(
       this.mode === 'lasso' ? 0 : 1,

@@ -201,6 +201,7 @@ const config: Record<string, UiAction> = {
   },
   about: {
     title: 'About',
+    enabledInViewOnly: true,
     action: { dialog: 'about' },
     hidden: (options) => isHidden(options, 'about'),
   },

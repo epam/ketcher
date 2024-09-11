@@ -7,7 +7,7 @@ export class Connection {
     public readonly direction: 0 | 90 | 180 | 270 | { x: number; y: number },
     public readonly isVertical: boolean,
     public readonly polymerBond: PolymerBond,
-    public offset: number,
+    public xOffset: number,
     public yOffset: number,
   ) {}
 }

@@ -101,14 +101,18 @@ function getRootReducer(setEditor) {
 }
 
 export default function (options, server, setEditor) {
-  const { buttons = {}, ...restOptions } = options;
+  const { buttons = {}, customButtons, ...restOptions } = options;
 
   // TODO: redux localStorage here
   const initState = {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, { app: restOptions, buttons }),
+    options: Object.assign(initOptionsState, {
+      app: restOptions,
+      buttons,
+      customButtons,
+    }),
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState,
   };

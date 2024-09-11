@@ -26,6 +26,10 @@ import { SystemControls } from './SystemControls';
 import { ExternalFuncControls } from './ExternalFuncControls';
 import { Divider } from './Divider';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
+import { CustomButtons } from './CustomButtons';
+import { ketcherProvider } from 'ketcher-core';
+import { useCallback, useMemo } from 'react';
+import { CustomButton } from '../../../../builders/ketcher/CustomButtons';
 
 type VoidFunction = () => void;
 
@@ -64,9 +68,11 @@ export interface PanelProps {
   onAbout: VoidFunction;
   onHelp: VoidFunction;
   togglerComponent?: JSX.Element;
+  customButtons: Array<CustomButton>;
 }
 
 const collapseLimit = 650;
+const CUSTOM_BUTTON_ADDITIONAL_WIDTH = 40;
 
 const ControlsPanel = styled('div')`
   display: flex;
@@ -149,8 +155,23 @@ export const TopToolbar = ({
   onAbout,
   onHelp,
   togglerComponent,
+  customButtons,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
+  const ketcher = ketcherProvider.getKetcher();
+
+  const onCustomAction = useCallback(
+    (name: string) => ketcher.sendCustomAction(name),
+    [ketcher],
+  );
+
+  const collapseLimitWithCustomButtons = useMemo(() => {
+    return (
+      collapseLimit + customButtons.length * CUSTOM_BUTTON_ADDITIONAL_WIDTH
+    );
+  }, [customButtons.length]);
+
+  const isCollapsed = width < collapseLimitWithCustomButtons;
 
   return (
     <ControlsPanel
@@ -205,7 +226,12 @@ export const TopToolbar = ({
           hiddenButtons={hiddenButtons}
           shortcuts={shortcuts}
           indigoVerification={indigoVerification}
-          isCollapsed={width < collapseLimit}
+          isCollapsed={isCollapsed}
+        />
+        <CustomButtons
+          isCollapsed={isCollapsed}
+          customButtons={customButtons}
+          onCustomAction={onCustomAction}
         />
       </BtnsWpapper>
       <BtnsWpapper>

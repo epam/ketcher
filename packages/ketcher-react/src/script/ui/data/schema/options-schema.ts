@@ -192,9 +192,9 @@ const render: {
   },
   fontsz: {
     title: 'Font size',
-    type: 'integer',
+    type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   fontszUnit: {
@@ -205,9 +205,9 @@ const render: {
   },
   fontszsub: {
     title: 'Sub font size',
-    type: 'integer',
+    type: 'number',
     default: 13,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   fontszsubUnit: {
@@ -257,7 +257,7 @@ const render: {
   },
   bondThickness: {
     title: 'Bond thickness',
-    type: 'integer',
+    type: 'number',
     default: defaultBondThickness,
     minimum: 0.1,
     maximum: 96,
@@ -270,9 +270,9 @@ const render: {
   },
   stereoBondWidth: {
     title: 'Stereo (Wedge) bond width',
-    type: 'integer',
+    type: 'number',
     default: 6,
-    minimum: 1,
+    minimum: 0.1,
     maximum: 96,
   },
   stereoBondWidthUnit: {
@@ -285,7 +285,8 @@ const render: {
     title: 'Bond length',
     type: 'number',
     default: 40,
-    minimum: 1,
+    minimum: 0.1,
+    maximum: 1000,
   },
   bondLengthUnit: {
     title: 'Bond length unit',
@@ -297,7 +298,8 @@ const render: {
     title: 'Reaction component margin size',
     type: 'number',
     default: 20, // half of bond length
-    minimum: 1,
+    minimum: 0.1,
+    maximum: 1000,
   },
   reactionComponentMarginSizeUnit: {
     title: 'Reaction component margin size unit',
@@ -309,7 +311,8 @@ const render: {
     title: 'Hash spacing',
     type: 'number',
     default: 1.2,
-    minimum: 0,
+    minimum: 0.1,
+    maximum: 1000,
   },
   hashSpacingUnit: {
     title: 'Hash spacing unit',

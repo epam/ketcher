@@ -179,6 +179,144 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file,
+     * after that loaded from .ket file and added to selected place on Canvas with correct position and layer level.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.ket',
+      page,
+    );
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.5, tail - 0.4, head - 0.5), its a minimal size', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.5, tail - 0.4, head - 0.5), it's a minimal size.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-minimal.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  const testConfigs = [
+    {
+      description:
+        'Multi-Tailed Arrow with corrupted fields (type, head, spine, tails) cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-type.ket',
+      detailedDescription: `Multi-Tailed Arrow with corrupted fields (type, head, spine, tails) can't be added from KET file to Canvas and error message 
+      is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with spine less than 0.5 cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-spine-0.49.ket',
+      detailedDescription: `Multi-Tailed Arrow with spine less than 0.5 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow cannot be added from KET file if y1-coordinate is less than y2-coordinate of spine',
+      file: 'KET/multi-tailed-arrow-invalid-spine-y1-y2.ket',
+      detailedDescription: `Multi-Tailed Arrow can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON." 
+      if y1-coordinate is less than y2-coordinate of spine.`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with different x-coordinates of spine cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-spine-not-equal-x.ket',
+      detailedDescription: `Multi-Tailed Arrow with different x-coordinates of spine can't be added from KET file to Canvas and error message 
+      is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with head less than 0.5 cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-head-0.49.ket',
+      detailedDescription: `Multi-Tailed Arrow with head less than 0.5 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with head positioned less than 0.15 to top tail cannot be added from KET file',
+      file: 'KET/multi-tailed-arrow-invalid-head-position-0.14.ket',
+      detailedDescription: `Multi-Tailed Arrow with head is positioned less than 0.15 to top tail can't be added from KET file to Canvas and error message 
+      is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with tail less than 0.4 cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-tails-0.39.ket',
+      detailedDescription: `Multi-Tailed Arrow with tail less than 0.4 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with tail distance less than 0.35 cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-tails-distance.ket',
+      detailedDescription: `Multi-Tailed Arrow with tail distance less than 0.35 can't be added from KET file to Canvas and error message 
+      is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with different lengths of tails cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-tails-different-length.ket',
+      detailedDescription: `Multi-Tailed Arrow with different length of tails can't be added from KET file to Canvas and error message 
+      is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow cannot be added from KET file if y-coordinates of top and bottom tails are not equal to spine',
+      file: 'KET/multi-tailed-arrow-invalid-tails-y-not-equal-spine.ket',
+      detailedDescription: `Multi-Tailed Arrow can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON." 
+      if y-coordinates of top and bottom tails are not equal to y-coordinates of spine.`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow cannot be added from KET file if y-coordinates of some tails are out of spine',
+      file: 'KET/multi-tailed-arrow-invalid-tails-out-of-spine.ket',
+      detailedDescription: `Multi-Tailed Arrow can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON." 
+      if y-coordinates of some tails are out of y-coordinates of spine.`,
+    },
+  ];
+
+  for (const { description, file } of testConfigs) {
+    test(`Verify that ${description}`, async ({ page }) => {
+      /**
+       * Test case: https://github.com/epam/ketcher/issues/5104
+       * Description: ${detailedDescription}
+       */
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await openFile(file, page);
+      await pressButton(page, 'Add to Canvas');
+      await takeEditorScreenshot(page);
+    });
+  }
+
   test('Verify that 3 different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async ({
     page,
   }) => {
@@ -535,7 +673,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+c');
     await page.keyboard.press('Control+v');
-    await page.mouse.click(300, 350);
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -574,7 +714,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+c');
     await page.keyboard.press('Control+v');
-    await page.mouse.click(300, 350);
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
     await takeEditorScreenshot(page);
   });
 

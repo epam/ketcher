@@ -1,7 +1,7 @@
 import {
+  AmbiguousMonomerType,
   AttachmentPointName,
   MonomerItemType,
-  AmbiguousMonomerType,
   MonomerOrAmbiguousType,
 } from 'domain/types';
 import { Vec2 } from 'domain/entities/vec2';
@@ -66,6 +66,7 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { KetMonomerClass } from 'application/formatters';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1764,7 +1765,12 @@ export class DrawingEntitiesManager {
     let isValid = true;
 
     this.monomers.forEach((monomer) => {
-      const monomerType = monomer.monomerItem.props.MonomerType;
+      const monomerType =
+        monomer instanceof AmbiguousMonomer
+          ? monomer.monomerClass === KetMonomerClass.CHEM
+            ? MONOMER_CONST.CHEM
+            : monomer.monomers[0].monomerItem.props.MonomerType
+          : monomer.monomerItem.props.MonomerType;
       monomerTypes.add(monomerType);
       if (monomerType === MONOMER_CONST.CHEM || monomerTypes.size > 1) {
         isValid = false;

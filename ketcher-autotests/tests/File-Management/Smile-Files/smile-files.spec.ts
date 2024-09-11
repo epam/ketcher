@@ -674,4 +674,200 @@ test.describe('SMILES files', () => {
       page,
     );
   });
+
+  test('Validate that the simple schema with retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+      page,
+    );
+  });
+
+  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+      page,
+    );
+  });
+
+  test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
+      page,
+    );
+  });
+
+  test('Validate that the schema with two retrosynthetic arrows could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/schema-with-two-retrosynthetic-arrows.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/schema-with-two-retrosynthetic-arrows.smi',
+      page,
+    );
+  });
+
+  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    */
+
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
+    const expectedFile = await getSmiles(page);
+    await saveToFile(
+      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
+      expectedFile,
+    );
+    const { fileExpected: smilesFileExpected, file: smilesFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
+      });
+
+    expect(smilesFile).toEqual(smilesFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
+      page,
+    );
+  });
+
+  test(
+    'Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMILE file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that the schema with retrosynthetic arrow could be saved to SMILE file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2315
+    After fix we need update file and screenshot.
+    */
+
+      await openFileAndAddToCanvas(
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+        page,
+      );
+      const expectedFile = await getSmiles(page);
+      await saveToFile(
+        'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        expectedFile,
+      );
+      const { fileExpected: smilesFileExpected, file: smilesFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        });
+
+      expect(smilesFile).toEqual(smilesFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+        page,
+      );
+    },
+  );
 });

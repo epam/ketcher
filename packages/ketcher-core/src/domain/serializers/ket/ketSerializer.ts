@@ -714,11 +714,13 @@ export class KetSerializer implements Serializer<Struct> {
         );
 
         if (monomer instanceof AmbiguousMonomer) {
-          templateId = monomer.monomers.reduce(
-            (templateId, monomer) =>
-              templateId + '_' + getMonomerUniqueKey(monomer.monomerItem),
-            '',
-          );
+          templateId =
+            monomer.variantMonomerItem.id ||
+            monomer.monomers.reduce(
+              (templateId, monomer) =>
+                templateId + '_' + getMonomerUniqueKey(monomer.monomerItem),
+              '',
+            );
         } else {
           templateId =
             monomer.monomerItem.props.id ||

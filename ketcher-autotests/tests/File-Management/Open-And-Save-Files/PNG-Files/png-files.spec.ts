@@ -1,11 +1,10 @@
 import { test } from '@playwright/test';
 import {
-  TopPanelButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  clickOnFileFormatDropdown,
+  selectFormatForSaving,
+  clickOnSaveFileAndOpenDropdown,
 } from '@utils';
 
 test.describe('Saving in .png files', () => {
@@ -45,10 +44,110 @@ test.describe('Saving in .png files', () => {
     }) => {
       await openFileAndAddToCanvas(filename, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByRole('option', { name: 'PNG Image' }).click();
+      await clickOnSaveFileAndOpenDropdown(page);
+      await selectFormatForSaving(page, 'PNG Image');
       await takeEditorScreenshot(page);
     });
   }
+
+  test(`Verify it is possible to export the simple schema with retrosynthetic arrow to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/simple-schema-with-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verify it is possible to export the schema with retrosynthetic, angel arrows and plus to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
+      page,
+    );
+
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verify it is possible to export the schema with vertical retrosynthetic arrow to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verify it is possible to export the schema with two retrosynthetic arrows to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/schema-with-two-retrosynthetic-arrows.ket',
+      page,
+    );
+
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verify it is possible to export the schema with diagonaly retrosynthetic arrow to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
+
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Verify it is possible to export the schema reverse retrosynthetic arrow and pluses to PNG`, async ({
+    page,
+  }) => {
+    /*
+    Test case: #2096
+    Description: Validate that schema with retrosynthetic arrow could be saved to PNG
+    */
+    await openFileAndAddToCanvas(
+      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
+      page,
+    );
+
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
 });

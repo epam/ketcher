@@ -65,6 +65,30 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     });
     await takeEditorScreenshot(page);
   });
+
+  test(
+    'Validate that the schema with retrosynthetic arrow after clicking on Explicit hysrogens tool',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
+    After fix we need update file and screenshot.
+     */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+        page,
+      );
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(
+          TopPanelButton.toggleExplicitHydrogens,
+          page,
+        );
+      });
+      await takeEditorScreenshot(page);
+    },
+  );
 });
 
 test.describe('1. Molecules connected ', () => {

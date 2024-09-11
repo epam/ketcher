@@ -300,3 +300,12 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
+
+export async function selectFormatForSaving(page: Page, templateName: string) {
+  await page.getByRole('option', { name: templateName }).click();
+}
+
+export async function clickOnSaveFileAndOpenDropdown(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await clickOnFileFormatDropdown(page);
+}

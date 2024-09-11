@@ -24,6 +24,7 @@ import {
   waitForSpinnerFinishedWork,
   waitForRender,
   clickOnBond,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -426,6 +427,24 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.move(point.x, point.y);
   });
+
+  test(
+    'Validate that the schema with retrosynthetic arrow after clicking on Calculate CIP tool',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
+    After fix we need update file and screenshot.
+     */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+        page,
+      );
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    },
+  );
 });
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {

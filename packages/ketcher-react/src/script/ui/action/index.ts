@@ -72,12 +72,14 @@ const config: Record<string, UiAction> = {
   open: {
     shortcut: 'Mod+o',
     title: 'Open…',
+    enabledInViewOnly: true,
     action: { dialog: 'open' },
     hidden: (options) => isHidden(options, 'open'),
   },
   save: {
     shortcut: 'Mod+s',
     title: 'Save As…',
+    enabledInViewOnly: true,
     action: { dialog: 'save' },
     hidden: (options) => isHidden(options, 'save'),
   },
@@ -237,6 +239,7 @@ const config: Record<string, UiAction> = {
   },
   'deselect-all': {
     title: 'Deselect All',
+    enabledInViewOnly: true,
     shortcut: 'Mod+Shift+a',
     action: (editor) => {
       editor.selection(null);
@@ -246,6 +249,7 @@ const config: Record<string, UiAction> = {
   'select-descriptors': {
     title: 'Select descriptors',
     shortcut: 'Mod+d',
+    enabledInViewOnly: true,
     action: {
       thunk: (dispatch, getState) => {
         const selectionTool = getState().toolbar.visibleTools.select;

@@ -50,7 +50,6 @@ const toolActions = {
   },
   'select-fragment': {
     title: 'Fragment Selection',
-    enabledInViewOnly: true,
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'fragment' },
     hidden: (options) => isHidden(options, 'select-fragment'),

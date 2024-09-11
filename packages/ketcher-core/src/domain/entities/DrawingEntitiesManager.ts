@@ -1885,17 +1885,17 @@ export class DrawingEntitiesManager {
   }
 
   public addAmbiguousMonomer(
-    variantMonomerItem: AmbiguousMonomerType,
+    ambiguousMonomerItem: AmbiguousMonomerType,
     position: Vec2,
   ) {
     const command = new Command();
     const operation = new MonomerAddOperation(
       this.addAmbiguousMonomerChangeModel.bind(
         this,
-        variantMonomerItem,
+        ambiguousMonomerItem,
         position,
       ),
-      () => {},
+      this.deleteMonomerChangeModel.bind(this),
     );
 
     command.addOperation(operation);

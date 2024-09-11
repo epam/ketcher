@@ -492,4 +492,47 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
   });
+
+  test(
+    'Validate that the schema with retrosynthetic arrow could be Aromatize',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
+    After fix we need update file and screenshot.
+     */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+        page,
+      );
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+    },
+  );
+
+  test(
+    'Validate that the schema with retrosynthetic arrow could be Dearomatize',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test case: #2071
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
+    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
+    After fix we need update file and screenshot.
+     */
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+        page,
+      );
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
+    },
+  );
 });

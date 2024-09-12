@@ -222,7 +222,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     let previousConnection;
     let previousCell;
 
-    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
+    const horizontalPartIntersectionsOffset = firstCellConnection.offset;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
@@ -276,9 +276,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           : 0
         : xDirection;
       const maxXOffset = cell.connections.reduce((max, connection) => {
-        return connection.isVertical || max > connection.xOffset
+        return connection.isVertical || max > connection.offset
           ? max
-          : connection.xOffset;
+          : connection.offset;
       }, 0);
 
       maxHorizontalOffset =
@@ -304,8 +304,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             SMOOTH_CORNER_SIZE -
             sin * (cellConnection.yOffset || 0) * 3 -
             (isTwoNeighborRowsConnection
-              ? maxHorizontalOffset - cellConnection.xOffset
-              : cellConnection.xOffset) *
+              ? maxHorizontalOffset - cellConnection.offset
+              : cellConnection.offset) *
               3
           } `;
           dAttributeForPath += generateBend(0, sin, cos, 1);

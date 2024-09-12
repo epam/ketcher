@@ -42,12 +42,12 @@ export class CanvasMatrix {
     direction: number,
     increaseOffset = (connection: Connection, increaseValue?: number) => {
       if (isNumber(increaseValue)) {
-        connection.xOffset = increaseValue;
+        connection.offset = increaseValue;
       } else {
-        connection.xOffset++;
+        connection.offset++;
       }
     },
-    getOffset = (connection: Connection) => connection.xOffset,
+    getOffset = (connection: Connection) => connection.offset,
   ) {
     // set offsets for connections with overlappings
     const currentConnections = new Map<PolymerBond, Set<Connection>>();
@@ -133,8 +133,8 @@ export class CanvasMatrix {
     this.matrix.forEach((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(
         (biggestOffset, connection) => {
-          return connection.xOffset > biggestOffset
-            ? connection.xOffset
+          return connection.offset > biggestOffset
+            ? connection.offset
             : biggestOffset;
         },
         0,
@@ -144,12 +144,12 @@ export class CanvasMatrix {
         if (connection.direction !== direction) {
           return;
         }
-        if (connection.xOffset <= biggestOffsetInCell) {
+        if (connection.offset <= biggestOffsetInCell) {
           const polymerBondConnections = this.polymerBondToConnections.get(
             connection.polymerBond,
           );
           polymerBondConnections?.forEach((polymerBondConnection) => {
-            polymerBondConnection.xOffset = biggestOffsetInCell;
+            polymerBondConnection.offset = biggestOffsetInCell;
           });
           handledConnections.add(connection.polymerBond);
         }
@@ -164,7 +164,7 @@ export class CanvasMatrix {
           return;
         }
 
-        polymerBondConnection.xOffset++;
+        polymerBondConnection.offset++;
       });
     });
   }
@@ -286,7 +286,7 @@ export class CanvasMatrix {
             polymerBond,
             connectedNode,
             direction: isVertical ? 90 : xDirection,
-            xOffset: 0,
+            offset: 0,
             yOffset: 0,
             isVertical,
           };
@@ -309,7 +309,7 @@ export class CanvasMatrix {
               polymerBond,
               connectedNode: null,
               direction: xDirection,
-              xOffset: 0,
+              offset: 0,
               yOffset: 0,
               isVertical,
             };
@@ -331,7 +331,7 @@ export class CanvasMatrix {
               polymerBond,
               connectedNode: null,
               direction: yDirection,
-              xOffset: 0,
+              offset: 0,
               yOffset: 0,
               isVertical,
             };
@@ -356,7 +356,7 @@ export class CanvasMatrix {
             direction: isVertical
               ? yDirection
               : { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
-            xOffset: 0,
+            offset: 0,
             yOffset: 0,
             isVertical,
           };

@@ -71,19 +71,33 @@ export const monomerFactory = (
     Monomer = UnsplitNucleotide;
     MonomerRenderer = UnsplitNucleotideRenderer;
     ketMonomerClass = KetMonomerClass.RNA;
-  } else if (monomer.props.MonomerClass === KetMonomerClass.AminoAcid) {
+  } else if (
+    monomer.props.MonomerClass === KetMonomerClass.AminoAcid ||
+    monomer.props.MonomerType === MONOMER_CONST.PEPTIDE
+  ) {
     Monomer = Peptide;
     MonomerRenderer = PeptideRenderer;
     ketMonomerClass = KetMonomerClass.AminoAcid;
-  } else if (monomer.props.MonomerClass === KetMonomerClass.Sugar) {
+  } else if (
+    monomer.props.MonomerClass === KetMonomerClass.Sugar ||
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R)
+  ) {
     Monomer = Sugar;
     MonomerRenderer = SugarRenderer;
     ketMonomerClass = KetMonomerClass.Sugar;
-  } else if (monomer.props.MonomerClass === KetMonomerClass.Phosphate) {
+  } else if (
+    monomer.props.MonomerClass === KetMonomerClass.Phosphate ||
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P)
+  ) {
     Monomer = Phosphate;
     MonomerRenderer = PhosphateRenderer;
     ketMonomerClass = KetMonomerClass.Phosphate;
-  } else if (monomer.props.MonomerClass === KetMonomerClass.Base) {
+  } else if (
+    monomer.props.MonomerClass === KetMonomerClass.Base ||
+    monomer.props.MonomerType === MONOMER_CONST.RNA
+  ) {
     Monomer = RNABase;
     MonomerRenderer = RNABaseRenderer;
     ketMonomerClass = KetMonomerClass.Base;

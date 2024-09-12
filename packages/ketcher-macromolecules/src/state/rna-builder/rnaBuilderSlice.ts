@@ -32,6 +32,7 @@ import {
 import { transformRnaPresetToRnaLabeledPreset } from './rnaBuilderSlice.helper';
 import { selectEditorPosition } from 'state/common';
 import { PresetPosition } from 'ketcher-react';
+import { getValidations } from 'helpers/rnaValidations';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -141,14 +142,17 @@ export const rnaBuilderSlice = createSlice({
     ) => {
       state.activeRnaBuilderItem = action.payload;
     },
-    setSugarValidations: (state, action: PayloadAction<string[]>) => {
-      state.groupItemValidations[MonomerGroups.SUGARS] = action.payload;
-    },
-    setBaseValidations: (state, action: PayloadAction<string[]>) => {
-      state.groupItemValidations[MonomerGroups.BASES] = action.payload;
-    },
-    setPhosphateValidations: (state, action: PayloadAction<string[]>) => {
-      state.groupItemValidations[MonomerGroups.PHOSPHATES] = action.payload;
+    recalculateRnaBuilderValidations: (
+      state,
+      action: PayloadAction<{ rnaPreset: IRnaPreset; isEditMode: boolean }>,
+    ) => {
+      const { sugarValidations, phosphateValidations, baseValidations } =
+        getValidations(action.payload.rnaPreset, action.payload.isEditMode);
+
+      state.groupItemValidations[MonomerGroups.SUGARS] = sugarValidations;
+      state.groupItemValidations[MonomerGroups.BASES] = baseValidations;
+      state.groupItemValidations[MonomerGroups.PHOSPHATES] =
+        phosphateValidations;
     },
     setActivePresetMonomerGroup: (
       state,
@@ -506,9 +510,7 @@ export const {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
-  setSugarValidations,
-  setBaseValidations,
-  setPhosphateValidations,
+  recalculateRnaBuilderValidations,
   setActivePresetMonomerGroup,
   savePreset,
   deletePreset,

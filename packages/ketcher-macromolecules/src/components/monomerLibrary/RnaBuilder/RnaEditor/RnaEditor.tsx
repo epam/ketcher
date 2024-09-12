@@ -26,6 +26,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
+  recalculateRnaBuilderValidations,
   RnaBuilderPresetsItem,
   selectActivePreset,
   selectIsEditMode,
@@ -65,6 +66,12 @@ export const RnaEditor = ({ duplicatePreset }) => {
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset]);
+
+  useEffect(() => {
+    dispatch(
+      recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
+    );
+  }, [isEditMode]);
 
   const expandEditor = () => {
     setExpanded(!expanded);

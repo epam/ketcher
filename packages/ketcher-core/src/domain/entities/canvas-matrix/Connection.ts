@@ -10,7 +10,7 @@ export class Connection {
     public readonly direction: DirectionInDegrees | DirectionOfLastCell,
     public readonly isVertical: boolean,
     public readonly polymerBond: PolymerBond,
-    public offset: number,
+    public xOffset: number,
     public yOffset: number,
   ) {}
 }

@@ -158,7 +158,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
-        return max > connection.offset ? max : connection.offset;
+        return max > connection.xOffset ? max : connection.xOffset;
       },
       0,
     );
@@ -187,7 +187,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (isHorizontal) {
       endOfPathPart +=
         -(connection.yOffset || 0) * 3 +
-        cos * -connection.offset * 3 +
+        cos * -connection.xOffset * 3 +
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;
     }
@@ -240,7 +240,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     let previousConnection: Connection;
     let previousCell: Cell;
 
-    const horizontalPartIntersectionsOffset = firstCellConnection.offset;
+    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
@@ -297,9 +297,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         : xDirection;
       const maxXOffset = cell.connections.reduce(
         (max: number, connection: Connection): number => {
-          return connection.isVertical || max > connection.offset
+          return connection.isVertical || max > connection.xOffset
             ? max
-            : connection.offset;
+            : connection.xOffset;
         },
         0,
       );
@@ -324,8 +324,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             SMOOTH_CORNER_SIZE -
             sin * (cellConnection.yOffset || 0) * 3 -
             (isTwoNeighborRowsConnection
-              ? maxHorizontalOffset - cellConnection.offset
-              : cellConnection.offset) *
+              ? maxHorizontalOffset - cellConnection.xOffset
+              : cellConnection.xOffset) *
               3
           } `;
           dAttributeForPath += generateBend(0, sin, cos, 1);

@@ -352,33 +352,36 @@ const correctHELMStrings: IHELMString[] = [
     issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
-    helmDescription: '46. RNA(RA) with single inline Extended SMILES (A)',
+    helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
     HELMString:
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
   },
   {
-    helmDescription: '47. RNA(RAP) with single inline Extended SMILES (A)',
+    helmDescription: '49. RNA(RAP) with single inline Extended SMILES (A)',
     HELMString:
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])P}$$$$V2.0',
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+    issueNumber:
+      'https://github.com/epam/Indigo/issues/2339, https://github.com/epam/Indigo/issues/2337',
   },
   {
-    helmDescription: '48. RNA(RP) with single inline Extended SMILES (P)',
+    helmDescription: '50. RNA(RP) with single inline Extended SMILES (P)',
     HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
   },
   {
-    helmDescription: '49. RNA(RP) with single inline Extended SMILES (R)',
+    helmDescription: '51. RNA(RP) with single inline Extended SMILES (R)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
   },
   {
-    helmDescription: '50. RNA(RAP) with  single inline Extended SMILES (P)',
+    helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',
     HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
   },
   {
     helmDescription:
-      '51. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
+      '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
     shouldFail: true,
@@ -386,26 +389,26 @@ const correctHELMStrings: IHELMString[] = [
   },
   {
     helmDescription:
-      '52. Single peptide with inline SMILES (L) without attachment points',
+      '54. Single peptide with inline SMILES (L) without attachment points',
     HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
   },
   {
-    helmDescription: '53. Single peptide with inline Extended SMILES (L)',
+    helmDescription: '55. Single peptide with inline Extended SMILES (L)',
     HELMString:
       'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
   },
   {
     helmDescription:
-      '54. Single CHEM with inline SMILES (A6OH) without attachment points',
+      '56. Single CHEM with inline SMILES (A6OH) without attachment points',
     HELMString: 'CHEM1{[N([H])CCCCCCO[H]]}$$$$V2.0',
   },
   {
-    helmDescription: '55. Single CHEM with inline Extended SMILES (A6OH)',
+    helmDescription: '57. Single CHEM with inline Extended SMILES (A6OH)',
     HELMString:
       'CHEM1{[N%91CCCCCCO%92.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
   },
   {
-    helmDescription: '56. List of peptide of inline Extended Smiles (A,C,D,L)',
+    helmDescription: '58. List of peptide of inline Extended Smiles (A,C,D,L)',
     HELMString:
       'PEPTIDE1{[N%91[C@H](C%92=O)C.[*:2]%92.[*:1]%91 |$;;;;;_R2;_R1$|].' +
       '[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].' +
@@ -413,7 +416,8 @@ const correctHELMStrings: IHELMString[] = [
       '[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
   },
   {
-    helmDescription: '57. ',
+    helmDescription:
+      '59. List of RNAs of inline Extended Smiles (R(A)P, R(C)P, R(G)P)',
     HELMString:
       // eslint-disable-next-line max-len
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]' +
@@ -833,6 +837,36 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '77. no ending token (PEPTIDE)',
     HELMString: 'PEPTIDE1{L}',
+  },
+  {
+    helmDescription:
+      '78. RNA(R(A)P) with inline SMILES (A) without attachment points',
+    HELMString:
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]' +
+      '([C1(N)=NC=NC2N([H])C=NC1=2])' +
+      '[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
+  {
+    helmDescription:
+      '79. RNA(RP) with single inline SMILES (P) without attachment points',
+    HELMString: 'RNA1{R[P(O)(O)(=O)O]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2361',
+  },
+  {
+    helmDescription:
+      '80. RNA(R(A)P) with  single inline SMILES (R) without attachment points',
+    HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
+  {
+    helmDescription:
+      '81. List of peptide of inline Smiles (A,C,D,L) - no attachment points',
+    HELMString:
+      'PEPTIDE1{[N([H])[C@H](C(O)=O)C].[C(O)([C@H](CS[H])N[H])=O].[C(O)([C@H](CC(O[H])=O)N[H])=O].[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
   },
 ];
 

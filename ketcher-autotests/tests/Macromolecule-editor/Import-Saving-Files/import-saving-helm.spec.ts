@@ -3,7 +3,7 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
@@ -11,6 +11,8 @@ import {
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
   selectClearCanvasTool,
+  selectSaveTool,
+  pressButton,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -66,12 +68,20 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
     async () => await page.getByTestId('add-to-canvas-button').click(),
   );
 }
+
+async function openSaveToHELMDialog(page: Page) {
+  await selectSaveTool(page);
+  await chooseFileFormat(page, 'HELM');
+}
+
 interface IHELMString {
   helmDescription: string;
   HELMString: string;
   shouldFail?: boolean;
   issueNumber?: string;
   pageReloadNeeded?: boolean;
+  // Some times export result is different to import string
+  differentHELMExport?: string;
 }
 
 const correctHELMStrings: IHELMString[] = [
@@ -114,14 +124,17 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '10. trash after ending token (RNA)',
     HELMString: 'RNA1{R(A)P}$$$$Bla-bla-bla',
+    differentHELMExport: 'RNA1{R(A)P}$$$$V2.0',
   },
   {
     helmDescription: '11. trash after ending token (PEPTIDE)',
     HELMString: 'PEPTIDE1{L}$$$$Bla-bla-bla',
+    differentHELMExport: 'PEPTIDE1{L}$$$$V2.0',
   },
   {
     helmDescription: '12. trash after ending token (CHEM)',
     HELMString: 'CHEM1{[A6OH]}$$$$Bla-bla-blaV2.0',
+    differentHELMExport: 'CHEM1{[A6OH]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -161,11 +174,15 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '20. ListOfSimplePolymers - Mix - reverse order',
     HELMString:
       'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{R(G)P}|CHEM1{[Az]}|RNA2{R(A)P}|PEPTIDE1{C}|CHEM2{[SMPEG2]}|RNA3{R(A)}|PEPTIDE2{A}|CHEM3{[A6OH]}$$$$V2.0',
   },
   {
     helmDescription: '21. Index starts from 100',
     HELMString:
       'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{R(G)P}|CHEM3{[Az]}$$$$V2.0',
   },
   {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
@@ -223,6 +240,8 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '32. Multi-char petide - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString: 'PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -234,6 +253,8 @@ const correctHELMStrings: IHELMString[] = [
       '34. Multi-char RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]+[nobn6p]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -264,6 +285,8 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:1+[nobn6p]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -282,6 +305,8 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '41. Multi-char peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString: 'PEPTIDE1{([Aad],[Abu],[Aca],[Aib],[Apm])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -293,6 +318,8 @@ const correctHELMStrings: IHELMString[] = [
       '43. Multi-char RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn],[nobn6p],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -306,6 +333,8 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:10,[Abu]:20,[Aca]:30,[Aib]:40,[Apm]:50)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -319,6 +348,8 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
 ];
 
@@ -326,13 +357,15 @@ test.describe('Import correct HELM sequence: ', () => {
   for (const correctHELMString of correctHELMStrings) {
     test(`${correctHELMString.helmDescription}`, async () => {
       /* 
-    Test case: https://github.com/epam/ketcher/issues/5215
+    Test case1: https://github.com/epam/ketcher/issues/5215
+    Test case2: https://github.com/epam/ketcher/issues/5438
     Description: Load correct HELM sequences and compare canvas with the template
     */
       test.setTimeout(20000);
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
+
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists
@@ -340,6 +373,38 @@ test.describe('Import correct HELM sequence: ', () => {
         correctHELMString.shouldFail === true,
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
+    });
+  }
+});
+
+test.describe('Export to HELM: ', () => {
+  for (const correctHELMString of correctHELMStrings) {
+    test(`${correctHELMString.helmDescription}`, async () => {
+      /* 
+    Test case: https://github.com/epam/ketcher/issues/5215
+    Description: Load correct HELM sequences and compare canvas with the template
+    */
+      test.setTimeout(20000);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctHELMString.shouldFail === true,
+        `That test fails because of ${correctHELMString.issueNumber} issue.`,
+      );
+      if (correctHELMString.pageReloadNeeded) await pageReload(page);
+
+      await loadHELMFromClipboard(page, correctHELMString.HELMString);
+      await openSaveToHELMDialog(page);
+      const HELMExportResult = await page
+        .getByTestId('preview-area-text')
+        .textContent();
+
+      if (correctHELMString.differentHELMExport) {
+        expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
+      } else {
+        expect(HELMExportResult).toEqual(correctHELMString.HELMString);
+      }
+
+      await pressButton(page, 'Cancel');
     });
   }
 });

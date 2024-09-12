@@ -16,8 +16,21 @@
 
 import styled from '@emotion/styled';
 
-export const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+export const Container = styled.div<{ fullsize?: boolean }>`
+  ${(props) => {
+    if (props.fullsize) {
+      return `
+          > svg {
+            height: 100%;
+            width: 100%;
+          }
+        `;
+    } else {
+      return `
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        `;
+    }
+  }}
 `;

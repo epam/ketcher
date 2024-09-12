@@ -41,6 +41,7 @@ const StructRender = ({
   struct,
   options,
   className,
+  fullsize,
   update,
 }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
@@ -54,7 +55,13 @@ const StructRender = ({
     }
   }, [struct, options, update]);
 
-  return <Container ref={renderRef} className={className}></Container>;
+  return (
+    <Container
+      ref={renderRef}
+      className={className}
+      fullsize={fullsize}
+    ></Container>
+  );
 };
 
 export default StructRender;

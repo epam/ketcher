@@ -42,6 +42,7 @@ import {
 import { Summary } from './Summary';
 import {
   createNewPreset,
+  recalculateRnaBuilderValidations,
   RnaBuilderItem,
   RnaBuilderPresetsItem,
   selectActivePreset,
@@ -51,10 +52,7 @@ import {
   selectIsEditMode,
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
-  setBaseValidations,
   setIsEditMode,
-  setPhosphateValidations,
-  setSugarValidations,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
 import { IRnaPreset } from '../types';
@@ -68,7 +66,6 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
-import { getValidations } from 'helpers/rnaValidations';
 
 interface IGroupsDataItem {
   groupName: MonomerGroups | RnaBuilderPresetsItem;
@@ -108,12 +105,9 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
       setExpandedAccordion(null);
     } else {
       setExpandedAccordion(rnaBuilderItem);
-      const { sugarValidations, phosphateValidations, baseValidations } =
-        getValidations(newPreset);
-
-      dispatch(setSugarValidations(sugarValidations));
-      dispatch(setPhosphateValidations(phosphateValidations));
-      dispatch(setBaseValidations(baseValidations));
+      dispatch(
+        recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
+      );
     }
   };
 

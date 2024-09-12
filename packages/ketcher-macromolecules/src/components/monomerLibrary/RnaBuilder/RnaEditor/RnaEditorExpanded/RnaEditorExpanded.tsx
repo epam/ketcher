@@ -43,15 +43,13 @@ import {
   selectAllPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
-  setSugarValidations,
-  setBaseValidations,
-  setPhosphateValidations,
   setIsEditMode,
   selectPresetFullName,
   setUniqueNameError,
   setSequenceSelection,
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
+  recalculateRnaBuilderValidations,
 } from 'state/rna-builder';
 import { useAppSelector, useLayoutMode } from 'hooks';
 import {
@@ -72,7 +70,6 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
-import { getValidations } from 'helpers/rnaValidations';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -224,12 +221,9 @@ export const RnaEditorExpanded = ({
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));
 
-    const { sugarValidations, phosphateValidations, baseValidations } =
-      getValidations(newPreset);
-
-    dispatch(setSugarValidations(sugarValidations));
-    dispatch(setPhosphateValidations(phosphateValidations));
-    dispatch(setBaseValidations(baseValidations));
+    dispatch(
+      recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
+    );
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {

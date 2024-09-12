@@ -1,9 +1,10 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   copyAndPaste,
   cutAndPaste,
+  dragMouseTo,
   openDropdown,
   openFile,
   openFileAndAddToCanvas,
@@ -13,6 +14,7 @@ import {
   readFileContents,
   receiveFileComparisonData,
   resetCurrentTool,
+  RingButton,
   saveToFile,
   screenshotBetweenUndoRedo,
   selectClearCanvasTool,
@@ -20,18 +22,57 @@ import {
   selectEraseTool,
   selectPartOfMolecules,
   selectRectangleSelectionTool,
+  selectRing,
   selectTopPanelButton,
   setZoomInputValue,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   TopPanelButton,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
   waitForLoad,
   waitForPageInit,
   waitForRender,
 } from '@utils';
 import { clickOnFileFormatDropdown, getKet } from '@utils/formats';
+import { openStructureLibrary } from '@utils/templates';
+
+async function saveToTemplates(page: Page) {
+  await pressButton(page, 'Save to Templates');
+  await page.getByPlaceholder('template').click();
+  await page
+    .getByPlaceholder('template')
+    .fill('multi_tail_arrows_with_elements');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+}
+
+async function selectFromSaveToTemplates(page: Page) {
+  await page.getByRole('button', { name: 'User Templates (1)' }).click();
+  await page
+    .getByPlaceholder('Search by elements...')
+    .fill('multi_tail_arrows_with_elements');
+  await page.getByPlaceholder('Search by elements...').press('Enter');
+}
+
+async function setupElementsAndModifyMultiTailArrow(page: Page) {
+  await selectDropdownTool(
+    page,
+    'reaction-arrow-open-angle',
+    'reaction-arrow-multitail',
+  );
+  await page.mouse.click(600, 400);
+  await selectRing(RingButton.Benzene, page);
+  await page.mouse.click(200, 400);
+  await selectRectangleSelectionTool(page);
+  await page.mouse.move(650, 350);
+  await dragMouseTo(800, 500, page);
+  await page.mouse.move(630, 350);
+  await dragMouseTo(800, 500, page);
+  await page.mouse.move(600, 400);
+  await dragMouseTo(200, 500, page);
+  await takeEditorScreenshot(page);
+  await page.mouse.move(610, 350);
+  await dragMouseTo(610, 100, page);
+  await page.mouse.click(100, 100);
+}
 
 test.describe('Multi-Tailed Arrow Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -401,52 +442,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro', async ({
-    page,
-  }) => {
-    /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro,
-     * verify that Arrows are not presented on the Canvas after switching to Macro mode, Clear Canvas, switch back to Micro mode,
-     * verify that arrows are presented after returning to Micro mode.
-     */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
-      page,
-    );
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows are not presented in Macro mode,  Clear Canvas, switch back to Micro mode', async ({
-    page,
-  }) => {
-    /**
-     * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows aren't presented in Macro mode,
-     * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
-     */
-    await turnOnMacromoleculesEditor(page);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows.ket',
-      page,
-    );
-    await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Verify that 3 different Multi-Tailed Arrows can be zoomed in/out (20, 400, 100) after adding to Canvas from .ket file', async ({
     page,
   }) => {
@@ -770,6 +765,297 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
     await page.mouse.click(300, 350);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) can be added to selected places on Canvas using "Multi-Tailed Arrow Tool"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) can be added to selected places on Canvas
+     * using "Multi-Tailed Arrow Tool" and can be saved to .ket file with the correct coordinates of spine, tails and head.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(500, 600);
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/reaction-arrow-multitail-to-compare.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/reaction-arrow-multitail-to-compare.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/reaction-arrow-multitail-to-compare.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas one by one using "Multi-Tailed Arrow Tool"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different selected places on Canvas
+     * one by one using "Multi-Tailed Arrow Tool" and can be saved together to .ket file with the correct coordinates of spines, tails and heads.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+    await page.mouse.click(500, 600);
+    await page.mouse.click(700, 500);
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/three-reaction-arrow-multitail-to-compare.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/three-reaction-arrow-multitail-to-compare.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-reaction-arrow-multitail-to-compare.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas (with previously added elements)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different selected places on Canvas (with previously added elements)
+     * one by one using "Multi-Tailed Arrow Tool" button and they can be saved together to .ket file with the correct coordinates of spines, tails and heads.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-benzene-rings.ket',
+      page,
+    );
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+    await page.mouse.click(500, 600);
+    await page.mouse.click(700, 500);
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Copy/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Copy/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-multi-tail-arrows-and-rings.ket',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+c');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Cut/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Cut/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-multi-tail-arrows-and-rings.ket',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+x');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Copy-Paste (Ctrl+C, Ctrl+V) and Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(500, 600);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+c');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(500, 600);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+x');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(300, 350);
+    });
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Multi-Tailed Arrows can not be saved to template - "Save to Template" button is disabled', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5055
+     * Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(500, 600);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await expect(page.getByText('Save to Templates')).toBeDisabled();
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('mol-preview-area-text')],
+    });
+  });
+
+  test('Verify that Multi-Tailed Arrows with elements can be saved to template and added to Canvas with correct position and layer level', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows with elements can be saved to template and added to Canvas with correct position and layer level.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await saveToTemplates(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+
+    await openStructureLibrary(page);
+    await selectFromSaveToTemplates(page);
+    await takeEditorScreenshot(page);
+    await page.getByText('multi_tail_arrows_with_elements').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: selection, movement of arrow itself, changing of size and position of head', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows with elements can be saved to KET format with the correct coordinates of spines, tails and heads and 
+    elements position after the following actions: selection, movement of arrow itself, changing of size and position of head.
+    */
+    await setupElementsAndModifyMultiTailArrow(page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/modified-multitail-arrow-expected.ket', expectedFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/modified-multitail-arrow-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/modified-multitail-arrow-expected.ket',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

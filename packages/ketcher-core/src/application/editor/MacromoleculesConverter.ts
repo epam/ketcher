@@ -466,7 +466,10 @@ export class MacromoleculesConverter {
         const atomsMap: { [atomId: number]: Atom } = {};
 
         monomer.monomerItem.struct.atoms.forEach((atom, atomId) => {
-          const atomAddCommand = drawingEntitiesManager.addAtom(atom.pp);
+          const atomAddCommand = drawingEntitiesManager.addAtom(
+            atom.pp,
+            monomer,
+          );
           atomsMap[atomId] = atomAddCommand.operations[0].atom;
           command.merge(atomAddCommand);
         });

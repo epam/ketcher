@@ -70,6 +70,8 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
 import { BondAddOperation } from 'application/editor/operations/coreBond/bond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { MonomerToAtomBondAddOperation } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -99,6 +101,7 @@ export class DrawingEntitiesManager {
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
+  public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -372,6 +375,23 @@ export class DrawingEntitiesManager {
         );
       }
     });
+
+    this.monomerToAtomBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.monomer.selected ||
+        drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
+      }
+    });
+
     return command;
   }
 
@@ -1906,17 +1926,17 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addAtomChangeModel(position: Vec2) {
-    const atom = new Atom(position);
+  private addAtomChangeModel(position: Vec2, monomer: BaseMonomer) {
+    const atom = new Atom(position, monomer);
     this.atoms.set(atom.id, atom);
     return atom;
   }
 
-  public addAtom(position: Vec2) {
+  public addAtom(position: Vec2, monomer: BaseMonomer) {
     const command = new Command();
     const atomAddOperation = new AtomAddOperation(
-      this.addAtomChangeModel.bind(this, position),
-      this.addAtomChangeModel.bind(this, position),
+      this.addAtomChangeModel.bind(this, position, monomer),
+      this.addAtomChangeModel.bind(this, position, monomer),
     );
     command.addOperation(atomAddOperation);
     return command;
@@ -1935,6 +1955,55 @@ export class DrawingEntitiesManager {
       this.addBondChangeModel.bind(this, firstAtom, secondAtom, type),
     );
     command.addOperation(bondAddOperation);
+    return command;
+  }
+
+  private addMonomerToAtomBondChangeModel(
+    monomer: BaseMonomer,
+    atom: Atom,
+    attachmentPoint: AttachmentPointName,
+    _monomerToAtomBond?: MonomerToAtomBond,
+  ) {
+    if (_monomerToAtomBond) {
+      this.monomerToAtomBonds.set(_monomerToAtomBond.id, _monomerToAtomBond);
+
+      return _monomerToAtomBond;
+    }
+
+    const monomerToAtomBond = new MonomerToAtomBond(monomer, atom);
+
+    this.monomerToAtomBonds.set(monomerToAtomBond.id, monomerToAtomBond);
+
+    monomerToAtomBond.moveToLinkedMonomerAndAtom();
+    monomer.setBond(attachmentPoint, monomerToAtomBond);
+
+    return monomerToAtomBond;
+  }
+
+  private deleteMonomerToAtomBondChangeModel(
+    monomerAtomBond: MonomerToAtomBond,
+  ) {
+    this.monomerToAtomBonds.delete(monomerAtomBond.id);
+
+    return monomerAtomBond;
+  }
+
+  public addMonomerToAtomBond(
+    monomer: BaseMonomer,
+    atom: Atom,
+    attachmentPoint: AttachmentPointName,
+  ) {
+    const command = new Command();
+    const monomerAddToAtomBondOperation = new MonomerToAtomBondAddOperation(
+      this.addMonomerToAtomBondChangeModel.bind(
+        this,
+        monomer,
+        atom,
+        attachmentPoint,
+      ),
+      this.deleteMonomerToAtomBondChangeModel.bind(this),
+    );
+    command.addOperation(monomerAddToAtomBondOperation);
     return command;
   }
 }

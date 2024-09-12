@@ -118,6 +118,10 @@ export class RenderStruct {
 
       const rnd = new Render(wrapperElement, extendedOptions);
 
+      if (!window.isPolymerEditorTurnedOn) {
+        preparedStruct.rescale();
+      }
+
       rnd.setMolecule(preparedStruct);
       this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 

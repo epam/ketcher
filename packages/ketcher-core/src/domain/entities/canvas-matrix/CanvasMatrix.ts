@@ -289,14 +289,14 @@ export class CanvasMatrix {
           const isVertical = xDistanceAbsolute === 0;
 
           // fill start cell by connection with direction
-          let connection: Connection = {
-            polymerBond,
+          let connection = new Connection(
             connectedNode,
-            direction: isVertical ? 90 : xDirection,
+            isVertical ? 90 : xDirection,
             isVertical,
-            offset: 0,
-            yOffset: 0,
-          };
+            polymerBond,
+            0,
+            0,
+          );
 
           cell.connections.push(connection);
           this.polymerBondToCells.set(polymerBond, [cell]);
@@ -312,14 +312,14 @@ export class CanvasMatrix {
               nextCellY,
               nextCellX,
             ) as Cell;
-            connection = {
-              polymerBond,
-              connectedNode: null,
-              direction: xDirection,
+            connection = new Connection(
+              null,
+              xDirection,
               isVertical,
-              offset: 0,
-              yOffset: 0,
-            };
+              polymerBond,
+              0,
+              0,
+            );
             nextCellToHandle.connections.push(connection);
             this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
             this.polymerBondToConnections.get(polymerBond)?.push(connection);
@@ -334,14 +334,14 @@ export class CanvasMatrix {
               nextCellY,
               nextCellX,
             ) as Cell;
-            connection = {
-              polymerBond,
-              connectedNode: null,
-              direction: yDirection,
+            connection = new Connection(
+              null,
+              yDirection,
               isVertical,
-              offset: 0,
-              yOffset: 0,
-            };
+              polymerBond,
+              0,
+              0,
+            );
             nextCellToHandle.connections.push(connection);
             this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
             this.polymerBondToConnections.get(polymerBond)?.push(connection);
@@ -357,16 +357,16 @@ export class CanvasMatrix {
             nextCellY,
             nextCellX,
           ) as Cell;
-          connection = {
-            polymerBond,
+          connection = new Connection(
             connectedNode,
-            direction: isVertical
+            isVertical
               ? yDirection
               : { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
             isVertical,
-            offset: 0,
-            yOffset: 0,
-          };
+            polymerBond,
+            0,
+            0,
+          );
           lastCellToHandle.connections.push(connection);
           this.polymerBondToCells.get(polymerBond)?.push(lastCellToHandle);
           this.polymerBondToConnections.get(polymerBond)?.push(connection);

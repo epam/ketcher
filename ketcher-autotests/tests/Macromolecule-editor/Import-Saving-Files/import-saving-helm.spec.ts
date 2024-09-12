@@ -161,18 +161,15 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '20. ListOfSimplePolymers - Mix - reverse order',
     HELMString:
       'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription: '21. Index starts from 100',
     HELMString:
       'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
     HELMString: 'PEPTIDE1{A}|RNA1{R(A)P}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription: '23. Connection CHEM1(R2) to Peptide(R1)',
@@ -195,7 +192,6 @@ const correctHELMStrings: IHELMString[] = [
       '26. List of peptides connected to another list of peptides via R3 to R1',
     HELMString:
       'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.R.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -217,6 +213,112 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '30. Cycled RNAs',
     HELMString: 'RNA1{R(A)P.R(C)P.R(G)P}$RNA1,RNA1,9:R2-1:R1$$$V2.0',
+  },
+  {
+    helmDescription:
+      '31. Simple petide - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'PEPTIDE1{(A+C)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '32. Multi-char petide - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '33. Simple RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'RNA1{R(A+C)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '34. Multi-char RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]+[nobn6p]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '35. Simple peptides - The ratio of each element can be given as a numerical value after the monomer' +
+      'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString: 'PEPTIDE1{(A:1.5+C:0.1)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
+  },
+  {
+    helmDescription:
+      '36. Multi-char peptides - The ratio of each element can be given as a numerical value after the monomer' +
+      'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString:
+      'PEPTIDE1{([Aad]:1.1+[Abu]:2.2+[Aca]:3.3+[Aib]:4.4+[Apm]:5.5)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
+  },
+  {
+    helmDescription:
+      '37. Simple RNAs - The ratio of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString: 'RNA1{R(A:100+C:200)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '38. Multi-char RNAs - The ratio of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]:1+[nobn6p]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      "39. Two peptides connected R2-R2, one of them don't have R1 AP",
+    HELMString:
+      'PEPTIDE1{[DACys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2358',
+  },
+  {
+    helmDescription:
+      '40. Simple peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'PEPTIDE1{(A,C)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '41. Multi-char peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'PEPTIDE1{([Aad],[Abu],[Aca],[Aib],[Apm])}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '42. Simple RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'RNA1{R(A,C)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '43. Multi-char RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn],[nobn6p],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '44. Single peptides - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString: 'PEPTIDE1{(A:10,C:20)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '45. Multi-char peptides - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString:
+      'PEPTIDE1{([Aad]:10,[Abu]:20,[Aca]:30,[Aib]:40,[Apm]:50)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '46. Simple RNAs - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString: 'RNA1{R(A:10,C:90)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '47. Multi-char RNAs - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
   },
 ];
 
@@ -261,9 +363,7 @@ const incorrectHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '5. wrong base name',
-    HELMString: 'RNA1{R(bla-bla-bla)p}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2265',
+    HELMString: 'RNA1{R(bla-bla-bla)P}$$$$V2.0',
   },
   {
     helmDescription: '6. wrong phosphate name',
@@ -312,8 +412,6 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '16. no squire brackets',
     HELMString: 'PEPTIDE1{D-gGlu}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2264',
   },
   {
     helmDescription: '17. No CHEM name',
@@ -368,14 +466,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '28. Missing ratio token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '29. Wrong ratio token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '30. Negative ratio (PEPTIDE)',
@@ -384,14 +478,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '31. Missing ratio token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '32. Wrong ratio token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '33. Negative ratio (CHEM)',
@@ -399,27 +489,21 @@ const incorrectHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '34. Missing ratio token (RNA)',
-    HELMString: 'RNA1{(r(A)p:+r(C)p:200)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2268',
+    HELMString: 'RNA1{R(A:+C:200)P}$$$$V2.0',
   },
   {
     helmDescription: '35. Wrong ratio token type (RNA)',
-    HELMString: 'RNA1{(r(A)p:100+r(C)p:aaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2269',
+    HELMString: 'RNA1{R(A:100+C:aaa)P}$$$$V2.0',
   },
   {
     helmDescription: '36. Negative ratio (RNA)',
-    HELMString: 'RNA1{(r(A)p:-100+r(C)p:200)}$$$$V2.0',
+    HELMString: 'RNA1{R(A:-100+C:200)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2270',
   },
   {
     helmDescription: '37. Missing probability token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '38. Wrong probability token type (PEPTIDE)',
@@ -432,14 +516,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '40. Probability is greater than 100 (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '41. Missing probability token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '42. Wrong probability token type (CHEM)',
@@ -452,32 +532,22 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '44. Probability is greater than 100 (CHEM)',
     HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '45. Missing probability token (RNA)',
-    HELMString: 'RNA1{(r(A)p:,r(C)p):90}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2273',
+    HELMString: 'RNA1{R(A:,C:90)P}$$$$V2.0',
   },
   {
     helmDescription: '46. Wrong probability token type (RNA)',
-    HELMString: 'RNA1{(r(A)p:10,r(C)p):aaa}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2274',
+    HELMString: 'RNA1{(R(A:10,C:aaa)P}$$$$V2.0',
   },
   {
     helmDescription: '47. Negative probability (RNA)',
-    HELMString: 'RNA1{(r(A)p:-10,r(C)p):90}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2275',
+    HELMString: 'RNA1{(R(A:-10,C:90)P}$$$$V2.0',
   },
   {
     helmDescription: '48. Probability is greater than 100 (RNA)',
-    HELMString: 'RNA1{(r(A)p:10,r(C)p):1000}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2276',
+    HELMString: 'RNA1{(R(A:10,C:1000)P}$$$$V2.0',
   },
   {
     helmDescription:
@@ -555,14 +625,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '64. Invalid range (PEPTIDE)',
     HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '65. Invalid range (CHEM)',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '66. Invalid range (RNA)',

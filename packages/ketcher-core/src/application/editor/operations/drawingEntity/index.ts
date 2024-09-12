@@ -2,6 +2,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
@@ -35,7 +36,10 @@ export class DrawingEntityMoveOperation implements Operation {
     this.wasInverted
       ? this.redoDrawingEntityChangeModel()
       : this.moveDrawingEntityChangeModel();
-    if (this.drawingEntity instanceof PolymerBond) {
+    if (
+      this.drawingEntity instanceof PolymerBond ||
+      this.drawingEntity instanceof MonomerToAtomBond
+    ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);
@@ -49,7 +53,10 @@ export class DrawingEntityMoveOperation implements Operation {
     // they have two drawing modes: straight and curved.
     // During switching snake/flex layout modes and undo/redo
     // we need to redraw them to apply the correct drawing mode.
-    if (this.drawingEntity instanceof PolymerBond) {
+    if (
+      this.drawingEntity instanceof PolymerBond ||
+      this.drawingEntity instanceof MonomerToAtomBond
+    ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);

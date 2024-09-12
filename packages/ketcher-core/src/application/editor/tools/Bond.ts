@@ -34,6 +34,7 @@ import { AttachmentPointName } from 'domain/types';
 //  which probably due to a circular dependency
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -404,6 +405,30 @@ class PolymerBond implements BaseTool {
       this.history.update(modelChanges);
       event.stopPropagation();
     }
+  }
+
+  public mouseUpAtom(event) {
+    const atomRenderer = event.target.__data__ as AtomRenderer;
+    const monomer = this.bondRenderer?.polymerBond.firstMonomer;
+    const attachmentPoint = monomer.getPotentialAttachmentPointByBond(
+      this.bondRenderer?.polymerBond,
+    );
+
+    this.editor.drawingEntitiesManager.deletePolymerBond(
+      this.bondRenderer?.polymerBond,
+    );
+    this.bondRenderer?.remove();
+    this.bondRenderer = undefined;
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.addMonomerToAtomBond(
+        monomer,
+        atomRenderer.atom,
+        attachmentPoint,
+      );
+
+    this.editor.renderersContainer.update(modelChanges);
+    this.history.update(modelChanges);
   }
 
   public handleBondCreation = (payload: {

@@ -37,6 +37,8 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToMoleculeBond';
+import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 
 export class RenderersManager {
   // FIXME: Specify the types.
@@ -450,6 +452,16 @@ export class RenderersManager {
   }
 
   public deleteBond(bond: Bond) {
+    bond.renderer.remove();
+  }
+
+  public addMonomerToAtomBond(bond: MonomerToAtomBond) {
+    console.log('jere');
+    const bondRenderer = new MonomerToAtomBondRenderer(bond);
+    bondRenderer.show();
+  }
+
+  public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
     bond.renderer.remove();
   }
 

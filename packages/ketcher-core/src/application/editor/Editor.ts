@@ -116,6 +116,38 @@ export class CoreEditor {
     this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
     this.rerenderSequenceMode();
+
+    // this.zoomTool.canvas
+    //   .append('circle')
+    //   .attr('r', 50)
+    //   .attr('cx', 100)
+    //   .attr('cy', 100)
+    //   .attr('stroke', 'black')
+    //   .attr('stroke-width', '1px')
+    //   .attr('fill', 'none')
+    //   .attr('pointer-events', 'all')
+    //   .on('mouseenter', () => {
+    //     console.log('enter 1')
+    //   })
+    //   .on('mouseleave', () => {
+    //     console.log('leave 1')
+    //   })
+    //
+    // this.zoomTool.canvas
+    //   .append('circle')
+    //   .attr('r', 50)
+    //   .attr('cx', 125)
+    //   .attr('cy', 125)
+    //   .attr('stroke', 'red')
+    //   .attr('stroke-width', '1px')
+    //   .attr('fill', 'none')
+    //   .attr('pointer-events', 'all')
+    //   .on('mouseenter', () => {
+    //     console.log('enter 2')
+    //   })
+    //   .on('mouseleave', () => {
+    //     console.log('leave 2')
+    //   })
   }
 
   static provideEditorInstance(): CoreEditor {

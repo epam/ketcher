@@ -96,8 +96,8 @@ export const monomerFactory = (
     ketMonomerClass = KetMonomerClass.Phosphate;
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.Base ||
-    monomer.props.MonomerType === MONOMER_CONST.RNA ||
-    monomer.props.MonomerNaturalAnalogCode
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerNaturalAnalogCode)
   ) {
     Monomer = RNABase;
     MonomerRenderer = RNABaseRenderer;

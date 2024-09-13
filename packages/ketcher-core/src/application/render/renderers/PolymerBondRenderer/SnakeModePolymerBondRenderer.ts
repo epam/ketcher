@@ -352,7 +352,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           isHorizontal,
           previousConnection,
           previousCell,
-          // FIXME? Check. Is it correct to use `as DirectionInDegrees` here?
+          // FIXME: Check. Is it correct to use `as DirectionInDegrees` here?
           isHorizontal
             ? xDirection
             : (previousConnection.direction as DirectionInDegrees),

@@ -180,11 +180,8 @@ function drawCIPLabel({
     atomOrBond,
     options,
   });
-  const box = relBox(cipValuePath.path.getBBox());
 
-  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
   path.push(cipValuePath.path.toFront());
-
   restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
 
   return cipValuePath;

@@ -78,7 +78,9 @@ test.describe('Polymer Bond Tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Create bond between two peptides', async ({ page }) => {
@@ -126,12 +128,16 @@ test.describe('Polymer Bond Tool', () => {
     // Select bond tool
     await selectSingleBondTool(page);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     // Create bonds between peptides, taking screenshots in middle states
     await bondTwoMonomers(page, peptide1, peptide2);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     await bondTwoMonomers(page, peptide2, peptide3);
 
@@ -164,7 +170,9 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.down();
     await hideMonomerPreview(page);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await chem2.hover();
     await page.mouse.up();
     await hideMonomerPreview(page);
@@ -227,7 +235,9 @@ test.describe('Signle Bond Tool', () => {
     await page.getByTestId(Peptides.Ethylthiocysteine).click();
     await page.mouse.click(x, y);
     await connectMonomersWithBonds(page, ['Bal', 'Edc']);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Check in full-screen mode it is possible to add a bond between a RNA monomers if this bond is pulled not from a specific attachment point R', async ({
@@ -247,7 +257,9 @@ test.describe('Signle Bond Tool', () => {
     await page.getByTestId('dR(U)P_U_dR_P').click();
     await page.mouse.click(x, y);
     await connectMonomersWithBonds(page, ['P', 'dR']);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Check in full-screen mode it is possible to add a bond between a CHEM monomers if this bond is pulled not from a specific attachment point R', async ({
@@ -274,7 +286,9 @@ test.describe('Signle Bond Tool', () => {
       .click();
     await page.getByRole('button', { name: 'R1' }).nth(1).click();
     await page.getByRole('button', { name: 'Connect' }).click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that the context menu with the "Edit Connection Points..." option appears when the user right-clicks on a bond', async ({
@@ -287,7 +301,9 @@ test.describe('Signle Bond Tool', () => {
     const bondLine = await page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
     await bondLine.click({ button: 'right' });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that clicking on the "Edit Connection Points..." option opens the dialog', async ({
@@ -301,7 +317,9 @@ test.describe('Signle Bond Tool', () => {
     await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
     await bondLine.click({ button: 'right' });
     await page.getByText('Edit Connection Points...').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that the user can interact with teal and white attachment points in the dialog', async ({
@@ -315,10 +333,14 @@ test.describe('Signle Bond Tool', () => {
     await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
     await bondLine.click({ button: 'right' });
     await page.getByText('Edit Connection Points...').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.getByRole('button', { name: 'R1' }).first().click();
     await page.getByRole('button', { name: 'R2' }).nth(1).click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that if there are no available (white) connection points on both monomers, the "Reconnect" button is disabled', async ({
@@ -332,7 +354,9 @@ test.describe('Signle Bond Tool', () => {
     await openFileAndAddToCanvasMacro('KET/two-connected-bases.ket', page);
     await bondLine.click({ button: 'right' });
     await page.getByText('Edit Connection Points...').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that clicking "Reconnect" with different attachment points chosen results in deletion of the previous bond and establishment of a new one', async ({
@@ -347,13 +371,17 @@ test.describe('Signle Bond Tool', () => {
     await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
     await bondLine.click({ button: 'right' });
     await page.getByText('Edit Connection Points...').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.getByRole('button', { name: 'R1' }).first().click();
     await page.getByRole('button', { name: 'R2' }).nth(1).click();
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that clicking "Reconnect" without changing the attachment points results in no change', async ({
@@ -370,7 +398,9 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that clicking "Cancel" in the dialog results in no change to the bond', async ({
@@ -388,11 +418,15 @@ test.describe('Signle Bond Tool', () => {
     await page.getByText('Edit Connection Points...').click();
     await page.getByRole('button', { name: 'R1' }).first().click();
     await page.getByRole('button', { name: 'R2' }).nth(1).click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await pressButton(page, 'Cancel');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" does not save any changes (click on cross)', async ({
@@ -410,11 +444,15 @@ test.describe('Signle Bond Tool', () => {
     await page.getByText('Edit Connection Points...').click();
     await page.getByRole('button', { name: 'R1' }).first().click();
     await page.getByRole('button', { name: 'R2' }).nth(1).click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.getByTitle('Close window').click();
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog can be undone and redone', async ({
@@ -433,15 +471,21 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a KET file and can be loaded', async ({
@@ -465,7 +509,9 @@ test.describe('Signle Bond Tool', () => {
     );
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a Mol V3000 file and can be loaded', async ({
@@ -493,7 +539,9 @@ test.describe('Signle Bond Tool', () => {
 
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a Sequence file and can be loaded', async ({
@@ -538,7 +586,9 @@ test.describe('Signle Bond Tool', () => {
     // await pressButton(page, 'Open as New');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a FASTA file and can be loaded', async ({
@@ -578,7 +628,9 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Open as New');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify that changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded', async ({
@@ -613,7 +665,9 @@ test.describe('Signle Bond Tool', () => {
     await openFileAndAddToCanvasAsNewProject('IDT/moe-idt-expected.idt', page);
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify changing connection points of a side chain bond', async ({
@@ -632,7 +686,9 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify editing of a cyclic structure', async ({ page }) => {
@@ -657,7 +713,9 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify correct display and changing of connection points in the dialog for Nucleotides', async ({
@@ -679,7 +737,9 @@ test.describe('Signle Bond Tool', () => {
     await pressButton(page, 'Reconnect');
     await selectSingleBondTool(page);
     await bondLine.hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test('Verify behaviour when a non-bond is right-clicked', async ({
@@ -691,12 +751,16 @@ test.describe('Signle Bond Tool', () => {
     */
     await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
     await page.mouse.click(200, 200, { button: 'right' });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page
       .getByText('Phe4Me')
       .locator('..')
       .first()
       .click({ button: 'right' });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 });

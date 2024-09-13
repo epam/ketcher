@@ -353,7 +353,9 @@ test.describe('Connection rules for sugars: ', () => {
 
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -544,7 +546,9 @@ test.describe('Connection rules for sugars: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -735,7 +739,9 @@ test.describe('Connection rules for sugars: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -766,7 +772,9 @@ test.describe('Connection rules for sugars: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -793,7 +801,9 @@ test.describe('Connection rules for sugars: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -986,7 +996,9 @@ test.describe('Connection rules for sugars: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -1022,7 +1034,9 @@ test.describe('Connection rules for sugars: ', () => {
 
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });

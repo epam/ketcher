@@ -22,6 +22,10 @@ import {
 } from 'domain/entities';
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
+import {
+  rnaDnaNaturalAnalogues,
+  unknownNaturalAnalogues,
+} from 'domain/constants/monomers';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 export const MONOMER_CONST = {
@@ -97,7 +101,9 @@ export const monomerFactory = (
   } else if (
     monomer.props.MonomerClass === KetMonomerClass.Base ||
     (monomer.props.MonomerType === MONOMER_CONST.RNA &&
-      monomer.props.MonomerNaturalAnalogCode)
+      [...rnaDnaNaturalAnalogues, ...unknownNaturalAnalogues].includes(
+        monomer.props.MonomerNaturalAnalogCode,
+      ))
   ) {
     Monomer = RNABase;
     MonomerRenderer = RNABaseRenderer;

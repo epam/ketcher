@@ -3,7 +3,7 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
@@ -11,6 +11,8 @@ import {
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
   selectClearCanvasTool,
+  selectSaveTool,
+  pressButton,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -66,12 +68,20 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
     async () => await page.getByTestId('add-to-canvas-button').click(),
   );
 }
+
+async function openSaveToHELMDialog(page: Page) {
+  await selectSaveTool(page);
+  await chooseFileFormat(page, 'HELM');
+}
+
 interface IHELMString {
   helmDescription: string;
   HELMString: string;
   shouldFail?: boolean;
   issueNumber?: string;
   pageReloadNeeded?: boolean;
+  // Some times export result is different to import string
+  differentHELMExport?: string;
 }
 
 const correctHELMStrings: IHELMString[] = [
@@ -114,14 +124,17 @@ const correctHELMStrings: IHELMString[] = [
   {
     helmDescription: '10. trash after ending token (RNA)',
     HELMString: 'RNA1{R(A)P}$$$$Bla-bla-bla',
+    differentHELMExport: 'RNA1{R(A)P}$$$$V2.0',
   },
   {
     helmDescription: '11. trash after ending token (PEPTIDE)',
     HELMString: 'PEPTIDE1{L}$$$$Bla-bla-bla',
+    differentHELMExport: 'PEPTIDE1{L}$$$$V2.0',
   },
   {
     helmDescription: '12. trash after ending token (CHEM)',
     HELMString: 'CHEM1{[A6OH]}$$$$Bla-bla-blaV2.0',
+    differentHELMExport: 'CHEM1{[A6OH]}$$$$V2.0',
   },
   {
     helmDescription:
@@ -161,18 +174,19 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '20. ListOfSimplePolymers - Mix - reverse order',
     HELMString:
       'RNA3{R(G)P}|CHEM3{[Az]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}$$$$V2.0',
-    // pageReloadNeeded: true,
+    differentHELMExport:
+      'RNA1{R(G)P}|CHEM1{[Az]}|RNA2{R(A)P}|PEPTIDE1{C}|CHEM2{[SMPEG2]}|RNA3{R(A)}|PEPTIDE2{A}|CHEM3{[A6OH]}$$$$V2.0',
   },
   {
     helmDescription: '21. Index starts from 100',
     HELMString:
       'RNA100{R(A)}|PEPTIDE10000{A}|CHEM100000{[A6OH]}|RNA1000000{R(A)P}|PEPTIDE10000000{C}|CHEM100000000{[SMPEG2]}|RNA1000000000{R(G)P}|CHEM3{[Az]}$$$$V2.0',
-    // pageReloadNeeded: true,
+    differentHELMExport:
+      'RNA1{R(A)}|PEPTIDE1{A}|CHEM1{[A6OH]}|RNA2{R(A)P}|PEPTIDE2{C}|CHEM2{[SMPEG2]}|RNA3{R(G)P}|CHEM3{[Az]}$$$$V2.0',
   },
   {
     helmDescription: '22. Connection RNA(R2) to Peptide(R1)',
     HELMString: 'PEPTIDE1{A}|RNA1{R(A)P}$RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription: '23. Connection CHEM1(R2) to Peptide(R1)',
@@ -195,7 +209,6 @@ const correctHELMStrings: IHELMString[] = [
       '26. List of peptides connected to another list of peptides via R3 to R1',
     HELMString:
       'PEPTIDE1{A.[Aad].[Abu].[Aca].[Aib].[Apm].[App].[Asu].[Aze].[Bux].C}|PEPTIDE2{Q.R.S.T.V.W.Y}$PEPTIDE2,PEPTIDE1,1:R1-6:R3$$$V2.0',
-    // pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -218,19 +231,239 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '30. Cycled RNAs',
     HELMString: 'RNA1{R(A)P.R(C)P.R(G)P}$RNA1,RNA1,9:R2-1:R1$$$V2.0',
   },
+  {
+    helmDescription:
+      '31. Simple petide - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'PEPTIDE1{(A+C)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '32. Multi-char petide - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      '33. Simple RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString: 'RNA1{R(A+C)P}$$$$V2.0',
+    pageReloadNeeded: true,
+  },
+  {
+    helmDescription:
+      '34. Multi-char RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]+[nobn6p]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      '35. Simple peptides - The ratio of each element can be given as a numerical value after the monomer' +
+      'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString: 'PEPTIDE1{(A:1.5+C:0.1)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
+  },
+  {
+    helmDescription:
+      '36. Multi-char peptides - The ratio of each element can be given as a numerical value after the monomer' +
+      'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString:
+      'PEPTIDE1{([Aad]:1.1+[Abu]:2.2+[Aca]:3.3+[Aib]:4.4+[Apm]:5.5)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
+  },
+  {
+    helmDescription:
+      '37. Simple RNAs - The ratio of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString: 'RNA1{R(A:100+C:200)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '38. Multi-char RNAs - The ratio of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]:1+[nobn6p]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      "39. Two peptides connected R2-R2, one of them don't have R1 AP",
+    HELMString:
+      'PEPTIDE1{[DACys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2358',
+  },
+  {
+    helmDescription:
+      '40. Simple peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'PEPTIDE1{(A,C)}$$$$V2.0',
+    pageReloadNeeded: true,
+  },
+  {
+    helmDescription:
+      '41. Multi-char peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'PEPTIDE1{([Aad],[Abu],[Aca],[Aib],[Apm])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      '42. Simple RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString: 'RNA1{R(A,C)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '43. Multi-char RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn],[nobn6p],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      '44. Single peptides - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString: 'PEPTIDE1{(A:10,C:20)}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '45. Multi-char peptides - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString:
+      'PEPTIDE1{([Aad]:10,[Abu]:20,[Aca]:30,[Aib]:40,[Apm]:50)}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription:
+      '46. Simple RNAs - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString: 'RNA1{R(A:10,C:90)P}$$$$V2.0',
+  },
+  {
+    helmDescription:
+      '47. Multi-char RNAs - The probability of each element can be given as a numerical value after the monomer' +
+      ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
+    HELMString:
+      'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+  },
+  {
+    helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
+    HELMString:
+      'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '49. RNA(RAP) with single inline Extended SMILES (A)',
+    HELMString:
+      'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/Indigo/issues/2339, https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '50. RNA(RP) with single inline Extended SMILES (P)',
+    HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '51. RNA(RP) with single inline Extended SMILES (R)',
+    HELMString:
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',
+    HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription:
+      '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
+    HELMString:
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
+  {
+    helmDescription:
+      '54. Single peptide with inline SMILES (L) without attachment points',
+    HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '55. Single peptide with inline Extended SMILES (L)',
+    HELMString:
+      'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription:
+      '56. Single CHEM with inline SMILES (A6OH) without attachment points',
+    HELMString: 'CHEM1{[N([H])CCCCCCO[H]]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '57. Single CHEM with inline Extended SMILES (A6OH)',
+    HELMString:
+      'CHEM1{[N%91CCCCCCO%92.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription: '58. List of peptide of inline Extended Smiles (A,C,D,L)',
+    HELMString:
+      'PEPTIDE1{[N%91[C@H](C%92=O)C.[*:2]%92.[*:1]%91 |$;;;;;_R2;_R1$|].' +
+      '[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].' +
+      '[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].' +
+      '[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+  },
+  {
+    helmDescription:
+      '59. List of RNAs of inline Extended Smiles (R(A)P, R(C)P, R(G)P)',
+    HELMString:
+      // eslint-disable-next-line max-len
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]' +
+      // eslint-disable-next-line max-len
+      '.[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(N)=NC(=O)N%91C=C1.[*:1]%91 |$;;;;;;;;_R1$|])[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|].' +
+      // eslint-disable-next-line max-len
+      '[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=C(N)N1)N%91C=N2)=O.[*:1]%91 |$;;;;;;;;;;;_R1$|])[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
 ];
 
 test.describe('Import correct HELM sequence: ', () => {
   for (const correctHELMString of correctHELMStrings) {
     test(`${correctHELMString.helmDescription}`, async () => {
       /* 
-    Test case: https://github.com/epam/ketcher/issues/5215
+    Test case1: https://github.com/epam/ketcher/issues/5215
+    Test case2: https://github.com/epam/ketcher/issues/5438
     Description: Load correct HELM sequences and compare canvas with the template
+    Case:
+        1. Load correct HELM via paste from clipboard way
+        2. Take screenshot of the canvas to compare it with example
     */
       test.setTimeout(20000);
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
+
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists
@@ -238,6 +471,42 @@ test.describe('Import correct HELM sequence: ', () => {
         correctHELMString.shouldFail === true,
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
+    });
+  }
+});
+
+test.describe('Export to HELM: ', () => {
+  for (const correctHELMString of correctHELMStrings) {
+    test(`${correctHELMString.helmDescription}`, async () => {
+      /* 
+    Test case: https://github.com/epam/ketcher/issues/5215
+    Description: Load correct HELM sequences and compare canvas with the template
+    Case:
+        1. Load correct HELM via paste from clipboard way
+        2. Export canvas to HELM
+        2. Compare export result with source HELM string
+    */
+      test.setTimeout(20000);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctHELMString.shouldFail === true,
+        `That test fails because of ${correctHELMString.issueNumber} issue.`,
+      );
+      if (correctHELMString.pageReloadNeeded) await pageReload(page);
+
+      await loadHELMFromClipboard(page, correctHELMString.HELMString);
+      await openSaveToHELMDialog(page);
+      const HELMExportResult = await page
+        .getByTestId('preview-area-text')
+        .textContent();
+
+      if (correctHELMString.differentHELMExport) {
+        expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
+      } else {
+        expect(HELMExportResult).toEqual(correctHELMString.HELMString);
+      }
+
+      await pressButton(page, 'Cancel');
     });
   }
 });
@@ -261,9 +530,7 @@ const incorrectHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '5. wrong base name',
-    HELMString: 'RNA1{R(bla-bla-bla)p}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2265',
+    HELMString: 'RNA1{R(bla-bla-bla)P}$$$$V2.0',
   },
   {
     helmDescription: '6. wrong phosphate name',
@@ -312,8 +579,6 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '16. no squire brackets',
     HELMString: 'PEPTIDE1{D-gGlu}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2264',
   },
   {
     helmDescription: '17. No CHEM name',
@@ -368,14 +633,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '28. Missing ratio token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '29. Wrong ratio token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '30. Negative ratio (PEPTIDE)',
@@ -384,14 +645,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '31. Missing ratio token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2266',
   },
   {
     helmDescription: '32. Wrong ratio token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
     helmDescription: '33. Negative ratio (CHEM)',
@@ -399,27 +656,21 @@ const incorrectHELMStrings: IHELMString[] = [
   },
   {
     helmDescription: '34. Missing ratio token (RNA)',
-    HELMString: 'RNA1{(r(A)p:+r(C)p:200)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2268',
+    HELMString: 'RNA1{R(A:+C:200)P}$$$$V2.0',
   },
   {
     helmDescription: '35. Wrong ratio token type (RNA)',
-    HELMString: 'RNA1{(r(A)p:100+r(C)p:aaa)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2269',
+    HELMString: 'RNA1{R(A:100+C:aaa)P}$$$$V2.0',
   },
   {
     helmDescription: '36. Negative ratio (RNA)',
-    HELMString: 'RNA1{(r(A)p:-100+r(C)p:200)}$$$$V2.0',
+    HELMString: 'RNA1{R(A:-100+C:200)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2270',
   },
   {
     helmDescription: '37. Missing probability token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '38. Wrong probability token type (PEPTIDE)',
@@ -432,14 +683,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '40. Probability is greater than 100 (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '41. Missing probability token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2271',
   },
   {
     helmDescription: '42. Wrong probability token type (CHEM)',
@@ -452,32 +699,22 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '44. Probability is greater than 100 (CHEM)',
     HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2272',
   },
   {
     helmDescription: '45. Missing probability token (RNA)',
-    HELMString: 'RNA1{(r(A)p:,r(C)p):90}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2273',
+    HELMString: 'RNA1{R(A:,C:90)P}$$$$V2.0',
   },
   {
     helmDescription: '46. Wrong probability token type (RNA)',
-    HELMString: 'RNA1{(r(A)p:10,r(C)p):aaa}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2274',
+    HELMString: 'RNA1{(R(A:10,C:aaa)P}$$$$V2.0',
   },
   {
     helmDescription: '47. Negative probability (RNA)',
-    HELMString: 'RNA1{(r(A)p:-10,r(C)p):90}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2275',
+    HELMString: 'RNA1{(R(A:-10,C:90)P}$$$$V2.0',
   },
   {
     helmDescription: '48. Probability is greater than 100 (RNA)',
-    HELMString: 'RNA1{(r(A)p:10,r(C)p):1000}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2276',
+    HELMString: 'RNA1{(R(A:10,C:1000)P}$$$$V2.0',
   },
   {
     helmDescription:
@@ -555,14 +792,10 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '64. Invalid range (PEPTIDE)',
     HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '65. Invalid range (CHEM)',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2278',
   },
   {
     helmDescription: '66. Invalid range (RNA)',
@@ -623,6 +856,36 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '77. no ending token (PEPTIDE)',
     HELMString: 'PEPTIDE1{L}',
   },
+  {
+    helmDescription:
+      '78. RNA(R(A)P) with inline SMILES (A) without attachment points',
+    HELMString:
+      'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]' +
+      '([C1(N)=NC=NC2N([H])C=NC1=2])' +
+      '[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
+  {
+    helmDescription:
+      '79. RNA(RP) with single inline SMILES (P) without attachment points',
+    HELMString: 'RNA1{R[P(O)(O)(=O)O]}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2361',
+  },
+  {
+    helmDescription:
+      '80. RNA(R(A)P) with  single inline SMILES (R) without attachment points',
+    HELMString: 'RNA1{[O1[C@@H](O)[C@H](O)[C@H](O[H])[C@H]1CO[H]](A)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+  },
+  {
+    helmDescription:
+      '81. List of peptide of inline Smiles (A,C,D,L) - no attachment points',
+    HELMString:
+      'PEPTIDE1{[N([H])[C@H](C(O)=O)C].[C(O)([C@H](CS[H])N[H])=O].[C(O)([C@H](CC(O[H])=O)N[H])=O].[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
+  },
 ];
 
 test.describe('Import incorrect HELM sequence: ', () => {
@@ -631,6 +894,10 @@ test.describe('Import incorrect HELM sequence: ', () => {
       /* 
       Test case: https://github.com/epam/ketcher/issues/5215
       Description: Load INCORRECT HELM sequences and compare canvas (with error message) with the template
+      Case:
+        1. Load icorrect HELM
+        2. Get error message
+        3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
       if (incorrectHELMString.pageReloadNeeded) await pageReload(page);

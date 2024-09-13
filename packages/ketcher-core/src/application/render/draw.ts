@@ -1608,7 +1608,7 @@ function rgroupAttachmentPoint(
   const resultShape = paper
     .set([curvePath, linePath])
     .attr(options.lineattr)
-    .attr({ 'stroke-width': options.lineWidth });
+    .attr({ 'stroke-width': options.bondThickness });
 
   return resultShape;
 }

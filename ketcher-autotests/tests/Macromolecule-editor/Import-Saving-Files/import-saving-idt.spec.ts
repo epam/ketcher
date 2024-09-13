@@ -1104,3 +1104,11 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 });
+
+interface IDTString {
+  helmDescription: string;
+  HELMString: string;
+  shouldFail?: boolean;
+  issueNumber?: string;
+  pageReloadNeeded?: boolean;
+}

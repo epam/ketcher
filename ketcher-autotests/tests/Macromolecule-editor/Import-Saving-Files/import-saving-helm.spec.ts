@@ -247,6 +247,7 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '33. Simple RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString: 'RNA1{R(A+C)P}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:

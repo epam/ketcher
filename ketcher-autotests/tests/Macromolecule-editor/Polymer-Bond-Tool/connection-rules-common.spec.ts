@@ -221,27 +221,37 @@ test.describe('Common connection rules: ', () => {
     // Peptide
     await dragBondFromMonomerCenterAwayTo(page, 'SMPEG2', 500, 400);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // CHEM
     await dragBondFromMonomerCenterAwayTo(page, 'LysiPr', 500, 400);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Sugar
     await dragBondFromMonomerCenterAwayTo(page, '12ddR', 500, 400);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Phosphate
     await dragBondFromMonomerCenterAwayTo(page, 'P', 500, 400);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Base
     await dragBondFromMonomerCenterAwayTo(page, 'c7io7n', 500, 400);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
   });
 
@@ -261,27 +271,37 @@ test.describe('Common connection rules: ', () => {
     // Peptide
     await dragBondFromMonomerCenterTo(page, 'SMPEG2', 'sDBL');
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // CHEM
     await dragBondFromMonomerCenterTo(page, 'LysiPr', 'Hcy');
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Sugar
     await dragBondFromMonomerCenterTo(page, '12ddR', 'nC62r');
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Phosphate
     await dragBondFromMonomerCenterTo(page, 'P', 'mn');
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
     // Base
     await dragBondFromMonomerCenterTo(page, 'c7io7n', 'nC6n5U');
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.mouse.up();
   });
 
@@ -302,19 +322,29 @@ test.describe('Common connection rules: ', () => {
 
     // Peptide
     await hoverMouseOverMonomerNTymes(page, 'sDBL', 10);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     // CHEM
     await hoverMouseOverMonomerNTymes(page, 'Hcy', 10);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     // Sugar
     await hoverMouseOverMonomerNTymes(page, 'nC62r', 10);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     // Phosphate
     await hoverMouseOverMonomerNTymes(page, 'mn', 10);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     // Base
     await hoverMouseOverMonomerNTymes(page, 'nC6n5U', 10);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     await selectFlexLayoutModeTool(page);
   });
@@ -338,17 +368,25 @@ test.describe('Common connection rules: ', () => {
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, 'A6OH', 200, 200);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await page.keyboard.press('Control+=');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     await page.keyboard.press('Control+-');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, 'A6OH');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
     await saveToKet(page, '4 connected by Bond A6OH-expected.ket');
@@ -403,10 +441,14 @@ test.describe('Common connection rules: ', () => {
     );
     // Case 8-9
     await page.getByTitle('expand window').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
     // Case 10
     await page.getByTitle('expand window').click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     await pressCancelAtSelectConnectionPointDialog(page);
   });
@@ -439,11 +481,15 @@ test.describe('Common connection rules: ', () => {
   //
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
   //   await delay(1);
-  //   await takeEditorScreenshot(page);
+  //           await takeEditorScreenshot(page, {
+  //         masks: [page.getByTestId('polymer-library-preview')],
+  //       });
   //
   //   await hoverMouseOverMonomer(page, 'F1');
   //   await delay(1);
-  //   await takeEditorScreenshot(page);
+  //           await takeEditorScreenshot(page, {
+  //         masks: [page.getByTestId('polymer-library-preview')],
+  //       });
   // });
 
   test(`Check preview for monomer after loading Mol V3000. Leaving groups are displayed correctly`, async () => {
@@ -461,7 +507,9 @@ test.describe('Common connection rules: ', () => {
 
     await hoverMouseOverMonomer(page, 'C');
     await delay(1);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
   });
 
   test(`Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode`, async () => {
@@ -479,7 +527,9 @@ test.describe('Common connection rules: ', () => {
     await turnOnMicromoleculesEditor(page);
     await page.getByText('C', { exact: true }).locator('..').first().hover();
     await delay(1);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('polymer-library-preview')],
+    });
 
     await turnOnMacromoleculesEditor(page);
   });
@@ -509,13 +559,17 @@ test.describe('Common connection rules: ', () => {
         page,
         connectionPoint,
       );
-      // await takeEditorScreenshot(page);
+      //         await takeEditorScreenshot(page, {
+      //     masks: [page.getByTestId('polymer-library-preview')],
+      //   });
 
       await selectRightConnectionPointAtSelectConnectionPointDialog(
         page,
         connectionPoint,
       );
-      // await takeEditorScreenshot(page);
+      //         await takeEditorScreenshot(page, {
+      //     masks: [page.getByTestId('polymer-library-preview')],
+      //   });
     }
 
     await pressCancelAtSelectConnectionPointDialog(page);

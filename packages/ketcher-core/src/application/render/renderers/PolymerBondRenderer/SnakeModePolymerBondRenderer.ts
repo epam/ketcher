@@ -11,8 +11,8 @@ import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
-  DirectionInDegrees,
-  DirectionOfLastCell,
+  ConnectionDirectionInDegrees,
+  ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -150,7 +150,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     isHorizontal: boolean,
     connection: Connection,
     cell: Cell,
-    direction: DirectionInDegrees,
+    direction: ConnectionDirectionInDegrees,
   ): string {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
@@ -312,7 +312,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           return;
         }
 
-        const directionObject = cellConnection.direction as DirectionOfLastCell;
+        const directionObject =
+          cellConnection.direction as ConnectionDirectionOfLastCell;
         const yDirection = isVerticalConnection ? 90 : directionObject.y;
         const sin = Math.sin((yDirection * Math.PI) / 180);
         const cos = Math.cos((_xDirection * Math.PI) / 180);
@@ -352,10 +353,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           isHorizontal,
           previousConnection,
           previousCell,
-          // FIXME: Check. Is it correct to use `as DirectionInDegrees` here?
+          // FIXME: Check. Is it correct to use `as ConnectionDirectionInDegrees` here?
           isHorizontal
             ? xDirection
-            : (previousConnection.direction as DirectionInDegrees),
+            : (previousConnection.direction as ConnectionDirectionInDegrees),
         );
       }
       previousCell = cell;

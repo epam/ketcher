@@ -72,7 +72,7 @@ export function getNextMonomerInChain(
   if (!monomer) return undefined;
 
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
-  const nextMonomer = r2PolymerBond?.getAnotherMonomer(monomer);
+  const nextMonomer = r2PolymerBond?.getAnotherMonomer?.(monomer);
 
   if (
     !nextMonomer ||

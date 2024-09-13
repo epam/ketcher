@@ -5,6 +5,7 @@ import {
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
+  LeftPanelButton,
   openDropdown,
   openFile,
   openFileAndAddToCanvas,
@@ -20,6 +21,7 @@ import {
   selectClearCanvasTool,
   selectDropdownTool,
   selectEraseTool,
+  selectLeftPanelButton,
   selectPartOfMolecules,
   selectRectangleSelectionTool,
   selectRing,
@@ -62,16 +64,50 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await selectRing(RingButton.Benzene, page);
   await page.mouse.click(200, 400);
   await selectRectangleSelectionTool(page);
-  await page.mouse.move(650, 350);
+  await page.mouse.click(600, 400);
+  await page.getByTestId('head-resize').hover({ force: true });
   await dragMouseTo(800, 500, page);
-  await page.mouse.move(630, 350);
+  await page.getByTestId('head-move').hover({ force: true });
   await dragMouseTo(800, 500, page);
-  await page.mouse.move(600, 400);
+  await page.getByTestId('bottomTail-resize').hover({ force: true });
   await dragMouseTo(200, 500, page);
   await takeEditorScreenshot(page);
   await page.mouse.move(610, 350);
   await dragMouseTo(610, 100, page);
   await page.mouse.click(100, 100);
+}
+
+async function addNewTail(page: Page) {
+  await page.mouse.click(500, 600, { button: 'right' });
+  await waitForRender(page, async () => {
+    await page.getByText('Add new tail').click();
+  });
+}
+
+async function removeTail(page: Page, tailName: string) {
+  await page.getByTestId(tailName).click({ force: true, button: 'right' });
+  await waitForRender(page, async () => {
+    await page.getByText('Remove tail').click();
+  });
+}
+
+async function verifyFile(
+  page: Page,
+  filename: string,
+  expectedFilename: string,
+) {
+  const expectedFile = await getKet(page);
+  await saveToFile(filename, expectedFile);
+
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: expectedFilename,
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
+  await openFileAndAddToCanvasAsNewProject(filename, page);
+  await takeEditorScreenshot(page);
 }
 
 test.describe('Multi-Tailed Arrow Tool', () => {
@@ -94,22 +130,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/multi-tailed-arrow-to-compare.ket', expectedFile);
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/multi-tailed-arrow-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrow-to-compare.ket',
+    await verifyFile(
       page,
+      'KET/multi-tailed-arrow-to-compare.ket',
+      'tests/test-data/KET/multi-tailed-arrow-to-compare.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that 3 different Multi-Tailed Arrows can be saved together to .ket file with correct coordinates of spines, tails and heads', async ({
@@ -125,25 +150,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/three-different-multi-tail-arrows-expected.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/three-different-multi-tail-arrows-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-expected.ket',
+    await verifyFile(
       page,
+      'KET/three-different-multi-tail-arrows-expected.ket',
+      'tests/test-data/KET/three-different-multi-tail-arrows-expected.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that 3 different Multi-Tailed Arrows with different elements can be saved together to .ket file with the correct coordinates of spines, tails and heads', async ({
@@ -159,25 +170,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/three-different-multi-tail-arrows-with-elements-expected.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/three-different-multi-tail-arrows-with-elements-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/three-different-multi-tail-arrows-with-elements-expected.ket',
+    await verifyFile(
       page,
+      'KET/three-different-multi-tail-arrows-with-elements-expected.ket',
+      'tests/test-data/KET/three-different-multi-tail-arrows-with-elements-expected.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that Multi-Tailed Arrows with different elements together can be added to selected place on Canvas from 2 different .ket files', async ({
@@ -199,25 +196,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
     await page.mouse.click(200, 300);
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/multi-tailed-arrows-from-two-different-files-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
+    await verifyFile(
       page,
+      'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-from-two-different-files-expected.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file', async ({
@@ -233,25 +216,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+    await verifyFile(
       page,
+      'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.5, tail - 0.4, head - 0.5), its a minimal size', async ({
@@ -666,8 +635,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+c');
+    });
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
     await waitForRender(page, async () => {
       await page.mouse.click(300, 350);
     });
@@ -688,8 +661,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+x');
-    await page.keyboard.press('Control+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+x');
+    });
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
     await page.mouse.click(300, 350);
     await takeEditorScreenshot(page);
   });
@@ -707,8 +684,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+c');
+    });
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
     await waitForRender(page, async () => {
       await page.mouse.click(300, 350);
     });
@@ -728,8 +709,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+x');
-    await page.keyboard.press('Control+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+x');
+    });
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
     await page.mouse.click(300, 350);
     await takeEditorScreenshot(page);
   });
@@ -783,25 +768,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await page.mouse.click(500, 600);
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/reaction-arrow-multitail-to-compare.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/reaction-arrow-multitail-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/reaction-arrow-multitail-to-compare.ket',
+    await verifyFile(
       page,
+      'KET/reaction-arrow-multitail-to-compare.ket',
+      'tests/test-data/KET/reaction-arrow-multitail-to-compare.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas one by one using "Multi-Tailed Arrow Tool"', async ({
@@ -821,25 +792,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.mouse.click(500, 600);
     await page.mouse.click(700, 500);
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/three-reaction-arrow-multitail-to-compare.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/three-reaction-arrow-multitail-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/three-reaction-arrow-multitail-to-compare.ket',
+    await verifyFile(
       page,
+      'KET/three-reaction-arrow-multitail-to-compare.ket',
+      'tests/test-data/KET/three-reaction-arrow-multitail-to-compare.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different places on Canvas (with previously added elements)', async ({
@@ -863,25 +820,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.mouse.click(500, 600);
     await page.mouse.click(700, 500);
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+    await verifyFile(
       page,
+      'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+      'tests/test-data/KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Verify that Copy/Paste actions for Multi-Tailed Arrows loaded from KET can be Undo/Redo when other elements are on Canvas', async ({
@@ -897,7 +840,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+c');
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -922,7 +867,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+x');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+x');
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -939,7 +886,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   }) => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/5055
-     * Description: Copy-Paste (Ctrl+C, Ctrl+V) and Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool
+     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for default Multi-Tailed Arrow added by Tool
      */
     await selectDropdownTool(
       page,
@@ -949,7 +896,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.mouse.click(500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+c');
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -976,7 +925,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.mouse.click(500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+x');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+x');
+    });
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -1041,21 +992,59 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     await setupElementsAndModifyMultiTailArrow(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/modified-multitail-arrow-expected.ket', expectedFile);
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/modified-multitail-arrow-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/modified-multitail-arrow-expected.ket',
+    await verifyFile(
       page,
+      'KET/modified-multitail-arrow-expected.ket',
+      'tests/test-data/KET/modified-multitail-arrow-expected.ket',
     );
+  });
+
+  test('Multi-Tailed Arrows with elements can be saved to KET format after following actions: changing size and positions of added tails, add/remove tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5055
+    Description: Multi-Tailed Arrows with elements can be saved to KET format after following actions: changing size and positions of 
+    added tails, add/remove tails, deletion of arrow/element.
+    */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(500, 600);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 400);
+    await selectRectangleSelectionTool(page);
+    await addNewTail(page);
+    await page.mouse.click(500, 600);
+    await page.getByTestId('tails-0-resize').hover({ force: true });
+    await dragMouseTo(200, 600, page);
+    await page.getByTestId('tails-0-move').hover({ force: true });
+    await dragMouseTo(500, 500, page);
+    /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
+    await page.mouse.click(500, 600);
+    await addNewTail(page);
+    /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
+    await page.mouse.click(500, 600);
+    await addNewTail(page);
     await takeEditorScreenshot(page);
+    await removeTail(page, 'tails-1-move');
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    /* Here we erase multi-tailed arrow */
+    await page.mouse.click(500, 600);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(500, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/modified-multitail-arrow-with-added-tails-expected.ket',
+      'tests/test-data/KET/modified-multitail-arrow-with-added-tails-expected.ket',
+    );
   });
 });

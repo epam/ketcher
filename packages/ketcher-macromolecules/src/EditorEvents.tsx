@@ -169,6 +169,11 @@ export const EditorEvents = () => {
   const handleOpenPreview = useCallback(
     (e) => {
       const polymerBond = e.target.__data__?.polymerBond;
+
+      if (polymerBond && !polymerBond.finished) {
+        return;
+      }
+
       if (polymerBond) {
         const style = calculateBondPreviewPosition(
           polymerBond,

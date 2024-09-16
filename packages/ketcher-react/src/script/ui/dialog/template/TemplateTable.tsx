@@ -100,6 +100,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             <StructRender
               struct={tmpl.struct}
               className={classes.struct}
+              fullsize={true}
               options={{
                 ...renderOptions,
                 autoScaleMargin: 10,

@@ -110,6 +110,18 @@ async function verifyFile(
   await takeEditorScreenshot(page);
 }
 
+async function hoverOverArrowSpine(page: Page, index = 0) {
+  const headMove = await page.getByTestId('head-move').nth(index);
+  const boundingBox = await headMove.boundingBox();
+
+  if (boundingBox) {
+    const x = boundingBox.x + boundingBox.width / 2;
+    const y = boundingBox.y + boundingBox.height / 2;
+
+    await page.mouse.move(x - 5, y);
+  }
+}
+
 test.describe('Multi-Tailed Arrow Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -1046,5 +1058,66 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/modified-multitail-arrow-with-added-tails-expected.ket',
       'tests/test-data/KET/modified-multitail-arrow-with-added-tails-expected.ket',
     );
+  });
+
+  test('Verify that loaded from KET Multi-Tailed Arrow with five tails and spine length = 1.4 can can be selected and moved to another place on Canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Loaded from KET Multi-Tailed Arrow with five tails and spine length = 1.4 can can be selected and moved to 
+    another place on Canvas with correct size and position of spine, tails and head.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await page.mouse.click(640, 350);
+    await dragMouseTo(300, 100, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that 3 Multi-Tailed Arrows with default size can be added to different selected places on Canvas one by one using "Multi-Tailed Arrow Tool" button', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different selected places on 
+    Canvas one by one using "Multi-Tailed Arrow Tool" button and can be selected and moved to another places on Canvas with correct sizes 
+    and positions of spines, tails and heads.
+    */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(200, 200);
+    await page.mouse.click(400, 400);
+    await page.mouse.click(600, 600);
+    await takeEditorScreenshot(page);
+    await selectRectangleSelectionTool(page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
+    await waitForRender(page, async () => {
+      await hoverOverArrowSpine(page, 0);
+    });
+    await dragMouseTo(400, 200, page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(400, 400);
+    });
+    await waitForRender(page, async () => {
+      await hoverOverArrowSpine(page, 1);
+    });
+    await dragMouseTo(600, 400, page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(600, 600);
+    });
+    await waitForRender(page, async () => {
+      await hoverOverArrowSpine(page, 2);
+    });
+    await dragMouseTo(800, 600, page);
+    await takeEditorScreenshot(page);
   });
 });

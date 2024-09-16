@@ -456,7 +456,6 @@ export class RenderersManager {
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
-    console.log('jere');
     const bondRenderer = new MonomerToAtomBondRenderer(bond);
     bondRenderer.show();
   }

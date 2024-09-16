@@ -33,7 +33,6 @@ export class BondRenderer extends BaseRenderer {
 
   show() {
     if (this.bond.type === 2) {
-      console.log('Macro');
       const linesOffset = 6 / 2;
       const shift = -1;
       const angle = Vec2.angle(
@@ -76,12 +75,12 @@ export class BondRenderer extends BaseRenderer {
       //   directionVector,
       //   -3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
       // );
-      console.log('Start', Math.cos(angle), Math.sin(angle));
+      // console.log('Start', Math.cos(angle), Math.sin(angle));
       rightLineStartPosition = rightLineStartPosition.addScaled(
         directionVector,
         3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
       );
-      console.log('End', Math.cos(angle), Math.sin(angle));
+      // console.log('End', Math.cos(angle), Math.sin(angle));
 
       rightLineEndPosition = rightLineEndPosition.addScaled(
         directionVector,

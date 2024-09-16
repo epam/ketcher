@@ -142,8 +142,16 @@ export class DrawingEntitiesManager {
     return [
       ...(this.monomers as Map<number, DrawingEntity>),
       ...(this.polymerBonds as Map<number, DrawingEntity>),
+      ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
       ...(this.bonds as Map<number, DrawingEntity>),
       ...(this.atoms as Map<number, DrawingEntity>),
+    ];
+  }
+
+  public get allBondsToMonomers() {
+    return [
+      ...(this.polymerBonds as Map<number, DrawingEntity>),
+      ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
     ];
   }
 
@@ -1932,17 +1940,25 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addAtomChangeModel(position: Vec2, monomer: BaseMonomer) {
-    const atom = new Atom(position, monomer);
+  private addAtomChangeModel(
+    position: Vec2,
+    monomer: BaseMonomer,
+    atomIdInMicroMode: number,
+  ) {
+    const atom = new Atom(position, monomer, atomIdInMicroMode);
     this.atoms.set(atom.id, atom);
     return atom;
   }
 
-  public addAtom(position: Vec2, monomer: BaseMonomer) {
+  public addAtom(
+    position: Vec2,
+    monomer: BaseMonomer,
+    atomIdInMicroMode: number,
+  ) {
     const command = new Command();
     const atomAddOperation = new AtomAddOperation(
-      this.addAtomChangeModel.bind(this, position, monomer),
-      this.addAtomChangeModel.bind(this, position, monomer),
+      this.addAtomChangeModel.bind(this, position, monomer, atomIdInMicroMode),
+      this.addAtomChangeModel.bind(this, position, monomer, atomIdInMicroMode),
     );
     command.addOperation(atomAddOperation);
     return command;

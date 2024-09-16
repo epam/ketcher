@@ -8,6 +8,7 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  FlexMode,
   LayoutMode,
   modesMap,
   SequenceMode,
@@ -96,7 +97,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = new FlexMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);

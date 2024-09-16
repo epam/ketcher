@@ -65,6 +65,8 @@ if (enablePolymerEditor) {
   PolymerEditor = Editor as PolymerType;
 }
 
+let alreadySwitched = 0;
+
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
@@ -76,9 +78,41 @@ const App = () => {
     window.isPolymerEditorTurnedOn = toggleValue;
   };
 
-  setTimeout(() => {
-    ketcher.setMode('flex');
-    ketcher.setMolecule(`{
+  const togglerComponent = enablePolymerEditor ? (
+    <ModeControl
+      toggle={togglePolymerEditor}
+      isPolymerEditor={showPolymerEditor}
+    />
+  ) : undefined;
+
+  return showPolymerEditor ? (
+    <>
+      <PolymerEditor togglerComponent={togglerComponent} />
+    </>
+  ) : (
+    <StrictMode>
+      <Editor
+        errorHandler={(message: string) => {
+          setHasError(true);
+          setErrorMessage(message.toString());
+        }}
+        buttons={hiddenButtonsConfig}
+        staticResourcesUrl={process.env.PUBLIC_URL}
+        structServiceProvider={structServiceProvider}
+        onInit={(ketcher: Ketcher) => {
+          window.ketcher = ketcher;
+
+          window.parent.postMessage(
+            {
+              eventType: 'init',
+            },
+            '*',
+          );
+          alreadySwitched++;
+          // ketcher.setMode('flex');
+          if (alreadySwitched === 2) {
+            // setTimeout(() => {
+            ketcher.setMolecule(`{
     "root": {
         "nodes": [
             {
@@ -336,40 +370,10 @@ const App = () => {
         "naturalAnalogShort": "A"
     }
 }`);
+            togglePolymerEditor(true);
 
-    togglePolymerEditor(true);
-  }, 10);
-
-  const togglerComponent = enablePolymerEditor ? (
-    <ModeControl
-      toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
-    />
-  ) : undefined;
-
-  return showPolymerEditor ? (
-    <>
-      <PolymerEditor togglerComponent={togglerComponent} />
-    </>
-  ) : (
-    <StrictMode>
-      <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
-        }}
-        buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
-
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
+            // }, 10)
+          }
         }}
         togglerComponent={togglerComponent}
       />

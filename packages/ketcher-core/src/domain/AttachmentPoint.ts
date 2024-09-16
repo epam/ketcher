@@ -12,6 +12,7 @@ import {
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class AttachmentPoint {
   static attachmentPointVector = 6;
@@ -234,7 +235,11 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const flip = this.monomer.id === polymerBond?.firstMonomer?.id;
+    const firstMonomer =
+      polymerBond instanceof MonomerToAtomBond
+        ? polymerBond.monomer
+        : polymerBond?.firstMonomer;
+    const flip = this.monomer.id === firstMonomer?.id;
     const isAttachmentpointR1 = this.attachmentPointName === 'R1';
     if (!polymerBond) {
       angleDegrees = this.initialAngle;

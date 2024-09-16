@@ -31,7 +31,11 @@ import {
   resetZoomLevelToDefault,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
+import {
+  closeErrorMessage,
+  closeOpenStructure,
+  pageReload,
+} from '@utils/common/helpers';
 import {
   chooseTab,
   enterSequence,
@@ -1116,7 +1120,7 @@ async function loadIDTFromClipboard(page: Page, idtString: string) {
     async () => await page.getByTestId('add-to-canvas-button').click(),
   );
 }
-interface IDTString {
+interface IIDTString {
   idtDescription: string;
   IDTString: string;
   // Set shouldFail to true if you expect test to work wrong because of existed bug and put issues link to issueNumber
@@ -1127,7 +1131,7 @@ interface IDTString {
   pageReloadNeeded?: boolean;
 }
 
-const correctIDTStrings: IDTString[] = [
+const correctIDTStrings: IIDTString[] = [
   {
     idtDescription:
       '1. DNA with standard mixed base (R) designated using a capital IUB (International Union of Biochemistry) code',
@@ -1467,6 +1471,121 @@ test.describe('Import correct IDT sequence: ', () => {
       test.fixme(
         correctIDTString.shouldFail === true,
         `That test fails because of ${correctIDTString.issueNumber} issue.`,
+      );
+    });
+  }
+});
+
+const incorrectIDTStrings: IIDTString[] = [
+  {
+    idtDescription: '1. Sum of percent is less 100',
+    IDTString: '(Y:00300060)',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2328',
+  },
+  {
+    idtDescription:
+      '2. Percent for non inscluded base (G) (but included base percents are present)',
+    IDTString: '(Y:00333334)',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2329',
+  },
+  {
+    idtDescription:
+      '3. Zeroes for included bases but non zeroes for non included',
+    IDTString: '(R:00330067)',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/Indigo/issues/2328, https://github.com/epam/Indigo/issues/2329',
+  },
+  {
+    idtDescription: '4. Less digits than needed',
+    IDTString: '(Y:0033006)',
+  },
+  {
+    idtDescription: '5. One digit replaced with char',
+    IDTString: '(Y:003300a6)',
+  },
+  {
+    idtDescription: '6. Wrong IUBcode',
+    IDTString: '(Z:00330067)',
+  },
+  {
+    idtDescription: '7. Doubled IUBcode',
+    IDTString: '(YY:00330067)',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2331',
+  },
+  {
+    idtDescription: '8. Digit as IUBcode',
+    IDTString: '(9:00330067)',
+  },
+  {
+    idtDescription: '9. No percentages',
+    IDTString: '(Y:)',
+  },
+  {
+    idtDescription: '10. No IUBcode',
+    IDTString: '(:00330067)',
+  },
+  {
+    idtDescription: '11. Semicolumns replaced with comma',
+    IDTString: '(Y,00330067)',
+  },
+  {
+    idtDescription: '12. Y used before definition',
+    IDTString: '(Y)A(Y:00670033)',
+  },
+  {
+    idtDescription: '13. Y defined twice',
+    IDTString: '(Y:00330067)A(Y:00670033)',
+  },
+  {
+    idtDescription: '14. Index out of range (allowed range - 1-4)',
+    IDTString: '(B5:00653005)',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2381',
+  },
+  {
+    idtDescription: '15. Index out of range (allowed range - 1-4)',
+    IDTString: '(B0:00653005)',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/Indigo/issues/2381',
+  },
+];
+
+test.describe('Import incorrect IDT sequence: ', () => {
+  for (const incorrectIDTString of incorrectIDTStrings) {
+    test(`${incorrectIDTString.idtDescription}`, async () => {
+      /* 
+      Test case: https://github.com/epam/ketcher/issues/5505
+      Description: Load INCORRECT IDT sequences and compare canvas (with error message) with the template
+      Case:
+        1. Load icorrect IDT
+        2. Get error message
+        3. Take screenshot to compare it with example
+      */
+      test.setTimeout(20000);
+      if (incorrectIDTString.pageReloadNeeded) await pageReload(page);
+
+      await loadIDTFromClipboard(page, incorrectIDTString.IDTString);
+      await takeEditorScreenshot(page);
+
+      // if Error Message is not found - that means that error message didn't appear.
+      // That shoul be considered as bug in that case
+      const errorMessage = page.getByText('Error message', {
+        exact: true,
+      });
+
+      if (await errorMessage.isVisible()) {
+        await closeErrorMessage(page);
+        await closeOpenStructure(page);
+      }
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        incorrectIDTString.shouldFail === true,
+        `That test fails or works wrong because of ${incorrectIDTString.issueNumber} issue.`,
       );
     });
   }

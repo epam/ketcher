@@ -99,7 +99,7 @@ export class Bond extends BaseMicromoleculeEntity {
   end: number;
   readonly type: number;
   readonly xxx: string;
-  readonly stereo: number;
+  stereo: number;
   readonly topology: number | null;
   readonly reactingCenterStatus: number | null;
   customQuery: string | null;
@@ -321,6 +321,14 @@ export class Bond extends BaseMicromoleculeEntity {
       struct.atoms.get(this.begin)?.sgs || new Pile();
     const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
+  }
+
+  changeDirection() {
+    if (this.stereo === Bond.PATTERN.STEREO.UP) {
+      this.stereo = Bond.PATTERN.STEREO.DOWN;
+    } else if (this.stereo === Bond.PATTERN.STEREO.DOWN) {
+      this.stereo = Bond.PATTERN.STEREO.UP;
+    }
   }
 
   public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {

@@ -270,7 +270,7 @@ export function fromBondsMerge(
   return action;
 }
 
-function fromBondFlipping(restruct: ReStruct, id: number): Action {
+export function fromBondFlipping(restruct: ReStruct, id: number): Action {
   const bond = restruct.molecule.bonds.get(id);
 
   const action = new Action();

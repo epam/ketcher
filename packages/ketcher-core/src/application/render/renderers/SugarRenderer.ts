@@ -3,6 +3,7 @@ import { Sugar } from 'domain/entities/Sugar';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 const SUGAR_SELECTED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].selected;
@@ -19,6 +20,14 @@ export class SugarRenderer extends BaseMonomerRenderer {
       SUGAR_SYMBOL_ELEMENT_ID,
       scale,
     );
+  }
+
+  public get textColor() {
+    return '#fff';
+  }
+
+  protected getMonomerColor(theme) {
+    return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA].regular;
   }
 
   protected appendBody(

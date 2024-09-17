@@ -99,7 +99,7 @@ export class Bond extends BaseMicromoleculeEntity {
   end: number;
   readonly type: number;
   readonly xxx: string;
-  readonly stereo: number;
+  stereo: number;
   readonly topology: number | null;
   readonly reactingCenterStatus: number | null;
   customQuery: string | null;

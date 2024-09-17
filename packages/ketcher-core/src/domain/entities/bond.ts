@@ -323,14 +323,6 @@ export class Bond extends BaseMicromoleculeEntity {
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
 
-  changeDirection() {
-    if (this.stereo === Bond.PATTERN.STEREO.UP) {
-      this.stereo = Bond.PATTERN.STEREO.DOWN;
-    } else if (this.stereo === Bond.PATTERN.STEREO.DOWN) {
-      this.stereo = Bond.PATTERN.STEREO.UP;
-    }
-  }
-
   public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);

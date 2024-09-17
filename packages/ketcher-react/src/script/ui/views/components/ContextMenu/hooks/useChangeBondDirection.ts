@@ -1,4 +1,5 @@
 import { useAppContext } from 'src/hooks';
+import { fromBondFlipping } from 'ketcher-core';
 
 export const useChangeBondDirection = (props) => {
   const { getKetcherInstance } = useAppContext();
@@ -14,13 +15,9 @@ export const useChangeBondDirection = (props) => {
     const bond = molecule.bonds.get(bondId);
     if (!bond) return;
 
-    const atomBegin = bond.begin;
-    const atomEnd = bond.end;
+    const action = fromBondFlipping(editor?.render.ctab, bondId);
 
-    bond.begin = atomEnd;
-    bond.end = atomBegin;
-
-    editor.update(true);
+    editor.update(action);
   };
 
   return { changeDirection };

@@ -210,8 +210,8 @@ export function getOptionsWithConvertedUnits(
   }
 
   if (
-    typeof options.bondSpacing !== 'undefined' &&
-    typeof options.bondLength !== 'undefined'
+    typeof options.bondLength !== 'undefined' &&
+    typeof options.bondLengthUnit !== 'undefined'
   ) {
     convertedOptions.microModeScale = convertValue(
       options.bondLength,

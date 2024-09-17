@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType, Struct } from 'ketcher-core';
@@ -56,6 +56,10 @@ describe('Test Rna Accordion component', () => {
     const peptidesSummary = screen.getByTestId('summary-Phosphates');
 
     expect(peptidesSummary).toHaveTextContent('Phosphates (1)');
+
+    act(() => {
+      peptidesSummary.click();
+    });
 
     const monomerCard = screen.getByTestId(
       getMonomerUniqueKey(monomerData as MonomerItemType),

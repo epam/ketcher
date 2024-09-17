@@ -6,6 +6,7 @@ import {
   cutAndPaste,
   dragMouseTo,
   LeftPanelButton,
+  moveOnAtom,
   openDropdown,
   openFile,
   openFileAndAddToCanvas,
@@ -110,7 +111,11 @@ async function verifyFile(
   await takeEditorScreenshot(page);
 }
 
-async function hoverOverArrowSpine(page: Page, index = 0) {
+async function hoverOverArrowSpine(
+  page: Page,
+  index = 0,
+  clickType?: 'left' | 'right',
+) {
   const headMove = await page.getByTestId('head-move').nth(index);
   const boundingBox = await headMove.boundingBox();
 
@@ -119,7 +124,27 @@ async function hoverOverArrowSpine(page: Page, index = 0) {
     const y = boundingBox.y + boundingBox.height / 2;
 
     await page.mouse.move(x - 5, y);
+
+    if (clickType === 'right') {
+      await page.mouse.click(x - 5, y, { button: 'right' });
+    } else if (clickType === 'left') {
+      await page.mouse.click(x - 5, y, { button: 'left' });
+    }
   }
+}
+
+async function addTails(page: Page, count: number) {
+  for (let i = 0; i < count; i++) {
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Add new tail').click();
+  }
+}
+
+async function addTailToArrow(page: Page, arrowIndex: number) {
+  await page.mouse.click(200, 200);
+  await selectPartOfMolecules(page);
+  await hoverOverArrowSpine(page, arrowIndex, 'right');
+  await page.getByText('Add new tail').click();
 }
 
 test.describe('Multi-Tailed Arrow Tool', () => {
@@ -1119,5 +1144,242 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
     await dragMouseTo(800, 600, page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Verify that 3 Multi-Tailed Arrows with default size can be selected and moved together with elements and separately to other places on Canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) can be added to different selected places on 
+    Canvas (with previously added elements) one by one using "Multi-Tailed Arrow Tool" button and they can be selected and moved together with 
+    elements and separately to other places on Canvas with correct sizes and positions.
+    */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(200, 200);
+    await page.mouse.click(800, 200);
+    await page.mouse.click(800, 300);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+    await selectRectangleSelectionTool(page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
+    await waitForRender(page, async () => {
+      await hoverOverArrowSpine(page, 0);
+    });
+    await dragMouseTo(250, 250, page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(600, 250, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from .ket file 3 different Multi-Tailed Arrows with elements can be selected and moved together with elements and separately to other places on Canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Loaded from .ket file and added to selected place on Canvas 3 different Multi-Tailed Arrows with elements can be selected and 
+    moved together with elements and separately to other places on Canvas with correct sizes and positions.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(600, 250, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that movement actions can be Undo/Redo for loaded from KET Multi-Tailed Arrows on Canvas with other elements', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Movement actions can be Undo/Redo for loaded from KET Multi-Tailed Arrows on Canvas with other elements.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-different-multi-tail-arrows-with-elements.ket',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(600, 250, page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that movement actions can be Undo/Redo for added by Tool Multi-Tailed Arrows on Canvas with other elements', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4898
+    Description: Movement actions can be Undo/Redo for added by Tool Multi-Tailed Arrows on Canvas with other elements.
+    */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(200, 200);
+    await page.mouse.click(800, 200);
+    await page.mouse.click(800, 300);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+    await selectRectangleSelectionTool(page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
+    await waitForRender(page, async () => {
+      await hoverOverArrowSpine(page, 0);
+    });
+    await dragMouseTo(250, 250, page);
+    await selectPartOfMolecules(page);
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(600, 250, page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Load from KET Multi-Tailed Arrow with two tails and  0.5 < spine length < 0.7, verify that a tail can not be added using "Add new tail" option in menu', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with two tails and  0.5 < spine length < 0.7, a tail can't be added using "Add new tail" option 
+    in menu, "Add new tail" option is disabled when right-clicking on tail/head/spine.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-spine-0.69.ket',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Load from KET Multi-Tailed Arrow with two tails and spine length = 0.7, verify that only one tail to the middle can be added using "Add new tail"', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with two tails and spine length = 0.7, only one tail to the middle can be 
+    added using "Add new tail" option in menu, after that "Add new tail" option is disabled when right-clicking on tails/head/spine, 
+    after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-spine-0.7.ket',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Add new tail').click();
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-spine-0.7-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-spine-0.7-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with two tails and  0.7 < spine length < 1.4, verify that only one tail to the middle can be added using "Add new tail"', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with two tails and  0.7 < spine length < 1.4, only one tail to the middle can be 
+    added using "Add new tail" option in menu, after that "Add new tail" option is disabled when right-clicking on tails/head/spine, 
+    after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-spine-1.39.ket',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Add new tail').click();
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-spine-1.39-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-spine-1.39-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with two tails and spine length = 1.4, verify that 3 tails can be added using "Add new tail"', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with two tails and spine length = 1.4, verify that 3 tails (the first to the middle, second to the top half, 
+    the third to the bottom half) can be added using "Add new tail" option in menu, after that "Add new tail" option is disabled when right-clicking on tails/head/spine, 
+    after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-spine-1.4.ket',
+      page,
+    );
+    for (let i = 0; i < 3; i++) {
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await page.getByText('Add new tail').click();
+    }
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-spine-1.4-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-spine-1.4-expected.ket',
+    );
+  });
+
+  test('Load from KET 3 different Multi-Tailed Arrows, verify that tails can be added to each Multi-Tailed Arrow, after that they can be saved to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET 3 different Multi-Tailed Arrows (small with two tails, medium with 4 tails, large with 3 tails), verify that tails 
+    (3 to small, 1 to medium, 6 to large) can be added to each Multi-Tailed Arrow, after that they can be saved to KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await addTails(page, 6);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await addTailToArrow(page, 0);
+    await addTailToArrow(page, 2);
+    await addTailToArrow(page, 2);
+    await hoverOverArrowSpine(page, 2, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-expected.ket',
+    );
   });
 });

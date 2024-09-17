@@ -77,8 +77,11 @@ async function openSaveToHELMDialog(page: Page) {
 interface IHELMString {
   helmDescription: string;
   HELMString: string;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
+  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
   pageReloadNeeded?: boolean;
   // Some times export result is different to import string
   differentHELMExport?: string;

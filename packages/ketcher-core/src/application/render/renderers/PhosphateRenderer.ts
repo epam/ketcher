@@ -3,6 +3,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 const PHOSPHATE_SELECTED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Phosphate].selected;
@@ -18,6 +19,10 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       PHOSPHATE_SYMBOL_ELEMENT_ID,
       scale,
     );
+  }
+
+  protected getMonomerColor(theme) {
+    return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.PHOSPHATE].regular;
   }
 
   protected appendBody(

@@ -34,3 +34,23 @@ export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;
 export const STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT =
   'struct-service-no-render-initialized';
 export const STRUCT_SERVICE_INITIALIZED_EVENT = 'struct-service-initialized';
+export const ACS_STYLE_DEFAULT_SETTINGS = {
+  atomColoring: false,
+  font: '30px Arial',
+  fontsz: 10,
+  fontszUnit: 'pt',
+  fontszsub: 10,
+  fontszsubUnit: 'pt',
+  reactionComponentMarginSize: 1.6,
+  reactionComponentMarginSizeUnit: 'pt',
+  imageResolution: '600',
+  bondLength: 14.4,
+  bondLengthUnit: 'pt',
+  bondSpacing: 18,
+  bondThickness: 0.6,
+  bondThicknessUnit: 'pt',
+  stereoBondWidth: 2,
+  stereoBondWidthUnit: 'pt',
+  hashSpacing: 2.5,
+  hashSpacingUnit: 'pt',
+};

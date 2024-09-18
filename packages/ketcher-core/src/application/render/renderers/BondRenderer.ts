@@ -10,6 +10,7 @@ import { getBondLineShift } from 'application/render/restruct/rebond';
 export class BondRenderer extends BaseRenderer {
   constructor(public bond: Bond) {
     super(bond);
+    bond.setRenderer(this);
   }
 
   private get scaledPosition() {
@@ -34,58 +35,85 @@ export class BondRenderer extends BaseRenderer {
   show() {
     if (this.bond.type === 2) {
       const linesOffset = 6 / 2;
-      const shift = -1;
-      const angle = Vec2.angle(
-        this.scaledPosition.startPosition,
-        this.scaledPosition.endPosition,
+      const angleInRadians =
+        (Vec2.oxAngleForVector(
+          this.scaledPosition.startPosition,
+          this.scaledPosition.endPosition,
+        ) +
+          2 * Math.PI) %
+        (2 * Math.PI);
+      console.log('Current', angleInRadians * (180 / Math.PI));
+      let shift = 1;
+      [...this.bond.firstAtom.bonds, ...this.bond.secondAtom.bonds].forEach(
+        (bond) => {
+          if (bond === this.bond) {
+            return;
+          }
+          // console.log(bond, bond.renderer?.scaledPosition.startPosition, bond.renderer?.scaledPosition.endPosition)
+          const bondAngle =
+            (Vec2.oxAngleForVector(bond.startPosition, bond.endPosition) +
+              2 * Math.PI) %
+            (2 * Math.PI);
+          let angleBetweenBonds = bondAngle - angleInRadians;
+
+          if (angleBetweenBonds > Math.PI) {
+            angleBetweenBonds -= 2 * Math.PI;
+          } else if (angleBetweenBonds < -Math.PI) {
+            angleBetweenBonds += 2 * Math.PI;
+          }
+
+          console.log('Another', bondAngle * (180 / Math.PI));
+          console.log('Between', angleBetweenBonds * (180 / Math.PI));
+          console.log('angleBetweenBonds', angleBetweenBonds * (180 / Math.PI));
+          if (angleBetweenBonds > 0) {
+            shift = -1;
+          }
+        },
       );
-      const angleInRadians = (angle * Math.PI) / 180;
+
       const s1 = linesOffset + shift * linesOffset;
       const s2 = -linesOffset + shift * linesOffset;
-      const isLeftShorterThanRight = Math.cos(angleInRadians) < 0;
       const directionVector = Vec2.diff(
         this.scaledPosition.endPosition,
         this.scaledPosition.startPosition,
       ).normalized();
 
       const normalVector = directionVector.turnLeft();
-      let leftLineStartPosition = this.scaledPosition.startPosition.addScaled(
+      const leftLineStartPosition = this.scaledPosition.startPosition.addScaled(
         normalVector,
         s1,
       );
-      let leftLineEndPosition = this.scaledPosition.endPosition.addScaled(
+      const leftLineEndPosition = this.scaledPosition.endPosition.addScaled(
         normalVector,
         s1,
       );
-      let rightLineStartPosition = this.scaledPosition.startPosition.addScaled(
-        normalVector,
-        s2,
-      );
-      let rightLineEndPosition = this.scaledPosition.endPosition.addScaled(
+      const rightLineStartPosition =
+        this.scaledPosition.startPosition.addScaled(normalVector, s2);
+      const rightLineEndPosition = this.scaledPosition.endPosition.addScaled(
         normalVector,
         s2,
       );
 
       // leftLineStartPosition = leftLineStartPosition.addScaled(
       //   directionVector,
-      //   3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
+      //   3 * getBondLineShift(Math.cos(angleInRadians), Math.sin(angleInRadians)),
       // );
       //
       // leftLineEndPosition = leftLineEndPosition.addScaled(
       //   directionVector,
-      //   -3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
+      //   -3 * getBondLineShift(Math.cos(angleInRadians), Math.sin(angleInRadians)),
       // );
       // console.log('Start', Math.cos(angle), Math.sin(angle));
-      rightLineStartPosition = rightLineStartPosition.addScaled(
-        directionVector,
-        3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
-      );
+      // rightLineStartPosition = rightLineStartPosition.addScaled(
+      //   directionVector,
+      //   3 * getBondLineShift(Math.cos(angleInRadians), Math.sin(angleInRadians)),
+      // );
       // console.log('End', Math.cos(angle), Math.sin(angle));
-
-      rightLineEndPosition = rightLineEndPosition.addScaled(
-        directionVector,
-        -3 * getBondLineShift(Math.cos(angle), Math.sin(angle)),
-      );
+      //
+      // rightLineEndPosition = rightLineEndPosition.addScaled(
+      //   directionVector,
+      //   -3 * getBondLineShift(Math.cos(angleInRadians), Math.sin(angleInRadians)),
+      // );
 
       this.canvas
         .append('line')

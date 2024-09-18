@@ -1964,9 +1964,24 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addBondChangeModel(firstAtom: Atom, secondAtom: Atom, type: number) {
+  private addBondChangeModel(
+    firstAtom: Atom,
+    secondAtom: Atom,
+    type: number,
+    _bond?: Bond,
+  ) {
+    if (_bond) {
+      this.bonds.set(_bond.id, _bond);
+
+      return _bond;
+    }
+
     const bond = new Bond(firstAtom, secondAtom, type);
+
     this.bonds.set(bond.id, bond);
+    firstAtom.addBond(bond);
+    secondAtom.addBond(bond);
+
     return bond;
   }
 

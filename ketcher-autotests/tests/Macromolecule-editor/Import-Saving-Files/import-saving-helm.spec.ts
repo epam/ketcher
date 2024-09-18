@@ -374,7 +374,6 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '29. Wrong ratio token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
-    shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {
@@ -390,7 +389,6 @@ const incorrectHELMStrings: IHELMString[] = [
   {
     helmDescription: '32. Wrong ratio token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
-    shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2267',
   },
   {

@@ -1382,4 +1382,194 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'tests/test-data/KET/multi-tailed-arrows-3-expected.ket',
     );
   });
+
+  test('Load from KET 3 different Multi-Tailed Arrows with elements, verify that tails can be added to each Multi-Tailed Arrow, after that they can be saved to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET 3 different Multi-Tailed Arrows with elements (small with two tails, medium with 4 tails, large with 3 tails), verify that tails 
+    (3 to small, 1 to medium, 6 to large) can be added to each Multi-Tailed Arrow, after that they can be saved to KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3-with-elements.ket',
+      page,
+    );
+    await addTails(page, 6);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await addTailToArrow(page, 0);
+    await addTailToArrow(page, 2);
+    await addTailToArrow(page, 2);
+    await hoverOverArrowSpine(page, 2, 'right');
+    await expect(page.getByText('Add new tail')).toBeDisabled();
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-with-elements-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-with-elements-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with three tails and spine length = 0.7, verify that top and bottom tails can not be removed, only middle tail can be removed', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with three tails and spine length = 0.7, verify that top and bottom tails can't be removed, 
+    only middle tail can be removed using "Remove tail" option in menu after right-click on middle tail, after that "Remove tail" option isn't 
+    in menu and changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-3-tails-spine-0.7.ket',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await page
+      .getByTestId('bottomTail-resize')
+      .click({ force: true, button: 'right' });
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    await page
+      .getByTestId('topTail-resize')
+      .click({ force: true, button: 'right' });
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    await removeTail(page, 'tails-0-move');
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-2-tails-spine-0.7-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-2-tails-spine-0.7-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with five tails and spine length = 1.4, verify that top and bottom tails can not be removed, only 3 middle tails can be removed', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with five tails and spine length = 1.4, verify that top and bottom tails can't be removed, only 3 
+    middle tails can be removed using "Remove tail" option in menu after right-click on each tail, after that changed Multi-Tailed Arrow 
+    can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+    const tailIds = ['tails-0-move', 'tails-1-move', 'tails-2-move'];
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-5-tails-spine-1.4-new.ket',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await page
+      .getByTestId('bottomTail-resize')
+      .click({ force: true, button: 'right' });
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    await page
+      .getByTestId('topTail-resize')
+      .click({ force: true, button: 'right' });
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    await clickInTheMiddleOfTheScreen(page);
+    for (const tailId of tailIds) {
+      await clickInTheMiddleOfTheScreen(page);
+      await removeTail(page, tailId);
+    }
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-5-tails-spine-1.4-new-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-5-tails-spine-1.4-new-expected.ket',
+    );
+  });
+
+  test('Load from KET 3 different Multi-Tailed Arrows, verify that tails can be removed from each Multi-Tailed Arrow, after that they can be saved to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET 3 different Multi-Tailed Arrows (small with two tails, medium with 4 tails, large with 3 tails), 
+    verify that tails (0 from small, 2 from medium, 1 from large) can be removed from each Multi-Tailed Arrow, after that they can be saved to 
+    KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-resize');
+    await selectPartOfMolecules(page);
+    await removeTail(page, 'tails-0-resize');
+    await removeTail(page, 'tails-1-resize');
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-removed-tails-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-removed-tails-expected.ket',
+    );
+  });
+
+  test('Load from KET 3 different Multi-Tailed Arrows with elements, verify that tails can be removed from each Multi-Tailed Arrow, after that they can be saved to KET', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET 3 different Multi-Tailed Arrows with elements (small with two tails, medium with 4 tails, large with 3 tails), 
+    verify that tails (0 from small, 2 from medium, 1 from large) can be removed from each Multi-Tailed Arrow, after that they can be saved to 
+    KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-resize');
+    await selectPartOfMolecules(page);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with five tails and spine length = 2.1, verify that new tails can not be added and "Add new tail" option is disabled', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Load from KET Multi-Tailed Arrow with five tails and spine length = 2.1, verify that new tails can't be added and "Add new tail" option is 
+    disabled, after that remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails can be added using "Add new tail", after that 
+    changed Multi-Tailed Arrow with 6 tails can be saved to KET with the correct coordinates of spine, tails and head.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-5-tails-spine-2.1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 3; i++) {
+      await clickInTheMiddleOfTheScreen(page);
+      await hoverOverArrowSpine(page, 0, 'right');
+      await page.getByText('Add new tail').click();
+    }
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+    );
+  });
 });

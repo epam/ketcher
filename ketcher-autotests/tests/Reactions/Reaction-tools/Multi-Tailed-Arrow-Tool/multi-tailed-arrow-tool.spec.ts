@@ -1568,8 +1568,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
-      'KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
-      'tests/test-data/KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+      'KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
     );
   });
 });

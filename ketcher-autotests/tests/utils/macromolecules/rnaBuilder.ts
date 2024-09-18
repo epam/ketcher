@@ -78,7 +78,7 @@ export async function gotoRNA(page: Page) {
 }
 
 export async function toggleSugarsAccordion(page: Page) {
-  return await toggleAccordionItem(page, 'Sugars');
+  await toggleAccordionItem(page, 'Sugars');
 }
 
 export async function toggleBasesAccordion(page: Page) {

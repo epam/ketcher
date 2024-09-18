@@ -397,6 +397,7 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2339',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:

@@ -13,6 +13,7 @@ import { Peptide } from 'domain/entities/Peptide';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerItemType } from 'domain/types';
 import { mockFn } from 'jest-mock-extended';
+import { KetMonomerClass } from 'application/formatters';
 
 const mockAtoms = [
   {
@@ -757,6 +758,7 @@ export const peptideMonomerItem: MonomerItemType = {
     MonomerCode: '',
     MonomerName: '',
     MonomerType: 'PEPTIDE',
+    MonomerClass: KetMonomerClass.AminoAcid,
     Name: '',
     MonomerNaturalAnalogCode: 'A',
   },

@@ -157,6 +157,7 @@ export function getOptionsWithConvertedUnits(
       | 'bondSpacingInPx'
       | 'bondThicknessInPx'
       | 'stereoBondWidthInPx'
+      | 'microModeScale'
     >
   > = {};
   const defaultUnit = 'px';
@@ -204,6 +205,17 @@ export function getOptionsWithConvertedUnits(
     convertedOptions.stereoBondWidthInPx = convertValue(
       options.stereoBondWidth,
       options.stereoBondWidthUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
+
+  if (
+    typeof options.bondLength !== 'undefined' &&
+    typeof options.bondLengthUnit !== 'undefined'
+  ) {
+    convertedOptions.microModeScale = convertValue(
+      options.bondLength,
+      options.bondLengthUnit || defaultUnit,
       defaultUnit,
     );
   }

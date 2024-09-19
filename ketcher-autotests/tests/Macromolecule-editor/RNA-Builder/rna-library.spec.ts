@@ -41,11 +41,17 @@ import {
   pressNewPresetButton,
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
+  togglePhosphatesAccordion,
+  togglePresetsAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
-import { goToCHEMTab } from '@utils/macromolecules/library';
+import {
+  goToCHEMTab,
+  goToPeptidesTab,
+  goToRNATab,
+} from '@utils/macromolecules/library';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -1377,5 +1383,166 @@ test.describe('RNA Library', () => {
     await expect(page.getByTestId('cancel-btn')).toBeVisible();
 
     await page.getByTestId('cancel-btn').click();
+  });
+
+  enum MonomerLocationTabs {
+    PEPTIDES = 'Peptides',
+    PRESETS = 'Presets',
+    SUGARS = 'Sugars',
+    BASES = 'Bases',
+    PHOSPHATES = 'Phosphates',
+    NUCLEOTIDES = 'Nucleotides',
+    CHEM = 'CHEM',
+  }
+
+  interface IIDTSearchString {
+    testDescription: string;
+    IDTSeatchString: string;
+    // Location where searched monomer located (we have to go to that location to make sure it is where)
+    ResultMonomerLocationTab: MonomerLocationTabs;
+    // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+    shouldFail?: boolean;
+    // issueNumber is mandatory if shouldFail === true
+    issueNumber?: string;
+    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+    pageReloadNeeded?: boolean;
+  }
+
+  async function goToMonomerLocationTab(
+    page: Page,
+    monomerLocation: MonomerLocationTabs,
+  ) {
+    switch (monomerLocation) {
+      case 'Peptides':
+        await goToPeptidesTab(page);
+        break;
+      case 'Presets':
+        await goToRNATab(page);
+        // Presets tab openned by default
+        break;
+      case 'Sugars':
+        await goToRNATab(page);
+        await toggleSugarsAccordion(page);
+        break;
+      case 'Bases':
+        await goToRNATab(page);
+        await toggleBasesAccordion(page);
+        break;
+      case 'Phosphates':
+        await goToRNATab(page);
+        await togglePhosphatesAccordion(page);
+        break;
+      case 'Nucleotides':
+        await toggleNucleotidesAccordion(page);
+        break;
+      case 'CHEM':
+        await goToCHEMTab(page);
+        break;
+      default:
+        await goToRNATab(page);
+        break;
+    }
+  }
+
+  async function searchMonomerBuName(page: Page, monomerName: string) {
+    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
+    await rnaLibrarySearch.fill(monomerName);
+  }
+
+  const IDTSearchStrings: IIDTSearchString[] = [
+    {
+      testDescription: '1. Verify search by full IDT alias (5Br-dU)',
+      IDTSeatchString: '5Br-dU',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+    },
+    {
+      testDescription: '2. Verify search by part of IDT alias (itInd))',
+      IDTSeatchString: 'itInd',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+    },
+    {
+      testDescription: '3. Verify search with a single symbol /',
+      IDTSeatchString: '/',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+    },
+    {
+      testDescription:
+        '4. Verify search with a specific ending symbol before the second / (hos/)',
+      IDTSeatchString: 'hos/',
+      ResultMonomerLocationTab: MonomerLocationTabs.PHOSPHATES,
+    },
+    {
+      testDescription:
+        '5. Verify no results when additional symbols are added after the second / (Ind/Am)',
+      IDTSeatchString: 'Ind/Am',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+    },
+    {
+      testDescription:
+        '6. Verify case insensitivity of the search (/5SUPER-DT)',
+      IDTSeatchString: '/5SUPER-DT',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+    {
+      testDescription:
+        '7. Verify search returns multiple monomers with the same starting symbol (Super))',
+      IDTSeatchString: 'Super',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+    {
+      testDescription:
+        '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
+      IDTSeatchString: '/3',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+    {
+      testDescription:
+        '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
+      IDTSeatchString: '/5',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+    {
+      testDescription:
+        '10. Verify search returns multiple monomers that have internal modification (/i))',
+      IDTSeatchString: '/i',
+      ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5452',
+    },
+  ];
+
+  test.describe('Search by IDT alias: ', () => {
+    for (const IDTSearchString of IDTSearchStrings) {
+      test(`${IDTSearchString.testDescription}`, async ({ page }) => {
+        /* 
+    Test task: https://github.com/epam/ketcher/issues/5539
+    Verify search by full IDT alias 
+      Case:
+        1. Fill Search field with value
+        2. Switch to monomer's tab to see it
+        3. Take screenshot of the library to make sure search works
+    */
+        await searchMonomerBuName(page, IDTSearchString.IDTSeatchString);
+        await goToMonomerLocationTab(
+          page,
+          IDTSearchString.ResultMonomerLocationTab,
+        );
+        await takeMonomerLibraryScreenshot(page);
+
+        // Test should be skipped if related bug exists
+        test.fixme(
+          IDTSearchString.shouldFail === true,
+          `That test fails because of ${IDTSearchString.issueNumber} issue.`,
+        );
+      });
+    }
   });
 });

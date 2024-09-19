@@ -42,7 +42,6 @@ import {
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
-  togglePresetsAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';

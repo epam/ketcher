@@ -78,15 +78,20 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await page.mouse.click(100, 100);
 }
 
-async function addNewTail(page: Page) {
-  await page.mouse.click(500, 600, { button: 'right' });
+async function addTail(page: Page, x: number, y: number) {
+  await page.mouse.click(x, y, { button: 'right' });
   await waitForRender(page, async () => {
     await page.getByText('Add new tail').click();
   });
 }
 
-async function removeTail(page: Page, tailName: string) {
-  await page.getByTestId(tailName).click({ force: true, button: 'right' });
+async function removeTail(page: Page, tailName: string, index?: number) {
+  const tailElement = page.getByTestId(tailName);
+  if (index !== undefined) {
+    await tailElement.nth(index).click({ force: true, button: 'right' });
+  } else {
+    await tailElement.first().click({ force: true, button: 'right' });
+  }
   await waitForRender(page, async () => {
     await page.getByText('Remove tail').click();
   });
@@ -1053,7 +1058,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectRing(RingButton.Benzene, page);
     await page.mouse.click(200, 400);
     await selectRectangleSelectionTool(page);
-    await addNewTail(page);
+    await addTail(page, 500, 600);
     await page.mouse.click(500, 600);
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(200, 600, page);
@@ -1061,10 +1066,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 500, page);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
     await page.mouse.click(500, 600);
-    await addNewTail(page);
+    await addTail(page, 500, 600);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
     await page.mouse.click(500, 600);
-    await addNewTail(page);
+    await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
@@ -1571,5 +1576,370 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
     );
+  });
+
+  test('Verify that Undo/Redo actions can be performed for added from KET Multi-Tailed Arrow with two tails and spine length = 1.4 after adding/removing of tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Undo/Redo actions can be performed for added from KET Multi-Tailed Arrow with two tails and spine 
+    length = 1.4 after adding/removing of tails.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-2-tails-1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 3; i++) {
+      await clickInTheMiddleOfTheScreen(page);
+      await hoverOverArrowSpine(page, 0, 'right');
+      await page.getByText('Add new tail').click();
+    }
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Undo/Redo actions can be performed for added from KET 3 different Multi-Tailed Arrows on Canvas with elements after adding/removing of tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Undo/Redo actions can be performed for added from KET 3 different Multi-Tailed Arrows on Canvas with elements after 
+    adding/removing of tails.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-resize');
+    await selectPartOfMolecules(page);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) can be performed for loaded from KET 3 different Multi-Tailed Arrow after adding of tails and removing of tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for loaded from KET 
+    3 different Multi-Tailed Arrow after adding of tails and removing of tails with correct quantity of tails.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-resize');
+    await selectPartOfMolecules(page);
+    await removeTail(page, 'tails-0-resize');
+    await removeTail(page, 'tails-1-resize');
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) can be performed for loaded from KET 3 different Multi-Tailed Arrow after adding of tails and removing of tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5056
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for loaded from KET 
+    3 different Multi-Tailed Arrow after adding of tails and removing of tails with correct quantity of tails.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await removeTail(page, 'tails-0-resize');
+    await selectPartOfMolecules(page);
+    await removeTail(page, 'tails-0-resize');
+    await removeTail(page, 'tails-1-resize');
+    await takeEditorScreenshot(page);
+    await cutAndPaste(page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second and 3 to the third', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second
+     * and 3 to the third, verify that these 3 Multi-Tailed Arrows can be saved to KET with the correct coordinates of spines, tails and heads.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+    await page.mouse.click(500, 600);
+    await page.mouse.click(700, 500);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+
+    await addTail(page, 500, 600);
+    await addTail(page, 500, 600);
+
+    await addTail(page, 700, 500);
+    await addTail(page, 700, 500);
+    await addTail(page, 700, 500);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/three-reaction-arrow-with-added-tails-to-compare.ket',
+      'tests/test-data/KET/three-reaction-arrow-with-added-tails-to-compare.ket',
+    );
+  });
+
+  test('Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to first one, 2 tails to second and 3 to third', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Using "Multi-Tailed Arrow Tool" button, add 2 default Multi-Tailed Arrow to Canvas, add 3 tails to each arrow,
+     * remove 1 middle tail for the first and 2 tails for the second, verify that these 2 Multi-Tailed Arrows can be saved to KET
+     * with the correct coordinates of spines, tails and heads.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+    await page.mouse.click(500, 600);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+
+    await addTail(page, 500, 600);
+    await addTail(page, 500, 600);
+    await addTail(page, 500, 600);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(300, 400);
+    await removeTail(page, 'tails-0-move');
+
+    await page.mouse.click(500, 600);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move', 1);
+
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/two-reaction-arrow-with-removed-tails-to-compare.ket',
+      'tests/test-data/KET/two-reaction-arrow-with-removed-tails-to-compare.ket',
+    );
+  });
+
+  test('Using "Multi-Tailed Arrow Tool" button, add 1 default Multi-Tailed Arrow to Canvas, verify that 3 tails can be added using "Add new tail"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Using "Multi-Tailed Arrow Tool" button, add 1 default Multi-Tailed Arrow to Canvas, verify that 3 tails can be added using "Add new tail" (5 are in total),
+     *  remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails can be added using "Add new tail", after that changed Multi-Tailed Arrow
+     *  with 6 tails can be saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(300, 400);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/one-reaction-arrow-with-six-tails-to-compare.ket',
+      'tests/test-data/KET/one-reaction-arrow-with-six-tails-to-compare.ket',
+    );
+  });
+
+  test('Verify that Undo/Redo actions can be performed for added by Tool 1 default Multi-Tailed Arrow with two tails after adding/removing of tails', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Undo/Redo actions can be performed for added by Tool 1 default Multi-Tailed Arrow with two tails after adding/removing of tails.
+     * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
+     * A bug has been logged: https://github.com/epam/ketcher/issues/5548
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(300, 400);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Undo/Redo actions can be performed for added by Tool 3 default Multi-Tailed Arrows after adding/removing of tails', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Verify that Undo/Redo actions can be performed for added by Tool 3 default Multi-Tailed Arrows after adding/removing of tails.
+     * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
+     * A bug has been logged: https://github.com/epam/ketcher/issues/5548
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+    await page.mouse.click(500, 600);
+    await page.mouse.click(700, 500);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+
+    await addTail(page, 500, 600);
+    await addTail(page, 500, 600);
+
+    await addTail(page, 700, 500);
+    await addTail(page, 700, 500);
+    await addTail(page, 700, 500);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(700, 500);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow after adding of tails and removing of tails', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow
+     * after adding of tails and removing of tails with correct quantity of tails.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(300, 400);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+
+    await copyAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow after adding of tails and removing of tails', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5056
+     * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for added by Tool default Multi-Tailed Arrow
+     * after adding of tails and removing of tails with correct quantity of tails.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await page.mouse.click(300, 400);
+
+    await selectRectangleSelectionTool(page);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await addTail(page, 300, 400);
+    await takeEditorScreenshot(page);
+
+    await page.mouse.click(300, 400);
+    await removeTail(page, 'tails-0-move');
+    await removeTail(page, 'tails-1-move');
+    await takeEditorScreenshot(page);
+
+    await cutAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
   });
 });

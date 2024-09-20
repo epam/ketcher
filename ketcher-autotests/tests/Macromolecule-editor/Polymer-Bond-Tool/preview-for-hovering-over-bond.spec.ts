@@ -122,7 +122,8 @@ test(
             2. Take screenshot of the canvas to compare it with example
         
         IMPORTANT: Some tooltips are wrong because of bugs: 
-        https://github.com/epam/ketcher/issues/5407, 
+        https://github.com/epam/ketcher/issues/5407,
+        https://github.com/epam/ketcher/issues/5557, 
         Will require to update screens after fix
         */
 

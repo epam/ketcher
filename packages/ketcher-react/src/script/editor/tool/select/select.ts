@@ -13,56 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
-  SGroup,
+  CoordinateTransformation,
+  fromImageResize,
   fromItemsFuse,
   fromMultipleMove,
+  fromSimpleObjectResizing,
   fromTextDeletion,
   fromTextUpdating,
-  getHoverToFuse,
   FunctionalGroup,
-  fromSimpleObjectResizing,
-  ReStruct,
-  ReSGroup,
-  Vec2,
-  Atom,
-  Bond,
+  getHoverToFuse,
   getItemsToFuse,
-  vectorUtils,
-  KetcherLogger,
-  CoordinateTransformation,
   IMAGE_KEY,
-  fromImageResize,
+  KetcherLogger,
   MULTITAIL_ARROW_KEY,
+  ReSGroup,
+  ReStruct,
+  SGroup,
+  Vec2,
+  vectorUtils,
 } from 'ketcher-core';
 
-import LassoHelper from './helper/lasso';
+import LassoHelper from '../helper/lasso';
 import {
   isBondingWithMacroMolecule,
   isMergingToMacroMolecule,
-} from './helper/isMacroMolecule';
-import { atomLongtapEvent } from './atom';
-import SGroupTool from './sgroup';
-import { xor } from 'lodash/fp';
-import { Editor } from '../Editor';
-import { dropAndMerge } from './helper/dropAndMerge';
-import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
-import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
-import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
-import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
-import { Tool } from './Tool';
-import { handleMovingPosibilityCursor } from '../utils';
-import { getItemCursor } from '../utils/getItemCursor';
+} from '../helper/isMacroMolecule';
+import { atomLongtapEvent } from '../atom';
+import SGroupTool from '../sgroup';
+import { Editor } from '../../Editor';
+import { dropAndMerge } from '../helper/dropAndMerge';
+import { getGroupIdsFromItemArrays } from '../helper/getGroupIdsFromItems';
+import { updateSelectedAtoms } from '../../../ui/state/modal/atoms';
+import { updateSelectedBonds } from '../../../ui/state/modal/bonds';
+import { filterNotInContractedSGroup } from '../helper/filterNotInCollapsedSGroup';
+import { Tool } from '../Tool';
+import { handleMovingPosibilityCursor } from '../../utils';
+import { getItemCursor } from '../../utils/getItemCursor';
 import {
   ArrowMoveTool,
   MultitailArrowClosestItem,
   ReactionArrowClosestItem,
-} from './arrow/arrow.types';
-import { MultitailArrowMoveTool } from './arrow/multitailArrowMoveTool';
-import { ReactionArrowMoveTool } from './arrow/reactionArrowMoveTool';
-
-type SelectMode = 'lasso' | 'fragment' | 'rectangle';
+} from '../arrow/arrow.types';
+import { MultitailArrowMoveTool } from '../arrow/multitailArrowMoveTool';
+import { ReactionArrowMoveTool } from '../arrow/reactionArrowMoveTool';
+import {
+  getNewSelectedItems,
+  getSelectedAtoms,
+  getSelectedBonds,
+  onSelectionEnd,
+  onSelectionLeave,
+  onSelectionMove,
+  onSelectionStart,
+  selMerge,
+} from './select.helpers';
+import { SelectMode } from './select.types';
 
 enum Direction {
   LEFT,
@@ -130,12 +137,7 @@ class SelectTool implements Tool {
     );
 
     if (!ci) {
-      //  ci.type == 'Canvas'
-      if (!event.shiftKey) this.editor.selection(null);
-      this.dragCtx = {
-        xy0: currentPosition,
-      };
-      if (!this.#lassoHelper.fragment) this.#lassoHelper.begin(event);
+      onSelectionStart(event, this.editor, this.#lassoHelper);
       return true;
     }
 
@@ -210,7 +212,7 @@ class SelectTool implements Tool {
 
     if (dragCtx?.closestItem) {
       if (dragCtx.action) {
-        dragCtx.action.perform(rnd.ctab);
+        dragCtx.action.perform(restruct);
       }
 
       if (dragCtx.closestItem.map === 'rxnArrows') {
@@ -302,12 +304,12 @@ class SelectTool implements Tool {
       return true;
     }
 
-    if (this.#lassoHelper.running()) {
-      const sel = this.#lassoHelper.addPoint(event);
-
-      editor.selection(
-        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
-      );
+    const isSelectionRunning = onSelectionMove(
+      event,
+      this.editor,
+      this.#lassoHelper,
+    );
+    if (isSelectionRunning) {
       return true;
     }
 
@@ -340,7 +342,6 @@ class SelectTool implements Tool {
     const selectedSgroups = selected
       ? getGroupIdsFromItemArrays(molecule, selected)
       : [];
-    const newSelected = getNewSelectedItems(editor, selectedSgroups);
 
     if (this.dragCtx?.stopTapping) this.dragCtx.stopTapping();
 
@@ -386,15 +387,8 @@ class SelectTool implements Tool {
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
         dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       }
-    } else if (this.#lassoHelper.running()) {
-      // TODO it catches more events than needed, to be re-factored
-      this.selectElementsOnCanvas(newSelected, editor, event);
-    } else if (this.#lassoHelper.fragment) {
-      if (
-        !event.shiftKey &&
-        this.editor.render.clientArea.contains(event.target as Node)
-      )
-        editor.selection(null);
+    } else {
+      onSelectionEnd(event, this.editor, this.#lassoHelper);
     }
     this.dragCtx = null;
     editor.event.message.dispatch({
@@ -537,26 +531,11 @@ class SelectTool implements Tool {
       const action = this.dragCtx.action;
       this.editor.update(action);
     }
-    if (this.#lassoHelper.running())
-      this.editor.selection(this.#lassoHelper.end());
+    onSelectionLeave(this.editor, this.#lassoHelper);
 
     delete this.dragCtx;
 
     this.editor.hover(null);
-  }
-
-  private selectElementsOnCanvas(
-    elements: { atoms: number[]; bonds: number[] },
-    editor: Editor,
-    event,
-  ) {
-    const sel =
-      elements.atoms.length > 0
-        ? selMerge(this.#lassoHelper.end(), elements, false)
-        : this.#lassoHelper.end();
-    editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
-    );
   }
 
   private isDraggingStructureOnSaltOrSolvent(
@@ -667,57 +646,10 @@ function closestToSel(ci) {
   return res;
 }
 
-// TODO: deep-merge?
-export function selMerge(selection, add, reversible: boolean) {
-  if (add) {
-    Object.keys(add).forEach((item) => {
-      if (!selection[item]) selection[item] = add[item].slice();
-      else selection[item] = uniqArray(selection[item], add[item], reversible);
-    });
-  }
-  return selection;
-}
-
 function isSelected(selection, item) {
   return (
     selection && selection[item.map] && selection[item.map].includes(item.id)
   );
-}
-
-export function getSelectedAtoms(selection, molecule) {
-  if (selection?.atoms) {
-    return mapAtomIdsToAtoms(selection?.atoms, molecule);
-  }
-  return [];
-}
-
-export function getSelectedBonds(selection, molecule) {
-  if (selection?.bonds) {
-    return mapBondIdsToBonds(selection?.bonds, molecule);
-  }
-  return [];
-}
-
-export function mapAtomIdsToAtoms(atomsIds: number[], molecule): Atom[] {
-  return atomsIds.map((atomId) => {
-    const atomOrReAtom = molecule.atoms.get(atomId);
-    return atomOrReAtom.a || atomOrReAtom;
-  });
-}
-
-export function mapBondIdsToBonds(bondsIds: number[], molecule): Bond[] {
-  return bondsIds.map((bondId) => {
-    const bondOrReBond = molecule.bonds.get(bondId);
-    return bondOrReBond?.b || bondOrReBond;
-  });
-}
-
-function uniqArray(dest, add, reversible: boolean) {
-  return add.reduce((_, item) => {
-    if (reversible) dest = xor(dest, [item]);
-    else if (!dest.includes(item)) dest.push(item);
-    return dest;
-  }, []);
 }
 
 function preventSaltAndSolventsMerge(
@@ -764,25 +696,6 @@ function getResizingProps(
   const current = editor.render.page2obj(event);
   const diff = current.sub(dragCtx.xy0);
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
-}
-
-function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
-  const newSelected: Record<'atoms' | 'bonds', number[]> = {
-    atoms: [],
-    bonds: [],
-  };
-
-  for (const sgId of selectedSgroups) {
-    const sgroup = editor.render.ctab.sgroups.get(sgId);
-    if (sgroup && !sgroup.item?.isSuperatomWithoutLabel) {
-      const sgroupAtoms = SGroup.getAtoms(editor.struct(), sgroup.item);
-      const sgroupBonds = SGroup.getBonds(editor.struct(), sgroup.item);
-      newSelected.atoms.push(...sgroupAtoms);
-      newSelected.bonds.push(...sgroupBonds);
-    }
-  }
-
-  return newSelected;
 }
 
 export default SelectTool;

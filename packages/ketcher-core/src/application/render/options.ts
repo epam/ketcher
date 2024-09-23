@@ -121,6 +121,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     contractedFunctionalGroupSize: 50,
 
     previewOpacity: 0.5,
+    viewOnlyMode: false,
   };
 
   return Object.assign({}, defaultOptions, options);

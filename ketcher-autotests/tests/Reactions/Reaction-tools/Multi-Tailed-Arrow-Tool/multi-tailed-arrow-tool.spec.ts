@@ -2480,7 +2480,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5058
-    Description: Undo/Redo actions can be performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of heads.
+    Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of heads.
     */
 
     await selectDropdownTool(
@@ -2518,6 +2518,575 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     for (let i = 0; i < 6; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of head', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added 
+    by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
+    */
+
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(300, 400);
+    await page.mouse.click(400, 500);
+
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('head-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('head-resize').hover({ force: true });
+    await dragMouseTo(900, 500, page);
+
+    await selectRectangleSelectionTool(page);
+    await selectPartOfMolecules(page);
+    await page.getByTestId('head-move').nth(1).hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('head-resize').nth(1).hover({ force: true });
+    await dragMouseTo(900, 500, page);
+
+    await page.getByTestId('head-move').nth(2).hover({ force: true });
+    await dragMouseTo(300, 600, page);
+    await page.getByTestId('head-resize').nth(2).hover({ force: true });
+    await dragMouseTo(900, 500, page);
+    await takeEditorScreenshot(page);
+
+    await copyAndPaste(page);
+    await page.mouse.click(650, 300);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that Cut-Paste (Ctrl+X, Ctrl+V) actions can be performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of head', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added 
+    by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
+    */
+
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(300, 400);
+    await page.mouse.click(400, 500);
+
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('head-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('head-resize').hover({ force: true });
+    await dragMouseTo(900, 500, page);
+
+    await selectRectangleSelectionTool(page);
+    await selectPartOfMolecules(page);
+    await page.getByTestId('head-move').nth(1).hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('head-resize').nth(1).hover({ force: true });
+    await dragMouseTo(900, 500, page);
+
+    await page.getByTestId('head-move').nth(2).hover({ force: true });
+    await dragMouseTo(300, 600, page);
+    await page.getByTestId('head-resize').nth(2).hover({ force: true });
+    await dragMouseTo(900, 500, page);
+    await takeEditorScreenshot(page);
+
+    await cutAndPaste(page);
+    await page.mouse.click(900, 400);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool Multi-Tailed Arrow after moving/changing size of head can be selected and moved with correct size and position of spine, tails and head', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5058
+    Description: Added by Tool Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
+    */
+
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('head-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('head-resize').hover({ force: true });
+    await dragMouseTo(900, 500, page);
+
+    await hoverOverArrowSpine(page);
+    await dragMouseTo(300, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Load from KET default Multi-Tailed Arrow, verify that top tail can be moved up and bottom tail can be moved down, after that can be saved to KET', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved up and bottom tail moved down,
+     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/moved-toptail-and-bottomtail-expected.ket',
+      'tests/test-data/KET/moved-toptail-and-bottomtail-expected.ket',
+    );
+  });
+
+  test('Load from KET default Multi-Tailed Arrow, verify that top tail can be moved down up to 0.15 from head arrow and bottom tail can be moved up to 0.5 from top tail', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Load from KET default Multi-Tailed Arrow, verify that top tail moved down up to 0.15 from head arrow and bottom
+     * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/moved-toptail-and-bottomtail-to-head-expected.ket',
+      'tests/test-data/KET/moved-toptail-and-bottomtail-to-head-expected.ket',
+    );
+  });
+
+  test('Load from KET Multi-Tailed Arrow with tail length = 1, verify that size of two tails can be reduced to right (minimal size is 0.4), after that saved to KET', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Load from KET Multi-Tailed Arrow with tail length = 1, verify that size of two tails reduced to right (minimal size is 0.4),
+     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-2-tails-1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+    );
+  });
+
+  test('Load from KET default Multi-Tailed Arrow, verify that size of two tails can be increased to left, after that changed Multi-Tailed Arrow can be saved to KET', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Load from KET default Multi-Tailed Arrow, verify that size of two tails increased to left,
+     * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-default-increased-to-left-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrow-default-increased-to-left-expected.ket',
+    );
+  });
+
+  test('Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail can be moved up and bottom tail can be moved down', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail moved up and
+     * bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectRectangleSelectionTool(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/button-added-moved-toptail-and-bottomtail-expected.ket',
+      'tests/test-data/KET/button-added-moved-toptail-and-bottomtail-expected.ket',
+    );
+  });
+
+  test('Add default Multi-Tailed Arrow by button, verify that top tail can be moved down up to 0.15 from head arrow and bottom tail can be moved up to 0.5 from top tail', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Add default Multi-Tailed Arrow by button, verify that top tail moved down up to 0.15 from head arrow and bottom
+     * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/button-added-moved-toptail-and-bottomtail-to-head-expected.ket',
+      'tests/test-data/KET/button-added-moved-toptail-and-bottomtail-to-head-expected.ket',
+    );
+  });
+
+  test('Add default Multi-Tailed Arrow by button, verify that size of two tails can be reduced to right (minimal size is 0.4) and increased to left', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5107
+     * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of two tails reduced to
+     * right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/button-added-multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+      'tests/test-data/KET/button-added-multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+    );
+  });
+
+  test('Load from KET 3 different Multi-Tailed Arrows with elements and verify that top and bottom tails can be moved and its size can be changed for each of them', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Load from KET 3 different Multi-Tailed Arrows to Canvas with elements and verify that top and bottom tails moved and its size 
+    changed for each of them, after that changed Multi-Tailed Arrows and elements saved to KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await selectPartOfMolecules(page);
+    await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await page.getByTestId('bottomTail-move').first().hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').first().hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-tails-expected.ket',
+      'tests/test-data/KET/multi-tailed-arrows-3-with-elements-moved-and-resized-tails-expected.ket',
+    );
+  });
+
+  test('Add 3 default Multi-Tailed Arrows by button, verify that top and bottom tails can be moved and its size can be changed for each of them', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrows, verify that that top and bottom tails moved 
+    and its size changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
+    */
+
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(300, 400);
+    await page.mouse.click(400, 500);
+    await takeEditorScreenshot(page);
+
+    await selectRectangleSelectionTool(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(100, 300, page);
+
+    await selectPartOfMolecules(page);
+    await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
+    await dragMouseTo(100, 300, page);
+
+    await page.getByTestId('topTail-move').nth(1).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/button-added-multi-tailed-arrows-3-moved-and-resized-tails-expected.ket',
+      'tests/test-data/KET/button-added-multi-tailed-arrows-3-moved-and-resized-tails-expected.ket',
+    );
+  });
+
+  test('Verify that Undo/Redo actions can be performed for added from KET default Multi-Tailed Arrow after moving/changing size of top and bottom tails ', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Undo/Redo actions performed for added from KET default Multi-Tailed Arrow after moving/changing size of top and bottom tails .
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(100, 300, page);
+
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < 4; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 4; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Undo/Redo actions can be performed for added from KET 3 different Multi-Tailed Arrows with elements after moving/changing size of top and bottom tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Undo/Redo actions performed for added from KET 3 different Multi-Tailed Arrows on Canvas with elements after moving/changing size of top and bottom tails.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await selectPartOfMolecules(page);
+    await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await page.getByTestId('bottomTail-move').first().hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').first().hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < 6; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < 6; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Copy-Paste (Ctrl+C, Ctrl+V) actions can be performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails .
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await selectPartOfMolecules(page);
+    await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await page.getByTestId('bottomTail-move').first().hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').first().hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(200, 200);
+    await copyAndPaste(page);
+    await page.mouse.click(700, 350);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Cut-Paste (Ctrl+C, Ctrl+V) actions can be performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Cut-Paste (Ctrl+C, Ctrl+V) actions performed for loaded from KET 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails .
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-3.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await selectPartOfMolecules(page);
+    await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
+    await dragMouseTo(700, 100, page);
+
+    await page.getByTestId('bottomTail-move').first().hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('bottomTail-resize').first().hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await page.mouse.click(200, 200);
+    await cutAndPaste(page);
+    await page.mouse.click(700, 350);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from KET Multi-Tailed Arrow after moving/changing size of top and bottom tails can be selected and moved to new position', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/5107
+    Description: Loaded from KET Multi-Tailed Arrow after moving/changing size of top and bottom tails selected and moved with correct size and position of spine, tails and head.
+    */
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('bottomTail-move').hover({ force: true });
+    await dragMouseTo(500, 600, page);
+    await page.getByTestId('bottomTail-resize').hover({ force: true });
+    await dragMouseTo(500, 100, page);
+    await takeEditorScreenshot(page);
+
+    await page.getByTestId('topTail-move').hover({ force: true });
+    await dragMouseTo(500, 200, page);
+    await page.getByTestId('topTail-resize').hover({ force: true });
+    await dragMouseTo(100, 300, page);
+    await takeEditorScreenshot(page);
+
+    await hoverOverArrowSpine(page);
+    await dragMouseTo(900, 400, page);
+    // await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
 });

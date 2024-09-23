@@ -30,18 +30,21 @@ import { isFlipDisabled } from './flips';
 const toolActions = {
   hand: {
     title: 'Hand tool',
+    enabledInViewOnly: true,
     shortcut: 'Mod+Alt+h',
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand'),
   },
   'select-rectangle': {
     title: 'Rectangle Selection',
+    enabledInViewOnly: true,
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'rectangle' },
     hidden: (options) => isHidden(options, 'select-rectangle'),
   },
   'select-lasso': {
     title: 'Lasso Selection',
+    enabledInViewOnly: true,
     shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'lasso' },
   },

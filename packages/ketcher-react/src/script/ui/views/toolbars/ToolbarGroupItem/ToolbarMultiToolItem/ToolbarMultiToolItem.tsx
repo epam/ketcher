@@ -134,6 +134,7 @@ const ToolbarMultiToolItem = (props: Props) => {
 
   const [Component, portalClassName] = chooseMultiTool(variant);
   const iconName = getIconName(currentId);
+  const isDisabled = currentStatus?.disabled === true;
   return displayMultiToolItem && iconName ? (
     <div
       ref={ref}
@@ -149,7 +150,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         selected={selected}
         dataTestId={dataTestId || iconName}
       />
-      {!isOpen && (
+      {!isOpen && !isDisabled && (
         <Icon
           className={`${classes.icon} ${
             currentStatus?.selected && classes.iconSelected

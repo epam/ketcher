@@ -43,27 +43,31 @@ export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
   const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
-  function resetToSelect(dispatch) {
-    // eslint-disable-line no-shadow
-    const state = global.currentState;
-    const activeTool = state.actionState.activeTool.tool;
-    if (activeTool === 'select') return;
-    const selectMode = state.toolbar.visibleTools.select;
-    const resetOption = state.options.settings.resetToSelect;
-    if (resetOption === true || resetOption === activeTool)
-      // example: 'paste'
-      dispatch({ type: 'ACTION', action: acts[selectMode].action });
-    else updateAction();
-  }
+  const resetToSelect =
+    (force = false) =>
+    (dispatch) => {
+      // eslint-disable-line no-shadow
+      const state = global.currentState;
+      const activeTool = state.actionState.activeTool.tool;
+      if (activeTool === 'select') return;
+      const selectMode = state.toolbar.visibleTools.select;
+      const resetOption = state.options.settings.resetToSelect;
+      if (resetOption === true || resetOption === activeTool || force === true)
+        // example: 'paste'
+        dispatch({ type: 'ACTION', action: acts[selectMode].action });
+      else updateAction();
+    };
 
   return {
     onInit: (editor) => {
       dispatch({ type: 'INIT', editor });
     },
     onChange: (action) => {
-      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect));
+      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect()));
+      // Editor switched to view only mode
+      if (action === 'force') dispatch(resetToSelect(true));
       // new tool in reducer
-      else dispatch(resetToSelect);
+      else dispatch(resetToSelect());
     },
     onSelectionChange: () => {
       updateAction();

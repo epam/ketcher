@@ -25,6 +25,7 @@ const openHelpLink = () =>
 
 export default {
   help: {
+    enabledInViewOnly: true,
     shortcut: ['?', '&', 'Shift+/'],
     action: () => openHelpLink(),
     hidden: (options) => isHidden(options, 'help'),

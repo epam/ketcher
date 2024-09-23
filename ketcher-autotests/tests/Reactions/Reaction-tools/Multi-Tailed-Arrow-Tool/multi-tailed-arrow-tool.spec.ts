@@ -2852,10 +2852,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').first().hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
-    await dragMouseTo(100, 300, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await dragMouseTo(400, 500, page);
+    await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2879,8 +2877,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(300, 400);
-    await page.mouse.click(400, 500);
+    await page.mouse.click(500, 300);
+    await page.mouse.click(600, 450);
     await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -2888,21 +2886,19 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 500, page);
 
     await selectPartOfMolecules(page);
     await page.getByTestId('bottomTail-move').nth(2).hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').nth(2).hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 500, page);
 
     await page.getByTestId('topTail-move').nth(1).hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
-    await dragMouseTo(100, 300, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(100, 100);
-    });
+    await dragMouseTo(400, 500, page);
+    await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2929,15 +2925,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await page.getByTestId('bottomTail-resize').hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 300, page);
 
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').hover({ force: true });
-    await dragMouseTo(100, 300, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(100, 100);
-    });
+    await dragMouseTo(400, 300, page);
+    await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
@@ -2978,10 +2972,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').first().hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
-    await dragMouseTo(100, 300, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await dragMouseTo(400, 300, page);
+    await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
@@ -3022,12 +3014,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').first().hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 300, page);
     await page.mouse.click(200, 200);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(700, 350);
-    });
+    await page.mouse.click(700, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -3059,7 +3049,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').first().hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 300, page);
     await page.mouse.click(200, 200);
     await cutAndPaste(page);
     await page.mouse.click(700, 350);
@@ -3090,7 +3080,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').hover({ force: true });
-    await dragMouseTo(100, 300, page);
+    await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
 
     await hoverOverArrowSpine(page);

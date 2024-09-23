@@ -31,7 +31,6 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   TopPanelButton,
-  waitForLoad,
   waitForPageInit,
   waitForRender,
 } from '@utils';
@@ -233,7 +232,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('KET/three-different-multi-tail-arrows.ket', page);
-    await waitForLoad(page, async () => {
+    await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
     await page.mouse.click(200, 300);
@@ -2854,7 +2853,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(100, 300, page);
-    await page.mouse.click(200, 200);
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2899,7 +2900,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
     await dragMouseTo(100, 300, page);
-    await page.mouse.click(100, 100);
+    await waitForRender(page, async () => {
+      await page.mouse.click(100, 100);
+    });
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2932,7 +2935,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(100, 300, page);
-    await page.mouse.click(100, 100);
+    await waitForRender(page, async () => {
+      await page.mouse.click(100, 100);
+    });
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
@@ -2974,7 +2979,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(100, 300, page);
-    await page.mouse.click(200, 200);
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
@@ -3018,7 +3025,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(100, 300, page);
     await page.mouse.click(200, 200);
     await copyAndPaste(page);
-    await page.mouse.click(700, 350);
+    await waitForRender(page, async () => {
+      await page.mouse.click(700, 350);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -3086,7 +3095,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
     await hoverOverArrowSpine(page);
     await dragMouseTo(900, 400, page);
-    // await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
 });

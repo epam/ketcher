@@ -1,10 +1,12 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   selectSingleBondTool,
+  selectSequenceLayoutModeTool,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
+  takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
 
@@ -156,5 +158,42 @@ test.describe('Hotkeys', () => {
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
+
+  test('Check New approach and UI for switching between types in sequence mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+    Description: 
+    1. The default mode for typing is RNA.
+    2. When hovering over RNA the user should see "RNA (Ctrl+Alt+R)", 
+    3. When hovering over DNA the user should see "DNA (Ctrl+Alt+D)", 
+    4. When hovering over PEP the user should see "Peptides (Ctrl+Alt+P)".
+    5. Ctrl+Alt+D switches to DNA type
+    6. Ctrl+Alt+P switches to peptide type
+    7. Ctrl+Alt+R switches to RNA type
+    */
+    selectSequenceLayoutModeTool(page);
+
+    await takeTopToolbarScreenshot(page);
+
+    const buttonRNA = page.getByTestId('RNABtn');
+    await expect(buttonRNA).toHaveAttribute('title', 'RNA (Ctrl+Alt+R)');
+
+    const buttonDNA = page.getByTestId('DNABtn');
+    await expect(buttonDNA).toHaveAttribute('title', 'DNA (Ctrl+Alt+D)');
+
+    const buttonPEP = page.getByTestId('PEPTIDEBtn');
+    await expect(buttonPEP).toHaveAttribute('title', 'Peptides (Ctrl+Alt+P)');
+
+    await page.keyboard.press('Control+Alt+D');
+    await takeTopToolbarScreenshot(page);
+
+    await page.keyboard.press('Control+Alt+P');
+    await takeTopToolbarScreenshot(page);
+
+    await page.keyboard.press('Control+Alt+R');
+    await takeTopToolbarScreenshot(page);
   });
 });

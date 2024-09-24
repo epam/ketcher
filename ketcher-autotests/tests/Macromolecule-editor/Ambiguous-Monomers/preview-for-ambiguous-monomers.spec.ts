@@ -121,14 +121,16 @@ const ambiguousMonomers: IHELMString[] = [
       'PEPTIDE1{(A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y)}$$$$V2.0',
     monomerLocatorIndex: 0,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '8. Peptide B (Mixture, from library)',
     HELMString: 'PEPTIDE2{(D+N)}$$$$V2.0',
     monomerLocatorIndex: 0,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '9. Mixture of 10 Peptides (no quantities)',
@@ -242,18 +244,22 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{[dR](T+G+C+A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '26. DNA Base B (mixture, no quantities, from library)',
     HELMString: 'RNA1{[dR](T+G+C)P}$$$$V2.0',
     monomerLocatorIndex: 1,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '27. DNA Base B (mixture, with quantities, from library)',
     HELMString: 'RNA1{[dR](T:20+G:50+C:30)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5566',
     monomerLocatorIndex: 1,
   },
   {
@@ -261,18 +267,22 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{R(C+A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '29. Base R (mixture, no quantities, from library)',
     HELMString: 'RNA1{R(G+A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
     shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
   },
   {
     testDescription: '30. Base R (mixture, with quantities, from library)',
     HELMString: 'RNA1{R(G:30+A:70)P}$$$$V2.0',
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5566',
     monomerLocatorIndex: 1,
   },
   {

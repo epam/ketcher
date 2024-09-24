@@ -23,9 +23,11 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     generateId = true,
   ) {
     const variantMonomerLabel =
-      variantMonomerItem.subtype === KetAmbiguousMonomerTemplateSubType.MIXTURE
+      variantMonomerItem.subtype ===
+        KetAmbiguousMonomerTemplateSubType.MIXTURE ||
+      variantMonomerItem.label?.length > 1
         ? DEFAULT_VARIANT_MONOMER_LABEL
-        : variantMonomerItem.label || DEFAULT_VARIANT_MONOMER_LABEL;
+        : variantMonomerItem.label;
 
     super(
       {

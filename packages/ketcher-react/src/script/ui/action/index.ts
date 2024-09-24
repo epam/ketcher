@@ -28,10 +28,33 @@ import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
 import { removeStructAction, openInfoModal } from '../state/shared';
+import { GetActionState, Tools, UiAction } from './action.types';
+import Editor from '../../editor/Editor';
 
 export * from './action.types';
 
-const config = {
+const disableIfViewOnly = (editor: Editor): boolean =>
+  !!editor.render.options.viewOnlyMode;
+
+const updateConfigItem = (item: UiAction): UiAction => {
+  if (typeof item.disabled === 'boolean' || item.enabledInViewOnly === true) {
+    return item;
+  } else if (typeof item.disabled === 'function') {
+    const originalDisabled = item.disabled as GetActionState;
+    return {
+      ...item,
+      disabled: (...props) =>
+        disableIfViewOnly(props[0]) || originalDisabled(...props),
+    };
+  } else {
+    return {
+      ...item,
+      disabled: disableIfViewOnly,
+    };
+  }
+};
+
+const config: Record<string, UiAction> = {
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     title: 'Clear Canvas',
@@ -49,12 +72,14 @@ const config = {
   open: {
     shortcut: 'Mod+o',
     title: 'Open…',
+    enabledInViewOnly: true,
     action: { dialog: 'open' },
     hidden: (options) => isHidden(options, 'open'),
   },
   save: {
     shortcut: 'Mod+s',
     title: 'Save As…',
+    enabledInViewOnly: true,
     action: { dialog: 'save' },
     hidden: (options) => isHidden(options, 'save'),
   },
@@ -101,12 +126,15 @@ const config = {
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'cut'),
   },
+  // This is some dirty trick for `ClipboardControls.tsx` component
   copies: {
+    enabledInViewOnly: true,
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copies'),
-  },
+  } as UiAction,
   copy: {
     shortcut: 'Mod+c',
+    enabledInViewOnly: true,
     title: 'Copy',
     action: {
       thunk: (dispatch, _) => {
@@ -122,6 +150,7 @@ const config = {
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
+    enabledInViewOnly: true,
     title: 'Copy Image',
     action: () => {
       copyImageToClipboard();
@@ -131,6 +160,7 @@ const config = {
   },
   'copy-mol': {
     shortcut: 'Mod+m',
+    enabledInViewOnly: true,
     title: 'Copy as MOL',
     action: () => {
       copyAs('mol');
@@ -140,6 +170,7 @@ const config = {
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
+    enabledInViewOnly: true,
     title: 'Copy as KET',
     action: () => {
       copyAs('ket');
@@ -172,6 +203,7 @@ const config = {
   },
   about: {
     title: 'About',
+    enabledInViewOnly: true,
     action: { dialog: 'about' },
     hidden: (options) => isHidden(options, 'about'),
   },
@@ -179,7 +211,7 @@ const config = {
     title: 'Reaction Auto-Mapping Tool',
     action: { dialog: 'automap' },
     hidden: (options) => isHidden(options, 'reaction-automap'),
-    disabled: (editor, server, options) =>
+    disabled: (editor, _server, options) =>
       !options.app.server || !editor.struct().hasRxnArrow(),
   },
   'period-table': {
@@ -194,6 +226,7 @@ const config = {
   },
   'select-all': {
     title: 'Select All',
+    enabledInViewOnly: true,
     shortcut: 'Mod+a',
     action: {
       thunk: (dispatch, getState) => {
@@ -206,6 +239,7 @@ const config = {
   },
   'deselect-all': {
     title: 'Deselect All',
+    enabledInViewOnly: true,
     shortcut: 'Mod+Shift+a',
     action: (editor) => {
       editor.selection(null);
@@ -215,6 +249,7 @@ const config = {
   'select-descriptors': {
     title: 'Select descriptors',
     shortcut: 'Mod+d',
+    enabledInViewOnly: true,
     action: {
       thunk: (dispatch, getState) => {
         const selectionTool = getState().toolbar.visibleTools.select;
@@ -243,6 +278,10 @@ const config = {
     action: { dialog: 'info-modal' },
     hidden: (options) => isHidden(options, 'info-modal'),
   },
+};
+
+const configWithNonViewOnlyActionsDisabled: Tools = Object.entries({
+  ...config,
   ...server,
   ...debug,
   ...tools,
@@ -252,7 +291,13 @@ const config = {
   ...functionalGroups,
   ...fullscreen,
   ...help,
-};
+}).reduce(
+  (acc, [key, item]) => ({
+    ...acc,
+    [key]: updateConfigItem(item as UiAction),
+  }),
+  {},
+) as Tools;
 
 function hasSelection(editor) {
   const selection = editor.selection();
@@ -263,4 +308,4 @@ function hasSelection(editor) {
   );
 }
 
-export default config;
+export default configWithNonViewOnlyActionsDisabled;

@@ -101,6 +101,7 @@ export type RenderOptions = {
   bondThicknessInPx: number;
   stereoBondWidthInPx: number;
   usageInMacromolecule?: UsageInMacromolecule;
+  viewOnlyMode?: boolean;
 };
 
 export interface RelativeBox {

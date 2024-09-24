@@ -18,11 +18,7 @@ test.describe('Sequence edit mode', () => {
   const typingModes = [
     { buttonTestId: 'RNABtn', expectedTitle: 'RNA (Ctrl+Alt+R)', type: 'RNA' },
     { buttonTestId: 'DNABtn', expectedTitle: 'DNA (Ctrl+Alt+D)', type: 'DNA' },
-    {
-      buttonTestId: 'PEPTIDEBtn',
-      expectedTitle: 'Peptides (Ctrl+Alt+P)',
-      type: 'Peptide',
-    },
+    { buttonTestId: 'PEPTIDEBtn', expectedTitle: 'Peptides (Ctrl+Alt+P)', type: 'Peptide' },
   ];
 
   test.describe('Check New approach and UI for switching between types in sequence mode', () => {

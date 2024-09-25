@@ -42,15 +42,16 @@ import {
   pressNewPresetButton,
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
   toggleRnaBuilderAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 import {
   goToCHEMTab,
+  goToMonomerLocationTab,
   goToPeptidesTab,
   goToRNATab,
+  MonomerLocationTabs,
 } from '@utils/macromolecules/library';
 
 async function drawThreeMonomers(page: Page) {
@@ -1385,16 +1386,6 @@ test.describe('RNA Library', () => {
     await page.getByTestId('cancel-btn').click();
   });
 
-  enum MonomerLocationTabs {
-    PEPTIDES = 'Peptides',
-    PRESETS = 'Presets',
-    SUGARS = 'Sugars',
-    BASES = 'Bases',
-    PHOSPHATES = 'Phosphates',
-    NUCLEOTIDES = 'Nucleotides',
-    CHEM = 'CHEM',
-  }
-
   interface ISearchString {
     testDescription: string;
     SearchString: string;
@@ -1406,42 +1397,6 @@ test.describe('RNA Library', () => {
     issueNumber?: string;
     // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
     pageReloadNeeded?: boolean;
-  }
-
-  async function goToMonomerLocationTab(
-    page: Page,
-    monomerLocation: MonomerLocationTabs,
-  ) {
-    switch (monomerLocation) {
-      case 'Peptides':
-        await goToPeptidesTab(page);
-        break;
-      case 'Presets':
-        await goToRNATab(page);
-        // Presets tab openned by default
-        break;
-      case 'Sugars':
-        await goToRNATab(page);
-        await toggleSugarsAccordion(page);
-        break;
-      case 'Bases':
-        await goToRNATab(page);
-        await toggleBasesAccordion(page);
-        break;
-      case 'Phosphates':
-        await goToRNATab(page);
-        await togglePhosphatesAccordion(page);
-        break;
-      case 'Nucleotides':
-        await toggleNucleotidesAccordion(page);
-        break;
-      case 'CHEM':
-        await goToCHEMTab(page);
-        break;
-      default:
-        await goToRNATab(page);
-        break;
-    }
   }
 
   async function searchMonomerByName(page: Page, monomerName: string) {
@@ -1678,7 +1633,7 @@ test.describe('RNA Library', () => {
       }) => {
         /* 
       Test task: https://github.com/epam/ketcher/issues/5558
-      Verify ambiguous monomer search functionality in the library
+      7. Verify ambiguous monomer search functionality in the library
       Case:
         1. Fill Search field with value
         2. Switch to monomer's tab to see it

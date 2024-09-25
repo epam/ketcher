@@ -74,10 +74,6 @@ test.describe('Template Manupulations', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('1-2) Fuse atom-to-atom', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1674
@@ -88,6 +84,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('3) Fuse atom-to-atom: drag atom slightly', async ({ page }) => {
@@ -103,6 +100,7 @@ test.describe('Template Manupulations', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('5) Fuse atom-to-atom: click and drag atom to fuse atom-to-atom', async ({
@@ -117,6 +115,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fuse atom-to-atom: click and drag atom to extend bonds', async ({
@@ -133,6 +132,7 @@ test.describe('Template Manupulations', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fuse bond-to-bond', async ({ page }) => {
@@ -151,6 +151,7 @@ test.describe('Template Manupulations', () => {
       await getRotationHandleCoordinates(page);
     await dragMouseTo(rotationHandleX, rotationHandleY, page);
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Place template on the Canvas', async ({ page }) => {
@@ -161,6 +162,7 @@ test.describe('Template Manupulations', () => {
     await selectRing(RingButton.Cyclopentadiene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -187,6 +189,7 @@ test.describe('Template Manupulations', () => {
       await page.keyboard.press('Control+a');
       await cutToClipboardByKeyboard(page);
       await page.keyboard.press('Control+z');
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -221,6 +224,7 @@ test.describe('Template Manupulations', () => {
     await selectRing(RingButton.Benzene, page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Templates - Manipulations with Erase Tool', async ({ page }) => {
@@ -243,6 +247,7 @@ test.describe('Template Manupulations', () => {
     await selectAction(TopPanelButton.Clear, page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Template Library' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Templates - Atom symbol editing', async ({ page }) => {
@@ -267,6 +272,7 @@ test.describe('Template Manupulations', () => {
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('Br');
     await page.getByTestId('OK').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo action', async ({ page }) => {
@@ -291,6 +297,7 @@ test.describe('Template Manupulations', () => {
     for (let i = 0; i < numberOfPressingRedo; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Rotate/Flip the template structure', async ({ page }) => {
@@ -308,6 +315,7 @@ test.describe('Template Manupulations', () => {
     await pressButton(page, 'Vertical Flip (Alt+V)');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await takeEditorScreenshot(page);
   });
 
   test('Templates - Zoom action for the template structure', async ({
@@ -337,6 +345,7 @@ test.describe('Template Manupulations', () => {
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await page.getByTestId('zoom-input').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save as *.mol file', async ({ page }) => {
@@ -361,6 +370,7 @@ test.describe('Template Manupulations', () => {
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as *.rxn file', async ({ page }) => {
@@ -382,6 +392,7 @@ test.describe('Template Manupulations', () => {
         metaDataIndexes: METADATA_STRINGS_INDEXES,
       });
     expect(RxnFile).toEqual(RxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('If connect to a single bond with two atoms then replace double bond by single bond for the fusion', async ({
@@ -395,6 +406,7 @@ test.describe('Template Manupulations', () => {
     await drawCyclopentadieneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
     await selectRing(RingButton.Cyclopentadiene, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Double cyclopentadiene ring - If connect to a double bond with two atom then cyclopentadiene rotate rand use double bond for the fusion', async ({
@@ -408,6 +420,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
     await selectRing(RingButton.Cyclopentadiene, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Double cyclopentadiene ring-if connect to a single bond with two atoms-but one atom is connected with a single bond and another with a double bond', async ({
@@ -424,7 +437,9 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
     await selectRing(RingButton.Cyclopentadiene, page);
+    await takeEditorScreenshot(page);
   });
+
   test('Double cyclopentadiene ring - if all bonds are single', async ({
     page,
   }) => {
@@ -437,6 +452,7 @@ test.describe('Template Manupulations', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 0);
     await selectRing(RingButton.Cyclopentadiene, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Adding the template to the existing structure', async ({ page }) => {
@@ -455,6 +471,7 @@ test.describe('Template Manupulations', () => {
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
     await page.mouse.move(rotationHandleX, rotationHandleY);
+    await takeEditorScreenshot(page);
   });
 
   test('Inappropriate structure is not generated when drawing fused aromatic rings', async ({
@@ -468,6 +485,7 @@ test.describe('Template Manupulations', () => {
     */
     await drawCyclopentadieneRing(page);
     await clickOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Templates - Edit abbreviation window appear when user trying to add structure to a functional group or salt', async ({
@@ -490,6 +508,7 @@ test.describe('Template Manupulations', () => {
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRing(RingButton.Benzene, page);
     await page.mouse.click(nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await takeEditorScreenshot(page);
   });
 });
 

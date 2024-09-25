@@ -92,11 +92,6 @@ test.describe(`Bond tool:`, () => {
     await selectAction(TopPanelButton.Clear, page);
   });
 
-  test.afterEach(async () => {
-    await takeEditorScreenshot(page);
-    await selectAction(TopPanelButton.Clear, page);
-  });
-
   test.afterAll(async () => {
     await page.close();
   });
@@ -162,6 +157,8 @@ test.describe(`Bond tool:`, () => {
       });
 
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
+      await takeEditorScreenshot(page);
+      await selectAction(TopPanelButton.Clear, page);
     });
 
     test(`click on an existing bond using ${bondToolKey}`, async () => {
@@ -193,6 +190,8 @@ test.describe(`Bond tool:`, () => {
         type: BondType.SINGLE,
       });
       await page.mouse.click(singleBond.x, singleBond.y);
+      await takeEditorScreenshot(page);
+      await selectAction(TopPanelButton.Clear, page);
     });
 
     test(`Undo/Redo ${bondToolKey} creation`, async () => {
@@ -266,6 +265,8 @@ test.describe(`Bond tool:`, () => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
+      await takeEditorScreenshot(page);
+      await selectAction(TopPanelButton.Clear, page);
     });
 
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
@@ -274,6 +275,8 @@ test.describe(`Bond tool:`, () => {
        */
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+      await selectAction(TopPanelButton.Clear, page);
     });
 
     test.describe('Saving and rendering', () => {
@@ -420,10 +423,6 @@ test.describe('Bond Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   for (const tool of toolsForTest) {
     test(`Functional Group with attach ${tool}`, async ({ page }) => {
       /**
@@ -434,6 +433,7 @@ test.describe('Bond Tool', () => {
       await clickInTheMiddleOfTheScreen(page);
       await selectDropdownTool(page, 'bonds', tool);
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     });
 
     test(`Creating two (or more) connected ${tool} bonds`, async ({ page }) => {
@@ -444,6 +444,7 @@ test.describe('Bond Tool', () => {
       await selectDropdownTool(page, 'bonds', tool);
       await clickInTheMiddleOfTheScreen(page);
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -464,6 +465,7 @@ test.describe('Bond Tool', () => {
       },
     });
     expect(screenshot).toMatchSnapshot();
+    await takeEditorScreenshot(page);
   });
 
   test('Hot keys', async ({ page }) => {
@@ -476,6 +478,7 @@ test.describe('Bond Tool', () => {
       await page.keyboard.press(hotKey);
       await takeLeftToolbarScreenshot(page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Adding custom s-groups to bonds correctly selects bonds', async ({
@@ -488,6 +491,7 @@ test.describe('Bond Tool', () => {
     await drawBenzeneRing(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Drawing bonds in one direction does not change the bond created in the other direction', async ({
@@ -519,6 +523,7 @@ test.describe('Bond Tool', () => {
     await waitForRender(page, async () => {
       await page.mouse.up();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Connecting two atoms with Double Bond and rotate', async ({ page }) => {
@@ -552,6 +557,7 @@ test.describe('Bond Tool', () => {
     await page.mouse.move(point2.x, point2.y);
     const coordinatesWithShift = point2.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple bond editing not changes bond types to all selected bonds', async ({
@@ -573,6 +579,7 @@ test.describe('Bond Tool', () => {
     await page.getByTestId('topology-input-span').click();
     await selectOption(page, 'Ring');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add new bonds to the same atom', async ({ page }) => {
@@ -583,6 +590,7 @@ test.describe('Bond Tool', () => {
     await selectNestedTool(page, BondTool.DOUBLE);
     await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Change the type of bond by clicking on bond', async ({ page }) => {
@@ -594,6 +602,7 @@ test.describe('Bond Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Aromatic - Ring inside the cycle structure', async ({ page }) => {
@@ -613,6 +622,7 @@ test.describe('Bond Tool', () => {
     await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -627,5 +637,6 @@ for (const [_, id] of Object.values(BondTool)) {
     await expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
     await button.click();
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 }

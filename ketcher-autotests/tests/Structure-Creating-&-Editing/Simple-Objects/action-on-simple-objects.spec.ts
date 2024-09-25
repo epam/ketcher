@@ -65,10 +65,6 @@ test.describe('Action on simples objects', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Simple Objects - Zoom In, Zoom Out', async ({ page }) => {
     // Test case: EPMLSOPKET-1978
     const numberOfPressZoomOut = 5;
@@ -85,6 +81,7 @@ test.describe('Action on simples objects', () => {
         await page.keyboard.press('Control+=');
       });
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Object - Action with zoom tool', async ({ page }) => {
@@ -97,6 +94,7 @@ test.describe('Action on simples objects', () => {
     await waitForRender(page, async () => {
       await setZoomInputValue(page, '100');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Simple objest - Simple Objects and Structures selection', async ({
@@ -119,6 +117,7 @@ test.describe('Action on simples objects', () => {
       await page.mouse.click(point2.x, point2.y);
       await dragMouseTo(point3.x, point3.y, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Simple object - Delete Simple Objects with Delete button', async ({
@@ -128,6 +127,7 @@ test.describe('Action on simples objects', () => {
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Simple object - Delete Simple Objects with Backspace button', async ({
@@ -137,6 +137,7 @@ test.describe('Action on simples objects', () => {
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Copy/Cut/Paste actions on simple objects', async ({
@@ -165,6 +166,7 @@ test.describe('Action on simples objects', () => {
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Adding structure to simple objects', async ({
@@ -176,6 +178,7 @@ test.describe('Action on simples objects', () => {
     await waitForRender(page, async () => {
       await drawBenzeneRing(page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
@@ -195,6 +198,7 @@ test.describe('Action on simples objects', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Save to Templates', async ({ page }) => {
@@ -206,5 +210,6 @@ test.describe('Action on simples objects', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await takeEditorScreenshot(page);
   });
 });

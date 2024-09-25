@@ -54,10 +54,6 @@ test.describe('SMILES files', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('SmileString for structure with Bond properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1906
@@ -74,6 +70,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString for structure with Atom properties', async ({ page }) => {
@@ -95,6 +92,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from mol file that contains abbreviation', async ({
@@ -108,6 +106,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString  from mol file that contains Sgroup', async ({ page }) => {
@@ -128,6 +127,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht,SgD:38,37,36:fgfh:dsfsd::: :|',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from mol file that contains Heteroatoms', async ({
@@ -151,6 +151,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
+    await takeEditorScreenshot(page);
   });
 
   // flaky
@@ -176,6 +177,7 @@ test.describe('SMILES files', () => {
       page,
       'CCCC[C@@H](C)[C@@H](C)CC |SgD:4,5:Purity:Purity = 96%::: :|',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from V2000 mol file contains abs stereochemistry', async ({
@@ -201,6 +203,7 @@ test.describe('SMILES files', () => {
       // eslint-disable-next-line max-len
       '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
     );
+    await takeEditorScreenshot(page);
   });
 
   // flaky
@@ -228,6 +231,7 @@ test.describe('SMILES files', () => {
       // eslint-disable-next-line max-len
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from file that contains Cis/Trans configuration', async ({
@@ -251,6 +255,7 @@ test.describe('SMILES files', () => {
       page,
       'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from file that contains alias and pseudoatom', async ({
@@ -271,6 +276,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString from reaction consists of two or more reaction arrows and structures', async ({
@@ -294,6 +300,7 @@ test.describe('SMILES files', () => {
       page,
       'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open Daylight SMILES file with reagent above arrow', async ({
@@ -316,6 +323,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+    await takeEditorScreenshot(page);
   });
 
   test('Open SMILE file with S-Group Properties', async ({ page }) => {
@@ -335,6 +343,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCC |SgD:1:atropisomer:info2::::|');
+    await takeEditorScreenshot(page);
   });
 
   test('Stereobond is preserved after pasting a SMILES structure', async ({
@@ -345,6 +354,7 @@ test.describe('SMILES files', () => {
     Description: The Single Down stereo bond is on the structure
     */
     await pasteFromClipboardAndAddToCanvas(page, 'C1=C(C)C(=O)C[S@]1=O');
+    await takeEditorScreenshot(page);
   });
 
   test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async ({
@@ -357,6 +367,7 @@ test.describe('SMILES files', () => {
     Single Down bond changes to Single Up and two other stereobonds dissapear.
     */
     await pasteFromClipboardAndAddToCanvas(page, 'C1[S@](=O)CC(=O)[C@@]=1C');
+    await takeEditorScreenshot(page);
   });
 
   test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async ({
@@ -370,6 +381,7 @@ test.describe('SMILES files', () => {
       'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to SMILE file and loaded back', async ({
@@ -402,6 +414,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-chems.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with another nucleotides could be saved to SMILE file and loaded back', async ({
@@ -434,6 +447,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to SMILE file and loaded back', async ({
@@ -466,6 +480,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-bases.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to SMILE file and loaded back', async ({
@@ -498,6 +513,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to SMILE file and loaded back', async ({
@@ -530,6 +546,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to SMILE file and loaded back', async ({
@@ -562,6 +579,7 @@ test.describe('SMILES files', () => {
       'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to Extended SMILE file and loaded back', async ({
@@ -599,6 +617,7 @@ test.describe('SMILES files', () => {
       'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with other nucleotides could be saved to Extended SMILE file and loaded back', async ({
@@ -636,6 +655,7 @@ test.describe('SMILES files', () => {
       'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to Extended SMILE file and loaded back', async ({
@@ -673,6 +693,7 @@ test.describe('SMILES files', () => {
       'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the simple schema with retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
@@ -705,6 +726,7 @@ test.describe('SMILES files', () => {
       'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMILE file and loaded back', async ({
@@ -737,6 +759,7 @@ test.describe('SMILES files', () => {
       'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
@@ -769,6 +792,7 @@ test.describe('SMILES files', () => {
       'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to SMILE file and loaded back', async ({
@@ -801,6 +825,7 @@ test.describe('SMILES files', () => {
       'SMILES/schema-with-two-retrosynthetic-arrows.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMILE file and loaded back', async ({
@@ -833,6 +858,7 @@ test.describe('SMILES files', () => {
       'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -868,6 +894,7 @@ test.describe('SMILES files', () => {
         'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
         page,
       );
+      await takeEditorScreenshot(page);
     },
   );
 });

@@ -46,10 +46,6 @@ test.describe('Atom Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Periodic table dialog', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1403
@@ -59,6 +55,7 @@ test.describe('Atom Tool', () => {
     await selectAtomInToolbar(AtomButton.Periodic, page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Extended table dialog', async ({ page }) => {
@@ -73,6 +70,7 @@ test.describe('Atom Tool', () => {
     - "x" button is at the top right corner of the window.
     */
     await page.getByTestId('extended-table').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Periodic table-selecting Atom in palette', async ({ page }) => {
@@ -86,6 +84,7 @@ test.describe('Atom Tool', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Creating a new bond with atoms from Periodic table/Palette bar', async ({
@@ -108,6 +107,7 @@ test.describe('Atom Tool', () => {
     await waitForRender(page, async () => {
       await clickInTheMiddleOfTheScreen(page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Creating a List from Periodic table', async ({ page }) => {
@@ -119,6 +119,7 @@ test.describe('Atom Tool', () => {
     await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Adding a List from Periodic table to structure', async ({ page }) => {
@@ -132,6 +133,7 @@ test.describe('Atom Tool', () => {
     await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Creating a Not List from Periodic table', async ({ page }) => {
@@ -143,6 +145,7 @@ test.describe('Atom Tool', () => {
     await selectAtomsFromPeriodicTable(page, 'Not List', ['Ti', 'V', 'Cs']);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Adding a Not List from Periodic table to structure', async ({
@@ -158,6 +161,7 @@ test.describe('Atom Tool', () => {
     await selectAtomsFromPeriodicTable(page, 'Not List', ['V', 'Ti', 'Cs']);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Select Generics from Extended table', async ({ page }) => {
@@ -168,6 +172,7 @@ test.describe('Atom Tool', () => {
     */
     await page.getByTestId('extended-table').click();
     await page.getByRole('button', { name: 'AH', exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Manipulation with structures with different atoms, List/Not List and Generic Group - Move whole structure', async ({
@@ -186,6 +191,7 @@ test.describe('Atom Tool', () => {
     await page.keyboard.press('Control+a');
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete Generic atom from structure', async ({ page }) => {
@@ -200,6 +206,7 @@ test.describe('Atom Tool', () => {
     await selectEraseTool(page);
     await page.getByText('AH').click();
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Erase part of structure with List/Not List and Generic Group', async ({
@@ -218,6 +225,7 @@ test.describe('Atom Tool', () => {
       await page.getByTestId('erase').click();
     });
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In and Zoom Out of structure with List/Not List and Generic Group', async ({
@@ -246,6 +254,7 @@ test.describe('Atom Tool', () => {
         await page.keyboard.press('Control+=');
       });
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste structure with List/Not List and Generic Group', async ({
@@ -263,6 +272,7 @@ test.describe('Atom Tool', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and paste structure with List/Not List and Generic Group', async ({
@@ -280,6 +290,7 @@ test.describe('Atom Tool', () => {
     );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Drag and drop Bromine atom on Benzene ring-Merging atom-to-atom', async ({
@@ -300,6 +311,7 @@ test.describe('Atom Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Colored atoms - save as mol-file and render', async ({ page }) => {
@@ -328,6 +340,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Colored atoms - save as rxn-file and render', async ({ page }) => {
@@ -356,6 +369,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('List/Not List - save as mol-file and render', async ({ page }) => {
@@ -385,6 +399,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('List/Not List - save as rxn-file and render', async ({ page }) => {
@@ -411,6 +426,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Generic Groups - save as rxn-file and render', async ({ page }) => {
@@ -440,6 +456,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Generic Groups - save as mol-file and render', async ({ page }) => {
@@ -469,6 +486,7 @@ test.describe('Atom Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Select part of structure and press Atom in toolbar', async ({
@@ -481,6 +499,7 @@ test.describe('Atom Tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectPartOfMolecules(page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Deleting an atom that is bonded to another atom not deleting second atom', async ({
@@ -503,6 +522,7 @@ test.describe('Atom Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await clickOnAtom(page, 'N', numberOfAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Deleting of one middle atom from a bunch of three not deleting another two atoms', async ({
@@ -516,6 +536,7 @@ test.describe('Atom Tool', () => {
     await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'N', numberOfAtom);
+    await takeEditorScreenshot(page);
   });
 });
 

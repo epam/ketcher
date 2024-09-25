@@ -26,20 +26,18 @@ test.describe('Open Ketcher', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Verify Ketcher settings panel', async ({ page }) => {
     /*
     Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
     */
     await selectTopPanelButton(TopPanelButton.Settings, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify settings menu', async ({ page }) => {
     // Test case: EPMLSOPKET-10077
     await generalDefaultSettings(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Actions when switch "reset to Select tool" is"Off"', async ({
@@ -53,5 +51,6 @@ test.describe('Open Ketcher', () => {
     await copyAndPaste(page);
     await page.mouse.click(pointX, pointY);
     await page.keyboard.press('Control+z');
+    await takeEditorScreenshot(page);
   });
 });

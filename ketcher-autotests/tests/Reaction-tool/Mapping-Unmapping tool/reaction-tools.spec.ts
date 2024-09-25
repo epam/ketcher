@@ -13,12 +13,9 @@ test.describe('Reaction Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeLeftToolbarScreenshot(page);
-  });
-
   test('Icons for Plus Tool', async ({ page }) => {
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+    await takeLeftToolbarScreenshot(page);
   });
 });
 
@@ -27,15 +24,13 @@ test.describe('Reaction Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeMultitoolDropdownScreenshot(page);
-  });
-
   test('Icons for Reaction Mapping tools', async ({ page }) => {
     await openDropdown(page, 'reaction-map');
+    await takeMultitoolDropdownScreenshot(page);
   });
 
   test('Icons for Arrow Tools', async ({ page }) => {
     await openDropdown(page, 'reaction-arrow-open-angle');
+    await takeMultitoolDropdownScreenshot(page);
   });
 });

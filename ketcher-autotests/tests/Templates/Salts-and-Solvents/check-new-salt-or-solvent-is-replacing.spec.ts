@@ -17,10 +17,6 @@ test.describe('Salts and Solvents replacement', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(
     'Verify if the new Salt or Solvent is replacing old one',
     {
@@ -36,6 +32,7 @@ test.describe('Salts and Solvents replacement', () => {
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
       await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -65,6 +62,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
 
     page.setDefaultTimeout(originalTimeout);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({
@@ -75,5 +73,6 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

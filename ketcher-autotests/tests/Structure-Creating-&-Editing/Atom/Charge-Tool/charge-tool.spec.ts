@@ -19,10 +19,6 @@ test.describe('Charge tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Hot key for the Charge Plus Tools', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1664
@@ -34,6 +30,7 @@ test.describe('Charge tool', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hot key for the Charge Minus Tools', async ({ page }) => {
@@ -47,6 +44,7 @@ test.describe('Charge tool', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Change charge on different atoms', async ({ page }) => {
@@ -63,6 +61,7 @@ test.describe('Charge tool', () => {
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
     await clickOnAtom(page, 'S', anyAtom);
     await clickOnAtom(page, 'O', anotherAnyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Check that pressing the hot button Charge Plus on an atom applies the correct charge', async ({
@@ -81,6 +80,7 @@ test.describe('Charge tool', () => {
     await page.keyboard.press('Shift++');
     await page.mouse.move(x, y);
     await page.keyboard.press('Shift++');
+    await takeEditorScreenshot(page);
   });
 
   test('Check that pressing the hot button Charge Minus on an atom applies the correct charge', async ({
@@ -99,6 +99,7 @@ test.describe('Charge tool', () => {
     await page.keyboard.press('-');
     await page.mouse.move(x, y);
     await page.keyboard.press('-');
+    await takeEditorScreenshot(page);
   });
 });
 

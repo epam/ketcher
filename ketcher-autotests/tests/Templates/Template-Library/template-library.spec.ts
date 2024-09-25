@@ -86,10 +86,6 @@ test.describe('Templates - Template Library', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Template with chiral flag 0 with ignoreChiralFlag enabled/disabled', async ({
     page,
   }) => {
@@ -105,12 +101,14 @@ test.describe('Templates - Template Library', () => {
 
     await setIgnoreChiralFlagSetting(page, false);
     await placePhenylalanineMustard(page, x + offsetX, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Structure Library UI', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Overview Templates Library structure
     await openStructureLibrary(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open Structure Library tooltip', async ({ page }) => {
@@ -121,6 +119,7 @@ test.describe('Templates - Template Library', () => {
       'title',
       'Structure Library (Shift+T)',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Template Library', async ({ page }) => {
@@ -136,12 +135,14 @@ test.describe('Templates - Template Library', () => {
       await page.mouse.move(anyX, anyY);
       await page.mouse.wheel(deltaX, deltaY);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Functional groups tab', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Verify Functional Group tab
     await openFunctionalGroup(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Functional groups - adding structure', async ({ page }) => {
@@ -149,6 +150,7 @@ test.describe('Templates - Template Library', () => {
     // Add structure from Functional Group into canvas
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit templates - name with just spaces', async ({ page }) => {
@@ -158,6 +160,7 @@ test.describe('Templates - Template Library', () => {
     await page.getByTestId('name-input').fill('   ');
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await page.getByText('β-D-Sugars').click();
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -166,20 +169,18 @@ test.describe('Templates - Template Library', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await getEditorScreenshot(page);
-  });
-
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
     await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await getEditorScreenshot(page);
   });
 
   test('Edit templates - name field with no character', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await getEditorScreenshot(page);
   });
 
   test('Text field 128 characters limit test ', async ({ page }) => {
@@ -191,5 +192,6 @@ test.describe('Templates - Template Library', () => {
     await waitForRender(page, async () => {
       await textField.type(inputText);
     });
+    await getEditorScreenshot(page);
   });
 });

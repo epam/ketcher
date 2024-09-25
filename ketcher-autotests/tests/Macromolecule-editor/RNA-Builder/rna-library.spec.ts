@@ -1395,9 +1395,9 @@ test.describe('RNA Library', () => {
     CHEM = 'CHEM',
   }
 
-  interface IIDTSearchString {
+  interface ISearchString {
     testDescription: string;
-    IDTSearchString: string;
+    SearchString: string;
     // Location where searched monomer located (we have to go to that location to make sure it is where)
     ResultMonomerLocationTab: MonomerLocationTabs;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
@@ -1449,38 +1449,38 @@ test.describe('RNA Library', () => {
     await rnaLibrarySearch.fill(monomerName);
   }
 
-  const IDTSearchStrings: IIDTSearchString[] = [
+  const IDTSearchStrings: ISearchString[] = [
     {
       testDescription: '1. Verify search by full IDT alias (5Br-dU)',
-      IDTSearchString: '5Br-dU',
+      SearchString: '5Br-dU',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
     },
     {
       testDescription: '2. Verify search by part of IDT alias (itInd))',
-      IDTSearchString: 'itInd',
+      SearchString: 'itInd',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
     },
     {
       testDescription: '3. Verify search with a single symbol /',
-      IDTSearchString: '/',
+      SearchString: '/',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
     },
     {
       testDescription:
         '4. Verify search with a specific ending symbol before the second / (hos/)',
-      IDTSearchString: 'hos/',
+      SearchString: 'hos/',
       ResultMonomerLocationTab: MonomerLocationTabs.PHOSPHATES,
     },
     {
       testDescription:
         '5. Verify no results when additional symbols are added after the second / (Ind/Am)',
-      IDTSearchString: 'Ind/Am',
+      SearchString: 'Ind/Am',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
     },
     {
       testDescription:
         '6. Verify case insensitivity of the search (/5SUPER-DT)',
-      IDTSearchString: '/5SUPER-DT',
+      SearchString: '/5SUPER-DT',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
@@ -1488,7 +1488,7 @@ test.describe('RNA Library', () => {
     {
       testDescription:
         '7. Verify search returns multiple monomers with the same starting symbol (Super))',
-      IDTSearchString: 'Super',
+      SearchString: 'Super',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
@@ -1496,7 +1496,7 @@ test.describe('RNA Library', () => {
     {
       testDescription:
         '8. Verify search returns multiple monomers that have endpoint3 modification (/3))',
-      IDTSearchString: '/3',
+      SearchString: '/3',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
@@ -1504,7 +1504,7 @@ test.describe('RNA Library', () => {
     {
       testDescription:
         '9. Verify search returns multiple monomers that have endpoint5 modification (/5))',
-      IDTSearchString: '/5',
+      SearchString: '/5',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
@@ -1512,7 +1512,7 @@ test.describe('RNA Library', () => {
     {
       testDescription:
         '10. Verify search returns multiple monomers that have internal modification (/i))',
-      IDTSearchString: '/i',
+      SearchString: '/i',
       ResultMonomerLocationTab: MonomerLocationTabs.NUCLEOTIDES,
       shouldFail: true,
       issueNumber: 'https://github.com/epam/ketcher/issues/5452',
@@ -1530,7 +1530,7 @@ test.describe('RNA Library', () => {
         2. Switch to monomer's tab to see it
         3. Take screenshot of the library to make sure search works
     */
-        await searchMonomerByName(page, IDTSearchString.IDTSearchString);
+        await searchMonomerByName(page, IDTSearchString.SearchString);
         await goToMonomerLocationTab(
           page,
           IDTSearchString.ResultMonomerLocationTab,
@@ -1637,4 +1637,69 @@ test.describe('RNA Library', () => {
       );
     },
   );
+
+  const AmbiguousMonomersSearchStrings: ISearchString[] = [
+    {
+      testDescription: "1. Search 'J' ambiguous peptide",
+      SearchString: 'J',
+      ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
+    },
+    {
+      testDescription:
+        "2. Search 'Leucine' as component of ambiguous peptide (should be J ambiguous monomer)",
+      SearchString: 'Leucine',
+      ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
+    },
+    {
+      testDescription: "3. Search 'W' ambiguous DNA and RNA bases",
+      SearchString: 'W',
+      ResultMonomerLocationTab: MonomerLocationTabs.BASES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
+    },
+    {
+      testDescription:
+        "4. Search 'Thymine'  as component of ambiguous DNA base",
+      SearchString: 'Thymine',
+      ResultMonomerLocationTab: MonomerLocationTabs.BASES,
+      shouldFail: true,
+      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
+    },
+  ];
+
+  test.describe('Search ambiguous monomers: ', () => {
+    for (const AmbiguousMonomersSearchString of AmbiguousMonomersSearchStrings) {
+      test(`${AmbiguousMonomersSearchString.testDescription}`, async ({
+        page,
+      }) => {
+        /* 
+      Test task: https://github.com/epam/ketcher/issues/5558
+      Verify ambiguous monomer search functionality in the library
+      Case:
+        1. Fill Search field with value
+        2. Switch to monomer's tab to see it
+        3. Take screenshot of the library to make sure search works
+      */
+        await searchMonomerByName(
+          page,
+          AmbiguousMonomersSearchString.SearchString,
+        );
+        await goToMonomerLocationTab(
+          page,
+          AmbiguousMonomersSearchString.ResultMonomerLocationTab,
+        );
+        await takeMonomerLibraryScreenshot(page);
+
+        // Test should be skipped if related bug exists
+        test.fixme(
+          AmbiguousMonomersSearchString.shouldFail === true,
+          `That test fails because of ${AmbiguousMonomersSearchString.issueNumber} issue.`,
+        );
+      });
+    }
+  });
 });

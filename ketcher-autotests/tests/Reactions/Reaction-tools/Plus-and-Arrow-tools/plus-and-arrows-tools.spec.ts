@@ -81,7 +81,7 @@ const formatsForSave = [
   },
 ];
 
-const OFFSET_FROM_ARROW = 30;
+const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();

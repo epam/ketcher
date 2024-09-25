@@ -1,12 +1,16 @@
-import { BaseRenderer } from 'application/render';
+import { BaseRenderer, ShowHydrogenLabels } from 'application/render';
 import { select } from 'd3';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor';
+import { AtomLabel, ElementColor } from 'domain/constants';
+import { Bond } from 'domain/entities/CoreBond';
+import { Vec2 } from 'domain/entities';
 
 export class AtomRenderer extends BaseRenderer {
   constructor(public atom: Atom) {
     super(atom);
+    atom.setRenderer(this);
   }
 
   get scaledPosition() {
@@ -64,9 +68,61 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement.attr('opacity', '0');
   }
 
+  public get isLabelVisible() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
+    const isCarbon = this.atom.label === AtomLabel.C;
+    const visibleTerminal = true;
+    const isAtomTerminal = atomNeighborsHalfEdges?.length === 1;
+    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) > 2;
+
+    if (isCarbon) {
+      return false;
+    }
+    if (isAtomTerminal && visibleTerminal) return true;
+
+    if (isAtomInMiddleOfChain) {
+      const firstHalfEdge = atomNeighborsHalfEdges[0];
+      const secondHalfEdge = atomNeighborsHalfEdges[1];
+      const firstBond = firstHalfEdge.bond;
+      const secondBond = secondHalfEdge.bond;
+
+      const sameNotStereo =
+        firstBond.type === secondBond.type &&
+        firstBond.stereo === 0 &&
+        secondBond.stereo === 0;
+
+      if (
+        sameNotStereo &&
+        Math.abs(
+          Vec2.cross(firstHalfEdge.direction, secondHalfEdge.direction),
+        ) < 0.2
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private appendLabel() {
+    if (!this.isLabelVisible) {
+      return;
+    }
+
+    this.rootElement
+      ?.append('text')
+      .text(this.atom.label)
+      .attr('text-anchor', 'middle')
+      .attr('y', 5)
+      .attr('fill', ElementColor[this.atom.label]);
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.hoverElement = this.appendHoverArea();
+    this.labelElement = this.appendLabel();
   }
 }

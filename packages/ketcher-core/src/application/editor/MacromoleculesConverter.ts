@@ -25,6 +25,7 @@ import {
 import { isNumber } from 'lodash';
 import { IKetAttachmentPoint } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { CoreEditor } from 'application/editor/Editor';
 
 export class MacromoleculesConverter {
   private static convertMonomerToMonomerMicromolecule(
@@ -373,6 +374,7 @@ export class MacromoleculesConverter {
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
+    const editor = CoreEditor.provideEditorInstance();
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();
@@ -423,6 +425,7 @@ export class MacromoleculesConverter {
             atom.pp,
             monomer,
             atomId,
+            atom.label,
           );
 
           atomsMap[atomId] = atomAddCommand.operations[0].atom;
@@ -435,6 +438,7 @@ export class MacromoleculesConverter {
               atomsMap[bond.begin],
               atomsMap[bond.end],
               bond.type,
+              bond.stereo,
             ),
           );
         });
@@ -569,6 +573,8 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
 
+    editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);
+    console.log(editor.viewModel);
     return { drawingEntitiesManager, modelChanges: command };
   }
 }

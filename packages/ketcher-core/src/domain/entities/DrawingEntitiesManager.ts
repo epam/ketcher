@@ -73,6 +73,7 @@ import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
 import { BondAddOperation } from 'application/editor/operations/coreBond/bond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MonomerToAtomBondAddOperation } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
+import { AtomLabel } from 'domain/constants';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -96,6 +97,10 @@ type NucleotideOrNucleoside = {
   rnaBase: RNABase | AmbiguousMonomer;
   baseMonomer: Sugar | Phosphate;
 };
+
+type DirectedAcylicAtomsGraph<T> = Record<number, T>;
+type IDirectedAcylicAtomsGraph =
+  DirectedAcylicAtomsGraph<IDirectedAcylicAtomsGraph>;
 
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
@@ -1944,9 +1949,19 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
+    label: AtomLabel,
+    _atom?: Atom,
   ) {
-    const atom = new Atom(position, monomer, atomIdInMicroMode);
+    if (_atom) {
+      this.atoms.set(_atom.id, _atom);
+
+      return _atom;
+    }
+
+    const atom = new Atom(position, monomer, atomIdInMicroMode, label);
+
     this.atoms.set(atom.id, atom);
+
     return atom;
   }
 
@@ -1954,13 +1969,28 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
+    label: string,
   ) {
     const command = new Command();
     const atomAddOperation = new AtomAddOperation(
-      this.addAtomChangeModel.bind(this, position, monomer, atomIdInMicroMode),
-      this.addAtomChangeModel.bind(this, position, monomer, atomIdInMicroMode),
+      this.addAtomChangeModel.bind(
+        this,
+        position,
+        monomer,
+        atomIdInMicroMode,
+        label,
+      ),
+      this.addAtomChangeModel.bind(
+        this,
+        position,
+        monomer,
+        atomIdInMicroMode,
+        label,
+      ),
     );
+
     command.addOperation(atomAddOperation);
+
     return command;
   }
 
@@ -1968,6 +1998,7 @@ export class DrawingEntitiesManager {
     firstAtom: Atom,
     secondAtom: Atom,
     type: number,
+    stereo: number,
     _bond?: Bond,
   ) {
     if (_bond) {
@@ -1976,7 +2007,7 @@ export class DrawingEntitiesManager {
       return _bond;
     }
 
-    const bond = new Bond(firstAtom, secondAtom, type);
+    const bond = new Bond(firstAtom, secondAtom, type, stereo);
 
     this.bonds.set(bond.id, bond);
     firstAtom.addBond(bond);
@@ -1985,11 +2016,16 @@ export class DrawingEntitiesManager {
     return bond;
   }
 
-  public addBond(firstAtom: Atom, secondAtom: Atom, type: number) {
+  public addBond(
+    firstAtom: Atom,
+    secondAtom: Atom,
+    type: number,
+    stereo: number,
+  ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type),
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type),
+      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
+      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
     );
     command.addOperation(bondAddOperation);
     return command;

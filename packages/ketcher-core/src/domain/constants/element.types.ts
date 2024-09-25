@@ -149,3 +149,7 @@ export interface Element {
   mass: number;
   leftH?: boolean;
 }
+
+export enum AtomLabel {
+  C = 'C',
+}

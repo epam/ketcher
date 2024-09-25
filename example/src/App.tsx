@@ -108,25 +108,222 @@ const App = () => {
             },
             '*',
           );
-          //           alreadySwitched++;
-          //           // ketcher.setMode('flex');
-          //           if (alreadySwitched === 2) {
-          //             // setTimeout(() => {
-          //             ketcher.setMolecule(`
-          //   -INDIGO-09172416033D
-          //
-          //   3  2  0  0  0  0  0  0  0  0999 V2000
-          //    15.8305   -6.6240   -1.9779 C   0  0  0  0  0  0  0  0  0  0  0  0
-          //    14.5620   -6.7389   -2.1472 C   0  0  0  0  0  0  0  0  0  0  0  0
-          //    13.8718   -7.6035    3.5290 C   0  0  0  0  0  0  0  0  0  0  0  0
-          //   1  2  2  0  0  0  0
-          //   3  2  1  0  0  0  0
-          // M  END
-          // `);
-          //             togglePolymerEditor(true);
+          alreadySwitched++;
+          // ketcher.setMode('flex');
+          if (alreadySwitched === 2) {
+            // setTimeout(() => {
+            ketcher.setMolecule(`{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    17.4873784618909,
+                    -5.873923566249523,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    17.4873784618909,
+                    -7.875180517611122,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    15.753695689312845,
+                    -8.876076433750477,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    14.025495446135155,
+                    -7.875314237840399,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    15.753561969083568,
+                    -5.873923566249523,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    13.262621538109101,
+                    -6.521263196180133,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.623278340302054,
+                    -6.374170943975284,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    16.623278340302054,
+                    -7.3749331398853615,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.753561969083568,
+                    -7.875314237840399,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.889595567724001,
+                    -7.3750668601146385,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.889595567724001,
+                    -6.374304664204562,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.025495446135155,
+                    -5.874057286478801,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    0
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    1
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    3
+                ],
+                "stereo": 1
+            }
+        ]
+    }
+}`);
+            togglePolymerEditor(true);
 
-          // }, 10)
-          // }
+            // }, 10)
+          }
         }}
         togglerComponent={togglerComponent}
       />

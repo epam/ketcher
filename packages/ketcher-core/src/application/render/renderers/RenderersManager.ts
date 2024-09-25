@@ -12,7 +12,13 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import { Peptide, Phosphate, Sugar, UnsplitNucleotide } from 'domain/entities';
+import {
+  HalfBond,
+  Peptide,
+  Phosphate,
+  Sugar,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -39,6 +45,7 @@ import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToMoleculeBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
+import { KetcherLogger } from 'utilities';
 
 export class RenderersManager {
   // FIXME: Specify the types.
@@ -50,6 +57,10 @@ export class RenderersManager {
     number,
     FlexModeOrSnakeModePolymerBondRenderer
   >();
+
+  public atoms = new Map<number, AtomRenderer>();
+
+  public bonds = new Map<number, BondRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
   private needRecalculateMonomersBeginning = false;
@@ -439,19 +450,25 @@ export class RenderersManager {
 
   public addAtom(atom: Atom) {
     const atomRenderer = new AtomRenderer(atom);
+
+    this.atoms.set(atom.id, atomRenderer);
     atomRenderer.show();
   }
 
   public deleteAtom(atom: Atom) {
+    this.atoms.delete(atom.id);
     atom.renderer.remove();
   }
 
   public addBond(bond: Bond) {
     const bondRenderer = new BondRenderer(bond);
+
+    this.bonds.set(bond.id, bondRenderer);
     bondRenderer.show();
   }
 
   public deleteBond(bond: Bond) {
+    this.bonds.delete(bond.id);
     bond.renderer.remove();
   }
 

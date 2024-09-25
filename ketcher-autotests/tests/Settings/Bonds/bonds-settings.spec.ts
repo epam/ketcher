@@ -1,11 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  bondsDefaultSettings,
+  bondsSettings,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
+  openSettings,
   pressButton,
   resetAllSettingsToDefault,
+  scrollToDownInSetting,
   setBondLengthOptionUnit,
   setBondLengthValue,
   setBondSpacingValue,
@@ -21,10 +23,9 @@ import {
 
 test('Verify Bonds setting menu', async ({ page }) => {
   await waitForPageInit(page);
-  await bondsDefaultSettings(page);
-  const scrollToDown = page.getByTestId('Options for Debugging-accordion');
-  await scrollToDown.scrollIntoViewIfNeeded();
-  await scrollToDown.hover({ force: true });
+  await openSettings(page);
+  await bondsSettings(page);
+  await scrollToDownInSetting(page);
   await takeEditorScreenshot(page);
 });
 
@@ -49,11 +50,13 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
     const bondLenght = page.getByText('Bond length');
     expect(bondLenght).toHaveText('Bond length');
     await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '7.8');
+    await setBondLengthValue(page, '74.8');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -67,14 +70,16 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
         require a number input should allow entering values with one decimal place
-        */
+    */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '17.8');
+    await setBondLengthValue(page, '27.8');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -93,9 +98,11 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
-    await setBondLengthValue(page, '0.8');
+    await setBondLengthValue(page, '2.8');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -114,9 +121,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
-    await setBondLengthValue(page, '2.8');
+    await setBondLengthValue(page, '0.8');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -135,7 +143,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '17');
     await moveMouseAway(page);
@@ -156,9 +165,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '19');
+    await setBondLengthValue(page, '69');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -177,9 +187,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
-    await setBondLengthValue(page, '1');
+    await setBondLengthValue(page, '3');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -198,9 +209,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
-    await setBondLengthValue(page, '3');
+    await setBondLengthValue(page, '1');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -219,9 +231,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '18.87');
+    await setBondLengthValue(page, '58.87');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -240,7 +253,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '16.68');
     await moveMouseAway(page);
@@ -261,7 +275,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0.78');
     await moveMouseAway(page);
@@ -282,9 +297,10 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
-    await setBondLengthValue(page, '3.25');
+    await setBondLengthValue(page, '0.52');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -301,7 +317,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -320,7 +337,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -339,7 +357,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -358,7 +377,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -378,7 +398,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.1');
     await moveMouseAway(page);
@@ -398,7 +419,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.2');
     await moveMouseAway(page);
@@ -418,7 +440,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '13.1');
     await moveMouseAway(page);
@@ -438,7 +461,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '3.1');
     await moveMouseAway(page);
@@ -458,7 +482,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '4');
     await moveMouseAway(page);
@@ -478,7 +503,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '1');
     await moveMouseAway(page);
@@ -498,7 +524,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3');
     await moveMouseAway(page);
@@ -518,7 +545,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '2');
     await moveMouseAway(page);
@@ -538,7 +566,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.17');
     await moveMouseAway(page);
@@ -558,7 +587,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.13');
     await moveMouseAway(page);
@@ -578,7 +608,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3.81');
     await moveMouseAway(page);
@@ -598,7 +629,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '.18');
     await moveMouseAway(page);
@@ -618,7 +650,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.4');
     await moveMouseAway(page);
@@ -638,7 +671,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.4');
     await moveMouseAway(page);
@@ -658,7 +692,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '2.4');
     await moveMouseAway(page);
@@ -678,7 +713,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '1.4');
     await moveMouseAway(page);
@@ -698,7 +734,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '4');
     await moveMouseAway(page);
@@ -718,7 +755,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '3');
     await moveMouseAway(page);
@@ -738,7 +776,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3');
     await moveMouseAway(page);
@@ -758,7 +797,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '2');
     await moveMouseAway(page);
@@ -778,7 +818,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.49');
     await moveMouseAway(page);
@@ -798,7 +839,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.74');
     await moveMouseAway(page);
@@ -818,7 +860,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3.14');
     await moveMouseAway(page);
@@ -838,7 +881,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '3.67');
     await moveMouseAway(page);
@@ -859,7 +903,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     const hashSpacing = page.getByText('Hash spacing');
     expect(hashSpacing).toHaveText('Hash spacing');
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -882,7 +927,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -903,7 +949,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -924,7 +971,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -945,7 +993,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2');
     await moveMouseAway(page);
@@ -966,7 +1015,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -987,7 +1037,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -1008,7 +1059,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -1029,7 +1081,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2.53');
     await moveMouseAway(page);
@@ -1050,7 +1103,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.53');
     await moveMouseAway(page);
@@ -1071,7 +1125,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.53');
     await moveMouseAway(page);
@@ -1092,7 +1147,8 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -1110,7 +1166,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     const bondSpacing = page.getByText('Bond spacing');
     expect(bondSpacing).toHaveText('Bond spacing');
     const bondSpacingValue = page.getByTestId('bondSpacing-input');
@@ -1132,7 +1189,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '50');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1151,7 +1209,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '10');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1168,7 +1227,8 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '100');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1190,7 +1250,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1208,7 +1269,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1226,7 +1288,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1244,7 +1307,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1260,7 +1324,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1276,7 +1341,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1292,7 +1358,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1308,7 +1375,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1326,7 +1394,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a 1000.1 value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1344,7 +1413,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1363,7 +1433,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1382,7 +1453,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1400,7 +1472,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1417,7 +1490,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1434,7 +1508,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1451,7 +1526,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1468,7 +1544,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1485,7 +1562,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1502,7 +1580,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1519,7 +1598,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1536,7 +1616,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1553,7 +1634,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1570,7 +1652,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1587,7 +1670,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1604,7 +1688,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1621,7 +1706,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1638,7 +1724,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1655,7 +1742,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1673,7 +1761,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1691,7 +1780,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1709,7 +1799,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1727,7 +1818,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1743,7 +1835,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1759,7 +1852,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1775,7 +1869,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1791,7 +1886,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1806,7 +1902,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '0');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
@@ -1822,7 +1919,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '-19');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
@@ -1836,7 +1934,8 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await bondsDefaultSettings(page);
+    await openSettings(page);
+    await bondsSettings(page);
     await setBondSpacingValue(page, '101');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });

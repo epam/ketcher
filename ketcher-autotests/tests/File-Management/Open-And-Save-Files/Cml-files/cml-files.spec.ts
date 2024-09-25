@@ -7,7 +7,7 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   setReactionMarginSizeOptionUnit,
-  bondsDefaultSettings,
+  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -341,7 +341,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -370,7 +370,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -399,7 +399,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -428,7 +428,7 @@ test.describe('CML files', () => {
     The Bond length setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -457,7 +457,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -486,7 +486,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -515,7 +515,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -544,7 +544,7 @@ test.describe('CML files', () => {
     The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');

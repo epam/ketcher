@@ -301,8 +301,10 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
-export async function bondsDefaultSettings(page: Page) {
+export async function openSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
+}
+export async function bondsSettings(page: Page) {
   await page.getByText('Bonds', { exact: true }).click();
 }
 
@@ -439,4 +441,10 @@ export async function setReactionMarginSizeValue(page: Page, value: string) {
     .getByRole('textbox')
     .nth(3)
     .fill(value);
+}
+
+export async function scrollToDownInSetting(page: Page) {
+  const scrollToDown = page.getByTestId('Options for Debugging-accordion');
+  await scrollToDown.scrollIntoViewIfNeeded();
+  await scrollToDown.hover({ force: true });
 }

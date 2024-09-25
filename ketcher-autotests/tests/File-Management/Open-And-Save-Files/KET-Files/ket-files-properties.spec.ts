@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
-  bondsDefaultSettings,
+  bondsSettings,
   openFileAndAddToCanvas,
   pressButton,
   receiveFileComparisonData,
@@ -79,7 +79,7 @@ test('The Bond length setting with px option is applied, click on layout and it 
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'px-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -106,7 +106,7 @@ test('The Bond length setting with pt option is applied, click on layout and it 
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'pt-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -136,7 +136,7 @@ test('The Bond length setting with cm option is applied, click on layout and it 
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'cm-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -166,7 +166,7 @@ test('The Bond length setting with inch option is applied, click on layout and i
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'inch-option');
   await setBondLengthValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -196,7 +196,7 @@ test('The Reaction component margin size setting with px option is applied, clic
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setReactionMarginSizeOptionUnit(page, 'px-option');
   await setReactionMarginSizeValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -224,7 +224,7 @@ test('The Reaction component margin size setting with pt option is applied, clic
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setReactionMarginSizeOptionUnit(page, 'pt-option');
   await setReactionMarginSizeValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -255,7 +255,7 @@ test('The Reaction component margin size setting with cm option is applied, clic
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setReactionMarginSizeOptionUnit(page, 'cm-option');
   await setReactionMarginSizeValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -286,7 +286,7 @@ test('The Reaction component margin size setting with inch option is applied, cl
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
   await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-  await bondsDefaultSettings(page);
+  await bondsSettings(page);
   await setReactionMarginSizeOptionUnit(page, 'inch-option');
   await setReactionMarginSizeValue(page, '7.8');
   await pressButton(page, 'Apply');
@@ -303,6 +303,32 @@ test('The Reaction component margin size setting with inch option is applied, cl
       page,
       expectedFileName:
         'tests/test-data/KET/layout-with-long-molecule-inch-margin-size.ket',
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
+});
+
+test('The ACS setting is applied, click on layout and it should be save to KET specification', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option AVS style and check saving to different format
+  */
+  await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await pressButton(page, 'ACS Style');
+  await pressButton(page, 'Apply');
+  await selectTopPanelButton(TopPanelButton.Layout, page);
+  await takeEditorScreenshot(page);
+  const expectedFile = await getKet(page);
+  await saveToFile('KET/layout-with-long-molecule-acs-style.ket', expectedFile);
+
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/KET/layout-with-long-molecule-acs-style.ket',
     });
 
   expect(ketFile).toEqual(ketFileExpected);

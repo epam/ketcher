@@ -12,7 +12,7 @@ import {
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
-  bondsDefaultSettings,
+  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -160,7 +160,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -189,7 +189,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -218,7 +218,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -247,7 +247,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Bond length setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -276,7 +276,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -306,7 +306,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -336,7 +336,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -366,7 +366,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to CDXML format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsDefaultSettings(page);
+    await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -382,6 +382,35 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         page,
         expectedFileName:
           'tests/test-data/CDXML/layout-with-long-molecule-inch-margin-size.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to CDXML format', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option AVS style and check saving to different format
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/layout-with-diagonally-arrow-acs-style.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/layout-with-diagonally-arrow-acs-style.cdxml',
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);

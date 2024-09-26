@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState, StrictMode } from 'react';
+import { useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
@@ -82,46 +82,84 @@ const App = () => {
     />
   ) : undefined;
 
-  return showPolymerEditor ? (
+  return (
     <>
-      <PolymerEditor togglerComponent={togglerComponent} />
-    </>
-  ) : (
-    <StrictMode>
-      <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: '22px 24px 0',
+          display: 'flex',
+          justifyContent: 'stretch',
+          alignItems: 'stretch',
+          boxSizing: 'border-box',
+          flexDirection: 'column',
+          background: 'url(../public/background.png)',
+          backgroundSize: 'cover',
         }}
-        buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
-
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
-        }}
-        togglerComponent={togglerComponent}
-      />
-      {hasError && (
-        <InfoModal
-          message={errorMessage}
-          close={() => {
-            setHasError(false);
-
-            // Focus on editor after modal is closed
-            const cliparea: HTMLElement | null =
-              document.querySelector('.cliparea');
-            cliparea?.focus();
+      >
+        <div style={{ marginBottom: '24px' }}>
+          <img src="../public/ketcher-logo.svg" />
+        </div>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '7px',
+            overflow: 'hidden',
           }}
-        />
-      )}
-    </StrictMode>
+        >
+          {showPolymerEditor ? (
+            <>
+              <PolymerEditor togglerComponent={togglerComponent} />
+            </>
+          ) : (
+            <Editor
+              errorHandler={(message: string) => {
+                setHasError(true);
+                setErrorMessage(message.toString());
+              }}
+              buttons={hiddenButtonsConfig}
+              staticResourcesUrl={process.env.PUBLIC_URL}
+              structServiceProvider={structServiceProvider}
+              onInit={(ketcher: Ketcher) => {
+                window.ketcher = ketcher;
+
+                window.parent.postMessage(
+                  {
+                    eventType: 'init',
+                  },
+                  '*',
+                );
+              }}
+              togglerComponent={togglerComponent}
+            />
+          )}
+          {hasError && (
+            <InfoModal
+              message={errorMessage}
+              close={() => {
+                setHasError(false);
+
+                // Focus on editor after modal is closed
+                const cliparea: HTMLElement | null =
+                  document.querySelector('.cliparea');
+                cliparea?.focus();
+              }}
+            />
+          )}
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            padding: '16px 0',
+          }}
+        >
+          <img src="../public/epam-logo.svg" />
+        </div>
+      </div>
+    </>
   );
 };
 

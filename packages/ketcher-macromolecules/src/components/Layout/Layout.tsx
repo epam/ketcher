@@ -30,7 +30,7 @@ const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
 }));
 
 const RowMain = styled.div(({ theme }) => ({
-  height: '100vh',
+  height: '100%',
   width: '100%',
   position: 'relative',
   padding: '12px',

@@ -30,10 +30,6 @@ test.describe('R-Group Label Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('R-group label dialog appears', async ({ page }) => {
     /* Test case: EPMLSOPKET-1556
       Description: R-group label dialog appears
@@ -44,6 +40,7 @@ test.describe('R-Group Label Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Try to create R-Group not with clicking on atom', async ({ page }) => {
@@ -53,6 +50,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Single R-Group label', async ({ page }) => {
@@ -70,6 +68,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple R-Group label', async ({ page }) => {
@@ -89,6 +88,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Delete R-Group label using Erase tool', async ({ page }) => {
@@ -109,6 +109,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.getByText('R5').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Edit R-Group label', async ({ page }) => {
@@ -131,6 +132,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Create S-Group with R-Group', async ({ page }) => {
@@ -160,6 +162,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Rotate R-group', async ({ page }) => {
@@ -180,6 +183,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Vertical Flip (Alt+V)');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Undo-Redo with R-group label', async ({ page }) => {
@@ -208,6 +212,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Create the same R-Group label as existing', async ({ page }) => {
@@ -234,6 +239,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In/Zoom Out', async ({ page }) => {
@@ -264,6 +270,7 @@ test.describe('R-Group Label Tool', () => {
         await page.keyboard.press('Control+=');
       });
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Delete R-Group label using hotkey', async ({ page }) => {
@@ -285,6 +292,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Move Structure with R-Group label', async ({ page }) => {
@@ -298,6 +306,7 @@ test.describe('R-Group Label Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move whole Structure with R-Group label', async ({ page }) => {
@@ -311,6 +320,7 @@ test.describe('R-Group Label Tool', () => {
     await page.keyboard.press('Control+a');
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move Actions with Reaction components with R-Group label', async ({
@@ -332,6 +342,7 @@ test.describe('R-Group Label Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move whole Reaction components with R-Group label', async ({
@@ -353,6 +364,7 @@ test.describe('R-Group Label Tool', () => {
     await page.keyboard.press('Control+a');
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -367,6 +379,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -379,6 +392,7 @@ test.describe('R-Group Label Tool', () => {
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Atom properties do not implement for the Rgroup labels', async ({
@@ -396,6 +410,7 @@ test.describe('R-Group Label Tool', () => {
     await waitForRender(page, async () => {
       await page.getByText('R13').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Add Bond to the R-Group Label', async ({ page }) => {
@@ -412,6 +427,7 @@ test.describe('R-Group Label Tool', () => {
     await selectBond(BondTypeName.Single, page);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Chain to the R-Group Label', async ({ page }) => {
@@ -428,6 +444,7 @@ test.describe('R-Group Label Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Template to the R-Group Label', async ({ page }) => {
@@ -444,6 +461,7 @@ test.describe('R-Group Label Tool', () => {
     await selectRingButton(RingButton.Benzene, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action to the distorted structure with R-Group Label', async ({
@@ -458,6 +476,7 @@ test.describe('R-Group Label Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 });
 

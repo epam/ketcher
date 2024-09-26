@@ -10,10 +10,6 @@ test.describe('S-Groups', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open file with several s-groups and check brackets', async ({
     page,
   }) => {
@@ -25,5 +21,6 @@ test.describe('S-Groups', () => {
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 });

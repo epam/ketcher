@@ -26,10 +26,6 @@ test.describe('Mapping Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Click atoms to map atoms in a reaction', async ({ page }) => {
     /* Test case: EPMLSOPKET-1799, EPMLSOPKET-8909
     Description:  Click atoms to map atoms in a reaction
@@ -41,6 +37,7 @@ test.describe('Mapping Tools', () => {
       { label: 'C', number: 0 },
       { label: 'C', number: 10 },
     );
+    await takeEditorScreenshot(page);
   });
 
   test.describe('Mapping Tools', () => {

@@ -28,10 +28,6 @@ test.describe('', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(
     'Open and Save file - Generate structure from ' +
       'InChI String - inserting correct string for multiple structures',
@@ -47,6 +43,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -65,6 +62,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -83,6 +81,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -101,6 +100,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -119,6 +119,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -137,6 +138,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -155,6 +157,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -173,6 +176,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -191,6 +195,7 @@ test.describe('', () => {
         page,
       );
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     },
   );
 });

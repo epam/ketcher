@@ -25,11 +25,6 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Formic acid appears near Oxygen', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11555
@@ -40,6 +35,8 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Acetic acid appears near Cbz', async ({ page }) => {
@@ -52,6 +49,8 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Propionic acid appears near Methane sulphonic acid', async ({
@@ -65,6 +64,8 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Isobutanol appears near Oxygen atom', async ({ page }) => {
@@ -85,6 +86,8 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await resetCurrentTool(page);
 
     await drawSaltAndDrag(SaltsAndSolvents.Isobutanol, -SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('AceticAcid appears near FMOC Functional Group', async ({ page }) => {
@@ -101,5 +104,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await resetCurrentTool(page);
     // test fails because can't select AceticAcid
     await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

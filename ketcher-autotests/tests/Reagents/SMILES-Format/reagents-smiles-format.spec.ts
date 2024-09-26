@@ -42,10 +42,6 @@ test.describe('Reagents SMILES format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(`Detection molecule as reagent 
   and write reagent information in "Daylight SMILES" format in "Preview" tab`, async ({
     page,
@@ -68,6 +64,7 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -92,6 +89,7 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule as reagent
@@ -110,6 +108,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     await getPreviewForSmiles(page, 'Extended SMILES');
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -128,6 +127,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     await getPreviewForSmiles(page, 'Extended SMILES');
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {
@@ -136,6 +136,7 @@ test.describe('Reagents SMILES format', () => {
     Description: Reagent 'Cl' above the reaction arrow
     */
     await openFileAndAddToCanvas('SMILES/daylight-smiles-expect.smi', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "Extended SMILES" format', async ({ page }) => {
@@ -147,6 +148,7 @@ test.describe('Reagents SMILES format', () => {
       'Extended-SMILES/extended-smiles-expect.cxsmi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMILES" format', async ({ page }) => {
@@ -159,6 +161,7 @@ test.describe('Reagents SMILES format', () => {
       'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Extended SMILES" format', async ({ page }) => {
@@ -171,6 +174,7 @@ test.describe('Reagents SMILES format', () => {
       'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('SMILES import if dearomotize-on-load is true', async ({ page }) => {
@@ -180,6 +184,7 @@ test.describe('Reagents SMILES format', () => {
     */
     await enableDearomatizeOnLoad(page);
     await setMolecule(page, 'c1ccccc1');
+    await takeEditorScreenshot(page);
   });
 });
 

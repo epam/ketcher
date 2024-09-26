@@ -458,7 +458,6 @@ function arrowOpenAngle(
   shouldApplySnappingStyle: boolean,
 ) {
   const { arrowHeadAttr, arrowHeadLength } = getArrowHeadDimensions(options);
-  console.log(arrowHeadAttr, arrowHeadLength);
   const pathBuilder = new PathBuilder().addOpenArrowPathParts(
     start,
     arrowLength,
@@ -895,7 +894,6 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
   );
 
   // Second (Unbalanced) arrow
-  console.log(unbalanceVal);
   path.push(
     `M${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
       `L${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
@@ -1032,11 +1030,6 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  // const arrowLen = 9;
-  // const lineOffset = 3.5;
-  // const arrowOffset = 7;
-  // const unbalanceVal = 15;
-
   const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
     getArrowHeadDimensions(options);
   const unbalanceVal = getUnbalancedArrowHeadOffset(options);

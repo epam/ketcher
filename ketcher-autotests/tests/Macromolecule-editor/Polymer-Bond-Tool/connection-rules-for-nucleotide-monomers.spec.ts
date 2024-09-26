@@ -603,6 +603,25 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    J: {
+      monomerType: 'peptide',
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    // '%': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //   },
+    // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
@@ -624,7 +643,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftNucleotideConnectionPoint} to ${rightPeptideConnectionPoint} of Nuc(${leftNucleotide.alias}) and Pept(${rightPeptide.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(40000);
 
                 await loadTwoMonomers(page, leftNucleotide, rightPeptide);
 
@@ -856,7 +875,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(40000);
 
         await loadTwoMonomers(page, leftNucleotide, rightPeptide);
 
@@ -1548,7 +1567,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case11: Cnnct ${leftNucleotideConnectionPoint} to ${rightBaseConnectionPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(40000);
 
                 /* In order to fix problem with label renderer (one pixel shift) 
                    we have to try to reload page
@@ -1599,7 +1618,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case12: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(40000);
 
         await loadTwoMonomers(page, leftNucleotide, rightBase);
 

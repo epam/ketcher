@@ -637,6 +637,5 @@ for (const [_, id] of Object.values(BondTool)) {
     await expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
     await button.click();
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 }

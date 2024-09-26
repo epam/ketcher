@@ -74,11 +74,7 @@ test.describe('Zoom Tool', () => {
     );
     await moveMouseToTheMiddleOfTheScreen(page);
   });
-  /*
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-  */
+
   test('Zoom In & Out monomer with menu buttons', async () => {
     await page.getByTestId('zoom-selector').click();
     await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);

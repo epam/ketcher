@@ -20,10 +20,6 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('open reaction map dropdown', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2865
@@ -32,6 +28,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     const button = page.getByTestId('reaction-map');
     await button.click();
     expect(button).toHaveAttribute('title', 'Reaction Mapping Tool');
+    await takeEditorScreenshot(page);
   });
 
   test('Not possible when the reaction is absent on canvas', async ({
@@ -55,6 +52,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await clickOnTheCanvas(page, point2.x, point2.y);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+    await takeEditorScreenshot(page);
   });
 
   test('UI dialog', async ({ page }) => {
@@ -66,6 +64,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await page.getByTestId('automap-mode-input-span').click();
+    await takeEditorScreenshot(page);
   });
 
   test.describe('full reaction on canvas', () => {

@@ -14,10 +14,6 @@ test.describe('Outline for hovered structures', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   /* Draw selection outline correctly for hovered structures:
    * related to GitHub issue: https://github.com/epam/ketcher/issues/2595
    */

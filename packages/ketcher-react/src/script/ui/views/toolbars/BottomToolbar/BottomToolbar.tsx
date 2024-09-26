@@ -45,17 +45,11 @@ type Props = BottomToolbarProps & BottomToolbarCallProps;
 
 const BottomToolbar = (props: Props) => {
   const { className, ...rest } = props;
-  const { active, disableableButtons, indigoVerification, onAction } = rest;
 
   return (
     <div data-testid="bottom-toolbar" className={clsx(classes.root, className)}>
       <Group>
-        <TemplatesList
-          active={active}
-          indigoVerification={indigoVerification}
-          disableableButtons={disableableButtons}
-          onAction={onAction}
-        />
+        <TemplatesList {...rest} />
         <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>

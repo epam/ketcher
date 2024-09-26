@@ -3,8 +3,11 @@ import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   selectSingleBondTool,
+  selectSequenceLayoutModeTool,
+  typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
+  takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
 
@@ -156,5 +159,42 @@ test.describe('Hotkeys', () => {
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
+
+  const hotkeysAndDescriptions = [
+    { key: 'Control+Alt+D', type: 'DNA' },
+    { key: 'Control+Alt+P', type: 'Peptide' },
+    { key: 'Control+Alt+R', type: 'RNA' },
+  ];
+
+  test.describe('Check New approach and UI for switching between types in sequence mode', () => {
+    for (const { key, type } of hotkeysAndDescriptions) {
+      test(`Check that ${key} switches to ${type} type`, async ({ page }) => {
+        /* 
+        Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+        Description: ${key} switches to ${type} type.
+        */
+        await selectSequenceLayoutModeTool(page);
+        await page.keyboard.press(key);
+        await takeTopToolbarScreenshot(page);
+      });
+    }
+  });
+
+  test.describe('Check New approach and UI for switching between types in sequence mode when typing any sequences', () => {
+    for (const { key, type } of hotkeysAndDescriptions) {
+      test(`Check that ${key} switches to ${type} type  when typing any sequences`, async ({
+        page,
+      }) => {
+        /* 
+        Test case: Hotkeys https://github.com/epam/ketcher/issues/5554
+        Description: ${key} switches to ${type} type when typing any sequences.
+        */
+        await selectSequenceLayoutModeTool(page);
+        await typeAllEnglishAlphabet(page);
+        await page.keyboard.press(key);
+        await takeTopToolbarScreenshot(page);
+      });
+    }
   });
 });

@@ -39,11 +39,6 @@ test.describe('addFragment', () => {
     await shiftStructure(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await page.mouse.move(0, 0);
-    await takeEditorScreenshot(page);
-  });
-
   test('mol with two monomers bonded', async ({ page }) => {
     const fileContents = await readFileContents(
       'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
@@ -60,6 +55,8 @@ test.describe('addFragment', () => {
       });
     }
     await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.move(0, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('ket with two monomers bonded', async ({ page }) => {
@@ -76,5 +73,7 @@ test.describe('addFragment', () => {
       });
     }
     await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.move(0, 0);
+    await takeEditorScreenshot(page);
   });
 });

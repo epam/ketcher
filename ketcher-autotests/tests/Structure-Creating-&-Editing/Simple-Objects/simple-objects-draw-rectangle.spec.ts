@@ -79,10 +79,6 @@ test.describe('Draw Rectangle', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Simple Objects - Draw a Rectangle - draw and highlightt rectangle', async ({
     page,
   }) => {
@@ -91,6 +87,7 @@ test.describe('Draw Rectangle', () => {
     const rectangleCoordinates = await setupRectangle(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(rectangleCoordinates.x, rectangleCoordinates.y);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit the Rectangle - move object', async ({
@@ -104,6 +101,7 @@ test.describe('Draw Rectangle', () => {
     await page.keyboard.press('Control+a');
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Object - Edit the Rectangle - changing size', async ({
@@ -118,6 +116,7 @@ test.describe('Draw Rectangle', () => {
     await createSomeStructure(page);
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Draw a lot of rectangles - moving and separeting crossed lines', async ({
@@ -129,5 +128,6 @@ test.describe('Draw Rectangle', () => {
       page,
     );
     await separetingAndMovingRecatngles(page);
+    await takeEditorScreenshot(page);
   });
 });

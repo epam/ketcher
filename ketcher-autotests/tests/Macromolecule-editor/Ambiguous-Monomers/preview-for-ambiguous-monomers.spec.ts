@@ -2,6 +2,7 @@
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
@@ -9,6 +10,7 @@ import {
   waitForIndigoToLoad,
   waitForKetcherInit,
   openStructurePasteFromClipboard,
+  selectFlexLayoutModeTool,
   waitForSpinnerFinishedWork,
   selectClearCanvasTool,
   delay,
@@ -65,6 +67,9 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
 }
 async function hoverMouseOverMonomer(page: Page, monomerLocatorIndex: number) {
   await page.locator('use').nth(monomerLocatorIndex).hover();
+}
+async function hoverMouseOverMicroMonomer(page: Page, monomerLocatorIndex: number) {
+  await page.locator('tspan').nth(monomerLocatorIndex).hover();
 }
 
 interface IHELMString {
@@ -336,6 +341,31 @@ test.describe('Preview tooltips checks: ', () => {
         ambiguousMonomer.shouldFail === true,
         `That test fails because of ${ambiguousMonomer.issueNumber} issue.`,
       );
+    });
+  }
+});
+
+test.describe('Preview tooltips checks: ', () => {
+  for (const ambiguousMonomer of ambiguousMonomers) {
+    test(`${ambiguousMonomer.testDescription} in small molecules mode`, async () => {
+      /* 
+        Test case1: https://github.com/epam/ketcher/issues/5585
+        Description: Verify that the ambiguous monomer preview displays a list of full names of monomers making up the ambiguous
+        Case:
+            1. Load correct HELM via paste from clipboard way
+            2. Switch to micromolecule mode
+            3. Hover mouse over monomer, wait for preview tooltip
+            4. Take screenshot of the canvas to compare it with example
+        */
+      test.setTimeout(20000);
+      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
+      await selectFlexLayoutModeTool(page);
+      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await turnOnMicromoleculesEditor(page);
+      await hoverMouseOverMicroMonomer(page, ambiguousMonomer.monomerLocatorIndex);
+      await delay(1);
+
+      await takeEditorScreenshot(page);
     });
   }
 });

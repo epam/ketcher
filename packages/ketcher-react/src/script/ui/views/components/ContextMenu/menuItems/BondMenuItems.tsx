@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import Editor from 'src/script/editor';
 import tools from 'src/script/ui/action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
@@ -16,6 +17,13 @@ import {
 import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
+import {
+  ColorContainer,
+  ColorItem,
+  ColorSquare,
+  standardColors,
+  StandardColorsText,
+} from './style';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -38,6 +46,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     props: props.propsFromTrigger,
   } as Params);
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
+  const editor = getKetcherInstance().editor as Editor;
+
   useEffect(() => {
     const editor = getKetcherInstance()?.editor;
     const bondIds = props.propsFromTrigger?.bondIds || [];
@@ -52,12 +62,22 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     }
   }, [props.propsFromTrigger, getKetcherInstance]);
 
+  const highlightBondWithColor = (color: string) => {
+    const bondIds = props.propsFromTrigger?.bondIds || [];
+
+    editor.highlights.create({
+      atoms: [],
+      bonds: bondIds,
+      color: color === '' ? 'transparent' : color,
+    });
+  };
   const shouldShowChangeDirection =
     bondData &&
     ((bondData.type === 9 && bondData.stereo === 0) ||
       (bondData.type === 1 && bondData.stereo === 1) ||
       (bondData.type === 1 && bondData.stereo === 6) ||
       (bondData.type === 1 && bondData.stereo === 4));
+
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>
@@ -113,7 +133,23 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
         Attach S-Group...
       </Item>
-
+      <Submenu {...props} label="Highlight">
+        <StandardColorsText disabled>Standard colors</StandardColorsText>
+        <ColorContainer>
+          {standardColors.map((color) => (
+            <ColorItem
+              key={color.name}
+              onClick={() => highlightBondWithColor(color.value)}
+            >
+              <ColorSquare color={color.value} />
+            </ColorItem>
+          ))}
+        </ColorContainer>
+        <StandardColorsText onClick={() => highlightBondWithColor('')}>
+          <Icon name={'no-highlight-cross'} />{' '}
+          <span style={{ marginLeft: '10px' }}>No highlight</span>
+        </StandardColorsText>
+      </Submenu>
       <Item
         {...props}
         hidden={sGroupEditHidden}

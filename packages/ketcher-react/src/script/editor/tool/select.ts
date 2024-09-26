@@ -35,6 +35,7 @@ import {
   IMAGE_KEY,
   fromImageResize,
   MULTITAIL_ARROW_KEY,
+  isControlKey,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -61,6 +62,7 @@ import {
 } from './arrow/arrow.types';
 import { MultitailArrowMoveTool } from './arrow/multitailArrowMoveTool';
 import { ReactionArrowMoveTool } from './arrow/reactionArrowMoveTool';
+import { createCopyOfSelected } from 'src/script/ui/action/createCopyOfSelected';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 
@@ -78,6 +80,8 @@ class SelectTool implements Tool {
   private dragCtx: any;
   private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
+  isReadyForCopy = false;
+  isCopied = false;
   readonly isMoving = false;
   private multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
@@ -105,12 +109,18 @@ class SelectTool implements Tool {
     const molecule = ctab.molecule;
 
     const map = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey,
+      this.#lassoHelper.fragment || event.altKey,
     );
     const ci = this.editor.findItem(event, map, null);
 
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
+    }
+
+    this.isReadyForCopy = false;
+    this.isCopied = false;
+    if (isControlKey(event)) {
+      this.isReadyForCopy = true;
     }
 
     const selected = {
@@ -206,6 +216,17 @@ class SelectTool implements Tool {
     const rnd = editor.render;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
+
+    if (this.isReadyForCopy && !this.isCopied) {
+      const point = CoordinateTransformation.pageToModel(event, rnd);
+      const { action, items } = createCopyOfSelected(editor, point);
+      editor.selection(items);
+
+      this.dragCtx.copyAction = action;
+      this.isCopied = true;
+      return;
+    }
+
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     if (dragCtx?.closestItem) {
@@ -312,7 +333,7 @@ class SelectTool implements Tool {
     }
 
     const maps = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey,
+      this.#lassoHelper.fragment || event.altKey,
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
@@ -384,7 +405,12 @@ class SelectTool implements Tool {
 
     if (this.dragCtx?.item) {
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
-        dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
+        dropAndMerge(
+          editor,
+          this.dragCtx.mergeItems,
+          this.dragCtx.action,
+          this.dragCtx.copyAction,
+        );
       }
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored

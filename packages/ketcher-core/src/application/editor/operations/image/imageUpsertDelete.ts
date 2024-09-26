@@ -22,18 +22,28 @@ import { ReStruct } from 'application/render';
 import { ReImage } from 'application/render/restruct/reImage';
 import { IMAGE_KEY } from 'domain/constants';
 
+interface ImageUpsertData {
+  id?: number;
+}
+
+interface ImageDeleteData {
+  id: number;
+}
+
 export class ImageUpsert extends BaseOperation {
-  constructor(private readonly image: Image, private id?: number) {
+  data: ImageUpsertData;
+  constructor(private readonly image: Image, id?: number) {
     super(OperationType.IMAGE_UPSERT);
+    this.data = { id };
   }
 
   execute(reStruct: ReStruct) {
     const struct = reStruct.molecule;
 
-    if (this.id === undefined) {
-      this.id = struct.images.newId();
+    if (this.data.id === undefined) {
+      this.data.id = struct.images.newId();
     }
-    const id = this.id;
+    const id = this.data.id;
     const item = this.image.clone();
     struct.images.set(id, item);
     reStruct.images.set(id, new ReImage(item));
@@ -42,18 +52,20 @@ export class ImageUpsert extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new ImageDelete(this.id!);
+    return new ImageDelete(this.data.id!);
   }
 }
 
 export class ImageDelete extends BaseOperation {
   private image?: Image;
-  constructor(private id: number) {
+  data: ImageDeleteData;
+  constructor(id: number) {
     super(OperationType.IMAGE_DELETE);
+    this.data = { id };
   }
 
   execute(reStruct: ReStruct) {
-    const reImage = reStruct.images.get(this.id);
+    const reImage = reStruct.images.get(this.data.id);
 
     if (!reImage) {
       return;
@@ -62,11 +74,11 @@ export class ImageDelete extends BaseOperation {
     this.image = reImage.image.clone();
     reStruct.clearVisel(reImage.visel);
     reStruct.markItemRemoved();
-    reStruct.images.delete(this.id);
-    reStruct.molecule.images.delete(this.id);
+    reStruct.images.delete(this.data.id);
+    reStruct.molecule.images.delete(this.data.id);
   }
 
   invert(): BaseOperation {
-    return new ImageUpsert(this.image!, this.id);
+    return new ImageUpsert(this.image!, this.data.id);
   }
 }

@@ -12,25 +12,25 @@ export function useLoading() {
   );
 
   useEffect(() => {
-    ketcher.eventBus.addListener(KetcherAsyncEvents.LOADING, onLoadingStart);
-    ketcher.eventBus.addListener(KetcherAsyncEvents.SUCCESS, onLoadingFinish);
-    ketcher.eventBus.addListener(KetcherAsyncEvents.FAILURE, onLoadingFinish);
+    ketcher?.eventBus.addListener(KetcherAsyncEvents.LOADING, onLoadingStart);
+    ketcher?.eventBus.addListener(KetcherAsyncEvents.SUCCESS, onLoadingFinish);
+    ketcher?.eventBus.addListener(KetcherAsyncEvents.FAILURE, onLoadingFinish);
 
     return () => {
-      ketcher.eventBus.removeListener(
+      ketcher?.eventBus.removeListener(
         KetcherAsyncEvents.LOADING,
         onLoadingStart,
       );
-      ketcher.eventBus.removeListener(
+      ketcher?.eventBus.removeListener(
         KetcherAsyncEvents.SUCCESS,
         onLoadingFinish,
       );
-      ketcher.eventBus.removeListener(
+      ketcher?.eventBus.removeListener(
         KetcherAsyncEvents.FAILURE,
         onLoadingFinish,
       );
     };
-  }, [ketcher.eventBus, onLoadingFinish, onLoadingStart]);
+  }, [ketcher?.eventBus, onLoadingFinish, onLoadingStart]);
 
   return isLoading;
 }

@@ -1510,6 +1510,23 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    N: {
+      monomerType: 'base',
+      fileName:
+        'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
+      alias: 'W',
+      connectionPoints: {
+        R1: 'R1',
+      },
+    },
+    // '%': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //   },
+    // },
   };
 
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {

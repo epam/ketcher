@@ -481,6 +481,7 @@ test.describe('Connection rules for peptides: ', () => {
       rightMonomersConnectionPoint,
     );
   }
+
   async function bondTwoMonomersByPointToCenter(
     page: Page,
     leftPeptide: IMonomer,

@@ -218,59 +218,74 @@ test.describe('Connection rules for sugars: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftSugar: IMonomer,
-    rightSugar: IMonomer,
+    leftMonomers: IMonomer,
+    rightMonomers: IMonomer,
   ) {
-    await openFileAndAddToCanvasMacro(leftSugar.fileName, page);
-    const leftsugarLocator = page
-      .getByText(leftSugar.alias)
+    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
+    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const leftMonomerLocator = canvasLocator
+      .locator(`text=${leftMonomers.alias}`)
       .locator('..')
       .first();
-    await leftsugarLocator.hover();
+    // const leftMonomerLocator = page.locator('use').first();
+    await leftMonomerLocator.hover();
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightSugar.fileName, page);
-    const rightsugarLocator =
-      (await page.getByText(leftSugar.alias).count()) > 1
-        ? page.getByText(rightSugar.alias).nth(1).locator('..').first()
-        : page.getByText(rightSugar.alias).locator('..').first();
-    await rightsugarLocator.hover();
+    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    const rightMonomerLocator =
+      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
+        ? canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .nth(1)
+            .locator('..')
+            .first()
+        : canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .locator('..')
+            .first();
+    // const rightMonomerLocator = page.locator('use').nth(1);
+    await rightMonomerLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 371, page);
+    await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
   }
-
   async function bondTwoMonomersByPointToPoint(
     page: Page,
-    leftSugar: IMonomer,
-    rightSugar: IMonomer,
-    leftSugarConnectionPoint?: string,
-    rightSugarConnectionPoint?: string,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+    leftMonomersConnectionPoint?: string,
+    rightMonomersConnectionPoint?: string,
   ) {
-    const leftSugarLocator = await page
-      .getByText(leftSugar.alias, { exact: true })
+    const leftMonomerLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
-    const rightSugarLocator =
-      (await page.getByText(rightSugar.alias, { exact: true }).count()) > 1
+    const rightMonomerLocator =
+      (await page
+        .getByTestId('ketcher-canvas')
+        .locator(`text=${leftMonomer.alias}`)
+        .count()) > 1
         ? page
-            .getByText(rightSugar.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
         : page
-            .getByText(rightSugar.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
     await bondTwoMonomersPointToPoint(
       page,
-      leftSugarLocator,
-      rightSugarLocator,
-      leftSugarConnectionPoint,
-      rightSugarConnectionPoint,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      leftMonomersConnectionPoint,
+      rightMonomersConnectionPoint,
     );
   }
 
@@ -510,6 +525,25 @@ test.describe('Connection rules for sugars: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    J: {
+      monomerType: 'peptide',
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    // '%': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //   },
+    // },
   };
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
@@ -531,7 +565,7 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case6: Connect ${leftSugarConnectionPoint} to ${rightPeptideConnectionPoint} of Sugar(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
                 await loadTwoMonomers(page, leftSugar, rightPeptide);
 

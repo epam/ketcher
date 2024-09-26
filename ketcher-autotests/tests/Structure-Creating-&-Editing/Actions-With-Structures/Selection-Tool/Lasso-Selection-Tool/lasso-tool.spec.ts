@@ -26,10 +26,6 @@ test.describe('Lasso Selection tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   const xDelta = 30;
   const yDelta = 60;
   const xAxis = 300;
@@ -81,6 +77,7 @@ test.describe('Lasso Selection tool', () => {
     // 'Shift+Tab' used for switch from Rectangle selection to Lasso
     await page.keyboard.press('Shift+Tab');
     await selectObjects(page, xAxis, yAxis);
+    await takeEditorScreenshot(page);
   });
 
   test('Drag atom/bond/molecule', async ({ page }) => {
@@ -95,6 +92,7 @@ test.describe('Lasso Selection tool', () => {
     const atomIndex = 5;
     await clickOnAtom(page, 'C', atomIndex);
     await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Select the reaction components', async ({ page }) => {
@@ -124,6 +122,7 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.press(`${modifier}+KeyA`);
+    await takeEditorScreenshot(page);
   });
 
   test('Drag the reaction components', async ({ page }) => {
@@ -138,6 +137,7 @@ test.describe('Lasso Selection tool', () => {
     const xShift = 100;
     await clickOnAtom(page, 'C', atomIndex);
     await dragMouseTo(point.x - xShift, point.y - yAxis, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fuse atoms together', async ({ page }) => {
@@ -152,6 +152,7 @@ test.describe('Lasso Selection tool', () => {
     const aimAtomIndex = 7;
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, aimAtomIndex);
     await dragMouseTo(atomPoint.x, atomPoint.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fuse bonds together', async ({ page }) => {
@@ -194,6 +195,7 @@ test.describe('Lasso Selection tool', () => {
       point.y + yDelta + shiftCoords2.y,
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Delete with selection', async ({ page }) => {
@@ -209,6 +211,7 @@ test.describe('Lasso Selection tool', () => {
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('UndoRedo moving of structures', async ({ page }) => {
@@ -296,6 +299,7 @@ test.describe('Lasso Selection tool', () => {
     for (let index = 0; index < loopCount; index++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test("Don't break the selection if the user's cursor goes beyond the canvas", async ({
@@ -319,5 +323,6 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.move(xShift, yAxis + yShift);
     await page.mouse.move(xAxis - xDelta, yAxis + yShift);
     await page.mouse.up();
+    await takeEditorScreenshot(page);
   });
 });

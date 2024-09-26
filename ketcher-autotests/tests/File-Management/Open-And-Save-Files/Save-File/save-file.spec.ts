@@ -318,10 +318,6 @@ test.describe('Open/Save/Paste files', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Paste the content from mol-string', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1844
@@ -335,6 +331,7 @@ test.describe('Open/Save/Paste files', () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMILES" format structure with attachment point and query features', async ({
@@ -349,6 +346,7 @@ test.describe('Open/Save/Paste files', () => {
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=CC=1.[*:1]%91 |$;;;;;;;;;;;;;;;;_AP1$,rb:10:2,u:10,s:10:*|',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Extended SMILES" format structure with attachment point and query features', async ({
@@ -363,6 +361,7 @@ test.describe('Open/Save/Paste files', () => {
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=C%92C=1O1C=CN=CC=1.[*:1]%91.[*:2]%92 |$;;;;;;;;;;;;;;;;;;;;;;_AP1;_AP2$,rb:10:2,u:10,s:10:*|',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "InChi" format structure', async ({ page }) => {
@@ -375,6 +374,7 @@ test.describe('Open/Save/Paste files', () => {
       'InChI=1S/C16H18/c1-11-5-12(2)8-15(7-11)16-9-13(3)6-14(4)10-16/h5-10H,1-4H3',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with SVG format', async ({ page }) => {
@@ -386,6 +386,7 @@ test.describe('Open/Save/Paste files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with PNG format', async ({ page }) => {
@@ -397,6 +398,7 @@ test.describe('Open/Save/Paste files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Saving structure with QUERY in Smiles format', async ({ page }) => {
@@ -410,6 +412,7 @@ test.describe('Open/Save/Paste files', () => {
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save *.ket file with atom list and atom properties', async ({
@@ -438,5 +441,6 @@ test.describe('Open/Save/Paste files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

@@ -29,10 +29,6 @@ test.describe('Generic nodes', () => {
     );
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('G and G* adding to the atom of structure', async ({ page }) => {
     /*
         Test case: EPMLSOPKET-1503
@@ -41,6 +37,7 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'GH', 'S');
     await selectExtendedAtom(page, 'G*', 'F');
     await selectExtendedAtom(page, 'GH*', 'I');
+    await takeEditorScreenshot(page);
   });
 
   test('Acylic atoms adding to the atom of structure', async ({ page }) => {
@@ -49,6 +46,7 @@ test.describe('Generic nodes', () => {
       */
     await selectExtendedAtom(page, 'ACY', 'S');
     await selectExtendedAtom(page, 'ACH', 'F');
+    await takeEditorScreenshot(page);
   });
 
   test('Acylic Carbo atoms adding to the atom of structure', async ({
@@ -65,6 +63,7 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'ALH', 'P');
     await selectExtendedAtom(page, 'AEL', 'Br');
     await selectExtendedAtom(page, 'AEH', 'Cl');
+    await takeEditorScreenshot(page);
   });
 
   test('Acylic Hetero atoms adding to the atom of structure', async ({
@@ -77,6 +76,7 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'AHH', 'O');
     await selectExtendedAtom(page, 'AOX', 'Br');
     await selectExtendedAtom(page, 'AOH', 'Cl');
+    await takeEditorScreenshot(page);
   });
 
   test('Cyclic atoms adding to the atom of structure', async ({ page }) => {
@@ -87,6 +87,7 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'CYH', 'O');
     await selectExtendedAtom(page, 'CXX', 'Cl');
     await selectExtendedAtom(page, 'CXH', 'Br');
+    await takeEditorScreenshot(page);
   });
 
   test('Cyclic Carbo atoms adding to the atom of structure', async ({
@@ -103,6 +104,7 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'CAH', 'P');
     await selectExtendedAtom(page, 'CEL', 'I');
     await selectExtendedAtom(page, 'CEH', 'N');
+    await takeEditorScreenshot(page);
   });
 
   test('Cyclic Hetero atoms adding to the atom of structure', async ({
@@ -115,5 +117,6 @@ test.describe('Generic nodes', () => {
     await selectExtendedAtom(page, 'CHH', 'O');
     await selectExtendedAtom(page, 'HAR', 'Cl');
     await selectExtendedAtom(page, 'HAH', 'Br');
+    await takeEditorScreenshot(page);
   });
 });

@@ -20,16 +20,13 @@ test.describe('open files with different formats', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('opening rxn files', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1839
     */
 
     await openFileAndAddToCanvas('Rxn-V2000/1839-ketcher.rxn', page);
+    await takeEditorScreenshot(page);
   });
 
   test('opening smi files', async ({ page }) => {
@@ -37,6 +34,7 @@ test.describe('open files with different formats', () => {
     Test case: EPMLSOPKET-1840
     */
     await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
+    await takeEditorScreenshot(page);
   });
 
   test('opening inchi files', async ({ page }) => {
@@ -44,6 +42,7 @@ test.describe('open files with different formats', () => {
     Test case: EPMLSOPKET-1841
     */
     await openFileAndAddToCanvas('InChI/1841-ketcher.inchi', page);
+    await takeEditorScreenshot(page);
   });
 
   /* two structures should be added on the canvas in the following test
@@ -70,6 +69,7 @@ test.describe('open files with different formats', () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickOnTheCanvas(page, X_OFFSET, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input .rxn string', async ({ page }) => {
@@ -90,6 +90,7 @@ test.describe('open files with different formats', () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickOnTheCanvas(page, 0, -X_OFFSET);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input InChi-string 1/3', async ({ page }) => {
@@ -104,6 +105,7 @@ test.describe('open files with different formats', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input InChi-string 2/3', async ({ page }) => {
@@ -118,6 +120,7 @@ test.describe('open files with different formats', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input InChi-string 3/3', async ({ page }) => {
@@ -132,6 +135,7 @@ test.describe('open files with different formats', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Open *.mol file 1/2', async ({ page }) => {
@@ -145,6 +149,7 @@ test.describe('open files with different formats', () => {
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Open *.mol file 2/2', async ({ page }) => {
@@ -158,6 +163,7 @@ test.describe('open files with different formats', () => {
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Open ket file with SMARTS attributes', async ({ page }) => {
@@ -169,5 +175,6 @@ test.describe('open files with different formats', () => {
       'KET/benzene-with-smarts-attributes.ket',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 });

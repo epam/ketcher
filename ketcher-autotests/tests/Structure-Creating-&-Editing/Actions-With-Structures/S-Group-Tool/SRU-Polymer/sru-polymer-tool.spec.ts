@@ -63,10 +63,6 @@ test.describe('SRU Polymer tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Brackets rendering for atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1529
@@ -82,6 +78,7 @@ test.describe('SRU Polymer tool', () => {
       'A',
       SGroupRepeatPattern.HeadToTail,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for bond', async ({ page }) => {
@@ -99,6 +96,7 @@ test.describe('SRU Polymer tool', () => {
       'A',
       SGroupRepeatPattern.HeadToTail,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole structure', async ({ page }) => {
@@ -116,6 +114,7 @@ test.describe('SRU Polymer tool', () => {
       'A',
       SGroupRepeatPattern.HeadToTail,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Connection of labels "Head-to-tail"', async ({ page }) => {
@@ -125,6 +124,7 @@ test.describe('SRU Polymer tool', () => {
       'Head-to-tail' connection type is opened.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Connection of labels "Head-to-head"', async ({ page }) => {
@@ -139,6 +139,7 @@ test.describe('SRU Polymer tool', () => {
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.HeadToHead);
+    await takeEditorScreenshot(page);
   });
 
   test('Connection of labels "Either unknown"', async ({ page }) => {
@@ -153,6 +154,7 @@ test.describe('SRU Polymer tool', () => {
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit SRU polymer S-Group', async ({ page }) => {
@@ -171,6 +173,7 @@ test.describe('SRU Polymer tool', () => {
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+z');
+    await takeEditorScreenshot(page);
   });
 
   test('Add atom on Chain with SRU polymer S-Group', async ({ page }) => {
@@ -182,6 +185,7 @@ test.describe('SRU Polymer tool', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete and Undo/Redo atom on Chain with SRU polymer S-Group', async ({
@@ -197,6 +201,7 @@ test.describe('SRU Polymer tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete whole Chain with SRU polymer S-Group and Undo/Redo', async ({
@@ -212,6 +217,7 @@ test.describe('SRU Polymer tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Template on Chain with SRU polymer S-Group', async ({ page }) => {
@@ -226,6 +232,7 @@ test.describe('SRU Polymer tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add R-Group Label and Undo/Redo on Chain with SRU polymer S-Group', async ({
@@ -245,6 +252,7 @@ test.describe('SRU Polymer tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste structure with SRU polymer S-Group', async ({ page }) => {
@@ -255,6 +263,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste structure with SRU polymer S-Group', async ({ page }) => {
@@ -265,6 +274,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save/Open SRU polymer S-Group', async ({ page }) => {
@@ -287,6 +297,7 @@ test.describe('SRU Polymer tool', () => {
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Add S-Group properties to structure and atom', async ({ page }) => {
@@ -315,5 +326,6 @@ test.describe('SRU Polymer tool', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

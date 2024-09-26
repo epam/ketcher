@@ -105,10 +105,6 @@ test.describe('Templates - Rings manipulations', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   const templates = Object.values(RingButton);
 
   for (const template of templates) {
@@ -116,6 +112,7 @@ test.describe('Templates - Rings manipulations', () => {
       // EPLMSOPCKET-1668, EPLMSOPCKET-1675, EPLMSOPCKET-1677, EPLMSOPCKET-1679, EPLMSOPCKET-1680, EPLMSOPCKET-1681
       // EPLMSOPCKET-1682, EPLMSOPCKET-1683
       await manipulateRingsByName(template, page);
+      await takeEditorScreenshot(page);
     });
   }
 });

@@ -61,10 +61,6 @@ test.describe('Draw Ellipse', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Simple Objects - Draw a Ellipse - draw and highlightt elllipse', async ({
     page,
   }) => {
@@ -72,6 +68,7 @@ test.describe('Draw Ellipse', () => {
     const ellipseCoordinates = await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(ellipseCoordinates.x, ellipseCoordinates.y);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit a Ellipse  - moving object', async ({ page }) => {
@@ -83,6 +80,7 @@ test.describe('Draw Ellipse', () => {
     await page.keyboard.press('Control+a');
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit a Ellipse  - changing sizes of the object', async ({
@@ -104,6 +102,7 @@ test.describe('Draw Ellipse', () => {
     await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();
     await dragMouseTo(point3.x, point3.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Draw a lot of ellipses', async ({ page }) => {
@@ -111,5 +110,6 @@ test.describe('Draw Ellipse', () => {
     // Separeting and moving few objects on canvas
     await openFileAndAddToCanvas('KET/ellipse-test-EPMLSOPKET-1966.ket', page);
     await separetingAndMovingEllipse(page);
+    await takeEditorScreenshot(page);
   });
 });

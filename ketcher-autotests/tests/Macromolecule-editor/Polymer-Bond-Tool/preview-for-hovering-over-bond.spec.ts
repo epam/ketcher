@@ -15,12 +15,6 @@ test.beforeEach(async ({ page }) => {
   await turnOnMacromoleculesEditor(page);
 });
 
-//   test.afterEach(async ({ page }) => {
-//     await takeEditorScreenshot(page, {
-//       masks: [page.getByTestId('polymer-library-preview')],
-//     });
-//   });
-
 async function hoverOverBond(page: Page, bondNumber: number) {
   await moveMouseAway(page);
   const bondLine = page.locator('g[pointer-events="stroke"]').nth(bondNumber);

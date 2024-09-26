@@ -20,10 +20,6 @@ test.describe('Select tools tests', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
     page,
   }) => {
@@ -36,6 +32,7 @@ test.describe('Select tools tests', () => {
 
     const cursor = await page.getByTestId('canvas').getAttribute('cursor');
     expect(cursor).toBe('all-scroll');
+    await takeEditorScreenshot(page);
   });
 
   test('When the structure is pasted or dragged', async ({ page }) => {
@@ -50,6 +47,7 @@ test.describe('Select tools tests', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
+    await takeEditorScreenshot(page);
   });
 
   test('Attachment points are highlited with CTRL+A', async ({ page }) => {
@@ -60,5 +58,6 @@ test.describe('Select tools tests', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
   });
 });

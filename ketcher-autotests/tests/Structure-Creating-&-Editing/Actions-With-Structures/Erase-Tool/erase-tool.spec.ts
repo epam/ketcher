@@ -30,10 +30,6 @@ test.describe('Erase Tool', () => {
     await page.getByTestId('erase').click();
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Erase atom and bond', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1363
@@ -61,6 +57,7 @@ test.describe('Erase Tool', () => {
       return window.ketcher.editor.struct().bonds.size;
     });
     expect(bondSize).toEqual(bondsSizeAfterErase);
+    await takeEditorScreenshot(page);
   });
 
   test('Erase reaction', async ({ page }) => {
@@ -140,16 +137,13 @@ test.describe('Erase Tool', () => {
       return window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowOnCanvas).toEqual(reactionArrow);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeLeftToolbarScreenshot(page);
   });
 
   test('Toolbar icon verification', async ({ page }) => {
@@ -161,5 +155,6 @@ test.describe('Erase Tool', () => {
       'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,
     );
+    await takeLeftToolbarScreenshot(page);
   });
 });

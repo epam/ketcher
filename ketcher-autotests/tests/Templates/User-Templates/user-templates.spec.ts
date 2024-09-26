@@ -50,10 +50,6 @@ test.describe('Click User Templates on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open template from the library', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-13158
@@ -62,6 +58,7 @@ test.describe('Click User Templates on canvas', () => {
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Spaces at the beginning and end of the entered line are truncated', async ({
@@ -83,6 +80,7 @@ test.describe('Click User Templates on canvas', () => {
     await pressButton(page, 'User Templates (1)');
     await page.getByPlaceholder('Search by elements...').fill('name');
     await page.getByPlaceholder('Search by elements...').press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('Delete user template', async ({ page }) => {
@@ -107,6 +105,7 @@ test.describe('Click User Templates on canvas', () => {
     await openStructureLibrary(page);
     await page.getByPlaceholder('Search by elements...').fill('to_delete');
     await page.getByPlaceholder('Search by elements...').press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('Create Template with Simple Objects', async ({ page }) => {
@@ -130,6 +129,7 @@ test.describe('Click User Templates on canvas', () => {
       .getByPlaceholder('Search by elements...')
       .fill('simple_object_template');
     await page.getByPlaceholder('Search by elements...').press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('Create Template with with Reaction arrow', async ({ page }) => {
@@ -154,6 +154,7 @@ test.describe('Click User Templates on canvas', () => {
       .getByPlaceholder('Search by elements...')
       .fill('reaction_arrow_template');
     await page.getByPlaceholder('Search by elements...').press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste action with templates', async ({ page }) => {
@@ -164,6 +165,7 @@ test.describe('Click User Templates on canvas', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste action with expanded functional group', async ({ page }) => {
@@ -176,6 +178,7 @@ test.describe('Click User Templates on canvas', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     });
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -183,10 +186,6 @@ test.describe('Click User Templates on canvas', () => {
 test.describe('Create and Save Templates', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test('User Templates - Create Template - UI', async ({ page }) => {
@@ -207,6 +206,7 @@ test.describe('Create and Save Templates', () => {
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Create Template - saving', async ({ page }) => {
@@ -231,6 +231,7 @@ test.describe('Create and Save Templates', () => {
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('user_template_1').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Attach created template to atom of structure on canvas', async ({
@@ -250,16 +251,13 @@ test.describe('Create and Save Templates', () => {
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('My Template').click();
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Templates field lenght validations', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await getEditorScreenshot(page);
   });
 
   test('Check a warning message about localStorage to template window', async ({
@@ -271,6 +269,7 @@ test.describe('Templates field lenght validations', () => {
     */
     await saveUserTemplate(page);
     await page.getByRole('button', { name: 'Save to Templates' }).click();
+    await getEditorScreenshot(page);
   });
 
   test('Molecule Name field length validation', async ({ page }) => {
@@ -286,6 +285,7 @@ test.describe('Templates field lenght validations', () => {
     await page
       .getByPlaceholder('template')
       .fill('a'.repeat(tooLongValueLength));
+    await getEditorScreenshot(page);
   });
 
   test('Empty Molecule name field validation', async ({ page }) => {
@@ -298,6 +298,7 @@ test.describe('Templates field lenght validations', () => {
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('name');
     await page.getByPlaceholder('template').fill('');
+    await getEditorScreenshot(page);
   });
 
   test('Check a warning message about unique name', async ({ page }) => {
@@ -318,6 +319,7 @@ test.describe('Templates field lenght validations', () => {
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
+    await getEditorScreenshot(page);
   });
 
   test('Check scrollbar in the structure field is present for long structures', async ({
@@ -329,5 +331,6 @@ test.describe('Templates field lenght validations', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
     await saveToTemplates(page, false);
+    await getEditorScreenshot(page);
   });
 });

@@ -22,14 +22,11 @@ test.describe('Peptide', () => {
     await turnOnMacromoleculesEditor(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Select peptide and drag it to canvas', async ({ page }) => {
     await page.click(ALANINE);
     await clickInTheMiddleOfTheScreen(page);
     await hideMonomerPreview(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add monomer preview on canvas', async ({ page }) => {
@@ -41,5 +38,6 @@ test.describe('Peptide', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectSingleBondTool(page);
     await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

@@ -11,9 +11,6 @@ test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
 
   test('Periodic table check', async ({ page }) => {
     /* 
@@ -21,6 +18,7 @@ test.describe('Open Ketcher', () => {
       Description: Open periodic table
       */
     await selectAtomInToolbar(AtomButton.Periodic, page);
+    await takeEditorScreenshot(page);
   });
 
   const atoms = [
@@ -40,6 +38,7 @@ test.describe('Open Ketcher', () => {
     test(`Check atoms ${atom}`, async ({ page }) => {
       await selectAtomInToolbar(atom, page);
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     });
   }
 });

@@ -21,11 +21,6 @@ test.describe('Click Atom on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('The Oxygen atom replaces the Nitrogen atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10102
@@ -36,6 +31,8 @@ test.describe('Click Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Sulfur atom replaces the FMOC functional group', async ({
@@ -50,6 +47,8 @@ test.describe('Click Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Sulfur atom replaces the formic acid', async ({ page }) => {
@@ -62,6 +61,8 @@ test.describe('Click Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Iodine replaces the Clorine atom', async ({ page }) => {
@@ -80,6 +81,8 @@ test.describe('Click Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Iodine, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fluorine atom replaces the Cbz functional group', async ({ page }) => {
@@ -98,5 +101,7 @@ test.describe('Click Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Fluorine, page);
     await page.mouse.click(coordinatesWithShift, y);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

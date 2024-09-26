@@ -13,9 +13,6 @@ test.describe('Selection and hover for simple objects', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
 
   const ellipseWidth = 120;
   const ellipseHeight = 100;
@@ -34,6 +31,7 @@ test.describe('Selection and hover for simple objects', () => {
   }) => {
     await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hover highlight appears immediately for simple objects', async ({
@@ -42,5 +40,6 @@ test.describe('Selection and hover for simple objects', () => {
     const ellipseCoordinates = await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(ellipseCoordinates.x, ellipseCoordinates.y);
+    await takeEditorScreenshot(page);
   });
 });

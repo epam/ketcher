@@ -43,10 +43,6 @@ test.describe('Ignore Chiral Flag', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Copy/Paste', async ({
     page,
   }) => {
@@ -59,6 +55,7 @@ test.describe('Ignore Chiral Flag', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(pointX, pointY);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Cut/Paste', async ({
@@ -73,6 +70,7 @@ test.describe('Ignore Chiral Flag', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(pointY, pointZ);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Undo', async ({
@@ -83,5 +81,6 @@ test.describe('Ignore Chiral Flag', () => {
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 });

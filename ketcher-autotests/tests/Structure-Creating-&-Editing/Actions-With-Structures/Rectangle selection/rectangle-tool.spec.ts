@@ -19,10 +19,6 @@ test.describe('Rectangle selection tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   const xDelta = 30;
   const yDelta = 60;
   const modifier = getControlModifier();
@@ -53,6 +49,7 @@ test.describe('Rectangle selection tool', () => {
     await page.getByTestId('select-rectangle').click();
     await clickCanvas(page);
     await selectObjects(page, selectionCoords.x, selectionCoords.y);
+    await takeEditorScreenshot(page);
   });
 
   test('Drag structure', async ({ page }) => {
@@ -64,6 +61,7 @@ test.describe('Rectangle selection tool', () => {
     const point = await selectObjects(page, objectSelection, objectSelection);
     await clickOnAtom(page, 'C', atomNumber);
     await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Reaction components selection', async ({ page }) => {
@@ -86,6 +84,7 @@ test.describe('Rectangle selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.press(`${modifier}+KeyA`);
+    await takeEditorScreenshot(page);
   });
 
   test('Reaction components dragging', async ({ page }) => {
@@ -106,6 +105,7 @@ test.describe('Rectangle selection tool', () => {
       point.y - selectionCoords.y,
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Fusing atoms together', async ({ page }) => {
@@ -121,6 +121,7 @@ test.describe('Rectangle selection tool', () => {
       secondAtomNumber,
     );
     await dragMouseTo(atomPoint.x, atomPoint.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fusing bonds together', async ({ page }) => {
@@ -136,6 +137,7 @@ test.describe('Rectangle selection tool', () => {
       secondBondnumber,
     );
     await dragMouseTo(bondPoint.x, bondPoint.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete with selection', async ({ page }) => {
@@ -155,5 +157,6 @@ test.describe('Rectangle selection tool', () => {
     await page.keyboard.press('Delete');
     await clickOnAtom(page, 'C', atomOnTheRightSide);
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 });

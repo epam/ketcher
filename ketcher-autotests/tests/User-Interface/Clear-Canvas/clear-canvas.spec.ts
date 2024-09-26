@@ -18,15 +18,12 @@ test.describe('Clear canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
     await selectTopPanelButton(TopPanelButton.Clear, page);
     const button = page.getByTestId('clear-canvas');
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - "Clear canvas" button', async ({ page }) => {
@@ -35,6 +32,7 @@ test.describe('Clear canvas', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Undo/Redo', async ({ page }) => {
@@ -49,6 +47,7 @@ test.describe('Clear canvas', () => {
       await selectTopPanelButton(TopPanelButton.Redo, page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Structure is opened from ket-file ', async ({
@@ -57,6 +56,7 @@ test.describe('Clear canvas', () => {
     // Test case:EPMLSOPKET-1705
     await openFileAndAddToCanvas('KET/ketcher.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Structure is opened from ket-file + hothey', async ({
@@ -66,6 +66,7 @@ test.describe('Clear canvas', () => {
     // Checking clearing canvas with hotkey
     await openFileAndAddToCanvas('KET/ketcher.ket', page);
     await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Hotkeys', async ({ page }) => {
@@ -83,6 +84,7 @@ test.describe('Clear canvas', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Clear Canvas - Structure is opened from smile-string', async ({
@@ -100,5 +102,6 @@ test.describe('Clear canvas', () => {
       await selectTopPanelButton(TopPanelButton.Redo, page);
       await selectTopPanelButton(TopPanelButton.Redo, page);
     });
+    await takeEditorScreenshot(page);
   });
 });

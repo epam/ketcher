@@ -16,10 +16,6 @@ test.describe('Special nodes', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   const atoms = ['H+', 'D', 'T', 'R', 'Pol'];
   for (const atom of atoms) {
     test(`${atom} calculated values`, async ({ page }) => {
@@ -31,6 +27,7 @@ test.describe('Special nodes', () => {
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
       await selectTopPanelButton(TopPanelButton.Calculated, page);
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -41,6 +38,7 @@ test.describe('Special nodes', () => {
       // buttons in Extended table dialog
       await selectAtomInToolbar(AtomButton.Extended, page);
       await page.getByRole('button', { name: atom, exact: true }).click();
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -51,6 +49,7 @@ test.describe('Special nodes', () => {
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -68,6 +67,7 @@ test.describe('Special nodes', () => {
       await clickOnAtom(page, 'S', 0);
       await clickOnAtom(page, 'F', 0);
       await page.keyboard.up('Shift');
+      await takeEditorScreenshot(page);
     });
   }
 });
@@ -75,12 +75,6 @@ test.describe('Special nodes', () => {
 test.describe('Special node', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
-    });
   });
 
   const atoms = ['H+', 'D', 'T', 'R', 'Pol'];
@@ -92,6 +86,9 @@ test.describe('Special node', () => {
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
       await selectTopPanelButton(TopPanelButton.Check, page);
+      await takeEditorScreenshot(page, {
+        masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      });
     });
   }
 });

@@ -52,10 +52,6 @@ test.describe('Text tools test cases', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(' Modify the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2228
     // Verify if possible is modify created text object by adding some extra symbols
@@ -67,6 +63,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').click();
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test(' Delete the created text object', async ({ page }) => {
@@ -78,6 +75,7 @@ test.describe('Text tools test cases', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('TEST').click();
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
@@ -90,6 +88,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   // Delete created text object in the text editor field
@@ -105,6 +104,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Create a single text object by pasting text', async ({ page }) => {
@@ -126,6 +126,7 @@ test.describe('Text tools test cases', () => {
       'Ketcher is a tool to draw molecular structures and chemical reactions';
     await page.getByRole('dialog').getByRole('textbox').fill(pasteText);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Create several text objects and modifited them', async ({ page }) => {
@@ -170,6 +171,7 @@ test.describe('Text tools test cases', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test(' Delete several created text objects', async ({ page }) => {
@@ -184,6 +186,7 @@ test.describe('Text tools test cases', () => {
     const text2 = 'Ketcher is a coool tool';
     await page.getByRole('dialog').getByRole('textbox').fill(text2);
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
@@ -192,6 +195,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -204,6 +208,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text2).click();
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test(' Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -219,6 +224,7 @@ test.describe('Text tools test cases', () => {
     await selectStructureWithSelectionTool(page);
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test(' Manipulations with the created text object', async ({ page }) => {
@@ -235,6 +241,7 @@ test.describe('Text tools test cases', () => {
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test(' Manipulations with the another created text object', async ({
@@ -265,6 +272,7 @@ test.describe('Text tools test cases', () => {
         await page.keyboard.press('Control+_');
       });
     }
+    await takeEditorScreenshot(page);
   });
 
   test(' Selection of a text object and a structure', async ({ page }) => {
@@ -285,5 +293,6 @@ test.describe('Text tools test cases', () => {
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);
     });
+    await takeEditorScreenshot(page);
   });
 });

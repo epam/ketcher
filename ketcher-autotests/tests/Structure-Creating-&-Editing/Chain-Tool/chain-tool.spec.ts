@@ -29,10 +29,6 @@ test.describe('Chain Tool drawing', () => {
     await dragMouseTo(center.x + DELTA, center.y, page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Check highlight absence', async () => {
     /* 
     Test case: EPMLSOPKET-1476
@@ -63,6 +59,7 @@ test.describe('Chain Tool drawing', () => {
       return window.ketcher.editor.struct().bonds.size;
     });
     expect(size).toEqual(expectedNumberOfBondsAfterDrag);
+    await takeEditorScreenshot(page);
   });
 
   test('Select atom', async ({ page }) => {
@@ -74,6 +71,7 @@ test.describe('Chain Tool drawing', () => {
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('o');
+    await takeEditorScreenshot(page);
   });
 
   test('Change the bond type', async ({ page }) => {
@@ -91,5 +89,6 @@ test.describe('Chain Tool drawing', () => {
     await page.mouse.click(point.x, point.y);
     const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
     expect(tripleBond.type).toEqual(BondType.TRIPLE);
+    await takeEditorScreenshot(page);
   });
 });

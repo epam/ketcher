@@ -25,11 +25,6 @@ test.describe('Click and drag FG on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Cbz forms a bond with Oxygen atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11550
@@ -39,6 +34,8 @@ test.describe('Click and drag FG on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await drawFGAndDrag(FunctionalGroups.Cbz, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Boc forms a bond with Cbz functional group', async ({ page }) => {
@@ -50,6 +47,8 @@ test.describe('Click and drag FG on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Boc appears near FormicAcid where the left mouse button was released', async ({
@@ -64,6 +63,8 @@ test.describe('Click and drag FG on canvas', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('CF3 forms a bond with Oxygen atom', async ({ page }) => {
@@ -83,6 +84,8 @@ test.describe('Click and drag FG on canvas', () => {
     await resetCurrentTool(page);
 
     await drawFGAndDrag(FunctionalGroups.CF3, -SHIFT, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Ms forms a bond with FMOC', async ({ page }) => {
@@ -102,5 +105,7 @@ test.describe('Click and drag FG on canvas', () => {
     await waitForRender(page, async () => {
       await drawFGAndDrag(FunctionalGroups.Ms, -SHIFT, page);
     });
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

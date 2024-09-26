@@ -29,10 +29,6 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Empty canvas', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1867
@@ -40,6 +36,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     await selectTopPanelButton(TopPanelButton.Aromatize, page);
     await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Non-aromatic structures - Single bonds only', async ({ page }) => {
@@ -55,6 +52,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Non-aromatic structures - interchanged Single and Double bonds', async ({
@@ -75,6 +73,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Aromatic structures - interchanged Single and Double bonds', async ({
@@ -98,6 +97,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Cycles with Aromatic Bonds', async ({ page }) => {
@@ -119,6 +119,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle', async ({
@@ -142,6 +143,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
@@ -162,6 +164,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
@@ -181,6 +184,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(Add Atom) Manipulations with cyclic structures with a circle inside the cycle', async ({
@@ -198,6 +202,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(MolV2000) Save cyclic structures with a circle inside the cycle', async ({
@@ -231,6 +236,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('(MolV3000) Save cyclic structures with a circle inside the cycle', async ({
@@ -264,6 +270,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('(Smiles) Save cyclic structures with a circle inside the cycle', async ({
@@ -290,6 +297,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(smiFile).toEqual(smiFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('(RxnV2000) Save cyclic structures with a circle inside the cycle', async ({
@@ -322,6 +330,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
@@ -355,6 +364,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
@@ -378,6 +388,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -405,6 +416,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Aromatize, page);
       });
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -438,6 +450,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Dearomatize, page);
       });
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -463,6 +476,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('User can Dearomatize molecules with custom query parameters. @IncorrectResultBecauseOfBug', async ({
@@ -491,6 +505,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -510,6 +525,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Aromatize, page);
       });
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -533,6 +549,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Dearomatize, page);
       });
+      await takeEditorScreenshot(page);
     },
   );
 });

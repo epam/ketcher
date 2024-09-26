@@ -36,10 +36,6 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Operation with a structure without stereo properties', async ({
     page,
   }) => {
@@ -51,6 +47,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Operation with structure including stereo properties (R/S labels)', async ({
@@ -67,6 +64,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Operation with empty canvas', async ({ page }) => {
@@ -81,6 +79,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Layout/Undo with structure that contain stereo labels', async ({
@@ -103,6 +102,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste of structure that contain stereo labels', async ({
@@ -124,6 +124,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste of structure that contain stereo labels', async ({
@@ -143,6 +144,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Operation with structure including stereo properties (E/Z labels)', async ({
@@ -159,6 +161,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(1 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -175,6 +178,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(2 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -191,6 +195,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(3 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -207,6 +212,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(4 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -223,6 +229,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(5 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -239,6 +246,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(6 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -255,6 +263,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('(7 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -271,6 +280,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Aromatize/Undo with structure that contain stereo labels', async ({
@@ -297,6 +307,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 
   test('3D View_structure with stereo labels', async ({ page }) => {
@@ -311,6 +322,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
@@ -337,6 +349,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
@@ -359,6 +372,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(Rotate structure) Manipulations with structure with stereo labels', async ({
@@ -391,6 +405,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
+    await takeEditorScreenshot(page);
   });
 
   test('(Add a new stereobond to the structure) Manipulations with structure with stereo labels', async ({
@@ -410,6 +425,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await page.mouse.click(point.x, point.y);
+    await takeEditorScreenshot(page);
   });
 
   test('Check tooltip and labels', async ({ page }) => {
@@ -426,6 +442,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.move(point.x, point.y);
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -443,6 +460,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         page,
       );
       await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await takeEditorScreenshot(page);
     },
   );
 });

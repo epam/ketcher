@@ -15,16 +15,13 @@ test.describe('CDX files', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('opening cdx files', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12514
     Description: Open CDX files
     */
     await openFileAndAddToCanvas('CDX/cdx-expanded-contracted.cdx', page);
+    await takeEditorScreenshot(page);
   });
 
   test('opening cdx files with R-group', async ({ page }) => {
@@ -43,6 +40,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('opening cdx files from clipboard', async ({ page }) => {
@@ -56,6 +54,7 @@ test.describe('CDX files', () => {
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAQCEAClnXYBBmHkAKuSsgHwQBgBAAMOAAIA////////AAAAAAAAAAETAAEAAQABAOIECQBTYW5zU2VyaWYBgAIAAAADgAMAAAAEAhAApR11AQbh4gCrErQB8MAZAQSABAAAAAACCACmm4UBBmHkAAIEAgAGACsEAgABAAAABIAFAAAAAAIIACiYhQHwQBgBAgQCAAcAKwQCAAAAAAAEgAYAAAAAAggApZ12ATJd/gACBAIACAArBAIAAAAAAASABwAAAAACCACnmaMB8EAYAQIEAgAGACsEAgABAAAABIAIAAAAAAIIABC8owEGYeQAAgQCAAYAKwQCAAEAAAAEgAkAAAAAAggAq5KyASdu/gACBAIABgArBAIAAQAAAAWACgAAAAQGBAAGAAAABQYEAAQAAAAABgIAAgABBgIAAAAAAAWACwAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgABBgIAAAAAAAWADAAAAAQGBAAEAAAABQYEAAgAAAAABgIAAQABBgIAAAAAAAWADQAAAAQGBAAFAAAABQYEAAYAAAAABgIAAQABBgIAAAAAAAWADgAAAAQGBAAIAAAABQYEAAkAAAAABgIAAgABBgIAAAAAAAWADwAAAAQGBAAJAAAABQYEAAcAAAAABgIAAQABBgIAAAAAAAAAAAAAAA==',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from .cdx file with contracted and expanded functional groups', async ({
@@ -83,6 +82,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from .cdx file with contracted and expanded Salts and Solvents', async ({
@@ -104,6 +104,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 });
 

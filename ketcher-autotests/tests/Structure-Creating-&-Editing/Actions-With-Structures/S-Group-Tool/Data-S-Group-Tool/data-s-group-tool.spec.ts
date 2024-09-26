@@ -68,10 +68,6 @@ test.describe('Data S-Group tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Create S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1510
@@ -83,6 +79,7 @@ test.describe('Data S-Group tool', () => {
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('S-Group properties dialog for atom of Benzene ring', async ({
@@ -96,6 +93,7 @@ test.describe('Data S-Group tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('S-Group properties dialog for bond of Benzene ring', async ({
@@ -109,6 +107,7 @@ test.describe('Data S-Group tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 2);
+    await takeEditorScreenshot(page);
   });
 
   test('S-Group properties dialog for whole structure of Benzene ring', async ({
@@ -122,6 +121,7 @@ test.describe('Data S-Group tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit S-Group', async ({ page }) => {
@@ -131,6 +131,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await editSGroupProperties(page, '33', 'Multiple group', '1');
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste structure with S-Group', async ({ page }) => {
@@ -141,6 +142,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste structure with S-Group', async ({ page }) => {
@@ -151,6 +153,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save/Open S-Group', async ({ page }) => {
@@ -178,6 +181,7 @@ test.describe('Data S-Group tool', () => {
     expect(molFile).toEqual(molFileExpected);
 
     await editSGroupProperties(page, '33', 'Multiple group', '8');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group to atoms of Chain', async ({ page }) => {
@@ -187,6 +191,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group to bonds of Chain', async ({ page }) => {
@@ -196,6 +201,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group Group context to Chain', async ({ page }) => {
@@ -211,6 +217,7 @@ test.describe('Data S-Group tool', () => {
       'Qw@!23#$%',
       'Absolute',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group Multifragment context to Chain', async ({ page }) => {
@@ -226,6 +233,7 @@ test.describe('Data S-Group tool', () => {
       'Qw@!23#$%',
       'Relative',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group for the reaction components', async ({ page }) => {
@@ -242,6 +250,7 @@ test.describe('Data S-Group tool', () => {
       'Absolute',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Data S-Group for the reaction components with attached radio button', async ({
@@ -260,6 +269,7 @@ test.describe('Data S-Group tool', () => {
       'Attached',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit Data S-Group Field name and Field Value', async ({ page }) => {
@@ -275,6 +285,7 @@ test.describe('Data S-Group tool', () => {
       '8',
       'Attached',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add atom on Chain with Data S-Group', async ({ page }) => {
@@ -286,6 +297,7 @@ test.describe('Data S-Group tool', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete and Undo/Redo atom on Chain with Data S-Group', async ({
@@ -301,6 +313,7 @@ test.describe('Data S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add R-Group Label and Undo/Redo on Chain with Data S-Group', async ({
@@ -319,6 +332,7 @@ test.describe('Data S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete whole Chain with Data S-Group and Undo/Redo', async ({
@@ -334,6 +348,7 @@ test.describe('Data S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete and Undo/Redo using hotkeys atom on Chain with Data S-Group', async ({
@@ -350,6 +365,7 @@ test.describe('Data S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open .mol file with Data S-Group and save it as .cml file', async ({
@@ -375,6 +391,7 @@ test.describe('Data S-Group tool', () => {
           'tests/test-data/CML/chain-with-data-s-group-partstructure-expected.cml',
       });
     expect(cmlFile).toEqual(cmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Click on atom opens menu with context for atom', async ({ page }) => {
@@ -385,6 +402,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Click on bond opens menu with context for bond', async ({ page }) => {
@@ -395,6 +413,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Selecting all structure opens menu with context for Fragment', async ({
@@ -407,6 +426,7 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hover over created S-Group displays tooltip for it', async ({
@@ -418,6 +438,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add S-Group properties to structure and atom', async ({ page }) => {
@@ -444,5 +465,6 @@ test.describe('Data S-Group tool', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

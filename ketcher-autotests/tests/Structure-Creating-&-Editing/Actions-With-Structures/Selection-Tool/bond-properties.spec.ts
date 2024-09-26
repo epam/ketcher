@@ -32,10 +32,6 @@ test.describe('Bond Properties', () => {
     await page.goto('');
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Bond properties dialog: verification', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1457
@@ -48,6 +44,7 @@ test.describe('Bond Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
+    await takeEditorScreenshot(page);
   });
 
   test('`Type` field: verification - 1/3 navigate with down and up', async ({
@@ -79,6 +76,7 @@ test.describe('Bond Properties', () => {
       await page.keyboard.press('ArrowUp');
       i++;
     }
+    await takeEditorScreenshot(page);
   });
 
   test('`Type` field: verification - 2/3 navigate with s', async ({ page }) => {
@@ -103,6 +101,7 @@ test.describe('Bond Properties', () => {
       await page.keyboard.press('s');
       i++;
     }
+    await takeEditorScreenshot(page);
   });
 
   test('`Type` field: verification - 3/3 navigate with t', async ({ page }) => {
@@ -127,6 +126,7 @@ test.describe('Bond Properties', () => {
       await page.keyboard.press('t');
       i++;
     }
+    await takeEditorScreenshot(page);
   });
 
   const types = [
@@ -156,6 +156,7 @@ test.describe('Bond Properties', () => {
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await selectOption(page, 'Double', type);
       await pressButton(page, 'Apply');
+      await takeEditorScreenshot(page);
     });
   }
   test(`Change 'Type' field value to Double type`, async ({ page }) => {
@@ -168,6 +169,7 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 2);
     await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test(`Change 'Type' field value - save`, async ({ page }) => {
@@ -198,6 +200,7 @@ test.describe('Bond Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test(`'Topology' field: verification - 1/2 navigate with down and up`, async ({
@@ -224,6 +227,7 @@ test.describe('Bond Properties', () => {
       await page.keyboard.press('ArrowUp');
       i++;
     }
+    await takeEditorScreenshot(page);
   });
 
   const tLetters = ['R', 'C', 'E'];
@@ -243,6 +247,7 @@ test.describe('Bond Properties', () => {
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await page.getByText('Either').click();
       await page.keyboard.press(letter);
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -276,6 +281,7 @@ test.describe('Bond Properties', () => {
       'Molfiles-V2000/mol_1461_to_open-expected.mol',
       expectedFile,
     );
+    await takeEditorScreenshot(page);
   });
 
   test(`Change 'Topology' field value - 2/2 open`, async ({ page }) => {
@@ -292,6 +298,7 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 1);
     await selectOption(page, 'Chain', 'Either');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test(`'Reacting Center' field: verification - 1/2 navigate with down and up`, async ({
@@ -319,6 +326,7 @@ test.describe('Bond Properties', () => {
       await page.keyboard.press('ArrowUp');
       i++;
     }
+    await takeEditorScreenshot(page);
   });
 
   const rCLetters = ['N', 'C', 'M', 'O', 'U'];
@@ -338,6 +346,7 @@ test.describe('Bond Properties', () => {
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
       await page.getByText('Unmarked').click();
       await page.keyboard.press(letter);
+      await takeEditorScreenshot(page);
     });
   }
 
@@ -405,6 +414,7 @@ test.describe('Bond Properties', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test(`Change 'Reacting Center' field value - 2/2 open and edit`, async ({
@@ -422,6 +432,7 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 8);
     await selectOption(page, 'Unmarked', 'Center');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Apply for all selected bonds', async ({ page }) => {
@@ -462,6 +473,7 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 1);
     await selectOption(page, 'Unmarked', 'Center');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test(`Different combinations - 1/3 edit a chain and save .mol file`, async ({
@@ -511,6 +523,7 @@ test.describe('Bond Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test(`Different combinations - 2/3 open the saved .mol file`, async ({
@@ -557,6 +570,7 @@ test.describe('Bond Properties', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test(`Different combinations - 3/3 open the saved *.rxn and edit it`, async ({
@@ -575,5 +589,6 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 10);
     await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 });

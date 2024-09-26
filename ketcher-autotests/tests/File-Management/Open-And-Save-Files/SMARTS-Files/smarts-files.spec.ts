@@ -17,10 +17,6 @@ test.describe('Loading SMARTS files', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Loading SMARTS with custom query', async ({ page }) => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1358
@@ -28,6 +24,7 @@ test.describe('Loading SMARTS files', () => {
     */
     const smartsStringToPaste = '[!#6,!#7,!#8]';
     await pasteFromClipboardAndOpenAsNewProject(page, smartsStringToPaste);
+    await takeEditorScreenshot(page);
   });
 
   test('Loading SMARTS with aromatic atom list', async ({ page }) => {
@@ -38,6 +35,7 @@ test.describe('Loading SMARTS files', () => {
     const smartsStringToPaste = 'c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1';
     await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste, false);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to SMARTS file and loaded back', async ({
@@ -70,6 +68,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with nucleotides could be saved to SMARTS file and loaded back', async ({
@@ -102,6 +101,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to SMARTS file and loaded back', async ({
@@ -134,6 +134,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to SMARTS file and loaded back', async ({
@@ -166,6 +167,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to SMARTS file and loaded back', async ({
@@ -198,6 +200,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to SMARTS file and loaded back', async ({
@@ -230,6 +233,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the simple schema with retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
@@ -262,6 +266,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to SMARTS file and loaded back', async ({
@@ -294,6 +299,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
@@ -326,6 +332,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to SMARTS file and loaded back', async ({
@@ -358,6 +365,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to SMARTS file and loaded back', async ({
@@ -390,6 +398,7 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to SMARTS file and loaded back', async ({
@@ -422,5 +431,6 @@ test.describe('Loading SMARTS files', () => {
       'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 });

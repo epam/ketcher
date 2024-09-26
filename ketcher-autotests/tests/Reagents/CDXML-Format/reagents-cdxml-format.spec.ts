@@ -32,10 +32,6 @@ test.describe('Reagents CDXML format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Detection molecule as reagent and write reagent information in "CDXML" format in "Preview" tab', async ({
     page,
   }) => {
@@ -48,6 +44,7 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
     await previewCDXML(page);
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule as reagent below arrow 
@@ -63,6 +60,7 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
     await previewCDXML(page);
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection text above arrow as reagent
@@ -75,6 +73,7 @@ test.describe('Reagents CDXML format', () => {
     */
     await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
     await previewCDXML(page);
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection text as reagent below arrow 
@@ -87,6 +86,7 @@ test.describe('Reagents CDXML format', () => {
     */
     await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
     await previewCDXML(page);
+    await takeEditorScreenshot(page);
   });
 
   test('File saves in "CDXML" format', async ({ page }) => {
@@ -103,6 +103,7 @@ test.describe('Reagents CDXML format', () => {
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'CDXML' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "CDXML" format', async ({ page }) => {
@@ -112,6 +113,7 @@ test.describe('Reagents CDXML format', () => {
       */
     await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with reagent NH3 above arrow', async ({ page }) => {
@@ -123,6 +125,7 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
@@ -134,6 +137,7 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with molecules above and below one arrow', async ({
@@ -148,6 +152,7 @@ test.describe('Reagents CDXML format', () => {
       'CDXML/molecules-above-and-below-arrow.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with multistep reactions', async ({ page }) => {
@@ -157,5 +162,6 @@ test.describe('Reagents CDXML format', () => {
       plus and two reaction arrows NH3 molecule above first arrow and HCl below second arrow
     */
     await openFileAndAddToCanvas('CDXML/cdxml-multistep.cdxml', page);
+    await takeEditorScreenshot(page);
   });
 });

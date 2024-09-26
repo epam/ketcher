@@ -65,10 +65,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   for (const testCase of testCasesForOpeningFiles) {
     const index = -1;
     const fileExtension = testCase.secondFile.split('.').at(index);
@@ -92,6 +88,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      */
     const smileString = 'C1=CC=CC=C1';
     await openPasteFromClipboard(page, smileString);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input SMILE-string - open as new project', async ({
@@ -106,6 +103,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input SMILE-string with arrow symbol - open as new project', async ({
@@ -120,6 +118,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Open file - Input SMILE-string and try to add incorrect one', async ({
@@ -147,6 +146,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       "'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', " +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed'";
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
+    await takeEditorScreenshot(page);
   });
 
   test('Open/Import structure as a KET file - create KET file', async ({
@@ -207,6 +207,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await addAndMoveOxygen();
     await addArrowSymbol();
     await addSecondHydrogen();
+    await takeEditorScreenshot(page);
   });
 
   test('Open/Import structure as a KET file - open KET file', async ({
@@ -235,5 +236,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

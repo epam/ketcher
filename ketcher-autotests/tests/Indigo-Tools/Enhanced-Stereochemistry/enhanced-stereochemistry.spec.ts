@@ -90,10 +90,6 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('OR stereo mark assignment', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2219
@@ -108,6 +104,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await selectRadioButtonForNewGroup(page, 'Create new OR Group', true);
 
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('OR stereo mark assignment to two stereocenters', async ({ page }) => {
@@ -124,6 +121,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 3);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Add to OR stereo mark assignment', async ({ page }) => {
@@ -140,6 +138,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Add to OR1Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Add AND and OR stereo mark assignment', async ({ page }) => {
@@ -156,6 +155,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Check Enhanced Stereochemistry modal window', async ({ page }) => {
@@ -169,6 +169,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     );
     await clickOnAtom(page, 'C', 1);
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async ({
@@ -184,6 +185,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('(Select part of structure)Check Enhanced Stereochemistry modal window for two structure with a stereocenter(s)', async ({
@@ -203,6 +205,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Radio buttons: checked', async ({ page }) => {
@@ -217,6 +220,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Radio buttons: unchecked', async ({ page }) => {
@@ -231,6 +235,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await takeEditorScreenshot(page);
   });
 
   test('AND stereo mark assignment', async ({ page }) => {
@@ -247,6 +252,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await selectRadioButtonForNewGroup(page, 'Create new AND Group', true);
 
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('AND stereo mark assignment to two stereocenters', async ({ page }) => {
@@ -263,6 +269,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 3);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Add to AND stereo mark assignment', async ({ page }) => {
@@ -279,6 +286,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Add to AND1Group');
+    await takeEditorScreenshot(page);
   });
 
   test('AND stereo marks - Save as *.ket file and edit', async ({ page }) => {
@@ -306,6 +314,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('OR stereo marks - Save as *.ket file and edit', async ({ page }) => {
@@ -333,6 +342,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Mixed stereo marks - Save as *.ket file and edit', async ({ page }) => {
@@ -360,6 +370,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Mixed AND stereo marks - Save as *.ket file and edit', async ({
@@ -389,6 +400,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Mixed OR stereo marks - Save as *.ket file and edit', async ({
@@ -418,6 +430,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await clickOnAtom(page, 'C', 4);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Label display styles - Classic', async ({ page }) => {
@@ -430,6 +443,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'Classic');
+    await takeEditorScreenshot(page);
   });
 
   test('Label display styles - On', async ({ page }) => {
@@ -442,6 +456,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'On');
+    await takeEditorScreenshot(page);
   });
 
   test('Label display styles - Off', async ({ page }) => {
@@ -454,6 +469,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'Off');
+    await takeEditorScreenshot(page);
   });
 
   test('Color stereogenic centers - Off', async ({ page }) => {
@@ -466,6 +482,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Off');
+    await takeEditorScreenshot(page);
   });
 
   test('Color stereogenic centers - Labels and Bonds', async ({ page }) => {
@@ -478,6 +495,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Labels and Bonds');
+    await takeEditorScreenshot(page);
   });
 
   test('Color stereogenic centers - Bonds Only', async ({ page }) => {
@@ -491,6 +509,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Bonds Only');
+    await takeEditorScreenshot(page);
   });
 
   test('Hide/show the stereo flag', async ({ page }) => {
@@ -508,6 +527,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
 
     await resetAllSettingsToDefault(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Label display styles - IUPAC style selected by default in settings', async ({
@@ -522,6 +542,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await page.getByText('Stereochemistry', { exact: true }).click();
     await page.mouse.wheel(deltaX, deltaY);
+    await takeEditorScreenshot(page);
   });
 
   test('Save in Molfile V2000 - If one of the saved structures had the ABS (Chiral) Flag', async ({
@@ -553,6 +574,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Save in Molfile V2000 - If none of the structures had the ABS (Chiral) Flag', async ({
@@ -584,6 +606,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Check modal when AND/OR Group not added to structure', async ({
@@ -601,6 +624,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check modal when AND/OR Group added to structure', async ({ page }) => {
@@ -613,6 +637,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await openFileAndAddToCanvas('KET/mixed-and-or-structure.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Auto fade And/Or center labels', async ({ page }) => {
@@ -627,6 +652,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await takeEditorScreenshot(page);
 
     await autoFadeCenterLabelsOff(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Edit Absolute flag text', async ({ page }) => {
@@ -639,6 +665,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await editAbsoluteFlagText(page, 'ABS (Chiral)1');
+    await takeEditorScreenshot(page);
   });
 
   test('Edit Mixed flag text', async ({ page }) => {
@@ -648,6 +675,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await editMixedFlagText(page, 'Mixed2');
     await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
+    await takeEditorScreenshot(page);
   });
 
   test('No overlapping of Stereo flag and structure', async ({ page }) => {
@@ -662,6 +690,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
 
     await selectBond(BondTypeName.Single, page);
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Check removing "Chiral" label from text of absolute flag', async ({
@@ -675,5 +704,6 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectNestedTool(page, BondTool.UP);
     await clickOnAtom(page, 'C', 1);
+    await takeEditorScreenshot(page);
   });
 });

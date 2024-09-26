@@ -50,10 +50,6 @@ test.describe('Indigo Tools - Layout', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Layout part of chain structures', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1798
@@ -68,6 +64,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {
@@ -77,6 +74,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Stereo flag is not shifted after clicking layout multiple times', async ({
@@ -89,6 +87,7 @@ test.describe('Indigo Tools - Layout', () => {
     for (let i = 0; i < numberOfIterations; i++) {
       await selectTopPanelButton(TopPanelButton.Layout, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('After applying Layout, the structure does not disappear and can be interacted with', async ({
@@ -103,6 +102,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Sprout bonds to the structure after Layout', async ({ page }) => {
@@ -125,6 +125,7 @@ test.describe('Indigo Tools - Layout', () => {
     });
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action on part of structure with S-Group', async ({ page }) => {
@@ -138,6 +139,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action on part of structure with R-Group label', async ({
@@ -156,6 +158,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action on part of structure with Attachment point', async ({
@@ -174,6 +177,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Layout part of structure of R-Group member with R-Group logic', async ({
@@ -192,6 +196,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Layout action on part of structure with Stereobonds', async ({
@@ -211,6 +216,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Clean reaction with Layout tool', async ({ page }) => {
@@ -224,6 +230,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Structures are displayed in the middle of the screen after clicks "Layout" button', async ({
@@ -238,6 +245,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Molecular structures are displayed in the middle of the canvas after clicks "Ctrl+L"', async ({
@@ -249,6 +257,7 @@ test.describe('Indigo Tools - Layout', () => {
     */
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
     await page.keyboard.press('Control+l');
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -269,6 +278,7 @@ test.describe('Indigo Tools - Layout', () => {
         page,
         async () => await selectTopPanelButton(TopPanelButton.Layout, page),
       );
+      await takeEditorScreenshot(page);
     },
   );
 });

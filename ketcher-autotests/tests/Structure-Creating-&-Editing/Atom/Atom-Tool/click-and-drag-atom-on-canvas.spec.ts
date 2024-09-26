@@ -23,11 +23,6 @@ test.describe('Click and drag Atom on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Nitrogen forms a bond with Oxygen atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10115
@@ -41,6 +36,8 @@ test.describe('Click and drag Atom on canvas', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Bromine atom forms a bond with Cbz functional group', async ({
@@ -58,6 +55,8 @@ test.describe('Click and drag Atom on canvas', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Phosphorus atom appears where the left mouse button was released', async ({
@@ -76,6 +75,8 @@ test.describe('Click and drag Atom on canvas', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fluorine atom forms a bond with Nitrogen', async ({ page }) => {
@@ -95,6 +96,8 @@ test.describe('Click and drag Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Fluorine, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x - MAX_BOND_LENGTH, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Oxygen atom forms a bond with Cbz functional group', async ({
@@ -117,6 +120,8 @@ test.describe('Click and drag Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.mouse.click(coordinatesWithShift, y);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hydrogen appears to the right on the inner atoms of a chain', async ({
@@ -153,5 +158,7 @@ test.describe('Click and drag Atom on canvas', () => {
         page,
       );
     }
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

@@ -21,11 +21,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('The glycerol replaces the Nitrogen atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10110
@@ -36,6 +31,8 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await selectSaltsAndSolvents(SaltsAndSolvents.Glycerol, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The isobutanol replaces the Boc functional group', async ({ page }) => {
@@ -48,6 +45,8 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The t-butanol replaces methane sulphonic acid', async ({ page }) => {
@@ -61,6 +60,8 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await selectSaltsAndSolvents(SaltsAndSolvents.TButanol, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   // behaves unstable even locally, maybe because of tab opening
@@ -81,6 +82,8 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('sulfolane places near the Cbz functional group', async ({ page }) => {
@@ -100,5 +103,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
     await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
     await page.mouse.click(coordinatesWithShift, y);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

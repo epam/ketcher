@@ -60,10 +60,6 @@ test.describe('Multiple S-Group tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Brackets rendering for atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1506
@@ -73,6 +69,7 @@ test.describe('Multiple S-Group tool', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for bond', async ({ page }) => {
@@ -84,6 +81,7 @@ test.describe('Multiple S-Group tool', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole s-group structure', async ({ page }) => {
@@ -95,6 +93,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Brackets rendering for whole s-group structure even with attachment points', async ({
@@ -108,6 +107,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Edit S-Group', async ({ page }) => {
@@ -122,6 +122,7 @@ test.describe('Multiple S-Group tool', () => {
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add atom on Chain with Data S-Group', async ({ page }) => {
@@ -133,6 +134,7 @@ test.describe('Multiple S-Group tool', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete and Undo/Redo atom on Chain with Multiple S-Group', async ({
@@ -148,6 +150,7 @@ test.describe('Multiple S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Delete whole Chain with Multiple S-Group and Undo/Redo', async ({
@@ -163,6 +166,7 @@ test.describe('Multiple S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add R-Group Label and Undo/Redo on Chain with Multiple S-Group', async ({
@@ -182,6 +186,7 @@ test.describe('Multiple S-Group tool', () => {
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste structure with Multiple S-Group', async ({ page }) => {
@@ -192,6 +197,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste structure with Multiple S-Group', async ({ page }) => {
@@ -202,6 +208,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save/Open Multiple S-Group', async ({ page }) => {
@@ -224,6 +231,7 @@ test.describe('Multiple S-Group tool', () => {
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Limit on minimum count', async ({ page }) => {
@@ -236,6 +244,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Limit on maximum count', async ({ page }) => {
@@ -248,6 +257,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Check validations on limitation (Try add 0 in Repeat count)', async ({
@@ -262,6 +272,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
+    await takeEditorScreenshot(page);
   });
 
   test('Check validations on limitation (Try add 201 in Repeat count)', async ({
@@ -276,6 +287,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
+    await takeEditorScreenshot(page);
   });
 
   test('Check validations on limitation (Try add -1 in Repeat count)', async ({
@@ -289,6 +301,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
+    await takeEditorScreenshot(page);
   });
 
   test('Attachment point inside S-Group brackets', async ({ page }) => {
@@ -307,6 +320,7 @@ test.describe('Multiple S-Group tool', () => {
       { primary: true, secondary: true },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Limit on minimum count', async ({ page }) => {
@@ -315,6 +329,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '1');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Limit on maximum count', async ({ page }) => {
@@ -323,6 +338,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '200');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Limit higher than maximum count', async ({ page }) => {
@@ -330,6 +346,7 @@ test.describe('Multiple S-Group tool', () => {
     // Verify system answer after putting a number higher than limit
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '201');
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Group - Value in the valid range', async ({ page }) => {
@@ -338,6 +355,7 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '50');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add S-Group properties to structure and atom', async ({ page }) => {
@@ -363,5 +381,6 @@ test.describe('Multiple S-Group tool', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

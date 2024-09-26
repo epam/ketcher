@@ -29,10 +29,6 @@ test.describe('Selection tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Selection is not reset when using context menu', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-8925
@@ -42,6 +38,7 @@ test.describe('Selection tools', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await clickOnAtom(page, 'C', 0, 'right');
+    await takeEditorScreenshot(page);
   });
 
   test('Using rounded rectangles for selection of bonds and atom labels', async ({
@@ -54,6 +51,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/atoms-and-bonds.ket', page);
     await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
   });
 
   test('Pressing atoms hotkey when atoms are selected', async ({ page }) => {
@@ -65,6 +63,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvas('KET/two-atoms.ket', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('o');
+    await takeEditorScreenshot(page);
   });
 
   test('Hovering of selected Atom', async ({ page }) => {
@@ -76,6 +75,7 @@ test.describe('Selection tools', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await moveOnAtom(page, 'C', 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Hovering of selected Bond', async ({ page }) => {
@@ -87,6 +87,7 @@ test.describe('Selection tools', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await moveOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify flipping horizontally with multiple disconnected structures selected', async ({
@@ -99,6 +100,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await page.keyboard.press('Control+a');
     await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify flipping vertically with multiple disconnected structures selected', async ({
@@ -111,6 +113,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await page.keyboard.press('Control+a');
     await pressButton(page, 'Vertical Flip (Alt+V)');
+    await takeEditorScreenshot(page);
   });
 
   test('Verify deletion of selected structures', async ({ page }) => {
@@ -121,6 +124,7 @@ test.describe('Selection tools', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('delete').click();
+    await takeEditorScreenshot(page);
   });
 
   test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async ({
@@ -137,6 +141,7 @@ test.describe('Selection tools', () => {
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowDown');
     }
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -162,6 +167,7 @@ test.describe('Selection tools', () => {
           await page.keyboard.press('ArrowUp');
         });
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -188,6 +194,7 @@ test.describe('Selection tools', () => {
           await page.keyboard.press('ArrowRight');
         });
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -214,6 +221,7 @@ test.describe('Selection tools', () => {
           await page.keyboard.press('ArrowLeft');
         });
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -237,6 +245,7 @@ test.describe('Selection tools', () => {
       });
     }
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
   });
 
   test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
@@ -259,6 +268,7 @@ test.describe('Selection tools', () => {
       });
     }
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
   });
 
   test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
@@ -281,6 +291,7 @@ test.describe('Selection tools', () => {
       });
     }
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
   });
 
   test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
@@ -303,6 +314,7 @@ test.describe('Selection tools', () => {
       });
     }
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
   });
 
   test('Field value text when placed on a structure becomes hard to access', async ({
@@ -331,6 +343,7 @@ test.describe('Selection tools', () => {
 
     await page.getByText('33', { exact: true }).click();
     await dragMouseTo(pointx1, pointy1, page);
+    await takeEditorScreenshot(page);
   });
 });
 

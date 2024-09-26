@@ -51,10 +51,6 @@ test.describe('Text tools test cases', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(' Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
     // Verify if possible is changing font size on the created text object
@@ -70,6 +66,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('button', { name: '20' }).click();
     await page.getByText('10', { exact: true }).click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test(' Applying styles - Bold', async ({ page }) => {
@@ -77,6 +74,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
     await applyTextFormat(page, 'ABC', 'bold');
+    await takeEditorScreenshot(page);
   });
 
   test(' Applying styles - Italic', async ({ page }) => {
@@ -84,6 +82,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
     await applyTextFormat(page, 'ABCDE', 'italic');
+    await takeEditorScreenshot(page);
   });
 
   test(' Applying styles - Subscript', async ({ page }) => {
@@ -91,6 +90,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
     await applyTextFormat(page, 'ABC123', 'subscript');
+    await takeEditorScreenshot(page);
   });
 
   test('Applying styles - Superscript', async ({ page }) => {
@@ -98,6 +98,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put Superscript style on the created text object
     await addTextBoxToCanvas(page);
     await applyTextFormat(page, 'ABC123', 'superscript');
+    await takeEditorScreenshot(page);
   });
 
   test('Applying styles - Combination of styles', async ({ page }) => {
@@ -117,6 +118,7 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Create text object and save it as .ket file', async ({ page }) => {
@@ -131,6 +133,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText('20', { exact: true }).click();
     await page.getByRole('button', { name: 'bold' }).click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Saving text object as a .ket file', async ({ page }) => {
@@ -146,6 +149,7 @@ test.describe('Text tools test cases', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open saved .ket file', async ({ page }) => {
@@ -160,6 +164,7 @@ test.describe('Text tools test cases', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test(' Cut/Copy/Paste', async ({ page }) => {
@@ -172,6 +177,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test(' Checking if user is able to cut and paste the created text objects', async ({
@@ -188,6 +194,7 @@ test.describe('Text tools test cases', () => {
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await selectTopPanelButton(TopPanelButton.Redo, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test(' Selection of different types of text objects', async ({ page }) => {
@@ -216,6 +223,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('UTF-8 compatible ("Paste from Clipboard")', async ({ page }) => {
@@ -227,5 +235,6 @@ test.describe('Text tools test cases', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

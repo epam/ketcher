@@ -17,10 +17,6 @@ test.describe('Select all', () => {
     await page.goto('');
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Select all using hot-key - 1/4 move', async ({ page }) => {
     /*
         Test case: EPMLSOPKET-1337(1)
@@ -35,6 +31,7 @@ test.describe('Select all', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x + offset, y + offset, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Select all using hot-key - 2/4 cut and paste', async ({ page }) => {
@@ -48,6 +45,7 @@ test.describe('Select all', () => {
     await selectAllStructuresOnCanvas(page);
     await cutAndPaste(page);
     await page.mouse.click(offset, offset);
+    await takeEditorScreenshot(page);
   });
 
   test('Select all using hot-key - 3/4 copy and paste', async ({ page }) => {
@@ -61,6 +59,7 @@ test.describe('Select all', () => {
     await selectAllStructuresOnCanvas(page);
     await copyAndPaste(page);
     await page.mouse.click(offset, offset);
+    await takeEditorScreenshot(page);
   });
 
   test('Select all using hot-key - 4/4 delete', async ({ page }) => {
@@ -73,5 +72,6 @@ test.describe('Select all', () => {
     await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.HandTool, page);
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 });

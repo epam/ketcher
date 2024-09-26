@@ -198,10 +198,6 @@ test.describe('Reagents RXN format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open from file in "RXN V2000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4679
@@ -213,6 +209,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "RXN V3000" format', async ({ page }) => {
@@ -226,6 +223,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "RXN V2000" format', async ({ page }) => {
@@ -239,6 +237,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
@@ -251,6 +250,7 @@ test.describe('Reagents RXN format', () => {
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "RXN V3000" format with reagents above and below arrow', async ({
@@ -266,5 +266,6 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 });

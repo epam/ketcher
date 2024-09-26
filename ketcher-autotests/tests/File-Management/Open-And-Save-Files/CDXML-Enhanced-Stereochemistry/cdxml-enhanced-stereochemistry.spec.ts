@@ -31,10 +31,6 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Adding AND stereo marks to structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4724
@@ -43,6 +39,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding OR stereo marks to structure', async ({ page }) => {
@@ -53,6 +50,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding Mixed AND stereo marks to structure', async ({ page }) => {
@@ -65,6 +63,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding Mixed OR stereo marks to structure', async ({ page }) => {
@@ -77,6 +76,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 });
 

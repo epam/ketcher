@@ -31,10 +31,6 @@ test.describe('Reagents SMARTS format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test(`Detection molecule as reagent
   and write reagent information in "Daylight SMARTS" format in "Preview" tab`, async ({
     page,
@@ -56,6 +52,7 @@ test.describe('Reagents SMARTS format', () => {
     expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
+    await takeEditorScreenshot(page);
   });
 
   test(`Detection molecule below arrow as reagent
@@ -81,6 +78,7 @@ test.describe('Reagents SMARTS format', () => {
     expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
@@ -98,6 +96,7 @@ test.describe('Reagents SMARTS format', () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "Daylight SMARTS" format', async ({ page }) => {
@@ -106,6 +105,7 @@ test.describe('Reagents SMARTS format', () => {
     Description: Reagent 'Cl' below the reaction arrow
     */
     await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Structure is opened with Not List atoms saved in "Daylight SMARTS" format', async ({
@@ -116,6 +116,7 @@ test.describe('Reagents SMARTS format', () => {
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
     await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
+    await takeEditorScreenshot(page);
   });
 });
 

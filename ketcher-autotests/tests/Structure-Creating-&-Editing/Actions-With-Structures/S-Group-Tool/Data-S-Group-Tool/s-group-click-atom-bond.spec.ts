@@ -15,10 +15,6 @@ test.describe('S-Group Properties', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Checking S-Group drop-down types', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1502
@@ -32,6 +28,7 @@ test.describe('S-Group Properties', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
     await page.getByTestId('s-group-type-input-span').click();
+    await takeEditorScreenshot(page);
   });
 
   test('A superatom named `Test` is created', async ({ page }) => {
@@ -52,6 +49,7 @@ test.describe('S-Group Properties', () => {
 
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('An atom is created with the name `Test` and the value 8', async ({
@@ -76,6 +74,7 @@ test.describe('S-Group Properties', () => {
 
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('A query component  is created', async ({ page }) => {
@@ -90,5 +89,6 @@ test.describe('S-Group Properties', () => {
 
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();
+    await takeEditorScreenshot(page);
   });
 });

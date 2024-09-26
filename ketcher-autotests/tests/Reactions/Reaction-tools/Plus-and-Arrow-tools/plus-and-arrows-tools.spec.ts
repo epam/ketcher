@@ -92,10 +92,6 @@ test.describe('Plus and Arrows tools ', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test.describe('Create reactions', () => {
     /**
      * Test case: EPMLSOPKET-1783
@@ -111,6 +107,7 @@ test.describe('Plus and Arrows tools ', () => {
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
         await selectTopPanelButton(TopPanelButton.Undo, page);
+        await takeEditorScreenshot(page);
       });
     }
   });
@@ -128,6 +125,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
     await dragMouseTo(x + 150, y + 150, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/paste, cut/paste arrow', async ({ page }) => {
@@ -145,6 +143,7 @@ test.describe('Plus and Arrows tools ', () => {
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify reaction is registered in undo/redo chain', async ({ page }) => {
@@ -180,6 +179,7 @@ test.describe('Plus and Arrows tools ', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test.describe('Plus sign - Manipulations with different Tools', () => {

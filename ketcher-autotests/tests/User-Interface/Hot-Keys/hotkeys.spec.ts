@@ -20,10 +20,6 @@ test.describe('Hot keys', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await expect(page).toHaveScreenshot();
-  });
-
   test('select last chosen selected tool when user press ESC', async ({
     page,
   }) => {
@@ -31,6 +27,7 @@ test.describe('Hot keys', () => {
     await selectTool(LeftPanelButton.AddText, page);
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('select-fragment')).toBeVisible();
+    await expect(page).toHaveScreenshot();
   });
 
   test('Shift+Tab to switch selection tool', async ({ page }) => {
@@ -38,6 +35,7 @@ test.describe('Hot keys', () => {
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId('select-fragment')).toBeVisible();
+    await expect(page).toHaveScreenshot();
   });
 });
 

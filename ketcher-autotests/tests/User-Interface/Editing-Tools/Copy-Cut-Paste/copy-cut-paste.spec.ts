@@ -40,10 +40,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Cut part of structures', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1712
@@ -56,6 +52,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut all structures', async ({ page }) => {
@@ -67,6 +64,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut one Atom on structure', async ({ page }) => {
@@ -79,6 +77,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut one Bond on structure', async ({ page }) => {
@@ -91,6 +90,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnBond(page, BondType.TRIPLE, anyBond);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
@@ -104,6 +104,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press(`${modifier}+KeyA`);
     await page.keyboard.press(`${modifier}+KeyX`);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste structure and edit', async ({ page }) => {
@@ -124,6 +125,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut the reaction', async ({ page }) => {
@@ -137,6 +139,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut the Atom from reaction', async ({ page }) => {
@@ -158,6 +161,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut the Bond from reaction', async ({ page }) => {
@@ -179,6 +183,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut the reaction with hotkey', async ({ page }) => {
@@ -191,6 +196,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await cutToClipboardByKeyboard(page);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy structure', async ({ page }) => {
@@ -201,6 +207,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Copy, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy the Atom from reaction', async ({ page }) => {
@@ -212,6 +219,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectTopPanelButton(TopPanelButton.Copy, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy the Bond from reaction', async ({ page }) => {
@@ -222,6 +230,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.SINGLE, 0);
     await selectTopPanelButton(TopPanelButton.Copy, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy the reaction with hotkey', async ({ page }) => {
@@ -232,6 +241,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
     await copyToClipboardByKeyboard(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and Paste structure and edit', async ({ page }) => {
@@ -253,6 +263,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the reaction', async ({ page }) => {
@@ -266,6 +277,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the Atom from reaction', async ({ page }) => {
@@ -288,6 +300,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     });
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the Bond from reaction', async ({ page }) => {
@@ -307,6 +320,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await pasteFromClipboardByKeyboard(page);
 
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the reaction with hotkey', async ({ page }) => {
@@ -320,6 +334,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Paste action', async ({ page }) => {
@@ -340,6 +355,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await pasteFromClipboardByKeyboard(page);
     await page.mouse.click(x2, y2);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the Generic S-Group structure', async ({ page }) => {
@@ -353,6 +369,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste the Generic S-Group structure and edit', async ({
@@ -372,6 +389,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste and Edit the pasted Structure', async ({ page }) => {
@@ -388,6 +406,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickAfterItemsToMergeInitialization(page, x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste and Edit the pasted Structure', async ({ page }) => {
@@ -405,6 +424,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste R-Group structure', async ({ page }) => {
@@ -418,6 +438,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/R-Group-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste R-Group structure', async ({ page }) => {
@@ -440,6 +461,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the S-Group structure', async ({ page }) => {
@@ -453,6 +475,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/s-group-features.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste the S-Group structure and edit', async ({ page }) => {
@@ -471,6 +494,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste the structure with attached data', async ({ page }) => {
@@ -484,6 +508,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste structure with attached data and edit', async ({
@@ -502,6 +527,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste Stereo structure with Chiral flag', async ({ page }) => {
@@ -515,6 +541,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste structure with Stereo and Chiral flag and edit', async ({
@@ -531,6 +558,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste reaction by hotkeys', async ({ page }) => {
@@ -544,6 +572,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
@@ -559,6 +588,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Cut/Paste reaction at the same canvas', async ({ page }) => {
@@ -578,6 +608,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste reaction with changed arrow', async ({ page }) => {
@@ -594,6 +625,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste reaction with changed arrow and edit', async ({
@@ -612,6 +644,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste reaction with multiple arrows', async ({ page }) => {
@@ -627,6 +660,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste reaction with multiple arrows and edit', async ({
@@ -645,6 +679,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste all kind of S-groups', async ({ page }) => {
@@ -661,6 +696,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
@@ -678,6 +714,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste Mapped reaction', async ({ page }) => {
@@ -691,6 +728,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste Mapped reaction and edit', async ({ page }) => {
@@ -706,6 +744,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste All kinds of bonds', async ({ page }) => {
@@ -721,6 +760,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste structure with Stereochemistry', async ({ page }) => {
@@ -733,6 +773,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste structure with Stereochemistry and edit', async ({
@@ -749,6 +790,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste complex R-Group structure', async ({ page }) => {
@@ -766,6 +808,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste complex R-Group structure and edit', async ({ page }) => {
@@ -786,6 +829,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste Structure with Simple objects and text', async ({
@@ -804,6 +848,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste Structure with Simple objects and text and edit', async ({
@@ -825,6 +870,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste Aromatic structure', async ({ page }) => {
@@ -841,6 +887,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await clickAfterItemsToMergeInitialization(page, x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste Aromatic structure and edit', async ({ page }) => {
@@ -860,6 +907,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste expanded and contracted Functional Froups', async ({
@@ -875,6 +923,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste expanded and contracted Functional Froups and edit', async ({
@@ -892,6 +941,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste expanded and contracted Salts and Solvents', async ({
@@ -910,6 +960,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste expanded and contracted Salts and Solvents and edit', async ({
@@ -930,16 +981,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'S', anyAtom);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await expect(page).toHaveScreenshot();
   });
 
   test('Copy button', async ({ page }) => {
@@ -960,6 +1008,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('copy-button-dropdown-triangle').click();
+    await expect(page).toHaveScreenshot();
   });
 
   test('Cut button', async ({ page }) => {
@@ -975,6 +1024,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await expect(page).toHaveScreenshot();
     await selectTopPanelButton(TopPanelButton.Cut, page);
+    await expect(page).toHaveScreenshot();
   });
 
   test('Paste button', async ({ page }) => {
@@ -993,6 +1043,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await selectTopPanelButton(TopPanelButton.Paste, page);
+    await expect(page).toHaveScreenshot();
   });
 
   test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async ({
@@ -1013,5 +1064,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await pressButton(page, 'Cancel');
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page);
+    await expect(page).toHaveScreenshot();
   });
 });

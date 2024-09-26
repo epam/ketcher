@@ -69,15 +69,12 @@ test.describe('Atom Settings', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Set "on" for Show hydrogen labels', async ({ page }) => {
     // Test case: EPMLSOPKET-10080
     // Verify appear of hydrogen labels on the molecules after changing setting to 'on'
     await drawBenzeneRing(page);
     await setHydrogenLabelsOn(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Display Special nodes "Deuterium", "Tritium" when "Show hydrogen labels" = "Terminal and Hetero"', async ({
@@ -91,6 +88,7 @@ test.describe('Atom Settings', () => {
     await page.mouse.click(pointX, pointY);
     await selectExtendedTableElements(page, 'T');
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('”Terminal and Hetero” is set for default for “Show hydrogen labels”', async ({
@@ -99,6 +97,7 @@ test.describe('Atom Settings', () => {
     // Test case: EPMLSOPKET-10076 and EPMLSOPKET-10079
     // Verify the default setting for “Show hydrogen labels”
     await atomDefaultSettings(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Non-terminal hetero atom when "Show hydrogen labels" = Terminal and Hetero', async ({
@@ -109,6 +108,7 @@ test.describe('Atom Settings', () => {
     await atomDefaultSettings(page);
     await pressButton(page, 'Apply');
     await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
   });
 
   test(' Add simple atom query primitives to the query specific properties', async ({
@@ -129,5 +129,6 @@ test.describe('Atom Settings', () => {
     await aromaticityQuery(page, 'Aromaticity');
     await ringSizeQuery(page, 'Ring size');
     await page.mouse.click(pointX, pointY);
+    await takeEditorScreenshot(page);
   });
 });

@@ -40,10 +40,6 @@ test.describe('Modal window', () => {
     await selectSingleBondTool(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('"Connect" button is disabled', async ({ page }) => {
     /*
       Description: Bond two monomers and open window. 
@@ -60,6 +56,7 @@ test.describe('Modal window', () => {
       false,
       false,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('"Connect" button is active', async ({ page }) => {
@@ -71,5 +68,6 @@ test.describe('Modal window', () => {
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2, 'R1', 'R2', true, false);
+    await takeEditorScreenshot(page);
   });
 });

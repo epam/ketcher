@@ -32,16 +32,13 @@ test.describe('Floating windows', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFileViaClipboard('tests/test-data/Txt/kecther-text.txt', page);
     await editText(page, '  NEW TEXT   ');
+    await takeEditorScreenshot(page);
   });
 
   test('Open structure: Errors of input (text file)', async ({ page }) => {
@@ -50,6 +47,7 @@ test.describe('Floating windows', () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Txt/incorect-text.txt', page);
     await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
   });
 
   test('Calculate values (data on canvas)', async ({ page }) => {
@@ -59,6 +57,7 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculated values: check accuracy', async ({ page }) => {
@@ -72,6 +71,7 @@ test.describe('Floating windows', () => {
     await page.getByRole('option', { name: '0' }).click();
     await page.getByTestId('Exact Mass-select').click();
     await page.getByRole('option', { name: '0' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Calculated values: check accuracy 2', async ({ page }) => {
@@ -85,6 +85,7 @@ test.describe('Floating windows', () => {
     await page.getByRole('option', { name: '7' }).click();
     await page.getByTestId('Exact Mass-select').click();
     await page.getByRole('option', { name: '7' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Calculate values: verify UI (empty canvas)', async ({ page }) => {
@@ -93,6 +94,7 @@ test.describe('Floating windows', () => {
       Description: verify empty fields in floating window for empty canvas 
     */
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open structure: Open window', async ({ page }) => {
@@ -102,6 +104,7 @@ test.describe('Floating windows', () => {
       open/drag file or paste from clipboard 
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Floating windows - Extended table: Verify UI', async ({ page }) => {
@@ -110,6 +113,7 @@ test.describe('Floating windows', () => {
       Description: verify visual representation of "Extended" table 
     */
     await page.getByTestId('extended-table').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Calculated Values', async ({ page }) => {
@@ -125,6 +129,7 @@ test.describe('Floating windows', () => {
     await page.getByRole('option', { name: '1' }).click();
     await page.keyboard.press('Escape');
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Opening text file', async ({ page }) => {
@@ -134,6 +139,7 @@ test.describe('Floating windows', () => {
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('CML/cml-molecule.cml', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard', async ({ page }) => {
@@ -145,6 +151,7 @@ test.describe('Floating windows', () => {
       page,
       'InChI=1S/C12H16/c1-10-7-8-12(9-10)11-5-3-2-4-6-11/h2-6,10,12H,7-9H2,1H3',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard/bad data', async ({ page }) => {
@@ -156,6 +163,7 @@ test.describe('Floating windows', () => {
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(page, 'VAAA==');
     await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {
@@ -173,5 +181,6 @@ test.describe('Floating windows', () => {
       pressButton(page, 'Open as New Project');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

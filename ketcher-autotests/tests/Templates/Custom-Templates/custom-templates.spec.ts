@@ -24,10 +24,6 @@ test.describe('Open Ketcher', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Custom Templates - Template Library folders', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1697
@@ -35,6 +31,7 @@ test.describe('Open Ketcher', () => {
     The 'Template Library' tab is opened by default.
     */
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
   });
 
   test('Custom Templates - Template Library folders content', async ({
@@ -47,6 +44,7 @@ test.describe('Open Ketcher', () => {
     Open the 'User Templates' folder'
     */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Custom Templates - Window UI', async ({ page }) => {
@@ -62,6 +60,7 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
   });
 
   test('When switching between tabs-the focus is active', async ({ page }) => {
@@ -75,6 +74,7 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Thumbnail images are readable in Template Dialog', async ({ page }) => {
@@ -86,6 +86,7 @@ test.describe('Open Ketcher', () => {
     */
     await selectFunctionalGroups(FunctionalGroups.Tf, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check automatically reset the search filter', async ({ page }) => {
@@ -101,6 +102,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
   });
 
   test('Adding template to canvas', async ({ page }) => {
@@ -115,6 +117,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The scroll should not be displayed in the edit', async ({ page }) => {
@@ -129,7 +132,9 @@ test.describe('Open Ketcher', () => {
     await page.getByTitle('Azulene').getByRole('button').click();
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Edit' }).click();
+    await takeEditorScreenshot(page);
   });
+
   test('Edit templates - Close window', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1700 
@@ -143,6 +148,7 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('button', { name: 'Cancel' }).click();
     await selectAzuleneOnTemplateLibrary(page);
     await page.getByRole('button', { name: 'Edit' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Edit templates - Template Name', async ({ page }) => {
@@ -159,6 +165,7 @@ test.describe('Open Ketcher', () => {
       .fill(
         'My new template for everyone who want to create new table with more than 128 symbols of elements like Azulene with merged Cyclopentadiene',
       );
+    await takeEditorScreenshot(page);
   });
 
   test('Edit templates -  Greek symbols in Template Name', async ({ page }) => {
@@ -169,6 +176,7 @@ test.describe('Open Ketcher', () => {
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('γ-template name');
+    await takeEditorScreenshot(page);
   });
 
   test('Edit templates -  Attachment atom and bond', async ({ page }) => {
@@ -179,6 +187,7 @@ test.describe('Open Ketcher', () => {
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page.getByRole('dialog').getByTestId('canvas').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Templates Library - Template attachment', async ({ page }) => {
@@ -200,6 +209,7 @@ test.describe('Open Ketcher', () => {
     await clickOnTheCanvas(page, point.x, point.y);
     await selectBond(BondTypeName.Single, page);
     await clickOnAtom(page, 'C', 0);
+    await takeEditorScreenshot(page);
   });
 });
 

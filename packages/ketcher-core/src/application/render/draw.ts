@@ -33,7 +33,7 @@ const ARROW_DASH_INTERVAL = 0.0875; // 3.5
 const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
 const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
 
-function getArrowHeadDimensions(options: RenderOptions) {
+export function getArrowHeadDimensions(options: RenderOptions) {
   const { microModeScale } = getOptionsWithConvertedUnits(options);
 
   return {

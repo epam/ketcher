@@ -24,10 +24,6 @@ test.describe('Reagents molecule above arrow', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open File RXN v3000 with reagent NH3 above arrow', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4680
@@ -37,6 +33,7 @@ test.describe('Reagents molecule above arrow', () => {
       'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with reagent NH3 above arrow', async ({ page }) => {
@@ -48,6 +45,7 @@ test.describe('Reagents molecule above arrow', () => {
       'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Save SVG with reagent NH3 above arrow', async ({ page }) => {
@@ -61,6 +59,7 @@ test.describe('Reagents molecule above arrow', () => {
     );
 
     await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
   });
 
   test('Save PNG with reagent NH3 above arrow', async ({ page }) => {
@@ -73,6 +72,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+    await takeEditorScreenshot(page);
   });
 
   test('Detection text as reagent and render reagent information in PNG format in "Preview" tab', async ({
@@ -87,6 +87,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+    await takeEditorScreenshot(page);
   });
 
   test('Detection text as reagent and render reagent information in SVG format in "Preview" tab', async ({
@@ -101,6 +102,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
   });
 
   test('Check that text nodes do not loses after save to SVG', async ({
@@ -112,5 +114,6 @@ test.describe('Reagents molecule above arrow', () => {
     */
     await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
     await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
   });
 });

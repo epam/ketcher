@@ -39,10 +39,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
-  });
-
   test('Clean bonds lenght', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1778
@@ -65,6 +61,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean bonds angles', async ({ page }) => {
@@ -88,6 +85,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Cleaned structure is placed horizontally', async ({ page }) => {
@@ -112,6 +110,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean distorted molecule with Layout tool', async ({ page }) => {
@@ -127,6 +126,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean distorted molecule with Clean Up tool', async ({ page }) => {
@@ -141,6 +141,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Queries structure', async ({ page }) => {
@@ -162,6 +163,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on a structures with Attachment point', async ({
@@ -177,6 +179,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Multiple undo', async ({ page }) => {
@@ -204,6 +207,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Structure with Stereochemistry', async ({ page }) => {
@@ -226,6 +230,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Structure with R-Groups', async ({ page }) => {
@@ -250,6 +255,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Structure with S-Groups', async ({ page }) => {
@@ -273,6 +279,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Structure with Stereolabels', async ({ page }) => {
@@ -291,6 +298,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Structure with Mapping', async ({ page }) => {
@@ -312,6 +320,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Layout cyclic structures', async ({ page }) => {
@@ -325,6 +334,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Layout several structures', async ({ page }) => {
@@ -338,6 +348,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up part of chain structures', async ({ page }) => {
@@ -354,6 +365,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up cyclic structures', async ({ page }) => {
@@ -370,6 +382,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure of R-Group member', async ({
@@ -389,6 +402,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Sprout bonds to the structure after Clean Up', async ({ page }) => {
@@ -413,6 +427,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with Stereobonds', async ({
@@ -432,6 +447,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Not layout rings as circles', async ({ page }) => {
@@ -454,6 +470,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with R-Group label', async ({
@@ -474,6 +491,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean reaction with Clean Up tool', async ({ page }) => {
@@ -487,6 +505,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up several structures', async ({ page }) => {
@@ -504,6 +523,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean action', async ({ page }) => {
@@ -529,6 +549,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with S-Group', async ({
@@ -544,6 +565,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test(
@@ -565,6 +587,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
         page,
         async () => await selectTopPanelButton(TopPanelButton.Clean, page),
       );
+      await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
     },
   );
 });

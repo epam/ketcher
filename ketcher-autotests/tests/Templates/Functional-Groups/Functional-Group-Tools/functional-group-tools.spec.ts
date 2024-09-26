@@ -40,11 +40,6 @@ test.describe('Templates - Functional Group Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Add a Bond to a contracted Functional Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-10086
@@ -55,6 +50,8 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add a Chain to a contracted Functional Group', async ({ page }) => {
@@ -70,6 +67,8 @@ test.describe('Templates - Functional Group Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + X_DELTA;
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Fragment Selection of expanded Functional Group', async ({ page }) => {
@@ -84,6 +83,8 @@ test.describe('Templates - Functional Group Tools', () => {
     );
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await clickOnAtom(page, 'C', anyAtom);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Rotate of expanded Functional Group', async ({ page }) => {
@@ -112,6 +113,8 @@ test.describe('Templates - Functional Group Tools', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Rotate Tool (FG + Other structures)', async ({ page }) => {
@@ -141,6 +144,8 @@ test.describe('Templates - Functional Group Tools', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Charge to the Functional group', async ({ page }) => {
@@ -159,6 +164,8 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Dragging a selected Functional Group not duplicates it', async ({
@@ -176,6 +183,8 @@ test.describe('Templates - Functional Group Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + X_DELTA;
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Bond to the expanded Functional group', async ({ page }) => {
@@ -192,6 +201,8 @@ test.describe('Templates - Functional Group Tools', () => {
       await pressButton(page, 'Remove Abbreviation');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Chain to the expanded Functional group', async ({ page }) => {
@@ -212,6 +223,8 @@ test.describe('Templates - Functional Group Tools', () => {
     });
     await clickOnAtom(page, 'O', anyAtom);
     await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Atom to the expanded Functional group', async ({ page }) => {
@@ -228,6 +241,8 @@ test.describe('Templates - Functional Group Tools', () => {
       await pressButton(page, 'Remove Abbreviation');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Remove Abbreviation and Undo/Redo action for Functional group', async ({
@@ -252,17 +267,14 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await resetCurrentTool(page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Templates - Functional Group Tools2', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
   });
 
   test('EDIT ABBREVIATION window appears after click on expanded Functional Group', async ({
@@ -286,6 +298,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Vertical Flip of expanded Functional Group', async ({ page }) => {
@@ -310,6 +324,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Vertical Flip (Alt+V)');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Horizontal Flip of expanded Functional Group', async ({ page }) => {
@@ -335,6 +351,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Horizontal Flip (Alt+H)');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Erase of contracted and expanded Functional Group', async ({
@@ -368,6 +386,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     );
     await page.keyboard.press('Control+a');
     await page.getByTestId('delete').click();
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Template to the Functional group', async ({ page }) => {
@@ -394,6 +414,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectRingButton(RingButton.Cyclopentadiene, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Expand/Contract/Remove Abbreviation of Functional Group', async ({
@@ -428,6 +450,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       await page.getByText('Remove Abbreviation').click();
     });
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Expand/Contract Abbreviation of Functional Group and Undo/Redo action', async ({
@@ -458,6 +481,8 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Rectangle and Lasso Selection of expanded Functional Group', async ({
@@ -486,6 +511,8 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Expand Functional Group on a structure', async ({ page }) => {
@@ -498,6 +525,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Contract Functional Group on a structure', async ({ page }) => {
@@ -513,6 +542,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Bond between Functional Group and structure not disappears after adding Functional Group again', async ({
@@ -539,6 +570,8 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectFunctionalGroups(FunctionalGroups.CPh3, page);
     await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Functional Group is added to all top of the bonds', async ({
@@ -552,6 +585,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectFunctionalGroups(FunctionalGroups.Ac, page);
     await attachOnTopOfBenzeneBonds(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Functional Group replaced by atom', async ({ page }) => {
@@ -564,6 +599,8 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });
 

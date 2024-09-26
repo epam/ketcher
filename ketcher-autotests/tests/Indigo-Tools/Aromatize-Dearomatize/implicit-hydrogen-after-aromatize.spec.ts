@@ -13,10 +13,6 @@ test.describe('Shows correctly implicit Hydrogen after aromatize', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   const fileNames = [
     'first.ket',
     'second.ket',
@@ -37,6 +33,7 @@ test.describe('Shows correctly implicit Hydrogen after aromatize', () => {
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Aromatize, page);
       });
+      await takeEditorScreenshot(page);
     });
   }
 });

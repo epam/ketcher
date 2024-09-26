@@ -24,10 +24,6 @@ test.describe('Calculated Values Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Calculate selected structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1991
@@ -36,6 +32,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Empty canvas', async ({ page }) => {
@@ -52,6 +49,7 @@ test.describe('Calculated Values Tools', () => {
     'Close' button.
     */
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculate all canvas and change Decimal places', async ({ page }) => {
@@ -84,6 +82,7 @@ test.describe('Calculated Values Tools', () => {
     await page.getByRole('option', { name: '2' }).click();
     await page.getByText('Decimal places3').click();
     await page.getByRole('option', { name: '2' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Calculate reaction', async ({ page }) => {
@@ -113,6 +112,7 @@ test.describe('Calculated Values Tools', () => {
     await page.getByRole('option', { name: '1' }).click();
     await page.getByText('Decimal places3').click();
     await page.getByRole('option', { name: '1' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('The calculation result for a substructure with existing but not selected query features', async ({
@@ -138,6 +138,7 @@ test.describe('Calculated Values Tools', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculated, page);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('One structure on canvas (Benzene ring)', async ({ page }) => {
@@ -166,6 +167,7 @@ test.describe('Calculated Values Tools', () => {
     await page.getByRole('option', { name: '1' }).click();
     await page.getByText('Decimal places3').click();
     await page.getByRole('option', { name: '1' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Validate the Calculation of exact mass for a part of molecule', async ({
@@ -182,6 +184,7 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation of exact mass for the reaction components', async ({
@@ -194,6 +197,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for an inorganic compound', async ({ page }) => {
@@ -209,6 +213,7 @@ test.describe('Calculated Values Tools', () => {
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for Rgroup Root Structure with Rgroup Label', async ({
@@ -222,6 +227,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for Rgroup Root Structure without Rgroup Label', async ({
@@ -238,6 +244,7 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for Rgroup member', async ({ page }) => {
@@ -248,6 +255,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for Rgroup member (select part of structure)', async ({
@@ -264,6 +272,7 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for the structure with R-group Attachment points', async ({
@@ -279,6 +288,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculations for the structure with R-group Attachment points (select part of structure)', async ({
@@ -298,6 +308,7 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for structure with S-group - SRU polymer', async ({
@@ -320,6 +331,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for structure with S-group - Multiple group', async ({
@@ -343,6 +355,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for structure with S-group - Superatom (abbreviation)', async ({
@@ -365,6 +378,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for structure with S-group - Data S-group', async ({
@@ -387,6 +401,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-non-hsub)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -399,6 +414,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-unsaturated)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -414,6 +430,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-ring-bonds)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -426,6 +443,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-aq)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -438,6 +456,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-atom-list)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -450,6 +469,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-not-list)Test Calculations with Structures Containing Atom Query Features', async ({
@@ -462,6 +482,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-non-hsub)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -477,6 +498,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-unsaturated)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -495,6 +517,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-ring-bonds)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -510,6 +533,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-aq)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -525,6 +549,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-atom-list)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -540,6 +565,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(a-query-not-list)Test Calculations with part of Structures Containing Atom Query Features', async ({
@@ -555,6 +581,7 @@ test.describe('Calculated Values Tools', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(hetero-adduct)Calculation of exact mass for different types of structures', async ({
@@ -574,6 +601,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/hetero-adduct.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(c14napthylbromide)Calculation of exact mass for different types of structures', async ({
@@ -593,6 +621,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/c14napthylbromide.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('(dgln-atomlist)Calculation of exact mass for different types of structures', async ({
@@ -605,6 +634,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/dgln-atomlist.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for several reaction components', async ({ page }) => {
@@ -625,6 +655,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculation for several reaction components(part of structure)', async ({
@@ -648,6 +679,7 @@ test.describe('Calculated Values Tools', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Calculate result for structure with atom and bond properties', async ({
@@ -670,6 +702,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
   });
 });
 

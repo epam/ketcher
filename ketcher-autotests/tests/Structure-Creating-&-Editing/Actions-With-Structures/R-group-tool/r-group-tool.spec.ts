@@ -17,10 +17,6 @@ test.describe('R-Group', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Icons and tooltips', async ({ page }) => {
     /* Test case: EPMLSOPKET-1555+EPMLSOPKET-1554
         Description: 'Ctrl+R' change tooltips. Correct icon of a tooltip is shown. Check all 3 values from drop-down list
@@ -35,6 +31,7 @@ test.describe('R-Group', () => {
 
     await page.keyboard.press('Control+r');
     await takeLeftToolbarScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy and paste R-Group structure', async ({ page }) => {
@@ -52,6 +49,7 @@ test.describe('R-Group', () => {
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut and Paste R-Group structure', async ({ page }) => {
@@ -69,6 +67,7 @@ test.describe('R-Group', () => {
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as .mol V2000 file with R-Group features', async ({ page }) => {
@@ -96,6 +95,7 @@ test.describe('R-Group', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as .mol V3000 file with R-Group features', async ({ page }) => {
@@ -123,6 +123,7 @@ test.describe('R-Group', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open .smi file with R-Group features', async ({ page }) => {
@@ -134,5 +135,6 @@ test.describe('R-Group', () => {
       'SMILES/r-group-with-allkind-attachment-points.smi',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 });

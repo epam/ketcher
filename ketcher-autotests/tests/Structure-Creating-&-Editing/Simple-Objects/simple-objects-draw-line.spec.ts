@@ -68,10 +68,6 @@ test.describe('draw and highlight line', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('drawing and highlighting', async ({ page }) => {
     // test case: EPMLSOPKET-16750
     await openDropdown(page, 'shape-ellipse');
@@ -84,6 +80,7 @@ test.describe('draw and highlight line', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit Line - Moving', async ({ page }) => {
@@ -96,6 +93,7 @@ test.describe('draw and highlight line', () => {
     await page.mouse.move(LineCoordinates.x, LineCoordinates.y);
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit Line - changing size', async ({ page }) => {
@@ -107,6 +105,7 @@ test.describe('draw and highlight line', () => {
     await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit Line - changing directions', async ({ page }) => {
@@ -118,6 +117,7 @@ test.describe('draw and highlight line', () => {
     await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Edit Line - highlighting and changing directions', async ({
@@ -129,6 +129,7 @@ test.describe('draw and highlight line', () => {
     await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
     await moveLineToNewPosition(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Simple Objects - Draw a lot of lines - moving and separeting crossed lines', async ({
@@ -137,5 +138,6 @@ test.describe('draw and highlight line', () => {
     // Test case: EPMLSOPKET-1958
     await openFileAndAddToCanvas('KET/lines-EPMLSOPKET-1958.ket', page);
     await separetingAndMovingLines(page);
+    await takeEditorScreenshot(page);
   });
 });

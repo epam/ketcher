@@ -15,9 +15,6 @@ test.describe('Bonds plus atoms selection ', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
 
   for (const bond of Object.values(BondTypeId)) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
@@ -35,6 +32,7 @@ test.describe('Bonds plus atoms selection ', () => {
       await page.keyboard.down('Shift');
       await page.mouse.click(atom1Point.x, atom1Point.y);
       await page.mouse.click(atom2Point.x, atom2Point.y);
+      await takeEditorScreenshot(page);
     });
   }
 });

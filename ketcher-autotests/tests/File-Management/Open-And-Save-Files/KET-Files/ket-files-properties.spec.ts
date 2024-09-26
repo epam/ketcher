@@ -66,9 +66,6 @@ test.describe('Import-Saving .ket Files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
 
   test('Validate that the simple schema with retrosynthetic arrow could be saved to ket file and loaded back', async ({
     page,
@@ -94,6 +91,7 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with retrosynthetic,angle arrows and plus could be saved to ket file and loaded back', async ({
@@ -120,6 +118,7 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to ket file and loaded back', async ({
@@ -146,6 +145,7 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to ket file and loaded back', async ({
@@ -172,6 +172,7 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with diagonal retrosynthetic arrow could be saved to ket file and loaded back', async ({
@@ -198,6 +199,7 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to ket file and loaded back', async ({
@@ -224,5 +226,6 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

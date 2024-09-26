@@ -7,6 +7,8 @@ import {
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
+  getCdx,
+  getCdxml,
   getKet,
   LeftPanelButton,
   moveOnAtom,
@@ -33,27 +35,45 @@ import {
   takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
+  waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { openStructureLibrary } from '@utils/templates';
+
+enum FileType {
+  KET = 'ket',
+  CDX = 'cdx',
+  CDXML = 'cdxml',
+}
+
+const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
+  {
+    [FileType.KET]: getKet,
+    [FileType.CDX]: getCdx,
+    [FileType.CDXML]: getCdxml,
+  };
 
 async function verifyFile(
   page: Page,
   filename: string,
   expectedFilename: string,
+  fileType: FileType,
 ) {
-  const expectedFile = await getKet(page);
+  const getFileContent = fileTypeHandlers[fileType];
+
+  if (!getFileContent) {
+    throw new Error(`Unsupported file type: ${fileType}`);
+  }
+
+  const expectedFile = await getFileContent(page);
   await saveToFile(filename, expectedFile);
 
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-    });
+  const { fileExpected, file } = await receiveFileComparisonData({
+    page,
+    expectedFileName: expectedFilename,
+  });
 
-  expect(ketFile).toEqual(ketFileExpected);
-  await openFileAndAddToCanvasAsNewProject(filename, page);
-  await takeEditorScreenshot(page);
+  expect(file).toEqual(fileExpected);
 }
 
 test.describe('Image files', () => {
@@ -74,7 +94,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-demo-expected.ket',
       'tests/test-data/KET/image-svg-demo-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-demo-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that single image of PNG format can be saved to KET file and load', async ({
@@ -90,7 +116,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-png-expected.ket',
       'tests/test-data/KET/image-png-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-png-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format can be saved to KET file and load', async ({
@@ -107,7 +139,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-and-png-expected.ket',
       'tests/test-data/KET/image-svg-and-png-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-and-png-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with correct positions and layer levels (last added image is on top)', async ({
@@ -127,7 +165,13 @@ test.describe('Image files', () => {
       page,
       'KET/four-images-svg-and-png-expected.ket',
       'tests/test-data/KET/four-images-svg-and-png-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/four-images-svg-and-png-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with structures', async ({
@@ -146,7 +190,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-with-benzene-ring-and-arrow-expected.ket',
       'tests/test-data/KET/images-with-benzene-ring-and-arrow-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-with-benzene-ring-and-arrow-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format with Structure library elements can be saved to KET file and added to canvas', async ({
@@ -165,7 +215,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-elements-expected.ket',
       'tests/test-data/KET/images-png-svg-with-elements-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-elements-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas', async ({
@@ -185,7 +241,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-80-with-50-structures-expected.ket',
       'tests/test-data/KET/images-png-svg-80-with-50-structures-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-80-with-50-structures-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of SVG and PNG format can be added from two different KET files saved and opened', async ({
@@ -207,7 +269,13 @@ test.describe('Image files', () => {
       page,
       'KET/two-images-with-many-elements-expected.ket',
       'tests/test-data/KET/two-images-with-many-elements-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/two-images-with-many-elements-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async ({
@@ -887,7 +955,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-png-after-moving-expected.ket',
       'tests/test-data/KET/image-svg-png-after-moving-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-after-moving-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async ({
@@ -915,7 +989,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-png-after-scaling-expected.ket',
       'tests/test-data/KET/image-svg-png-after-scaling-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-after-scaling-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async ({
@@ -936,7 +1016,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-png-after-deleting-expected.ket',
       'tests/test-data/KET/image-svg-png-after-deleting-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-after-deleting-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after copying of them and then opened', async ({
@@ -957,7 +1043,13 @@ test.describe('Image files', () => {
       page,
       'KET/image-svg-png-after-copying-expected.ket',
       'tests/test-data/KET/image-svg-png-after-copying-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-after-copying-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions', async ({
@@ -981,7 +1073,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved and aligned', async ({
@@ -1006,7 +1104,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-distorting-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved and aligned', async ({
@@ -1058,7 +1162,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, it is calculated for elements', async ({
@@ -1086,7 +1196,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, it is calculated for elements', async ({
@@ -1112,7 +1228,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements', async ({
@@ -1150,7 +1272,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-explicit-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode', async ({
@@ -1175,7 +1303,13 @@ test.describe('Image files', () => {
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       'tests/test-data/KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   const autoMapModes = ['Discard', 'Keep', 'Alter', 'Clear'];
@@ -1213,7 +1347,191 @@ test.describe('Image files', () => {
         page,
         expectedFiles[index],
         `tests/test-data/${expectedFiles[index]}`,
+        FileType.KET,
       );
+      await openFileAndAddToCanvasAsNewProject(expectedFiles[index], page);
+      await takeEditorScreenshot(page);
     });
+  });
+
+  test('Verify that images of allowed format (PNG) can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed format (PNG) saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-png-expected.cdx',
+      'tests/test-data/CDX/image-png-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (PNG) can be saved to CDXML file with correct coordinates of images, formats and sizes of files, after that loaded from CDXML', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed format (PNG) saved to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-png-expected.cdxml',
+      'tests/test-data/CDXML/image-png-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed format (PNG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed format (PNG) with elements saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-png-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-png-with-elements-expected.cdx',
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (PNG) with elements can be saved to CDXML file with correct coordinates of images, formats and sizes of files, and loaded from CDXML', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed format (PNG) with elements saved to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-png-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-png-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/image-png-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
+     * correct coordinates of images and file size.
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/two-images-png-with-elements-expected.cdx',
+      'tests/test-data/CDX/two-images-png-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-images-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDXML', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
+     * correct coordinates of images and file size.
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await waitForRender(page, async () => {
+      await page.mouse.click(200, 200);
+    });
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/two-images-png-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/two-images-png-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/two-images-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

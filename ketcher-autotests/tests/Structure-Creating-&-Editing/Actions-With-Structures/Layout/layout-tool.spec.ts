@@ -12,10 +12,6 @@ test.describe('Layout', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Structures are displayed in the middle of the screen after clicks "Layout" button', async ({
     page,
   }) => {
@@ -25,6 +21,7 @@ test.describe('Layout', () => {
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Molecular structures are displayed in the middle of the screen after clicks "Ctrl+L"', async ({
@@ -36,6 +33,7 @@ test.describe('Layout', () => {
     */
     await openFileAndAddToCanvas('KET/two-atoms-and-bond.ket', page);
     await page.keyboard.press('Control+l');
+    await takeEditorScreenshot(page);
   });
 
   test('The reaction is displayed in the middle of the screen after clicks "Layout" button', async ({
@@ -50,5 +48,6 @@ test.describe('Layout', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
   });
 });

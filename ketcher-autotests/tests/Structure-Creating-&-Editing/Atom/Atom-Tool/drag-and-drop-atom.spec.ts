@@ -26,11 +26,6 @@ test.describe('Drag and drop Atom on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('The Oxygen atom replaces the Nitrogen atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11831
@@ -48,6 +43,8 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Nitrogen atom replaces the FMOC functional group', async ({
@@ -69,6 +66,8 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Nitrogen atom replaces the formic acid', async ({ page }) => {
@@ -88,6 +87,8 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
     await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Oxygen atom replaces the Bromine atom', async ({ page }) => {
@@ -113,6 +114,8 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Oxygen atom replaces the Cbz functional group', async ({
@@ -140,5 +143,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
     await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

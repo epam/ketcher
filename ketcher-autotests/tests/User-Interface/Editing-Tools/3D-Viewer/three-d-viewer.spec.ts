@@ -33,10 +33,6 @@ test.describe('3D Viewer', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('3D Rotation of the simple structure without Save Position', async ({
     page,
   }) => {
@@ -55,6 +51,7 @@ test.describe('3D Viewer', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Cancel');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Structure with Heteroatoms without Save Position', async ({ page }) => {
@@ -72,6 +69,7 @@ test.describe('3D Viewer', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Cancel');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Structure with a Stereobonds without Save Position', async ({
@@ -90,6 +88,7 @@ test.describe('3D Viewer', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Cancel');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Structure with Aromatic Bonds without Save Position', async ({
@@ -111,6 +110,7 @@ test.describe('3D Viewer', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Cancel');
     });
+    await takeEditorScreenshot(page);
   });
 });
 

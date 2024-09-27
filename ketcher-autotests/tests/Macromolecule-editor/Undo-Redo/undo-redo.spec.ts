@@ -15,12 +15,24 @@ import {
   takePageScreenshot,
   turnOnMacromoleculesEditor,
   waitForPageInit,
+  Peptides as Peptides2,
+  selectMonomer,
+  clickOnTheCanvas,
+  selectRectangleSelectionTool,
+  zoomWithMouseWheel,
+  selectEraseTool,
+  Bases,
 } from '@utils';
+import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
@@ -429,5 +441,83 @@ test.describe('Undo-Redo tests', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('redo').click();
     await takeEditorScreenshot(page);
+  });
+
+  test('Verify the undo/redo functionality with ambiguous peptide (X) on the canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 12.1 Verify the undo/redo functionality with ambiguous monomers on the canvas
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete button
+          5. Take screenshot to make sure canvas is empty
+          6. Press Undo button
+          7. Take screenshot to make sure it returned back
+          8. Press Redo button
+          9. Take screenshot to make sure it is on canvas
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Peptides2.X);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await clickOnTheCanvas(page, 0, 0);
+    await selectEraseTool(page);
+
+    await takeEditorScreenshot(page);
+
+    await pressUndoButton(page);
+
+    await takeEditorScreenshot(page);
+
+    await pressRedoButton(page);
+
+    await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, 600);
+  });
+
+  test('Verify the undo/redo functionality with ambiguous Base (RNA_N) on the canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 12.1 Verify the undo/redo functionality with ambiguous monomers on the canvas
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete button
+          5. Take screenshot to make sure canvas is empty
+          6. Press Undo button
+          7. Take screenshot to make sure it returned back
+          8. Press Redo button
+          9. Take screenshot to make sure it is on canvas
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Bases.DNA_N);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await clickOnTheCanvas(page, 0, 0);
+    await selectEraseTool(page);
+
+    await takeEditorScreenshot(page);
+
+    await pressUndoButton(page);
+
+    await takeEditorScreenshot(page);
+
+    await pressRedoButton(page);
+
+    await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, 600);
   });
 });

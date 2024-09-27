@@ -437,7 +437,7 @@ test.describe('Erase Tool', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 9.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Description: 10.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
     Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
           2. Take screenshot to make sure it is on canvas
           3. Select it
@@ -464,8 +464,8 @@ test.describe('Erase Tool', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 9.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
-    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+    Description: 10.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide DNA_N)
           2. Take screenshot to make sure it is on canvas
           3. Select it
           4. Press Delete tool
@@ -491,11 +491,11 @@ test.describe('Erase Tool', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 10.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
-    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+    Description: 11.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide Z)
           2. Take screenshot to make sure it is on canvas
           3. Select it
-          4. Press Delete tool
+          4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
     await goToRNATab(page);
@@ -518,11 +518,11 @@ test.describe('Erase Tool', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 10.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
-    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+    Description: 11.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide RNA_N)
           2. Take screenshot to make sure it is on canvas
           3. Select it
-          4. Press Delete tool
+          4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
     await goToRNATab(page);

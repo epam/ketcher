@@ -1534,4 +1534,291 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  const testCases = [
+    {
+      description:
+        'Verify that images of allowed formats (PNG) are correctly displayed in CDX format in Open Structure Preview',
+      file: 'CDX/image-png-expected.cdx',
+      action: 'open',
+    },
+    {
+      description:
+        'Verify that images of allowed formats (PNG) are correctly displayed in CDXML format in Open Structure Preview',
+      file: 'CDXML/image-png-expected.cdxml',
+      action: 'open',
+    },
+    {
+      description:
+        'Verify that images of allowed formats (PNG) are correctly displayed in CDXML format in Save Structure Preview',
+      file: 'KET/image-png-with-elements.ket',
+      action: 'save',
+      dropdownOption: 'CDXML-option',
+    },
+    {
+      description:
+        'Verify that images of allowed formats (PNG) are correctly displayed in Base 64 CDX format in Save Structure Preview',
+      file: 'KET/image-png-with-elements.ket',
+      action: 'save',
+      dropdownOption: 'Base64 CDX-option',
+    },
+  ];
+
+  for (const testCase of testCases) {
+    test(testCase.description, async ({ page }) => {
+      if (testCase.action === 'open') {
+        await selectTopPanelButton(TopPanelButton.Open, page);
+        await openFile(testCase.file, page);
+      } else if (testCase.action === 'save') {
+        await openFileAndAddToCanvas(testCase.file, page);
+        await selectTopPanelButton(TopPanelButton.Save, page);
+        await clickOnFileFormatDropdown(page);
+
+        if (testCase.dropdownOption) {
+          await page.getByTestId(testCase.dropdownOption).click();
+        }
+      }
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Verify that 50 PNG images and 50 elements can be saved together to CDX files with the correct size of file, after that loaded from CDX file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: 50 PNG images and 50 elements saved together to CDX files with the correct size of file, after that loaded from CDX file
+     * and added to selected place on Canvas with correct position and layer level.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-50-with-50-structures.ket',
+      page,
+    );
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/images-png-50-with-50-structures-expected.cdx',
+      'tests/test-data/CDX/images-png-50-with-50-structures-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/images-png-50-with-50-structures-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that 50 PNG images and 50 elements can be saved together to CDXML files with the correct size of file, after that loaded from CDXML file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: 50 PNG images and 50 elements saved together to CDXML files with the correct size of file, after that loaded from CDXML file
+     * and added to selected place on Canvas with correct position and layer level.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-png-50-with-50-structures.ket',
+      page,
+    );
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/images-png-50-with-50-structures-expected.cdxml',
+      'tests/test-data/CDXML/images-png-50-with-50-structures-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/images-png-50-with-50-structures-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  const fileNames2 = [
+    'image-bmp.cdx',
+    'image-gif.cdx',
+    'image-jpeg.cdx',
+    'image-jpg.cdx',
+  ];
+
+  for (const fileName of fileNames2) {
+    test(`Verify that image of not allowed format ${fileName} cannot be added from CDX file`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/Indigo/issues/2028
+       * Description: Images of not allowed formats (e.g.: BMP, GIF, JPEG, JPG ) can't be added from CDX file to Canvas
+       * and instead of image appears placeholder.
+       * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
+       * We have a bug https://github.com/epam/Indigo/issues/2325
+       */
+      await openFileAndAddToCanvas(`CDX/${fileName}`, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const fileNames3 = [
+    'image-bmp.cdxml',
+    'image-gif.cdxml',
+    'image-jpeg.cdxml',
+    'image-jpg.cdxml',
+  ];
+
+  for (const fileName of fileNames3) {
+    test(`Verify that image of not allowed format ${fileName} cannot be added from CDXML file`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/Indigo/issues/2028
+       * Description: Images of not allowed formats (e.g.: BMP, GIF, JPEG, JPG ) can't be added from CDXML file to Canvas
+       * and instead of image appears placeholder.
+       * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
+       * We have a bug https://github.com/epam/Indigo/issues/2325
+       */
+      await openFileAndAddToCanvas(`CDXML/${fileName}`, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  test('Verify that image can not be loaded from CDXML file if the length of bitmap is less than 160 symbols and error message is displayed', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
+     *  is displayed - "Cannot deserialize input JSON.".
+     */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
+     */
+    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo
+     */
+    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDX file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) added to different selected places on Canvas one by one using "Add Image" button
+     *  and saved together to CDX file with the correct coordinates of images and sizes of files.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/two-image-png-expected.cdx',
+      'tests/test-data/CDX/two-image-png-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/two-image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDXML file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (PNG) added to different selected places on Canvas one by one using "Add Image" button
+     *  and saved together to CDXML file with the correct coordinates of images and sizes of files.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/two-image-png-expected.cdxml',
+      'tests/test-data/CDXML/two-image-png-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/two-image-png-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

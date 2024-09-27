@@ -362,10 +362,14 @@ test.describe('Preview tooltips checks: ', () => {
       await selectFlexLayoutModeTool(page);
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
       await turnOnMicromoleculesEditor(page);
-      await hoverMouseOverMicroMonomer(page, ambiguousMonomer.monomerLocatorIndex);
+      await hoverMouseOverMicroMonomer(
+        page,
+        ambiguousMonomer.monomerLocatorIndex,
+      );
       await delay(1);
 
       await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
     });
   }
 });

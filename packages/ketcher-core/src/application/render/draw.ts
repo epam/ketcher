@@ -979,8 +979,8 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   } = getArrowHeadDimensions(options);
   const unbalanceVal = getUnbalancedArrowHeadOffset(options);
 
-  // Multiplying by 2 because it's large variant
-  const arrowHeadWidth = arrowHeadWidthNormal * 2;
+  // Multiplying by 1.5 because it's large variant
+  const arrowHeadWidth = arrowHeadWidthNormal * 1.5;
 
   const endX = start.x + arrowLength;
 

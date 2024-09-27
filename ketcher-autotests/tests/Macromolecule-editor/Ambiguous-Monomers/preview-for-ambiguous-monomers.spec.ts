@@ -174,6 +174,7 @@ const ambiguousMonomers: IHELMString[] = [
       '13. RNA Base N (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{R(U,G,C,A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
+    pageReloadNeeded: true,
   },
   {
     testDescription:
@@ -370,6 +371,12 @@ test.describe('Preview tooltips checks: ', () => {
 
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        ambiguousMonomer.shouldFail === true,
+        `That test fails because of ${ambiguousMonomer.issueNumber} issue.`,
+      );
     });
   }
 });

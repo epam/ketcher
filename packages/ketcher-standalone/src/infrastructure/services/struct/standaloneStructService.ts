@@ -65,6 +65,7 @@ import {
   RecognizeResult,
   StructService,
   StructServiceOptions,
+  pickStandardServerOptions,
 } from 'ketcher-core';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -235,6 +236,14 @@ class IndigoService implements StructService {
     };
   }
 
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+
+    return pickStandardServerOptions(options);
+  }
+
   private callIndigoNoRenderLoadedCallback() {
     window.dispatchEvent(new Event(STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT));
   }
@@ -321,8 +330,14 @@ class IndigoService implements StructService {
         CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
       );
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
+        ...this.getStandardServerOptions(options),
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'reaction-component-margin-size-unit':
+          options?.['reaction-component-margin-size-unit'],
+        'reaction-component-margin-size':
+          options?.['reaction-component-margin-size'],
+        'image-resolution': options?.['image-resolution'],
         'input-format': inputFormat,
         monomerLibrary,
       };
@@ -379,9 +394,16 @@ class IndigoService implements StructService {
       };
 
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
+        ...this.getStandardServerOptions(options),
         'output-content-type': 'application/json',
+
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'reaction-component-margin-size-unit':
+          options?.['reaction-component-margin-size-unit'],
+        'reaction-component-margin-size':
+          options?.['reaction-component-margin-size'],
+        'image-resolution': options?.['image-resolution'],
       };
 
       const commandData: LayoutCommandData = {
@@ -420,15 +442,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: CleanCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
         selectedAtoms: selected || [],
       };
 
@@ -465,15 +482,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: AromatizeCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<AromatizeCommandData> = {
@@ -509,15 +521,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: DearomatizeCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<DearomatizeCommandData> = {
@@ -553,15 +560,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: CalculateCipCommandData = {
         struct,
         format,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CalculateCipCommandData> = {
@@ -597,16 +599,11 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: AutomapCommandData = {
         struct,
         format,
         mode,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CalculateCipCommandData> = {
@@ -646,15 +643,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: CheckCommandData = {
         struct,
         types,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<CheckCommandData> = {
@@ -698,15 +690,10 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: CalculateCommandData = {
         struct,
         properties,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
         selectedAtoms: selected || [],
       };
 
@@ -750,10 +737,30 @@ class IndigoService implements StructService {
       };
 
       const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...restOptions,
+        ...this.getStandardServerOptions(restOptions),
         'render-label-mode': getLabelRenderModeForIndigo(),
+
+        'render-coloring': restOptions['render-coloring'],
+        'render-font-size': restOptions['render-font-size'],
+        'render-font-size-unit': restOptions['render-font-size-unit'],
+        'render-font-size-sub': restOptions['render-font-size-sub'],
+        'render-font-size-sub-unit': restOptions['render-font-size-sub-unit'],
+        'image-resolution': restOptions['image-resolution'],
+        'bond-length-unit': restOptions['bond-length-unit'],
+        'bond-length': restOptions['bond-length'],
+        'render-bond-thickness': restOptions['render-bond-thickness'],
+        'render-bond-thickness-unit': restOptions['render-bond-thickness-unit'],
+        'render-bond-spacing': restOptions['render-bond-spacing'],
+        'render-stereo-bond-width': restOptions['render-stereo-bond-width'],
+        'render-stereo-bond-width-unit':
+          restOptions['render-stereo-bond-width-unit'],
+        'render-hash-spacing': restOptions['render-hash-spacing'],
+        'render-hash-spacing-unit': restOptions['render-hash-spacing-unit'],
+
+        'render-output-sheet-width': restOptions['render-output-sheet-width'],
+        'render-output-sheet-height': restOptions['render-output-sheet-height'],
       };
+
       const commandData: GenerateImageCommandData = {
         struct: inputData,
         outputFormat: outputFormat || 'png',
@@ -796,16 +803,11 @@ class IndigoService implements StructService {
         }
       };
 
-      const commandOptions: CommandOptions = {
-        ...this.defaultOptions,
-        ...options,
-      };
-
       const commandData: ExplicitHydrogensCommandData = {
         struct,
         format,
         mode,
-        options: commandOptions,
+        options: this.getStandardServerOptions(options),
       };
 
       const inputMessage: InputMessage<ExplicitHydrogensCommandData> = {

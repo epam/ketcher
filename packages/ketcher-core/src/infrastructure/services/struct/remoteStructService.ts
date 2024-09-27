@@ -131,6 +131,18 @@ function indigoCall(
   };
 }
 
+export function pickStandardServerOptions(options?: StructServiceOptions) {
+  return {
+    'dearomatize-on-load': options?.['dearomatize-on-load'],
+    'smart-layout': options?.['smart-layout'],
+    'ignore-stereochemistry-errors': options?.['ignore-stereochemistry-errors'],
+    'mass-skip-error-on-pseudoatoms':
+      options?.['mass-skip-error-on-pseudoatoms'],
+    'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
+    'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+  };
+}
+
 export class RemoteStructService implements StructService {
   private readonly apiPath: string;
   private readonly defaultOptions: StructServiceOptions;
@@ -160,6 +172,14 @@ export class RemoteStructService implements StructService {
       },
       {},
     );
+  }
+
+  private getStandardServerOptions(options?: StructServiceOptions) {
+    if (!options) {
+      return this.defaultOptions;
+    }
+
+    return pickStandardServerOptions(options);
   }
 
   async info(): Promise<InfoResult> {
@@ -196,7 +216,17 @@ export class RemoteStructService implements StructService {
     const monomerLibrary = JSON.stringify(
       CoreEditor.provideEditorInstance()?.monomersLibraryParsedJson,
     );
-    const expandedOptions = { monomerLibrary, ...options };
+    const expandedOptions = {
+      monomerLibrary,
+      ...this.getStandardServerOptions(options),
+      'bond-length-unit': options?.['bond-length-unit'],
+      'bond-length': options?.['bond-length'],
+      'reaction-component-margin-size-unit':
+        options?.['reaction-component-margin-size-unit'],
+      'reaction-component-margin-size':
+        options?.['reaction-component-margin-size'],
+      'image-resolution': options?.['image-resolution'],
+    };
 
     return indigoCall(
       'POST',
@@ -211,13 +241,26 @@ export class RemoteStructService implements StructService {
     data: LayoutData,
     options?: StructServiceOptions,
   ): Promise<LayoutResult> {
+    const expandedOptions = {
+      ...this.getStandardServerOptions(options),
+
+      'output-content-type': 'application/json',
+      'bond-length-unit': options?.['bond-length-unit'],
+      'bond-length': options?.['bond-length'],
+      'reaction-component-margin-size-unit':
+        options?.['reaction-component-margin-size-unit'],
+      'reaction-component-margin-size':
+        options?.['reaction-component-margin-size'],
+      'image-resolution': options?.['image-resolution'],
+    };
+
     return indigoCall(
       'POST',
       'indigo/layout',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, expandedOptions);
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
@@ -227,7 +270,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   aromatize(
@@ -240,7 +283,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   dearomatize(
@@ -253,7 +296,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   calculateCip(
@@ -266,7 +309,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   automap(
@@ -279,7 +322,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   check(data: CheckData, options?: StructServiceOptions): Promise<CheckResult> {
@@ -289,7 +332,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   calculate(
@@ -302,7 +345,7 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 
   recognize(blob: Blob, version: string): Promise<RecognizeResult> {
@@ -352,6 +395,27 @@ export class RemoteStructService implements StructService {
     )(
       { struct: data },
       {
+        ...this.getStandardServerOptions(options),
+
+        'render-coloring': options?.['render-coloring'],
+        'render-font-size': options?.['render-font-size'],
+        'render-font-size-unit': options?.['render-font-size-unit'],
+        'render-font-size-sub': options?.['render-font-size-sub'],
+        'render-font-size-sub-unit': options?.['render-font-size-sub-unit'],
+        'image-resolution': options?.['image-resolution'],
+        'bond-length-unit': options?.['bond-length-unit'],
+        'bond-length': options?.['bond-length'],
+        'render-bond-thickness': options?.['render-bond-thickness'],
+        'render-bond-thickness-unit': options?.['render-bond-thickness-unit'],
+        'render-bond-spacing': options?.['render-bond-spacing'],
+        'render-stereo-bond-width': options?.['render-stereo-bond-width'],
+        'render-stereo-bond-width-unit':
+          options?.['render-stereo-bond-width-unit'],
+        'render-hash-spacing': options?.['render-hash-spacing'],
+        'render-hash-spacing-unit': options?.['render-hash-spacing-unit'],
+        'render-output-sheet-width': options?.['render-output-sheet-width'],
+        'render-output-sheet-height': options?.['render-output-sheet-height'],
+
         'render-output-format': outputFormat,
         'render-bond-line-width': bondThickness,
         'render-label-mode': getLabelRenderModeForIndigo(),
@@ -370,6 +434,6 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, options);
+    )(data, this.getStandardServerOptions(options));
   }
 }

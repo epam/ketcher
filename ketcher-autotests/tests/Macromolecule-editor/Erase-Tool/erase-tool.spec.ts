@@ -16,11 +16,18 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
+  Peptides as Peptides2,
+  selectMonomer,
+  clickOnTheCanvas,
+  selectRectangleSelectionTool,
+  Bases,
 } from '@utils';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
+  zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
@@ -422,6 +429,114 @@ test.describe('Erase Tool', () => {
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       page,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the deletion of ambiguous peptide (X) from the canvas (by Erase tool)', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 9.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete tool
+          5. Take screenshot to make sure canvas is empty
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Peptides2.X);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await zoomWithMouseWheel(page, 600);
+    await clickOnTheCanvas(page, 0, 0);
+    await selectEraseTool(page);
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the deletion of ambiguous base (DNA_N) from the canvas (by Erase tool)', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 9.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete tool
+          5. Take screenshot to make sure canvas is empty
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Bases.DNA_N);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await zoomWithMouseWheel(page, 600);
+    await clickOnTheCanvas(page, 0, 0);
+    await selectEraseTool(page);
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the deletion of ambiguous peptide (Z) from the canvas (by Del hotkey)', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 10.1 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete tool
+          5. Take screenshot to make sure canvas is empty
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Peptides2.Z);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await zoomWithMouseWheel(page, 600);
+    await clickOnTheCanvas(page, 0, 0);
+    await page.keyboard.press('Delete');
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the deletion of ambiguous base (RNA_N) from the canvas (by Del hotkey)', async ({
+    page,
+  }) => {
+    /* 
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 10.2 Verify the deletion of ambiguous monomers from the canvas (by Erase tool) 
+    Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
+          2. Take screenshot to make sure it is on canvas
+          3. Select it
+          4. Press Delete tool
+          5. Take screenshot to make sure canvas is empty
+    */
+    await goToRNATab(page);
+    await selectMonomer(page, Bases.RNA_N);
+    await clickOnTheCanvas(page, 0, 0);
+
+    await selectRectangleSelectionTool(page);
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await zoomWithMouseWheel(page, 600);
+    await clickOnTheCanvas(page, 0, 0);
+    await page.keyboard.press('Delete');
+
     await takeEditorScreenshot(page);
   });
 });

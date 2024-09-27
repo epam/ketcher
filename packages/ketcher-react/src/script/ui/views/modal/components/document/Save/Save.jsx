@@ -161,11 +161,13 @@ class SaveDialog extends Component {
         structStr,
         isLoading: true,
       });
-      const options = {};
-      options.outputFormat = type;
-      options.bondThickness = bondThickness;
+      const serverOptions = { ...options };
+
+      serverOptions.outputFormat = type;
+      serverOptions.bondThickness = bondThickness;
+
       return server
-        .generateImageAsBase64(structStr, options)
+        .generateImageAsBase64(structStr, serverOptions)
         .then((base64) => {
           this.setState({
             disableControls: false,

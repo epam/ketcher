@@ -17,13 +17,7 @@ import {
 import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
-import {
-  ColorContainer,
-  ColorItem,
-  ColorSquare,
-  standardColors,
-  StandardColorsText,
-} from './style';
+import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -133,23 +127,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
         Attach S-Group...
       </Item>
-      <Submenu {...props} label="Highlight">
-        <StandardColorsText disabled>Standard colors</StandardColorsText>
-        <ColorContainer>
-          {standardColors.map((color) => (
-            <ColorItem
-              key={color.name}
-              onClick={() => highlightBondWithColor(color.value)}
-            >
-              <ColorSquare color={color.value} />
-            </ColorItem>
-          ))}
-        </ColorContainer>
-        <StandardColorsText onClick={() => highlightBondWithColor('')}>
-          <Icon name={'no-highlight-cross'} />{' '}
-          <span style={{ marginLeft: '10px' }}>No highlight</span>
-        </StandardColorsText>
-      </Submenu>
+      <HighlightMenu onHighlight={highlightBondWithColor} />
       <Item
         {...props}
         hidden={sGroupEditHidden}

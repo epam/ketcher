@@ -22,14 +22,7 @@ import styles from '../ContextMenu.module.less';
 import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';
 import useRemoveAttachmentPoint from '../hooks/useRemoveAttachmentPoint';
-import {
-  StandardColorsText,
-  ColorContainer,
-  ColorItem,
-  ColorSquare,
-  standardColors,
-} from './style';
-import { Icon } from 'components';
+import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 
 const {
   ringBondCount,
@@ -239,23 +232,7 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             Add attachment point
           </Item>
         )}
-      <Submenu {...props} label="Highlight">
-        <StandardColorsText disabled>Standard colors</StandardColorsText>
-        <ColorContainer>
-          {standardColors.map((color) => (
-            <ColorItem
-              key={color.name}
-              onClick={() => highlightAtomWithColor(color.value)}
-            >
-              <ColorSquare color={color.value} />
-            </ColorItem>
-          ))}
-        </ColorContainer>
-        <StandardColorsText onClick={() => highlightAtomWithColor('')}>
-          <Icon name={'no-highlight-cross'} />{' '}
-          <span style={{ marginLeft: '10px' }}>No highlight</span>
-        </StandardColorsText>
-      </Submenu>
+      <HighlightMenu onHighlight={highlightAtomWithColor} />
       {isAtomSuperatomAttachmentPoint &&
         atomFreeAttachmentPoints.length > 0 && (
           <Item {...props} onClick={handleRemoveAttachmentPoint}>

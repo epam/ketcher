@@ -14,14 +14,8 @@ import {
   SelectionContextMenuProps,
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
-import {
-  ColorContainer,
-  ColorItem,
-  ColorSquare,
-  standardColors,
-  StandardColorsText,
-} from './style';
 import { useAppContext } from 'src/hooks';
+import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 
 const bondNames = getBondNames(tools);
 
@@ -75,23 +69,7 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
       <Item {...props} disabled={atomStereoDisabled} onClick={handleAtomStereo}>
         Enhanced stereochemistry...
       </Item>
-      <Submenu {...props} label="Highlight">
-        <StandardColorsText disabled>Standard colors</StandardColorsText>
-        <ColorContainer>
-          {standardColors.map((color) => (
-            <ColorItem
-              key={color.name}
-              onClick={() => highlightBondWithColor(color.value)}
-            >
-              <ColorSquare color={color.value} />
-            </ColorItem>
-          ))}
-        </ColorContainer>
-        <StandardColorsText onClick={() => highlightBondWithColor('')}>
-          <Icon name={'no-highlight-cross'} />{' '}
-          <span style={{ marginLeft: '10px' }}>No highlight</span>
-        </StandardColorsText>
-      </Submenu>
+      <HighlightMenu onHighlight={highlightBondWithColor} />
       <Item {...props} onClick={handleDelete}>
         Delete
       </Item>

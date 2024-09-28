@@ -839,7 +839,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByText('Save to Templates').isDisabled();
+    await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('mol-preview-area-text')],
     });

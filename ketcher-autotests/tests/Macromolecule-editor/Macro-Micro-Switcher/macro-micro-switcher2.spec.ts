@@ -23,6 +23,9 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   openFileAndAddToCanvasAsNewProject,
+  selectDropdownTool,
+  clickInTheMiddleOfTheScreen,
+  selectClearCanvasTool,
 } from '@utils';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
@@ -286,6 +289,52 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/micro-macro-structure-expected.mol',
       page,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro,
+     * verify that Arrows are not presented on the Canvas after switching to Macro mode, Clear Canvas, switch back to Micro mode,
+     * verify that arrows are presented after returning to Micro mode.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-different-multi-tail-arrows.ket',
+      page,
+    );
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows are not presented in Macro mode,  Clear Canvas, switch back to Micro mode', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows aren't presented in Macro mode,
+     * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
+     */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/three-different-multi-tail-arrows.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 });

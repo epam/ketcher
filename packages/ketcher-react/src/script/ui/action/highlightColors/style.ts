@@ -19,7 +19,7 @@ export const StyledSubmenu = styled(Submenu)`
 export const ColorContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 30px);
-  padding: 0 5px 0 5px;
+  padding: 5px;
   gap: 10px;
 `;
 
@@ -42,12 +42,7 @@ export const ColorItem = styled(Item)`
     padding: 0 !important;
   }
 `;
-export const StandardColorsText = styled(Item)`
-  font-size: 15px;
-  line-height: 14px;
-  font-weight: 400;
-  color: #333333 !important;
-  padding: 5px 0 5px 0;
-  opacity: 1 !important;
-  margin-left: -10px;
+export const Divider = styled.div`
+  height: 1px;
+  background-color: #ccc;
 `;

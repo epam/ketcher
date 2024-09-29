@@ -450,17 +450,14 @@ class ReBond extends ReObject {
         'stroke-width': options.lineattr['stroke-width'] * 3,
         'stroke-linecap': 'round',
       };
-
-      const c = Scale.modelToCanvas(this.b.center, restruct.render.options);
-
-      const highlightPath = getHighlightPath(restruct, hb1, hb2);
+      const highlightPath = getHighlightPath(restruct, hb1, hb2, bond.type);
       highlightPath.attr(style);
 
       restruct.addReObjectPath(
         LayerMap.hovering,
         this.visel,
         highlightPath,
-        c,
+        null,
         true,
       );
     }
@@ -476,17 +473,52 @@ class ReBond extends ReObject {
   }
 }
 
-function getHighlightPath(restruct: ReStruct, hb1: HalfBond, hb2: HalfBond) {
+function getHighlightPath(
+  restruct: ReStruct,
+  hb1: HalfBond,
+  hb2: HalfBond,
+  bondType: number,
+  bondStereo?: number,
+) {
   const beginning = { x: hb1.p.x, y: hb1.p.y };
   const end = { x: hb2.p.x, y: hb2.p.y };
-
   const paper = restruct.render.paper;
 
+  if (bondType === Bond.PATTERN.TYPE.DOUBLE) {
+    const options = restruct.render.options;
+    const n = hb1.norm;
+    const bsp = options.bondSpace / 2;
+
+    const path1 = `M${beginning.x + n.x * bsp},${beginning.y + n.y * bsp} L${
+      end.x + n.x * bsp
+    },${end.y + n.y * bsp}`;
+    const path2 = `M${beginning.x - n.x * bsp},${beginning.y - n.y * bsp} L${
+      end.x - n.x * bsp
+    },${end.y - n.y * bsp}`;
+
+    const path = `${path1} ${path2}`;
+    return paper.path(path);
+  }
+
+  if (
+    bondType === Bond.PATTERN.TYPE.SINGLE &&
+    bondStereo === Bond.PATTERN.STEREO.UP
+  ) {
+    const options = restruct.render.options;
+    const n = hb1.norm;
+    const bsp = 0.7 * options.stereoBond;
+
+    const mainPath = `M${beginning.x},${beginning.y} L${end.x},${end.y}`;
+    const upPath1 = `M${end.x + n.x * bsp},${end.y + n.y * bsp} L${
+      end.x - n.x * bsp
+    },${end.y - n.y * bsp}`;
+
+    const path = `${mainPath} ${upPath1}`;
+    return paper.path(path);
+  }
+
   const pathString = `M${beginning.x},${beginning.y} L${end.x},${end.y}`;
-
-  const path = paper.path(pathString);
-
-  return path;
+  return paper.path(pathString);
 }
 
 function findIncomingStereoUpBond(

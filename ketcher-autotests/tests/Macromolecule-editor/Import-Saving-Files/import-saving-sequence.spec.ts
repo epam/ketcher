@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   TopPanelButton,
@@ -15,8 +16,14 @@ import {
   readFileContents,
   getSequence,
   moveMouseAway,
+  moveMouseToTheMiddleOfTheScreen,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { closeErrorMessage } from '@utils/common/helpers';
+import {
+  turnOnMacromoleculesEditor,
+  zoomWithMouseWheel,
+} from '@utils/macromolecules';
 
 test.describe('Import-Saving .seq Files', () => {
   test.beforeEach(async ({ page }) => {
@@ -252,6 +259,178 @@ test.describe('Import-Saving .seq Files', () => {
       // Need open twice
       await openFileAndAddToCanvasMacro('Sequence/sequence-acgtu.seq', page);
       await takeEditorScreenshot(page);
+    },
+  );
+
+  test(
+    'Saving ambiguous peptides (with mapping) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 15.1 Verify saving ambiguous peptides (with mapping) in Sequence format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence');
+      await takeEditorScreenshot(page);
+
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      );
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 600);
+    },
+  );
+
+  test(
+    'Saving ambiguous peptides (without mapping) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 15.2 Verify saving ambiguous peptides (without mapping) in Sequence format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+            (Error should occure)
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -200);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence');
+      await takeEditorScreenshot(page);
+
+      await closeErrorMessage(page);
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 200);
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
+      );
+    },
+  );
+
+  test(
+    'Saving ambiguous DNA bases (with mapping) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 15.3 Verify saving ambiguous DNA bases (with mapping) in Sequence format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives and mixed).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -100);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence');
+      await takeEditorScreenshot(page);
+
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      );
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 100);
+    },
+  );
+
+  test(
+    'Saving ambiguous RNA bases (with mapping) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 15.4 Verify saving ambiguous RNA bases (with mapping) in Sequence format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives and mixed).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -100);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence');
+      await takeEditorScreenshot(page);
+
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      );
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 100);
+    },
+  );
+
+  test(
+    'Saving ambiguous (common) bases (with mapping) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 15.5 Verify saving ambiguous (common) bases (with mapping) in Sequence format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives and mixed).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -400);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence');
+      await takeEditorScreenshot(page);
+
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      );
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 400);
     },
   );
 });

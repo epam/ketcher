@@ -358,10 +358,10 @@ test.describe('Import-Saving .ket Files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('Verify saving and load to canvas variant monomers in KET format (macro mode)', async () => {
+  test('Verify saving and load to canvas ambiguous monomers in KET format (macro mode)', async () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 13. Verify saving and load to canvas variant monomers in KET format (macro mode)
+    Description: 13. Verify saving and load to canvas ambiguous monomers in KET format (macro mode)
     Case: 1. Load all ambiguous monomers from KET
           2. Make a screenshot to make sure they loaded
           3. Save canvas to KET
@@ -372,8 +372,7 @@ test.describe('Import-Saving .ket Files', () => {
       page,
     );
 
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await zoomWithMouseWheel(page, -200);
+    await zoomWithMouseWheel(page, -250);
     await takeEditorScreenshot(page);
 
     const expectedFile = await getKet(page);
@@ -389,7 +388,7 @@ test.describe('Import-Saving .ket Files', () => {
           'tests/test-data/KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
       });
     expect(ketFile).toEqual(ketFileExpected);
-    await zoomWithMouseWheel(page, 200);
+    await zoomWithMouseWheel(page, 250);
   });
 });
 

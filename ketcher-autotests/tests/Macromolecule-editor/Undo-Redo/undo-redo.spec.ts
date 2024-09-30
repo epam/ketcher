@@ -448,7 +448,7 @@ test.describe('Undo-Redo tests', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 12.1 Verify the undo/redo functionality with ambiguous monomers on the canvas
+    Description: 12.1 Verify the undo/redo functionality with ambiguous peptide (X) on the canvas
     Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
           2. Take screenshot to make sure it is on canvas
           3. Select it
@@ -487,7 +487,7 @@ test.describe('Undo-Redo tests', () => {
   }) => {
     /* 
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 12.1 Verify the undo/redo functionality with ambiguous monomers on the canvas
+    Description: 12.2 Verify the undo/redo functionality with ambiguous Base (RNA_N) on the canvas
     Case: 1. Put on the center of canvas ambiguous monomer from the library (peptide X)
           2. Take screenshot to make sure it is on canvas
           3. Select it

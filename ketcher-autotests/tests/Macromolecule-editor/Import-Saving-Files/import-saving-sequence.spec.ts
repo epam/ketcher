@@ -323,11 +323,10 @@ test.describe('Import-Saving .seq Files', () => {
     },
   );
 
-  test(
-    'Saving ambiguous peptides (without mapping, alternatives) in Sequence format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous peptides (without mapping, alternatives) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.3 Verify saving ambiguous peptides (without mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
@@ -336,29 +335,24 @@ test.describe('Import-Saving .seq Files', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -200);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence');
+    await takeEditorScreenshot(page);
 
-      await closeErrorMessage(page);
+    await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 200);
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
-      );
-    },
-  );
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
 
   test(
     'Saving ambiguous peptides (without mapping, mixed) in Sequence format',

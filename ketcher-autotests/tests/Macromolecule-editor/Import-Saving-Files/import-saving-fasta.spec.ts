@@ -412,24 +412,53 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Saving ambiguous peptides (with mapping, alternatives) in FASTA format', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.1 Verify saving ambiguous peptides (with mapping, alternatives) in FASTA format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -600);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 600);
+  });
+
   test(
-    'Saving ambiguous peptides (with mapping) in FASTA format',
+    'Saving ambiguous peptides (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 16.1 Verify saving ambiguous peptides (with mapping) in FASTA format (macro mode)
+    Description: 16.2 Verify saving ambiguous peptides (with mapping, mixed) in FASTA format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have mapping to library).ket',
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
         page,
       );
 
       await zoomWithMouseWheel(page, -600);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -446,25 +475,57 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
-  test(
-    'Saving ambiguous peptides (without mapping) in FASTA format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous peptides (without mapping, alternatives) in FASTA format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 16.2 Verify saving ambiguous peptides (without mapping) in FASTA format (macro mode)
+    Description: 16.3 Verify saving ambiguous peptides (without mapping, alternatives) in FASTA format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+
+    await closeErrorMessage(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
+
+  test(
+    'Saving ambiguous peptides (without mapping, mixed) in FASTA format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.4 Verify saving ambiguous peptides (without mapping, mixed) in FASTA format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library, mixed) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+            (Error should occure)
+          4. Take screenshot to make sure export is correct
+    */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library).ket',
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
         page,
       );
 
       await zoomWithMouseWheel(page, -200);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -482,58 +543,53 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
+  test('Saving ambiguous DNA bases (with mapping, alternatives) in FASTA format', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in FASTA format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
+
   test(
-    'Saving ambiguous DNA bases (with mapping) in FASTA format',
+    'Saving ambiguous DNA bases (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 16.3 Verify saving ambiguous DNA bases (with mapping) in FASTA format (macro mode)
+    Description: 16.6 Verify saving ambiguous DNA bases (with mapping, mixed) in FASTA format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives and mixed).ket',
+        'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
         page,
       );
 
       await zoomWithMouseWheel(page, -100);
-      await takeEditorScreenshot(page);
-
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
-      await takeEditorScreenshot(page);
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
-
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
-
-  test(
-    'Saving ambiguous RNA bases (with mapping) in FASTA format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 16.4 Verify saving ambiguous RNA bases (with mapping) in FASTA format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose Sequence option
-          4. Take screenshot to make sure export is correct
-    */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives and mixed).ket',
-        page,
-      );
-
-      await zoomWithMouseWheel(page, -100);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -550,28 +606,120 @@ test.describe('Import-Saving .fasta Files', () => {
     },
   );
 
+  test('Saving ambiguous RNA bases (with mapping, alternatives) in FASTA format', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in FASTA format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
+
   test(
-    'Saving ambiguous (common) bases (with mapping) in FASTA format',
+    'Saving ambiguous RNA bases (with mapping, mixed) in FASTA format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 16.5 Verify saving ambiguous (common) bases (with mapping) in FASTA format (macro mode)
+    Description: 16.8 Verify saving ambiguous RNA bases (with mapping, mixed) in FASTA format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose FASTA option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives and mixed).ket',
+        'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
+        page,
+      );
+
+      await zoomWithMouseWheel(page, -100);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'FASTA');
+      await takeEditorScreenshot(page);
+
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+      );
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 100);
+    },
+  );
+
+  test('Saving ambiguous (common) bases (with mapping, alternatives) in FASTA format', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in FASTA format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'FASTA');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
+
+  test(
+    'Saving ambiguous (common) bases (with mapping, mixed) in FASTA format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 16.10 Verify saving ambiguous (common) bases (with mapping, mixed) in FASTA format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose FASTA option
+          4. Take screenshot to make sure export is correct
+    */
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
         page,
       );
 
       await zoomWithMouseWheel(page, -200);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 
       test.fixme(

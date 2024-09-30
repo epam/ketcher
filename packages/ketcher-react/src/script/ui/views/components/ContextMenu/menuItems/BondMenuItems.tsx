@@ -58,13 +58,13 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
 
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
+
     editor.highlights.create({
       atoms: [],
       bonds: bondIds,
       color: color === '' ? 'transparent' : color,
     });
   };
-
   const shouldShowChangeDirection =
     bondData &&
     ((bondData.type === 9 && bondData.stereo === 0) ||

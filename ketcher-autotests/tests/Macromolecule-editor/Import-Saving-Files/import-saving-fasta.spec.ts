@@ -19,6 +19,7 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
+  TypeDropdownOptions,
 } from '@utils';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
@@ -30,6 +31,12 @@ import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
 }
+
+test.beforeEach(async ({ page }) => {
+  await waitForPageInit(page);
+  await turnOnMacromoleculesEditor(page);
+});
+
 test.describe('Import-Saving .fasta Files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -739,4 +746,82 @@ test.describe('Import-Saving .fasta Files', () => {
       await zoomWithMouseWheel(page, 200);
     },
   );
+});
+
+test.describe('Import correct FASTA file: ', () => {
+  interface IFASTAFile {
+    FASTADescription: string;
+    FASTAFileName: string;
+    FASTAType: TypeDropdownOptions;
+    // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+    shouldFail?: boolean;
+    // issueNumber is mandatory if shouldFail === true
+    issueNumber?: string;
+    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+    pageReloadNeeded?: boolean;
+  }
+
+  const correctFASTAFiles: IFASTAFile[] = [
+    {
+      FASTADescription: '1. Ambiguous (common) Bases with DNA sugar',
+      FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases.fasta',
+      FASTAType: 'DNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      FASTADescription: '2. Ambiguous (common) Bases with RNA sugar',
+      FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases.fasta',
+      FASTAType: 'RNA',
+      shouldFail: true,
+      issueNumber: "can't load in rc2",
+    },
+    {
+      FASTADescription: '3. Ambiguous DNA Bases',
+      FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous DNA Bases.fasta',
+      FASTAType: 'DNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      FASTADescription: '4. Ambiguous RNA Bases',
+      FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous RNA Bases.fasta',
+      FASTAType: 'RNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      FASTADescription: '5. Peptides (that have mapping to library)',
+      FASTAFileName:
+        'FASTA/Ambiguous-Monomers/Peptides (that have mapping to library).fasta',
+      FASTAType: 'Peptide',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+  ];
+
+  for (const correctFASTAFile of correctFASTAFiles) {
+    test(`${correctFASTAFile.FASTADescription}`, async ({ page }) => {
+      /*
+      Test task: https://github.com/epam/ketcher/issues/5558
+      Description: Verify import of FASTA files works correct
+      Case: 1. Load FASTA file 
+            2. Take screenshot to make sure import works correct
+      */
+      if (correctFASTAFile.pageReloadNeeded) await pageReload(page);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctFASTAFile.shouldFail === true,
+        `That test fails because of ${correctFASTAFile.issueNumber} issue.`,
+      );
+
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        correctFASTAFile.FASTAFileName,
+        page,
+        correctFASTAFile.FASTAType,
+      );
+
+      await takeEditorScreenshot(page);
+    });
+  }
 });

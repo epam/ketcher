@@ -124,12 +124,6 @@ class SelectTool implements Tool {
       return;
     }
 
-    this.isReadyForCopy = false;
-    this.isCopied = false;
-    if (isControlKey(event)) {
-      this.isReadyForCopy = true;
-    }
-
     const selected = {
       ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
       ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
@@ -208,6 +202,12 @@ class SelectTool implements Tool {
     }
 
     this.handleMoveCloseToEdgeOfCanvas();
+
+    this.isReadyForCopy = false;
+    this.isCopied = false;
+    if (isControlKey(event) && this.dragCtx) {
+      this.isReadyForCopy = true;
+    }
 
     return true;
   }

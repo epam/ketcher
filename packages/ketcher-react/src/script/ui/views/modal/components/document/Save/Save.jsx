@@ -78,7 +78,8 @@ class SaveDialog extends Component {
       tabIndex: 0,
       isLoading: true,
     };
-    this.isRxn = this.props.struct.hasRxnArrow();
+    this.isRxn =
+      this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
     const formats = !this.props.server
@@ -89,6 +90,8 @@ class SaveDialog extends Component {
           this.isRxn ? 'rxnV3000' : 'molV3000',
           'sdf',
           'sdfV3000',
+          'rdf',
+          'rdfV3000',
           'smarts',
           'smiles',
           'smilesExt',

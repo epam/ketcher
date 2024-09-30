@@ -25,6 +25,8 @@ import {
   saveToFile,
   saveToTemplates,
   screenshotBetweenUndoRedo,
+  selectClearCanvasTool,
+  selectEraseTool,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectRing,
@@ -1819,6 +1821,121 @@ test.describe('Image files', () => {
       'CDXML/two-image-png-expected.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDX file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDXML file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
+     */
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectEraseTool(page);
     await takeEditorScreenshot(page);
   });
 });

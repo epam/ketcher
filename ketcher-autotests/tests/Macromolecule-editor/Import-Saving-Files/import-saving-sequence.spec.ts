@@ -16,7 +16,6 @@ import {
   readFileContents,
   getSequence,
   moveMouseAway,
-  moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { closeErrorMessage } from '@utils/common/helpers';
@@ -318,6 +317,8 @@ test.describe('Import-Saving .seq Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 600);
     },
@@ -449,6 +450,8 @@ test.describe('Import-Saving .seq Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 100);
     },
@@ -512,6 +515,8 @@ test.describe('Import-Saving .seq Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 100);
     },
@@ -574,6 +579,8 @@ test.describe('Import-Saving .seq Files', () => {
         true,
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
+
+      await closeErrorMessage(page);
 
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 200);

@@ -21,7 +21,6 @@ import {
   clickUndo,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
-  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {

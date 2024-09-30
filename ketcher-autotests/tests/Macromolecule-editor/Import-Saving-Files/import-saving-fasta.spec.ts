@@ -470,6 +470,8 @@ test.describe('Import-Saving .fasta Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 600);
     },
@@ -601,6 +603,8 @@ test.describe('Import-Saving .fasta Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 100);
     },
@@ -664,6 +668,8 @@ test.describe('Import-Saving .fasta Files', () => {
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
 
+      await closeErrorMessage(page);
+
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 100);
     },
@@ -726,6 +732,8 @@ test.describe('Import-Saving .fasta Files', () => {
         true,
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
+
+      await closeErrorMessage(page);
 
       await pressButton(page, 'Cancel');
       await zoomWithMouseWheel(page, 200);

@@ -263,19 +263,19 @@ test.describe('Import-Saving .seq Files', () => {
   );
 
   test(
-    'Saving ambiguous peptides (with mapping) in Sequence format',
+    'Saving ambiguous peptides (with mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.1 Verify saving ambiguous peptides (with mapping) in Sequence format (macro mode)
+    Description: 15.1 Verify saving ambiguous peptides (with mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have mapping to library).ket',
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
         page,
       );
 
@@ -297,12 +297,12 @@ test.describe('Import-Saving .seq Files', () => {
   );
 
   test(
-    'Saving ambiguous peptides (without mapping) in Sequence format',
+    'Saving ambiguous peptides (without mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.2 Verify saving ambiguous peptides (without mapping) in Sequence format (macro mode)
+    Description: 15.2 Verify saving ambiguous peptides (without mapping), alternatives in Sequence format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
@@ -310,7 +310,7 @@ test.describe('Import-Saving .seq Files', () => {
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Peptides (that have no mapping to library).ket',
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
         page,
       );
 
@@ -333,19 +333,19 @@ test.describe('Import-Saving .seq Files', () => {
   );
 
   test(
-    'Saving ambiguous DNA bases (with mapping) in Sequence format',
+    'Saving ambiguous DNA bases (with mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.3 Verify saving ambiguous DNA bases (with mapping) in Sequence format (macro mode)
+    Description: 15.3 Verify saving ambiguous DNA bases (with mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives and mixed).ket',
+        'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
         page,
       );
 
@@ -367,19 +367,19 @@ test.describe('Import-Saving .seq Files', () => {
   );
 
   test(
-    'Saving ambiguous RNA bases (with mapping) in Sequence format',
+    'Saving ambiguous RNA bases (with mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.4 Verify saving ambiguous RNA bases (with mapping) in Sequence format (macro mode)
+    Description: 15.4 Verify saving ambiguous RNA bases (with mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives and mixed).ket',
+        'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
         page,
       );
 
@@ -401,23 +401,23 @@ test.describe('Import-Saving .seq Files', () => {
   );
 
   test(
-    'Saving ambiguous (common) bases (with mapping) in Sequence format',
+    'Saving ambiguous (common) bases (with mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 15.5 Verify saving ambiguous (common) bases (with mapping) in Sequence format (macro mode)
+    Description: 15.5 Verify saving ambiguous (common) bases (with mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives and mixed).ket',
+        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
         page,
       );
 
-      await zoomWithMouseWheel(page, -400);
+      await zoomWithMouseWheel(page, -200);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -430,7 +430,7 @@ test.describe('Import-Saving .seq Files', () => {
       );
 
       await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 400);
+      await zoomWithMouseWheel(page, 200);
     },
   );
 });

@@ -567,7 +567,7 @@ test.describe('Import-Saving .fasta Files', () => {
         page,
       );
 
-      await zoomWithMouseWheel(page, -400);
+      await zoomWithMouseWheel(page, -200);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
@@ -580,7 +580,7 @@ test.describe('Import-Saving .fasta Files', () => {
       );
 
       await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 400);
+      await zoomWithMouseWheel(page, 200);
     },
   );
 });

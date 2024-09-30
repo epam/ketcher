@@ -30,6 +30,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
   waitForSpinnerFinishedWork,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -42,6 +43,7 @@ import {
   Tabs,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
@@ -1589,4 +1591,134 @@ test.describe('Import incorrect IDT sequence: ', () => {
       );
     });
   }
+});
+
+test.describe('Ambiguous monomers: ', () => {
+  test('Saving ambiguous peptides (with mapping) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.1 Verify saving ambiguous peptides (with mapping) in IDT format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose IDT option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Ambiguous-monomers/Peptides (that have mapping to library).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -600);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 600);
+  });
+
+  test('Saving ambiguous peptides (without mapping) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.2 Verify saving ambiguous peptides (without mapping) in IDT format (macro mode)
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose IDT option
+            (Error should occure)
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Ambiguous-monomers/Peptides (that have no mapping to library).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -200);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+
+    await closeErrorMessage(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
+
+  test('Saving ambiguous DNA bases (with mapping) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.3 Verify saving ambiguous DNA bases (with mapping) in IDT format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose IDT option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives and mixed).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -100);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
+
+  test('Saving ambiguous RNA bases (with mapping) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.4 Verify saving ambiguous RNA bases (with mapping) in IDT format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose Sequence option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives and mixed).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -100);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
+
+  test('Saving ambiguous (common) bases (with mapping) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.5 Verify saving ambiguous (common) bases (with mapping) in IDT format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose IDT option
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives and mixed).ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -200);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
 });

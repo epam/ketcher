@@ -80,14 +80,91 @@ test.describe('Saving in .svg files', () => {
       filename: 'KET/all-types-of-possible-modifications.ket',
       description: 'all types of possible modifications',
     },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
+      description: '1. Ambiguous (common) Bases (alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
+      description: '2. Ambiguous (common) Bases (mixed)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
+      description: '3. Ambiguous DNA Bases (alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
+      description: '4. Ambiguous DNA Bases (alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
+      description: '5. Ambiguous RNA Bases (alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
+      description: '6. Ambiguous RNA Bases (mixed)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
+      description: '7. Peptides (that have mapping to library, alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename: 'KET/Peptides (that have mapping to library, mixed).ket',
+      description: '8. Peptides (that have mapping to library, mixed)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
+      description:
+        '9. Peptides (that have no mapping to library, alternatives)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
+      description: '10. Peptides (that have no mapping to library, mixed)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
+      description: '11. RNA ambigous bases connected to DNA sugar (mixed)',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      filename:
+        'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
+      description: '12. DNA ambigous bases connected to RNA sugar (mixed)',
+    },
   ];
 
   for (const { filename, description } of testData) {
     test(`Export to SVG: Verify it is possible to export Flex mode canvas with ${description} to SVG`, async () => {
+      /*
+      Description: Verify import of Sequence files works correct
+      Case: 1. Load monomers from KET
+            2. Take screenshot to make sure import KET loaded correct
+            3. Open Save dialog and choose SVG format
+            2. Take screenshot to make sure export works correct
+      */
       await openFileAndAddToCanvasMacro(filename, page);
+
       await takeEditorScreenshot(page);
+
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'SVG Document');
+
       await takeEditorScreenshot(page);
     });
   }

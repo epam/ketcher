@@ -17,19 +17,20 @@ import {
   getSequence,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
+  TypeDropdownOptions,
 } from '@utils';
-import { closeErrorMessage } from '@utils/common/helpers';
+import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 
-test.describe('Import-Saving .seq Files', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
+test.beforeEach(async ({ page }) => {
+  await waitForPageInit(page);
+  await turnOnMacromoleculesEditor(page);
+});
 
+test.describe('Import-Saving .seq Files', () => {
   const sequenceFileTypes = ['DNA', 'RNA', 'Peptide'] as const;
 
   for (const fileType of sequenceFileTypes) {
@@ -586,4 +587,88 @@ test.describe('Import-Saving .seq Files', () => {
       await zoomWithMouseWheel(page, 200);
     },
   );
+});
+
+test.describe('Import correct Sequence file: ', () => {
+  interface ISequenceFile {
+    SequenceDescription: string;
+    SequenceFileName: string;
+    SequenceType: TypeDropdownOptions;
+    // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+    shouldFail?: boolean;
+    // issueNumber is mandatory if shouldFail === true
+    issueNumber?: string;
+    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+    pageReloadNeeded?: boolean;
+  }
+
+  const correctSequenceFiles: ISequenceFile[] = [
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      SequenceDescription: '1. Ambiguous (common) Bases with DNA sugar',
+      SequenceFileName:
+        'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
+      SequenceType: 'DNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      SequenceDescription: '2. Ambiguous (common) Bases with RNA sugar',
+      SequenceFileName:
+        'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
+      SequenceType: 'RNA',
+      shouldFail: true,
+      issueNumber: "can't load in rc2",
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      SequenceDescription: '3. Ambiguous DNA Bases',
+      SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous DNA Bases.seq',
+      SequenceType: 'DNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      SequenceDescription: '4. Ambiguous RNA Bases',
+      SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous RNA Bases.seq',
+      SequenceType: 'RNA',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+    {
+      // Test task: https://github.com/epam/ketcher/issues/5558
+      SequenceDescription: '5. Peptides (that have mapping to library)',
+      SequenceFileName:
+        'Sequence/Ambiguous-Monomers/Peptides (that have mapping to library).seq',
+      SequenceType: 'Peptide',
+      shouldFail: true,
+      issueNumber: 'wrong labels screenshots',
+    },
+  ];
+
+  for (const correctSequenceFile of correctSequenceFiles) {
+    test(`${correctSequenceFile.SequenceDescription}`, async ({ page }) => {
+      /*
+      Description: Verify import of Sequence files works correct
+      Case: 1. Load Sequence file 
+            2. Take screenshot to make sure import works correct
+      */
+      if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        correctSequenceFile.shouldFail === true,
+        `That test fails because of ${correctSequenceFile.issueNumber} issue.`,
+      );
+
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        correctSequenceFile.SequenceFileName,
+        page,
+        correctSequenceFile.SequenceType,
+      );
+
+      await takeEditorScreenshot(page);
+    });
+  }
 });

@@ -91,7 +91,8 @@ export async function selectOptionInTypeDropdown2(
   page: Page,
 ) {
   await page.getByTestId('dropdown-select-type').getByRole('combobox').click();
-  await page.locator('#menu-').getByText(typeDropdownOption).click();
+  const menuLocator = page.locator('#menu-');
+  await menuLocator.getByText(typeDropdownOption).click();
 }
 
 /**

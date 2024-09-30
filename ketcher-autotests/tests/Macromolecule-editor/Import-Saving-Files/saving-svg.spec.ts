@@ -12,6 +12,7 @@ import {
   switchSequenceEnteringButtonType,
   SequenceType,
   selectClearCanvasTool,
+  pressButton,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -119,7 +120,8 @@ test.describe('Saving in .svg files', () => {
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
-      filename: 'KET/Peptides (that have mapping to library, mixed).ket',
+      filename:
+        'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       description: '8. Peptides (that have mapping to library, mixed)',
     },
     {
@@ -166,6 +168,8 @@ test.describe('Saving in .svg files', () => {
       await chooseFileFormat(page, 'SVG Document');
 
       await takeEditorScreenshot(page);
+
+      await pressButton(page, 'Cancel');
     });
   }
 

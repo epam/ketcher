@@ -346,6 +346,7 @@ const correctHELMStrings: IHELMString[] = [
       '46. Simple RNAs - The probability of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString: 'RNA1{R(A:10,C:90)P}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -389,6 +390,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:

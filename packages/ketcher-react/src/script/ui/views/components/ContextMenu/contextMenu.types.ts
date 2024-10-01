@@ -51,7 +51,6 @@ export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   id: CONTEXT_MENU_ID.FOR_MACROMOLECULE;
   functionalGroups: FunctionalGroup[];
-  // sGroups: SGroup[];
 }
 
 export interface RGroupAttachmentPointContextMenuProps

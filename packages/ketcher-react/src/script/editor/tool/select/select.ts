@@ -113,10 +113,6 @@ class SelectTool implements Tool {
     );
     const ci = this.editor.findItem(event, map, null);
 
-    // if (isBondingWithMacroMolecule(this.editor, event)) {
-    //   return;
-    // }
-
     const selected = {
       ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
       ...(ci?.map === 'bonds' && { bonds: [ci.id] }),

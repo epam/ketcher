@@ -1,11 +1,6 @@
 import { BaseRenderer } from 'application/render';
-import { Atom } from 'domain/entities/CoreAtom';
-import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond } from 'domain/entities/CoreBond';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
-import { Vec2 } from 'domain/entities';
-import { getBondLineShift } from 'application/render/restruct/rebond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class MonomerToAtomBondRenderer extends BaseRenderer {
@@ -35,18 +30,29 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
 
   show() {
     this.rootElement = this.canvas
-      .insert('line', `.monomer`)
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y)
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y)
+      .insert('g', `.monomer`)
+      .attr(
+        'transform',
+        `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
+      );
+
+    this.rootElement
+      ?.append('line')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr(
+        'x2',
+        this.scaledPosition.endPosition.x - this.scaledPosition.startPosition.x,
+      )
+      .attr(
+        'y2',
+        this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
+      )
       .attr('stroke', '#333333')
       .attr('stroke-width', 1);
   }
 
-  protected appendHover(
-    hoverArea,
-  ): D3SvgElementSelection<SVGUseElement, void> | void {
+  protected appendHover(): D3SvgElementSelection<SVGUseElement, void> | void {
     return undefined;
   }
 
@@ -54,7 +60,16 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
 
   drawSelection(): void {}
 
-  moveSelection(): void {}
+  public move() {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.remove();
+    this.show();
+  }
 
   protected removeHover(): void {}
+
+  public moveSelection(): void {}
 }

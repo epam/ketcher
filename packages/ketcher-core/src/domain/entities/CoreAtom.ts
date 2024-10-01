@@ -2,7 +2,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Bond } from 'domain/entities/CoreBond';
-import { BaseRenderer, ShowHydrogenLabels } from 'application/render';
+import { BaseRenderer } from 'application/render';
 import { AtomLabel } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 
@@ -16,6 +16,10 @@ export class Atom extends DrawingEntity {
     public label: AtomLabel,
   ) {
     super(position);
+  }
+
+  public get center() {
+    return this.position;
   }
 
   public addBond(bond: Bond) {

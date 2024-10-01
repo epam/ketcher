@@ -296,6 +296,7 @@ export class ViewModel {
     this.halfEdges.clear();
     this.loops.clear();
     this.atomsToHalfEdges.clear();
+    this.bondsToHalfEdges.clear();
   }
 
   public initialize(bonds: Bond[]) {

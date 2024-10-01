@@ -11,6 +11,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import {
   BaseMonomer,
+  Chem,
   LinkerSequenceNode,
   Phosphate,
   Pool,
@@ -72,8 +73,12 @@ import { Bond } from 'domain/entities/CoreBond';
 import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
 import { BondAddOperation } from 'application/editor/operations/coreBond/bond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { MonomerToAtomBondAddOperation } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
+import {
+  MonomerToAtomBondAddOperation,
+  MonomerToAtomBondDeleteOperation,
+} from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import { AtomLabel } from 'domain/constants';
+import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -97,10 +102,6 @@ type NucleotideOrNucleoside = {
   rnaBase: RNABase | AmbiguousMonomer;
   baseMonomer: Sugar | Phosphate;
 };
-
-type DirectedAcylicAtomsGraph<T> = Record<number, T>;
-type IDirectedAcylicAtomsGraph =
-  DirectedAcylicAtomsGraph<IDirectedAcylicAtomsGraph>;
 
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
@@ -249,6 +250,8 @@ export class DrawingEntitiesManager {
       return this.deleteMonomer(drawingEntity, needToDeleteConnectedEntities);
     } else if (drawingEntity instanceof PolymerBond) {
       return this.deletePolymerBond(drawingEntity);
+    } else if (drawingEntity instanceof MonomerToAtomBond) {
+      return this.deleteMonomerToAtomBond(drawingEntity);
     } else {
       return new Command();
     }
@@ -334,11 +337,23 @@ export class DrawingEntitiesManager {
   ) {
     if (drawingEntity instanceof PolymerBond) {
       drawingEntity.moveToLinkedMonomers();
+    } else if (drawingEntity instanceof Bond) {
+      const editor = CoreEditor.provideEditorInstance();
+      const viewModel = editor.viewModel;
+
+      drawingEntity.moveToLinkedAtoms();
+      viewModel.initialize([...this.bonds.values()]);
+    } else if (drawingEntity instanceof MonomerToAtomBond) {
+      drawingEntity.moveToLinkedMonomerAndAtom();
     } else {
       assert(offset);
       drawingEntity.moveRelative(offset);
-      // if (drawingEntity instanceof BaseMonomer)
-      // this.moveChemAtomsPoint(drawingEntity, offset);
+      if (
+        drawingEntity instanceof BaseMonomer &&
+        isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        this.moveChemAtomsPoint(drawingEntity, offset);
+      }
     }
 
     return drawingEntity;
@@ -362,17 +377,19 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    this.monomers.forEach((drawingEntity) => {
-      if (drawingEntity.selected) {
-        command.merge(
-          this.createDrawingEntityMovingCommand(
-            drawingEntity,
-            partOfMovementOffset,
-            fullMovementOffset,
-          ),
-        );
-      }
-    });
+    [...this.atoms.values(), ...this.monomers.values()].forEach(
+      (drawingEntity) => {
+        if (drawingEntity.selected) {
+          command.merge(
+            this.createDrawingEntityMovingCommand(
+              drawingEntity,
+              partOfMovementOffset,
+              fullMovementOffset,
+            ),
+          );
+        }
+      },
+    );
 
     this.polymerBonds.forEach((drawingEntity) => {
       if (
@@ -395,6 +412,22 @@ export class DrawingEntitiesManager {
         drawingEntity.selected ||
         drawingEntity.monomer.selected ||
         drawingEntity.atom.selected
+      ) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
+      }
+    });
+
+    this.bonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstAtom.selected ||
+        drawingEntity.secondAtom.selected
       ) {
         command.merge(
           this.createDrawingEntityMovingCommand(
@@ -482,10 +515,14 @@ export class DrawingEntitiesManager {
         // This check helps to avoid operations duplication
         if (bond.selected) return;
 
-        // We need to remove connected bond when doing a group selection even if it is not selected
-        // and mark it as selected to avoid operations duplication
-        bond.turnOnSelection();
-        command.merge(this.deletePolymerBond(bond));
+        if (bond instanceof PolymerBond) {
+          // We need to remove connected bond when doing a group selection even if it is not selected
+          // and mark it as selected to avoid operations duplication
+          bond.turnOnSelection();
+          command.merge(this.deletePolymerBond(bond));
+        } else {
+          command.merge(this.deleteMonomerToAtomBond(bond));
+        }
       });
     }
 
@@ -515,6 +552,13 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
     this.allEntities.forEach(([, drawingEntity]) => {
+      if (
+        drawingEntity instanceof Chem &&
+        !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+      ) {
+        return;
+      }
+
       const isPreviousSelected = previousSelectedEntities.find(
         ([, entity]) => entity === drawingEntity,
       );
@@ -1097,9 +1141,10 @@ export class DrawingEntitiesManager {
   }
 
   public rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {
-    if (monomer.monomerItem.props.isMicromoleculeFragment) {
+    if (isMonomerSgroupWithAttachmentPoints(monomer)) {
       const offset = newPosition.sub(monomer.position);
-      // this.moveChemAtomsPoint(monomer, offset);
+
+      this.moveChemAtomsPoint(monomer, offset);
     }
 
     monomer.moveAbsolute(newPosition);
@@ -1299,7 +1344,11 @@ export class DrawingEntitiesManager {
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       const nextMonomer = polymerBond?.getAnotherMonomer(monomer);
-      if (!polymerBond || rearrangedMonomersSet.has(nextMonomer.id)) {
+      if (
+        !polymerBond ||
+        polymerBond instanceof MonomerToAtomBond ||
+        rearrangedMonomersSet.has(nextMonomer.id)
+      ) {
         continue;
       }
       if (
@@ -1469,24 +1518,33 @@ export class DrawingEntitiesManager {
   }
 
   private redrawBondsModelChange(
-    polymerBond: PolymerBond,
+    bond: PolymerBond | MonomerToAtomBond,
     startPosition?: Vec2,
     endPosition?: Vec2,
   ) {
-    if (startPosition && endPosition) {
-      polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
-      polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
-    } else {
-      polymerBond.moveToLinkedMonomers();
+    if (bond instanceof MonomerToAtomBond) {
+      bond.moveToLinkedMonomerAndAtom();
+
+      return bond;
     }
 
-    return polymerBond;
+    if (startPosition && endPosition) {
+      bond.moveBondStartAbsolute(startPosition.x, startPosition.y);
+      bond.moveBondEndAbsolute(endPosition.x, endPosition.y);
+    } else {
+      bond.moveToLinkedMonomers();
+    }
+
+    return bond;
   }
 
   public redrawBonds() {
     const command = new Command();
 
-    this.polymerBonds.forEach((polymerBond) => {
+    [
+      ...this.polymerBonds.values(),
+      ...this.monomerToAtomBonds.values(),
+    ].forEach((polymerBond) => {
       command.merge(
         this.createDrawingEntityRedrawCommand(
           this.redrawBondsModelChange.bind(this, polymerBond),
@@ -1499,6 +1557,7 @@ export class DrawingEntitiesManager {
         ),
       );
     });
+
     return command;
   }
 
@@ -1541,8 +1600,11 @@ export class DrawingEntitiesManager {
     )
       return false;
 
+    const r2Bond = nucleoside.sugar.attachmentPointsToBonds.R2;
+
     return (
-      nucleoside.sugar.attachmentPointsToBonds.R2?.secondMonomer === phosphate
+      !(r2Bond instanceof MonomerToAtomBond) &&
+      r2Bond?.secondMonomer === phosphate
     );
   }
 
@@ -1564,7 +1626,11 @@ export class DrawingEntitiesManager {
   public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
     const command = new Command();
     const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
+    const atomToNewAtom = new Map<Atom, Atom>();
     const mergedDrawingEntities = new DrawingEntitiesManager();
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+
     this.monomers.forEach((monomer) => {
       const monomerAddCommand =
         monomer instanceof AmbiguousMonomer
@@ -1591,6 +1657,7 @@ export class DrawingEntitiesManager {
         monomerAddCommand.operations[0].monomer as BaseMonomer,
       );
     });
+
     this.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
       const polymerBondCreateCommand =
@@ -1614,6 +1681,52 @@ export class DrawingEntitiesManager {
         addedPolymerBond,
       );
     });
+
+    this.atoms.forEach((atom) => {
+      const atomAddCommand = targetDrawingEntitiesManager.addAtom(
+        atom.position,
+        monomerToNewMonomer.get(atom.monomer) as BaseMonomer,
+        atom.atomIdInMicroMode,
+        atom.label,
+      );
+      const addedAtom = atomAddCommand.operations[0].atom as Atom;
+
+      command.merge(atomAddCommand);
+      mergedDrawingEntities.atoms.set(addedAtom.id, addedAtom);
+      atomToNewAtom.set(atom, addedAtom);
+    });
+
+    this.bonds.forEach((bond) => {
+      const bondAddCommand = targetDrawingEntitiesManager.addBond(
+        bond.firstAtom,
+        bond.secondAtom,
+        bond.type,
+        bond.stereo,
+      );
+      const addedBond = bondAddCommand.operations[0].bond as Bond;
+
+      command.merge(bondAddCommand);
+      mergedDrawingEntities.bonds.set(addedBond.id, addedBond);
+    });
+
+    viewModel.initialize([...targetDrawingEntitiesManager.bonds.values()]);
+
+    this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      const bondAddCommand = targetDrawingEntitiesManager.addMonomerToAtomBond(
+        monomerToNewMonomer.get(monomerToAtomBond.monomer) as BaseMonomer,
+        atomToNewAtom.get(monomerToAtomBond.atom) as Atom,
+        monomerToAtomBond.monomer.getAttachmentPointByBond(
+          monomerToAtomBond,
+        ) as AttachmentPointName,
+      );
+
+      const addedBond = bondAddCommand.operations[0]
+        .monomerToAtomBond as MonomerToAtomBond;
+
+      command.merge(bondAddCommand);
+      mergedDrawingEntities.monomerToAtomBonds.set(addedBond.id, addedBond);
+    });
+
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
@@ -1690,6 +1803,10 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deletePolymerBond(polymerBond);
     });
 
+    this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
+    });
+
     SequenceRenderer.removeEmptyNodes();
   }
 
@@ -1709,6 +1826,11 @@ export class DrawingEntitiesManager {
     this.polymerBonds.forEach((polymerBond) => {
       editor.renderersContainer.deletePolymerBond(polymerBond);
       editor.renderersContainer.addPolymerBond(polymerBond);
+    });
+
+    this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+      editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
+      editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
 
     SequenceRenderer.removeEmptyNodes();
@@ -1969,7 +2091,7 @@ export class DrawingEntitiesManager {
     position: Vec2,
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
-    label: string,
+    label: AtomLabel,
   ) {
     const command = new Command();
     const atomAddOperation = new AtomAddOperation(
@@ -2027,11 +2149,13 @@ export class DrawingEntitiesManager {
       this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
       this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
     );
+
     command.addOperation(bondAddOperation);
+
     return command;
   }
 
-  private addMonomerToAtomBondChangeModel(
+  public addMonomerToAtomBondChangeModel(
     monomer: BaseMonomer,
     atom: Atom,
     attachmentPoint: AttachmentPointName,
@@ -2049,6 +2173,8 @@ export class DrawingEntitiesManager {
 
     monomerToAtomBond.moveToLinkedMonomerAndAtom();
     monomer.setBond(attachmentPoint, monomerToAtomBond);
+    monomer.turnOffAttachmentPointsVisibility();
+    monomer.turnOffHover();
 
     return monomerToAtomBond;
   }
@@ -2059,6 +2185,27 @@ export class DrawingEntitiesManager {
     this.monomerToAtomBonds.delete(monomerAtomBond.id);
 
     return monomerAtomBond;
+  }
+
+  private deleteMonomerToAtomBond(monomerAtomBond: MonomerToAtomBond) {
+    const command = new Command();
+
+    command.addOperation(
+      new MonomerToAtomBondDeleteOperation(
+        monomerAtomBond,
+        this.deleteMonomerToAtomBondChangeModel.bind(this, monomerAtomBond),
+        this.addMonomerToAtomBondChangeModel.bind(
+          this,
+          monomerAtomBond.monomer,
+          monomerAtomBond.atom,
+          monomerAtomBond.monomer.getAttachmentPointByBond(
+            monomerAtomBond,
+          ) as AttachmentPointName,
+        ),
+      ),
+    );
+
+    return command;
   }
 
   public addMonomerToAtomBond(
@@ -2076,7 +2223,9 @@ export class DrawingEntitiesManager {
       ),
       this.deleteMonomerToAtomBondChangeModel.bind(this),
     );
+
     command.addOperation(monomerAddToAtomBondOperation);
+
     return command;
   }
 }

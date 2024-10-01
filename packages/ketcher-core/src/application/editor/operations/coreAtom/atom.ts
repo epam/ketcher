@@ -36,7 +36,7 @@ export class AtomAddOperation implements Operation {
 
   public invert(renderersManager: RenderersManager) {
     if (this.atom) {
-      this.deleteAtomChangeModel(this.atom);
+      this.deleteAtomChangeModel();
       renderersManager.deleteAtom(this.atom);
     }
   }

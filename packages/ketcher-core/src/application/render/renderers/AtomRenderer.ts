@@ -1,46 +1,50 @@
-import { BaseRenderer, ShowHydrogenLabels } from 'application/render';
-import { select } from 'd3';
+import { BaseRenderer } from 'application/render';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor';
 import { AtomLabel, ElementColor } from 'domain/constants';
-import { Bond } from 'domain/entities/CoreBond';
-import { Vec2 } from 'domain/entities';
+import { D3SvgElementSelection } from 'application/render/types';
 
 export class AtomRenderer extends BaseRenderer {
+  private selectionElement?: D3SvgElementSelection<SVGCircleElement, void>;
+
   constructor(public atom: Atom) {
     super(atom);
     atom.setRenderer(this);
   }
 
   get scaledPosition() {
-    return Coordinates.modelToView(this.atom.position);
+    return Coordinates.modelToCanvas(this.atom.position);
+  }
+
+  get center() {
+    return this.scaledPosition;
   }
 
   private appendRootElement() {
-    return this.canvasWrapper
+    return this.canvas
       .append('g')
       .data([this])
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
-      );
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   private appendBody() {
-    return this.canvas
-      .append('circle')
-      .attr('r', 1)
+    return this.rootElement
+      ?.append('circle')
+      .data([this])
+      .attr('r', 0)
       .attr('cx', 0)
       .attr('cy', 0);
   }
 
-  private appendHoverArea() {
+  protected appendHover() {
     const editor = CoreEditor.provideEditorInstance();
 
     return this.rootElement
-      .append('circle')
-      .data([this])
+      ?.append('circle')
       .attr('r', 10)
       .attr('cx', 0)
       .attr('cy', 0)
@@ -49,7 +53,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('fill', 'none')
       .attr('pointer-events', 'all')
       .attr('opacity', '0')
-      .on('mouseenter', () => {
+      .on('mouseover', () => {
         this.showHover();
       })
       .on('mouseleave', () => {
@@ -61,11 +65,11 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   public showHover() {
-    this.hoverElement.attr('opacity', '1');
+    this.hoverElement?.attr('opacity', '1');
   }
 
   public hideHover() {
-    this.hoverElement.attr('opacity', '0');
+    this.hoverElement?.attr('opacity', '0');
   }
 
   public get isLabelVisible() {
@@ -75,33 +79,14 @@ export class AtomRenderer extends BaseRenderer {
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
     const isAtomTerminal = atomNeighborsHalfEdges?.length === 1;
-    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) > 2;
+    const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
 
-    if (isCarbon) {
+    if (isCarbon && !isAtomTerminal) {
       return false;
     }
-    if (isAtomTerminal && visibleTerminal) return true;
 
-    if (isAtomInMiddleOfChain) {
-      const firstHalfEdge = atomNeighborsHalfEdges[0];
-      const secondHalfEdge = atomNeighborsHalfEdges[1];
-      const firstBond = firstHalfEdge.bond;
-      const secondBond = secondHalfEdge.bond;
-
-      const sameNotStereo =
-        firstBond.type === secondBond.type &&
-        firstBond.stereo === 0 &&
-        secondBond.stereo === 0;
-
-      if (
-        sameNotStereo &&
-        Math.abs(
-          Vec2.cross(firstHalfEdge.direction, secondHalfEdge.direction),
-        ) < 0.2
-      ) {
-        return true;
-      }
-    }
+    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain)
+      return true;
 
     return false;
   }
@@ -111,18 +96,77 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    this.rootElement
+    return this.rootElement
       ?.append('text')
       .text(this.atom.label)
       .attr('text-anchor', 'middle')
       .attr('y', 5)
-      .attr('fill', ElementColor[this.atom.label]);
+      .attr('fill', ElementColor[this.atom.label])
+      .attr('style', 'user-select: none')
+      .attr('pointer-events', 'none');
+  }
+
+  public appendSelection() {
+    if (this.selectionElement) {
+      this.selectionElement.attr('cx', this.center.x).attr('cy', this.center.y);
+    } else {
+      this.selectionElement = this.canvas
+        ?.insert('circle', ':first-child')
+        .attr('r', '13px')
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y)
+        .attr('fill', '#57FF8F')
+        .attr('class', 'dynamic-element');
+    }
+  }
+
+  public removeSelection() {
+    this.selectionElement?.remove();
+    this.selectionElement = undefined;
+  }
+
+  public drawSelection() {
+    if (!this.rootElement) {
+      return;
+    }
+    if (this.atom.selected) {
+      this.appendSelection();
+      // this.raiseElement();
+    } else {
+      this.removeSelection();
+    }
+  }
+
+  public moveSelection() {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.drawSelection();
+    this.move();
   }
 
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
-    this.hoverElement = this.appendHoverArea();
-    this.labelElement = this.appendLabel();
+    this.hoverElement = this.appendHover();
+    this.appendLabel();
+    this.drawSelection();
   }
+
+  public move() {
+    this.rootElement?.attr(
+      'transform',
+      `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+    );
+  }
+
+  public remove() {
+    this.removeSelection();
+    super.remove();
+  }
+
+  protected appendHoverAreaElement(): void {}
+
+  protected removeHover(): void {}
 }

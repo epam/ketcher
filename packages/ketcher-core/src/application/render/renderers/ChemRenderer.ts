@@ -3,6 +3,7 @@ import { Chem } from 'domain/entities/Chem';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
+import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 const CHEM_SELECTED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].selected;
@@ -39,7 +40,10 @@ export class ChemRenderer extends BaseMonomerRenderer {
   }
 
   public show(theme?) {
-    if (this.monomer.monomerItem.props.isMicromoleculeFragment) {
+    if (
+      this.monomer.monomerItem.props.isMicromoleculeFragment &&
+      !isMonomerSgroupWithAttachmentPoints(this.monomer)
+    ) {
       return;
     }
 

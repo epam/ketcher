@@ -30,6 +30,10 @@ export class MonomerToAtomBond extends DrawingEntity {
     return this.position;
   }
 
+  public get center() {
+    return this.position;
+  }
+
   public moveToLinkedMonomerAndAtom() {
     const firstMonomerCenter = this.monomer.position;
     const secondMonomerCenter = this.atom?.position;
@@ -38,4 +42,6 @@ export class MonomerToAtomBond extends DrawingEntity {
       this.moveBondEndAbsolute(secondMonomerCenter.x, secondMonomerCenter.y);
     }
   }
+
+  public getAnotherMonomer() {}
 }

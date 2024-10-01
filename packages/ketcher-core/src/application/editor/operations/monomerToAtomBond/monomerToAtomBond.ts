@@ -18,8 +18,7 @@
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import { Bond } from 'domain/entities/CoreBond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToMoleculeBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class MonomerToAtomBondAddOperation implements Operation {
   public monomerToAtomBond: MonomerToAtomBond;
@@ -28,7 +27,7 @@ export class MonomerToAtomBondAddOperation implements Operation {
       monomerToAtomBond?: MonomerToAtomBond,
     ) => MonomerToAtomBond,
     public deleteMonomerToAtomBondChangeModel: (
-      monomerToAtomBond?: MonomerToAtomBond,
+      monomerToAtomBond: MonomerToAtomBond,
     ) => void,
   ) {
     this.monomerToAtomBond = this.addMonomerToAtomBondChangeModel();
@@ -46,5 +45,27 @@ export class MonomerToAtomBondAddOperation implements Operation {
       this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
       renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
     }
+  }
+}
+
+export class MonomerToAtomBondDeleteOperation implements Operation {
+  constructor(
+    public monomerToAtomBond: MonomerToAtomBond,
+    public deleteMonomerToAtomBondChangeModel: (
+      monomerToAtomBond?: MonomerToAtomBond,
+    ) => void,
+    public addMonomerToAtomBondChangeModel: (
+      monomerToAtomBond?: MonomerToAtomBond,
+    ) => MonomerToAtomBond,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.deleteMonomerToAtomBondChangeModel(this.monomerToAtomBond);
+    renderersManager.deleteMonomerToAtomBond(this.monomerToAtomBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.addMonomerToAtomBondChangeModel(this.monomerToAtomBond);
+    renderersManager.addMonomerToAtomBond(this.monomerToAtomBond);
   }
 }

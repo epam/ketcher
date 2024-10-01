@@ -3,7 +3,6 @@ import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
 

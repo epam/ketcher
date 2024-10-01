@@ -12,13 +12,7 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import {
-  HalfBond,
-  Peptide,
-  Phosphate,
-  Sugar,
-  UnsplitNucleotide,
-} from 'domain/entities';
+import { Peptide, Phosphate, Sugar, UnsplitNucleotide } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -35,17 +29,16 @@ import {
 import { AttachmentPointName } from 'domain/types';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
-
-type FlexModeOrSnakeModePolymerBondRenderer =
-  | FlexModePolymerBondRenderer
-  | SnakeModePolymerBondRenderer;
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
-import { MonomerToAtomBond } from 'domain/entities/MonomerToMoleculeBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
-import { KetcherLogger } from 'utilities';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+
+type FlexModeOrSnakeModePolymerBondRenderer =
+  | FlexModePolymerBondRenderer
+  | SnakeModePolymerBondRenderer;
 
 export class RenderersManager {
   // FIXME: Specify the types.
@@ -457,7 +450,7 @@ export class RenderersManager {
 
   public deleteAtom(atom: Atom) {
     this.atoms.delete(atom.id);
-    atom.renderer.remove();
+    atom.renderer?.remove();
   }
 
   public addBond(bond: Bond) {
@@ -469,16 +462,19 @@ export class RenderersManager {
 
   public deleteBond(bond: Bond) {
     this.bonds.delete(bond.id);
-    bond.renderer.remove();
+    bond.renderer?.remove();
   }
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
     const bondRenderer = new MonomerToAtomBondRenderer(bond);
+
     bondRenderer.show();
+    bond.monomer.renderer?.redrawAttachmentPoints();
+    bond.monomer.renderer?.redrawHover();
   }
 
   public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
-    bond.renderer.remove();
+    bond.renderer?.remove();
   }
 
   public runPostRenderMethods() {

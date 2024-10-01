@@ -235,6 +235,11 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
+
+    if (polymerBond instanceof MonomerToAtomBond) {
+      return;
+    }
+
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
         ? polymerBond.monomer
@@ -349,7 +354,9 @@ export class AttachmentPoint {
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
 
-    assert(polymerBond);
+    if (!polymerBond || polymerBond instanceof MonomerToAtomBond) {
+      return;
+    }
 
     const flip = this.monomer.id === polymerBond?.firstMonomer?.id;
 

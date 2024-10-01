@@ -17,6 +17,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
 import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -54,6 +55,11 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   }
 
   const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+
+  if (R1PolymerBond instanceof MonomerToAtomBond) {
+    return false;
+  }
+
   const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
 
   return (
@@ -143,6 +149,11 @@ export function isMonomerBeginningOfChain(
   >,
 ) {
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
+
+  if (r1PolymerBond instanceof MonomerToAtomBond) {
+    return true;
+  }
+
   const previousMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
   const isPreviousMonomerPartOfChain =
     previousMonomer &&

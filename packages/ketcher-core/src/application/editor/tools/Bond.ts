@@ -408,17 +408,26 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAtom(event) {
+    if (!this.bondRenderer) {
+      return;
+    }
+
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
-    const attachmentPoint = monomer.getPotentialAttachmentPointByBond(
-      this.bondRenderer?.polymerBond,
-    );
+    const attachmentPoint =
+      monomer.getPotentialAttachmentPointByBond(
+        this.bondRenderer?.polymerBond,
+      ) || monomer?.getValidSourcePoint();
 
     this.editor.drawingEntitiesManager.deletePolymerBond(
       this.bondRenderer?.polymerBond,
     );
     this.bondRenderer?.remove();
     this.bondRenderer = undefined;
+
+    if (!attachmentPoint) {
+      return;
+    }
 
     const modelChanges =
       this.editor.drawingEntitiesManager.addMonomerToAtomBond(

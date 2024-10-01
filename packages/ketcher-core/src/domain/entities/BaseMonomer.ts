@@ -21,6 +21,7 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { isNumber } from 'lodash';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
 
@@ -113,7 +114,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public getAttachmentPointByBond(
-    bond: PolymerBond,
+    bond: PolymerBond | MonomerToAtomBond,
   ): AttachmentPointName | undefined {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName] === bond) {
@@ -217,7 +218,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
   }
 
-  public setBond(attachmentPointName: AttachmentPointName, bond: PolymerBond) {
+  public setBond(
+    attachmentPointName: AttachmentPointName,
+    bond: PolymerBond | MonomerToAtomBond,
+  ) {
     this.attachmentPointsToBonds[attachmentPointName] = bond;
   }
 

@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import Editor from 'src/script/editor';
 import tools from 'src/script/ui/action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
@@ -16,6 +17,7 @@ import {
 import { getIconName, Icon } from 'components';
 import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
 import { useAppContext } from 'src/hooks/useAppContext';
+import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
@@ -38,6 +40,8 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     props: props.propsFromTrigger,
   } as Params);
   const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
+  const editor = getKetcherInstance().editor as Editor;
+
   useEffect(() => {
     const editor = getKetcherInstance()?.editor;
     const bondIds = props.propsFromTrigger?.bondIds || [];
@@ -52,12 +56,22 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     }
   }, [props.propsFromTrigger, getKetcherInstance]);
 
+  const highlightBondWithColor = (color: string) => {
+    const bondIds = props.propsFromTrigger?.bondIds || [];
+
+    editor.highlights.create({
+      atoms: [],
+      bonds: bondIds,
+      color: color === '' ? 'transparent' : color,
+    });
+  };
   const shouldShowChangeDirection =
     bondData &&
     ((bondData.type === 9 && bondData.stereo === 0) ||
       (bondData.type === 1 && bondData.stereo === 1) ||
       (bondData.type === 1 && bondData.stereo === 6) ||
       (bondData.type === 1 && bondData.stereo === 4));
+
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>
@@ -113,7 +127,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
       <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
         Attach S-Group...
       </Item>
-
+      <HighlightMenu onHighlight={highlightBondWithColor} />
       <Item
         {...props}
         hidden={sGroupEditHidden}

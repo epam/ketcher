@@ -220,7 +220,7 @@
                 "$ref": "monomerTemplate-T___Thymine"
             },
             {
-                "$ref": "monomerTemplate-nasP___Sodium Phosporothioate"
+                "$ref": "monomerTemplate-sP-___Dihydrogen phosphorothioate"
             },
             {
                 "$ref": "monomerTemplate-C___Cytosine"
@@ -1220,9 +1220,9 @@
             "y": -1.25
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
-    "monomerTemplate-nasP___Sodium Phosporothioate": {
+    "monomerTemplate-sP-___Dihydrogen phosphorothioate": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1299,7 +1299,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "nasP___Sodium Phosporothioate",
+        "id": "sP-___Dihydrogen phosphorothioate",
         "fullName": "Sodium Phosporothioate",
         "alias": "nasP",
         "attachmentPoints": [
@@ -1511,7 +1511,7 @@
             "y": -1.25
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
     "monomer72": {
         "type": "monomer",
@@ -1700,7 +1700,7 @@
             "y": -1.25
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
     "monomer79": {
         "type": "monomer",
@@ -1710,6 +1710,6 @@
             "y": -1.25
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     }
 }

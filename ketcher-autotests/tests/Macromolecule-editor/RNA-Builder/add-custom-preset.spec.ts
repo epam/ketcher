@@ -8,7 +8,9 @@ import {
 } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import {
+  Bases,
   moveMouseToTheMiddleOfTheScreen,
+  Sugars,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
@@ -63,8 +65,8 @@ test.describe('Macromolecules custom presets', () => {
 
   test('Add new preset and duplicate it', async ({ page }) => {
     await selectRNAComponents(page, {
-      sugar: '25R___2,5-Ribose',
-      base: 'baA___N-benzyl-adenine',
+      sugar: Sugars.TwentyFiveR,
+      base: Bases.baA,
       phosphate: 'bP___Boranophosphate',
     });
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -75,7 +77,7 @@ test.describe('Macromolecules custom presets', () => {
     await page.getByTestId('duplicate-btn').click();
 
     await selectRNAComponents(page, {
-      sugar: "12ddR___1',2'-Di-Deoxy-Ribose",
+      sugar: "12ddR___1',2'-dideoxyribose",
       base: 'A___Adenine',
       phosphate: 'P___Phosphate',
     });
@@ -111,13 +113,13 @@ test.describe('Macromolecules custom presets', () => {
     await page.getByTestId(SUGAR).click();
 
     // Click on <div> "25R ★"
-    await page.click('[data-testid="25R___2,5-Ribose"]');
+    await page.click(`[data-testid="${Sugars.TwentyFiveR}"]`);
 
     // Click on <div> "Base Not selected"
     await page.getByTestId(BASE).click();
 
     // Click on <div> "baA ★"
-    await page.click('[data-testid="baA___N-benzyl-adenine"]');
+    await page.click(`[data-testid="${Bases.baA}"]`);
 
     // Click on <button> "Add to Presets"
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();

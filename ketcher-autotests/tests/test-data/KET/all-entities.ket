@@ -233,13 +233,13 @@
                 "$ref": "monomerTemplate-TyrabD___2-amino-3-(4-methoxyphenyl)prop-2-enoic acid"
             },
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
                 "$ref": "monomerTemplate-nac2r___2-O-(2-Acetamide)ribose"
             },
             {
-                "$ref": "monomerTemplate-daA___N,N-dimethyl-Adenine"
+                "$ref": "monomerTemplate-daA___N6,N6-dimethyladenine"
             },
             {
                 "$ref": "monomerTemplate-c3A___3-Deazaadenine"
@@ -248,7 +248,7 @@
                 "$ref": "monomerTemplate-Test-6-Ph___Test-6-AP-Phosphate"
             },
             {
-                "$ref": "monomerTemplate-msp___Methylthiophosphonate"
+                "$ref": "monomerTemplate-msp___Methylphosphonothioic acid"
             },
             {
                 "$ref": "monomerTemplate-U___Uracil"
@@ -269,13 +269,13 @@
                 "$ref": "monomerTemplate-SMPEG2___SM(PEG)2 linker from Pierce"
             },
             {
-                "$ref": "monomerTemplate-cpmA___N-cyclopropylmethyl-adenine"
+                "$ref": "monomerTemplate-cpmA___N6-cyclopropylmethyladenine"
             },
             {
                 "$ref": "monomerTemplate-3A6___6-amino-hexanol (3' end)"
             },
             {
-                "$ref": "monomerTemplate-nasP___Sodium Phosporothioate"
+                "$ref": "monomerTemplate-sP-___Dihydrogen phosphorothioate"
             }
         ]
     },
@@ -5097,9 +5097,9 @@
             "y": -11.032333424886074
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -5295,7 +5295,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "2,5-Ribose",
         "alias": "25R",
         "attachmentPoints": [
@@ -5637,9 +5637,9 @@
             "y": -11.042333424886074
         },
         "alias": "daA",
-        "templateId": "daA___N,N-dimethyl-Adenine"
+        "templateId": "daA___N6,N6-dimethyladenine"
     },
-    "monomerTemplate-daA___N,N-dimethyl-Adenine": {
+    "monomerTemplate-daA___N6,N6-dimethyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -5849,7 +5849,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "daA___N,N-dimethyl-Adenine",
+        "id": "daA___N6,N6-dimethyladenine",
         "fullName": "N,N-dimethyl-Adenine",
         "alias": "daA",
         "attachmentPoints": [
@@ -6346,9 +6346,9 @@
             "y": -12.360666758219416
         },
         "alias": "msp",
-        "templateId": "msp___Methylthiophosphonate"
+        "templateId": "msp___Methylphosphonothioic acid"
     },
-    "monomerTemplate-msp___Methylthiophosphonate": {
+    "monomerTemplate-msp___Methylphosphonothioic acid": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -6424,7 +6424,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "msp___Methylthiophosphonate",
+        "id": "msp___Methylphosphonothioic acid",
         "fullName": "Methylthiophosphonate",
         "alias": "msp",
         "attachmentPoints": [
@@ -7963,9 +7963,9 @@
             "y": -14.177666575113953
         },
         "alias": "cpmA",
-        "templateId": "cpmA___N-cyclopropylmethyl-adenine"
+        "templateId": "cpmA___N6-cyclopropylmethyladenine"
     },
-    "monomerTemplate-cpmA___N-cyclopropylmethyl-adenine": {
+    "monomerTemplate-cpmA___N6-cyclopropylmethyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -8212,7 +8212,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "cpmA___N-cyclopropylmethyl-adenine",
+        "id": "cpmA___N6-cyclopropylmethyladenine",
         "fullName": "N-cyclopropylmethyl-adenine",
         "alias": "cpmA",
         "attachmentPoints": [
@@ -8446,9 +8446,9 @@
             "y": -12.747666575113946
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
-    "monomerTemplate-nasP___Sodium Phosporothioate": {
+    "monomerTemplate-sP-___Dihydrogen phosphorothioate": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -8525,7 +8525,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "nasP___Sodium Phosporothioate",
+        "id": "sP-___Dihydrogen phosphorothioate",
         "fullName": "Sodium Phosporothioate",
         "alias": "nasP",
         "attachmentPoints": [

@@ -61,7 +61,7 @@ async function drawThreeMonomers(page: Page) {
   const y3 = 106;
   await selectMonomer(page, Sugars.ThreeA6);
   await page.mouse.click(x1, y1);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await page.mouse.click(x2, y2);
   await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x3, y3);
@@ -93,7 +93,7 @@ async function drawBasePhosphate(page: Page) {
   const base1 = bases.nth(0);
   const phosphates = await page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x, y);
@@ -133,7 +133,7 @@ async function drawSugarBase(page: Page) {
   const base1 = bases.nth(0);
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await page.mouse.click(x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
@@ -370,7 +370,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
@@ -388,12 +388,10 @@ test.describe('RNA Library', () => {
     Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('rna-builder-slot--sugar').click();
-    await page
-      .getByTestId("3SS6___3'-Thiol-Modifier 6 S-S from Glen Research")
-      .click();
+    await page.getByTestId(Sugars.ThreeSS6).click();
     await page.getByTestId('rna-builder-slot--sugar').click();
     await takeRNABuilderScreenshot(page);
   });
@@ -459,7 +457,7 @@ test.describe('RNA Library', () => {
     });
     await page.getByTestId('edit').locator('div').click();
     await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId('baA___N-benzyl-adenine').click();
+    await page.getByTestId(Bases.baA).click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('25R(baA)Test-6-Ph_baA_25R_Test-6-Ph').click();
     // To avoid unstable test execution
@@ -548,7 +546,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await pressAddToPresetsButton(page);
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
@@ -571,7 +569,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId("3A6___6-amino-hexanol (3' end)").click();
     await moveMouseAway(page);
     await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId('baA___N-benzyl-adenine').click();
+    await page.getByTestId(Bases.baA).click();
     await moveMouseAway(page);
     await page.getByTestId('rna-builder-slot--phosphate').click();
     await page.getByTestId('bP___Boranophosphate').click();
@@ -586,7 +584,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     // To avoid unstable test execution
     // Hide tooltip which overlays 'rna-builder-slot--base' element
     await moveMouseAway(page);
@@ -614,7 +612,7 @@ test.describe('RNA Library', () => {
         groupName: 'Sugars',
         name: "3A6___6-amino-hexanol (3' end)",
       },
-      { type: 'base', groupName: 'Bases', name: 'baA___N-benzyl-adenine' },
+      { type: 'base', groupName: 'Bases', name: Bases.baA },
       {
         type: 'phosphate',
         groupName: 'Phosphates',
@@ -642,7 +640,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)_baA_3A6_.').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -673,7 +671,7 @@ test.describe('RNA Library', () => {
     Description: Base-Phosphate Combination not added to Presets.
     */
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('rna-builder-slot--base').click();
     await takeRNABuilderScreenshot(page);
@@ -811,8 +809,8 @@ test.describe('RNA Library', () => {
   });
 
   const molecules = [
-    { type: 'Sugars', description: '25R___2,5-Ribose' },
-    { type: 'Bases', description: 'baA___N-benzyl-adenine' },
+    { type: 'Sugars', description: Sugars.TwentyFiveR },
+    { type: 'Bases', description: Bases.baA },
     { type: 'Phosphates', description: 'bP___Boranophosphate' },
   ];
 
@@ -959,7 +957,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
-    await page.getByTestId(`12ddR___1',2'-Di-Deoxy-Ribose`).click();
+    await page.getByTestId(Sugars.TwelveddR).click();
     await page.getByTestId('rna-builder-slot--base').click();
     await takePresetsScreenshot(page);
   });
@@ -1140,7 +1138,7 @@ test.describe('RNA Library', () => {
     */
     await expandCollapseRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId(`baA___N-benzyl-adenine`).click();
+    await page.getByTestId(Bases.baA).click();
     await page.getByTestId('rna-builder-slot--sugar').click();
     await takePresetsScreenshot(page);
   });

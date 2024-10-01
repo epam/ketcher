@@ -498,7 +498,7 @@
                 "$ref": "monomerTemplate-moen___2-Methoxyethylamino"
             },
             {
-                "$ref": "monomerTemplate-5Br-dU___5-Bromo dU"
+                "$ref": "monomerTemplate-5Br-dU___5-Bromo-deoxyuridine"
             },
             {
                 "$ref": "monomerTemplate-sDBL___Symmetric Doubler"
@@ -2374,9 +2374,9 @@
             "y": -8.449999999999996
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
-    "monomerTemplate-5Br-dU___5-Bromo dU": {
+    "monomerTemplate-5Br-dU___5-Bromo-deoxyuridine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -2727,7 +2727,7 @@
         ],
         "class": "RNA",
         "classHELM": "RNA",
-        "id": "5Br-dU___5-Bromo dU",
+        "id": "5Br-dU___5-Bromo-deoxyuridine",
         "fullName": "5-Bromo-deoxyuridine",
         "alias": "5-Bromo dU",
         "attachmentPoints": [
@@ -3329,7 +3329,7 @@
             "y": -6.499999999999982
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
     "monomer2302": {
         "type": "monomer",
@@ -3420,7 +3420,7 @@
             "y": -8.499999999999993
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
     "monomer2311": {
         "type": "monomer",
@@ -3511,7 +3511,7 @@
             "y": -7.5000000000000036
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
     "monomer2320": {
         "type": "monomer",
@@ -3602,7 +3602,7 @@
             "y": -8.574999999999996
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
     "monomer2329": {
         "type": "monomer",
@@ -3693,7 +3693,7 @@
             "y": -8.574999999999996
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
     "monomer2338": {
         "type": "monomer",

@@ -179,7 +179,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-12ddR___1',2'-Di-Deoxy-Ribose"
+                "$ref": "monomerTemplate-12ddR___1',2'-dideoxyribose"
             },
             {
                 "$ref": "monomerTemplate-P___Phosphate"
@@ -209,16 +209,16 @@
                 "$ref": "monomerTemplate-nC6n5U___Amino-Modier C6 dT"
             },
             {
-                "$ref": "monomerTemplate-DBCOnC___5-DBCO-U (ethylene carbamoyl hexylamino linker)"
+                "$ref": "monomerTemplate-DBCOnC___5-DBCO-U"
             },
             {
-                "$ref": "monomerTemplate-m2G___2-Methylguanine"
+                "$ref": "monomerTemplate-m2G___N2-methylguanine"
             },
             {
                 "$ref": "monomerTemplate-mn___Methylamino"
             },
             {
-                "$ref": "monomerTemplate-mepo2___Methylenephosphonate"
+                "$ref": "monomerTemplate-mepo2___Hydroxymethylphosphonic acid"
             },
             {
                 "$ref": "monomerTemplate-mp___Methylphosphonate"
@@ -251,9 +251,9 @@
             "y": -5.637499999999998
         },
         "alias": "12ddR",
-        "templateId": "12ddR___1',2'-Di-Deoxy-Ribose"
+        "templateId": "12ddR___1',2'-dideoxyribose"
     },
-    "monomerTemplate-12ddR___1',2'-Di-Deoxy-Ribose": {
+    "monomerTemplate-12ddR___1',2'-dideoxyribose": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -415,7 +415,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "12ddR___1',2'-Di-Deoxy-Ribose",
+        "id": "12ddR___1',2'-dideoxyribose",
         "fullName": "1',2'-Di-Deoxy-Ribose",
         "alias": "12ddR",
         "attachmentPoints": [
@@ -2616,9 +2616,9 @@
             "y": -16.499999999999996
         },
         "alias": "DBCOnC",
-        "templateId": "DBCOnC___5-DBCO-U (ethylene carbamoyl hexylamino linker)"
+        "templateId": "DBCOnC___5-DBCO-U"
     },
-    "monomerTemplate-DBCOnC___5-DBCO-U (ethylene carbamoyl hexylamino linker)": {
+    "monomerTemplate-DBCOnC___5-DBCO-U": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -3322,7 +3322,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "DBCOnC___5-DBCO-U (ethylene carbamoyl hexylamino linker)",
+        "id": "DBCOnC___5-DBCO-U",
         "fullName": "5-DBCO-U (ethylene carbamoyl hexylamino linker)",
         "alias": "DBCOnC",
         "attachmentPoints": [
@@ -3346,9 +3346,9 @@
             "y": -16.531695023454525
         },
         "alias": "m2G",
-        "templateId": "m2G___2-Methylguanine"
+        "templateId": "m2G___N2-methylguanine"
     },
-    "monomerTemplate-m2G___2-Methylguanine": {
+    "monomerTemplate-m2G___N2-methylguanine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -3558,7 +3558,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "m2G___2-Methylguanine",
+        "id": "m2G___N2-methylguanine",
         "fullName": "2-Methylguanine",
         "alias": "m2G",
         "attachmentPoints": [
@@ -3678,9 +3678,9 @@
             "y": -13.0125
         },
         "alias": "mepo2",
-        "templateId": "mepo2___Methylenephosphonate"
+        "templateId": "mepo2___Hydroxymethylphosphonic acid"
     },
-    "monomerTemplate-mepo2___Methylenephosphonate": {
+    "monomerTemplate-mepo2___Hydroxymethylphosphonic acid": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -3771,7 +3771,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "mepo2___Methylenephosphonate",
+        "id": "mepo2___Hydroxymethylphosphonic acid",
         "fullName": "Methylenephosphonate",
         "alias": "mepo2",
         "attachmentPoints": [

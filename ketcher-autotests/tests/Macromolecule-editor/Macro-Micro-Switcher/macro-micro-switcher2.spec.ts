@@ -26,6 +26,8 @@ import {
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
   selectClearCanvasTool,
+  Sugars,
+  Bases,
 } from '@utils';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 
@@ -38,9 +40,9 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('meM___N-Methyl-Methionine').getByText('★').click();
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId('25R___2,5-Ribose').getByText('★').click();
+  await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
   await page.getByTestId('summary-Bases').click();
-  await page.getByTestId('baA___N-benzyl-adenine').getByText('★').click();
+  await page.getByTestId(Bases.baA).getByText('★').click();
   await page.getByTestId('summary-Phosphates').click();
   await page.getByTestId('bP___Boranophosphate').getByText('★').click();
   await page.getByTestId('CHEM-TAB').click();

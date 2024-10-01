@@ -1844,13 +1844,12 @@ test.describe('Ambiguous monomers: ', () => {
       await chooseFileFormat(page, 'IDT');
       await takeEditorScreenshot(page);
 
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-
       test.fixme(
         true,
         `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
       );
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 100);
     },
   );
 

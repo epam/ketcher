@@ -101,7 +101,7 @@ export class SequenceMode extends BaseMode {
 
     const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
       editor.canvas.width.baseVal.value,
-      true,
+      false,
       false,
     );
     const zoom = ZoomTool.instance;

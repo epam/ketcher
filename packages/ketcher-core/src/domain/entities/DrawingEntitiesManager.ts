@@ -554,6 +554,7 @@ export class DrawingEntitiesManager {
     this.allEntities.forEach(([, drawingEntity]) => {
       if (
         drawingEntity instanceof Chem &&
+        drawingEntity.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(drawingEntity)
       ) {
         return;

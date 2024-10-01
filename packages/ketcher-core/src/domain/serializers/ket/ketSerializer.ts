@@ -529,7 +529,7 @@ export class KetSerializer implements Serializer<Struct> {
     structToDrawingEntitiesConversionResult.fragmentIdToAtomIdMap.forEach(
       (_atomIdsMap) => {
         _atomIdsMap.forEach((atomId, oldAtomId) => {
-          atomIdsMap.set(atomId, oldAtomId);
+          atomIdsMap.set(oldAtomId, atomId);
         });
       },
     );

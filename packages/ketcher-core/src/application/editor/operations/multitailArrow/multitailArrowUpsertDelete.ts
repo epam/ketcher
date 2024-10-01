@@ -5,21 +5,28 @@ import { OperationType } from 'application/editor';
 import { ReStruct, ReMultitailArrow } from 'application/render';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants';
 
+interface MultitailArrowUpsertData {
+  id?: number;
+}
+
+interface MultitailArrowDeleteData {
+  id: number;
+}
+
 export class MultitailArrowUpsert extends BaseOperation {
-  constructor(
-    private readonly multitailArrow: MultitailArrow,
-    private id?: number,
-  ) {
+  data: MultitailArrowUpsertData;
+  constructor(private readonly multitailArrow: MultitailArrow, id?: number) {
     super(OperationType.MULTITAIL_ARROW_UPSERT);
+    this.data = { id };
   }
 
   execute(reStruct: ReStruct) {
     const struct = reStruct.molecule;
 
-    if (this.id === undefined) {
-      this.id = struct.multitailArrows.newId();
+    if (this.data.id === undefined) {
+      this.data.id = struct.multitailArrows.newId();
     }
-    const id = this.id;
+    const id = this.data.id;
     const item = this.multitailArrow.clone();
     struct.multitailArrows.set(id, item);
     reStruct.multitailArrows.set(id, new ReMultitailArrow(item));
@@ -28,18 +35,20 @@ export class MultitailArrowUpsert extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new MultitailArrowDelete(this.id!);
+    return new MultitailArrowDelete(this.data.id!);
   }
 }
 
 export class MultitailArrowDelete extends BaseOperation {
   private multitailArrow?: MultitailArrow;
-  constructor(private id: number) {
+  data: MultitailArrowDeleteData;
+  constructor(id: number) {
     super(OperationType.MULTITAIL_ARROW_DELETE);
+    this.data = { id };
   }
 
   execute(reStruct: ReStruct) {
-    const reMultitailArrow = reStruct.multitailArrows.get(this.id);
+    const reMultitailArrow = reStruct.multitailArrows.get(this.data.id);
 
     if (!reMultitailArrow) {
       return;
@@ -48,11 +57,11 @@ export class MultitailArrowDelete extends BaseOperation {
     this.multitailArrow = reMultitailArrow.multitailArrow.clone();
     reStruct.clearVisel(reMultitailArrow.visel);
     reStruct.markItemRemoved();
-    reStruct.multitailArrows.delete(this.id);
-    reStruct.molecule.multitailArrows.delete(this.id);
+    reStruct.multitailArrows.delete(this.data.id);
+    reStruct.molecule.multitailArrows.delete(this.data.id);
   }
 
   invert(): BaseOperation {
-    return new MultitailArrowUpsert(this.multitailArrow!, this.id);
+    return new MultitailArrowUpsert(this.multitailArrow!, this.data.id);
   }
 }

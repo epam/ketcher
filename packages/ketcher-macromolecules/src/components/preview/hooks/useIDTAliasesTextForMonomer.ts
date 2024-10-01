@@ -3,9 +3,9 @@ import {
   IKetIdtAliases,
   KetMonomerClass,
   Sugar,
+  MonomerToAtomBond,
 } from 'ketcher-core';
 import { useMemo } from 'react';
-import { MonomerToAtomBond } from 'ketcher-core/dist/domain/entities/MonomerToAtomBond';
 
 type Props = {
   idtAliases: IKetIdtAliases | undefined;

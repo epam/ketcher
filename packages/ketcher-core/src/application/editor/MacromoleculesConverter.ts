@@ -245,14 +245,13 @@ export class MacromoleculesConverter {
         ?.get(monomerToAtomBond.atom.monomer)
         ?.get(monomerToAtomBond.atom.atomIdInMicroMode);
 
-      // const endSuperatomAttachmentPointNumber =
-
       if (!isNumber(beginAtom) || !isNumber(endAtom)) {
         conversionErrorMessage =
           'There is no atom for provided attachment point. Bond between monomers was not created.';
 
         return;
       }
+
       const bond = new Bond({
         type: Bond.PATTERN.TYPE.SINGLE,
         begin: beginAtom,
@@ -260,6 +259,7 @@ export class MacromoleculesConverter {
         beginSuperatomAttachmentPointNumber,
       });
       const bondId = struct.bonds.add(bond);
+
       reStruct?.bonds.set(bondId, new ReBond(bond));
     });
 

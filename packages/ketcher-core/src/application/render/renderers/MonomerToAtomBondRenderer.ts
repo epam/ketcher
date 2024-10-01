@@ -10,8 +10,6 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
   }
 
   private get scaledPosition() {
-    // we need to convert monomer coordinates(stored in angstroms) to pixels.
-    // it needs to be done in view layer of application (like renderers)
     const startPositionInPixels = Scale.modelToCanvas(
       this.monomerToAtomBond.startPosition,
       this.editorSettings,

@@ -11,6 +11,8 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
 
+const BOND_WIDTH = 2;
+
 export class BondRenderer extends BaseRenderer {
   private pathShape = '';
   private selectionElement:
@@ -133,8 +135,7 @@ export class BondRenderer extends BaseRenderer {
     if (atom.renderer?.isLabelVisible) {
       return position.addScaled(
         halfEdge.direction,
-        2 * 3 + this.bond.firstAtom.label.length * 8,
-        // 2 is the width of the bond line
+        BOND_WIDTH * 3 + this.bond.firstAtom.label.length * 8,
       );
     }
 
@@ -212,10 +213,9 @@ export class BondRenderer extends BaseRenderer {
     const firstHalfEdge = halfEdges?.[0];
     const secondHalfEdge = halfEdges?.[1];
     const bond: Bond = this.bond;
-    const bondThickness = 2;
     const bondSpacingInPx = 6;
     const stereoBondWidth = 6;
-    const regularSelectionThikness = bondSpacingInPx + bondThickness;
+    const regularSelectionThikness = bondSpacingInPx + BOND_WIDTH;
 
     if (!firstHalfEdge || !secondHalfEdge) {
       KetcherLogger.warn(
@@ -382,7 +382,6 @@ export class BondRenderer extends BaseRenderer {
     const secondHalfEdge = halfEdges?.[1];
     const bondSpace = 6;
     const linesOffset = bondSpace / 2;
-    const LINE_WIDTH = 2;
     const stereoBondWidth = 6;
 
     if (!firstHalfEdge || !secondHalfEdge) {
@@ -484,7 +483,7 @@ export class BondRenderer extends BaseRenderer {
         .append('path')
         .attr('d', this.pathShape)
         .attr('stroke', 'black')
-        .attr('stroke-width', '2px')
+        .attr('stroke-width', `${BOND_WIDTH}px`)
         .on('mouseover', () => {
           this.appendHover();
         })
@@ -561,11 +560,11 @@ export class BondRenderer extends BaseRenderer {
         const direction = bondEndPosition.sub(bondStartPosition);
         const bondLength = direction.length() + 0.2;
         const normalizedDirection = direction.normalized();
-        const offsetBetweenLines = 1.2 * LINE_WIDTH;
+        const offsetBetweenLines = 1.2 * BOND_WIDTH;
         const numberOfLines =
           Math.max(
             Math.floor(
-              (bondLength - LINE_WIDTH) / (LINE_WIDTH + offsetBetweenLines),
+              (bondLength - BOND_WIDTH) / (BOND_WIDTH + offsetBetweenLines),
             ),
             0,
           ) + 2;
@@ -573,6 +572,7 @@ export class BondRenderer extends BaseRenderer {
         const halfOfBondEndWidth = 0.7 * stereoBondWidth;
 
         let path = '';
+        // TODO define proper names for variables below
         let p;
         let q;
         let r;
@@ -632,7 +632,7 @@ export class BondRenderer extends BaseRenderer {
           .append('path')
           .attr('d', this.pathShape)
           .attr('stroke', 'black')
-          .attr('stroke-width', '2px')
+          .attr('stroke-width', `${BOND_WIDTH}px`)
           .on('mouseenter', () => {
             this.appendHover();
           })

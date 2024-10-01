@@ -131,7 +131,6 @@ export class AtomRenderer extends BaseRenderer {
     }
     if (this.atom.selected) {
       this.appendSelection();
-      // this.raiseElement();
     } else {
       this.removeSelection();
     }

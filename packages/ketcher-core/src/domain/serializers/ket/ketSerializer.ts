@@ -511,49 +511,6 @@ export class KetSerializer implements Serializer<Struct> {
       JSON.stringify(fileContentForMicromolecules),
     );
 
-    // let fragmentNumber = 1;
-    // const fragments = MacromoleculesConverter.getFragmentsGroupedBySgroup(
-    //   deserializedMicromolecules,
-    // );
-    // const atomIdMap = new Map<number, number>();
-    // fragments.forEach((_fragment) => {
-    //   const fragmentStruct = deserializedMicromolecules.getFragment(
-    //     _fragment,
-    //     false,
-    //     atomIdMap,
-    //   );
-    //   const fragmentBbox = fragmentStruct.getCoordBoundingBox();
-    //
-    //   if (fragmentStruct.sgroups.get(0)?.isSuperatomWithoutLabel) {
-    //     const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
-    //       {
-    //         struct: fragmentStruct,
-    //         label: 'F' + fragmentNumber,
-    //         colorScheme: undefined,
-    //         favorite: false,
-    //         props: {
-    //           Name: 'F' + fragmentNumber,
-    //           MonomerNaturalAnalogCode: '',
-    //           MonomerName: 'F' + fragmentNumber,
-    //           MonomerType: MONOMER_CONST.CHEM,
-    //           isMicromoleculeFragment: true,
-    //         },
-    //       },
-    //       new Vec2(
-    //         fragmentBbox.max.x - (fragmentBbox.max.x - fragmentBbox.min.x) / 2,
-    //         fragmentBbox.max.y - (fragmentBbox.max.y - fragmentBbox.min.y) / 2,
-    //       ),
-    //     );
-    //     const monomer = monomerAdditionCommand.operations[0].monomer;
-    //     monomerIdsMap[`mol${fragmentNumber - 1}`] = monomer?.id;
-    //     command.merge(monomerAdditionCommand);
-    //   } else {
-    //   }
-    //
-    //   fragmentNumber++;
-    // });
-    //
-
     const structToDrawingEntitiesConversionResult =
       MacromoleculesConverter.convertStructToDrawingEntities(
         deserializedMicromolecules,

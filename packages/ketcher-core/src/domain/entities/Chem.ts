@@ -5,9 +5,6 @@ import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain'
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class Chem extends BaseMonomer {
-  constructor(args) {
-    super(args);
-  }
   public getValidSourcePoint(monomer?: BaseMonomer) {
     return Peptide.prototype.getValidSourcePoint.call(this, monomer);
   }

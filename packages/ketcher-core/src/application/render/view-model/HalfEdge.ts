@@ -4,7 +4,6 @@ import { Bond } from 'domain/entities/CoreBond';
 
 export class HalfEdge {
   public direction: Vec2;
-  // public p: Vec2;
   public loopId: number;
   // eslint-disable-next-line no-use-before-define
   public oppositeHalfEdge: HalfEdge | undefined;
@@ -26,7 +25,6 @@ export class HalfEdge {
     public bond: Bond,
   ) {
     this.direction = new Vec2();
-    // this.p = new Vec2(); // corrected origin position
     this.loopId = -1; // left loop id if the half-bond is in a loop, otherwise -1
     this.sinToLeftNeighborHalfEdge = 0;
     this.cosToLeftNeighborHalfEdge = 0;

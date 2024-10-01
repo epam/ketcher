@@ -714,31 +714,24 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Check import of .ket file with unresolved monomers and save in .idt format ',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
-      Test working not a proper way because we have a bug https://github.com/epam/Indigo/issues/2121
-      */
-      await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
-      const expectedFile = await getIdt(page);
-      await saveToFile('IDT/unresolved-monomers.idt', expectedFile);
+  test('Check import of .ket file with unresolved monomers and save in .idt format ', async () => {
+    await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
+    const expectedFile = await getIdt(page);
+    await saveToFile('IDT/unresolved-monomers.idt', expectedFile);
 
-      const METADATA_STRING_INDEX = [1];
+    const METADATA_STRING_INDEX = [1];
 
-      const { fileExpected: idtFileExpected, file: idtFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/IDT/unresolved-monomers.idt',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
+    const { fileExpected: idtFileExpected, file: idtFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/IDT/unresolved-monomers.idt',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(idtFile).toEqual(idtFileExpected);
+    expect(idtFile).toEqual(idtFileExpected);
 
-      await takeEditorScreenshot(page);
-    },
-  );
+    await takeEditorScreenshot(page);
+  });
 
   test('Verify import of unresolved IDT monomers as "black box" in flex/snake modes and ? in sequence', async () => {
     /*

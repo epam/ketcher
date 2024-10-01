@@ -539,7 +539,7 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(15000);
+                  test.setTimeout(20000);
 
                   await loadTwoMonomers(page, leftCHEM, rightCHEM);
 

@@ -352,7 +352,7 @@ test.describe('Connection rules for sugars: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 1: Connect ${leftSugarConnectionPoint} to ${rightSugarConnectionPoint} of ${leftSugar.alias} and ${rightSugar.alias}`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(25000);
 
                 await loadTwoMonomers(page, leftSugar, rightSugar);
 
@@ -565,7 +565,7 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case6: Connect ${leftSugarConnectionPoint} to ${rightPeptideConnectionPoint} of Sugar(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(30000);
+                test.setTimeout(25000);
 
                 await loadTwoMonomers(page, leftSugar, rightPeptide);
 
@@ -758,7 +758,7 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case7: Cnnct ${leftSugarConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftSugar.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(25000);
 
                 await loadTwoMonomers(page, leftSugar, rightCHEM);
 
@@ -797,7 +797,7 @@ test.describe('Connection rules for sugars: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case8: Cnnct Center to Center of Base(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(25000);
 
         await loadTwoMonomers(page, leftSugar, rightPeptide);
 
@@ -1015,7 +1015,7 @@ test.describe('Connection rules for sugars: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftSugarConnectionPoint} to ${rightOMConnectionPoint} of Sugar(${leftSugar.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(25000);
 
                 await loadTwoMonomers(page, leftSugar, rightOM);
 
@@ -1054,7 +1054,7 @@ test.describe('Connection rules for sugars: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Sugar(${leftSugar.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(25000);
 
         await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
 

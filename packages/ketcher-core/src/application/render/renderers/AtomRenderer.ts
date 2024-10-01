@@ -1,4 +1,4 @@
-import { BaseRenderer } from 'application/render';
+import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor';

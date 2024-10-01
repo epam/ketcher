@@ -1,4 +1,4 @@
-import { BaseRenderer } from 'application/render';
+import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';

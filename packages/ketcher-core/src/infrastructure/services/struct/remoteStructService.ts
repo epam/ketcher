@@ -396,7 +396,6 @@ export class RemoteStructService implements StructService {
       { struct: data },
       {
         ...this.getStandardServerOptions(options),
-
         'render-coloring': options?.['render-coloring'],
         'render-font-size': options?.['render-font-size'],
         'render-font-size-unit': options?.['render-font-size-unit'],
@@ -415,9 +414,7 @@ export class RemoteStructService implements StructService {
         'render-hash-spacing-unit': options?.['render-hash-spacing-unit'],
         'render-output-sheet-width': options?.['render-output-sheet-width'],
         'render-output-sheet-height': options?.['render-output-sheet-height'],
-
         'render-output-format': outputFormat,
-        'render-bond-line-width': bondThickness,
         'render-label-mode': getLabelRenderModeForIndigo(),
       },
       (response) => response.then((resp) => resp.text()),

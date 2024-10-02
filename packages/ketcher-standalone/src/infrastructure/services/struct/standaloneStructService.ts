@@ -718,7 +718,6 @@ class IndigoService implements StructService {
     options: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '',
-      bondThickness: 1,
     },
   ): Promise<string> {
     const { outputFormat, backgroundColor, bondThickness, ...restOptions } =
@@ -739,7 +738,6 @@ class IndigoService implements StructService {
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(restOptions),
         'render-label-mode': getLabelRenderModeForIndigo(),
-
         'render-coloring': restOptions['render-coloring'],
         'render-font-size': restOptions['render-font-size'],
         'render-font-size-unit': restOptions['render-font-size-unit'],
@@ -756,7 +754,6 @@ class IndigoService implements StructService {
           restOptions['render-stereo-bond-width-unit'],
         'render-hash-spacing': restOptions['render-hash-spacing'],
         'render-hash-spacing-unit': restOptions['render-hash-spacing-unit'],
-
         'render-output-sheet-width': restOptions['render-output-sheet-width'],
         'render-output-sheet-height': restOptions['render-output-sheet-height'],
       };
@@ -765,7 +762,6 @@ class IndigoService implements StructService {
         struct: inputData,
         outputFormat: outputFormat || 'png',
         backgroundColor,
-        bondThickness,
         options: commandOptions,
       };
 

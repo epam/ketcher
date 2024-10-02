@@ -447,7 +447,7 @@ class ReBond extends ReObject {
       const style = {
         fill: highlightColor,
         stroke: highlightColor,
-        'stroke-width': options.lineattr['stroke-width'] * 7,
+        'stroke-width': options.lineattr['stroke-width'] * 3,
         'stroke-linecap': 'round',
       };
 

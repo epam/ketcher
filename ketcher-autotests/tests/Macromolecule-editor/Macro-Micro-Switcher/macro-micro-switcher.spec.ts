@@ -315,75 +315,63 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and move it to a new position',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and move it to a new position', async () => {
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3654
     */
-      const x = 400;
-      const y = 400;
-      await turnOnMacromoleculesEditor(page);
-      await openFileAndAddToCanvasMacro(
-        'KET/three-monomers-connected-with-bonds.ket',
-        page,
-      );
-      await turnOnMicromoleculesEditor(page);
-      await page.keyboard.press('Control+a');
-      await page.getByText('Edc').hover();
-      await dragMouseTo(x, y, page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    const x = 400;
+    const y = 400;
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasMacro(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.keyboard.press('Control+a');
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    'Add monomers in macro mode then switch to micro mode and check that it can not be expanded and abreviation can not be removed',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Add monomers in macro mode then switch to micro mode and check that it can not be expanded and abreviation can not be removed', async () => {
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
-      await openFileAndAddToCanvasMacro(
-        'KET/three-monomers-connected-with-bonds.ket',
-        page,
-      );
-      await turnOnMicromoleculesEditor(page);
-      await page.getByText('A6OH').click({ button: 'right' });
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasMacro(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('A6OH').click({ button: 'right' });
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    'Add monomers in macro mode then switch to micro mode and check that it can not be moved',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Add monomers in macro mode then switch to micro mode and check that it can not be moved', async () => {
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3658
     */
-      const x1 = 400;
-      const y1 = 400;
-      const x2 = 500;
-      const y2 = 500;
-      await turnOnMacromoleculesEditor(page);
-      await openFileAndAddToCanvasMacro(
-        'KET/three-monomers-not-connected-with-bonds.ket',
-        page,
-      );
-      await turnOnMicromoleculesEditor(page);
-      await page.getByText('Edc').hover();
-      await dragMouseTo(x1, y1, page);
-      await page.getByText('Edc').hover();
-      await dragMouseTo(x2, y2, page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    const x1 = 400;
+    const y1 = 400;
+    const x2 = 500;
+    const y2 = 500;
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasMacro(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x1, y1, page);
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x2, y2, page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (UI Buttons) after switching to Macro mode', async () => {
     /* 

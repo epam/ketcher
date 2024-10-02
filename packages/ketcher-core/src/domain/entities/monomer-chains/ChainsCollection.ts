@@ -19,6 +19,8 @@ import {
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -98,8 +100,13 @@ export class ChainsCollection {
 
   public static fromMonomers(monomers: BaseMonomer[]) {
     const chainsCollection = new ChainsCollection();
+    const filteredMonomers = monomers.filter(
+      (monomer) =>
+        !monomer.monomerItem.props.isMicromoleculeFragment ||
+        isMonomerSgroupWithAttachmentPoints(monomer),
+    );
     const [firstMonomersInRegularChains, firstMonomersInCycledChains] =
-      this.getFirstMonomersInChains(monomers);
+      this.getFirstMonomersInChains(filteredMonomers);
 
     firstMonomersInRegularChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer));
@@ -163,6 +170,11 @@ export class ChainsCollection {
   ): BaseMonomer[] {
     const firstMonomersInRegularChains = monomersList.filter((monomer) => {
       const R1PolymerBond = monomer.attachmentPointsToBonds.R1;
+
+      if (R1PolymerBond instanceof MonomerToAtomBond) {
+        return true;
+      }
+
       const isFirstMonomerWithR2R1connection =
         !R1PolymerBond || R1PolymerBond.isSideChainConnection;
 

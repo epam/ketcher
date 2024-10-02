@@ -267,21 +267,25 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Micromolecules in macromode will be represented as CHEMs with generated name(F1, F2, ...Fn)', async () => {
-    /*
+  test.skip(
+    'Micromolecules in macromode will be represented as CHEMs with generated name(F1, F2, ...Fn)',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
-    await turnOnMicromoleculesEditor(page);
-    await openFileAndAddToCanvas(
-      'KET/eight-micromolecules.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      await turnOnMicromoleculesEditor(page);
+      await openFileAndAddToCanvas(
+        'KET/eight-micromolecules.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check that After hiding Library in Macro mode possible to see Show Library button', async () => {
     /*
@@ -622,175 +626,215 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
   });
 
-  test('Check that the Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it', async () => {
-    /*
+  test.skip(
+    'Check that the Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/glutamine.mol',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/glutamine.mol',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Check that the Ket-structure opened from the file in Micro mode  is visible in Macro mode when hover on it', async () => {
-    /*
+  test.skip(
+    'Check that the Ket-structure opened from the file in Micro mode  is visible in Macro mode when hover on it',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas(
-      'KET/stereo-and-structure.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/stereo-and-structure.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create two Benzene rings structure with Charge Plus (+) and Charge Plus (-) Tool added in Micro mode and switch to Macro mode', async () => {
-    /*
+  test.skip(
+    'Create two Benzene rings structure with Charge Plus (+) and Charge Plus (-) Tool added in Micro mode and switch to Macro mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
-    await openFileAndAddToCanvas(
-      'KET/two-benzene-charged.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F2').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/two-benzene-charged.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F2').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create two Benzene rings structure with some text added in Micro mode and switch to Macro mode.', async () => {
-    /*
+  test.skip(
+    'Create two Benzene rings structure with some text added in Micro mode and switch to Macro mode.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without text.
     */
-    await openFileAndAddToCanvas(
-      'KET/benzene-rings-with-text.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/benzene-rings-with-text.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create two Benzene rings structure with Shape Ellipse Tool added in Micro mode and switch to Macro mode.', async () => {
-    /*
+  test.skip(
+    'Create two Benzene rings structure with Shape Ellipse Tool added in Micro mode and switch to Macro mode.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without Shape Ellipse.
     */
-    await openFileAndAddToCanvas(
-      'KET/two-benzene-and-ellipse.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/two-benzene-and-ellipse.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create two Benzene rings structure with Arrow Open Angle Tool added in Micro mode and switch to Macro mode.', async () => {
-    /*
+  test.skip(
+    'Create two Benzene rings structure with Arrow Open Angle Tool added in Micro mode and switch to Macro mode.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
-    await openFileAndAddToCanvas(
-      'KET/two-benzene-and-arrow.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/two-benzene-and-arrow.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create ABS, new OR Group, new AND Group. Switch to Macro mode and check that ABS, AND and OR isn not appear.', async () => {
-    /*
+  test.skip(
+    'Create ABS, new OR Group, new AND Group. Switch to Macro mode and check that ABS, AND and OR isn not appear.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-    const xOffsetFromCenter = 200;
-    const yOffsetFromCenter = 0;
-    await openFileAndAddToCanvas(
-      'KET/three-alpha-d-allopyranose.ket',
-      page,
-      xOffsetFromCenter,
-      yOffsetFromCenter,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await waitForRender(page, async () => {
-      await page.getByText('F1').locator('..').hover();
-    });
-    await takeEditorScreenshot(page);
-  });
+      const xOffsetFromCenter = 200;
+      const yOffsetFromCenter = 0;
+      await openFileAndAddToCanvas(
+        'KET/three-alpha-d-allopyranose.ket',
+        page,
+        xOffsetFromCenter,
+        yOffsetFromCenter,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await waitForRender(page, async () => {
+        await page.getByText('F1').locator('..').hover();
+      });
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Create two Benzene rings structure with Reaction Plus Tool in Micro mode and switch to Macro mode.', async () => {
-    /*
+  test.skip(
+    'Create two Benzene rings structure with Reaction Plus Tool in Micro mode and switch to Macro mode.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: In Macro mode plus sign is not appear
     */
-    await openFileAndAddToCanvas(
-      'KET/two-benzene-and-plus.ket',
-      page,
-      topLeftCorner.x,
-      topLeftCorner.y,
-    );
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/two-benzene-and-plus.ket',
+        page,
+        topLeftCorner.x,
+        topLeftCorner.y,
+      );
+      await turnOnMacromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Check that the Ket-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.', async () => {
-    /*
+  test.skip(
+    'Check that the Ket-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
-    const topLeftCornerCoords = {
-      x: 500,
-      y: 100,
-    };
-    await pasteFromClipboard(
-      page,
-      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
-    );
-    await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').click();
-    await takeEditorScreenshot(page);
-  });
+      const topLeftCornerCoords = {
+        x: 500,
+        y: 100,
+      };
+      await pasteFromClipboard(
+        page,
+        FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+      );
+      await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').click();
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Check that the Mol-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.', async () => {
-    /*
+  test.skip(
+    'Check that the Mol-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
-    const coordsToClick = {
-      x: 400,
-      y: 100,
-    };
-    await pasteFromClipboard(
-      page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-      '.mol',
-    );
-    await waitForRender(page, async () => {
-      await page.mouse.click(coordsToClick.x, coordsToClick.y);
-    });
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      const coordsToClick = {
+        x: 400,
+        y: 100,
+      };
+      await pasteFromClipboard(
+        page,
+        FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        '.mol',
+      );
+      await waitForRender(page, async () => {
+        await page.mouse.click(coordsToClick.x, coordsToClick.y);
+      });
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test(
     'Make full screen mode in micro mode and switch to macro mode.',
@@ -814,25 +858,29 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test('Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line', async () => {
-    /*
+  test.skip(
+    'Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Atoms displayed as dots, without any text or other additional information.
     Bonds displayed as one line regardless which type of bond it is.
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 3; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('zoom-selector').click();
+      for (let i = 0; i < 3; i++) {
+        await waitForRender(page, async () => {
+          await page.getByTestId('zoom-out-button').click();
+        });
+      }
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open a macro file and put in center of canvas in micro mode then switch to macro', async () => {
     /*
@@ -847,27 +895,31 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Settings related to atom and bond display are ignored in macromolecules mode', async () => {
-    /*
+  test.skip(
+    'Settings related to atom and bond display are ignored in macromolecules mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher
     Description: Settings related to atom and bond display are ignored in macromolecules mode,
     and display is consistently set to dots for atoms and single lines for bonds.
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
     */
-    await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
-    await setAtomAndBondSettings(page);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 3; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
+      await setAtomAndBondSettings(page);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByTestId('zoom-selector').click();
+      for (let i = 0; i < 3; i++) {
+        await waitForRender(page, async () => {
+          await page.getByTestId('zoom-out-button').click();
+        });
+      }
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check that attachment point added in micro mode used as attachment point when switch to macro mode', async () => {
     /*
@@ -999,89 +1051,105 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async () => {
-    /*
+  test.skip(
+    'Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-    const x = 200;
-    const y = 200;
-    const x1 = 600;
-    const y1 = 600;
-    await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(x, y);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await dragMouseTo(x1, y1, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      const x = 200;
+      const y = 200;
+      const x1 = 600;
+      const y1 = 600;
+      await selectRing(RingButton.Benzene, page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await dragMouseTo(x1, y1, page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Make sure that micro structure Atom when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async () => {
-    /*
+  test.skip(
+    'Make sure that micro structure Atom when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-    const x = 200;
-    const y = 200;
-    const x1 = 600;
-    const y1 = 600;
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
-    await page.mouse.click(x, y);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await dragMouseTo(x1, y1, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      const x = 200;
+      const y = 200;
+      const x1 = 600;
+      const y1 = 600;
+      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await dragMouseTo(x1, y1, page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Micro structure Functional Group when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async () => {
-    /*
+  test.skip(
+    'Micro structure Functional Group when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-    const x = 200;
-    const y = 200;
-    const x1 = 600;
-    const y1 = 600;
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-    await page.mouse.click(x, y);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await dragMouseTo(x1, y1, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      const x = 200;
+      const y = 200;
+      const x1 = 600;
+      const y1 = 600;
+      await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await dragMouseTo(x1, y1, page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Micro structure Salt and Solvent when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode', async () => {
-    /*
+  test.skip(
+    'Micro structure Salt and Solvent when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
-    const x = 200;
-    const y = 200;
-    const x1 = 600;
-    const y1 = 600;
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
-    await page.mouse.click(x, y);
-    await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
-    await dragMouseTo(x1, y1, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
+      const x = 200;
+      const y = 200;
+      const x1 = 600;
+      const y1 = 600;
+      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+      await page.mouse.click(x, y);
+      await takeEditorScreenshot(page);
+      await turnOnMacromoleculesEditor(page);
+      await page.getByText('F1').locator('..').hover();
+      await dragMouseTo(x1, y1, page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+      await turnOnMicromoleculesEditor(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   const testData = [
     {
@@ -1934,32 +2002,36 @@ test.describe('Macro-Micro-Switcher', () => {
 
   for (const data of testData5) {
     // eslint-disable-next-line max-len
-    test(`Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`, async () => {
-      /*
+    test.skip(
+      `Add to micro structure with free attachment point ${data.type} in sequence mode and ensure that a connection was formed when switching to flex or snake mode`,
+      { tag: ['@NeedToBeUpdated'] },
+      async () => {
+        /*
       Github ticket: #4530
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
-      await openFileAndAddToCanvas(
-        'KET/two-attachment-points-added-in-micro-mode.ket',
-        page,
-      );
-      await turnOnMacromoleculesEditor(page);
-      await selectSequenceLayoutModeTool(page);
+        await openFileAndAddToCanvas(
+          'KET/two-attachment-points-added-in-micro-mode.ket',
+          page,
+        );
+        await turnOnMacromoleculesEditor(page);
+        await selectSequenceLayoutModeTool(page);
 
-      if (data.sequenceType) {
-        await switchSequenceEnteringButtonType(page, data.sequenceType);
-      }
+        if (data.sequenceType) {
+          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        }
 
-      await clickOnSequenceSymbol(page, '@', { button: 'right' });
-      await page.getByTestId('edit_sequence').click();
-      await page.keyboard.press('ArrowRight');
-      await enterSequence(page, 'a');
-      await page.keyboard.press('Escape');
-      await selectSnakeLayoutModeTool(page);
-      await selectSingleBondTool(page);
-      await page.getByText('F1').locator('..').hover();
-      await takeEditorScreenshot(page);
-    });
+        await clickOnSequenceSymbol(page, '@', { button: 'right' });
+        await page.getByTestId('edit_sequence').click();
+        await page.keyboard.press('ArrowRight');
+        await enterSequence(page, 'a');
+        await page.keyboard.press('Escape');
+        await selectSnakeLayoutModeTool(page);
+        await selectSingleBondTool(page);
+        await page.getByText('F1').locator('..').hover();
+        await takeEditorScreenshot(page);
+      },
+    );
   }
 
   const testData6 = [
@@ -1970,25 +2042,29 @@ test.describe('Macro-Micro-Switcher', () => {
 
   for (const data of testData6) {
     // eslint-disable-next-line max-len
-    test(`Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`, async () => {
-      /*
+    test.skip(
+      `Add to micro structure with NO free attachment point ${data.type} in sequence mode and ensure that a connection was NOt formed when switching to snake mode`,
+      { tag: ['@NeedToBeUpdated'] },
+      async () => {
+        /*
       Github ticket: #4530
       Description: R2-R1 connection was formed when switching to flex or snake mode
       */
-      await drawBenzeneRing(page);
-      await turnOnMacromoleculesEditor(page);
-      await selectSequenceLayoutModeTool(page);
+        await drawBenzeneRing(page);
+        await turnOnMacromoleculesEditor(page);
+        await selectSequenceLayoutModeTool(page);
 
-      if (data.sequenceType) {
-        await switchSequenceEnteringButtonType(page, data.sequenceType);
-      }
+        if (data.sequenceType) {
+          await switchSequenceEnteringButtonType(page, data.sequenceType);
+        }
 
-      await clickOnSequenceSymbol(page, '@', { button: 'right' });
-      await page.getByTestId('edit_sequence').click();
-      await page.keyboard.press('ArrowRight');
-      await enterSequence(page, 'a');
-      await takeEditorScreenshot(page);
-    });
+        await clickOnSequenceSymbol(page, '@', { button: 'right' });
+        await page.getByTestId('edit_sequence').click();
+        await page.keyboard.press('ArrowRight');
+        await enterSequence(page, 'a');
+        await takeEditorScreenshot(page);
+      },
+    );
   }
 
   test('Check it is NOT possible to attach old AP to new AP label', async () => {

@@ -1109,7 +1109,7 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBond),
+          editor.drawingEntitiesManager.deleteDrawingEntity(polymerBond),
         );
       });
     });
@@ -1505,7 +1505,7 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBond),
+          editor.drawingEntitiesManager.deleteDrawingEntity(polymerBond),
         );
       });
     });

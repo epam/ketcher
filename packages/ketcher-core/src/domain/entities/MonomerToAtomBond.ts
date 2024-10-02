@@ -4,16 +4,21 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseRenderer } from 'application/render';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
+import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 
 export class MonomerToAtomBond extends DrawingEntity {
   public endPosition: Vec2 = new Vec2();
-  public renderer?: MonomerToAtomBondRenderer = undefined;
+  public renderer?:
+    | MonomerToAtomBondRenderer
+    | MonomerToAtomBondSequenceRenderer = undefined;
 
   constructor(public monomer: BaseMonomer, public atom: Atom) {
     super();
   }
 
-  public setRenderer(renderer: MonomerToAtomBondRenderer): void {
+  public setRenderer(
+    renderer: MonomerToAtomBondRenderer | MonomerToAtomBondSequenceRenderer,
+  ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

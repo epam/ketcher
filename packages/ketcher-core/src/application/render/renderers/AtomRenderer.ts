@@ -22,13 +22,29 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendRootElement() {
-    return this.canvas
+    const editor = CoreEditor.provideEditorInstance();
+
+    const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('pointer-events', 'all')
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    rootElement
+      ?.on('mouseover', () => {
+        this.showHover();
+      })
+      .on('mouseleave', () => {
+        this.hideHover();
+      })
+      .on('mouseup', (event) => {
+        editor.events.mouseUpAtom.dispatch(event);
+      });
+
+    return rootElement;
   }
 
   private appendBody() {
@@ -41,8 +57,6 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   protected appendHover() {
-    const editor = CoreEditor.provideEditorInstance();
-
     return this.rootElement
       ?.append('circle')
       .attr('r', 10)
@@ -51,17 +65,7 @@ export class AtomRenderer extends BaseRenderer {
       .attr('stroke', '#0097a8')
       .attr('stroke-width', '1.2')
       .attr('fill', 'none')
-      .attr('pointer-events', 'all')
-      .attr('opacity', '0')
-      .on('mouseover', () => {
-        this.showHover();
-      })
-      .on('mouseleave', () => {
-        this.hideHover();
-      })
-      .on('mouseup', (event) => {
-        editor.events.mouseUpAtom.dispatch(event);
-      });
+      .attr('opacity', '0');
   }
 
   public showHover() {

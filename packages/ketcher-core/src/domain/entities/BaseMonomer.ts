@@ -204,7 +204,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public forEachBond(
     callback: (
-      polymerBond: PolymerBond,
+      polymerBond: PolymerBond | MonomerToAtomBond,
       attachmentPointName: AttachmentPointName,
     ) => void,
   ) {
@@ -504,7 +504,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get sideConnections() {
     const sideConnections: PolymerBond[] = [];
     this.forEachBond((bond) => {
-      if (bond.isSideChainConnection) {
+      if (!(bond instanceof MonomerToAtomBond) && bond.isSideChainConnection) {
         sideConnections.push(bond);
       }
     });

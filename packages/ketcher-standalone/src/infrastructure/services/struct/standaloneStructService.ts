@@ -720,8 +720,7 @@ class IndigoService implements StructService {
       backgroundColor: '',
     },
   ): Promise<string> {
-    const { outputFormat, backgroundColor, bondThickness, ...restOptions } =
-      options;
+    const { outputFormat, backgroundColor, ...restOptions } = options;
 
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {

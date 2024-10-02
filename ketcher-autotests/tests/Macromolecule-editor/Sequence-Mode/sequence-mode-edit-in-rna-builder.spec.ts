@@ -20,7 +20,7 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { BASE, PHOSPHATE, SUGAR } from '@constants/testIdConstants';
+import { PHOSPHATE, SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
   pressSaveButton,

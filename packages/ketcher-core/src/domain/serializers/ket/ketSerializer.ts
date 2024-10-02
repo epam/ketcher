@@ -613,10 +613,6 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
-    drawingEntitiesManager.setMicromoleculesHiddenEntities(
-      deserializedMicromolecules,
-    );
-
     return { modelChanges: command, drawingEntitiesManager };
   }
 

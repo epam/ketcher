@@ -78,7 +78,8 @@ export class AtomRenderer extends BaseRenderer {
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
-    const isAtomTerminal = atomNeighborsHalfEdges?.length === 1;
+    const isAtomTerminal =
+      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
 
     if (isCarbon && !isAtomTerminal) {

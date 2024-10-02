@@ -1698,9 +1698,16 @@ export class DrawingEntitiesManager {
     });
 
     this.bonds.forEach((bond) => {
+      const newFirstAtom = atomToNewAtom.get(bond.firstAtom);
+      const newSecondAtom = atomToNewAtom.get(bond.secondAtom);
+
+      if (!newFirstAtom || !newSecondAtom) {
+        return;
+      }
+
       const bondAddCommand = targetDrawingEntitiesManager.addBond(
-        bond.firstAtom,
-        bond.secondAtom,
+        newFirstAtom,
+        newSecondAtom,
         bond.type,
         bond.stereo,
       );
@@ -2183,6 +2190,12 @@ export class DrawingEntitiesManager {
   private deleteMonomerToAtomBondChangeModel(
     monomerAtomBond: MonomerToAtomBond,
   ) {
+    const attachmentPointName =
+      monomerAtomBond.monomer.getAttachmentPointByBond(monomerAtomBond);
+
+    if (attachmentPointName) {
+      monomerAtomBond.monomer.unsetBond(attachmentPointName);
+    }
     this.monomerToAtomBonds.delete(monomerAtomBond.id);
 
     return monomerAtomBond;

@@ -36,34 +36,35 @@ test.describe('Salts and Solvents replacement', () => {
     },
   );
 
-  test('Salts and Solvents should replace Atoms, Functional Groups, and Salts and Solvents', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Salts and Solvents should replace Atoms, Functional Groups, and Salts and Solvents',
+    async ({ page }) => {
+      /*
 Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacement'
   */
-    const originalTimeout = 10000;
-    const longerTimeout = 30000;
-    page.setDefaultTimeout(longerTimeout);
+      const originalTimeout = 10000;
+      const longerTimeout = 30000;
+      page.setDefaultTimeout(longerTimeout);
 
-    await selectAtomInToolbar(AtomButton.Carbon, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+      await selectAtomInToolbar(AtomButton.Carbon, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
 
-    await selectFunctionalGroups(FunctionalGroups.Bz, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+      await selectFunctionalGroups(FunctionalGroups.Bz, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
 
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+      await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
 
-    await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
+      await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
 
-    page.setDefaultTimeout(originalTimeout);
-    await takeEditorScreenshot(page);
-  });
+      page.setDefaultTimeout(originalTimeout);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({
     page,

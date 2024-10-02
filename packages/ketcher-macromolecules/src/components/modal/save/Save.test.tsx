@@ -40,6 +40,12 @@ describe('Save modal', () => {
           setMicromoleculesHiddenEntities: jest.fn(),
           monomers: [],
           polymerBonds: [],
+          bonds: [],
+          monomerToAtomBonds: [],
+          atoms: [],
+        },
+        viewModel: {
+          initialize: jest.fn(),
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any;

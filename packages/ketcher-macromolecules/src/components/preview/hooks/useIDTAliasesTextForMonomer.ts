@@ -3,6 +3,7 @@ import {
   IKetIdtAliases,
   KetMonomerClass,
   Sugar,
+  MonomerToAtomBond,
 } from 'ketcher-core';
 import { useMemo } from 'react';
 
@@ -35,7 +36,11 @@ const useIDTAliasesTextForMonomer = ({
       const { R1, R2 } = attachmentPointsToBonds;
       // Handle phosphate exclusively
       if (monomerClass === KetMonomerClass.Phosphate) {
-        if (R1 && R1.firstMonomer instanceof Sugar) {
+        if (
+          R1 &&
+          !(R1 instanceof MonomerToAtomBond) &&
+          R1.firstMonomer instanceof Sugar
+        ) {
           return null;
         }
       }

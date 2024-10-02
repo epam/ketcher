@@ -786,6 +786,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y);
 
+    this.hoverCircleAreaElement
+      ?.attr('cx', this.scaledPosition.endPosition.x)
+      .attr('cy', this.scaledPosition.endPosition.y);
+
     this.selectionElement
       ?.attr('x2', this.scaledPosition.endPosition.x)
       ?.attr('y2', this.scaledPosition.endPosition.y);
@@ -852,6 +856,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('x2', this.scaledPosition.endPosition.x)
         .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '10');
+
+      (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(
+        this.hoverCircleAreaElement
+      )) = this.rootElement
+        ?.append('circle')
+        .attr('cursor', 'pointer')
+        .attr('r', '1')
+        .attr('fill', 'transparent')
+        .attr('pointer-events', 'none')
+        .attr('stroke-width', '10')
+        .attr('cx', this.scaledPosition.endPosition.x)
+        .attr('cy', this.scaledPosition.endPosition.y);
     }
   }
 

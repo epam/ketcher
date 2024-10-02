@@ -493,6 +493,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('P___Phosphate').click();
     await pressSaveButton(page);
     await page.getByTestId('25R(A)P_A_25R_P').click();
+    await moveMouseAway(page);
     await takePresetsScreenshot(page);
   });
 

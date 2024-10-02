@@ -20,6 +20,7 @@ const initialState = {
   editor: {
     struct: () => ({
       hasRxnArrow: () => false,
+      hasMultitailArrow: () => false,
       isBlank: () => true,
       atoms: { size: 0 },
       bonds: { size: 0 },

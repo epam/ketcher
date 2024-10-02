@@ -15,6 +15,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -82,7 +83,7 @@ test.describe('Macromolecules custom presets', () => {
       phosphate: 'P___Phosphate',
     });
 
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
 
     await takeMonomerLibraryScreenshot(page);
   });

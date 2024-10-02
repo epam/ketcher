@@ -97,7 +97,7 @@ export enum TemplateLibrary {
 
 export enum Sugars {
   TwelveddR = "12ddR___1',2'-dideoxyribose",
-  TwentyFiveR = '25R___2,5-Ribose',
+  TwentyFiveR = '25R___Ribose (2,5 connectivity)',
   ThreeA6 = "3A6___6-amino-hexanol (3' end)",
   ThreeSS6 = "3SS6___Thiol Modifier 6 S-S (3' end)",
 }
@@ -125,7 +125,7 @@ export enum Phosphates {
   Test6Ph = 'Test-6-Ph___Test-6-AP-Phosphate',
   Phosphate = 'P___Phosphate',
   Boranophosphate = 'bP___Boranophosphate',
-  nasP = 'sP-___Dihydrogen phosphorothioate',
+  sP_ = 'sP-___Dihydrogen phosphorothioate',
 }
 
 export async function selectPhosphate(phosphateName: Phosphates, page: Page) {

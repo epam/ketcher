@@ -1115,8 +1115,8 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: Phosphates.nasP,
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1153,7 +1153,9 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       const bondLine = page.locator('g[pointer-events="stroke"]').first();
       await bondLine.hover();
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
     });
   }
 
@@ -1299,8 +1301,8 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: Phosphates.nasP,
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1396,8 +1398,8 @@ test.describe('Macro-Micro-Switcher', () => {
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: Phosphates.nasP,
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },

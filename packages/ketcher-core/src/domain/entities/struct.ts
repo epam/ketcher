@@ -114,6 +114,10 @@ export class Struct {
     return this.rxnArrows.size >= 1;
   }
 
+  hasMultitailArrow(): boolean {
+    return this.multitailArrows.size >= 1;
+  }
+
   hasRxnPluses(): boolean {
     return this.rxnPluses.size > 0;
   }

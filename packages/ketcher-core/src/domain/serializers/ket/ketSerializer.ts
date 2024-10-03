@@ -516,7 +516,7 @@ export class KetSerializer implements Serializer<Struct> {
         deserializedMicromolecules,
         drawingEntitiesManager,
       );
-    const atomIdsMap = new Map<number, number>();
+    const localAtomIdToGlobalAtomId = new Map<number, number>();
 
     command.merge(structToDrawingEntitiesConversionResult.modelChanges);
 
@@ -528,8 +528,8 @@ export class KetSerializer implements Serializer<Struct> {
 
     structToDrawingEntitiesConversionResult.fragmentIdToAtomIdMap.forEach(
       (_atomIdsMap) => {
-        _atomIdsMap.forEach((atomId, oldAtomId) => {
-          atomIdsMap.set(oldAtomId, atomId);
+        _atomIdsMap.forEach((globalAtomId, localAtomId) => {
+          localAtomIdToGlobalAtomId.set(localAtomId, globalAtomId);
         });
       },
     );
@@ -569,11 +569,16 @@ export class KetSerializer implements Serializer<Struct> {
             (firstMonomer.monomerItem.props.isMicromoleculeFragment ||
               secondMonomer.monomerItem.props.isMicromoleculeFragment)
           ) {
+            const atomId = Number(
+              connection.endpoint1.atomId || connection.endpoint2.atomId,
+            );
+
             const atom = MacromoleculesConverter.findAtomByMicromoleculeAtomId(
               drawingEntitiesManager,
-              Number(
-                connection.endpoint1.atomId || connection.endpoint2.atomId,
-              ),
+              atomId,
+              firstMonomer.monomerItem.props.isMicromoleculeFragment
+                ? firstMonomer
+                : secondMonomer,
             );
             const attachmentPointName =
               connection.endpoint1.attachmentPointId ||
@@ -597,7 +602,7 @@ export class KetSerializer implements Serializer<Struct> {
             const bondAdditionCommand = polymerBondToDrawingEntity(
               connection,
               drawingEntitiesManager,
-              atomIdsMap,
+              localAtomIdToGlobalAtomId,
               superatomMonomerToUsedAttachmentPoint,
               firstMonomer,
               secondMonomer,

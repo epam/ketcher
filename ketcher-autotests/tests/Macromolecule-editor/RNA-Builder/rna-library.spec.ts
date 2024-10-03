@@ -332,7 +332,7 @@ test.describe('RNA Library', () => {
     await page.reload();
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -352,7 +352,7 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
     await pageReload(page);
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);

@@ -45,6 +45,7 @@ import {
 } from 'domain/services';
 import { KetcherLogger } from 'utilities';
 import { getLabelRenderModeForIndigo } from 'infrastructure/services/helpers';
+import { ketcherProvider } from 'application/utils';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -132,6 +133,8 @@ function indigoCall(
 }
 
 export function pickStandardServerOptions(options?: StructServiceOptions) {
+  const ketcherInstance = ketcherProvider.getKetcher();
+
   return {
     'dearomatize-on-load': options?.['dearomatize-on-load'],
     'smart-layout': options?.['smart-layout'],
@@ -140,6 +143,8 @@ export function pickStandardServerOptions(options?: StructServiceOptions) {
       options?.['mass-skip-error-on-pseudoatoms'],
     'gross-formula-add-rsites': options?.['gross-formula-add-rsites'],
     'gross-formula-add-isotopes': options?.['gross-formula-add-isotopes'],
+    'ignore-no-chiral-flag': ketcherInstance.editor.options().ignoreChiralFlag,
+    'aromatize-skip-superatoms': true,
   };
 }
 

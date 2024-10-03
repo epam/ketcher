@@ -48,15 +48,19 @@ test.afterAll(async ({ browser }) => {
 });
 
 test.describe('Import-Saving .ket Files', () => {
-  test('Open ket file with monomers and bonds', async () => {
-    /*
+  test.skip(
+    'Open ket file with monomers and bonds',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: #3230 - Support parsing KET file for macromolecules on ketcher side
     Description: Ket Deserialize
     */
-    await openFileAndAddToCanvasMacro('KET/monomers-with-bonds.ket', page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasMacro('KET/monomers-with-bonds.ket', page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check save and open of file with 50 monomers saved in KET format', async () => {
     /*

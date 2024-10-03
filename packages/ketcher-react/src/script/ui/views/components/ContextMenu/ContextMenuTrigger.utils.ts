@@ -88,7 +88,7 @@ export function getMenuPropsForClosestItem(
     case 'sgroups':
     case 'functionalGroups': {
       const sGroup = struct.sgroups.get(closestItem.id);
-      if (sGroup instanceof MonomerMicromolecule) return null;
+
       const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
         struct.functionalGroups,
         sGroup,
@@ -96,7 +96,10 @@ export function getMenuPropsForClosestItem(
 
       return functionalGroup
         ? {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+            id:
+              sGroup instanceof MonomerMicromolecule
+                ? CONTEXT_MENU_ID.FOR_MACROMOLECULE
+                : CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
             functionalGroups: [functionalGroup],
           }
         : null;
@@ -143,6 +146,17 @@ export function getMenuPropsForSelection(
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
+    if (
+      functionalGroups.some(
+        (fg) => fg.relatedSGroup instanceof MonomerMicromolecule,
+      )
+    ) {
+      return {
+        id: CONTEXT_MENU_ID.FOR_MACROMOLECULE,
+        functionalGroups,
+      };
+    }
+
     return {
       id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
       functionalGroups,

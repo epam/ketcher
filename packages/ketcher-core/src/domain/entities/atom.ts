@@ -25,6 +25,7 @@ import {
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 /**
  * Return unions of Pick.
@@ -787,6 +788,16 @@ export class Atom extends BaseMicromoleculeEntity {
       attachmentPointAtomBonds.filter((_, bond) => {
         const beginAtom = struct.atoms.get(bond.begin);
         const endAtom = struct.atoms.get(bond.end);
+
+        if (
+          Atom.isAtomInMonomer(struct, bond.begin) ||
+          Atom.isAtomInMonomer(struct, bond.end)
+        ) {
+          const sGroup1 = struct.getGroupFromAtomId(bond.begin);
+          const sGroup2 = struct.getGroupFromAtomId(bond.end);
+          return sGroup1 !== sGroup2;
+        }
+
         return (
           beginAtom?.fragment !== atom?.fragment ||
           endAtom?.fragment !== atom?.fragment
@@ -796,6 +807,11 @@ export class Atom extends BaseMicromoleculeEntity {
     return attachmentAtomExternalConnection;
   }
 
+  public static isAtomInMonomer(struct: Struct, atomId: number) {
+    const sGroup = struct.getGroupFromAtomId(atomId);
+    return sGroup instanceof MonomerMicromolecule;
+  }
+
   public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {
     const attachmentAtomExternalConnections =
       Atom.getAttachmentAtomExternalConnections(struct, undefined, atomId);
@@ -803,9 +819,10 @@ export class Atom extends BaseMicromoleculeEntity {
       struct,
       atomId,
     );
-    const sgroup = struct.getGroupFromAtomId(atomId);
+    const sGroup = struct.getGroupFromAtomId(atomId);
+    const isMonomer = sGroup instanceof MonomerMicromolecule;
 
-    if (!sgroup || !sgroup?.isSuperatomWithoutLabel) {
+    if (!sGroup || (!isMonomer && !sGroup?.isSuperatomWithoutLabel)) {
       return false;
     }
 

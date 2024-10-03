@@ -245,6 +245,26 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="RDF V2000-option"
+            data-value="rdf"
+            role="option"
+            tabindex="-1"
+          >
+            RDF V2000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="RDF V3000-option"
+            data-value="rdfV3000"
+            role="option"
+            tabindex="-1"
+          >
+            RDF V3000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
             data-testid="Daylight SMARTS-option"
             data-value="smarts"
             role="option"

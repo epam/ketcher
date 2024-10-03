@@ -996,7 +996,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('mol-preview-area-text')],
+      masks: [page.getByTestId('rxn-preview-area-text')],
     });
   });
 

@@ -74,7 +74,7 @@
                 "$ref": "monomerTemplate-bP___Boranophosphate"
             },
             {
-                "$ref": "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC"
+                "$ref": "monomerTemplate-5hMedC___5-Hydroxymethyl dC"
             },
             {
                 "$ref": "monomerTemplate-A6OH___6-amino-hexanol"
@@ -741,9 +741,9 @@
             "y": -12.025000000000027
         },
         "alias": "5HydMe-dC",
-        "templateId": "5HydMe-dC___5-Hydroxymethyl dC"
+        "templateId": "5hMedC___5-Hydroxymethyl dC"
     },
-    "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC": {
+    "monomerTemplate-5hMedC___5-Hydroxymethyl dC": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1109,7 +1109,7 @@
         ],
         "class": "RNA",
         "classHELM": "RNA",
-        "id": "5HydMe-dC___5-Hydroxymethyl dC",
+        "id": "5hMedC___5-Hydroxymethyl dC",
         "fullName": "Hydroxymethyl dC",
         "alias": "5HydMe-dC",
         "attachmentPoints": [

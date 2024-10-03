@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { turnOnMacromoleculesEditor } from '.';
 import { RNA_TAB } from '@constants/testIdConstants';
+import { moveMouseAway } from '@utils/moveMouseAway';
 
 export async function toggleRnaBuilderAccordion(page: Page) {
   await page.getByText('RNA Builder').locator('button').click();
@@ -37,19 +38,28 @@ export async function pressNewPresetButton(page: Page) {
 }
 
 export async function selectSugarSlot(page: Page) {
+  await moveMouseAway(page);
   await page.getByTestId('rna-builder-slot--sugar').click();
 }
 
 export async function selectBaseSlot(page: Page) {
+  await moveMouseAway(page);
   await page.getByTestId('rna-builder-slot--base').click();
 }
 
 export async function selectPhosphateSlot(page: Page) {
+  await moveMouseAway(page);
   await page.getByTestId('rna-builder-slot--phosphate').click();
 }
 
 export async function pressAddToPresetsButton(page: Page) {
+  await moveMouseAway(page);
   await page.getByTestId('add-to-presets-btn').click();
+}
+
+export async function pressSaveButton(page: Page) {
+  await moveMouseAway(page);
+  await page.getByTestId('save-btn').click();
 }
 
 export async function expandCollapseRnaBuilder(page: Page) {

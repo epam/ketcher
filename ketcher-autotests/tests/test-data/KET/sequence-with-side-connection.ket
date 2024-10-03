@@ -282,7 +282,7 @@
                 "$ref": "monomerTemplate-P___Phosphate"
             },
             {
-                "$ref": "monomerTemplate-5FAM___5'-6FAM (6-carboxyfluorescein)"
+                "$ref": "monomerTemplate-5FAM___6-FAM (5' end)"
             },
             {
                 "$ref": "monomerTemplate-FMOE___2'-O-Tris-trifluoromethoxyethyl ribose"
@@ -1787,9 +1787,9 @@
             "y": -3.24
         },
         "alias": "5FAM",
-        "templateId": "5FAM___5'-6FAM (6-carboxyfluorescein)"
+        "templateId": "5FAM___6-FAM (5' end)"
     },
-    "monomerTemplate-5FAM___5'-6FAM (6-carboxyfluorescein)": {
+    "monomerTemplate-5FAM___6-FAM (5' end)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -2358,7 +2358,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "5FAM___5'-6FAM (6-carboxyfluorescein)",
+        "id": "5FAM___6-FAM (5' end)",
         "fullName": "5'-6FAM (6-carboxyfluorescein)",
         "alias": "5FAM",
         "attachmentPoints": [

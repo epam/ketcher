@@ -20,6 +20,7 @@ import {
   selectClearCanvasTool,
   clickUndo,
   dragMouseTo,
+  Sugars,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -200,7 +201,7 @@ test.describe('Import-Saving .ket Files', () => {
     test.slow();
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('summary-Sugars').click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await clickInTheMiddleOfTheScreen(page);
     const expectedFile = await getKet(page);
     await saveToFile('KET/25R-expected.ket', expectedFile);

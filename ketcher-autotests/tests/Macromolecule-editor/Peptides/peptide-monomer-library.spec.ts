@@ -13,6 +13,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Peptide library testing', () => {
@@ -68,7 +69,7 @@ test.describe('Peptide library testing', () => {
     */
     await page.getByTestId('dA___D-Alanine').getByText('★').click();
     await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('A_A_R_P').getByText('★').click();
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('A6OH___6-amino-hexanol').getByText('★').click();
@@ -223,7 +224,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
     Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('C_C_R_P').click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

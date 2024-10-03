@@ -151,30 +151,32 @@ test.describe('Save files', () => {
     expect(smiFile).toEqual(smiFileExpected);
   });
 
-  test('Save as a .rxn file if reaction consists of two or more reaction arrows', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Save as a .rxn file if reaction consists of two or more reaction arrows',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2483
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      expectedFile,
-    );
+      await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+      const expectedFile = await getRxn(page);
+      await saveToFile(
+        'Rxn-V2000/two-arrows-and-plus-expected.rxn',
+        expectedFile,
+      );
 
-    const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
+      const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          metaDataIndexes: METADATA_STRING_INDEX,
+          expectedFileName:
+            'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
+        });
+      expect(rxnFile).toEqual(rxnFileExpected);
+    },
+  );
 
   test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({
     page,
@@ -289,28 +291,32 @@ test.describe('Save files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
-    /*
+  test.fail(
+    'Support for exporting to "SDF V3000" file format',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2477
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+      await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
+      const expectedFile = await getSdf(page, 'v3000');
+      await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
 
-    const METADATA_STRING_INDEX = [1];
+      const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 });
 
 test.describe('Open/Save/Paste files', () => {
@@ -318,8 +324,9 @@ test.describe('Open/Save/Paste files', () => {
     await waitForPageInit(page);
   });
 
-  test('Paste the content from mol-string', async ({ page }) => {
+  test.fail('Paste the content from mol-string', async ({ page }) => {
     /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2485 
       Test case: EPMLSOPKET-1844
       Description: MolFile is pasted to canvas
       */

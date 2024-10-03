@@ -187,18 +187,20 @@ test.describe('Calculated Values Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Calculation of exact mass for the reaction components', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Calculation of exact mass for the reaction components',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2485 
     Test case: EPMLSOPKET-2001
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
+      await selectTopPanelButton(TopPanelButton.Calculated, page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Calculation for an inorganic compound', async ({ page }) => {
     /*

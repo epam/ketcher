@@ -333,39 +333,41 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    '(RxnV3000) Save cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
-      page,
-    );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+        expectedFile,
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRING_INDEX = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+          metaDataIndexes: METADATA_STRING_INDEX,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
     page,

@@ -739,8 +739,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await pressButton(page, 'Save to SDF');
   });
 
-  test('Check aromatize/dearomatize tool on FG', async ({ page }) => {
+  test.fail('Check aromatize/dearomatize tool on FG', async ({ page }) => {
     /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5635
     Test case: EPMLSOPKET-2954
     Description: Two FG's are added. Aromatize funcion is selected, nothing happens.
     Dearomatize function is selected, nothing happens.

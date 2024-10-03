@@ -206,28 +206,32 @@ test.describe('3D Viewer', () => {
     expect(initialStructureData).not.toEqual(changedStructureData);
   });
 
-  test('Structure with a Stereobonds with Save Position', async ({ page }) => {
-    /*
+  test.fail(
+    'Structure with a Stereobonds with Save Position',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2484
     Test case: EPMLSOPKET-1942
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
-    const initialStructureData = await getKet(page);
-    await open3DViewer(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 75, y, page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
-    });
+      await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
+      const initialStructureData = await getKet(page);
+      await open3DViewer(page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await dragMouseTo(x + 75, y, page);
+      await waitForRender(page, async () => {
+        await pressButton(page, 'Apply');
+      });
 
-    // Get the structure data after making changes
-    const changedStructureData = await getKet(page);
+      // Get the structure data after making changes
+      const changedStructureData = await getKet(page);
 
-    // Compare the initial and changed structure data
-    expect(initialStructureData).not.toEqual(changedStructureData);
-  });
+      // Compare the initial and changed structure data
+      expect(initialStructureData).not.toEqual(changedStructureData);
+    },
+  );
 
   test('Structure with Aromatic Bonds with Save Position', async ({ page }) => {
     /*

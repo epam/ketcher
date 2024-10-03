@@ -631,18 +631,21 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    // test('open files', async ({ page }) => {
-    //   await openFileAndAddToCanvas(
-    //     `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
-    //     page,
-    //   );
-    //   await takeEditorScreenshot(page);
-    //   await selectTopPanelButton(TopPanelButton.Clear, page);
-    //   await openFileAndAddToCanvas(
-    //     `KET/resizing-reaction-arrow-saving.ket`,
-    //     page,
-    //   );
-    // });
+    test.fail('open files', async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2479
+       */
+      await openFileAndAddToCanvas(
+        `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
+        page,
+      );
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Clear, page);
+      await openFileAndAddToCanvas(
+        `KET/resizing-reaction-arrow-saving.ket`,
+        page,
+      );
+    });
   });
 
   test('Check that pressing Clear Canvas with Reaction Arrow under mouse cursor does not cause errors in DevTool console', async ({

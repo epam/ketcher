@@ -19,6 +19,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
 import {
   selectEditor,
+  selectEditorLayoutMode,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { LayoutMode, DEFAULT_LAYOUT_MODE } from 'ketcher-core';
@@ -28,7 +29,10 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useLayoutMode() {
   const editor = useAppSelector(selectEditor);
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(DEFAULT_LAYOUT_MODE);
+  const previousLayoutMode = useAppSelector(selectEditorLayoutMode);
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(
+    previousLayoutMode || DEFAULT_LAYOUT_MODE,
+  );
 
   const onLayoutModeChange = useCallback(
     (newLayoutMode: LayoutMode) => {
@@ -43,6 +47,10 @@ export function useLayoutMode() {
       editor?.events.layoutModeChange.remove(onLayoutModeChange);
     };
   }, [onLayoutModeChange, editor?.events.layoutModeChange]);
+
+  useEffect(() => {
+    editor?.events.selectMode.dispatch(layoutMode);
+  }, [editor?.events.selectMode, layoutMode]);
 
   return layoutMode;
 }

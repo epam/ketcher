@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { CoreEditor } from 'ketcher-core';
+import { CoreEditor, LayoutMode } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
@@ -27,6 +27,7 @@ interface EditorState {
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
+  editorLayoutMode: LayoutMode | undefined;
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
 }
@@ -35,6 +36,7 @@ const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
   editor: undefined,
+  editorLayoutMode: undefined,
   preview: {
     type: PreviewType.Monomer,
     monomer: undefined,
@@ -76,6 +78,7 @@ export const editorSlice: Slice = createSlice({
       });
     },
     destroyEditor: (state) => {
+      state.editorLayoutMode = state.editor.mode.modeName;
       state.editor.switchToMicromolecules();
       state.editor = undefined;
     },
@@ -123,5 +126,9 @@ export const selectIsSequenceEditInRNABuilderMode = (
 
 export const selectIsSequenceMode = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
+
+export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
+  return state.editor.editorLayoutMode;
+};
 
 export const editorReducer = editorSlice.reducer;

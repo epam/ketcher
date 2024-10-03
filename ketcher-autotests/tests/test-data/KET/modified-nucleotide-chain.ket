@@ -457,7 +457,7 @@
                 "$ref": "monomerTemplate-4sR___4-Thio-Ribose"
             },
             {
-                "$ref": "monomerTemplate-mepo2___Methylenephosphonate"
+                "$ref": "monomerTemplate-mepo2___Hydroxymethylphosphonic acid"
             },
             {
                 "$ref": "monomerTemplate-prpC___5-Propynyl-Cytosine"
@@ -3571,9 +3571,9 @@
             "y": -1.25
         },
         "alias": "mepo2",
-        "templateId": "mepo2___Methylenephosphonate"
+        "templateId": "mepo2___Hydroxymethylphosphonic acid"
     },
-    "monomerTemplate-mepo2___Methylenephosphonate": {
+    "monomerTemplate-mepo2___Hydroxymethylphosphonic acid": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -3664,7 +3664,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "mepo2___Methylenephosphonate",
+        "id": "mepo2___Hydroxymethylphosphonic acid",
         "fullName": "Methylenephosphonate",
         "alias": "mepo2",
         "attachmentPoints": [

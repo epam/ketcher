@@ -14,10 +14,10 @@
         "connections": [],
         "templates": [
             {
-                "$ref": "monomerTemplate-3SS6___3'-Thiol-Modifier 6 S-S from Glen Research"
+                "$ref": "monomerTemplate-3SS6___Thiol Modifier 6 S-S (3' end)"
             },
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
                 "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem"
@@ -32,9 +32,9 @@
             "y": -2.2309333170572923
         },
         "alias": "3SS6",
-        "templateId": "3SS6___3'-Thiol-Modifier 6 S-S from Glen Research"
+        "templateId": "3SS6___Thiol Modifier 6 S-S (3' end)"
     },
-    "monomerTemplate-3SS6___3'-Thiol-Modifier 6 S-S from Glen Research": {
+    "monomerTemplate-3SS6___Thiol Modifier 6 S-S (3' end)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -305,7 +305,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "3SS6___3'-Thiol-Modifier 6 S-S from Glen Research",
+        "id": "3SS6___Thiol Modifier 6 S-S (3' end)",
         "fullName": "3'-Thiol-Modifier 6 S-S from Glen Research",
         "alias": "3SS6",
         "attachmentPoints": [
@@ -338,9 +338,9 @@
             "y": -2.2575999837239586
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -632,7 +632,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [

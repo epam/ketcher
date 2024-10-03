@@ -23,7 +23,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
                 "$ref": "monomerTemplate-bP___Boranophosphate"
@@ -38,9 +38,9 @@
             "y": -5.325000000000005
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -236,7 +236,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "2,5-Ribose",
         "alias": "25R",
         "attachmentPoints": [

@@ -8,7 +8,7 @@
         "connections": [],
         "templates": [
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             }
         ]
     },
@@ -20,9 +20,9 @@
             "y": -7.65
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -218,8 +218,8 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
-        "fullName": "2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
+        "fullName": "Ribose (2,5 connectivity)",
         "alias": "25R",
         "attachmentPoints": [
             {

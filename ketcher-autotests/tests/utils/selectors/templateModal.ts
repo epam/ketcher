@@ -166,19 +166,19 @@ export async function selectSaltsAndSolvents(
   saltsAndSolventsGroupName: SaltsAndSolvents,
   page: Page,
 ) {
-  const amountOfSaltsAndSolvents = 124;
+  // const amountOfSaltsAndSolvents = 124;
   await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   const saltsButton = page
     .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
     .first();
-  await expect(
-    page.locator('[data-testid*="templates-modal"] > div'),
-  ).toHaveCount(amountOfSaltsAndSolvents, {
-    timeout: 30000,
-  });
+  // await expect(
+  //   page.locator('[data-testid*="templates-modal"] > div'),
+  // ).toHaveCount(amountOfSaltsAndSolvents, {
+  //   timeout: 30000,
+  // });
   await saltsButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
+  // await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
 export async function putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(

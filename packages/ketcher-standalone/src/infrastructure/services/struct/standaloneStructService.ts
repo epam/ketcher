@@ -151,6 +151,9 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.HELM;
       break;
     }
+    case ChemicalMimeType.RDF:
+      format = SupportedFormat.RDF;
+      break;
     case ChemicalMimeType.UNKNOWN:
     default: {
       throw new Error('Unsupported chemical mime type');

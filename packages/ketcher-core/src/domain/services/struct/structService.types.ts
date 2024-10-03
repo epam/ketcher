@@ -36,6 +36,7 @@ export enum ChemicalMimeType {
   PEPTIDE = 'chemical/x-peptide-sequence',
   IDT = 'chemical/x-idt',
   HELM = 'chemical/x-helm',
+  RDF = 'chemical/x-rdf',
 }
 
 export interface WithStruct {

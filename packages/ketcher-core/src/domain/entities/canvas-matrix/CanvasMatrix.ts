@@ -1,5 +1,6 @@
 import {
   BaseMonomer,
+  MonomerToAtomBond,
   Nucleoside,
   Nucleotide,
   SubChainNode,
@@ -262,6 +263,10 @@ export class CanvasMatrix {
       const monomer = cell.monomer;
 
       monomer?.forEachBond((polymerBond) => {
+        if (polymerBond instanceof MonomerToAtomBond) {
+          return;
+        }
+
         if (
           polymerBond.isSideChainConnection &&
           !handledConnections.has(polymerBond)

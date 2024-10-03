@@ -28,6 +28,7 @@ import RGroupAttachmentPointMenuItems from './menuItems/RGroupAttachmentPointMen
 import { createPortal } from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
+import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -215,6 +216,7 @@ const ContextMenu: React.FC = () => {
           >
             <RGroupAttachmentPointMenuItems />
           </Menu>
+
           <Menu
             {...props}
             id={CONTEXT_MENU_ID.FOR_MULTITAIL_ARROW}
@@ -223,6 +225,16 @@ const ContextMenu: React.FC = () => {
             }
           >
             <MultitailArrowMenuItems />
+          </Menu>
+
+          <Menu
+            {...props}
+            id={CONTEXT_MENU_ID.FOR_MACROMOLECULE}
+            onVisibilityChange={(visible) =>
+              trackVisibility(CONTEXT_MENU_ID.FOR_MACROMOLECULE, visible)
+            }
+          >
+            <MacromoleculeMenuItems />
           </Menu>
         </>,
         ketcherEditorRootElement,

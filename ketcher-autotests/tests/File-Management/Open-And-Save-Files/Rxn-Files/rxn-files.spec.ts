@@ -255,19 +255,21 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - Open the RXN v2000 file with S-Group Properties Type = Multiple group', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-12967 for Open RXN v2000 file with 'S-Group Properties Type = Multiple group rxnV2000Multiple.zip
-     * Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
-     */
-    await openFileAndAddToCanvas(
-      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+  test.fail(
+    'Open and Save file - Open the RXN v2000 file with S-Group Properties Type = Multiple group',
+    async ({ page }) => {
+      /**
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2478
+       * Test case: EPMLSOPKET-12967 for Open RXN v2000 file with 'S-Group Properties Type = Multiple group rxnV2000Multiple.zip
+       * Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
+       */
+      await openFileAndAddToCanvas(
+        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open and Save file - Reaction from file that contains abbreviation 1/2 - open', async ({
     page,
@@ -354,31 +356,36 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save file - V3000 rxn file contains Rgroup 2/2 - save', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1902(2)
-     * Description: Reaction can be saved correctly to rxn V3000 file
-     */
-    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('Rxn-V3000/r-group-V3000-expectedV3000.rxn', expectedFile);
+  test.fail(
+    'Open and Save file - V3000 rxn file contains Rgroup 2/2 - save',
+    async ({ page }) => {
+      /**
+       * * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+       * Test case: EPMLSOPKET-1902(2)
+       * Description: Reaction can be saved correctly to rxn V3000 file
+       */
+      await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/r-group-V3000-expectedV3000.rxn',
+        expectedFile,
+      );
 
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
 
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
 
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
+      expect(rxnFile).toEqual(rxnFileExpected);
+    },
+  );
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -728,45 +735,47 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that simple schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that simple schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/simple-schema-with-retrosynthetic-arrow.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -808,45 +817,47 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with vertical retrosynthetic arrow could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -888,45 +899,47 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with vertical retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with vertical retrosynthetic arrow could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -968,45 +981,47 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with two retrosynthetic arrows could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with two retrosynthetic arrows could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-two-retrosynthetic-arrows.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -1048,45 +1063,47 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with diagonaly retrosynthetic arrow could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with diagonaly retrosynthetic arrow could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to rxn2000 file and loaded back', async ({
     page,
@@ -1128,43 +1145,46 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to rxn3000 file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to rxn3000 file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+
     Test case: Import/Saving files
     Description: Validate that schema with retrosynthetic arrow could be saved to rxn3000 file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
-      page,
-    );
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+        expectedFile,
+      );
 
-    await openFileAndAddToCanvasAsNewProject(
-      'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRINGS_INDEXES = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 });

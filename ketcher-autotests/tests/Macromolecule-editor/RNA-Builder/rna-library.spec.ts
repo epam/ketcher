@@ -1310,6 +1310,8 @@ test.describe('RNA Library', () => {
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
+    await goToRNATab(page);
+    await toggleRnaBuilderAccordion(page);
     await toggleBasesAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
     await page.getByText('2imen2').hover();

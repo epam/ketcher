@@ -15,7 +15,13 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
+import {
+  pressAddToPresetsButton,
+  pressSaveButton,
+  selectBaseSlot,
+  selectSugarSlot,
+} from '@utils/macromolecules/rnaBuilder';
+import { goToRNATab } from '@utils/macromolecules/library';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -97,7 +103,7 @@ test.describe('Macromolecules custom presets', () => {
     await turnOnMacromoleculesEditor(page);
 
     // Click on <button> "RNA"
-    await page.getByTestId(RNA_TAB).click();
+    await goToRNATab(page);
 
     await expandRnaBuilder(page);
 
@@ -111,19 +117,19 @@ test.describe('Macromolecules custom presets', () => {
     await page.press('[placeholder="Name your structure"]', 'Enter');
 
     // Click on <div> "Sugar Not selected"
-    await page.getByTestId(SUGAR).click();
+    await selectSugarSlot(page);
 
     // Click on <div> "25R ★"
     await page.click(`[data-testid="${Sugars.TwentyFiveR}"]`);
 
     // Click on <div> "Base Not selected"
-    await page.getByTestId(BASE).click();
+    await selectBaseSlot(page);
 
     // Click on <div> "baA ★"
     await page.click(`[data-testid="${Bases.baA}"]`);
 
     // Click on <button> "Add to Presets"
-    await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
+    await pressAddToPresetsButton(page);
 
     await takeMonomerLibraryScreenshot(page);
 

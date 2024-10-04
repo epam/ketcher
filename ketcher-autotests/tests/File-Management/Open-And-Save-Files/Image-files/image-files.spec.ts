@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
@@ -7,9 +7,6 @@ import {
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
-  getCdx,
-  getCdxml,
-  getKet,
   LeftPanelButton,
   moveOnAtom,
   openFile,
@@ -19,10 +16,8 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  receiveFileComparisonData,
   resetCurrentTool,
   RingButton,
-  saveToFile,
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectClearCanvasTool,
@@ -40,43 +35,8 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
-
-enum FileType {
-  KET = 'ket',
-  CDX = 'cdx',
-  CDXML = 'cdxml',
-}
-
-const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
-  {
-    [FileType.KET]: getKet,
-    [FileType.CDX]: getCdx,
-    [FileType.CDXML]: getCdxml,
-  };
-
-async function verifyFile(
-  page: Page,
-  filename: string,
-  expectedFilename: string,
-  fileType: FileType,
-) {
-  const getFileContent = fileTypeHandlers[fileType];
-
-  if (!getFileContent) {
-    throw new Error(`Unsupported file type: ${fileType}`);
-  }
-
-  const expectedFile = await getFileContent(page);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected, file } = await receiveFileComparisonData({
-    page,
-    expectedFileName: expectedFilename,
-  });
-
-  expect(file).toEqual(fileExpected);
-}
 
 test.describe('Image files', () => {
   test.beforeEach(async ({ page }) => {

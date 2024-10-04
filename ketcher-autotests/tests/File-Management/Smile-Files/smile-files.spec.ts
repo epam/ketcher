@@ -180,33 +180,31 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'SmileString from V2000 mol file contains abs stereochemistry',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5635 
+  test('SmileString from V2000 mol file contains abs stereochemistry', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1917
     Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     All stereobonds are displayed as in a mol-file.
     */
-      await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/JSON/smiles-v2000-abs-expected.json',
-      );
+    await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/JSON/smiles-v2000-abs-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(
-        page,
-        // eslint-disable-next-line max-len
-        '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await clearCanvasAndPasteSmiles(
+      page,
+      // eslint-disable-next-line max-len
+      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   // flaky
   test('SmileString from mol file that contains combination of different features', async ({
@@ -236,31 +234,29 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'SmileString from file that contains Cis/Trans configuration',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5635 
+  test('SmileString from file that contains Cis/Trans configuration', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1923
     Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     */
-      await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/JSON/smiles-cis-trans-cycle-expected.json',
-      );
+    await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/JSON/smiles-cis-trans-cycle-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(
-        page,
-        'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await clearCanvasAndPasteSmiles(
+      page,
+      'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('SmileString from file that contains alias and pseudoatom', async ({
     page,
@@ -283,29 +279,31 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString from reaction consists of two or more reaction arrows and structures', async ({
-    page,
-  }) => {
-    /*
-    Test case: EPMLSOPKET-8905
-    Description: Structure is correctly opens from saved files. Keep only first reaction arrow
-    and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
-    */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/smiles-two-arrows-and-plus-expected.json',
-    );
+  test.fail(
+    'SmileString from reaction consists of two or more reaction arrows and structures',
+    async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5641
+       * Test case: EPMLSOPKET-8905
+       * Description: Structure is correctly opens from saved files. Keep only first reaction arrow
+       * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
+       */
+      await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/JSON/smiles-two-arrows-and-plus-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(
-      page,
-      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-    );
-    await takeEditorScreenshot(page);
-  });
+      await clearCanvasAndPasteSmiles(
+        page,
+        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open Daylight SMILES file with reagent above arrow', async ({
     page,
@@ -361,20 +359,18 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5635
+  test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async ({
+    page,
+  }) => {
+    /*
     Test case: https://github.com/epam/Indigo/issues/1300
     Description: The Single Up, Single Down and Single Up/Down  stereo bonds is on the structure
     The test result is not what it should be. The behavior requires further clarification.
     Single Down bond changes to Single Up and two other stereobonds dissapear.
     */
-      await pasteFromClipboardAndAddToCanvas(page, 'C1[S@](=O)CC(=O)[C@@]=1C');
-      await takeEditorScreenshot(page);
-    },
-  );
+    await pasteFromClipboardAndAddToCanvas(page, 'C1[S@](=O)CC(=O)[C@@]=1C');
+    await takeEditorScreenshot(page);
+  });
 
   test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async ({
     page,

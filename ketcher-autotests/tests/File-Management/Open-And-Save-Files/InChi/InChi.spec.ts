@@ -142,12 +142,11 @@ test.describe('', () => {
     },
   );
 
-  test.fail(
+  test(
     'Open and Save file - Generate structure ' +
       'from InChI String - Structure with stereobonds',
     async ({ page }) => {
       /**
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5635
        * Test case: EPMLSOPKET-1974
        * Description: Open structure with stereobonds from InChi string
        */

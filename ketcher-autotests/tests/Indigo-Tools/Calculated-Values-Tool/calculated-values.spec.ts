@@ -122,7 +122,6 @@ test.describe('Calculated Values Tools', () => {
     Test case: EPMLSOPKET-2000
     Description: The calculation result for a substructure with not selected query features should be correct.
     */
-    test.fail();
     let point: { x: number; y: number };
     await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
 
@@ -187,20 +186,18 @@ test.describe('Calculated Values Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Calculation of exact mass for the reaction components',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2485 
+  test('Calculation of exact mass for the reaction components', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2001
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-      await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
+    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Calculation for an inorganic compound', async ({ page }) => {
     /*
@@ -495,7 +492,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);

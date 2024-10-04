@@ -352,12 +352,13 @@ test.describe('R-Group Fragment Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Save as *.mol V3000 file', async ({ page }) => {
+  test.fail('Save as *.mol V3000 file', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1603
-    Description: All R-group members, R-group definition, occurrence, 
-    brackets are rendered correctly after saving as *.mol V3000 file.
-    */
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET-1603
+     * Description: All R-group members, R-group definition, occurrence,
+     * brackets are rendered correctly after saving as *.mol V3000 file.
+     */
     await openFileAndAddToCanvas(
       'Molfiles-V3000/r1-several-structures-V3000.mol',
       page,

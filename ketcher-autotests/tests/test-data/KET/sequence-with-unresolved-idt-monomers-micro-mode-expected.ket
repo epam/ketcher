@@ -1001,7 +1001,7 @@
                 "$ref": "monomerTemplate-sP"
             },
             {
-                "$ref": "monomerTemplate-5meC___5-methyl-cytidine"
+                "$ref": "monomerTemplate-5meC___5-methylcytosine"
             },
             {
                 "$ref": "monomerTemplate-G___Guanine"
@@ -1650,10 +1650,10 @@
             "y": -9.12500001192093
         },
         "alias": "5meC",
-        "templateId": "5meC___5-methyl-cytidine",
+        "templateId": "5meC___5-methylcytosine",
         "seqid": 1
     },
-    "monomerTemplate-5meC___5-methyl-cytidine": {
+    "monomerTemplate-5meC___5-methylcytosine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1811,7 +1811,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "5meC___5-methyl-cytidine",
+        "id": "5meC___5-methylcytosine",
         "fullName": "5-methyl-cytidine",
         "alias": "5meC",
         "attachmentPoints": [
@@ -2099,7 +2099,7 @@
             "y": -9.12500001192093
         },
         "alias": "5meC",
-        "templateId": "5meC___5-methyl-cytidine",
+        "templateId": "5meC___5-methylcytosine",
         "seqid": 3
     },
     "monomer82": {
@@ -2919,7 +2919,7 @@
             "y": -9.12500001192093
         },
         "alias": "5meC",
-        "templateId": "5meC___5-methyl-cytidine",
+        "templateId": "5meC___5-methylcytosine",
         "seqid": 1
     },
     "monomer147": {
@@ -2985,7 +2985,7 @@
             "y": -9.12500001192093
         },
         "alias": "5meC",
-        "templateId": "5meC___5-methyl-cytidine",
+        "templateId": "5meC___5-methylcytosine",
         "seqid": 3
     },
     "monomer153": {

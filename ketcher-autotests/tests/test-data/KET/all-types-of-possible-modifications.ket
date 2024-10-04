@@ -746,7 +746,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
                 "$ref": "monomerTemplate-A___Adenine"
@@ -755,13 +755,13 @@
                 "$ref": "monomerTemplate-R___Ribose"
             },
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
                 "$ref": "monomerTemplate-P___Phosphate"
             },
             {
-                "$ref": "monomerTemplate-nasP___Sodium Phosporothioate"
+                "$ref": "monomerTemplate-sP-___Dihydrogen phosphorothioate"
             },
             {
                 "$ref": "monomerTemplate-bP___Boranophosphate"
@@ -779,9 +779,9 @@
             "y": -1.25
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -977,7 +977,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "2,5-Ribose",
         "alias": "25R",
         "attachmentPoints": [
@@ -1465,9 +1465,9 @@
             "y": -2.5665
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1759,7 +1759,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [
@@ -1924,9 +1924,9 @@
             "y": -1.25
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
-    "monomerTemplate-nasP___Sodium Phosporothioate": {
+    "monomerTemplate-sP-___Dihydrogen phosphorothioate": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -2003,7 +2003,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "nasP___Sodium Phosporothioate",
+        "id": "sP-___Dihydrogen phosphorothioate",
         "fullName": "Sodium Phosporothioate",
         "alias": "nasP",
         "attachmentPoints": [
@@ -2086,7 +2086,7 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72415": {
         "type": "monomer",
@@ -2106,7 +2106,7 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72420": {
         "type": "monomer",
@@ -2116,7 +2116,7 @@
             "y": -5.3870000000000005
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72422": {
         "type": "monomer",
@@ -2136,7 +2136,7 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72428": {
         "type": "monomer",
@@ -2166,7 +2166,7 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72436": {
         "type": "monomer",
@@ -2297,7 +2297,7 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72444": {
         "type": "monomer",
@@ -2327,7 +2327,7 @@
             "y": -6.891
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer72468": {
         "type": "monomer",
@@ -2337,7 +2337,7 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72473": {
         "type": "monomer",
@@ -2357,7 +2357,7 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72476": {
         "type": "monomer",
@@ -2387,7 +2387,7 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72485": {
         "type": "monomer",
@@ -2417,7 +2417,7 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72494": {
         "type": "monomer",
@@ -2437,7 +2437,7 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72528": {
         "type": "monomer",
@@ -2697,7 +2697,7 @@
             "y": -11.028
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
     "monomer72575": {
         "type": "monomer",

@@ -144,14 +144,7 @@ class SaveDialog extends Component {
   };
 
   changeType = (type) => {
-    const {
-      struct,
-      server,
-      options,
-      formState,
-      ignoreChiralFlag,
-      bondThickness,
-    } = this.props;
+    const { struct, server, options, formState, ignoreChiralFlag } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -164,11 +157,12 @@ class SaveDialog extends Component {
         structStr,
         isLoading: true,
       });
-      const options = {};
-      options.outputFormat = type;
-      options.bondThickness = bondThickness;
+      const serverOptions = { ...options };
+
+      serverOptions.outputFormat = type;
+
       return server
-        .generateImageAsBase64(structStr, options)
+        .generateImageAsBase64(structStr, serverOptions)
         .then((base64) => {
           this.setState({
             disableControls: false,

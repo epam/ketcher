@@ -204,41 +204,45 @@ test.describe('Macro-Micro-Switcher2', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Check that attachment points and leaving groups are correctly represented in Mol V3000 format',
+    async ({ page }) => {
+      /*
       Test case: #4530
       Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
+
+      IMPORTANT: This test fails because of https://github.com/epam/Indigo/issues/2477 issue.
+      After fix we need to update screenshot.
       */
-    await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
-      page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRINGS_INDEXES = [1];
+
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Connection one molecule to another one by drugging one over another - result indicate existence of AP label and it remain back after delete connection', async ({
     page,
@@ -302,6 +306,7 @@ test.describe('Macro-Micro-Switcher2', () => {
      * Description: Open from KET 3 different Multi-Tailed Arrows, add default Multi-Tailed Arrow by Tool, switch to Macro,
      * verify that Arrows are not presented on the Canvas after switching to Macro mode, Clear Canvas, switch back to Micro mode,
      * verify that arrows are presented after returning to Micro mode.
+     *
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/three-different-multi-tail-arrows.ket',
@@ -328,6 +333,7 @@ test.describe('Macro-Micro-Switcher2', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Switch to Macro mode, open from KET 3 different Multi-Tailed Arrows, verify that arrows aren't presented in Macro mode,
      * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
+     *
      */
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasAsNewProject(

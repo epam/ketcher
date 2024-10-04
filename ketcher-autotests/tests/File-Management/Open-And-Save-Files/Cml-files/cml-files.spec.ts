@@ -106,6 +106,7 @@ test.describe('CML files', () => {
       /**
        * Test case: EPMLSOPKET-1948
        * Description: Saved cml file with structure is compering with paste R-group from a mol file
+       * It needs to be investigated why the test is failing.
        */
 
       await openFileAddToCanvasTakeScreenshot(

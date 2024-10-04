@@ -22,13 +22,13 @@ import {
   getAttachmentPointLabel,
   getAttachmentPointNumberFromLabel,
 } from 'domain/helpers/attachmentPointCalculations';
-import { isNumber } from 'lodash';
+import { invert, isNumber } from 'lodash';
 import { IKetAttachmentPoint } from 'application/formatters';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { CoreEditor } from 'application/editor/Editor';
-import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
+import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 
 export class MacromoleculesConverter {
   private static convertMonomerToMonomerMicromolecule(
@@ -373,9 +373,12 @@ export class MacromoleculesConverter {
   public static findAtomByMicromoleculeAtomId(
     drawingEntitiesManager: DrawingEntitiesManager,
     atomId: number,
+    monomer?: BaseMonomer,
   ) {
     return [...drawingEntitiesManager.atoms.values()].find(
-      (atom) => atom.atomIdInMicroMode === atomId,
+      (atom) =>
+        atom.atomIdInMicroMode === atomId &&
+        (!monomer || monomer === atom.monomer),
     );
   }
 
@@ -402,6 +405,7 @@ export class MacromoleculesConverter {
 
     let fragmentNumber = 1;
     const fragmentIdToAtomIdMap = new Map<number, Map<number, number>>();
+    const globalAtomIdToMonomerMap = new Map<number, BaseMonomer>();
 
     fragments.forEach((_fragment) => {
       const atomIdMap = new Map<number, number>();
@@ -412,26 +416,20 @@ export class MacromoleculesConverter {
         drawingEntitiesManager,
       );
       const monomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      const atomIdMapObject = Object.fromEntries(atomIdMap.entries());
+      const localAtomIdToGlobalAtomId = invert(atomIdMapObject);
+      const atomsMap = new Map<number, Atom>();
 
       _fragment.forEach((fragmentId) => {
         fragmentIdToMonomer.set(fragmentId as number, monomer);
         fragmentIdToAtomIdMap.set(fragmentId, atomIdMap);
       });
       command.merge(monomerAddCommand);
-      fragmentNumber++;
-    });
-    const superatomAttachmentPointToBond = new Map<
-      SGroupAttachmentPoint,
-      Bond
-    >();
 
-    drawingEntitiesManager.monomers.forEach((monomer) => {
       if (
         monomer.monomerItem.props.isMicromoleculeFragment &&
         !isMonomerSgroupWithAttachmentPoints(monomer)
       ) {
-        const atomsMap: { [atomId: number]: Atom } = {};
-
         monomer.monomerItem.struct.atoms.forEach((atom, atomId) => {
           const atomAddCommand = drawingEntitiesManager.addAtom(
             atom.pp,
@@ -440,22 +438,40 @@ export class MacromoleculesConverter {
             atom.label as AtomLabel,
           );
 
-          atomsMap[atomId] = atomAddCommand.operations[0].atom as Atom;
           command.merge(atomAddCommand);
+          atomsMap.set(atomId, atomAddCommand.operations[0].atom as Atom);
+          globalAtomIdToMonomerMap.set(
+            Number(localAtomIdToGlobalAtomId[atomId]),
+            monomer,
+          );
         });
 
         monomer.monomerItem.struct.bonds.forEach((bond) => {
+          const firstAtom = atomsMap.get(bond.begin);
+          const secondAtom = atomsMap.get(bond.end);
+
+          if (!firstAtom || !secondAtom) {
+            return;
+          }
+
           command.merge(
             drawingEntitiesManager.addBond(
-              atomsMap[bond.begin],
-              atomsMap[bond.end],
+              firstAtom,
+              secondAtom,
               bond.type,
               bond.stereo,
             ),
           );
         });
       }
+
+      fragmentNumber++;
     });
+
+    const superatomAttachmentPointToBond = new Map<
+      SGroupAttachmentPoint,
+      Bond
+    >();
 
     struct.bonds.forEach((bond) => {
       const beginAtom = struct.atoms.get(bond.begin);
@@ -500,6 +516,7 @@ export class MacromoleculesConverter {
         MacromoleculesConverter.findAtomByMicromoleculeAtomId(
           drawingEntitiesManager,
           atomIdInMicromolecules,
+          globalAtomIdToMonomerMap.get(moleculeAtomId),
         );
 
       if (

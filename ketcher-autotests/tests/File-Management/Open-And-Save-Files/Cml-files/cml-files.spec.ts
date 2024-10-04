@@ -365,6 +365,7 @@ test.describe('CML files', () => {
     'Validate that the simple schema with retrosynthetic, angel arrows and plus could be saved to CML file and loaded back',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
+      test.fail();
       /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back

@@ -239,9 +239,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   test('Set and Get Molecule containing chiral centers V3000', async ({
     page,
   }) => {
+    test.fail();
     /*
     Test case: EPMLSOPKET- 10097
     Description:  Molecule set and get with chiral centers V3000
+    We have a bug https://github.com/epam/Indigo/issues/2490
+    After fix need to be update.
     */
 
     await waitForSpinnerFinishedWork(

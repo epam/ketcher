@@ -729,8 +729,9 @@ test.describe('Open and Save file', () => {
     ];
 
     for (const file of files) {
-      test.fail(`${file.testName}`, async ({ page }) => {
+      test(`${file.testName}`, async ({ page }) => {
         // IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+        if (file.format === 'v3000') test.fail();
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
         const expectedFile = await getMolfile(
@@ -848,7 +849,7 @@ test.describe('Open and Save file', () => {
      * Test case: EPMLSOPKET-1893(2)
      * Description: Structures are rendered correctly.
      * */
-
+    test.slow();
     for (let i = 1; i < 9; i++) {
       await openFileAndAddToCanvas(
         `Molfiles-V2000/ferrocene-radical0${i}.mol`,

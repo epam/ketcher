@@ -239,39 +239,41 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(MolV3000) Save cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
-    Test case: EPMLSOPKET-1877
-    Description: The structures are saved as mol-file.
-    The saved mol-file is opened correctly. In Ketcher the saved structures appear
-    with the circle inside the cycles.
-    */
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/aromatic-benzene-v3000.mol',
-      page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+  test.fail(
+    '(MolV3000) Save cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+       * Test case: EPMLSOPKET-1877
+       * Description: The structures are saved as mol-file.
+       * The saved mol-file is opened correctly. In Ketcher the saved structures appear
+       * with the circle inside the cycles.
+       */
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/aromatic-benzene-v3000.mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRING_INDEX = [1];
+
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
+          metaDataIndexes: METADATA_STRING_INDEX,
+          fileFormat: 'v3000',
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('(Smiles) Save cyclic structures with a circle inside the cycle', async ({
     page,
@@ -333,39 +335,41 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    '(RxnV3000) Save cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
-      page,
-    );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+        expectedFile,
+      );
 
-    expect(rxnFile).toEqual(rxnFileExpected);
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRING_INDEX = [2];
+
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+          metaDataIndexes: METADATA_STRING_INDEX,
+          fileFormat: 'v3000',
+        });
+
+      expect(rxnFile).toEqual(rxnFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
     page,
@@ -508,48 +512,40 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Validate that the schema with retrosynthetic arrow could be Aromatize',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Validate that the schema with retrosynthetic arrow could be Aromatize', async ({
+    page,
+  }) => {
+    /*
     Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
-    After fix we need update file and screenshot.
      */
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
-        page,
-      );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    'Validate that the schema with retrosynthetic arrow could be Dearomatize',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Validate that the schema with retrosynthetic arrow could be Dearomatize', async ({
+    page,
+  }) => {
+    /*
     Test case: #2071
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2318
-    After fix we need update file and screenshot.
      */
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/schema-with-retrosynthetic-arrow-for-options.ket',
-        page,
-      );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-      });
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/schema-with-retrosynthetic-arrow-for-options.ket',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+    await takeEditorScreenshot(page);
+  });
 });

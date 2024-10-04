@@ -1486,37 +1486,39 @@ test.describe('Atom Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('All atom properties information saved as *.rxn file', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'All atom properties information saved as *.rxn file',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-    await openFileAndAddToCanvas(
-      'Rxn-V3000/all-possible-atoms-properties.rxn',
-      page,
-    );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Rxn-V3000/all-possible-atoms-properties.rxn',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRING_INDEX = [2];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Add Reaction flags - Inversion (Inverts) in modal and press Cancel', async ({
     page,

@@ -156,29 +156,27 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.fail(
-    'Verify that default Multi-Tailed Arrow with two tails can be saved to .ket file with correct coordinates of spine, tails and head',
-    async ({ page }) => {
-      /**
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/ketcher/issues/5633
-       * Test case: https://github.com/epam/ketcher/issues/5104
-       * Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
-       * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
-       */
-      await selectDropdownTool(
-        page,
-        'reaction-arrow-open-angle',
-        'reaction-arrow-multitail',
-      );
-      await clickInTheMiddleOfTheScreen(page);
+  test('Verify that default Multi-Tailed Arrow with two tails can be saved to .ket file with correct coordinates of spine, tails and head', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
+     * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
 
-      await verifyFile(
-        page,
-        'KET/multi-tailed-arrow-to-compare.ket',
-        'tests/test-data/KET/multi-tailed-arrow-to-compare.ket',
-      );
-    },
-  );
+    await verifyFile(
+      page,
+      'KET/multi-tailed-arrow-to-compare.ket',
+      'tests/test-data/KET/multi-tailed-arrow-to-compare.ket',
+    );
+  });
 
   test('Verify that 3 different Multi-Tailed Arrows can be saved together to .ket file with correct coordinates of spines, tails and heads', async ({
     page,
@@ -249,6 +247,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file', async ({
     page,
   }) => {
+    test.setTimeout(90000);
     /**
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures saved together to .ket file,

@@ -1892,14 +1892,15 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test(
+  test.fail(
     'Check that Aromatize/Dearomatize works for molecules with AP',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async () => {
       /*
-    Test case: #4530
-    Description: Aromatize/Dearomatize works for molecules with AP.
-    */
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2027
+       * Test case: #4530
+       * Description: Aromatize/Dearomatize works for molecules with AP.
+       */
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,

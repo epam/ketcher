@@ -59,7 +59,7 @@ it('should get hover path and style for simple objects correctly', () => {
     const render = new Render(document as unknown as HTMLElement, option);
     const paths = reSimpleObject.hoverPath(render);
     expect(
-      paths.filter((path) => path.path.attrs.fill === '#fff')?.length,
+      paths.filter((path) => path.path.attrs.stroke === '#CCFFDD')?.length,
     ).toBeGreaterThanOrEqual(1);
   });
 });

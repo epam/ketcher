@@ -101,6 +101,11 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
       fill: '#CCFFDD',
       'stroke-width': (0.6 * scaleFactorMicro) / 20,
     },
+    innerHoverStyle: {
+      stroke: '#CCFFDD',
+      fill: 'none',
+      'stroke-width': (4.6 * scaleFactorMicro) / 20,
+    },
     sgroupBracketStyle: {
       stroke: 'darkgray',
       'stroke-width': (0.5 * scaleFactorMicro) / 20,

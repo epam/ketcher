@@ -6,4 +6,12 @@ export class ChemSequenceItemRenderer extends BaseSequenceItemRenderer {
   }
 
   protected drawModification() {}
+
+  public show() {
+    if (this.node.monomer.monomerItem.props.isMicromoleculeFragment) {
+      return;
+    }
+
+    super.show();
+  }
 }

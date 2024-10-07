@@ -26,7 +26,7 @@
                 "$ref": "monomerTemplate-AmdA___2, 6-Diaminopurine"
             },
             {
-                "$ref": "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC"
+                "$ref": "monomerTemplate-5hMedC___5-Hydroxymethyl dC"
             }
         ]
     },
@@ -469,9 +469,9 @@
             "y": -10.300000000000002
         },
         "alias": "5HydMe-dC",
-        "templateId": "5HydMe-dC___5-Hydroxymethyl dC"
+        "templateId": "5hMedC___5-Hydroxymethyl dC"
     },
-    "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC": {
+    "monomerTemplate-5hMedC___5-Hydroxymethyl dC": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -837,7 +837,7 @@
         ],
         "class": "RNA",
         "classHELM": "RNA",
-        "id": "5HydMe-dC___5-Hydroxymethyl dC",
+        "id": "5hMedC___5-Hydroxymethyl dC",
         "fullName": "Hydroxymethyl dC",
         "alias": "5HydMe-dC",
         "attachmentPoints": [

@@ -56,3 +56,4 @@ export * from './UnresolvedMonomer';
 export * from './UnsplitNucleotide';
 export * from './PolymerBond';
 export * from './AmbiguousMonomer';
+export * from './MonomerToAtomBond';

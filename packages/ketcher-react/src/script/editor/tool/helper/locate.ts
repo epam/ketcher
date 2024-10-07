@@ -16,7 +16,6 @@
 
 import {
   FunctionalGroup,
-  MonomerMicromolecule,
   IMAGE_KEY,
   Struct,
   Vec2,
@@ -83,7 +82,6 @@ function getElementsInRectangle(restruct: ReStruct, p0, p1) {
     );
     const reSGroup = restruct.sgroups.get(relatedFGId as number);
     if (
-      !(reSGroup?.item instanceof MonomerMicromolecule) &&
       atom.a.pp.x > x0 &&
       atom.a.pp.x < x1 &&
       atom.a.pp.y > y0 &&
@@ -265,7 +263,6 @@ function getElementsInPolygon(restruct: ReStruct, rr) {
     );
     const reSGroup = restruct.sgroups.get(relatedFGId as number);
     if (
-      !(reSGroup?.item instanceof MonomerMicromolecule) &&
       isPointInPolygon(r, atom.a.pp) &&
       (!FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom.a,

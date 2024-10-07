@@ -68,6 +68,7 @@ export enum SupportedFormat {
   SEQUENCE = 'sequence',
   IDT = 'idt',
   HELM = 'helm',
+  RDF = 'rdf',
 }
 
 export interface WithStruct {

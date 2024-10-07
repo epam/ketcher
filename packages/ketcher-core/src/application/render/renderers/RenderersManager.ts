@@ -29,6 +29,12 @@ import {
 import { AttachmentPointName } from 'domain/types';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
+import { Atom } from 'domain/entities/CoreAtom';
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { Bond } from 'domain/entities/CoreBond';
+import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -44,6 +50,10 @@ export class RenderersManager {
     number,
     FlexModeOrSnakeModePolymerBondRenderer
   >();
+
+  public atoms = new Map<number, AtomRenderer>();
+
+  public bonds = new Map<number, BondRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
   private needRecalculateMonomersBeginning = false;
@@ -429,6 +439,42 @@ export class RenderersManager {
     modelChanges?.execute(this);
     this.runPostRenderMethods();
     notifyRenderComplete();
+  }
+
+  public addAtom(atom: Atom) {
+    const atomRenderer = new AtomRenderer(atom);
+
+    this.atoms.set(atom.id, atomRenderer);
+    atomRenderer.show();
+  }
+
+  public deleteAtom(atom: Atom) {
+    this.atoms.delete(atom.id);
+    atom.renderer?.remove();
+  }
+
+  public addBond(bond: Bond) {
+    const bondRenderer = new BondRenderer(bond);
+
+    this.bonds.set(bond.id, bondRenderer);
+    bondRenderer.show();
+  }
+
+  public deleteBond(bond: Bond) {
+    this.bonds.delete(bond.id);
+    bond.renderer?.remove();
+  }
+
+  public addMonomerToAtomBond(bond: MonomerToAtomBond) {
+    const bondRenderer = new MonomerToAtomBondRenderer(bond);
+
+    bondRenderer.show();
+    bond.monomer.renderer?.redrawAttachmentPoints();
+    bond.monomer.renderer?.redrawHover();
+  }
+
+  public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
+    bond.renderer?.remove();
   }
 
   public runPostRenderMethods() {

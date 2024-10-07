@@ -14,11 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { lazy, Suspense, useCallback, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   FormatterFactory,
   KetcherLogger,
+  ketcherProvider,
   Struct,
   StructService,
   SupportedFormat,
@@ -121,6 +122,13 @@ const MiewDialog = ({
 }: Props) => {
   const miewRef = useRef<MiewAsType>();
   const [isInitialized, setIsIsInitialized] = useState(false);
+  const ketcher = ketcherProvider.getKetcher();
+
+  const isDisabled = useMemo(() => {
+    return (
+      !isInitialized || ketcher?.editor.render.options.viewOnlyMode === true
+    );
+  }, [ketcher, isInitialized]);
 
   const onMiewInit = useCallback(
     (miew: MiewAsType) => {
@@ -163,7 +171,7 @@ const MiewDialog = ({
           key="apply"
           onClick={exportCML}
           className={classes.applyButton}
-          disabled={!isInitialized}
+          disabled={isDisabled}
           data-testid="miew-modal-button"
         >
           Apply

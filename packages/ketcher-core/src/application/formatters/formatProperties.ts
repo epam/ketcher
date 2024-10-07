@@ -157,6 +157,18 @@ const formatProperties: FormatPropertiesMap = {
     ['.'],
     true,
   ),
+  rdf: new SupportedFormatProperties(
+    'RDF V2000',
+    ChemicalMimeType.RDF,
+    ['.rdf'],
+    true,
+  ),
+  rdfV3000: new SupportedFormatProperties(
+    'RDF V3000',
+    ChemicalMimeType.RDF,
+    ['.rdf'],
+    true,
+  ),
 };
 
 const imgFormatProperties = {

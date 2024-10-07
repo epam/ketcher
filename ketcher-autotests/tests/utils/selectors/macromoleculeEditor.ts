@@ -3,7 +3,8 @@ export const Peptides = {
   BetaAlanine: 'bAla___beta-Alanine',
   Ethylthiocysteine: 'Edc___S-ethylthiocysteine',
   Tza: 'Tza___3-(4-Thiazolyl)-alanine',
-  D2Nal: 'D-2Nal___D-3-(2-naphtyl)-alanine',
+  D2Nal: 'D-2Nal___D-3-(2-naphthyl)-alanine',
+  D_OAla: 'D-OAla___D-Lactic acid',
 };
 
 export const Chems = {

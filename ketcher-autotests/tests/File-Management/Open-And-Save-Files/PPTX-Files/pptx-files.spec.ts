@@ -197,7 +197,7 @@ test.describe('PPTX files', () => {
     3. In appeared dialog - Validate Preview area
     4. Press Open as New Project button
     5. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/4071 issue.
+    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1680 issue.
     Uncomment code after fix and update screenshots!
     */
     await selectTopPanelButton(TopPanelButton.Open, page);

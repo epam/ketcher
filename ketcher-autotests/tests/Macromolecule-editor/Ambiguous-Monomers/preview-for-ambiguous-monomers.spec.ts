@@ -206,6 +206,16 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{R(G,A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
   },
+  // dfB	  2,4-Difluoro-Benzene
+  // cnes4T	4-Cyanoethylthiothymine
+  // 5eU	  5-ethynyl-uracil
+  // 5meC	  5-methylcytosine
+  // 2imen2	N2-[(Imidazo-2-yl)ethylamino]adenine
+  // 4imen2	N2-[(Imidazol-4-yl)ethyl]guanine
+  // cneT	  N3-(2-Cyanoethyl)thymine
+  // ac4C	  N4-acetylcytosine
+  // 4ime6A	N6-[2-(4-Imidazoyl)ethyl]adenine
+  // allyl9	N9-allyl-8-oxoguanine
   {
     testDescription:
       '20. Alternatives of 10 bases (multi-char, no probabilities)',

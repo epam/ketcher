@@ -2,6 +2,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import {
   BaseMonomer,
+  MonomerToAtomBond,
   Nucleotide,
   Phosphate,
   Sugar,
@@ -32,6 +33,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { isNumber } from 'lodash';
+import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
 
 export type SequencePointer = number;
 export type NumberOfSymbolsInRow = number;
@@ -208,6 +210,24 @@ export class SequenceRenderer {
             handledMonomersToAttachmentPoints.set(node.monomer, new Set());
           }
           node.monomer.forEachBond((polymerBond, attachmentPointName) => {
+            const handledAttachmentPoints =
+              handledMonomersToAttachmentPoints.get(
+                node.monomer,
+              ) as Set<AttachmentPointName>;
+
+            if (polymerBond instanceof MonomerToAtomBond) {
+              const bondRenderer = new MonomerToAtomBondSequenceRenderer(
+                polymerBond,
+                node,
+              );
+
+              bondRenderer.show();
+              polymerBond.setRenderer(bondRenderer);
+              handledAttachmentPoints.add(attachmentPointName);
+
+              return;
+            }
+
             if (!subChain.bonds.includes(polymerBond)) {
               subChain.bonds.push(polymerBond);
             }
@@ -217,11 +237,6 @@ export class SequenceRenderer {
               );
               return;
             }
-
-            const handledAttachmentPoints =
-              handledMonomersToAttachmentPoints.get(
-                node.monomer,
-              ) as Set<AttachmentPointName>;
 
             if (handledAttachmentPoints.has(attachmentPointName)) {
               return;

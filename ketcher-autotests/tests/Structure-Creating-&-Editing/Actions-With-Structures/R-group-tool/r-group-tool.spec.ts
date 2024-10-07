@@ -98,33 +98,37 @@ test.describe('R-Group', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as .mol V3000 file with R-Group features', async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1672
-    Description: The file is saved as .mol V3000 file.
-    */
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
-      page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
-    const { file: molFile, fileExpected: molFileExpected } =
-      await receiveFileComparisonData({
+  test.fail(
+    'Save as .mol V3000 file with R-Group features',
+    async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+       * Test case: EPMLSOPKET-1672
+       * Description: The file is saved as .mol V3000 file.
+       */
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
         page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          metaDataIndexes: METADATA_STRING_INDEX,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
+          fileFormat: 'v3000',
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
-  });
+      expect(molFile).toEqual(molFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open .smi file with R-Group features', async ({ page }) => {
     /*

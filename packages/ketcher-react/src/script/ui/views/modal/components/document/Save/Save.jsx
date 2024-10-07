@@ -78,7 +78,8 @@ class SaveDialog extends Component {
       tabIndex: 0,
       isLoading: true,
     };
-    this.isRxn = this.props.struct.hasRxnArrow();
+    this.isRxn =
+      this.props.struct.hasRxnArrow() || this.props.struct.hasMultitailArrow();
     this.textAreaRef = createRef();
 
     const formats = !this.props.server
@@ -89,6 +90,8 @@ class SaveDialog extends Component {
           this.isRxn ? 'rxnV3000' : 'molV3000',
           'sdf',
           'sdfV3000',
+          'rdf',
+          'rdfV3000',
           'smarts',
           'smiles',
           'smilesExt',
@@ -141,14 +144,7 @@ class SaveDialog extends Component {
   };
 
   changeType = (type) => {
-    const {
-      struct,
-      server,
-      options,
-      formState,
-      ignoreChiralFlag,
-      bondThickness,
-    } = this.props;
+    const { struct, server, options, formState, ignoreChiralFlag } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -161,11 +157,12 @@ class SaveDialog extends Component {
         structStr,
         isLoading: true,
       });
-      const options = {};
-      options.outputFormat = type;
-      options.bondThickness = bondThickness;
+      const serverOptions = { ...options };
+
+      serverOptions.outputFormat = type;
+
       return server
-        .generateImageAsBase64(structStr, options)
+        .generateImageAsBase64(structStr, serverOptions)
         .then((base64) => {
           this.setState({
             disableControls: false,

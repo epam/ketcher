@@ -114,6 +114,10 @@ export class Struct {
     return this.rxnArrows.size >= 1;
   }
 
+  hasMultitailArrow(): boolean {
+    return this.multitailArrows.size >= 1;
+  }
+
   hasRxnPluses(): boolean {
     return this.rxnPluses.size > 0;
   }
@@ -463,14 +467,26 @@ export class Struct {
     const halfBond = this.halfBonds.get(halfBondId)!;
     const sgroup1 = this.getGroupFromAtomId(halfBond.begin);
     const sgroup2 = this.getGroupFromAtomId(halfBond.end);
-    const startCoords =
-      sgroup1 instanceof MonomerMicromolecule
+
+    let startCoords: Vec2;
+    let endCoords: Vec2;
+
+    if (sgroup1 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+      startCoords = sgroup1.isContracted()
         ? (sgroup1.pp as Vec2)
         : this.atoms.get(halfBond.begin)!.pp;
-    const endCoords =
-      sgroup2 instanceof MonomerMicromolecule
+    } else {
+      startCoords = this.atoms.get(halfBond.begin)!.pp;
+    }
+
+    if (sgroup2 instanceof MonomerMicromolecule && sgroup1 !== sgroup2) {
+      endCoords = sgroup2.isContracted()
         ? (sgroup2.pp as Vec2)
         : this.atoms.get(halfBond.end)!.pp;
+    } else {
+      endCoords = this.atoms.get(halfBond.end)!.pp;
+    }
+
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized();
 
     halfBond.dir =

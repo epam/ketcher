@@ -39,7 +39,12 @@ import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
 import { IMAGE_KEY, MULTITAIL_ARROW_KEY } from 'domain/constants';
 
-export function fromMultipleMove(restruct, lists, d: Vec2) {
+export function fromMultipleMove(
+  restruct,
+  lists,
+  d: Vec2,
+  shouldPerform = true,
+) {
   d = new Vec2(d);
 
   const action = new Action();
@@ -142,7 +147,7 @@ export function fromMultipleMove(restruct, lists, d: Vec2) {
     });
   }
 
-  return action.perform(restruct);
+  return shouldPerform ? action.perform(restruct) : action;
 }
 
 export function fromStereoFlagUpdate(restruct, frid, flag = null) {

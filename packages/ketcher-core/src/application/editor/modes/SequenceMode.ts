@@ -50,6 +50,7 @@ import {
 } from 'application/editor/tools/Tool';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -248,6 +249,11 @@ export class SequenceMode extends BaseMode {
           // Add Phosphate to Nucleoside
         } else if (currentNode instanceof Nucleoside) {
           const sugarR2 = currentNode.sugar.attachmentPointsToBonds.R2;
+
+          if (sugarR2 instanceof MonomerToAtomBond) {
+            return;
+          }
+
           const nextMonomerInSameChain = sugarR2?.secondMonomer;
 
           // Remove existing bond connection between Nucleoside Sugar and next node in case of any
@@ -560,7 +566,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const nodeR2Bond = node?.lastMonomerInNode.attachmentPointsToBonds.R2;
 
-    if (!nodeR2Bond) {
+    if (!nodeR2Bond || nodeR2Bond instanceof MonomerToAtomBond) {
       return;
     }
 
@@ -1049,7 +1055,11 @@ export class SequenceMode extends BaseMode {
 
     Object.entries(selection.node.monomer.attachmentPointsToBonds).forEach(
       ([key, bond]) => {
-        if (!bond || !bond.isSideChainConnection) {
+        if (
+          !bond ||
+          bond instanceof MonomerToAtomBond ||
+          !bond.isSideChainConnection
+        ) {
           return;
         }
 
@@ -1099,7 +1109,7 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBond),
+          editor.drawingEntitiesManager.deleteDrawingEntity(polymerBond),
         );
       });
     });
@@ -1202,29 +1212,31 @@ export class SequenceMode extends BaseMode {
       );
     // Side chains
     // node.selection.node.monomers.attachmentPoints
-    const oldMonomerBonds: [string, PolymerBond | null][] = sideChainConnections
-      ? Object.entries(nodeSelection.node.monomer.attachmentPointsToBonds)
-      : [
-          [
-            AttachmentPointName.R1 as string,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            nodeSelection.node.firstMonomerInNode.attachmentPointsToBonds.R1!,
-          ],
-          [
-            AttachmentPointName.R2 as string,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            nodeSelection.node.lastMonomerInNode.attachmentPointsToBonds.R2!,
-          ],
-        ];
+    const oldMonomerBonds: [string, PolymerBond | MonomerToAtomBond | null][] =
+      sideChainConnections
+        ? Object.entries(nodeSelection.node.monomer.attachmentPointsToBonds)
+        : [
+            [
+              AttachmentPointName.R1 as string,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              nodeSelection.node.firstMonomerInNode.attachmentPointsToBonds.R1!,
+            ],
+            [
+              AttachmentPointName.R2 as string,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              nodeSelection.node.lastMonomerInNode.attachmentPointsToBonds.R2!,
+            ],
+          ];
     // Backbone
     // nodeSelection.node.firstMonomerInNode.attachmentPointsToBonds.R1
     // nodeSelection.node.lastMonomerInNode.attachmentPointsToBonds.R2
     return oldMonomerBonds.every(([key, bond]) => {
       if (
         !bond ||
-        (sideChainConnections
-          ? !bond.isSideChainConnection
-          : !bond.isBackBoneChainConnection)
+        (!(bond instanceof MonomerToAtomBond) &&
+          (sideChainConnections
+            ? !bond.isSideChainConnection
+            : !bond.isBackBoneChainConnection))
       ) {
         return true;
       }
@@ -1493,7 +1505,7 @@ export class SequenceMode extends BaseMode {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
         modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBond),
+          editor.drawingEntitiesManager.deleteDrawingEntity(polymerBond),
         );
       });
     });

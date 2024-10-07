@@ -121,7 +121,7 @@
         ],
         "templates": [
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
                 "$ref": "monomerTemplate-A___Adenine"
@@ -142,9 +142,9 @@
             "y": -10.118526136593884
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -436,7 +436,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [

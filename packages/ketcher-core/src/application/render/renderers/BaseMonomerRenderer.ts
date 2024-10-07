@@ -28,6 +28,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editor: CoreEditor;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
+  public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
 
   private freeSectorsList: number[] = sectorsList;
 
@@ -421,7 +422,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendEvents() {
-    assert(this.bodyElement);
+    if (!this.bodyElement) {
+      return;
+    }
+
     this.bodyElement
       .on('mouseover', (event) => {
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);

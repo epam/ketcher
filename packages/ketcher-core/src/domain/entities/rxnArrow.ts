@@ -73,7 +73,7 @@ export class RxnArrow extends BaseMicromoleculeEntity {
       }
     }
     this.mode = attributes.mode;
-    const defaultHeight = 2;
+    const defaultHeight = 1;
 
     if (RxnArrow.isElliptical(this)) {
       this.height = attributes.height ?? defaultHeight;

@@ -1709,39 +1709,44 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files', async () => {
-    /*
+  test.fail(
+    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files',
+    async () => {
+      /*
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
+    
+    IMPORTANT: This test fails because of https://github.com/epam/Indigo/issues/2477 issue
     */
-    await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
-      page,
-    );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-      expectedFile,
-    );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
-        expectedFileName:
-          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getSdf(page, 'v3000');
+      await saveToFile(
+        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRINGS_INDEXES = [1];
+
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
     /* 
@@ -1887,16 +1892,15 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test(
+  test.fail(
     'Check that Aromatize/Dearomatize works for molecules with AP',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async () => {
       /*
-    Test case: #4530
-    Description: Aromatize/Dearomatize works for molecules with AP.
-    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4804
-    After the fix, you need to update test.
-    */
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2027
+       * Test case: #4530
+       * Description: Aromatize/Dearomatize works for molecules with AP.
+       */
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,

@@ -309,33 +309,35 @@ test.describe('CDX files without screenshots', () => {
     expect(cdxFile).toEqual(cdxFileExpected);
   });
 
-  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2205
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
-      'CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
-        expectedFileName:
-          'tests/test-data/CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      });
+      );
+      const expectedFile = await getCdx(page);
+      await saveToFile(
+        'CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
+        expectedFile,
+      );
 
-    expect(cdxFile).toEqual(cdxFileExpected);
-  });
+      const { fileExpected: cdxFileExpected, file: cdxFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
+        });
+
+      expect(cdxFile).toEqual(cdxFileExpected);
+    },
+  );
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to Cdx file and loaded back', async ({
     page,

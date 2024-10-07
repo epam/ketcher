@@ -428,11 +428,12 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.mol file V3000', async ({ page }) => {
+  test.fail('Save as *.mol file V3000', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1651
-    Description: Structure with attachment points saved as .mol file V3000
-    */
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET-1651
+     * Description: Structure with attachment points saved as .mol file V3000
+     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
@@ -500,11 +501,12 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save as *.rxn file V3000', async ({ page }) => {
+  test.fail('Save as *.rxn file V3000', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1652
-    Description: Structure with attachment points saved as .rxn file V3000
-    */
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET-1652
+     * Description: Structure with attachment points saved as .rxn file V3000
+     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(

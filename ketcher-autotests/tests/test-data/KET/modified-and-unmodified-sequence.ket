@@ -217,16 +217,16 @@
                 "$ref": "monomerTemplate-R___Ribose"
             },
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
                 "$ref": "monomerTemplate-bP___Boranophosphate"
             },
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
-                "$ref": "monomerTemplate-daA___N,N-dimethyl-Adenine"
+                "$ref": "monomerTemplate-daA___N6,N6-dimethyladenine"
             },
             {
                 "$ref": "monomerTemplate-sP___Phosporothioate"
@@ -990,9 +990,9 @@
             "y": -7.425000000000009
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1188,7 +1188,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "2,5-Ribose",
         "alias": "25R",
         "attachmentPoints": [
@@ -1341,9 +1341,9 @@
             "y": -8.74150000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1635,7 +1635,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [
@@ -1659,7 +1659,7 @@
             "y": -7.425000000000009
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
     "monomer6304": {
         "type": "monomer",
@@ -1669,9 +1669,9 @@
             "y": -8.74150000000001
         },
         "alias": "daA",
-        "templateId": "daA___N,N-dimethyl-Adenine"
+        "templateId": "daA___N6,N6-dimethyladenine"
     },
-    "monomerTemplate-daA___N,N-dimethyl-Adenine": {
+    "monomerTemplate-daA___N6,N6-dimethyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1881,7 +1881,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "daA___N,N-dimethyl-Adenine",
+        "id": "daA___N6,N6-dimethyladenine",
         "fullName": "N,N-dimethyl-Adenine",
         "alias": "daA",
         "attachmentPoints": [

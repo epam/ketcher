@@ -17,6 +17,7 @@ import {
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export type MonomerColorScheme = {
   regular: string;
@@ -110,5 +111,5 @@ export type PreviewAttachmentPointConstructorParams =
 export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;
 
 export type AttachmentPointsToBonds = Partial<
-  Record<AttachmentPointName, PolymerBond | null>
+  Record<AttachmentPointName, PolymerBond | MonomerToAtomBond | null>
 >;

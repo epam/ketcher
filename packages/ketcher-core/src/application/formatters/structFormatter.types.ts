@@ -54,6 +54,8 @@ export enum SupportedFormat {
   idt = 'idt',
   helm = 'helm',
   unknown = 'unknown',
+  rdf = 'rdf',
+  rdfV3000 = 'rdfV3000',
 }
 
 export type FormatterFactoryOptions = Partial<

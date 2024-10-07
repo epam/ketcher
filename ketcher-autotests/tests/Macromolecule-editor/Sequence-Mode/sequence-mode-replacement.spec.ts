@@ -1118,7 +1118,7 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Bases',
     MonomerAlias: '5meC',
-    MonomerTestId: '5meC___5-methyl-cytidine',
+    MonomerTestId: '5meC___5-methylcytosine',
     MonomerDescription: 'base w/o R2 (5meC)',
   },
   {
@@ -1173,7 +1173,7 @@ const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     Id: <number>monomerIDs.peptide_w_o_R1_D_OAla,
     MonomerType: 'Peptide',
     MonomerAlias: 'D-OAla',
-    MonomerTestId: 'D-OAla___D-lactic acid',
+    MonomerTestId: 'D-OAla___D-Lactic acid',
     MonomerDescription: 'peptide w/o R1 (D-OAla)',
   },
   {
@@ -1188,7 +1188,7 @@ const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Sugars',
     MonomerAlias: '5cGT',
-    MonomerTestId: "5cGT___2-(methylamino)acetamide (GeneTools 5'-cap for PMO)",
+    MonomerTestId: "5cGT___2-(methylamino)acetamidate (5' end)",
     MonomerDescription: 'sugar w/o R1 (5cGT)',
   },
 ];

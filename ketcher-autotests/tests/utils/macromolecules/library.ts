@@ -5,8 +5,10 @@ import {
   PEPTIDES_TAB,
   RNA_TAB,
 } from '@constants/testIdConstants';
+import { moveMouseAway } from '@utils/moveMouseAway';
 
 export async function goToRNATab(page: Page) {
+  await moveMouseAway(page);
   await page.getByTestId(FAVORITES_TAB).click();
   await page.getByTestId(RNA_TAB).click();
 }

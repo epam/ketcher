@@ -228,6 +228,7 @@ import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import CrossIcon from '../../../assets/icons/files/cross.svg';
 
 export const iconNameToIcon = {
   α,
@@ -460,4 +461,5 @@ export const iconNameToIcon = {
   'snake-layout-mode': SnakeLayoutIcon,
   'sequence-layout-mode': SequenceLayoutIcon,
   questionMark: QuestionMark,
+  'no-highlight-cross': CrossIcon,
 } as const;

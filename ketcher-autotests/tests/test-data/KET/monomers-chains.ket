@@ -2699,7 +2699,7 @@
                 "$ref": "monomerTemplate-MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate"
             },
             {
-                "$ref": "monomerTemplate-5FAM___5'-6FAM (6-carboxyfluorescein)"
+                "$ref": "monomerTemplate-5FAM___6-FAM (5' end)"
             },
             {
                 "$ref": "monomerTemplate-FMOE___2'-O-Tris-trifluoromethoxyethyl ribose"
@@ -14520,9 +14520,9 @@
             "y": -29.073571421305342
         },
         "alias": "5FAM",
-        "templateId": "5FAM___5'-6FAM (6-carboxyfluorescein)"
+        "templateId": "5FAM___6-FAM (5' end)"
     },
-    "monomerTemplate-5FAM___5'-6FAM (6-carboxyfluorescein)": {
+    "monomerTemplate-5FAM___6-FAM (5' end)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -15091,7 +15091,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "5FAM___5'-6FAM (6-carboxyfluorescein)",
+        "id": "5FAM___6-FAM (5' end)",
         "fullName": "5'-6FAM (6-carboxyfluorescein)",
         "alias": "5FAM",
         "attachmentPoints": [

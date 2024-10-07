@@ -39,6 +39,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private path = '';
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
   private sideConnectionBondTurnPoint?: number;
+  public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
@@ -863,6 +864,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         .attr('cursor', 'pointer')
         .attr('r', '1')
         .attr('fill', 'transparent')
+        .attr('pointer-events', 'none')
         .attr('stroke-width', '10')
         .attr('cx', this.scaledPosition.endPosition.x)
         .attr('cy', this.scaledPosition.endPosition.y);

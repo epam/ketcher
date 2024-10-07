@@ -25,7 +25,7 @@ test.describe('Outline for hovered structures', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
 
     await page.keyboard.press('Control+KeyA');
-    await page.keyboard.down('Control');
+    await page.keyboard.down('Alt');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 

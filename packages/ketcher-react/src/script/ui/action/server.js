@@ -89,6 +89,7 @@ const config = {
   },
   miew: {
     title: '3D Viewer',
+    enabledInViewOnly: true,
     action: { dialog: 'miew' },
     hidden: (options) => isHidden(options, 'miew'),
   },

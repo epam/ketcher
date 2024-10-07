@@ -264,7 +264,7 @@
                 "$ref": "monomerTemplate-AmdA___2, 6-Diaminopurine"
             },
             {
-                "$ref": "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC"
+                "$ref": "monomerTemplate-5hMedC___5-Hydroxymethyl dC"
             },
             {
                 "$ref": "monomerTemplate-Super-dG___Super G"
@@ -276,7 +276,7 @@
                 "$ref": "monomerTemplate-Super-dT___Super T"
             },
             {
-                "$ref": "monomerTemplate-5Br-dU___5-Bromo dU"
+                "$ref": "monomerTemplate-5Br-dU___5-Bromo-deoxyuridine"
             },
             {
                 "$ref": "monomerTemplate-5NitInd___5-Nitroindole"
@@ -737,9 +737,9 @@
             "y": -1.25
         },
         "alias": "5HydMe-dC",
-        "templateId": "5HydMe-dC___5-Hydroxymethyl dC"
+        "templateId": "5hMedC___5-Hydroxymethyl dC"
     },
-    "monomerTemplate-5HydMe-dC___5-Hydroxymethyl dC": {
+    "monomerTemplate-5hMedC___5-Hydroxymethyl dC": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1105,7 +1105,7 @@
         ],
         "class": "RNA",
         "classHELM": "RNA",
-        "id": "5HydMe-dC___5-Hydroxymethyl dC",
+        "id": "5hMedC___5-Hydroxymethyl dC",
         "fullName": "Hydroxymethyl dC",
         "alias": "5HydMe-dC",
         "attachmentPoints": [
@@ -2618,9 +2618,9 @@
             "y": -1.25
         },
         "alias": "5-Bromo dU",
-        "templateId": "5Br-dU___5-Bromo dU"
+        "templateId": "5Br-dU___5-Bromo-deoxyuridine"
     },
-    "monomerTemplate-5Br-dU___5-Bromo dU": {
+    "monomerTemplate-5Br-dU___5-Bromo-deoxyuridine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -2971,7 +2971,7 @@
         ],
         "class": "RNA",
         "classHELM": "RNA",
-        "id": "5Br-dU___5-Bromo dU",
+        "id": "5Br-dU___5-Bromo-deoxyuridine",
         "fullName": "5-Bromo-deoxyuridine",
         "alias": "5-Bromo dU",
         "attachmentPoints": [

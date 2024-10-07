@@ -51,6 +51,7 @@ export function resetEditorEvents() {
     mouseDownOnSequenceItem: new Subscription(),
     doubleClickOnSequenceItem: new Subscription(),
     openConfirmationDialog: new Subscription(),
+    mouseUpAtom: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -86,6 +87,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mousedownBetweenSequenceItems',
   'mouseDownOnSequenceItem',
   'doubleClickOnSequenceItem',
+  'mouseUpAtom',
 ];
 
 export const hotkeysConfiguration = {

@@ -17,12 +17,38 @@
 import { RaphaelPaper, Element } from 'raphael';
 import { HalfBond, RxnArrowMode, Vec2 } from 'domain/entities';
 
+import { getOptionsWithConvertedUnits } from './options';
 import Raphael from './raphael-ext';
 import svgPath from 'svgpath';
 import util from './util';
 import { ArrowItem, RelativeBox, RenderOptions } from './render.types';
 import { tfx } from 'utilities';
 import { PathBuilder } from './pathBuilder';
+
+const ARROW_HEAD_LENGHT = 0.25; // 10
+const ARROW_HEAD_WIDTH = 0.125; // 5
+const ARROW_HEAD_ATTR = 0.1; // 4
+const ARROW_OFFSET = 0.1; // 4
+const ARROW_DASH_INTERVAL = 0.0875; // 3.5
+const ARROW_FAIL_SIGN_WIDTH = 0.2; // 8
+const ARROW_UNBALANCED_OFFSET = 0.2; // 8 (used to be 15)
+
+export function getArrowHeadDimensions(options: RenderOptions) {
+  const { microModeScale } = getOptionsWithConvertedUnits(options);
+
+  return {
+    arrowHeadLength: ARROW_HEAD_LENGHT * microModeScale,
+    arrowHeadWidth: ARROW_HEAD_WIDTH * microModeScale,
+    arrowHeadAttr: ARROW_HEAD_ATTR * microModeScale,
+    arrowOffset: ARROW_OFFSET * microModeScale,
+  };
+}
+
+function getUnbalancedArrowHeadOffset(options: RenderOptions) {
+  const { microModeScale } = getOptionsWithConvertedUnits(options);
+
+  return ARROW_UNBALANCED_OFFSET * microModeScale;
+}
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
@@ -282,9 +308,12 @@ function arrowEllipticalArcFilledBow(
   shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
-  const arrowHeadLength = direction * 10;
-  const arrowHeadWidth = direction * 5;
-  const arrowHeadAttr = direction * 4;
+  const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
+    getArrowHeadDimensions(options);
+
+  const length = direction * arrowHeadLength;
+  const width = direction * arrowHeadWidth;
+  const attr = direction * arrowHeadAttr;
 
   const endX = start.x + arrowLength;
   const path =
@@ -292,10 +321,10 @@ function arrowEllipticalArcFilledBow(
     `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
       endX,
     )},${tfx(start.y)}` +
-    `L${tfx(endX - arrowHeadWidth)},${tfx(start.y - arrowHeadLength)}` +
-    `l${tfx(arrowHeadWidth)},${tfx(arrowHeadAttr)}` +
-    `l${tfx(arrowHeadWidth)},${tfx(-arrowHeadAttr)}` +
-    `l${tfx(-arrowHeadWidth)},${arrowHeadLength}`;
+    `L${tfx(endX - width)},${tfx(start.y - length)}` +
+    `l${tfx(width)},${tfx(attr)}` +
+    `l${tfx(width)},${tfx(-attr)}` +
+    `l${tfx(-width)},${length}`;
 
   const transformedPath = svgPath(path)
     .rotate(arrowAngle, start.x, start.y)
@@ -317,9 +346,12 @@ function arrowEllipticalArcFilledTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
+
   const direction = height >= 0 ? 1 : -1;
-  const triangleLength = direction * 10;
-  const triangleWidth = direction * 5;
+
+  const triangleLength = direction * arrowHeadLength;
+  const triangleWidth = direction * arrowHeadWidth;
 
   const endX = start.x + arrowLength;
 
@@ -353,8 +385,12 @@ function arrowEllipticalArcOpenAngle(
   shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
-  const width = direction * 5;
-  const length = direction * 7;
+
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
+
+  const width = direction * arrowHeadWidth;
+  const length = direction * arrowHeadLength;
+
   const endX = start.x + arrowLength;
 
   const path =
@@ -387,8 +423,11 @@ function arrowEllipticalArcOpenHalfAngle(
   shouldApplySnappingStyle: boolean,
 ) {
   const direction = height >= 0 ? 1 : -1;
-  const width = direction * 5;
-  const length = direction * 7;
+
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
+
+  const width = direction * arrowHeadWidth;
+  const length = direction * arrowHeadLength;
   const endX = start.x + arrowLength;
 
   const path =
@@ -418,9 +457,12 @@ function arrowOpenAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
+  const { arrowHeadAttr, arrowHeadLength } = getArrowHeadDimensions(options);
   const pathBuilder = new PathBuilder().addOpenArrowPathParts(
     start,
     arrowLength,
+    arrowHeadLength,
+    arrowHeadAttr,
   );
   const transformedPath = svgPath(pathBuilder.build())
     .rotate(arrowAngle, start.x, start.y)
@@ -442,16 +484,15 @@ function arrowFilledTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const triangleLength = 10;
-  const triangleWidth = 5;
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
   const path =
     `M${tfx(start.x)},${tfx(start.y)}` +
     `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
-    `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
     `L${tfx(endX)},${tfx(start.y)}Z`;
 
   const transformedPath = svgPath(path)
@@ -473,9 +514,8 @@ function arrowFilledBow(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowHeadLength = 10;
-  const arrowHeadWidth = 5;
-  const arrowHeadAttr = 4;
+  const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
+    getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
@@ -506,9 +546,10 @@ function arrowDashedOpenAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const triangleLength = 10;
-  const triangleWidth = 5;
-  const dashInterval = 3.5;
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
+  const { microModeScale } = getOptionsWithConvertedUnits(options);
+
+  const dashInterval = ARROW_DASH_INTERVAL * microModeScale;
 
   const path: string[] = [];
 
@@ -526,9 +567,9 @@ function arrowDashedOpenAngle(
   // Arrowhead
   path.push(
     `M${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
       `M${tfx(endX)},${tfx(start.y)}` +
-      `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}`,
+      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -550,10 +591,11 @@ function arrowFailed(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowHeadLength = 10;
-  const arrowHeadWidth = 5;
-  const arrowHeadAttr = 4;
-  const failSignWidth = 8;
+  const { arrowHeadLength, arrowHeadWidth, arrowHeadAttr } =
+    getArrowHeadDimensions(options);
+  const { microModeScale } = getOptionsWithConvertedUnits(options);
+
+  const failSignWidth = ARROW_FAIL_SIGN_WIDTH * microModeScale;
 
   const endX = start.x + arrowLength;
 
@@ -602,39 +644,31 @@ function arrowRetrosynthetic(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const width = 5;
-  const length = 7;
-  const arrowheadLength = 0.1;
-  const lineOffset = 4;
+  const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
+    getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
   const path: string[] = [];
 
-  // First arrow and arrowhead base
+  // First arrow and arrowhead
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
   );
 
-  // First Arrowhead line
+  // Second arrow and arrowhead
   path.push(
-    `M${tfx(endX - length)},${tfx(start.y - width - lineOffset)}` +
-      `L${tfx(endX + length)},${tfx(start.y - arrowheadLength)}`,
-  );
-
-  // Second arrow and arrowhead base
-  path.push(
-    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX - length)},${tfx(start.y + width + lineOffset)}`,
-  );
-
-  // Second Arrowhead line
-  path.push(
-    `M${tfx(endX - length)},${tfx(start.y + width + lineOffset)}` +
-      `L${tfx(endX + length)},${tfx(start.y + arrowheadLength)}`,
+    `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
+      )}` +
+      `L${tfx(endX + arrowHeadLength)},${tfx(start.y)}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -657,20 +691,19 @@ function arrowBothEndsFilledTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const triangleLength = 10;
-  const triangleWidth = 5;
+  const { arrowHeadLength, arrowHeadWidth } = getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
   const path =
     `M${tfx(start.x)},${tfx(start.y)}` +
     `L${tfx(endX)},${tfx(start.y)}` +
-    `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
-    `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
     `L${tfx(endX)},${tfx(start.y)}` +
     `M${tfx(start.x)},${tfx(start.y)}` +
-    `L${tfx(start.x + triangleLength)},${tfx(start.y - triangleWidth)}` +
-    `L${tfx(start.x + triangleLength)},${tfx(start.y + triangleWidth)}` +
+    `L${tfx(start.x + arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
+    `L${tfx(start.x + arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
     `L${tfx(start.x)},${tfx(start.y)}`;
 
   const transformedPath = svgPath(path)
@@ -692,29 +725,35 @@ function arrowEquilibriumFilledHalfBow(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const arrowOffset = 7;
-  const arrowHeadAttr = 2;
+  const { arrowHeadLength, arrowHeadAttr, arrowOffset, arrowHeadWidth } =
+    getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
   const path: string[] = [];
 
-  // Arrow
+  // top arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+        start.y - arrowOffset,
+      )}Z`,
   );
 
-  // Arrowhead
+  // bottom arrow
   path.push(
-    `M${tfx(endX)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowLen - arrowHeadAttr)},${start.y + lineOffset}Z`,
+    `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
+      )}` +
+      `L${tfx(start.x + arrowHeadLength - arrowHeadAttr)},${
+        start.y + arrowOffset
+      }Z`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -736,9 +775,8 @@ function arrowEquilibriumFilledTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const arrowOffset = 7;
+  const { arrowHeadLength, arrowOffset, arrowHeadWidth } =
+    getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
@@ -746,23 +784,28 @@ function arrowEquilibriumFilledTriangle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}Z`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y + arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}Z`,
   );
 
   // Second arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen)},${tfx(start.y + arrowOffset)}` +
-      `L${tfx(start.x + arrowLen)},${start.y + lineOffset}Z` +
-      `L${tfx(start.x + arrowLen)},${tfx(start.y)}` +
-      `L${tfx(start.x + arrowLen)},${start.y + lineOffset}Z`,
+    `M${tfx(endX)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
+      )}` +
+      `L${tfx(start.x + arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth + arrowOffset,
+      )}` +
+      `L${tfx(start.x)},${tfx(start.y + arrowOffset)}Z`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -784,10 +827,8 @@ function arrowEquilibriumOpenAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const width = 5;
-  const length = 7;
-  const arrowLen = 9;
-  const lineOffset = 3.5;
+  const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
+    getArrowHeadDimensions(options);
 
   const endX = start.x + arrowLength;
 
@@ -795,17 +836,21 @@ function arrowEquilibriumOpenAngle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}`,
   );
 
   // Second arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen)},${tfx(start.y + lineOffset + width)}`,
+    `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + arrowOffset)}` +
+      `M${tfx(start.x)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength)},${tfx(
+        start.y + arrowOffset + arrowHeadWidth,
+      )}`,
   );
 
   const transformedPath = svgPath(path.join(''))
@@ -828,11 +873,9 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const arrowOffset = 7;
-  const arrowHeadAttr = 2;
-  const unbalanceVal = 15;
+  const { arrowHeadLength, arrowHeadWidth, arrowOffset, arrowHeadAttr } =
+    getArrowHeadDimensions(options);
+  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -840,22 +883,25 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+        start.y - arrowOffset,
+      )}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
-        start.y + arrowOffset,
+    `M${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + unbalanceVal + arrowHeadLength)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
-        start.y + lineOffset
+      `L${tfx(start.x + unbalanceVal + arrowHeadLength - arrowHeadAttr)},${
+        start.y + arrowOffset
       }Z`,
   );
 
@@ -878,11 +924,9 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const width = 5;
-  const length = 7;
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const unbalanceVal = 15;
+  const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
+    getArrowHeadDimensions(options);
+  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -890,18 +934,20 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
-        start.y + lineOffset + width,
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+        start.y + arrowOffset + arrowHeadWidth,
       )}`,
   );
 
@@ -925,11 +971,16 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const arrowOffset = 10;
-  const arrowHeadAttr = 2;
-  const unbalanceVal = 15;
+  const {
+    arrowHeadLength,
+    arrowHeadWidth: arrowHeadWidthNormal,
+    arrowOffset,
+    arrowHeadAttr,
+  } = getArrowHeadDimensions(options);
+  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
+
+  // Multiplying by 1.5 because it's large variant
+  const arrowHeadWidth = arrowHeadWidthNormal * 1.5;
 
   const endX = start.x + arrowLength;
 
@@ -937,22 +988,26 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(
+        start.y - arrowOffset,
+      )}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
-        start.y + arrowOffset,
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
-        start.y + lineOffset
+      `L${tfx(start.x + arrowHeadLength - arrowHeadAttr + unbalanceVal)},${
+        start.y + arrowOffset
       }Z`,
   );
 
@@ -975,10 +1030,9 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
   options: RenderOptions,
   shouldApplySnappingStyle: boolean,
 ) {
-  const arrowLen = 9;
-  const lineOffset = 3.5;
-  const arrowOffset = 7;
-  const unbalanceVal = 15;
+  const { arrowHeadLength, arrowHeadWidth, arrowOffset } =
+    getArrowHeadDimensions(options);
+  const unbalanceVal = getUnbalancedArrowHeadOffset(options);
 
   const endX = start.x + arrowLength;
 
@@ -986,21 +1040,25 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 
   // First arrow
   path.push(
-    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
-      `L${tfx(endX - arrowLen)},${tfx(start.y - lineOffset)}Z`,
+    `M${tfx(start.x)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(
+        start.y - arrowHeadWidth - arrowOffset,
+      )}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowOffset)}Z`,
   );
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
-      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
-        start.y + arrowOffset,
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${tfx(
+        start.y + arrowHeadWidth + arrowOffset,
       )}` +
-      `L${tfx(start.x + arrowLen + unbalanceVal)},${start.y + lineOffset}Z`,
+      `L${tfx(start.x + arrowHeadLength + unbalanceVal)},${
+        start.y + arrowOffset
+      }Z`,
   );
 
   const transformedPath = svgPath(path.join(''))

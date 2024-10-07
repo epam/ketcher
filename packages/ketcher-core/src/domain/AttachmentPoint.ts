@@ -12,6 +12,7 @@ import {
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export class AttachmentPoint {
   static attachmentPointVector = 6;
@@ -234,11 +235,17 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
-    const flip = this.monomer.id === polymerBond?.firstMonomer?.id;
+
+    const firstMonomer =
+      polymerBond instanceof MonomerToAtomBond
+        ? polymerBond.monomer
+        : polymerBond?.firstMonomer;
+    const flip = this.monomer.id === firstMonomer?.id;
     const isAttachmentpointR1 = this.attachmentPointName === 'R1';
     if (!polymerBond) {
       angleDegrees = this.initialAngle;
     } else if (
+      !(polymerBond instanceof MonomerToAtomBond) &&
       this.isSnake &&
       !polymerBond?.renderer?.isMonomersOnSameHorizontalLine()
     ) {
@@ -291,7 +298,10 @@ export class AttachmentPoint {
       .attr('stroke', this.fill === 'white' ? '#0097A8' : 'white');
   }
 
-  public rotateToAngle(polymerBond: PolymerBond, flip = false) {
+  public rotateToAngle(
+    polymerBond: PolymerBond | MonomerToAtomBond,
+    flip = false,
+  ) {
     let angleRadians = 0;
     if (flip) {
       angleRadians = Vec2.oxAngleForVector(
@@ -344,7 +354,9 @@ export class AttachmentPoint {
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
 
-    assert(polymerBond);
+    if (!polymerBond || polymerBond instanceof MonomerToAtomBond) {
+      return;
+    }
 
     const flip = this.monomer.id === polymerBond?.firstMonomer?.id;
 

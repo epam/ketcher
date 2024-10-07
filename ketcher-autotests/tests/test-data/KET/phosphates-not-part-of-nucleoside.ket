@@ -240,7 +240,7 @@
                 "$ref": "monomerTemplate-U___Uracil"
             },
             {
-                "$ref": "monomerTemplate-m2nen___(Dimethylaminoethyl)amino"
+                "$ref": "monomerTemplate-m2nen___N1,N1-dimethylethane-1,2-diamine"
             }
         ]
     },
@@ -1632,9 +1632,9 @@
             "y": -0.8264775717794592
         },
         "alias": "m2nen",
-        "templateId": "m2nen___(Dimethylaminoethyl)amino"
+        "templateId": "m2nen___N1,N1-dimethylethane-1,2-diamine"
     },
-    "monomerTemplate-m2nen___(Dimethylaminoethyl)amino": {
+    "monomerTemplate-m2nen___N1,N1-dimethylethane-1,2-diamine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -1755,7 +1755,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "m2nen___(Dimethylaminoethyl)amino",
+        "id": "m2nen___N1,N1-dimethylethane-1,2-diamine",
         "fullName": "(Dimethylaminoethyl)amino",
         "alias": "m2nen",
         "attachmentPoints": [

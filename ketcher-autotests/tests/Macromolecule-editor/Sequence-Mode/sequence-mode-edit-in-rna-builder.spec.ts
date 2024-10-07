@@ -13,13 +13,21 @@ import {
   startNewSequence,
   takePresetsScreenshot,
   selectSnakeLayoutModeTool,
+  Sugars,
+  Phosphates,
 } from '@utils';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { BASE, PHOSPHATE, SUGAR } from '@constants/testIdConstants';
+import { PHOSPHATE, SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import {
+  pressSaveButton,
+  selectBaseSlot,
+  selectPhosphateSlot,
+  selectSugarSlot,
+} from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,11 +51,11 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await page.getByTestId(SUGAR).click();
     // should see disabled and nondisabled sugars
     await takeMonomerLibraryScreenshot(page);
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     // should see updated nucleotide in chain
     // should see nondisabled top bar's selectors
     // should see nondisabled top undo/redo/open buttons
@@ -71,7 +79,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeRNABuilderScreenshot(page);
     // Update Sugar
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await moveMouseAway(page);
     // Update Phosphate
     await page.getByTestId(PHOSPHATE).click();
@@ -79,7 +87,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await moveMouseAway(page);
     // should see updated sugar and phosphate, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await takePageScreenshot(page);
   });
 
@@ -100,7 +108,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeRNABuilderScreenshot(page);
     // Update Sugar
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await moveMouseAway(page);
     // Update Phosphate
     await page.getByTestId(PHOSPHATE).click();
@@ -108,7 +116,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await moveMouseAway(page);
     // should see updated sugar and phosphate of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     // Click 'Yes' in modal
     await page.getByText('Yes').click();
     await takePageScreenshot(page);
@@ -119,7 +127,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
@@ -145,14 +153,14 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await moveMouseAway(page);
     await page.getByTestId(PHOSPHATE).click();
     await page.getByTestId('bP___Boranophosphate').click();
     await moveMouseAway(page);
     // should see updated sugar and phosphate, and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     // should see modal to apply or cancel modification
     await takeEditorScreenshot(page);
     await page.getByText('Yes').click();
@@ -247,15 +255,15 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await clickOnSequenceSymbol(page, 'G');
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
-    await page.getByTestId(SUGAR).click();
-    await page.getByTestId(`3A6___6-amino-hexanol (3' end)`).click();
+    await selectSugarSlot(page);
+    await page.getByTestId(Sugars.ThreeA6).click();
     await moveMouseAway(page);
-    await page.getByTestId(BASE).click();
+    await selectBaseSlot(page);
     await page
       .getByTestId('dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine')
       .click();
-    await page.getByTestId(PHOSPHATE).click();
-    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await selectPhosphateSlot(page);
+    await page.getByTestId(Phosphates.sP_).click();
     await moveMouseAway(page);
     await takeRNABuilderScreenshot(page);
   });
@@ -275,14 +283,14 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await page.getByTestId(SUGAR).click();
     await page.getByTestId(`3A6___6-amino-hexanol (3' end)`).click();
     await moveMouseAway(page);
-    await page.getByTestId(BASE).click();
+    await selectBaseSlot(page);
     await page
       .getByTestId('dabA___7-deaza-8-aza-7-bromo-2-amino-Adenine')
       .click();
-    await page.getByTestId(PHOSPHATE).click();
-    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await selectPhosphateSlot(page);
+    await page.getByTestId(Phosphates.sP_).click();
     await moveMouseAway(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -316,9 +324,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await page.getByTestId(PHOSPHATE).click();
-    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await page.getByTestId(Phosphates.sP_).click();
     await moveMouseAway(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -343,9 +351,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await page.getByTestId('modify_in_rna_builder').click();
     await takeRNABuilderScreenshot(page);
     await page.getByTestId(PHOSPHATE).click();
-    await page.getByTestId('nasP___Sodium Phosporothioate').click();
+    await page.getByTestId(Phosphates.sP_).click();
     await moveMouseAway(page);
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await page.getByText('Yes').click();
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);

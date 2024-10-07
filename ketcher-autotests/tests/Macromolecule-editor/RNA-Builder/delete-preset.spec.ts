@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
-import { gotoRNA } from '@utils/macromolecules/rnaBuilder';
+import { gotoRNA, pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Macromolecules delete RNA presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,7 +18,7 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.getByTestId('A_A_R_P').click({ button: 'right' });
 
     await page.getByTestId('duplicateandedit').click();
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
 
     const createdPreset = page.getByTestId('A_Copy_A_R_P');
     await expect(createdPreset).toBeVisible();

@@ -21,6 +21,7 @@ import {
   SGroup,
   Vec2,
   Struct,
+  MonomerMicromolecule,
 } from 'domain/entities';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
@@ -129,7 +130,8 @@ class ReSGroup extends ReObject {
       ];
       if (
         sgroupTypesWithBrackets.includes(sgroup.type) &&
-        !sgroup.isSuperatomWithoutLabel
+        !sgroup.isSuperatomWithoutLabel &&
+        !(sgroup instanceof MonomerMicromolecule)
       ) {
         SGroupdrawBrackets(SGroupdrawBracketsOptions);
       }

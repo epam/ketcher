@@ -40,13 +40,24 @@ import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Image } from 'domain/entities/image';
 
+type CreatedItems = {
+  atoms: number[];
+  bonds: number[];
+  rxnArrows: number[];
+  rxnPluses: number[];
+  texts: number[];
+  images: number[];
+  simpleObjects: number[];
+  multitailArrows: number[];
+};
+
 export function fromPaste(
   restruct,
   pstruct,
   point,
   angle = 0,
   isPreview = false,
-): [Action, { atoms: number[]; bonds: number[] }] {
+): [Action, { atoms: number[]; bonds: number[] }, CreatedItems] {
   const xy0 = getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
 
@@ -59,6 +70,17 @@ export function fromPaste(
     // only atoms and bonds now
     atoms: [] as number[],
     bonds: [] as number[],
+  };
+
+  const items: CreatedItems = {
+    atoms: [],
+    bonds: [],
+    rxnArrows: [],
+    rxnPluses: [],
+    texts: [],
+    images: [],
+    simpleObjects: [],
+    multitailArrows: [],
   };
 
   pstruct.atoms.forEach((atom, aid) => {
@@ -84,6 +106,7 @@ export function fromPaste(
     aidMap.set(aid, operation.data.aid);
 
     pasteItems.atoms.push(operation.data.aid);
+    items.atoms.push(operation.data.aid);
 
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
@@ -122,6 +145,7 @@ export function fromPaste(
     action.addOp(operation);
 
     pasteItems.bonds.push(operation.data.bid);
+    items.bonds.push(operation.data.bid);
     new BondAttr(operation.data.bid, 'isPreview', isPreview, false).perform(
       restruct,
     );
@@ -160,50 +184,55 @@ export function fromPaste(
   });
 
   pstruct.rxnArrows.forEach((rxnArrow) => {
-    action.addOp(
-      new RxnArrowAdd(
-        rxnArrow.pos.map((p) => p.add(offset)),
-        rxnArrow.mode,
-      ).perform(restruct),
-    );
+    const operation = new RxnArrowAdd(
+      rxnArrow.pos.map((p) => p.add(offset)),
+      rxnArrow.mode,
+    ).perform(restruct);
+    action.addOp(operation);
+    items.rxnArrows.push(operation.data.id);
   });
 
   pstruct.rxnPluses.forEach((plus) => {
-    action.addOp(new RxnPlusAdd(plus.pp.add(offset)).perform(restruct));
+    const operation = new RxnPlusAdd(plus.pp.add(offset)).perform(restruct);
+    action.addOp(operation);
+    items.rxnPluses.push(operation.data.plid);
   });
 
   pstruct.simpleObjects.forEach((simpleObject) => {
-    action.addOp(
-      new SimpleObjectAdd(
-        simpleObject.pos.map((p) => p.add(offset)),
-        simpleObject.mode,
-      ).perform(restruct),
-    );
+    const operation = new SimpleObjectAdd(
+      simpleObject.pos.map((p) => p.add(offset)),
+      simpleObject.mode,
+    ).perform(restruct);
+    action.addOp(operation);
+    items.simpleObjects.push(operation.data.id);
   });
 
   pstruct.texts.forEach((text) => {
-    action.addOp(
-      new TextCreate(
-        text.content,
-        text.position.add(offset),
-        text.pos.map((p) => p.add(offset)),
-      ).perform(restruct),
-    );
+    const operation = new TextCreate(
+      text.content,
+      text.position.add(offset),
+      text.pos.map((p) => p.add(offset)),
+    ).perform(restruct);
+    action.addOp(operation);
+    items.texts.push(operation.data.id);
   });
 
   pstruct.images.forEach((image: Image) => {
     const clonedImage = image.clone();
     clonedImage.addPositionOffset(offset);
-
-    action.addOp(new ImageUpsert(clonedImage).perform(restruct));
+    const operation = new ImageUpsert(clonedImage).perform(restruct);
+    action.addOp(operation);
+    items.images.push(operation.data.id);
   });
 
   pstruct.multitailArrows.forEach((multitailArrow: MultitailArrow) => {
     const clonedMultitailArrow = multitailArrow.clone();
     clonedMultitailArrow.move(offset);
-    action.addOp(
-      new MultitailArrowUpsert(clonedMultitailArrow).perform(restruct),
+    const operation = new MultitailArrowUpsert(clonedMultitailArrow).perform(
+      restruct,
     );
+    action.addOp(operation);
+    items.multitailArrows.push(operation.data.id);
   });
 
   pstruct.rgroups.forEach((rg, rgid) => {
@@ -220,7 +249,7 @@ export function fromPaste(
   });
 
   action.operations.reverse();
-  return [action, pasteItems];
+  return [action, pasteItems, items];
 }
 
 function getStructCenter(struct: Struct): Vec2 {

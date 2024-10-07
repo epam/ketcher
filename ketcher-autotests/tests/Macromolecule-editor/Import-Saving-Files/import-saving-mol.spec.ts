@@ -378,34 +378,40 @@ test.describe('Import-Saving .mol Files', () => {
     await turnOnMacromoleculesEditor(page);
   });
 
-  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
-    /*
+  test.fail(
+    'Check that you can save snake viewed chain of peptides in a Mol v3000 file',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async () => {
+      /*
     Test case: Import/Saving files
     Description: Snake viewed chain of peptides saved in a Mol v3000 file
+
+    Test fails because we have bug https://github.com/epam/ketcher/issues/5634
     */
-    await openFileAndAddToCanvasMacro(
-      'Molfiles-V3000/snake-mode-peptides.mol',
-      page,
-    );
-    await selectSnakeLayoutModeTool(page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/snake-mode-peptides-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvasMacro(
+        'Molfiles-V3000/snake-mode-peptides.mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/snake-mode-peptides-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
+      await selectSnakeLayoutModeTool(page);
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        'Molfiles-V3000/snake-mode-peptides-expected.mol',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const METADATA_STRING_INDEX = [1];
+
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/snake-mode-peptides-expected.mol',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
     /*

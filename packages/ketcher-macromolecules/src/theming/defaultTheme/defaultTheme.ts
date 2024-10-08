@@ -19,7 +19,7 @@ import { EditorTheme } from '.';
 import { MonomerColorScheme } from 'ketcher-core';
 
 const monomerColors: Record<string, MonomerColorScheme> = {
-  colorA: { regular: '#CCCBD6', hover: '#B8BBCC' },
+  colorA: { regular: '#008080', hover: '#0097A8' },
   colorCM: { regular: '#FFE34C', hover: '#FFD700' },
   colorDQ: { regular: '#AD4551', hover: '#AB0014' },
   colorEN: { regular: '#93F5F5', hover: '#00F0F0' },

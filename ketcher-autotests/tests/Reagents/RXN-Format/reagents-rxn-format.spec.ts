@@ -88,39 +88,44 @@ test.describe('Reagents RXN format', () => {
     expect(actualComparableData).toEqual(expectedComparableData);
   });
 
-  test('Detection molecule as reagent and write reagent information in "MDL rxnfile V3000" format', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Detection molecule as reagent and write reagent information in "MDL rxnfile V3000" format',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-4672
     Description: Files are compared for reagent presence
     */
-    await openFileAndAddToCanvas(
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
-      page,
-    );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('Rxn-V3000/mdl-rxnfile-v3000-expected.rxn', expectedFile);
+      await openFileAndAddToCanvas(
+        'KET/benzene-arrow-benzene-reagent-nh3.ket',
+        page,
+      );
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+        expectedFile,
+      );
 
-    const rxnFileExpected = await readFileContents(
-      'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
-    );
-    const COMPARABLE_DATA_START = 5;
-    const COMPARABLE_DATA_END = 58;
-    const rxnFile = await getRxn(page, 'v3000');
+      const rxnFileExpected = await readFileContents(
+        'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+      );
+      const COMPARABLE_DATA_START = 5;
+      const COMPARABLE_DATA_END = 58;
+      const rxnFile = await getRxn(page, 'v3000');
 
-    const actualComparableData = getComparableDataFromRxn(
-      rxnFile,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-    const expectedComparableData = getComparableDataFromRxn(
-      rxnFileExpected,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-    expect(actualComparableData).toEqual(expectedComparableData);
-  });
+      const actualComparableData = getComparableDataFromRxn(
+        rxnFile,
+        COMPARABLE_DATA_START,
+        COMPARABLE_DATA_END,
+      );
+      const expectedComparableData = getComparableDataFromRxn(
+        rxnFileExpected,
+        COMPARABLE_DATA_START,
+        COMPARABLE_DATA_END,
+      );
+      expect(actualComparableData).toEqual(expectedComparableData);
+    },
+  );
 
   test('File saves in "MDL rxnfile V2000" format', async ({ page }) => {
     /*
@@ -157,8 +162,9 @@ test.describe('Reagents RXN format', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });
 
-  test('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
+  test.fail('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
     /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-4676
     Description: File saved in format (e.g. "ketcher.rxn")
     */
@@ -198,10 +204,6 @@ test.describe('Reagents RXN format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open from file in "RXN V2000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4679
@@ -213,6 +215,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "RXN V3000" format', async ({ page }) => {
@@ -226,6 +229,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "RXN V2000" format', async ({ page }) => {
@@ -239,6 +243,7 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
@@ -251,6 +256,7 @@ test.describe('Reagents RXN format', () => {
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from file in "RXN V3000" format with reagents above and below arrow', async ({
@@ -266,5 +272,6 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 });

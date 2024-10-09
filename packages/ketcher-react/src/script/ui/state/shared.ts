@@ -136,13 +136,13 @@ export function load(struct: Struct, options?) {
     const state = getState();
     const editor = state.editor as Editor;
     const server = state.server;
+    const serverSettings = state.options.getServerSettings();
     const errorHandler = editor.errorHandler;
     options = options || {};
     let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
+      ...serverSettings,
       ...otherOptions,
-      'dearomatize-on-load': editor.options()['dearomatize-on-load'],
-      ignoreChiralFlag: editor.options().ignoreChiralFlag,
     };
 
     dispatch(setAnalyzingFile(true));

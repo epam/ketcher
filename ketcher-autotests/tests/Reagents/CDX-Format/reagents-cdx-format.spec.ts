@@ -24,10 +24,6 @@ test.describe('Reagents CDX format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('File saves in "CDX" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4709
@@ -51,6 +47,7 @@ test.describe('Reagents CDX format', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file in "CDX" format', async ({ page }) => {
@@ -59,6 +56,7 @@ test.describe('Reagents CDX format', () => {
     Description: File open in CDX format.
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "CDX" format', async ({ page }) => {
@@ -71,6 +69,7 @@ test.describe('Reagents CDX format', () => {
       FILE_TEST_DATA.reagentsBelowAndAboveArrowCdx,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Detection molecule as reagent and write reagent information in CDX format in "Preview" tab', async ({
@@ -82,5 +81,6 @@ test.describe('Reagents CDX format', () => {
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
     await saveFileAsCdxFormat(page);
+    await takeEditorScreenshot(page);
   });
 });

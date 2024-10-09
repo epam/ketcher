@@ -81,7 +81,7 @@ const formatsForSave = [
   },
 ];
 
-const OFFSET_FROM_ARROW = 30;
+const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
@@ -90,10 +90,6 @@ test.describe('Plus and Arrows tools ', () => {
 
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test.describe('Create reactions', () => {
@@ -111,6 +107,7 @@ test.describe('Plus and Arrows tools ', () => {
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
         await selectTopPanelButton(TopPanelButton.Undo, page);
+        await takeEditorScreenshot(page);
       });
     }
   });
@@ -128,6 +125,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
     await dragMouseTo(x + 150, y + 150, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/paste, cut/paste arrow', async ({ page }) => {
@@ -145,6 +143,7 @@ test.describe('Plus and Arrows tools ', () => {
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Verify reaction is registered in undo/redo chain', async ({ page }) => {
@@ -180,6 +179,7 @@ test.describe('Plus and Arrows tools ', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test.describe('Plus sign - Manipulations with different Tools', () => {
@@ -631,7 +631,10 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test('open files', async ({ page }) => {
+    test.fail('open files', async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2479
+       */
       await openFileAndAddToCanvas(
         `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
         page,
@@ -775,4 +778,39 @@ test.describe('Plus and Arrows tools ', () => {
       await clickInTheMiddleOfTheScreen(page);
     });
   }
+
+  test('Resizing retrosynthetic arrow', async ({ page }) => {
+    /**
+     * Test case: #4985
+     * Description: Retrosynthetic Arrow is resized correctly
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await dragMouseTo(x + 200, y + 200, page);
+  });
+
+  test('Copy/paste retrosynthetic arrow', async ({ page }) => {
+    /**
+    Test case: #4985
+    Description: Retrosynthetic Arrow Copy/paste
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickInTheMiddleOfTheScreen(page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test('Cut/paste retrosynthetic arrow', async ({ page }) => {
+    /**
+    Test case: #4985
+    Description: Retrosynthetic Arrow Cut/paste
+     */
+    await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
+    await clickInTheMiddleOfTheScreen(page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
 });

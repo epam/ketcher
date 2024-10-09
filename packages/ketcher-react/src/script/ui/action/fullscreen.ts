@@ -50,6 +50,7 @@ const toggleFullscreen = () => {
 export default {
   fullscreen: {
     title: 'Fullscreen mode',
+    enabledInViewOnly: true,
     action: () => toggleFullscreen(),
     hidden: (options) => isHidden(options, 'fullscreen'),
   },

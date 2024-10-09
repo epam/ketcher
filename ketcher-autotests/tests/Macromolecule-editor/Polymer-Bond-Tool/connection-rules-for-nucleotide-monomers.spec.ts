@@ -404,7 +404,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -444,7 +446,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -635,7 +639,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -826,7 +832,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -861,7 +869,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -888,7 +898,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -1081,7 +1093,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -1117,7 +1131,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -1304,7 +1320,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -1339,7 +1357,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -1538,7 +1558,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -1569,7 +1591,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });
@@ -1768,7 +1792,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 await zoomWithMouseWheel(page, -600);
                 await hoverOverConnectionLine(page);
 
-                await takeEditorScreenshot(page);
+                await takeEditorScreenshot(page, {
+                  masks: [page.getByTestId('polymer-library-preview')],
+                });
               });
             },
           );
@@ -1799,7 +1825,9 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
         await zoomWithMouseWheel(page, -600);
         await hoverOverConnectionLine(page);
 
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
       });
     });
   });

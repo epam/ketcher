@@ -31,10 +31,6 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Adding AND stereo marks to structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4724
@@ -43,6 +39,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding OR stereo marks to structure', async ({ page }) => {
@@ -53,6 +50,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding Mixed AND stereo marks to structure', async ({ page }) => {
@@ -65,6 +63,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await takeEditorScreenshot(page);
   });
 
   test('Adding Mixed OR stereo marks to structure', async ({ page }) => {
@@ -77,6 +76,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -186,174 +186,6 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
         page,
         expectedFileName:
           'tests/test-data/CDXML/mixed-stereo-marks-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with another nucleotides could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-nucleotides.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-nucleotides.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-chems.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-chems.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-chems.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with bases could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with bases could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-bases.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-bases.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-bases.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with sugars could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-sugars.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-sugars.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-sugars.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with phosphates could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-phosphates.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-phosphates.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-phosphates.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
-  });
-
-  test('Validate that unsplit nucleotides connected with peptides could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
-    Test case: #4382
-    Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdxml file and loaded back
-    */
-
-    await openFileAndAddToCanvas(
-      'KET/unsplit-nucleotides-connected-with-peptides.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/unsplit-nucleotides-connected-with-peptides.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-peptides.cdxml',
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);

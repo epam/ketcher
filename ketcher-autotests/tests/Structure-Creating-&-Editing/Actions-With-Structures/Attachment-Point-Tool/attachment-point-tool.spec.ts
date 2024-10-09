@@ -56,10 +56,6 @@ test.describe('Attachment Point Tool', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Attachment point dialog', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1625
@@ -68,6 +64,7 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Able to check any check-mark', async ({ page }) => {
@@ -80,6 +77,7 @@ test.describe('Attachment Point Tool', () => {
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await takeEditorScreenshot(page);
   });
 
   test('Rendering of Attachment points', async ({ page }) => {
@@ -109,6 +107,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: true, secondary: true },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo actions', async ({ page }) => {
@@ -148,6 +147,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Click cancel in dialog window', async ({ page }) => {
@@ -172,6 +172,7 @@ test.describe('Attachment Point Tool', () => {
       { secondary: true },
       'Cancel',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Click not on atom', async ({ page }) => {
@@ -184,6 +185,7 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
+    await takeEditorScreenshot(page);
   });
 
   test('Modify attachment point', async ({ page }) => {
@@ -217,6 +219,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: true, secondary: false },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Remove attachment points', async ({ page }) => {
@@ -246,6 +249,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: false, secondary: false },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Modify atom with Attchment point (add atom)', async ({ page }) => {
@@ -262,6 +266,7 @@ test.describe('Attachment Point Tool', () => {
 
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Modify atom with Attchment point (add Not List atom, Any Atom, Group Generics)', async ({
@@ -280,6 +285,7 @@ test.describe('Attachment Point Tool', () => {
 
     await selectExtendedTableElements(page, 'G');
     await clickOnAtom(page, 'C', 3);
+    await takeEditorScreenshot(page);
   });
 
   test('Create reaction with Attachment point', async ({ page }) => {
@@ -310,6 +316,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: true, secondary: true },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste actions', async ({ page }) => {
@@ -322,6 +329,7 @@ test.describe('Attachment Point Tool', () => {
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste actions', async ({ page }) => {
@@ -335,6 +343,7 @@ test.describe('Attachment Point Tool', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste reaction with Attachment point', async ({ page }) => {
@@ -350,6 +359,7 @@ test.describe('Attachment Point Tool', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste reaction with Attachment point', async ({ page }) => {
@@ -368,6 +378,7 @@ test.describe('Attachment Point Tool', () => {
     await page.mouse.click(x, y);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as *.mol file', async ({ page }) => {
@@ -390,6 +401,7 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Click and Save as *.mol file', async ({ page }) => {
@@ -413,13 +425,15 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
-  test('Save as *.mol file V3000', async ({ page }) => {
+  test.fail('Save as *.mol file V3000', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1651
-    Description: Structure with attachment points saved as .mol file V3000
-    */
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET-1651
+     * Description: Structure with attachment points saved as .mol file V3000
+     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
@@ -436,6 +450,7 @@ test.describe('Attachment Point Tool', () => {
         fileFormat: 'v3000',
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as *.rxn file', async ({ page }) => {
@@ -459,6 +474,7 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Click and Save as *.rxn file', async ({ page }) => {
@@ -482,13 +498,15 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
-  test('Save as *.rxn file V3000', async ({ page }) => {
+  test.fail('Save as *.rxn file V3000', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1652
-    Description: Structure with attachment points saved as .rxn file V3000
-    */
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET-1652
+     * Description: Structure with attachment points saved as .rxn file V3000
+     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
@@ -505,6 +523,7 @@ test.describe('Attachment Point Tool', () => {
         fileFormat: 'v3000',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Save as *.smi file', async ({ page }) => {
@@ -525,6 +544,7 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Click and Save as *.smi file', async ({ page }) => {
@@ -550,6 +570,7 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Rotate structure with attachment points', async ({ page }) => {
@@ -574,6 +595,7 @@ test.describe('Attachment Point Tool', () => {
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
     await page.mouse.up();
+    await takeEditorScreenshot(page);
   });
 
   test('Drag atoms consist attachment points', async ({ page }) => {
@@ -603,6 +625,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Delete the atom with attachment point(s) with Erase tool.', async ({
@@ -627,6 +650,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Delete the atom with attachment point(s) with hotkey.', async ({
@@ -656,6 +680,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Select any Atom from Atom Palette, press the atom with attachment point and drag.', async ({
@@ -687,6 +712,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 4; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('With any Bond tool click the atom with attachment point(s.', async ({
@@ -711,6 +737,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Select any Template, press the atom with attachment point and drag.', async ({
@@ -743,6 +770,7 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async ({
@@ -756,6 +784,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/three-examples-attachment-points.mol',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async ({
@@ -769,6 +798,7 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/four-attachment-point.mol',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that changing primary attachment points to secondary updates the visualization', async ({
@@ -794,6 +824,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: false, secondary: true },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that changing secondary attachment points to primary updates the visualization', async ({
@@ -819,6 +850,7 @@ test.describe('Attachment Point Tool', () => {
       { primary: true, secondary: false },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that removing all attachment points updates the visualization', async ({
@@ -844,16 +876,13 @@ test.describe('Attachment Point Tool', () => {
       { primary: false, secondary: false },
       'Apply',
     );
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Attachment Point Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up and Layout distorted chain with attachment points', async ({
@@ -880,5 +909,6 @@ test.describe('Attachment Point Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Clean, page);
     });
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 });

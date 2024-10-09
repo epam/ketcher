@@ -41,6 +41,7 @@ import settingsSchema, {
 import fieldGroups from './fieldGroups';
 import { isEqual } from 'lodash';
 import { Icon } from 'components';
+import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
 
 interface SettingsProps extends BaseProps {
   initState: any;
@@ -59,6 +60,7 @@ interface SettingsProps extends BaseProps {
 interface SettingsCallProps extends BaseCallProps {
   onOpenFile: (any) => void;
   onReset: () => void;
+  onACSStyle: (result) => void;
 }
 
 const defaultSettings = getDefaultOptions();
@@ -317,6 +319,23 @@ const SettingsDialog = (props: Props) => {
     ),
   };
 
+  const onACSStyle = () => {
+    prop.onACSStyle({
+      ...formState.result,
+      ...ACS_STYLE_DEFAULT_SETTINGS,
+    });
+  };
+
+  const ACSStyleButton = (
+    <button
+      className={classes.acsStyleButton}
+      key="acsstylebutton"
+      onClick={onACSStyle}
+    >
+      ACS Style
+    </button>
+  );
+
   const tabs = [
     generalTab,
     stereoTab,
@@ -334,7 +353,7 @@ const SettingsDialog = (props: Props) => {
       valid={() => formState.valid}
       params={prop}
       buttonsNameMap={{ OK: 'Apply' }}
-      buttons={['Cancel', 'OK']}
+      buttons={[ACSStyleButton, 'Cancel', 'OK']}
       withDivider
       needMargin={false}
       headerContent={
@@ -378,6 +397,9 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onOk: (res) => {
     dispatch(saveSettings(res));
     ownProps.onOk(res);
+  },
+  onACSStyle: (result) => {
+    dispatch(updateFormState({ result }));
   },
 });
 

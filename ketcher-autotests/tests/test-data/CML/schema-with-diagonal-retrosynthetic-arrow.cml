@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+<cml>
+<reaction>
+<reactantList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="C" x2="16.1234" y2="-11.715"/>
+        <atom id="a1" elementType="C" x2="16.9894" y2="-12.215"/>
+        <atom id="a2" elementType="C" x2="17.8554" y2="-11.715"/>
+        <atom id="a3" elementType="C" x2="18.7215" y2="-12.215"/>
+        <atom id="a4" elementType="C" x2="19.5875" y2="-11.715"/>
+        <atom id="a5" elementType="C" x2="20.4535" y2="-12.215"/>
+        <atom id="a6" elementType="C" x2="21.3195" y2="-11.715"/>
+    </atomArray>
+    <bondArray>
+        <bond atomRefs2="a0 a1" order="1"/>
+        <bond atomRefs2="a1 a2" order="1"/>
+        <bond atomRefs2="a2 a3" order="1"/>
+        <bond atomRefs2="a3 a4" order="1"/>
+        <bond atomRefs2="a4 a5" order="1"/>
+        <bond atomRefs2="a5 a6" order="1"/>
+    </bondArray>
+</molecule>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="S" x2="20.5234" y2="-13.895"/>
+    </atomArray>
+</molecule>
+</reactantList>
+<productList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="N" x2="8.08046" y2="-2.605"/>
+        <atom id="a1" elementType="N" x2="8.08046" y2="-3.60501"/>
+        <atom id="a2" elementType="N" x2="8.94647" y2="-4.10502"/>
+        <atom id="a3" elementType="N" x2="9.81248" y2="-3.60501"/>
+        <atom id="a4" elementType="N" x2="9.81248" y2="-2.605"/>
+        <atom id="a5" elementType="N" x2="8.94647" y2="-2.10499"/>
+    </atomArray>
+    <bondArray>
+        <bond atomRefs2="a5 a0" order="1"/>
+        <bond atomRefs2="a0 a1" order="1"/>
+        <bond atomRefs2="a1 a2" order="1"/>
+        <bond atomRefs2="a2 a3" order="1"/>
+        <bond atomRefs2="a3 a4" order="1"/>
+        <bond atomRefs2="a4 a5" order="1"/>
+    </bondArray>
+</molecule>
+</productList>
+<spectatorList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="P" x2="16.7984" y2="-5.06501"/>
+    </atomArray>
+</molecule>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="Br" x2="10.5734" y2="-8.96501"/>
+    </atomArray>
+</molecule>
+</spectatorList>
+</reaction>
+</cml>

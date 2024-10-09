@@ -3,6 +3,7 @@ import { Line, MultitailArrow } from 'domain/entities/multitailArrow';
 import { MULTITAIL_ARROW_KEY } from 'domain/constants/multitailArrow';
 import { LayerMap, Render, ReStruct } from 'application/render';
 import { RenderOptions } from 'application/render/render.types';
+import { getArrowHeadDimensions } from 'application/render/draw';
 import { PathBuilder } from 'application/render/pathBuilder';
 import { Scale } from 'domain/helpers';
 import { Box2Abs, Pool, Vec2 } from 'domain/entities';
@@ -291,13 +292,21 @@ export class ReMultitailArrow extends ReObject {
     const arrowStart = new Vec2(topSpine.x, head.y);
     const arrowLength = head.x - arrowStart.x;
 
+    const { arrowHeadLength, arrowHeadWidth } =
+      getArrowHeadDimensions(renderOptions);
+
     pathBuilder.addMultitailArrowBase(
       topSpine.y,
       bottomSpine.y,
       topSpine.x,
       topTailOffsetX,
     );
-    headPathBuilder.addFilledTriangleArrowPathParts(arrowStart, arrowLength);
+    headPathBuilder.addFilledTriangleArrowPathParts(
+      arrowStart,
+      arrowLength,
+      arrowHeadLength,
+      arrowHeadWidth,
+    );
     tails.forEach((tail) => {
       pathBuilder.addLine(tail, { x: topSpine.x, y: tail.y });
     });

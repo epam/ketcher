@@ -13,10 +13,6 @@ test.describe('Reagents molecule below arrow', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open File RXN v3000 with reagent HCl below arrow', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4723
@@ -26,6 +22,7 @@ test.describe('Reagents molecule below arrow', () => {
       'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
@@ -37,6 +34,7 @@ test.describe('Reagents molecule below arrow', () => {
       'CDXML/benzene-arrow-benzene-reagent-hcl.cdxml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Save SVG with reagent HCl below arrow', async ({ page }) => {
@@ -51,6 +49,7 @@ test.describe('Reagents molecule below arrow', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save PNG with reagent HCl below arrow', async ({ page }) => {
@@ -66,5 +65,6 @@ test.describe('Reagents molecule below arrow', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
+    await takeEditorScreenshot(page);
   });
 });

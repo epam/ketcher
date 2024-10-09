@@ -21,11 +21,6 @@ test.describe('Click Functional Group on canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('The Boc replaces the N atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10105
@@ -35,6 +30,8 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The Cbz replaces the Boc functional group', async ({ page }) => {
@@ -47,6 +44,8 @@ test.describe('Click Functional Group on canvas', () => {
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('The CCl3 replaces methane sulphonic acid', async ({ page }) => {
@@ -59,6 +58,8 @@ test.describe('Click Functional Group on canvas', () => {
 
     await selectFunctionalGroups(FunctionalGroups.CCl3, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('CO2tBu replaces the Cl atom', async ({ page }) => {
@@ -78,6 +79,8 @@ test.describe('Click Functional Group on canvas', () => {
 
     await selectFunctionalGroups(FunctionalGroups.CO2tBu, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Ms replaces the Cbz functional group', async ({ page }) => {
@@ -96,5 +99,7 @@ test.describe('Click Functional Group on canvas', () => {
 
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
     await page.mouse.click(coordinatesWithShift, y);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

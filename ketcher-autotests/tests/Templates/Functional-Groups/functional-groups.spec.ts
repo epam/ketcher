@@ -62,10 +62,6 @@ test.describe('Functional Groups', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Open from V2000 file with expanded functional group', async ({
     page,
   }) => {
@@ -85,6 +81,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Remove Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Open from V2000 file with contracted functional group', async ({
@@ -103,6 +100,7 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
 
     await changeStatusOfAbbreviation(page, 'Remove Abbreviation');
+    await takeEditorScreenshot(page);
   });
 
   test('Open functional group from library', async ({ page }) => {
@@ -113,6 +111,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste action with expanded functional group', async ({ page }) => {
@@ -126,6 +125,7 @@ test.describe('Functional Groups', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste action with expanded functional group', async ({ page }) => {
@@ -139,6 +139,7 @@ test.describe('Functional Groups', () => {
     );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Copy/Paste action with contracted functional group', async ({
@@ -156,6 +157,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Cut/Paste action with contracted functional group', async ({
@@ -171,6 +173,7 @@ test.describe('Functional Groups', () => {
     );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Attach functional group to the molecule', async ({ page }) => {
@@ -182,6 +185,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save functional groups to Custom Templates', async ({ page }) => {
@@ -199,16 +203,13 @@ test.describe('Functional Groups', () => {
     await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test('Open from V3000 file with contracted and expanded functional groups', async ({
@@ -222,6 +223,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V3000/V3000-contracted-and-expanded-fg.mol',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Open from .ket file with contracted and expanded functional groups', async ({
@@ -232,6 +234,7 @@ test.describe('Functional Groups', () => {
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from Clipboard with contracted and expanded functional groups', async ({
@@ -246,6 +249,7 @@ test.describe('Functional Groups', () => {
       FILE_TEST_DATA.expandedAndContractedFg,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Highlight Functional Group with Selection tool', async ({ page }) => {
@@ -262,6 +266,7 @@ test.describe('Functional Groups', () => {
     );
     await page.mouse.move(x, y);
     await page.mouse.move(x + smallShift, y);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Bond to expanded Functional Group', async ({ page }) => {
@@ -275,6 +280,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Atom to expanded Functional Group', async ({ page }) => {
@@ -288,6 +294,7 @@ test.describe('Functional Groups', () => {
     );
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Chain to expanded Functional Group', async ({ page }) => {
@@ -301,6 +308,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Template to expanded Functional Group', async ({ page }) => {
@@ -314,6 +322,7 @@ test.describe('Functional Groups', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Charge Plus to expanded Functional Group', async ({ page }) => {
@@ -327,6 +336,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Charge Minus to expanded Functional Group', async ({ page }) => {
@@ -340,6 +350,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Erase to expanded Functional Group', async ({ page }) => {
@@ -353,6 +364,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Click S-Group tool to expanded Functional Group', async ({ page }) => {
@@ -366,6 +378,7 @@ test.describe('Functional Groups', () => {
     );
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Click S-Group tool to contracted Functional Group', async ({
@@ -381,6 +394,7 @@ test.describe('Functional Groups', () => {
     );
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add R-Group Label Tool to expanded Functional Group', async ({
@@ -396,6 +410,7 @@ test.describe('Functional Groups', () => {
     );
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add R-Group Fragment Tool to expanded Functional Group', async ({
@@ -411,6 +426,7 @@ test.describe('Functional Groups', () => {
     );
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Attachment Point Tool to expanded Functional Group', async ({
@@ -426,6 +442,7 @@ test.describe('Functional Groups', () => {
     );
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
     await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Ordinary elements should not show explicit valences (SO3H)', async ({
@@ -442,6 +459,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Ordinary elements should not show explicit valences (PO4H2)', async ({
@@ -458,6 +476,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Selection highlight is displayed correctly for functional groups with longer names', async ({
@@ -472,6 +491,7 @@ test.describe('Functional Groups', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Selection highlight is displayed correctly for salts and solvents with longer names', async ({
@@ -486,6 +506,7 @@ test.describe('Functional Groups', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Selection highlight appears immediately after hover over text', async ({
@@ -500,6 +521,7 @@ test.describe('Functional Groups', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('me').first().hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Atom by hotkey to expanded Functional Group', async ({ page }) => {
@@ -513,6 +535,7 @@ test.describe('Functional Groups', () => {
     );
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Atom by hotkey to expanded Salts and Solvents', async ({
@@ -534,6 +557,7 @@ test.describe('Functional Groups', () => {
     point = await getAtomByIndex(page, { label: 'S' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Functional Group abbreviation to FG connected to terminal atoms of structure', async ({
@@ -558,6 +582,7 @@ test.describe('Functional Groups', () => {
       await page.mouse.click(x, y);
     });
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hotkey (Del) can delete Functional Groups abbreviation', async ({
@@ -574,6 +599,7 @@ test.describe('Functional Groups', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hotkey (Del) can delete Salts and Solvents abbreviation', async ({
@@ -590,6 +616,7 @@ test.describe('Functional Groups', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hotkey for Atom can replace Functional Groups abbreviation', async ({
@@ -606,6 +633,7 @@ test.describe('Functional Groups', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('n');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Hotkey for Atom can replace Salts and Solvents abbreviation', async ({
@@ -623,6 +651,7 @@ test.describe('Functional Groups', () => {
       await page.keyboard.press('o');
     });
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Select Functional Group by hovering one of the atom of structure and press hotkey', async ({
@@ -639,6 +668,7 @@ test.describe('Functional Groups', () => {
     await page.getByTitle('Boc').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Expand/Contract unknown superatom', async ({ page }) => {
@@ -657,6 +687,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Check that expanded Functional Groups not overlap each other', async ({
@@ -676,6 +707,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('After expand a Functional Group hotkeys not stop working', async ({
@@ -694,6 +726,7 @@ test.describe('Functional Groups', () => {
     });
 
     await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
   });
 
   test('Add a custom structure to a canvas with an expanded functional group and contract it', async ({
@@ -712,6 +745,7 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });
+    await takeEditorScreenshot(page);
   });
 
   test('After expand a Functional Group hotkeys for atoms not stop working', async ({
@@ -736,5 +770,6 @@ test.describe('Functional Groups', () => {
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
     });
+    await takeEditorScreenshot(page);
   });
 });

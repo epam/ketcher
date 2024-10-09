@@ -126,7 +126,7 @@ Parameters:
 
 ## Settings
 
-You can add extra configuration in editor.setSetting
+You can add extra configuration in editor.setSettings
 
 **Allowed parameters:**
 - disableQueryElements: Disable the elements from the Extended Table

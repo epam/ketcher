@@ -6,10 +6,6 @@ test.describe('Scroll canvas', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Scroll canvas by mouse wheel or touchpad/trackpad', async ({
     page,
   }) => {
@@ -18,6 +14,7 @@ test.describe('Scroll canvas', () => {
     await drawBenzeneRing(page);
 
     await page.mouse.wheel(deltaX, deltaY);
+    await takeEditorScreenshot(page);
   });
 
   test('Scroll canvas horizontally with `Shift` pressed', async ({ page }) => {
@@ -27,5 +24,6 @@ test.describe('Scroll canvas', () => {
     await page.keyboard.down('Shift');
     await page.mouse.wheel(0, wheelDelta);
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
   });
 });

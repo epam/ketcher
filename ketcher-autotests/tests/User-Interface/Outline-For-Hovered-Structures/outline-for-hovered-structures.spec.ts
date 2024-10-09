@@ -14,10 +14,6 @@ test.describe('Outline for hovered structures', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   /* Draw selection outline correctly for hovered structures:
    * related to GitHub issue: https://github.com/epam/ketcher/issues/2595
    */
@@ -29,7 +25,7 @@ test.describe('Outline for hovered structures', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
 
     await page.keyboard.press('Control+KeyA');
-    await page.keyboard.down('Control');
+    await page.keyboard.down('Alt');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 

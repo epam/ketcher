@@ -50,6 +50,7 @@ import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
+import { ViewModel } from 'application/render/view-model/ViewModel';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -67,6 +68,7 @@ export class CoreEditor {
 
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
+  public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
@@ -104,6 +106,7 @@ export class CoreEditor {
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
+    this.viewModel = new ViewModel();
     this.domEventSetup();
     this.setupContextMenuEvents();
     this.setupKeyboardEvents();

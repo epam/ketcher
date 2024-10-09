@@ -60,7 +60,10 @@ const BondPreview = ({ className }: Props) => {
   }
 
   return (
-    <ContainerDynamic className={className}>
+    <ContainerDynamic
+      className={className}
+      data-testid="polymer-library-preview"
+    >
       <ConnectionOverview
         firstMonomer={firstMonomer}
         secondMonomer={secondMonomer}

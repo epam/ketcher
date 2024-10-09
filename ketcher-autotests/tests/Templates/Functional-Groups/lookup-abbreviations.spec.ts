@@ -15,16 +15,13 @@ test.describe('Lookup Abbreviations tests', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Lookup Abbreviation appears when typing name', async ({ page }) => {
     // EPMLSOPKET-15523
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('dc');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-selecting template', async ({ page }) => {
@@ -36,6 +33,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation not appearing if typing within time limit ', async ({
@@ -48,6 +46,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-only name displayed', async ({ page }) => {
@@ -56,6 +55,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('co2me');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-element from Periodic table', async ({ page }) => {
@@ -64,6 +64,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('br');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-no matching result', async ({ page }) => {
@@ -72,6 +73,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('xyz');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-displayed message after deleting typed test', async ({
@@ -84,6 +86,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.press('Backspace');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-ME is highlighted based on priority order', async ({
@@ -94,6 +97,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('me');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-verify suggestions list is sorted according to criteria', async ({
@@ -104,6 +108,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('mer');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-available option verification', async ({
@@ -117,6 +122,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('bro');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-verify suggestions list displayed with a highest similarity', async ({
@@ -127,6 +133,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('hg');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-element from Periodic table in correct format', async ({
@@ -137,6 +144,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('ca');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-context window dissapearing after closing it', async ({
@@ -148,6 +156,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.press('Escape');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toHaveCount(0);
+    await takeEditorScreenshot(page);
   });
 
   test('Lookup Abbreviation-opened window does not dissapear after switching tabs', async ({
@@ -161,6 +170,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await newPage.goto('', { waitUntil: 'domcontentloaded' });
     await newPage.bringToFront();
     await page.bringToFront();
+    await takeEditorScreenshot(page);
   });
 
   test('changing atom in a molecule using lookup abbreviation', async ({
@@ -174,6 +184,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await moveOnAtom(page, 'C', atomC);
     await page.keyboard.type('mer');
     await page.keyboard.press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('changing atom in a molecule with a structure from functional groups using lookup abbreviation', async ({
@@ -187,6 +198,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await moveOnAtom(page, 'C', atomC);
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
+    await takeEditorScreenshot(page);
   });
 
   test('atom state restores after typing additional letters', async ({
@@ -202,5 +214,6 @@ test.describe('Lookup Abbreviations tests', () => {
     // 'N' should be placed on hovered atom
     await page.keyboard.type('ickel');
     // state of hovered atom should be restored
+    await takeEditorScreenshot(page);
   });
 });

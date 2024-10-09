@@ -26,6 +26,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
+  recalculateRnaBuilderValidations,
   RnaBuilderPresetsItem,
   selectActivePreset,
   selectIsEditMode,
@@ -66,6 +67,12 @@ export const RnaEditor = ({ duplicatePreset }) => {
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset]);
 
+  useEffect(() => {
+    dispatch(
+      recalculateRnaBuilderValidations({ rnaPreset: activePreset, isEditMode }),
+    );
+  }, [isEditMode]);
+
   const expandEditor = () => {
     setExpanded(!expanded);
     if (!activePreset?.nameInList) {
@@ -83,7 +90,10 @@ export const RnaEditor = ({ duplicatePreset }) => {
         }
       >
         RNA Builder
-        <ExpandButton onClick={expandEditor}>
+        <ExpandButton
+          onClick={expandEditor}
+          data-testid="rna-builder-expand-button"
+        >
           <ExpandIcon expanded={expanded} name="chevron" />
         </ExpandButton>
       </StyledHeader>

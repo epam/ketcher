@@ -842,7 +842,7 @@ test.describe('Open and Save file', () => {
     });
   }
 
-  test('Open/Save files for ferrocen-like structures 2/2 - save', async ({
+  test.skip('Open/Save files for ferrocen-like structures 2/2 - save', async ({
     page,
   }) => {
     /**

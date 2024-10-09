@@ -206,6 +206,12 @@ export class CoreEditor {
       event.preventDefault();
 
       const eventData = event.target?.__data__;
+      const canvasBoundingClientRect = this.canvas.getBoundingClientRect();
+      const isClickOnCanvas =
+        event.clientX >= canvasBoundingClientRect.left &&
+        event.clientX <= canvasBoundingClientRect.right &&
+        event.clientY >= canvasBoundingClientRect.top &&
+        event.clientY <= canvasBoundingClientRect.bottom;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch(
@@ -217,7 +223,7 @@ export class CoreEditor {
         eventData instanceof SnakeModePolymerBondRenderer
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
-      } else {
+      } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
 

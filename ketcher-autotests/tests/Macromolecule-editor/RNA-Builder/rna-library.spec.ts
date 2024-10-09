@@ -1513,6 +1513,7 @@ test.describe('RNA Library', () => {
         await togglePhosphatesAccordion(page);
         break;
       case 'Nucleotides':
+        await goToRNATab(page);
         await toggleNucleotidesAccordion(page);
         break;
       case 'CHEM':
@@ -1601,15 +1602,15 @@ test.describe('RNA Library', () => {
 
   test.describe('Search by IDT alias: ', () => {
     for (const IDTSearchString of IDTSearchStrings) {
-      test(`${IDTSearchString.testDescription}`, async ({ page }) => {
-        /* 
-    Test task: https://github.com/epam/ketcher/issues/5539
-    Verify search by full IDT alias 
-      Case:
-        1. Fill Search field with value
-        2. Switch to monomer's tab to see it
-        3. Take screenshot of the library to make sure search works
-    */
+      test(`${IDTSearchString.testDescription}`, async () => {
+        /*
+         * Test task: https://github.com/epam/ketcher/issues/5539
+         * Verify search by full IDT alias
+         * Case:
+         * 1. Fill Search field with value
+         * 2. Switch to monomer's tab to see it
+         * 3. Take screenshot of the library to make sure search works
+         */
         await searchMonomerBuName(page, IDTSearchString.IDTSeatchString);
         await goToMonomerLocationTab(
           page,

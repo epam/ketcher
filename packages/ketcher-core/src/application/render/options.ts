@@ -104,7 +104,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     innerHoverStyle: {
       stroke: '#CCFFDD',
       fill: 'none',
-      'stroke-width': (4.6 * scaleFactorMicro) / 20,
+      'stroke-width': (4.4 * scaleFactorMicro) / 20,
     },
     sgroupBracketStyle: {
       stroke: 'darkgray',

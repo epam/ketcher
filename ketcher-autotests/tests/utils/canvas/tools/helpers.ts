@@ -143,6 +143,9 @@ export async function selectImageTool(page: Page) {
  * It limits the attempts by a specified maximum number and presses the 'Escape' key to possibly close any modal overlays.
  * If the maximum number of attempts is not provided, it defaults to 10.
  *
+ * The reason for this approach is to ensure the canvas can always be cleared after a test,
+ * even if other UI elements (like modal dialogs or dropdowns) are open and blocking the button.
+ *
  * @param {Page} page - The Playwright page instance where the button is located.
  * @param {number} [maxAttempts=10] - The maximum number of retry attempts to click the button.
  * @throws {Error} Throws an error if the button cannot be clicked after the specified number of attempts.

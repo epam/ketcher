@@ -1619,7 +1619,7 @@
                 "$ref": "monomerTemplate-U___Uracil"
             },
             {
-                "$ref": "monomerTemplate-25R___2,5-Ribose"
+                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
             },
             {
                 "$ref": "monomerTemplate-3A6___6-amino-hexanol (3' end)"
@@ -1634,13 +1634,13 @@
                 "$ref": "monomerTemplate-FMOE___2'-O-Tris-trifluoromethoxyethyl ribose"
             },
             {
-                "$ref": "monomerTemplate-baA___N-benzyl-adenine"
+                "$ref": "monomerTemplate-baA___N6-benzyladenine"
             },
             {
-                "$ref": "monomerTemplate-5meC___5-methyl-cytidine"
+                "$ref": "monomerTemplate-5meC___5-methylcytosine"
             },
             {
-                "$ref": "monomerTemplate-m1G___1-Methylguanine"
+                "$ref": "monomerTemplate-m1G___N1-methylguanine"
             },
             {
                 "$ref": "monomerTemplate-s2T___2-Thiothymine"
@@ -1652,10 +1652,10 @@
                 "$ref": "monomerTemplate-bP___Boranophosphate"
             },
             {
-                "$ref": "monomerTemplate-naP___Sodium Phosphate"
+                "$ref": "monomerTemplate-P-___Dihydrogen phosphate"
             },
             {
-                "$ref": "monomerTemplate-nasP___Sodium Phosporothioate"
+                "$ref": "monomerTemplate-sP-___Dihydrogen phosphorothioate"
             },
             {
                 "$ref": "monomerTemplate-sP___Phosporothioate"
@@ -1664,10 +1664,10 @@
                 "$ref": "monomerTemplate-moen___2-Methoxyethylamino"
             },
             {
-                "$ref": "monomerTemplate-cpmA___N-cyclopropylmethyl-adenine"
+                "$ref": "monomerTemplate-cpmA___N6-cyclopropylmethyladenine"
             },
             {
-                "$ref": "monomerTemplate-m2nen___(Dimethylaminoethyl)amino"
+                "$ref": "monomerTemplate-m2nen___N1,N1-dimethylethane-1,2-diamine"
             },
             {
                 "$ref": "monomerTemplate-tCo___1,3-Diaza-2-oxophenoxazin"
@@ -1676,13 +1676,13 @@
                 "$ref": "monomerTemplate-Rmp___(Rp)-Methylphosphonate"
             },
             {
-                "$ref": "monomerTemplate-m2G___2-Methylguanine"
+                "$ref": "monomerTemplate-m2G___N2-methylguanine"
             },
             {
                 "$ref": "monomerTemplate-Rsp___(Rp)-Phosphorothioate"
             },
             {
-                "$ref": "monomerTemplate-cnes4T___4-Cyanoethylthiothymidine"
+                "$ref": "monomerTemplate-cnes4T___4-Cyanoethylthiothymine"
             },
             {
                 "$ref": "monomerTemplate-Smp___(Sp)-Methylphosphonate"
@@ -1694,7 +1694,7 @@
                 "$ref": "monomerTemplate-Ssp___(Sp)-Phosphorothioate"
             },
             {
-                "$ref": "monomerTemplate-daA___N,N-dimethyl-Adenine"
+                "$ref": "monomerTemplate-daA___N6,N6-dimethyladenine"
             },
             {
                 "$ref": "monomerTemplate-aR___3-Amino-Ribose"
@@ -3168,9 +3168,9 @@
             "y": -4.0705
         },
         "alias": "25R",
-        "templateId": "25R___2,5-Ribose"
+        "templateId": "25R___Ribose (2,5 connectivity)"
     },
-    "monomerTemplate-25R___2,5-Ribose": {
+    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -3366,7 +3366,7 @@
         ],
         "class": "Sugar",
         "classHELM": "RNA",
-        "id": "25R___2,5-Ribose",
+        "id": "25R___Ribose (2,5 connectivity)",
         "fullName": "2,5-Ribose",
         "alias": "25R",
         "attachmentPoints": [
@@ -4638,9 +4638,9 @@
             "y": -8.207500000000001
         },
         "alias": "baA",
-        "templateId": "baA___N-benzyl-adenine"
+        "templateId": "baA___N6-benzyladenine"
     },
-    "monomerTemplate-baA___N-benzyl-adenine": {
+    "monomerTemplate-baA___N6-benzyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -4932,7 +4932,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "baA___N-benzyl-adenine",
+        "id": "baA___N6-benzyladenine",
         "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [
@@ -4976,9 +4976,9 @@
             "y": -8.207500000000001
         },
         "alias": "5meC",
-        "templateId": "5meC___5-methyl-cytidine"
+        "templateId": "5meC___5-methylcytosine"
     },
-    "monomerTemplate-5meC___5-methyl-cytidine": {
+    "monomerTemplate-5meC___5-methylcytosine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -5136,7 +5136,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "5meC___5-methyl-cytidine",
+        "id": "5meC___5-methylcytosine",
         "fullName": "5-methyl-cytidine",
         "alias": "5meC",
         "attachmentPoints": [
@@ -5180,9 +5180,9 @@
             "y": -8.207500000000001
         },
         "alias": "m1G",
-        "templateId": "m1G___1-Methylguanine"
+        "templateId": "m1G___N1-methylguanine"
     },
-    "monomerTemplate-m1G___1-Methylguanine": {
+    "monomerTemplate-m1G___N1-methylguanine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -5392,7 +5392,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "m1G___1-Methylguanine",
+        "id": "m1G___N1-methylguanine",
         "fullName": "1-Methylguanine",
         "alias": "m1G",
         "attachmentPoints": [
@@ -6010,9 +6010,9 @@
             "y": -9.711500000000001
         },
         "alias": "naP",
-        "templateId": "naP___Sodium Phosphate"
+        "templateId": "P-___Dihydrogen phosphate"
     },
-    "monomerTemplate-naP___Sodium Phosphate": {
+    "monomerTemplate-P-___Dihydrogen phosphate": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -6089,7 +6089,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "naP___Sodium Phosphate",
+        "id": "P-___Dihydrogen phosphate",
         "fullName": "Sodium Phosphate",
         "alias": "naP",
         "attachmentPoints": [
@@ -6142,9 +6142,9 @@
             "y": -9.711500000000001
         },
         "alias": "nasP",
-        "templateId": "nasP___Sodium Phosporothioate"
+        "templateId": "sP-___Dihydrogen phosphorothioate"
     },
-    "monomerTemplate-nasP___Sodium Phosporothioate": {
+    "monomerTemplate-sP-___Dihydrogen phosphorothioate": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -6221,7 +6221,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "nasP___Sodium Phosporothioate",
+        "id": "sP-___Dihydrogen phosphorothioate",
         "fullName": "Sodium Phosporothioate",
         "alias": "nasP",
         "attachmentPoints": [
@@ -6546,9 +6546,9 @@
             "y": -13.8485
         },
         "alias": "cpmA",
-        "templateId": "cpmA___N-cyclopropylmethyl-adenine"
+        "templateId": "cpmA___N6-cyclopropylmethyladenine"
     },
-    "monomerTemplate-cpmA___N-cyclopropylmethyl-adenine": {
+    "monomerTemplate-cpmA___N6-cyclopropylmethyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -6795,7 +6795,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "cpmA___N-cyclopropylmethyl-adenine",
+        "id": "cpmA___N6-cyclopropylmethyladenine",
         "fullName": "N-cyclopropylmethyl-adenine",
         "alias": "cpmA",
         "attachmentPoints": [
@@ -6829,9 +6829,9 @@
             "y": -12.532
         },
         "alias": "m2nen",
-        "templateId": "m2nen___(Dimethylaminoethyl)amino"
+        "templateId": "m2nen___N1,N1-dimethylethane-1,2-diamine"
     },
-    "monomerTemplate-m2nen___(Dimethylaminoethyl)amino": {
+    "monomerTemplate-m2nen___N1,N1-dimethylethane-1,2-diamine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -6952,7 +6952,7 @@
         ],
         "class": "Phosphate",
         "classHELM": "RNA",
-        "id": "m2nen___(Dimethylaminoethyl)amino",
+        "id": "m2nen___N1,N1-dimethylethane-1,2-diamine",
         "fullName": "(Dimethylaminoethyl)amino",
         "alias": "m2nen",
         "attachmentPoints": [
@@ -7396,9 +7396,9 @@
             "y": -13.8485
         },
         "alias": "m2G",
-        "templateId": "m2G___2-Methylguanine"
+        "templateId": "m2G___N2-methylguanine"
     },
-    "monomerTemplate-m2G___2-Methylguanine": {
+    "monomerTemplate-m2G___N2-methylguanine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -7608,7 +7608,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "m2G___2-Methylguanine",
+        "id": "m2G___N2-methylguanine",
         "fullName": "2-Methylguanine",
         "alias": "m2G",
         "attachmentPoints": [
@@ -7755,9 +7755,9 @@
             "y": -13.8485
         },
         "alias": "cnes4T",
-        "templateId": "cnes4T___4-Cyanoethylthiothymidine"
+        "templateId": "cnes4T___4-Cyanoethylthiothymine"
     },
-    "monomerTemplate-cnes4T___4-Cyanoethylthiothymidine": {
+    "monomerTemplate-cnes4T___4-Cyanoethylthiothymine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -7975,7 +7975,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "cnes4T___4-Cyanoethylthiothymidine",
+        "id": "cnes4T___4-Cyanoethylthiothymine",
         "fullName": "4-Cyanoethylthiothymidine",
         "alias": "cnes4T",
         "attachmentPoints": [
@@ -8429,9 +8429,9 @@
             "y": -16.668999999999997
         },
         "alias": "daA",
-        "templateId": "daA___N,N-dimethyl-Adenine"
+        "templateId": "daA___N6,N6-dimethyladenine"
     },
-    "monomerTemplate-daA___N,N-dimethyl-Adenine": {
+    "monomerTemplate-daA___N6,N6-dimethyladenine": {
         "type": "monomerTemplate",
         "atoms": [
             {
@@ -8641,7 +8641,7 @@
         ],
         "class": "Base",
         "classHELM": "RNA",
-        "id": "daA___N,N-dimethyl-Adenine",
+        "id": "daA___N6,N6-dimethyladenine",
         "fullName": "N,N-dimethyl-Adenine",
         "alias": "daA",
         "attachmentPoints": [

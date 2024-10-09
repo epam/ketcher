@@ -1,5 +1,6 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
+import Editor from 'src/script/editor';
 import tools from 'src/script/ui/action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
@@ -14,12 +15,20 @@ import {
   MenuItemsProps,
 } from '../contextMenu.types';
 import { getIconName, Icon } from 'components';
+import { useChangeBondDirection } from '../hooks/useChangeBondDirection';
+import { useAppContext } from 'src/hooks/useAppContext';
+import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
 
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
+  const { getKetcherInstance } = useAppContext();
+  const [bondData, setBondData] = useState<{
+    type: number;
+    stereo: number;
+  } | null>(null);
   const [handleEdit] = useBondEdit();
   const [handleTypeChange, disabled] = useBondTypeChange();
   const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
@@ -30,6 +39,39 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
   const isDisabled = disabled({
     props: props.propsFromTrigger,
   } as Params);
+  const { changeDirection } = useChangeBondDirection(props as ItemEventParams);
+  const editor = getKetcherInstance().editor as Editor;
+
+  useEffect(() => {
+    const editor = getKetcherInstance()?.editor;
+    const bondIds = props.propsFromTrigger?.bondIds || [];
+
+    if (bondIds.length > 0 && editor) {
+      const bond = editor.render.ctab.molecule.bonds.get(bondIds[0]);
+      if (bond) {
+        setBondData({ type: bond.type, stereo: bond.stereo });
+      } else {
+        setBondData(null);
+      }
+    }
+  }, [props.propsFromTrigger, getKetcherInstance]);
+
+  const highlightBondWithColor = (color: string) => {
+    const bondIds = props.propsFromTrigger?.bondIds || [];
+
+    editor.highlights.create({
+      atoms: [],
+      bonds: bondIds,
+      color: color === '' ? 'transparent' : color,
+    });
+  };
+  const shouldShowChangeDirection =
+    bondData &&
+    ((bondData.type === 9 && bondData.stereo === 0) ||
+      (bondData.type === 1 && bondData.stereo === 1) ||
+      (bondData.type === 1 && bondData.stereo === 6) ||
+      (bondData.type === 1 && bondData.stereo === 4));
+
   return (
     <>
       <Item {...props} onClick={handleEdit} disabled={isDisabled}>
@@ -77,10 +119,15 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
         })}
       </Submenu>
 
+      {shouldShowChangeDirection && (
+        <Item {...props} onClick={changeDirection}>
+          Change direction
+        </Item>
+      )}
       <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>
         Attach S-Group...
       </Item>
-
+      <HighlightMenu onHighlight={highlightBondWithColor} />
       <Item
         {...props}
         hidden={sGroupEditHidden}

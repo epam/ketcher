@@ -1,7 +1,6 @@
 import { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import assert from 'assert';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
 import { BaseMonomer } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
@@ -10,28 +9,12 @@ import { CoreEditor } from 'application/editor';
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,
   drawingEntitiesManager: DrawingEntitiesManager,
-  monomerIdsMap: { [monomerIdFromKet: string]: number },
   atomIdMap: Map<number, number>,
   superatomMonomerToUsedAttachmentPoint: Map<BaseMonomer, Set<string>>,
+  firstMonomer: BaseMonomer,
+  secondMonomer: BaseMonomer,
 ) {
   const command = new Command();
-  const firstMonomer = drawingEntitiesManager.monomers.get(
-    Number(
-      monomerIdsMap[
-        connection.endpoint1.monomerId || connection.endpoint1.moleculeId
-      ],
-    ),
-  );
-  const secondMonomer = drawingEntitiesManager.monomers.get(
-    Number(
-      monomerIdsMap[
-        connection.endpoint2.monomerId || connection.endpoint2.moleculeId
-      ],
-    ),
-  );
-
-  assert(firstMonomer);
-  assert(secondMonomer);
 
   const firstAttachmentPoint =
     connection.endpoint1.attachmentPointId ||

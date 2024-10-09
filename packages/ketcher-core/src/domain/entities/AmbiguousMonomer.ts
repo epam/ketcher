@@ -4,10 +4,14 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { KetMonomerClass } from 'application/formatters';
+import {
+  KetAmbiguousMonomerTemplateSubType,
+  KetMonomerClass,
+} from 'application/formatters';
 import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
+
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
@@ -19,7 +23,12 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     generateId = true,
   ) {
     const variantMonomerLabel =
-      variantMonomerItem.label || DEFAULT_VARIANT_MONOMER_LABEL;
+      variantMonomerItem.subtype ===
+        KetAmbiguousMonomerTemplateSubType.MIXTURE ||
+      variantMonomerItem.label?.length > 1
+        ? DEFAULT_VARIANT_MONOMER_LABEL
+        : variantMonomerItem.label;
+
     super(
       {
         label: variantMonomerLabel,

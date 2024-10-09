@@ -228,6 +228,7 @@ import SequenceLayoutIcon from '../../../assets/icons/files/sequence-layout-mode
 import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
+import CrossIcon from '../../../assets/icons/files/cross.svg';
 
 export const iconNameToIcon = {
   α,
@@ -282,6 +283,7 @@ export const iconNameToIcon = {
   'any-atom': AnyAtomIcon,
   arom: AromIcon,
   'arrow-upward': ArrowUpwardIcon,
+  bonds: BondSingleIcon,
   'bond-any': BondAnyIcon,
   'bond-aromatic': BondAromaticIcon,
   'bond-crossed': BondCrossedIcon,
@@ -337,6 +339,7 @@ export const iconNameToIcon = {
   open: OpenIcon,
   paste: PasteIcon,
   'period-table': PeriodTableIcon,
+  arrows: ReactionArrowOpenAngleIcon,
   'reaction-arrow-elliptical-arc-arrow-filled-bow':
     ReactionArrowEllipticalArcArrowFilledBow,
   'reaction-arrow-elliptical-arc-arrow-filled-triangle':
@@ -368,11 +371,13 @@ export const iconNameToIcon = {
     ReactionArrowUnbalancedEquilibriumFilledHalfTriangle,
   [MULTITAIL_ARROW_TOOL_NAME]: ReactionArrowMultitail,
   'reaction-automap': ReactionAutomapIcon,
+  'reaction-mapping-tools': ReactionMapIcon,
   'reaction-map': ReactionMapIcon,
   'reaction-plus': ReactionPlusIcon,
   'reaction-unmap': ReactionUnmapIcon,
   recognize: RecognizeIcon,
   redo: RedoIcon,
+  rgroup: RgroupLabelIcon,
   'rgroup-attpoints': RgroupAttpointsIcon,
   'rgroup-fragment': RgroupFragmentIcon,
   'rgroup-label': RgroupLabelIcon,
@@ -406,6 +411,7 @@ export const iconNameToIcon = {
   'zoom-in': ZoomInIcon,
   'zoom-out': ZoomOutIcon,
   'zoom-reset': ZoomResetIcon,
+  shapes: ShapeEllipseIcon,
   'shape-ellipse': ShapeEllipseIcon,
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
@@ -421,7 +427,7 @@ export const iconNameToIcon = {
   'stereo-white': StereoWhiteIcon,
   atoms: AtomsIcon,
   'atoms-white': AtomsWhiteIcon,
-  bonds: BondsIcon,
+  'bond-common': BondsIcon,
   'bonds-white': BondsWhiteIcon,
   server: ServerIcon,
   'server-white': ServerWhiteIcon,
@@ -455,4 +461,5 @@ export const iconNameToIcon = {
   'snake-layout-mode': SnakeLayoutIcon,
   'sequence-layout-mode': SequenceLayoutIcon,
   questionMark: QuestionMark,
+  'no-highlight-cross': CrossIcon,
 } as const;

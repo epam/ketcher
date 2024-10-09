@@ -151,58 +151,62 @@ test.describe('Save files', () => {
     expect(smiFile).toEqual(smiFileExpected);
   });
 
-  test('Save as a .rxn file if reaction consists of two or more reaction arrows', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Save as a .rxn file if reaction consists of two or more reaction arrows',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2483
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile(
-      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      expectedFile,
-    );
+      await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+      const expectedFile = await getRxn(page);
+      await saveToFile(
+        'Rxn-V2000/two-arrows-and-plus-expected.rxn',
+        expectedFile,
+      );
 
-    const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
+      const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          metaDataIndexes: METADATA_STRING_INDEX,
+          expectedFileName:
+            'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
+        });
+      expect(rxnFile).toEqual(rxnFileExpected);
+    },
+  );
+
+  test.fail(
+    'Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999',
+    async ({ page }) => {
+      /**
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2494
+       * Test case: EPMLSOPKET-5260
+       * Description: Structure is saved according to automated selected format MDL Molfile v3000
+       */
+
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
         page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-5260
-     * Description: Structure is saved according to automated selected format MDL Molfile v3000
-     */
-
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
-      page,
-    );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-  });
+      );
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('The file formats in the Save Structure window match the mockup', async ({
     page,
@@ -289,37 +293,37 @@ test.describe('Save files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
-    /*
+  test.fail(
+    'Support for exporting to "SDF V3000" file format',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2477
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+      await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
+      const expectedFile = await getSdf(page, 'v3000');
+      await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
 
-    const METADATA_STRING_INDEX = [1];
+      const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 });
 
 test.describe('Open/Save/Paste files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test('Paste the content from mol-string', async ({ page }) => {
@@ -335,6 +339,7 @@ test.describe('Open/Save/Paste files', () => {
       await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Daylight SMILES" format structure with attachment point and query features', async ({
@@ -349,6 +354,7 @@ test.describe('Open/Save/Paste files', () => {
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=CC=1.[*:1]%91 |$;;;;;;;;;;;;;;;;_AP1$,rb:10:2,u:10,s:10:*|',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "Extended SMILES" format structure with attachment point and query features', async ({
@@ -363,6 +369,7 @@ test.describe('Open/Save/Paste files', () => {
       'C1%91C(O)=C(C2[CH]=CC(C)=CC=2N)C(C)=C%92C=1O1C=CN=CC=1.[*:1]%91.[*:2]%92 |$;;;;;;;;;;;;;;;;;;;;;;_AP1;_AP2$,rb:10:2,u:10,s:10:*|',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "InChi" format structure', async ({ page }) => {
@@ -375,6 +382,7 @@ test.describe('Open/Save/Paste files', () => {
       'InChI=1S/C16H18/c1-11-5-12(2)8-15(7-11)16-9-13(3)6-14(4)10-16/h5-10H,1-4H3',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with SVG format', async ({ page }) => {
@@ -386,6 +394,7 @@ test.describe('Open/Save/Paste files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with PNG format', async ({ page }) => {
@@ -397,6 +406,7 @@ test.describe('Open/Save/Paste files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Saving structure with QUERY in Smiles format', async ({ page }) => {
@@ -410,6 +420,7 @@ test.describe('Open/Save/Paste files', () => {
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Save *.ket file with atom list and atom properties', async ({
@@ -438,5 +449,6 @@ test.describe('Open/Save/Paste files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+    await takeEditorScreenshot(page);
   });
 });

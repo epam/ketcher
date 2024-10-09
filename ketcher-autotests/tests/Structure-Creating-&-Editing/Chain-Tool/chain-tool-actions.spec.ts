@@ -24,15 +24,12 @@ test.describe('Chain Tool verification', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Chain Tool - UI verification', async ({ page }) => {
     // Test case: EPMLSOPKET-1474
     // Verify the icon and the tooltip of the Chain Tool button
     const button = page.getByTestId('chain');
     await expect(button).toHaveAttribute('title', 'Chain');
+    await takeEditorScreenshot(page);
   });
 
   test('Chain tool - Select atom', async ({ page }) => {
@@ -45,6 +42,7 @@ test.describe('Chain Tool verification', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
   });
 
   test('Chain tool - Save and render', async ({ page }) => {
@@ -64,6 +62,7 @@ test.describe('Chain Tool verification', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Chain tool - edit saved file', async ({ page }) => {
@@ -75,6 +74,7 @@ test.describe('Chain Tool verification', () => {
     );
     await clickOnBond(page, BondType.SINGLE, bondNumber);
     await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
   });
 
   test('Chain Tool - order of Hydrogen symbol in abbreviation of the atoms when adding them to the structure', async ({
@@ -97,5 +97,6 @@ test.describe('Chain Tool verification', () => {
     await clickOnAtom(page, 'C', bondNumber2);
     await page.keyboard.up('Shift');
     await page.keyboard.press('p');
+    await takeEditorScreenshot(page);
   });
 });

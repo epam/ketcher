@@ -22,7 +22,7 @@ import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
-import { getFormatMimeTypeByFileName } from 'ketcher-core';
+import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
 interface OpenProps {
   server: any;
   errorHandler: (err: string) => void;
@@ -42,7 +42,13 @@ const MODAL_STATES = {
   presentationViewer: 'presentationViewer',
 };
 
-const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
+const FooterContent = ({
+  structStr,
+  openHandler,
+  copyHandler,
+  onCancel,
+  isAddToCanvasDisabled,
+}) => {
   return (
     <div className={classes.footerContent}>
       <button onClick={onCancel} className={classes.cancelButton}>
@@ -58,7 +64,7 @@ const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
         />
         <DialogActionButton
           key="copyButton"
-          disabled={!structStr}
+          disabled={!structStr || isAddToCanvasDisabled}
           clickHandler={copyHandler}
           styles={classes.copyButton}
           label="Add to Canvas"
@@ -88,6 +94,7 @@ const Open: FC<Props> = (props) => {
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
   const [isLoading, setIsLoading] = useState(false);
+  const ketcher = ketcherProvider.getKetcher();
 
   useEffect(() => {
     if (server) {
@@ -162,6 +169,7 @@ const Open: FC<Props> = (props) => {
             openHandler={openHandler}
             copyHandler={copyHandler}
             onCancel={rest.onCancel}
+            isAddToCanvasDisabled={ketcher.editor.render.options.viewOnlyMode}
           />
         ) : undefined
       }

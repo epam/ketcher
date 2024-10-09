@@ -20,6 +20,7 @@ import {
   selectClearCanvasTool,
   clickUndo,
   dragMouseTo,
+  Sugars,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -48,15 +49,19 @@ test.afterAll(async ({ browser }) => {
 });
 
 test.describe('Import-Saving .ket Files', () => {
-  test('Open ket file with monomers and bonds', async () => {
-    /*
+  test.skip(
+    'Open ket file with monomers and bonds',
+    { tag: ['@NeedToBeUpdated'] },
+    async () => {
+      /*
     Test case: #3230 - Support parsing KET file for macromolecules on ketcher side
     Description: Ket Deserialize
     */
-    await openFileAndAddToCanvasMacro('KET/monomers-with-bonds.ket', page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasMacro('KET/monomers-with-bonds.ket', page);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check save and open of file with 50 monomers saved in KET format', async () => {
     /*
@@ -196,7 +201,7 @@ test.describe('Import-Saving .ket Files', () => {
     test.slow();
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('summary-Sugars').click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     await clickInTheMiddleOfTheScreen(page);
     const expectedFile = await getKet(page);
     await saveToFile('KET/25R-expected.ket', expectedFile);

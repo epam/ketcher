@@ -62,10 +62,6 @@ test.describe('Atom Properties', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Check Atom Properties modal window by double click on atom', async ({
     page,
   }) => {
@@ -91,6 +87,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
     await waitForAtomPropsModal(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check Atom Properties modal window by hovering and press hotkey /', async ({
@@ -120,6 +117,7 @@ test.describe('Atom Properties', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('/');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Label on structure and press Cancel', async ({ page }) => {
@@ -132,6 +130,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await selectAtomLabel(page, 'Na', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Label on structure and press Apply', async ({ page }) => {
@@ -146,6 +145,7 @@ test.describe('Atom Properties', () => {
     await waitForRender(page, async () => {
       await selectAtomLabel(page, 'Sb', 'Apply');
     });
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Label on structure to incorrect', async ({ page }) => {
@@ -159,6 +159,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'N', 0);
 
     await page.getByLabel('Label').fill('J%');
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Label on structure to incorrect and press Cancel', async ({
@@ -175,6 +176,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'N', 0);
 
     await selectAtomLabel(page, 'J%', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing atom symbols - single selected atom', async ({ page }) => {
@@ -199,6 +201,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', secondAnyAtom);
 
     await selectAtomLabel(page, 'Cl', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Open saved structure and edit atoms', async ({ page }) => {
@@ -222,6 +225,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'Cl', 0);
 
     await selectAtomLabel(page, 'Zn', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save the structure as *.mol file', async ({ page }) => {
@@ -250,6 +254,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Typing atom symbols - several selected atoms', async ({ page }) => {
@@ -265,6 +270,7 @@ test.describe('Atom Properties', () => {
     await page.keyboard.press(`${modifier}+KeyA`);
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Typing atom symbols - atoms of different structures', async ({
@@ -289,6 +295,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await selectAtomLabel(page, 'Zn', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save two structures the structure as *.mol file', async ({ page }) => {
@@ -317,6 +324,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Alias on structure and press Cancel', async ({ page }) => {
@@ -331,6 +339,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await fillAliasForAtom(page, 'abc123TesREasd!@', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Change Atom Alias on structure and press Apply', async ({ page }) => {
@@ -345,6 +354,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await fillAliasForAtom(page, 'abc123TesREasd!@', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Edit Atom Label and Alias on structure and press Apply', async ({
@@ -365,6 +375,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
 
     await fillAliasForAtom(page, 'TesREasd!@', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Dialog - Number of Atom', async ({ page }) => {
@@ -384,6 +395,7 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Cancel');
 
     await doubleClickOnAtom(page, 'O', 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Dialog - Atom type - List', async ({ page }) => {
@@ -398,6 +410,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await page.locator('label').filter({ hasText: 'Atom Type' }).click();
     await page.getByRole('option', { name: 'List', exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Dialog - Atom type - Special', async ({ page }) => {
@@ -411,6 +424,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await page.locator('label').filter({ hasText: 'Atom Type' }).click();
     await page.getByRole('option', { name: 'Special', exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Charge of the Atoms', async ({ page }) => {
@@ -435,6 +449,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillChargeForAtom(page, '-2', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Type in the Charge field any incorrect data', async ({ page }) => {
@@ -448,6 +463,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByLabel('Charge').fill('A');
+    await takeEditorScreenshot(page);
   });
 
   test('Type in the Charge field number bigger than maximum', async ({
@@ -465,6 +481,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByTestId('charge-input').fill('9999');
     await page.getByTestId('charge-input').hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with two Charge as *.mol file', async ({ page }) => {
@@ -493,6 +510,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Change charge on different atoms', async ({ page }) => {
@@ -516,6 +534,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'S', 0);
 
     await fillChargeForAtom(page, '3', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing in Charge for sigle atom', async ({ page }) => {
@@ -536,6 +555,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'I', 0);
     await fillChargeForAtom(page, '5', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Isotope in modal and press Cancel', async ({ page }) => {
@@ -549,6 +569,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillIsotopeForAtom(page, '18', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Isotope in modal and press Apply', async ({ page }) => {
@@ -562,6 +583,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await fillIsotopeForAtom(page, '13', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add incorrect Isotope in modal', async ({ page }) => {
@@ -574,6 +596,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByLabel('Isotope').fill('b');
+    await takeEditorScreenshot(page);
   });
 
   test('Add incorrect negative Isotope in modal', async ({ page }) => {
@@ -587,6 +610,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByTestId('isotope-input').fill('-88');
     await page.getByTestId('isotope-input').hover();
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Isotope information as *.mol file', async ({
@@ -614,6 +638,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Change Isotope value on different atoms', async ({ page }) => {
@@ -637,6 +662,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'O', 0);
 
     await fillIsotopeForAtom(page, '18', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing Isotopes in Label Edit modal', async ({ page }) => {
@@ -653,6 +679,7 @@ test.describe('Atom Properties', () => {
 
     await page.getByLabel('Atom').fill('18O');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing in isotope - several atoms through Label Edit modal', async ({
@@ -680,6 +707,7 @@ test.describe('Atom Properties', () => {
 
     await page.getByLabel('Atom').fill('18S');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Valence in modal and press Cancel', async ({ page }) => {
@@ -694,6 +722,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectValenceForAtom(page, 'III', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Valence in modal and press Apply', async ({ page }) => {
@@ -707,6 +736,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectValenceForAtom(page, 'III', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Valence information as *.mol file', async ({
@@ -734,6 +764,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Change Valence value on different atoms', async ({ page }) => {
@@ -758,6 +789,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'O', 0);
 
     await selectValenceForAtom(page, 'V', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Radicals in modal and press Cancel', async ({ page }) => {
@@ -772,6 +804,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRadical(page, 'Monoradical', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Radical in modal and press Apply', async ({ page }) => {
@@ -788,6 +821,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRadical(page, 'Monoradical', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Radical information as *.mol file', async ({
@@ -818,6 +852,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open the saved *.mol file and edit it', async ({ page }) => {
@@ -832,6 +867,7 @@ test.describe('Atom Properties', () => {
     );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing in Radicals - three atoms through Label Edit modal', async ({
@@ -863,6 +899,7 @@ test.describe('Atom Properties', () => {
     await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('F^^');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Radicals value on different atoms', async ({ page }) => {
@@ -887,6 +924,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'O', 0);
 
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Ring bond count in modal and press Cancel', async ({
@@ -909,6 +947,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Ring bond count in modal and press Apply', async ({
@@ -924,6 +963,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRingBondCount(page, 'As drawn', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Query specific - Ring bond count information as *.mol file', async ({
@@ -954,6 +994,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open the saved *.mol file with Ring bond count and edit it', async ({
@@ -970,6 +1011,7 @@ test.describe('Atom Properties', () => {
     );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '3', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Typing the atom symbol with the different atom properties - three atoms through Label Edit modal', async ({
@@ -1002,6 +1044,7 @@ test.describe('Atom Properties', () => {
     await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('22F.3+');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Ring bonds count - Representation', async ({ page }) => {
@@ -1027,6 +1070,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', thirdAnyAtom);
     await selectRingBondCount(page, '4', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
@@ -1065,6 +1109,7 @@ test.describe('Atom Properties', () => {
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Hydrogen count in modal and press Cancel', async ({
@@ -1081,6 +1126,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '0', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Hydrogen count in modal and press Apply', async ({
@@ -1096,6 +1142,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '2', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Hydrogen count in modal and Edit', async ({
@@ -1112,6 +1159,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '4', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Query specific - H count information as *.mol file', async ({
@@ -1139,6 +1187,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Hydrogen count - Representation of blank selection', async ({
@@ -1161,6 +1210,7 @@ test.describe('Atom Properties', () => {
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Substitution count in modal and press Cancel', async ({
@@ -1178,6 +1228,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '0', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Substitution count in modal and press Apply', async ({
@@ -1193,6 +1244,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '2', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Substitution count in modal and Edit', async ({
@@ -1209,6 +1261,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '4', 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Save structure with Query specific - Substitution count information as *.mol file', async ({
@@ -1239,6 +1292,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Substitution count - Representation of blank selection', async ({
@@ -1261,6 +1315,7 @@ test.describe('Atom Properties', () => {
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Unsaturated in modal and press Cancel', async ({
@@ -1276,6 +1331,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectUnsaturated(page, 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Unsaturated in modal and press Apply', async ({
@@ -1292,6 +1348,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectUnsaturated(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Query specific - Unsaturated in modal and Edit', async ({
@@ -1311,6 +1368,7 @@ test.describe('Atom Properties', () => {
     await page.getByText('Query specific').click();
     await page.getByLabel('Unsaturated').uncheck();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Double click on the selected atom do not create error', async ({
@@ -1324,6 +1382,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 
   test('Click Single Bond on Atom of Phosphorus', async ({ page }) => {
@@ -1336,6 +1395,7 @@ test.describe('Atom Properties', () => {
 
     await selectBond(BondTypeName.Single, page);
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Typing atom symbols - Single selected atom (symbol has two letters)', async ({
@@ -1356,6 +1416,7 @@ test.describe('Atom Properties', () => {
     await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('FE');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Colored atoms set - Mapping reaction', async ({ page }) => {
@@ -1374,6 +1435,7 @@ test.describe('Atom Properties', () => {
     await clickOnAtom(page, 'F', 0);
 
     await clickOnAtom(page, 'O', 0);
+    await takeEditorScreenshot(page);
   });
 
   test('Colored atoms - Applying of atom properties to colored atoms', async ({
@@ -1390,6 +1452,7 @@ test.describe('Atom Properties', () => {
     );
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await takeEditorScreenshot(page);
   });
 
   test('All atom properties information saved as *.mol file', async ({
@@ -1420,38 +1483,42 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
-  test('All atom properties information saved as *.rxn file', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'All atom properties information saved as *.rxn file',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-    await openFileAndAddToCanvas(
-      'Rxn-V3000/all-possible-atoms-properties.rxn',
-      page,
-    );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-      expectedFile,
-    );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Rxn-V3000/all-possible-atoms-properties.rxn',
         page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const METADATA_STRING_INDEX = [2];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Add Reaction flags - Inversion (Inverts) in modal and press Cancel', async ({
     page,
@@ -1466,6 +1533,7 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectReactionFlagsInversion(page, 'Inverts', 'Cancel');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Reaction flags - Inversion (Inverts) and Exact change in modal and press Apply', async ({
@@ -1482,6 +1550,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Inverts');
     await selectExactChange(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Add Reaction flags - Inversion (Retains) and Exact change in modal and press Apply', async ({
@@ -1498,6 +1567,7 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Retains');
     await selectExactChange(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Reaction flags information saved as *.mol file', async ({ page }) => {
@@ -1526,6 +1596,7 @@ test.describe('Atom Properties', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Add to canvas - List atoms', async ({ page }) => {
@@ -1543,6 +1614,7 @@ test.describe('Atom Properties', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add to canvas - Not List atoms', async ({ page }) => {
@@ -1560,6 +1632,7 @@ test.describe('Atom Properties', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add to canvas - Generic Groups', async ({ page }) => {
@@ -1570,6 +1643,7 @@ test.describe('Atom Properties', () => {
     await selectElementFromExtendedTable(page, 'G', 'Add');
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add to canvas - Generic Groups and click on it', async ({ page }) => {
@@ -1581,6 +1655,7 @@ test.describe('Atom Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('GH*').first().dblclick();
+    await takeEditorScreenshot(page);
   });
 
   test('"Query properties" section with the contents of the "Query specific" drop-down list inside the "Edit" section', async ({
@@ -1621,6 +1696,7 @@ test.describe('Atom Properties', () => {
       }
       await takeEditorScreenshot(page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('The selection of an option inside the "Ring bond count" sub-section', async ({
@@ -1640,6 +1716,7 @@ test.describe('Atom Properties', () => {
     for (let i = 0; i < atomIndices.length; i++) {
       await selectRingBondCountOption(page, atomIndices[i], optionIndices[i]);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('The selection of an option inside the "H count" sub-section', async ({
@@ -1659,6 +1736,7 @@ test.describe('Atom Properties', () => {
     for (let i = 0; i < atomIndices.length; i++) {
       await selectHCountOption(page, atomIndices[i], optionIndices[i]);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('The selection of an option inside the "Substitution count" sub-section', async ({
@@ -1682,6 +1760,7 @@ test.describe('Atom Properties', () => {
         optionIndices[i],
       );
     }
+    await takeEditorScreenshot(page);
   });
 
   test('The selection of an option inside the "Unsaturated" sub-section', async ({
@@ -1700,6 +1779,7 @@ test.describe('Atom Properties', () => {
     for (let i = 0; i < atomIndices.length; i++) {
       await selectUnsaturatedOption(page, atomIndices[i], selectedOption[i]);
     }
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -1725,6 +1805,7 @@ test.describe('Atom Properties', () => {
           optionIndices[i],
         );
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -1744,6 +1825,7 @@ test.describe('Atom Properties', () => {
     for (let i = 0; i < atomIndices.length; i++) {
       await selectAromaticityOption(page, atomIndices[i], selectedOption[i]);
     }
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -1769,6 +1851,7 @@ test.describe('Atom Properties', () => {
           optionIndices[i],
         );
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -1791,6 +1874,7 @@ test.describe('Atom Properties', () => {
       for (let i = 0; i < atomIndices.length; i++) {
         await selectRingSizeOption(page, atomIndices[i], optionIndices[i]);
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -1813,6 +1897,7 @@ test.describe('Atom Properties', () => {
       for (let i = 0; i < atomIndices.length; i++) {
         await selectConnectivityOption(page, atomIndices[i], optionIndices[i]);
       }
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -1865,5 +1950,6 @@ test.describe('Atom Properties', () => {
           break;
       }
     }
+    await takeEditorScreenshot(page);
   });
 });

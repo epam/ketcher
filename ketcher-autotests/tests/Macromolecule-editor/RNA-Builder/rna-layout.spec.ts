@@ -22,16 +22,14 @@ test.describe('RNA layout', () => {
     await createRNA(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takePageScreenshot(page);
-  });
-
   test('Each panel is collapsed', async ({ page }) => {
     await page.getByText('RNA Builder').locator('button').click();
     await page.getByTestId('summary-Presets').click();
+    await takePageScreenshot(page);
   });
 
   test('RNA Builder panel is collapsed', async ({ page }) => {
     await toggleRnaBuilderAccordion(page);
+    await takePageScreenshot(page);
   });
 });

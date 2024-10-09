@@ -23,10 +23,6 @@ test.describe('Right-click menu', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Check right-click menu for bonds', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-5872
@@ -35,6 +31,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Check right-click submenu for Query bonds', async ({ page }) => {
@@ -46,6 +43,7 @@ test.describe('Right-click menu', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Query bonds').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Check editing for bonds', async ({ page }) => {
@@ -60,6 +58,7 @@ test.describe('Right-click menu', () => {
     await page.getByTestId('type-input-span').click();
     await page.getByRole('option', { name: 'Double', exact: true }).click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Check selecting Bond type for bonds', async ({ page }) => {
@@ -71,6 +70,7 @@ test.describe('Right-click menu', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Check deleting for bonds', async ({ page }) => {
@@ -82,6 +82,7 @@ test.describe('Right-click menu', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Delete', { exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 
   test('Check that right-click menu does not cancel selected tool', async ({
@@ -104,6 +105,7 @@ test.describe('Right-click menu', () => {
       await clickOnAtom(page, 'C', 1);
     });
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check right-click menu for atoms', async ({ page }) => {
@@ -117,6 +119,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {
@@ -133,6 +136,7 @@ test.describe('Right-click menu', () => {
     await page.getByText('Unsaturated').first().click();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check editing for atoms', async ({ page }) => {
@@ -147,6 +151,7 @@ test.describe('Right-click menu', () => {
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Check that menu Enhanced stereochemistry is grayed out if atom does not have enhanced stereochemistry', async ({
@@ -162,6 +167,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Check that the menu Enhanced stereochemistry is NOT grayed out if the atom have enhanced stereochemistry', async ({
@@ -174,6 +180,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Check creating new AND Group from Enhanced stereochemistry item', async ({
@@ -200,6 +207,7 @@ test.describe('Right-click menu', () => {
       .filter({ hasText: 'Ignore the chiral flag' })
       .click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Check creating new OR Group from Enhanced stereochemistry item', async ({
@@ -227,6 +235,7 @@ test.describe('Right-click menu', () => {
       .locator('div span')
       .click();
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Check deleting for atoms', async ({ page }) => {
@@ -238,6 +247,7 @@ test.describe('Right-click menu', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Delete').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Check that there are no error when deleting few stereo bond via context-menu', async ({
@@ -258,6 +268,7 @@ test.describe('Right-click menu', () => {
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Delete').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Close menu by clicking on canvas', async ({ page }) => {
@@ -272,6 +283,7 @@ test.describe('Right-click menu', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.mouse.click(canvasClickX, canvasClickY);
+    await takeEditorScreenshot(page);
   });
 
   test('Right click on an Atom with selected S-Group tool not opens S-Group Properties window', async ({
@@ -285,6 +297,7 @@ test.describe('Right-click menu', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Right click on a Bond with selected S-Group tool not opens S-Group Properties window', async ({
@@ -298,6 +311,7 @@ test.describe('Right-click menu', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
   });
 
   test('Check Attach S-Group for bond by right-click menu', async ({
@@ -316,6 +330,7 @@ test.describe('Right-click menu', () => {
     await page.getByPlaceholder('Enter value').click();
     await page.getByPlaceholder('Enter value').fill('Test!@#$%');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Atom editing by right-click menu', async ({ page }) => {
@@ -340,6 +355,7 @@ test.describe('Right-click menu', () => {
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
     await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Bond editing by right-click menu', async ({ page }) => {
@@ -361,5 +377,6 @@ test.describe('Right-click menu', () => {
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
+    await takeEditorScreenshot(page);
   });
 });

@@ -15,6 +15,7 @@ export enum RNA_DNA_NON_MODIFIED_PART {
 }
 
 export const rnaDnaNaturalAnalogues = ['A', 'T', 'G', 'C', 'U'];
+export const unknownNaturalAnalogues = ['.', 'X'];
 export const peptideNaturalAnalogues = [
   'A',
   'C',

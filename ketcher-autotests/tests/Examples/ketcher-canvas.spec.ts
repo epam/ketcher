@@ -23,11 +23,6 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
-  });
-
   test('drawing atom, then dragging other atom', async ({ page }) => {
     const xDelta = 100;
     await selectAtomInToolbar(AtomButton.Carbon, page);
@@ -38,6 +33,8 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y, page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('drawing benzene ring, then adding single bond', async ({ page }) => {
@@ -46,6 +43,8 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await selectBond(BondTypeName.Single, page);
 
     await clickOnAtom(page, 'C', 2);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('single bond tool', async ({ page }) => {
@@ -56,6 +55,8 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await selectBond(BondTypeName.Single, page);
 
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 
   test('double bond tool ', async ({ page }) => {
@@ -65,5 +66,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await selectNestedTool(page, BondTool.DOUBLE);
 
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

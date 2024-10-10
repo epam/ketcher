@@ -10,11 +10,16 @@ import {
   scrollToDownInSetting,
   openFileAndAddToCanvas,
   openSettings,
+  resetAllSettingsToDefault,
 } from '@utils';
 
 test.describe('ACS Style Settings', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await resetAllSettingsToDefault(page);
   });
 
   test('Verify ACS Style button and setting after clicking', async ({

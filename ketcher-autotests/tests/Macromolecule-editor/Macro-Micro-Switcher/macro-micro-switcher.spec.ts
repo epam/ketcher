@@ -62,6 +62,7 @@ import {
   Sugars,
   Bases,
   Phosphates,
+  getControlModifier,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -949,13 +950,14 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await page.keyboard.press(`${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });

@@ -119,7 +119,9 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   public show(theme) {
     super.show(theme);
     this.appendNumberOfMonomers();
-    this.appendEnumeration();
+    if (this.enumerationElementPosition) {
+      this.appendEnumeration();
+    }
     if (this.CHAIN_BEGINNING) {
       this.appendChainBeginning();
     }

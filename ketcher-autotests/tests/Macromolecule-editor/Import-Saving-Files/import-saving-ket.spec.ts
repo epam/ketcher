@@ -20,8 +20,8 @@ import {
   selectClearCanvasTool,
   clickUndo,
   dragMouseTo,
-  Sugars,
   openFileAndAddToCanvasAsNewProjectMacro,
+  Sugars,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -371,6 +371,7 @@ test.describe('Import-Saving .ket Files', () => {
           3. Save canvas to KET
           4. Compate result with template
     */
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/AllAmbiguousMonomers.ket',
       page,

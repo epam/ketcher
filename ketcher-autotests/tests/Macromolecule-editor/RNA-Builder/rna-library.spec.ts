@@ -59,7 +59,6 @@ import {
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 import {
   goToCHEMTab,
-  goToMonomerLocationTab,
   goToPeptidesTab,
   goToRNATab,
   MonomerLocationTabs,
@@ -1518,7 +1517,7 @@ test.describe('RNA Library', () => {
     }
   }
 
-  async function searchMonomerBuName(page: Page, monomerName: string) {
+  async function searchMonomerByName(page: Page, monomerName: string) {
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill(monomerName);
   }
@@ -1604,7 +1603,7 @@ test.describe('RNA Library', () => {
          * 2. Switch to monomer's tab to see it
          * 3. Take screenshot of the library to make sure search works
          */
-        await searchMonomerBuName(page, IDTSearchString.IDTSeatchString);
+        await searchMonomerByName(page, IDTSearchString.SearchString);
         await goToMonomerLocationTab(
           page,
           IDTSearchString.ResultMonomerLocationTab,

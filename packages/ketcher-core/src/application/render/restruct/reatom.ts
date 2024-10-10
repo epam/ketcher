@@ -39,7 +39,10 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
-import { RenderOptions } from 'application/render/render.types';
+import {
+  RenderOptions,
+  RenderOptionStyles,
+} from 'application/render/render.types';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -111,11 +114,12 @@ class ReAtom extends ReObject {
     return ret;
   }
 
-  getLabeledSelectionContour(render: Render) {
+  getLabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
-    const padding = fontszInPx * radiusScaleFactor;
-    const radius = fontszInPx * radiusScaleFactor * 2;
+    const highlightPadding = isHighlight ? -2 : 0;
+    const padding = fontszInPx * radiusScaleFactor + highlightPadding;
+    const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
     const box = this.getVBoxObj(restruct.render)!;
     const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
     const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
@@ -130,67 +134,75 @@ class ReAtom extends ReObject {
     );
   }
 
-  getUnlabeledSelectionContour(render: Render) {
+  getUnlabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
+    const highlightPadding = isHighlight ? -2 : 0;
     const ps = Scale.modelToCanvas(this.a.pp, options);
-    return paper.circle(ps.x, ps.y, atomSelectionPlateRadius);
+    return paper.circle(
+      ps.x,
+      ps.y,
+      atomSelectionPlateRadius + highlightPadding,
+    );
   }
 
-  getSelectionContour(render: Render) {
+  getSelectionContour(render: Render, isHighlight: boolean) {
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
     return hasLabel
-      ? this.getLabeledSelectionContour(render)
-      : this.getUnlabeledSelectionContour(render);
+      ? this.getLabeledSelectionContour(render, isHighlight)
+      : this.getUnlabeledSelectionContour(render, isHighlight);
   }
 
-  makeHoverPlate(render: Render) {
-    const atom = this.a;
-    const { options } = render;
+  private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
     const sgroups = render.ctab.sgroups;
     const functionalGroups = render.ctab.molecule.functionalGroups;
     const struct = render.ctab.molecule;
     const atomId = struct.atoms.keyOf(atom) as number;
 
-    if (
+    return (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
         atom,
         sgroups,
         functionalGroups,
         true,
-      ) ||
-      Atom.isHiddenLeavingGroupAtom(struct, atomId)
-    ) {
+      ) || Atom.isHiddenLeavingGroupAtom(struct, atomId)
+    );
+  };
+
+  private makeHighlightePlate = (
+    restruct: ReStruct,
+    style: RenderOptionStyles,
+  ) => {
+    const atom = this.a;
+    const { render } = restruct;
+    if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
 
-    return this.getSelectionContour(render).attr(options.hoverStyle);
+    return this.getSelectionContour(render, true).attr(style);
+  };
+
+  makeHoverPlate(render: Render) {
+    const atom = this.a;
+    const { options } = render;
+    if (this.isPlateShouldBeHidden(atom, render)) {
+      return null;
+    }
+
+    return this.getSelectionContour(render, false).attr(options.hoverStyle);
   }
 
   makeSelectionPlate(restruct: ReStruct) {
     const atom = this.a;
     const { render } = restruct;
     const { options } = render;
-    const sgroups = render.ctab.sgroups;
-    const functionalGroups = render.ctab.molecule.functionalGroups;
-    const struct = render.ctab.molecule;
-    const atomId = struct.atoms.keyOf(atom) as number;
 
-    if (
-      FunctionalGroup.isAtomInContractedFunctionalGroup(
-        atom,
-        sgroups,
-        functionalGroups,
-        true,
-      ) ||
-      Atom.isHiddenLeavingGroupAtom(struct, atomId)
-    ) {
+    if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
-
-    return this.getSelectionContour(render).attr(options.selectionStyle);
+    return this.getSelectionContour(render, false).attr(options.selectionStyle);
   }
 
   /**
@@ -545,11 +557,7 @@ class ReAtom extends ReObject {
     if (isHighlighted) {
       const style = { fill: highlightColor, stroke: 'none' };
 
-      const ps = Scale.modelToCanvas(this.a.pp, restruct.render.options);
-      const path = render.paper
-        .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
-        .attr(style);
-
+      const path = this.makeHighlightePlate(restruct, style);
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 

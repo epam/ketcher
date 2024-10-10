@@ -29,6 +29,11 @@ export type FloatingToolsParams = {
   rotateHandlePosition?: { x: number; y: number };
 };
 
+export enum EditorType {
+  Micromolecules = 0,
+  Macromolecules = 1,
+}
+
 export interface Editor {
   isDitrty: () => boolean;
   setOrigin: () => void;

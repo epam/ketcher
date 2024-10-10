@@ -428,9 +428,8 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Save as *.mol file V3000', async ({ page }) => {
+  test('Save as *.mol file V3000', async ({ page }) => {
     /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
      * Test case: EPMLSOPKET-1651
      * Description: Structure with attachment points saved as .mol file V3000
      */

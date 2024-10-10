@@ -44,13 +44,7 @@ import {
   PreviewStyle,
   PreviewType,
 } from 'state/types';
-import {
-  calculateAmbiguousMonomerPreviewLeft,
-  calculateAmbiguousMonomerPreviewTop,
-  calculateBondPreviewPosition,
-  calculateMonomerPreviewTop,
-  calculateNucleoElementPreviewTop,
-} from 'ketcher-react';
+import { calculateBondPreviewPosition } from 'ketcher-react';
 
 const noPreviewTools = ['bond-single'];
 
@@ -185,8 +179,6 @@ export const EditorEvents = () => {
       }
 
       // TODO: Split to separate functions for monomers and presets
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const left = `${cardCoordinates.left + cardCoordinates.width / 2}px`;
       const sequenceNode = e.target.__data__?.node;
       const monomer: BaseMonomer | AmbiguousMonomer =
         e.target.__data__?.monomer || sequenceNode?.monomer;
@@ -195,14 +187,7 @@ export const EditorEvents = () => {
         const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {
           type: PreviewType.AmbiguousMonomer,
           monomer: monomer.variantMonomerItem,
-          style: {
-            left: `${calculateAmbiguousMonomerPreviewLeft(
-              cardCoordinates.left,
-            )}px`,
-            top: calculateAmbiguousMonomerPreviewTop(
-              monomer.variantMonomerItem,
-            )(cardCoordinates),
-          },
+          target: e.target,
         };
 
         debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -233,14 +218,7 @@ export const EditorEvents = () => {
             type: PreviewType.AmbiguousMonomer,
             monomer: sequenceNode.rnaBase.variantMonomerItem,
             presetMonomers: monomers,
-            style: {
-              left: `${calculateAmbiguousMonomerPreviewLeft(
-                cardCoordinates.left,
-              )}px`,
-              top: calculateAmbiguousMonomerPreviewTop(
-                sequenceNode.rnaBase.variantMonomerItem,
-              )(cardCoordinates),
-            },
+            target: e.target,
           };
 
           debouncedShowPreview(ambiguousMonomerPreviewData);
@@ -271,13 +249,7 @@ export const EditorEvents = () => {
           name: existingPreset?.name,
           idtAliases: existingPreset?.idtAliases,
           position,
-          style: {
-            left,
-            top: monomerItem
-              ? calculateNucleoElementPreviewTop(cardCoordinates)
-              : '',
-            transform: 'translate(-50%, 0)',
-          },
+          target: e.target,
         };
 
         debouncedShowPreview(presetPreviewData);
@@ -288,10 +260,7 @@ export const EditorEvents = () => {
         type: PreviewType.Monomer,
         monomer: monomerItem,
         attachmentPointsToBonds,
-        style: {
-          left,
-          top: monomerItem ? calculateMonomerPreviewTop(cardCoordinates) : '',
-        },
+        target: e.target,
       };
 
       debouncedShowPreview(monomerPreviewData);

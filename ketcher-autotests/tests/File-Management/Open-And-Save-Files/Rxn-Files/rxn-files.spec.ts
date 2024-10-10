@@ -356,36 +356,31 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Open and Save file - V3000 rxn file contains Rgroup 2/2 - save',
-    async ({ page }) => {
-      /**
-       * * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
-       * Test case: EPMLSOPKET-1902(2)
-       * Description: Reaction can be saved correctly to rxn V3000 file
-       */
-      await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Rxn-V3000/r-group-V3000-expectedV3000.rxn',
-        expectedFile,
-      );
+  test('Open and Save file - V3000 rxn file contains Rgroup 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1902(2)
+     * Description: Reaction can be saved correctly to rxn V3000 file
+     */
+    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile('Rxn-V3000/r-group-V3000-expectedV3000.rxn', expectedFile);
 
-      // eslint-disable-next-line no-magic-numbers
-      const METADATA_STRINGS_INDEXES = [2];
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2];
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v3000',
-        });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back', async ({
     page,

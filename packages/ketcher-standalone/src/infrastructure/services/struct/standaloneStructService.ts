@@ -342,6 +342,7 @@ class IndigoService implements StructService {
           options?.['reaction-component-margin-size'],
         'image-resolution': options?.['image-resolution'],
         'input-format': inputFormat,
+        'molfile-saving-mode': options?.['molfile-saving-mode'],
         monomerLibrary,
       };
 

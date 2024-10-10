@@ -1,5 +1,6 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
@@ -17,6 +18,7 @@ import {
   pressButton,
   readFileContents,
   resetCurrentTool,
+  resetZoomLevelToDefault,
   RingButton,
   saveToTemplates,
   screenshotBetweenUndoRedo,
@@ -35,17 +37,31 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
 
 test.describe('Image files', () => {
-  test.beforeEach(async ({ page }) => {
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    const context = await browser.newContext();
+    page = await context.newPage();
+
     await waitForPageInit(page);
   });
 
-  test('Verify that single image of SVG format can be saved to KET file and load', async ({
-    page,
-  }) => {
+  test.afterEach(async ({ context: _ }) => {
+    await closeErrorAndInfoModals(page);
+    await selectClearCanvasTool(page);
+    await resetZoomLevelToDefault(page);
+  });
+
+  test.afterAll(async ({ browser }) => {
+    await Promise.all(browser.contexts().map((context) => context.close()));
+  });
+
+  test('Verify that single image of SVG format can be saved to KET file and load', async () => {
     /**
      * Test case: #4911
      * Description: Single image of SVG format can be saved to KET file and load
@@ -65,9 +81,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that single image of PNG format can be saved to KET file and load', async ({
-    page,
-  }) => {
+  test('Verify that single image of PNG format can be saved to KET file and load', async () => {
     /**
      * Test case: #4911
      * Description: Single image of PNG format can be saved to KET file and load
@@ -87,9 +101,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format can be saved to KET file and load', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format can be saved to KET file and load', async () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and load
@@ -110,9 +122,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with correct positions and layer levels (last added image is on top)', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with correct positions and layer levels (last added image is on top)', async () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and added to canvas
@@ -136,9 +146,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with structures', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format can be saved to KET file and added to canvas with structures', async () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be saved to KET file and added to canvas with structures
@@ -161,9 +169,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format with Structure library elements can be saved to KET file and added to canvas', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format with Structure library elements can be saved to KET file and added to canvas', async () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format with Structure library elements can be saved to KET file and added to canvas
@@ -186,9 +192,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format with 30 structure elements can be saved to KET file and added to canvas', async () => {
     test.slow();
     /**
      * Test case: #4911
@@ -212,9 +216,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of SVG and PNG format can be added from two different KET files saved and opened', async ({
-    page,
-  }) => {
+  test('Verify that images of SVG and PNG format can be added from two different KET files saved and opened', async () => {
     /**
      * Test case: #4911
      * Description: Images of SVG and PNG format can be added from two different KET files saved and opened
@@ -240,9 +242,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async () => {
     /**
      * Test case: #4911
      * Description: Images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"
@@ -256,9 +256,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"', async () => {
     /**
      * Test case: #4911
      * Description: Images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"
@@ -271,9 +269,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions', async ({
-    page,
-  }) => {
+  test('Verify that images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions', async () => {
     /**
      * Test case: #4911
      * Description: Images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions
@@ -290,9 +286,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview', async ({
-    page,
-  }) => {
+  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview', async () => {
     /**
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
@@ -302,9 +296,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview', async ({
-    page,
-  }) => {
+  test('Verify that images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview', async () => {
     /**
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
@@ -327,9 +319,7 @@ test.describe('Image files', () => {
   ];
 
   for (const fileName of fileNames) {
-    test(`Verify that image of not supported format ${fileName} cannot be added from .ket file to Canvas`, async ({
-      page,
-    }) => {
+    test(`Verify that image of not supported format ${fileName} cannot be added from .ket file to Canvas`, async () => {
       /**
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
@@ -357,9 +347,7 @@ test.describe('Image files', () => {
   ];
 
   for (const file of corruptedFiles) {
-    test(`Verify that image with corrupted data from ${file} cannot be added from .ket file to Canvas`, async ({
-      page,
-    }) => {
+    test(`Verify that image with corrupted data from ${file} cannot be added from .ket file to Canvas`, async () => {
       /**
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
@@ -371,9 +359,7 @@ test.describe('Image files', () => {
     });
   }
 
-  test('Verify that image cannot be loaded from .ket file if the length of bitmap is less than 160 symbols', async ({
-    page,
-  }) => {
+  test('Verify that image cannot be loaded from .ket file if the length of bitmap is less than 160 symbols', async () => {
     /**
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
@@ -384,9 +370,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async ({
-    page,
-  }) => {
+  test('Verify adding SVG and PNG images with the canvas zoomed to 400%. After placing the images, zoom out to 20% and then press the 100% zoom button', async () => {
     /**
      * Test case: #4911
      * Description: Zoom In and Zoom Out work for Images
@@ -403,9 +387,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo', async () => {
     /**
      * Test case: #4911
      * Description: Action of adding to Canvas images of allowed formats (PNG, SVG) together from .ket file can be Undo/Redo
@@ -416,9 +398,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) using "Add Image" button can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that action of adding to Canvas images of allowed formats (PNG, SVG) using "Add Image" button can be Undo/Redo', async () => {
     /**
      * Test case: #4911
      * Description: Action of adding to Canvas images of allowed formats (PNG, SVG) using "Add Image" button can be Undo/Redo
@@ -430,9 +410,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that "Add Image" button is on left panel, icon can be selected and it displays with filling', async ({
-    page,
-  }) => {
+  test('Verify that "Add Image" button is on left panel, icon can be selected and it displays with filling', async () => {
     /**
      * Test case: #4897
      * Description: "Add Image" button is on left panel, icon can be selected and it displays with filling, after
@@ -444,9 +422,7 @@ test.describe('Image files', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another place', async ({
-    page,
-  }) => {
+  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another place', async () => {
     /**
      * Test case: #4897
      * Description: Images can be added to different selected places on Canvas one by one using "Add Image" button
@@ -460,9 +436,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another image', async ({
-    page,
-  }) => {
+  test('Verify that images can be added to different selected places on Canvas one by one using "Add Image" button and can be selected and moved to another image', async () => {
     /**
      * Test case: #4897
      * Description: Images can be added to different selected places on Canvas one by one using "Add Image" button
@@ -476,9 +450,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together and separately to other places on Canvas', async ({
-    page,
-  }) => {
+  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together and separately to other places on Canvas', async () => {
     /**
      * Test case: #4897
      * Description: Loaded from .ket file and added to selected place on Canvas images with elements can be selected and
@@ -497,9 +469,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas', async ({
-    page,
-  }) => {
+  test('Verify that loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas', async () => {
     /**
      * Test case: #4897
      * Description: Loaded from .ket file and added to Canvas images with elements can be selected and moved together to other places on Canvas
@@ -514,9 +484,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of allowed formats (PNG, SVG) can be zoomed in/out (20, 400, 100) after adding to Canvas using "Add Image" button', async ({
-    page,
-  }) => {
+  test('Verify that images of allowed formats (PNG, SVG) can be zoomed in/out (20, 400, 100) after adding to Canvas using "Add Image" button', async () => {
     /**
      * Test case: #4911
      * Description: Zoom In and Zoom Out work for Images with mouse wheel
@@ -535,9 +503,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that moving actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that moving actions of images (PNG, SVG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Moving actions of images (PNG, SVG) on Canvas can be Undo/Redo
@@ -552,9 +518,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that scaling actions of image (PNG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that scaling actions of image (PNG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Scaling actions of images (PNG) on Canvas can be Undo/Redo
@@ -576,9 +540,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that scaling actions of image (SVG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that scaling actions of image (SVG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Scaling actions of images (SVG) on Canvas can be Undo/Redo
@@ -600,9 +562,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Deleting actions of images (PNG, SVG) on Canvas can be Undo/Redo
@@ -624,9 +584,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that copying actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that copying actions of images (PNG, SVG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Copying actions of images (PNG, SVG) on Canvas can be Undo/Redo
@@ -647,9 +605,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that cut actions of images (PNG, SVG) on Canvas can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that cut actions of images (PNG, SVG) on Canvas can be Undo/Redo', async () => {
     /**
      * Test case: #4897
      * Description: Cut actions of images (PNG, SVG) on Canvas can be Undo/Redo
@@ -664,9 +620,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
-    page,
-  }) => {
+  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
      * Test case: #4897
      * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
@@ -681,9 +635,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
-    page,
-  }) => {
+  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
      * Test case: #4897
      * Description: Adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)
@@ -699,9 +651,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async ({
-    page,
-  }) => {
+  test('Verify that loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
     /**
      * Test case: #4897
      * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG)
@@ -714,9 +664,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Erase" (or Delete, Backspace buttons)', async ({
-    page,
-  }) => {
+  test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
     /**
      * Test case: #4897
      * Description: Adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Erase" (or Delete, Backspace buttons)
@@ -748,14 +696,13 @@ test.describe('Image files', () => {
        * Test case: #4897
        * Description: Error message is displayed - "Unsupported image type"
        */
+      await pageReload(page);
       await openImageAndAddToCanvas(`Images/${fileName}`, page);
       await takeEditorScreenshot(page);
     });
   }
 
-  test('Verify that image with size less than 16 pixels cannot be added to Canvas using "Add Image" button', async ({
-    page,
-  }) => {
+  test('Verify that image with size less than 16 pixels cannot be added to Canvas using "Add Image" button', async () => {
     /**
      * Test case: #4897
      * Description: Error message is displayed - "Image should be at least 16x16 pixels"
@@ -764,9 +711,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode', async ({
-    page,
-  }) => {
+  test('Verify that images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode', async () => {
     /**
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Rectangle Selection" in "Add Image" mode
@@ -779,9 +724,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of formats (PNG, SVG) can be selected using "Lasso Selection" in "Add Image" mode', async ({
-    page,
-  }) => {
+  test('Verify that images of formats (PNG, SVG) can be selected using "Lasso Selection" in "Add Image" mode', async () => {
     /**
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Lasso Selection" in "Add Image" mode
@@ -797,16 +740,14 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode', async ({
-    page,
-  }) => {
+  test('Verify that images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode', async () => {
     /**
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode
      */
+    await pageReload(page);
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectRectangleSelectionTool(page);
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Shift+Tab');
     }
@@ -816,9 +757,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that if image is selected then green selection frame is displayed and image can be scaled vertically, horizontally and diagonally', async ({
-    page,
-  }) => {
+  test('Verify that if image is selected then green selection frame is displayed and image can be scaled vertically, horizontally and diagonally', async () => {
     /**
      * Test case: #4897
      * Description: Image is selected then green selection frame is displayed and
@@ -859,9 +798,7 @@ test.describe('Image files', () => {
     }
   });
 
-  test('Verify that images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled
@@ -875,9 +812,7 @@ test.describe('Image files', () => {
     });
   });
 
-  test('Verify that images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) with elements can be saved to template and added to Canvas with correct position and layer level
@@ -899,9 +834,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after moving of them and then opened', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after moving of them and then opened', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
@@ -926,9 +859,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
@@ -960,9 +891,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
@@ -987,9 +916,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after copying of them and then opened', async ({
-    page,
-  }) => {
+  test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after copying of them and then opened', async () => {
     /**
      * Test case: #4897
      * Description: Images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after
@@ -1014,9 +941,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions and can be
@@ -1044,9 +969,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved and aligned', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved and aligned', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Layout (Ctrl+L) action, only Benzene Rings are moved
@@ -1075,9 +998,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved and aligned', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Clean Up (Ctrl+Shift+L) action, only Benzene Rings are moved and aligned', async () => {
     test.slow();
     /**
      * Test case: #2144
@@ -1102,9 +1023,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Calculate CIP (Ctrl+P) action, CIP is calculated for elements, they can be
@@ -1133,9 +1052,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, it is calculated for elements', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, it is calculated for elements', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Check structure (Alt+S) action, CIP is calculated for elements, they can be
@@ -1167,9 +1084,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, it is calculated for elements', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, it is calculated for elements', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Calculate Values (Alt+C) action, CIP is calculated for elements, they can be
@@ -1199,9 +1114,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after Add/Remove explicit hydrogens actions, it is calculated for elements, they can be
@@ -1243,9 +1156,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode', async ({
-    page,
-  }) => {
+  test('Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode', async () => {
     /**
      * Test case: #2144
      * Description: Images of (PNG, SVG) are on the same positions after using of 3D mode, only elements are displayed in 3D mode.
@@ -1293,6 +1204,7 @@ test.describe('Image files', () => {
        * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tools, only elements are affected,
        * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
        */
+      await pageReload(page);
       await openFileAndAddToCanvasAsNewProject(
         'KET/images-png-svg-with-benzene-for-distorting.ket',
         page,
@@ -1316,9 +1228,7 @@ test.describe('Image files', () => {
     });
   });
 
-  test('Verify that images of allowed format (PNG) can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async ({
-    page,
-  }) => {
+  test('Verify that images of allowed format (PNG) can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed format (PNG) saved to CDX files with correct coordinates of images, formats and sizes of files,
@@ -1340,9 +1250,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Image of allowed format (PNG) can be saved to CDXML file with correct coordinates of images, formats and sizes of files, after that loaded from CDXML', async ({
-    page,
-  }) => {
+  test('Image of allowed format (PNG) can be saved to CDXML file with correct coordinates of images, formats and sizes of files, after that loaded from CDXML', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed format (PNG) saved to CDXML files with correct coordinates of images, formats and sizes of files,
@@ -1363,9 +1271,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Images of allowed format (PNG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async ({
-    page,
-  }) => {
+  test('Images of allowed format (PNG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed format (PNG) with elements saved to CDX files with correct coordinates of images, formats and sizes of files,
@@ -1390,9 +1296,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Image of allowed format (PNG) with elements can be saved to CDXML file with correct coordinates of images, formats and sizes of files, and loaded from CDXML', async ({
-    page,
-  }) => {
+  test('Image of allowed format (PNG) with elements can be saved to CDXML file with correct coordinates of images, formats and sizes of files, and loaded from CDXML', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed format (PNG) with elements saved to CDXML files with correct coordinates of images, formats and sizes of files,
@@ -1416,9 +1320,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async ({
-    page,
-  }) => {
+  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
@@ -1457,9 +1359,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDXML', async ({
-    page,
-  }) => {
+  test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDXML', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
@@ -1528,6 +1428,7 @@ test.describe('Image files', () => {
 
   for (const testCase of testCases) {
     test(testCase.description, async ({ page }) => {
+      await pageReload(page);
       if (testCase.action === 'open') {
         await selectTopPanelButton(TopPanelButton.Open, page);
         await openFile(testCase.file, page);
@@ -1544,9 +1445,7 @@ test.describe('Image files', () => {
     });
   }
 
-  test('Verify that 50 PNG images and 50 elements can be saved together to CDX files with the correct size of file, after that loaded from CDX file', async ({
-    page,
-  }) => {
+  test('Verify that 50 PNG images and 50 elements can be saved together to CDX files with the correct size of file, after that loaded from CDX file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: 50 PNG images and 50 elements saved together to CDX files with the correct size of file, after that loaded from CDX file
@@ -1573,9 +1472,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that 50 PNG images and 50 elements can be saved together to CDXML files with the correct size of file, after that loaded from CDXML file', async ({
-    page,
-  }) => {
+  test('Verify that 50 PNG images and 50 elements can be saved together to CDXML files with the correct size of file, after that loaded from CDXML file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: 50 PNG images and 50 elements saved together to CDXML files with the correct size of file, after that loaded from CDXML file
@@ -1619,6 +1516,7 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
+      await pageReload(page);
       await openFileAndAddToCanvas(`CDX/${fileName}`, page);
       await takeEditorScreenshot(page);
     });
@@ -1642,14 +1540,13 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
+      await pageReload(page);
       await openFileAndAddToCanvas(`CDXML/${fileName}`, page);
       await takeEditorScreenshot(page);
     });
   }
 
-  test('Verify that image can not be loaded from CDXML file if the length of bitmap is less than 160 symbols and error message is displayed', async ({
-    page,
-  }) => {
+  test('Verify that image can not be loaded from CDXML file if the length of bitmap is less than 160 symbols and error message is displayed', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
@@ -1661,9 +1558,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file', async ({
-    page,
-  }) => {
+  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file
@@ -1685,9 +1580,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file', async ({
-    page,
-  }) => {
+  test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
@@ -1705,9 +1598,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo
@@ -1722,9 +1613,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo', async ({
-    page,
-  }) => {
+  test('Verify that action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo
@@ -1735,9 +1624,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDX file', async ({
-    page,
-  }) => {
+  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDX file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) added to different selected places on Canvas one by one using "Add Image" button
@@ -1760,9 +1647,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDXML file', async ({
-    page,
-  }) => {
+  test('Images of allowed formats (PNG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDXML file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) added to different selected places on Canvas one by one using "Add Image" button
@@ -1784,9 +1669,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Loaded from CDX file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async ({
-    page,
-  }) => {
+  test('Loaded from CDX file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) with
@@ -1808,9 +1691,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Loaded from CDXML file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async ({
-    page,
-  }) => {
+  test('Loaded from CDXML file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) with
@@ -1831,9 +1712,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
-    page,
-  }) => {
+  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
@@ -1848,9 +1727,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async ({
-    page,
-  }) => {
+  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
@@ -1864,9 +1741,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async ({
-    page,
-  }) => {
+  test('Verify that loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
@@ -1882,9 +1757,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async ({
-    page,
-  }) => {
+  test('Verify that loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"

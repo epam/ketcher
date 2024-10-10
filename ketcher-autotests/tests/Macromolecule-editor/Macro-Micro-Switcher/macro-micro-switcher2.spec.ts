@@ -204,45 +204,41 @@ test.describe('Macro-Micro-Switcher2', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fail(
-    'Check that attachment points and leaving groups are correctly represented in Mol V3000 format',
-    async ({ page }) => {
-      /*
+  test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
+    page,
+  }) => {
+    /*
       Test case: #4530
       Description: Attachment points and leaving groups are correctly represented in Mol V3000 format.
-
-      IMPORTANT: This test fails because of https://github.com/epam/Indigo/issues/2477 issue.
-      After fix we need to update screenshot.
       */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getMolfile(page, 'v3000');
-      await saveToFile(
-        'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
 
-      const METADATA_STRINGS_INDEXES = [1];
-
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v3000',
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-      await openFileAndAddToCanvasAsNewProject(
-        'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Connection one molecule to another one by drugging one over another - result indicate existence of AP label and it remain back after delete connection', async ({
     page,

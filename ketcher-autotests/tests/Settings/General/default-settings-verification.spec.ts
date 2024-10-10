@@ -224,7 +224,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -244,7 +245,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -264,7 +266,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -284,7 +287,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -464,7 +468,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -484,7 +489,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -504,7 +510,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -524,7 +531,8 @@ test.describe('General Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5175
-    Description: require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -727,7 +735,8 @@ test.describe('General Settings', () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
-    require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/layout-with-catalyst.ket',
@@ -749,7 +758,8 @@ test.describe('General Settings', () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
-    require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/layout-with-catalyst.ket',
@@ -771,7 +781,8 @@ test.describe('General Settings', () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
-    require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/layout-with-catalyst.ket',
@@ -793,7 +804,8 @@ test.describe('General Settings', () => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5152
     Description: add new setting Reaction component margin size
-    require a number input should allow entering values with one decimal place, two decimal place should rounding up
+    require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
     */
     await openFileAndAddToCanvasAsNewProject(
       'KET/layout-with-catalyst.ket',
@@ -868,7 +880,6 @@ test.describe('General Settings', () => {
     await openSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '1000');
-    await page.waitForTimeout(1000);
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');

@@ -123,6 +123,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0.8');
     await moveMouseAway(page);
@@ -145,6 +146,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '17');
     await moveMouseAway(page);
@@ -167,6 +169,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '69');
     await moveMouseAway(page);
@@ -189,6 +192,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '3');
     await moveMouseAway(page);
@@ -211,6 +215,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1');
     await moveMouseAway(page);
@@ -225,7 +230,8 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -233,6 +239,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '58.87');
     await moveMouseAway(page);
@@ -247,7 +254,8 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -255,6 +263,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '16.68');
     await moveMouseAway(page);
@@ -269,7 +278,8 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -277,6 +287,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0.78');
     await moveMouseAway(page);
@@ -291,7 +302,8 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Bond length
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -299,6 +311,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0.52');
     await moveMouseAway(page);
@@ -319,6 +332,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -339,6 +353,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -359,6 +374,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -379,6 +395,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000');
     await moveMouseAway(page);
@@ -400,6 +417,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.1');
     await moveMouseAway(page);
@@ -421,6 +439,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.2');
     await moveMouseAway(page);
@@ -442,6 +461,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '13.1');
     await moveMouseAway(page);
@@ -463,6 +483,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '3.1');
     await moveMouseAway(page);
@@ -484,6 +505,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '4');
     await moveMouseAway(page);
@@ -505,6 +527,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '1');
     await moveMouseAway(page);
@@ -526,6 +549,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3');
     await moveMouseAway(page);
@@ -547,6 +571,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '2');
     await moveMouseAway(page);
@@ -560,7 +585,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -568,6 +594,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.17');
     await moveMouseAway(page);
@@ -581,7 +608,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -589,6 +617,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.13');
     await moveMouseAway(page);
@@ -610,6 +639,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3.81');
     await moveMouseAway(page);
@@ -623,7 +653,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
@@ -631,6 +662,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '.18');
     await moveMouseAway(page);
@@ -652,6 +684,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.4');
     await moveMouseAway(page);
@@ -673,6 +706,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.4');
     await moveMouseAway(page);
@@ -694,6 +728,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '2.4');
     await moveMouseAway(page);
@@ -715,6 +750,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '1.4');
     await moveMouseAway(page);
@@ -736,6 +772,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '4');
     await moveMouseAway(page);
@@ -757,6 +794,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '3');
     await moveMouseAway(page);
@@ -778,6 +816,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3');
     await moveMouseAway(page);
@@ -799,6 +838,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '2');
     await moveMouseAway(page);
@@ -812,7 +852,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -820,6 +861,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.49');
     await moveMouseAway(page);
@@ -833,7 +875,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -841,6 +884,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.74');
     await moveMouseAway(page);
@@ -854,7 +898,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -862,6 +907,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3.14');
     await moveMouseAway(page);
@@ -875,7 +921,8 @@ test.describe('Bonds Settings', () => {
   }) => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5175
-        Description: require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        Description: require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -883,6 +930,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '3.67');
     await moveMouseAway(page);
@@ -898,6 +946,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -905,6 +955,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     const hashSpacing = page.getByText('Hash spacing');
     expect(hashSpacing).toHaveText('Hash spacing');
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -922,6 +973,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -929,6 +982,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -944,6 +998,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -951,6 +1007,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -966,6 +1023,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -973,6 +1032,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
     await moveMouseAway(page);
@@ -988,6 +1048,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -995,6 +1057,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2');
     await moveMouseAway(page);
@@ -1010,6 +1073,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1017,6 +1082,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -1032,6 +1098,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1039,6 +1107,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -1054,6 +1123,8 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1061,6 +1132,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1');
     await moveMouseAway(page);
@@ -1075,7 +1147,10 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place,
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1083,6 +1158,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2.53');
     await moveMouseAway(page);
@@ -1097,7 +1173,10 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1105,6 +1184,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.53');
     await moveMouseAway(page);
@@ -1119,7 +1199,10 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1127,6 +1210,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.53');
     await moveMouseAway(page);
@@ -1141,7 +1225,10 @@ test.describe('Bonds Settings', () => {
     /*
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
-        require a number input should allow entering values with one decimal place, the second number from the value entered after the dot is substituted
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1149,8 +1236,113 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000 value in inch option Hash spacing setting', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
+        */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/mixed-or-stereomarks.ket',
+      page,
+    );
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '1000');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000 value in px option Hash spacing setting', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
+        */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/mixed-or-stereomarks.ket',
+      page,
+    );
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'px-option');
+    await setHashSpacingValue(page, '1000');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000 value in cm option Hash spacing setting', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
+        */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/mixed-or-stereomarks.ket',
+      page,
+    );
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'cm-option');
+    await setHashSpacingValue(page, '1000');
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000 value in pt option Hash spacing setting', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        require a number input should allow entering values with one decimal place, 
+        the second number from the value entered after the dot is substituted
+        Screenshot after applying the settings should be update 
+        after implementing https://github.com/epam/ketcher/issues/5354
+        */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/mixed-or-stereomarks.ket',
+      page,
+    );
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '1000');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -1168,6 +1360,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     const bondSpacing = page.getByText('Bond spacing');
     expect(bondSpacing).toHaveText('Bond spacing');
     const bondSpacingValue = page.getByTestId('bondSpacing-input');
@@ -1178,7 +1371,7 @@ test.describe('Bonds Settings', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify Bond spacing entering the whole number more than default for ACS 18%', async ({
+  test('Verify Bond spacing entering the whole number more than default', async ({
     page,
   }) => {
     /*
@@ -1191,6 +1384,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '50');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1211,6 +1405,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '10');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1229,6 +1424,7 @@ test.describe('Bonds Settings', () => {
     );
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '100');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -1252,6 +1448,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1271,6 +1468,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1290,6 +1488,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1309,6 +1508,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '-7.8');
     await moveMouseAway(page);
@@ -1326,6 +1526,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1343,6 +1544,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1360,6 +1562,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1377,6 +1580,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0');
     await moveMouseAway(page);
@@ -1396,6 +1600,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
@@ -1415,13 +1620,13 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
-    await takeEditorScreenshot(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1435,13 +1640,13 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
-    await takeEditorScreenshot(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1455,13 +1660,13 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000.1');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
-    await takeEditorScreenshot(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1474,6 +1679,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1492,6 +1698,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1510,6 +1717,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1528,6 +1736,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '-0.2');
     await moveMouseAway(page);
@@ -1546,6 +1755,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1564,6 +1774,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1582,6 +1793,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1600,6 +1812,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '0');
     await moveMouseAway(page);
@@ -1618,6 +1831,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1636,6 +1850,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1654,6 +1869,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1672,6 +1888,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '-1.4');
     await moveMouseAway(page);
@@ -1690,6 +1907,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1708,6 +1926,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1726,6 +1945,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1744,6 +1964,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '0');
     await moveMouseAway(page);
@@ -1763,6 +1984,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1782,6 +2004,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1801,6 +2024,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1820,6 +2044,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '-0.5');
     await moveMouseAway(page);
@@ -1837,6 +2062,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1854,6 +2080,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1871,6 +2098,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -1888,8 +2116,83 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 in inch option Hash spacing setting', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        1000.1 should not be allowed to be entered
+        */
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 in cm option Hash spacing setting', async ({ page }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        1000.1 should not be allowed to be entered
+        */
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'cm-option');
+    await setHashSpacingValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 in pt option Hash spacing setting', async ({ page }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        1000.1 should not be allowed to be entered
+        */
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '1000.1');
+    await moveMouseAway(page);
+    const Apply = page.getByRole('button', { name: 'Apply' });
+    const isDisabled = await Apply.isDisabled();
+    expect(isDisabled).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify 1000.1 in px option Hash spacing setting', async ({ page }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/5152
+        Description: add new setting Hash spacing
+        1000.1 should not be allowed to be entered
+        */
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'px-option');
+    await setHashSpacingValue(page, '1000.1');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
@@ -1904,6 +2207,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '0');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
@@ -1921,6 +2225,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '-19');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });
@@ -1936,6 +2241,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         */
     await openSettings(page);
     await bondsSettings(page);
+    await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '101');
     await moveMouseAway(page);
     const Apply = page.getByRole('button', { name: 'Apply' });

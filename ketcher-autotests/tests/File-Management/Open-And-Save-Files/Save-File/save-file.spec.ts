@@ -293,32 +293,28 @@ test.describe('Save files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fail(
-    'Support for exporting to "SDF V3000" file format',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2477
+  test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-18031
       Description: Structure saves in SDF V3000 format
     */
-      await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
 
-      const expectedFile = await getSdf(page, 'v3000');
-      await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
 
-      const METADATA_STRING_INDEX = [1];
+    const METADATA_STRING_INDEX = [1];
 
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
-          fileFormat: 'v3000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 });
 
 test.describe('Open/Save/Paste files', () => {

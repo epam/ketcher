@@ -155,7 +155,7 @@ class SelectTool implements Tool {
       };
     }
 
-    if (!ci || (ci.map === 'atoms' && !event.ctrlKey)) {
+    if (!ci || ci.map === 'atoms') {
       atomLongtapEvent(this, rnd);
     }
 
@@ -196,7 +196,6 @@ class SelectTool implements Tool {
 
     this.handleMoveCloseToEdgeOfCanvas();
 
-    this.isReadyForCopy = false;
     this.isCopied = false;
     if (isControlKey(event) && this.dragCtx) {
       this.isReadyForCopy = true;

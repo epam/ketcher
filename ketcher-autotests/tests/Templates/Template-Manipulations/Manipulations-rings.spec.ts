@@ -12,6 +12,7 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   LeftPanelButton,
+  moveMouseAway,
   RingButton,
   selectTool,
   selectTopPanelButton,
@@ -28,6 +29,7 @@ async function checkTooltip(type: RingButton, page: Page) {
 async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
   await selectButtonByTitle(type, page);
   await clickInTheMiddleOfTheScreen(page);
+  await moveMouseAway(page);
 
   // Attaching Second Ring By Atom
   await selectButtonByTitle(type, page);
@@ -63,6 +65,7 @@ async function deleteRightBondInRing(page: Page) {
   const point = await getRightBondByAttributes(page, {
     reactingCenterStatus: 0,
   });
+  await moveMouseAway(page);
   await page.keyboard.press('Escape');
   await page.mouse.click(point.x, point.y);
   await page.keyboard.press('Delete');
@@ -81,18 +84,21 @@ async function checkHistoryForBondDeletion(page: Page) {
 async function manipulateRingsByName(type: RingButton, page: Page) {
   await checkTooltip(type, page);
   await placeTwoRingsMergedByAtom(type, page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
   await selectTopPanelButton(TopPanelButton.Clear, page);
 
   await placeTwoRingsMergedByAtom(type, page);
   await mergeRingByBond(type, page);
   await mergeDistantRingByABond(type, page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
   await selectTopPanelButton(TopPanelButton.Clear, page);
 
   await selectButtonByTitle(type, page);
   await clickInTheMiddleOfTheScreen(page);
   await deleteRightBondInRing(page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 
   await checkHistoryForBondDeletion(page);
@@ -112,6 +118,7 @@ test.describe('Templates - Rings manipulations', () => {
       // EPLMSOPCKET-1668, EPLMSOPCKET-1675, EPLMSOPCKET-1677, EPLMSOPCKET-1679, EPLMSOPCKET-1680, EPLMSOPCKET-1681
       // EPLMSOPCKET-1682, EPLMSOPCKET-1683
       await manipulateRingsByName(template, page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }

@@ -196,6 +196,7 @@ class SelectTool implements Tool {
 
     this.handleMoveCloseToEdgeOfCanvas();
 
+    this.isReadyForCopy = false;
     this.isCopied = false;
     if (isControlKey(event) && this.dragCtx) {
       this.isReadyForCopy = true;
@@ -345,7 +346,6 @@ class SelectTool implements Tool {
       return;
     }
     this.isMouseDown = false;
-    this.isReadyForCopy = false;
 
     const editor = this.editor;
     const selected = editor.selection();

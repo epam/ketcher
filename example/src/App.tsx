@@ -51,6 +51,14 @@ if (process.env.MODE === 'standalone') {
 
 const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';
 
+const customButtons = new Array(10)
+  .fill({
+    id: 'custom',
+    title: 'CustomButton',
+    imageLink: '/favicon.ico',
+  })
+  .map((item, index) => ({ ...item, id: `${item.id}_${index}` }));
+
 type PolymerType = ({
   togglerComponent,
 }: {
@@ -94,10 +102,22 @@ const App = () => {
           setErrorMessage(message.toString());
         }}
         buttons={hiddenButtonsConfig}
+        customButtons={customButtons}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
+
+          window.ketcher.eventBus.on(
+            'CUSTOM_BUTTON_PRESSED',
+            (name: string) => {
+              console.info(name);
+
+              if (name.endsWith('0')) {
+                window.ketcher.editor.zoom(2);
+              }
+            },
+          );
 
           window.parent.postMessage(
             {

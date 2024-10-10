@@ -20,24 +20,98 @@ import PresetPreview from './components/PresetPreview/PresetPreview';
 import BondPreview from './components/BondPreview/BondPreview';
 import { PreviewType } from 'state';
 import { AmbiguousMonomerPreview } from 'ketcher-react';
+import { useEffect, useRef, useState } from 'react';
+import styled from '@emotion/styled';
+import { ZoomTool } from 'ketcher-core';
+
+const PreviewContainer = styled.div(() => ({
+  display: 'inline-block',
+  position: 'absolute',
+  background: 'white',
+}));
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+
+  useEffect(() => {
+    if (!previewRef.current || preview.style) {
+      return;
+    }
+
+    if (preview && preview.type) {
+      previewRef.current.setAttribute('style', '');
+      setIsPreviewVisible(true);
+
+      const PREVIEW_OFFSET = 20;
+
+      const previewBoundingClientRect =
+        previewRef.current?.getBoundingClientRect();
+      const previewHeight = previewBoundingClientRect?.height || 0;
+      const previewWidth = previewBoundingClientRect?.width || 0;
+
+      const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
+        .node()
+        ?.getBoundingClientRect();
+      const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
+      const canvasWrapperLeft = canvasWrapperBoundingClientRect?.left || 0;
+      const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
+
+      const targetBoundingClientRect = preview.target?.getBoundingClientRect();
+      const targetTop = targetBoundingClientRect?.top || 0;
+      const targetBottom = targetBoundingClientRect?.bottom || 0;
+      const targetLeft = targetBoundingClientRect?.left || 0;
+      const targetWidth = targetBoundingClientRect?.width || 0;
+      const targetCenterX = targetLeft - targetWidth / 2;
+
+      const topPreviewPosition = targetTop - previewHeight - PREVIEW_OFFSET;
+      const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
+      const leftPreviewPosition = targetLeft - previewWidth / 2;
+
+      if (targetTop > previewHeight + PREVIEW_OFFSET) {
+        previewRef.current.style.top = `${topPreviewPosition}px`;
+      } else if (
+        targetBottom + previewHeight > canvasWrapperBottom &&
+        targetBottom > canvasWrapperBottom / 2
+      ) {
+        previewRef.current.style.top = `${topPreviewPosition}px`;
+      } else {
+        previewRef.current.style.top = `${bottomPreviewPosition}px`;
+      }
+
+      if (
+        targetCenterX > previewWidth / 2 &&
+        targetCenterX + previewWidth / 2 < canvasWrapperRight
+      ) {
+        previewRef.current.style.left = `${leftPreviewPosition}px`;
+      } else if (targetCenterX < previewWidth / 2) {
+        previewRef.current.style.left = `${canvasWrapperLeft}px`;
+      } else {
+        const SCROLL_BAR_OFFSET = 10;
+
+        previewRef.current.style.left = `${
+          canvasWrapperRight - previewWidth - SCROLL_BAR_OFFSET
+        }px`;
+      }
+    } else if (isPreviewVisible) {
+      setIsPreviewVisible(false);
+      previewRef.current.setAttribute('style', '');
+    }
+  }, [preview]);
 
   if (!preview) {
     return null;
   }
 
-  switch (preview.type) {
-    case PreviewType.Preset:
-      return <PresetPreview />;
-    case PreviewType.Monomer:
-      return <MonomerPreview />;
-    case PreviewType.Bond:
-      return <BondPreview />;
-    case PreviewType.AmbiguousMonomer:
-      return <AmbiguousMonomerPreview preview={preview} />;
-    default:
-      return null;
-  }
+  return (
+    <PreviewContainer ref={previewRef} style={{ ...preview?.style }}>
+      {preview.type === PreviewType.Monomer && <MonomerPreview />}
+      {preview.type === PreviewType.Preset && <PresetPreview />}
+      {preview.type === PreviewType.Bond && <BondPreview />}
+      {preview.type === PreviewType.AmbiguousMonomer && (
+        <AmbiguousMonomerPreview preview={preview} />
+      )}
+    </PreviewContainer>
+  );
 };

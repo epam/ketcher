@@ -122,7 +122,6 @@ test.describe('Calculated Values Tools', () => {
     Test case: EPMLSOPKET-2000
     Description: The calculation result for a substructure with not selected query features should be correct.
     */
-    test.fail();
     let point: { x: number; y: number };
     await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
 
@@ -493,7 +492,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
@@ -509,7 +507,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas(
       'Molfiles-V3000/a-query-unsaturated.mol',
       page,
@@ -528,7 +525,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
@@ -544,7 +540,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
@@ -560,7 +555,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
@@ -576,7 +570,6 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    test.fail();
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);

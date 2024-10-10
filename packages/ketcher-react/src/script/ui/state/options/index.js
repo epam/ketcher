@@ -64,9 +64,49 @@ export const initOptionsState = {
     validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
   ),
   getServerSettings() {
-    return pick(SERVER_OPTIONS, this.settings);
+    const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
+    const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
+
+    return {
+      ...defaultServerOptions,
+      ...seriliazedServerOptions,
+    };
   },
 };
+
+function getSerilizedServerOptions(options) {
+  let newOptions = {
+    'render-coloring': options.atomColoring,
+    'render-font-size': options.fontsz,
+    'render-font-size-unit': options.fontszUnit,
+    'render-font-size-sub': options.fontszsub,
+    'render-font-size-sub-unit': options.fontszsubUnit,
+    'image-resolution': Number(options.imageResolution),
+    'bond-length': options.bondLength,
+    'bond-length-unit': options.bondLengthUnit,
+    'render-bond-thickness': options.bondThickness,
+    'render-bond-thickness-unit': options.bondThicknessUnit,
+    'render-bond-spacing': options.bondSpacing / 100,
+    'render-stereo-bond-width': options.stereoBondWidth,
+    'render-stereo-bond-width-unit': options.stereoBondWidthUnit,
+    'render-hash-spacing': options.hashSpacing,
+    'render-hash-spacing-unit': options.hashSpacingUnit,
+    'reaction-component-margin-size': options.reactionComponentMarginSize,
+    'reaction-component-margin-size-unit':
+      options.reactionComponentMarginSizeUnit,
+  };
+
+  if (options.imageResolution === '600') {
+    newOptions = {
+      ...newOptions,
+      // TODO: change to the values from settings once they are implemented
+      'render-output-sheet-width': 11,
+      'render-output-sheet-height': 8.5,
+    };
+  }
+
+  return newOptions;
+}
 
 export function appUpdate(data) {
   return (dispatch) => {

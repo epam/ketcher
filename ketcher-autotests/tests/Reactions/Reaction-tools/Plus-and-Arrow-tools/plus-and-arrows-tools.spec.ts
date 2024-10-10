@@ -81,7 +81,7 @@ const formatsForSave = [
   },
 ];
 
-const OFFSET_FROM_ARROW = 30;
+const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
@@ -631,7 +631,10 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test('open files', async ({ page }) => {
+    test.fail('open files', async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2479
+       */
       await openFileAndAddToCanvas(
         `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
         page,

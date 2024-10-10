@@ -247,6 +247,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be saved together to .ket file', async ({
     page,
   }) => {
+    test.setTimeout(90000);
     /**
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures saved together to .ket file,

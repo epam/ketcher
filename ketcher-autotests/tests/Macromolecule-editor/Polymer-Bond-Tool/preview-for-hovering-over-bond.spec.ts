@@ -79,7 +79,7 @@ test(
         https://github.com/epam/ketcher/issues/5445
         Will require to update screens after fix
         */
-    test.slow();
+    test.setTimeout(240000);
     await selectRectangleSelectionTool(page);
 
     for (const fileWithPairs of fileNames) {

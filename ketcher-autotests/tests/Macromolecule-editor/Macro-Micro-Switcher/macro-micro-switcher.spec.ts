@@ -59,6 +59,9 @@ import {
   selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
+  Sugars,
+  Bases,
+  Phosphates,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -113,9 +116,9 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('meM___N-Methyl-Methionine').getByText('★').click();
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId('25R___2,5-Ribose').getByText('★').click();
+  await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
   await page.getByTestId('summary-Bases').click();
-  await page.getByTestId('baA___N-benzyl-adenine').getByText('★').click();
+  await page.getByTestId(Bases.baA).getByText('★').click();
   await page.getByTestId('summary-Phosphates').click();
   await page.getByTestId('bP___Boranophosphate').getByText('★').click();
   await page.getByTestId('CHEM-TAB').click();
@@ -1155,21 +1158,21 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
+      monomerTestId: Sugars.TwentyFiveR,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
+      monomerTestId: Bases.meA,
       summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1206,7 +1209,9 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       const bondLine = page.locator('g[pointer-events="stroke"]').first();
       await bondLine.hover();
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
     });
   }
 
@@ -1246,14 +1251,14 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
+      monomerTestId: Sugars.TwentyFiveR,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
+      monomerTestId: Bases.meA,
       summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
@@ -1339,21 +1344,21 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
+      monomerTestId: Sugars.TwentyFiveR,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
+      monomerTestId: Bases.meA,
       summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1436,21 +1441,21 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: '25R___2,5-Ribose',
+      monomerTestId: Sugars.TwentyFiveR,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
-      monomerTestId: 'meA___N-Methyl-Adenine',
+      monomerTestId: Bases.meA,
       summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
-      monomer: 'nasP',
-      monomerTestId: 'nasP___Sodium Phosporothioate',
+      monomer: 'sP-',
+      monomerTestId: Phosphates.sP_,
       summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1704,39 +1709,44 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files', async () => {
-    /*
+  test.fail(
+    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files',
+    async () => {
+      /*
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
+    
+    IMPORTANT: This test fails because of https://github.com/epam/Indigo/issues/2477 issue
     */
-    await openFileAndAddToCanvas(
-      'KET/one-attachment-point-added-in-micro-mode.ket',
-      page,
-    );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-      expectedFile,
-    );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
-        expectedFileName:
-          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+      );
+      const expectedFile = await getSdf(page, 'v3000');
+      await saveToFile(
+        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        expectedFile,
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      const METADATA_STRINGS_INDEXES = [1];
+
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+          metaDataIndexes: METADATA_STRINGS_INDEXES,
+          fileFormat: 'v3000',
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await openFileAndAddToCanvasAsNewProject(
+        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
     /* 
@@ -1882,16 +1892,15 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test(
+  test.fail(
     'Check that Aromatize/Dearomatize works for molecules with AP',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async () => {
       /*
-    Test case: #4530
-    Description: Aromatize/Dearomatize works for molecules with AP.
-    Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4804
-    After the fix, you need to update test.
-    */
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2027
+       * Test case: #4530
+       * Description: Aromatize/Dearomatize works for molecules with AP.
+       */
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,

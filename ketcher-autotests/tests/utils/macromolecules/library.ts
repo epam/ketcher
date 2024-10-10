@@ -23,6 +23,8 @@ export async function goToCHEMTab(page: Page) {
 }
 
 export async function goToPeptidesTab(page: Page) {
+  await moveMouseAway(page);
+  await page.getByTestId(FAVORITES_TAB).click();
   await page.getByTestId(PEPTIDES_TAB).click();
 }
 

@@ -47,9 +47,6 @@ test.describe('Import-Saving .fasta Files', () => {
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async ({ page }) => {
-      if (fileType === 'DNA') {
-        await pageReload(page);
-      }
       await openFileAndAddToCanvasMacro(
         `FASTA/fasta-${fileType.toLowerCase()}.fasta`,
         page,

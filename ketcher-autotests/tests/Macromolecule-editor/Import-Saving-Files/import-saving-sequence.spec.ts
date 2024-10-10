@@ -35,6 +35,7 @@ test.describe('Import-Saving .seq Files', () => {
 
   for (const fileType of sequenceFileTypes) {
     test(`Import .seq ${fileType} file`, async ({ page }) => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Sequence/sequence-${fileType.toLowerCase()}.seq`,
         page,

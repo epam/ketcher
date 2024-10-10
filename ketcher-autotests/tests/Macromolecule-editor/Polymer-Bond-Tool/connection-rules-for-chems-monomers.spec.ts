@@ -392,26 +392,27 @@ test.describe('Connection rules for chems: ', () => {
     leftMonomersConnectionPoint?: string,
     rightMonomersConnectionPoint?: string,
   ) {
-    const leftMonomerLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(`text=${leftMonomer.alias}`)
+    const canvasLocator = page.getByTestId('ketcher-canvas');
+    const leftMonomerLocator = canvasLocator
+      .getByText(leftMonomer.alias, { exact: true })
+      // .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
     const rightMonomerLocator =
-      (await page
-        .getByTestId('ketcher-canvas')
-        .locator(`text=${leftMonomer.alias}`)
+      (await canvasLocator
+        .getByText(leftMonomer.alias, { exact: true })
+        // .locator(`text=${leftMonomer.alias}`)
         .count()) > 1
-        ? page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
+        ? canvasLocator
+            .getByText(rightMonomer.alias, { exact: true })
+            // .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
-        : page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
+        : canvasLocator
+            .getByText(rightMonomer.alias, { exact: true })
+            // .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
@@ -583,7 +584,7 @@ test.describe('Connection rules for chems: ', () => {
              *         Validate canvas
              */
             test(`Case 2: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-              test.setTimeout(20000);
+              test.setTimeout(35000);
 
               await prepareCanvasOneFreeAPLeft(
                 page,

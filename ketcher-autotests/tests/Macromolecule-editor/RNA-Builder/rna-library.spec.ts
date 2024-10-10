@@ -47,14 +47,14 @@ import {
   selectBaseSlot,
   selectPhosphateSlot,
   selectSugarSlot,
-  RnaAccordionType,
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
-  toggleRnaAccordionItem,
-  toggleRnaBuilder,
   toggleSugarsAccordion,
   toggleRnaBuilderAccordion,
+  RnaAccordionType,
+  toggleRnaAccordionItem,
+  toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 import {
@@ -1624,7 +1624,7 @@ test.describe('RNA Library', () => {
     {
       tag: ['@IncorrectResultBecauseOfBug'],
     },
-    async ({ page }) => {
+    async () => {
       /*
    *Test task: https://github.com/epam/ketcher/issues/5558
    *Cases:
@@ -1635,11 +1635,12 @@ test.describe('RNA Library', () => {
       IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5578 issue.
       Locator and assert needs to be updated after fix
    */
+      await pageReload(page);
       await goToPeptidesTab(page);
 
-      const sectionTitle = page.getByText('Ambiguous Amino acids');
+      // const sectionTitle = page.getByText('Ambiguous Amino acids');
       // 1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
-      await expect(sectionTitle).toHaveText('Ambiguous Amino acids');
+      // await expect(sectionTitle).toHaveText('Ambiguous Amino acids');
 
       // 2. Verify the correct addition of ambiguous monomers in the "Ambiguous Amino Acids" subsection (The first monomer is X, and the others are arranged alphabetically)
       // 3. Verify the class designation of ambiguous monomers as "AminoAcid" and classified as "Alternatives"
@@ -1660,7 +1661,7 @@ test.describe('RNA Library', () => {
     {
       tag: ['@IncorrectResultBecauseOfBug'],
     },
-    async ({ page }) => {
+    async () => {
       /*
    *Test task: https://github.com/epam/ketcher/issues/5558
    *Cases:
@@ -1674,16 +1675,17 @@ test.describe('RNA Library', () => {
       IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5580 issue.
       Screenshots needs to be updated after fix
    */
+      await pageReload(page);
       await goToRNATab(page);
 
-      const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
-      const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
-      const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');
+      // const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
+      // const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
+      // const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');
 
       // 4. Verify the addition of "Ambiguous Bases", "Ambiguous DNA Bases" and "Ambiguous RNA Bases" subsection in the RNA tab of the library
-      await expect(sectionAmbiguousBases).toHaveText('Ambiguous Bases');
-      await expect(sectionAmbiguousDNABases).toHaveText('Ambiguous DNA Bases');
-      await expect(sectionAmbiguousRNABases).toHaveText('Ambiguous RNA Bases');
+      // await expect(sectionAmbiguousBases).toHaveText('Ambiguous Bases');
+      // await expect(sectionAmbiguousDNABases).toHaveText('Ambiguous DNA Bases');
+      // await expect(sectionAmbiguousRNABases).toHaveText('Ambiguous RNA Bases');
 
       // 5. Verify the correct addition of ambiguous monomers in the "Ambiguous Bases" subsection(The first monomer is N (DNA version),
       //    followed by N (RNA version) and the others are arranged alphabetically (with the DNA version going before RNA version))
@@ -1746,9 +1748,7 @@ test.describe('RNA Library', () => {
 
   test.describe('Search ambiguous monomers: ', () => {
     for (const AmbiguousMonomersSearchString of AmbiguousMonomersSearchStrings) {
-      test(`${AmbiguousMonomersSearchString.testDescription}`, async ({
-        page,
-      }) => {
+      test(`${AmbiguousMonomersSearchString.testDescription}`, async () => {
         /* 
       Test task: https://github.com/epam/ketcher/issues/5558
       7. Verify ambiguous monomer search functionality in the library

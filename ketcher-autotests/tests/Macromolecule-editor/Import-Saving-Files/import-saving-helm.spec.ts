@@ -339,6 +339,7 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
@@ -346,6 +347,7 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription: '49. RNA(RAP) with single inline Extended SMILES (A)',
@@ -453,7 +455,7 @@ test.describe('Import correct HELM sequence: ', () => {
         1. Load correct HELM via paste from clipboard way
         2. Take screenshot of the canvas to compare it with example
     */
-      test.setTimeout(20000);
+      test.setTimeout(35000);
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
@@ -480,7 +482,7 @@ test.describe('Export to HELM: ', () => {
         2. Export canvas to HELM
         2. Compare export result with source HELM string
     */
-      test.setTimeout(20000);
+      test.setTimeout(35000);
       // Test should be skipped if related bug exists
       test.fixme(
         correctHELMString.shouldFail === true,

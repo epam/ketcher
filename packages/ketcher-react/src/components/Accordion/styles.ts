@@ -34,13 +34,8 @@ export const SummaryContainer = styled.div({
   },
 });
 
-export const DetailsContainer = styled.div<IDetailsContainerProps>(
-  {
-    overflowX: 'hidden',
-    overflowY: 'auto',
-    transition: 'all .3s',
-  },
-  ({ expanded }) => ({
-    maxHeight: expanded ? '9999px' : '0',
-  }),
-);
+export const DetailsContainer = styled.div<IDetailsContainerProps>({
+  overflowX: 'hidden',
+  overflowY: 'auto',
+  transition: 'all .3s',
+});

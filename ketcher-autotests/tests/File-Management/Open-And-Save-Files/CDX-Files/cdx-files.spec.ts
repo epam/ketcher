@@ -15,16 +15,13 @@ test.describe('CDX files', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('opening cdx files', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12514
     Description: Open CDX files
     */
     await openFileAndAddToCanvas('CDX/cdx-expanded-contracted.cdx', page);
+    await takeEditorScreenshot(page);
   });
 
   test('opening cdx files with R-group', async ({ page }) => {
@@ -43,6 +40,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('opening cdx files from clipboard', async ({ page }) => {
@@ -56,6 +54,7 @@ test.describe('CDX files', () => {
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAQCEAClnXYBBmHkAKuSsgHwQBgBAAMOAAIA////////AAAAAAAAAAETAAEAAQABAOIECQBTYW5zU2VyaWYBgAIAAAADgAMAAAAEAhAApR11AQbh4gCrErQB8MAZAQSABAAAAAACCACmm4UBBmHkAAIEAgAGACsEAgABAAAABIAFAAAAAAIIACiYhQHwQBgBAgQCAAcAKwQCAAAAAAAEgAYAAAAAAggApZ12ATJd/gACBAIACAArBAIAAAAAAASABwAAAAACCACnmaMB8EAYAQIEAgAGACsEAgABAAAABIAIAAAAAAIIABC8owEGYeQAAgQCAAYAKwQCAAEAAAAEgAkAAAAAAggAq5KyASdu/gACBAIABgArBAIAAQAAAAWACgAAAAQGBAAGAAAABQYEAAQAAAAABgIAAgABBgIAAAAAAAWACwAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgABBgIAAAAAAAWADAAAAAQGBAAEAAAABQYEAAgAAAAABgIAAQABBgIAAAAAAAWADQAAAAQGBAAFAAAABQYEAAYAAAAABgIAAQABBgIAAAAAAAWADgAAAAQGBAAIAAAABQYEAAkAAAAABgIAAgABBgIAAAAAAAWADwAAAAQGBAAJAAAABQYEAAcAAAAABgIAAQABBgIAAAAAAAAAAAAAAA==',
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from .cdx file with contracted and expanded functional groups', async ({
@@ -83,6 +82,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open from .cdx file with contracted and expanded Salts and Solvents', async ({
@@ -104,6 +104,7 @@ test.describe('CDX files', () => {
       });
 
     expect(cdxFile).toEqual(cdxFileExpected);
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -308,33 +309,35 @@ test.describe('CDX files without screenshots', () => {
     expect(cdxFile).toEqual(cdxFileExpected);
   });
 
-  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back',
+    async ({ page }) => {
+      /*
+    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2205
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
-      'CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
-        expectedFileName:
-          'tests/test-data/CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      });
+      );
+      const expectedFile = await getCdx(page);
+      await saveToFile(
+        'CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
+        expectedFile,
+      );
 
-    expect(cdxFile).toEqual(cdxFileExpected);
-  });
+      const { fileExpected: cdxFileExpected, file: cdxFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
+        });
+
+      expect(cdxFile).toEqual(cdxFileExpected);
+    },
+  );
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to Cdx file and loaded back', async ({
     page,

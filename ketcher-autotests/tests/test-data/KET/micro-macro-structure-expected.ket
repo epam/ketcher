@@ -2,7 +2,7 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer3"
+                "$ref": "monomer7"
             },
             {
                 "$ref": "mol0"
@@ -16,7 +16,7 @@
                     "atomId": "1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer3",
+                    "monomerId": "monomer7",
                     "attachmentPointId": "R1"
                 }
             }
@@ -172,9 +172,9 @@
             "z": 0
         }
     },
-    "monomer3": {
+    "monomer7": {
         "type": "monomer",
-        "id": "3",
+        "id": "7",
         "position": {
             "x": 15.736879933869105,
             "y": -7.604491937162553

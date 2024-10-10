@@ -29,6 +29,7 @@ import {
   IMAGE_KEY,
   KetcherLogger,
   MULTITAIL_ARROW_KEY,
+  isControlKey,
   ReSGroup,
   ReStruct,
   SGroup,
@@ -37,10 +38,7 @@ import {
 } from 'ketcher-core';
 
 import LassoHelper from '../helper/lasso';
-import {
-  isBondingWithMacroMolecule,
-  isMergingToMacroMolecule,
-} from '../helper/isMacroMolecule';
+import { isMergingToMacroMolecule } from '../helper/isMacroMolecule';
 import { atomLongtapEvent } from '../atom';
 import SGroupTool from '../sgroup';
 import { Editor } from '../../Editor';
@@ -70,6 +68,7 @@ import {
   selMerge,
 } from './select.helpers';
 import { SelectMode } from './select.types';
+import { createCopyOfSelected } from 'src/script/ui/action/createCopyOfSelected';
 
 enum Direction {
   LEFT,
@@ -85,6 +84,8 @@ class SelectTool implements Tool {
   private dragCtx: any;
   private previousMouseMoveEvent?: PointerEvent;
   isMouseDown = false;
+  isReadyForCopy = false;
+  isCopied = false;
   readonly isMoving = false;
   private multitailArrowMoveTool: ArrowMoveTool<MultitailArrowClosestItem>;
   private reactionArrowMoveTool: ArrowMoveTool<ReactionArrowClosestItem>;
@@ -112,13 +113,9 @@ class SelectTool implements Tool {
     const molecule = ctab.molecule;
 
     const map = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey,
+      this.#lassoHelper.fragment || event.altKey,
     );
     const ci = this.editor.findItem(event, map, null);
-
-    if (isBondingWithMacroMolecule(this.editor, event)) {
-      return;
-    }
 
     const selected = {
       ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
@@ -199,6 +196,12 @@ class SelectTool implements Tool {
 
     this.handleMoveCloseToEdgeOfCanvas();
 
+    this.isReadyForCopy = false;
+    this.isCopied = false;
+    if (isControlKey(event) && this.dragCtx) {
+      this.isReadyForCopy = true;
+    }
+
     return true;
   }
 
@@ -208,6 +211,17 @@ class SelectTool implements Tool {
     const rnd = editor.render;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
+
+    if (this.isReadyForCopy && !this.isCopied) {
+      const point = CoordinateTransformation.pageToModel(event, rnd);
+      const { action, items } = createCopyOfSelected(editor, point);
+      editor.selection(items);
+
+      this.dragCtx.copyAction = action;
+      this.isCopied = true;
+      return;
+    }
+
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
 
     if (dragCtx?.closestItem) {
@@ -314,7 +328,7 @@ class SelectTool implements Tool {
     }
 
     const maps = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey,
+      this.#lassoHelper.fragment || event.altKey,
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);
@@ -385,7 +399,12 @@ class SelectTool implements Tool {
 
     if (this.dragCtx?.item) {
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
-        dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
+        dropAndMerge(
+          editor,
+          this.dragCtx.mergeItems,
+          this.dragCtx.action,
+          this.dragCtx.copyAction,
+        );
       }
     } else {
       onSelectionEnd(event, this.editor, this.#lassoHelper);

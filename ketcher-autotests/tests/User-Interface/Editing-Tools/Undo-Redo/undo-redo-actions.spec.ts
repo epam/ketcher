@@ -111,10 +111,6 @@ test.describe('Undo/Redo Actions', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Undo/Redo Erase template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1732
@@ -129,6 +125,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Atom template action', async ({ page }) => {
@@ -145,6 +142,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Atom Properties template action', async ({ page }) => {
@@ -162,6 +160,7 @@ test.describe('Undo/Redo Actions', () => {
     await fillAliasForAtom(page, '!@#$%123AbCd', 'Apply');
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Bond Properties template action', async ({ page }) => {
@@ -179,6 +178,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectBondProperties(page, 'Double', 'Ring', 'Center', 'Apply');
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single Bond template action', async ({ page }) => {
@@ -195,6 +195,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Double Bond template action', async ({ page }) => {
@@ -210,6 +211,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Triple Bond template action', async ({ page }) => {
@@ -225,6 +227,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Chain template action', async ({ page }) => {
@@ -244,6 +247,7 @@ test.describe('Undo/Redo Actions', () => {
     await dragMouseTo(x, y, page);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single Up stereobond template action', async ({ page }) => {
@@ -260,6 +264,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single Down stereobond template action', async ({ page }) => {
@@ -276,6 +281,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single Up/Down stereobond template action', async ({
@@ -294,6 +300,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Double Cis/Trans stereobond template action', async ({
@@ -312,6 +319,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Any Query Bond template action', async ({ page }) => {
@@ -328,6 +336,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Aromatic Query Bond template action', async ({ page }) => {
@@ -344,6 +353,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single/Double Query Bond template action', async ({
@@ -362,6 +372,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Single/Aromatic Query Bond template action', async ({
@@ -380,6 +391,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Double/Aromatic Query Bond template action', async ({
@@ -398,6 +410,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Mapping tool template action', async ({ page }) => {
@@ -413,6 +426,7 @@ test.describe('Undo/Redo Actions', () => {
       await pressButton(page, 'Apply');
     });
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Data S-Group tool', async ({ page }) => {
@@ -429,6 +443,7 @@ test.describe('Undo/Redo Actions', () => {
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Multiple Group tool', async ({ page }) => {
@@ -443,6 +458,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo SRU Polymer tool', async ({ page }) => {
@@ -457,6 +473,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Superatom tool', async ({ page }) => {
@@ -471,6 +488,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo R-Group Label tool', async ({ page }) => {
@@ -490,6 +508,7 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo R-Group Fragment tool', async ({ page }) => {
@@ -509,6 +528,7 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Attachment Point tool', async ({ page }) => {
@@ -525,6 +545,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Multiple Undo/Redo', async ({ page }) => {
@@ -555,6 +576,7 @@ test.describe('Undo/Redo Actions', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Copy/Paste', async ({ page }) => {
@@ -571,6 +593,7 @@ test.describe('Undo/Redo Actions', () => {
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Cut/Paste', async ({ page }) => {
@@ -589,6 +612,7 @@ test.describe('Undo/Redo Actions', () => {
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     });
     await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Hotkeys', async ({ page }) => {
@@ -609,6 +633,7 @@ test.describe('Undo/Redo Actions', () => {
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Control+Shift+z');
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo Zoom In/Zoom Out', async ({ page }) => {
@@ -636,6 +661,7 @@ test.describe('Undo/Redo Actions', () => {
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press('Control+=');
     }
+    await takeEditorScreenshot(page);
   });
 
   test('Undo/Redo S-Group , Structure, Chain', async ({ page }) => {
@@ -663,6 +689,7 @@ test.describe('Undo/Redo Actions', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+    await takeEditorScreenshot(page);
   });
 });
 

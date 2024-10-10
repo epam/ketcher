@@ -243,8 +243,6 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '32. Multi-char petide - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString: 'PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -257,16 +255,12 @@ const correctHELMStrings: IHELMString[] = [
       '34. Multi-char RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]+[nobn6p]+[nC6n2G]+[nC6n8A])[mepo2]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
       '35. Simple peptides - The ratio of each element can be given as a numerical value after the monomer' +
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString: 'PEPTIDE1{(A:1.5+C:0.1)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
   },
   {
     helmDescription:
@@ -274,8 +268,6 @@ const correctHELMStrings: IHELMString[] = [
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:1.1+[Abu]:2.2+[Aca]:3.3+[Aib]:4.4+[Apm]:5.5)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2355',
   },
   {
     helmDescription:
@@ -289,16 +281,12 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:1+[nobn6p]:2+[nC6n2G]:4+[nC6n8A]:5)[mepo2]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
       "39. Two peptides connected R2-R2, one of them don't have R1 AP",
     HELMString:
       'PEPTIDE1{[DACys]}|PEPTIDE2{C}$PEPTIDE2,PEPTIDE1,1:R2-1:R2$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2358',
   },
   {
     helmDescription:
@@ -310,8 +298,6 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '41. Multi-char peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString: 'PEPTIDE1{([Aad],[Abu],[Aca],[Aib],[Apm])}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription:
@@ -323,14 +309,14 @@ const correctHELMStrings: IHELMString[] = [
       '43. Multi-char RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn],[nobn6p],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
       '44. Single peptides - The probability of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString: 'PEPTIDE1{(A:10,C:20)}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -338,8 +324,7 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:10,[Abu]:20,[Aca]:30,[Aib]:40,[Apm]:50)}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -354,8 +339,6 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2321',
   },
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
@@ -407,6 +390,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription: '55. Single peptide with inline Extended SMILES (L)',
@@ -414,6 +398,7 @@ const correctHELMStrings: IHELMString[] = [
       'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -421,6 +406,7 @@ const correctHELMStrings: IHELMString[] = [
     HELMString: 'CHEM1{[N([H])CCCCCCO[H]]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription: '57. Single CHEM with inline Extended SMILES (A6OH)',
@@ -428,6 +414,7 @@ const correctHELMStrings: IHELMString[] = [
       'CHEM1{[N%91CCCCCCO%92.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription: '58. List of peptide of inline Extended Smiles (A,C,D,L)',
@@ -438,6 +425,7 @@ const correctHELMStrings: IHELMString[] = [
       '[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2337',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:

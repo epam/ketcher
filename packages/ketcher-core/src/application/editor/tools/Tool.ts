@@ -79,6 +79,8 @@ interface ToolEventHandler {
   mouseDownOnSequenceItem?(event: Event): void;
 
   doubleClickOnSequenceItem?(event: Event): void;
+
+  mouseUpAtom?(event: Event): void;
 }
 
 export interface IRnaPreset {

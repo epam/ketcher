@@ -1,4 +1,6 @@
 import {
+  chooseTab,
+  Tabs,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
@@ -33,17 +35,26 @@ import {
   selectSequenceLayoutModeTool,
   selectTopPanelButton,
   TopPanelButton,
+  selectClearCanvasTool,
   Peptides,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
   expandCollapseRnaBuilder,
-  gotoRNA,
+  pressAddToPresetsButton,
   pressNewPresetButton,
+  pressSaveButton,
+  selectBaseSlot,
+  selectPhosphateSlot,
+  selectSugarSlot,
+  RnaAccordionType,
   toggleBasesAccordion,
   toggleNucleotidesAccordion,
-  toggleRnaBuilderAccordion,
+  togglePhosphatesAccordion,
+  toggleRnaAccordionItem,
+  toggleRnaBuilder,
   toggleSugarsAccordion,
+  toggleRnaBuilderAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 import {
@@ -53,6 +64,7 @@ import {
   goToRNATab,
   MonomerLocationTabs,
 } from '@utils/macromolecules/library';
+import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -63,18 +75,18 @@ async function drawThreeMonomers(page: Page) {
   const y3 = 106;
   await selectMonomer(page, Sugars.ThreeA6);
   await page.mouse.click(x1, y1);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await page.mouse.click(x2, y2);
   await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x3, y3);
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
-  const sugars = await page.getByText('3A6').locator('..');
+  const sugars = page.getByText('3A6').locator('..');
   const sugar1 = sugars.nth(0);
-  const bases = await page.getByText('baA').locator('..');
+  const bases = page.getByText('baA').locator('..');
   const base1 = bases.nth(0);
-  const phosphates = await page.getByText('P').locator('..');
+  const phosphates = page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
   await drawThreeMonomers(page);
   await selectSingleBondTool(page);
@@ -91,11 +103,11 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
 async function drawBasePhosphate(page: Page) {
   const x = 800;
   const y = 350;
-  const bases = await page.getByText('baA').locator('..');
+  const bases = page.getByText('baA').locator('..');
   const base1 = bases.nth(0);
-  const phosphates = await page.getByText('P').locator('..');
+  const phosphates = page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x, y);
@@ -111,9 +123,9 @@ async function drawBasePhosphate(page: Page) {
 async function drawSugarPhosphate(page: Page) {
   const x = 800;
   const y = 350;
-  const sugars = await page.getByText('3A6').locator('..');
+  const sugars = page.getByText('3A6').locator('..');
   const sugar1 = sugars.nth(0);
-  const phosphates = await page.getByText('P').locator('..');
+  const phosphates = page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
@@ -129,13 +141,13 @@ async function drawSugarPhosphate(page: Page) {
 async function drawSugarBase(page: Page) {
   const x = 800;
   const y = 350;
-  const sugars = await page.getByText('3A6').locator('..');
+  const sugars = page.getByText('3A6').locator('..');
   const sugar1 = sugars.nth(0);
-  const bases = await page.getByText('baA').locator('..');
+  const bases = page.getByText('baA').locator('..');
   const base1 = bases.nth(0);
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(page, Bases.NBebnzylAdenine);
+  await selectMonomer(page, Bases.baA);
   await page.mouse.click(x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
@@ -154,24 +166,40 @@ async function pressEscapeWhenPullBond(page: Page) {
     await page.mouse.up();
   });
 }
-async function pressAddToPresetsButton(page: Page) {
-  // To avoid unstable test execution
-  // Hide tooltip which overlays 'add-to-presets-btn' element
-  await moveMouseAway(page);
-  await page.getByTestId('add-to-presets-btn').click();
+
+async function reloadPageAndConfigureInitialState(page: Page) {
+  await pageReload(page);
+  await configureInitialState(page);
+}
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
 }
 
 test.describe('RNA Library', () => {
-  test.beforeEach(async ({ page }) => {
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    const context = await browser.newContext();
+    page = await context.newPage();
+
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+    await configureInitialState(page);
+  });
+
+  test.afterEach(async ({ context: _ }) => {
+    await selectClearCanvasTool(page);
+  });
+
+  test.afterAll(async ({ browser }) => {
+    await Promise.all(browser.contexts().map((context) => context.close()));
   });
 
   test(
     'Check that switch between Macro and Micro mode does not crash application',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /* 
     Test case: #3498
     Description: Application does not crash. 
@@ -179,11 +207,12 @@ test.describe('RNA Library', () => {
     */
       await turnOnMicromoleculesEditor(page);
       await turnOnMacromoleculesEditor(page);
-      await takePageScreenshot(page);
+
+      await configureInitialState(page);
     },
   );
 
-  test('Check the RNA components panel', async ({ page }) => {
+  test('Check the RNA components panel', async () => {
     /* 
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: Check the RNA components panel. 
@@ -194,13 +223,16 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Expand RNA Builder', async ({ page }) => {
+  test('Expand RNA Builder', async () => {
     /* 
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: After click on arrow RNA Builder expanded.
     */
     await expandCollapseRnaBuilder(page);
     await takeMonomerLibraryScreenshot(page);
+
+    // Reset to default state
+    await toggleRnaBuilder(page, 'collapse');
   });
 
   const testData = [
@@ -225,27 +257,40 @@ test.describe('RNA Library', () => {
     },
   ];
 
-  for (const data of testData) {
-    test(`Check ${data.component} component`, async ({ page }) => {
+  for (const [index, data] of testData.entries()) {
+    test(`Check ${data.component} component`, async () => {
       /* 
       Test case: #2748, #2751 - RNA Builder. Accordion component
       */
-      await page.getByTestId(`summary-${data.component}`).click();
+      await toggleRnaAccordionItem(
+        page,
+        data.component as RnaAccordionType,
+        'expand',
+      );
+
       await takeMonomerLibraryScreenshot(page);
+
+      // Reset to default state: expand the 'Presets' component after verifying the last item
+      if (index === testData.length - 1) {
+        await toggleRnaAccordionItem(page, 'Presets', 'expand');
+      }
     });
   }
 
-  test('Add Sugar monomer to canvas', async ({ page }) => {
+  test('Add Sugar monomer to canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected sugar monomer should be added to the canvas 
     in the form of a square with rounded edges and in the corresponding color.
     */
+    // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
+    await reloadPageAndConfigureInitialState(page);
+
     await addMonomerToCenterOfCanvas(page, Sugars.TwelveddR);
     await takeEditorScreenshot(page);
   });
 
-  test('Add Base monomer to canvas', async ({ page }) => {
+  test('Add Base monomer to canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected base monomer should be added to the canvas 
@@ -255,7 +300,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Phosphate monomer to canvas', async ({ page }) => {
+  test('Add Phosphate monomer to canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected phosphate monomer should be added to the canvas 
@@ -265,7 +310,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Sugar preview window when hovered on canvas', async ({ page }) => {
+  test('Sugar preview window when hovered on canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected sugar monomer should be added to the canvas 
@@ -277,7 +322,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Base preview window when hovered on canvas', async ({ page }) => {
+  test('Base preview window when hovered on canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected base monomer should be added to the canvas 
@@ -289,7 +334,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Phosphate preview window when hovered on canvas', async ({ page }) => {
+  test('Phosphate preview window when hovered on canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: The selected phosphate monomer should be added to the canvas 
@@ -301,7 +346,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Custom preset to Presets section', async ({ page }) => {
+  test('Add Custom preset to Presets section', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
@@ -310,69 +355,75 @@ test.describe('RNA Library', () => {
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
-  test('Add Custom preset to Presets section and display after page reload', async ({
-    page,
-  }) => {
+  test('Add Custom preset to Presets section and display after page reload', async () => {
     /* 
     Test case: #4427 - Edit RNA mode
     Description: Custom presets added to Presets section and saved in local storage after reload.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
-    await page.reload();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+
+    await reloadPageAndConfigureInitialState(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
-  test('Add same Custom preset to Presets section', async ({ page }) => {
+  test('Add same Custom preset to Presets section', async () => {
     /* 
     Test case: #4427 - Edit RNA mode
     Description: System alert that you should rename preset.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
-    await page.reload();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+
+    await reloadPageAndConfigureInitialState(page);
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Add Custom preset to Canvas', async ({ page }) => {
+  test('Add Custom preset to Canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Custom presets added to Canvas.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
@@ -381,88 +432,99 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3SS6)', async ({
-    page,
-  }) => {
+  test('Add to RNA Sugar which does not contain R3 attachment point(for example 3SS6)', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas https://github.com/epam/ketcher/issues/3615
     Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3SS6).
     Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('rna-builder-slot--sugar').click();
-    await page
-      .getByTestId("3SS6___3'-Thiol-Modifier 6 S-S from Glen Research")
-      .click();
-    await page.getByTestId('rna-builder-slot--sugar').click();
+    await selectSugarSlot(page);
+    await page.getByTestId(Sugars.ThreeSS6).click();
+    await selectSugarSlot(page);
     await takeRNABuilderScreenshot(page);
   });
 
-  test('Add to presets (different combinations: Sugar+Base', async ({
-    page,
-  }) => {
+  test('Add to presets (different combinations: Sugar+Base', async () => {
     /*
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)_A_25R_.').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
-  test('Add to presets (different combinations: Sugar+Phosphate', async ({
-    page,
-  }) => {
+  test('Add to presets (different combinations: Sugar+Phosphate', async () => {
     /*
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R()bP_._25R_bP').click();
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
-  test('Add to presets (different combinations: Base+Phosphate', async ({
-    page,
-  }) => {
+  test('Add to presets (different combinations: Base+Phosphate', async () => {
     /*
     Test case: #2759 - Edit RNA mode
     Description: Custom preset Base+Phosphate could not be added to Presets.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('rna-builder-slot--base').click();
+    await selectBaseSlot(page);
     await takeRNABuilderScreenshot(page);
   });
 
-  test('Add Custom preset to Presets section and Edit', async ({ page }) => {
+  test('Add Custom preset to Presets section and Edit', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be edited.
     */
+    // Reload needed to reset the already added custom preset
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('edit').locator('div').click();
-    await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId('baA___N-benzyl-adenine').click();
-    await page.getByTestId('save-btn').click();
+    await selectBaseSlot(page);
+    await page.getByTestId(Bases.baA).click();
+    await moveMouseAway(page);
+    await pressSaveButton(page);
     await page.getByTestId('25R(baA)Test-6-Ph_baA_25R_Test-6-Ph').click();
     // To avoid unstable test execution
     // Allows see a right preset in a viewport
@@ -470,23 +532,25 @@ test.describe('RNA Library', () => {
     await takePresetsScreenshot(page);
   });
 
-  test('Add Custom preset to Presets section then Duplicate and Edit', async ({
-    page,
-  }) => {
+  test('Add Custom preset to Presets section then Duplicate and Edit', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
-    await page.getByTestId('add-to-presets-btn').click();
+    await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
     await expandCollapseRnaBuilder(page);
@@ -494,20 +558,23 @@ test.describe('RNA Library', () => {
       button: 'right',
     });
     await page.getByTestId('edit').click();
-    await page.getByTestId('rna-builder-slot--phosphate').click();
+    await selectPhosphateSlot(page);
     await page.getByTestId('P___Phosphate').click();
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await page.getByTestId('25R(A)P_A_25R_P').click();
+    await moveMouseAway(page);
     await takePresetsScreenshot(page);
   });
 
-  test('After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved', async ({
-    page,
-  }) => {
+  test('After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved', async () => {
     /* 
     Test case: #3633 - Edit RNA mode
     Description: After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await page.getByTestId('A_A_R_P').click({
       button: 'right',
@@ -523,12 +590,16 @@ test.describe('RNA Library', () => {
   test(
     'Add Custom preset to Presets section and Delete',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be deleted.
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
+      // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+      await clearLocalStorage(page);
+      await reloadPageAndConfigureInitialState(page);
+
       await expandCollapseRnaBuilder(page);
       await selectMonomer(page, Sugars.TwentyFiveR);
       await selectMonomer(page, Bases.Adenine);
@@ -540,17 +611,20 @@ test.describe('RNA Library', () => {
       await page.getByTestId('deletepreset').click();
       await page.getByRole('button', { name: 'Delete' }).click();
       await takePresetsScreenshot(page);
+
+      // Reset to default state
+      await toggleRnaBuilder(page, 'collapse');
     },
   );
 
-  test('Add Custom preset to Presets section and Rename', async ({ page }) => {
+  test('Add Custom preset to Presets section and Rename', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await pressAddToPresetsButton(page);
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
@@ -559,42 +633,49 @@ test.describe('RNA Library', () => {
     await page.getByTestId('edit').locator('div').click();
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('TestMonomers');
-    await page.getByTestId('save-btn').click();
+    await pressSaveButton(page);
     await takePresetsScreenshot(page);
   });
 
-  test('Autofilling RNA name when selects RNA parts', async ({ page }) => {
+  test('Autofilling RNA name when selects RNA parts', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: RNA name autofilling when selects RNA parts.
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('rna-builder-slot--sugar').click();
-    await page.getByTestId("3A6___6-amino-hexanol (3' end)").click();
+    await selectSugarSlot(page);
+    await page.getByTestId(Sugars.ThreeA6).click();
     await moveMouseAway(page);
-    await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId('baA___N-benzyl-adenine').click();
+    await selectBaseSlot(page);
+    await page.getByTestId(Bases.baA).click();
     await moveMouseAway(page);
-    await page.getByTestId('rna-builder-slot--phosphate').click();
-    await page.getByTestId('bP___Boranophosphate').click();
+    await selectPhosphateSlot(page);
+    await page.getByTestId(Phosphates.Boranophosphate).click();
     await moveMouseAway(page);
     await takeRNABuilderScreenshot(page);
+
+    // Reset to default state
+    await toggleRnaBuilder(page, 'collapse');
   });
 
-  test('Add names to RNA manually', async ({ page }) => {
+  test('Add names to RNA manually', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('rna-builder-slot--sugar').click();
-    await page.getByTestId('25R___2,5-Ribose').click();
+    await selectSugarSlot(page);
+    await page.getByTestId(Sugars.TwentyFiveR).click();
     // To avoid unstable test execution
     // Hide tooltip which overlays 'rna-builder-slot--base' element
     await moveMouseAway(page);
-    await page.getByTestId('rna-builder-slot--base').click();
+    await selectBaseSlot(page);
     await page.getByTestId('A___Adenine').click();
-    await page.getByTestId('rna-builder-slot--phosphate').click();
+    await selectPhosphateSlot(page);
     await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('cTest');
@@ -603,20 +684,22 @@ test.describe('RNA Library', () => {
     await takeRNABuilderScreenshot(page);
   });
 
-  test('Highlight Sugar, Phosphate and Base in Library, once it chosen in RNA Builder', async ({
-    page,
-  }) => {
+  test('Highlight Sugar, Phosphate and Base in Library, once it chosen in RNA Builder', async () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Sugar, Phosphate and Base highlighted in Library.
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     const monomers = [
       {
         type: 'sugar',
         groupName: 'Sugars',
-        name: "3A6___6-amino-hexanol (3' end)",
+        name: Sugars.ThreeA6,
       },
-      { type: 'base', groupName: 'Bases', name: 'baA___N-benzyl-adenine' },
+      { type: 'base', groupName: 'Bases', name: Bases.baA },
       {
         type: 'phosphate',
         groupName: 'Phosphates',
@@ -637,14 +720,18 @@ test.describe('RNA Library', () => {
     }
   });
 
-  test('Add Sugar-Base Combination to Canvas', async ({ page }) => {
+  test('Add Sugar-Base Combination to Canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base Combination added to Canvas.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await pressAddToPresetsButton(page);
     await page.getByTestId('3A6(baA)_baA_3A6_.').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -652,11 +739,15 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add Sugar-Phosphate Combination to Canvas', async ({ page }) => {
+  test('Add Sugar-Phosphate Combination to Canvas', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Phosphate Combination added to Canvas.
     */
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Phosphates.Boranophosphate);
@@ -667,67 +758,65 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Can not Add Base-Phosphate Combination to Presets', async ({
-    page,
-  }) => {
+  test('Can not Add Base-Phosphate Combination to Presets', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base-Phosphate Combination not added to Presets.
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
-    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Bases.baA);
     await selectMonomer(page, Phosphates.Boranophosphate);
-    await page.getByTestId('rna-builder-slot--base').click();
+    await selectBaseSlot(page);
     await takeRNABuilderScreenshot(page);
   });
 
-  test('Add Sugar and Base Combination to Canvas and connect with bond', async ({
-    page,
-  }) => {
+  test('Add Sugar and Base Combination to Canvas and connect with bond', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar and Base Combination added to Canvas and connect with bond.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
+    const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawSugarBase(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Sugar and Phosphate Combination to Canvas and connect with bond', async ({
-    page,
-  }) => {
+  test('Add Sugar and Phosphate Combination to Canvas and connect with bond', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar and Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawSugarPhosphate(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Base and Phosphate Combination to Canvas and connect with bond', async ({
-    page,
-  }) => {
+  test('Add Base and Phosphate Combination to Canvas and connect with bond', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base and Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawBasePhosphate(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);
   });
 
-  test('Add Sugar-Base-Phosphate Combination to Canvas and connect with bond', async ({
-    page,
-  }) => {
+  test('Add Sugar-Base-Phosphate Combination to Canvas and connect with bond', async () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').nth(1);
+    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await bondLine.hover();
     await takeEditorScreenshot(page);
@@ -740,9 +829,7 @@ test.describe('RNA Library', () => {
   ];
 
   for (const monomer of monomersToDelete) {
-    test(`Open file from .ket and Delete ${monomer.text} monomer`, async ({
-      page,
-    }) => {
+    test(`Open file from .ket and Delete ${monomer.text} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
         'KET/monomers-connected-with-bonds.ket',
         page,
@@ -760,9 +847,7 @@ test.describe('RNA Library', () => {
   ];
 
   for (const monomer of monomerToDelete) {
-    test(`Draw Sugar-Base-Phosphate and Delete ${monomer.text} monomer`, async ({
-      page,
-    }) => {
+    test(`Draw Sugar-Base-Phosphate and Delete ${monomer.text} monomer`, async () => {
       await drawThreeMonomersConnectedWithBonds(page);
       await selectEraseTool(page);
       await page.getByText(monomer.text).locator('..').first().click();
@@ -770,14 +855,12 @@ test.describe('RNA Library', () => {
     });
   }
 
-  test('Draw Sugar-Base-Phosphate and Delete connecting bond', async ({
-    page,
-  }) => {
+  test('Draw Sugar-Base-Phosphate and Delete connecting bond', async () => {
     /* 
     Test case: Bond tool
     Description: Bond deleted.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').nth(1);
+    const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await selectEraseTool(page);
     await bondLine.click();
@@ -785,19 +868,17 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Draw Sugar-Base-Phosphate and try to attach bond to occupied attachment point', async ({
-    page,
-  }) => {
+  test('Draw Sugar-Base-Phosphate and try to attach bond to occupied attachment point', async () => {
     /* 
     Test case: Bond tool
     Description: A message appears at the bottom of the canvas: 
     Monomers don't have any connection point available.
     */
-    const sugars = await page.getByText('3A6').locator('..');
+    const sugars = page.getByText('3A6').locator('..');
     const sugar1 = sugars.nth(0);
-    const bases = await page.getByText('baA').locator('..');
+    const bases = page.getByText('baA').locator('..');
     const base1 = bases.nth(0);
-    const phosphates = await page.getByText('P').locator('..');
+    const phosphates = page.getByText('P').locator('..');
     const phosphate1 = phosphates.nth(0);
     await drawThreeMonomers(page);
     await selectSingleBondTool(page);
@@ -813,15 +894,13 @@ test.describe('RNA Library', () => {
   });
 
   const molecules = [
-    { type: 'Sugars', description: '25R___2,5-Ribose' },
-    { type: 'Bases', description: 'baA___N-benzyl-adenine' },
+    { type: 'Sugars', description: Sugars.TwentyFiveR },
+    { type: 'Bases', description: Bases.baA },
     { type: 'Phosphates', description: 'bP___Boranophosphate' },
   ];
 
   for (const molecule of molecules) {
-    test(`Move ${molecule.type} on canvas to new position`, async ({
-      page,
-    }) => {
+    test(`Move ${molecule.type} on canvas to new position`, async () => {
       /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar/Base/Phosphate moved to new position.
@@ -841,9 +920,7 @@ test.describe('RNA Library', () => {
   const monomersToMove = ['3A6', 'baA', 'P'];
 
   for (const monomer of monomersToMove) {
-    test(`Draw Sugar-Base-Phosphate and Move ${monomer} monomer`, async ({
-      page,
-    }) => {
+    test(`Draw Sugar-Base-Phosphate and Move ${monomer} monomer`, async () => {
       /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar/Base/Phosphate monomer moved to new position. 
@@ -863,7 +940,7 @@ test.describe('RNA Library', () => {
   test(
     'Press "Escape" button while pull the bond from monomer',
     { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
+    async () => {
       /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Bond does not remain on the canvas and returns to original position.
@@ -874,20 +951,24 @@ test.describe('RNA Library', () => {
       await page.getByText('25R').locator('..').first().click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);
+
+      // Reset to default
+      await toggleRnaAccordionItem(page, 'Presets', 'expand');
     },
   );
 
-  test('Check presence of Clear canvas button in top menu', async ({
-    page,
-  }) => {
+  test('Check presence of Clear canvas button in top menu', async () => {
     /* 
     Test case: Clear Canvas tool
     Description: Clear canvas button presence in left menu
     */
+    // Remove mouse from Clear Canvas button for correct screenshot
+    await moveMouseAway(page);
+
     await takeTopToolbarScreenshot(page);
   });
 
-  test('Draw Sugar-Base-Phosphate and press Clear canvas', async ({ page }) => {
+  test('Draw Sugar-Base-Phosphate and press Clear canvas', async () => {
     /* 
     Test case: Clear Canvas tool
     Description: Canvas is cleared
@@ -897,9 +978,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open Sugar-Base-Phosphate from .ket file and press Clear canvas', async ({
-    page,
-  }) => {
+  test('Open Sugar-Base-Phosphate from .ket file and press Clear canvas', async () => {
     /* 
     Test case: Clear Canvas tool
     Description: Canvas is cleared
@@ -912,11 +991,14 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Save file with three Monomers as .ket file', async ({ page }) => {
+  test('Save file with three Monomers as .ket file', async () => {
     /* 
     Test case: Open&save files
     Description: File saved with three Monomers as .ket file
     */
+    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
+    await reloadPageAndConfigureInitialState(page);
+
     await openFileAndAddToCanvasMacro(
       'KET/monomers-connected-with-bonds.ket',
       page,
@@ -936,9 +1018,7 @@ test.describe('RNA Library', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('Open Sugar-Base-Phosphate from .ket file and switch to Micromolecule mode', async ({
-    page,
-  }) => {
+  test('Open Sugar-Base-Phosphate from .ket file and switch to Micromolecule mode', async () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/3498
     Description: Ketcher switch to Micromolecule mode
@@ -952,41 +1032,44 @@ test.describe('RNA Library', () => {
     await takePageScreenshot(page);
   });
 
-  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async ({
-    page,
-  }) => {
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Sugar is selected and we select Base)', async () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/3816
     Description: It is not possible to create preset if Sugar is without R3 connection point.
     */
+    // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('rna-builder-slot--sugar').click();
-    await page.getByTestId(`12ddR___1',2'-Di-Deoxy-Ribose`).click();
-    await page.getByTestId('rna-builder-slot--base').click();
+    await selectSugarSlot(page);
+    await page.getByTestId(Sugars.TwelveddR).click();
+    await selectBaseSlot(page);
     await takePresetsScreenshot(page);
   });
 
   const rnaNucleotides = [
-    `2-Amino-dA___2,6-Diaminopurine`,
-    `5HydMe-dC___Hydroxymethyl dC`,
+    `2-damdA___2,6-Diaminopurine`,
+    `5hMedC___Hydroxymethyl dC`,
     `Super G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
     `Super T___5-hydroxybutynl-2’-deoxyuridine`,
-    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];
 
   for (const monomer of rnaNucleotides) {
-    test(`Validate that you can put unsplit nucleotide ${monomer} on the canvas from library, select it and move it, delete it`, async ({
-      page,
-    }) => {
+    test(`Validate that you can put unsplit nucleotide ${monomer} on the canvas from library, select it and move it, delete it`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
     */
+      // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
+      await clearLocalStorage(page);
+      await reloadPageAndConfigureInitialState(page);
+
       const x = 200;
       const y = 200;
-      await page.getByTestId('RNA-TAB').click();
       await toggleNucleotidesAccordion(page);
       await waitForRender(page, async () => {
         await page.getByTestId(monomer).click();
@@ -1004,9 +1087,7 @@ test.describe('RNA Library', () => {
     });
   }
 
-  test('Validate that chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas', async ({
-    page,
-  }) => {
+  test('Validate that chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas', async () => {
     /* 
     Test case: #4382
     Description: Chain with unsplit nucleotides looks correct on micro-mode canvas, on macro-flex, on macro-snake and squence canvas
@@ -1023,11 +1104,13 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
+
+    // reset to default state
+    await turnOnMacromoleculesEditor(page);
+    await configureInitialState(page);
   });
 
-  test('Validate that unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode', async () => {
     /* 
     Test case: #4382
     Description: Unsplit nucleotides in chain does not interrupt enumeration of RNA chain in flex mode
@@ -1039,9 +1122,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that unsplit nucleotides could be deleted from sequence', async ({
-    page,
-  }) => {
+  test('Validate that unsplit nucleotides could be deleted from sequence', async () => {
     /* 
     Test case: #4382
     Description: unsplit nucleotides can be deleted from sequence
@@ -1063,24 +1144,21 @@ test.describe('RNA Library', () => {
   });
 
   const rnaNucleotides1 = [
-    `2-Amino-dA___2,6-Diaminopurine`,
-    `5HydMe-dC___Hydroxymethyl dC`,
+    `2-damdA___2,6-Diaminopurine`,
+    `5hMedC___Hydroxymethyl dC`,
     `Super G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
     `Super T___5-hydroxybutynl-2’-deoxyuridine`,
-    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];
 
   for (const monomer of rnaNucleotides1) {
-    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer}`, async ({
-      page,
-    }) => {
+    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer}`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
     */
-      await page.getByTestId('RNA-TAB').click();
       await toggleNucleotidesAccordion(page);
       await waitForRender(page, async () => {
         await page.getByTestId(monomer).click();
@@ -1089,30 +1167,30 @@ test.describe('RNA Library', () => {
       await page.keyboard.press('Escape');
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
+
+      // Reset to default state
+      await toggleRnaAccordionItem(page, 'Presets', 'expand');
     });
   }
 
   const rnaNucleotides2 = [
-    `2-Amino-dA___2,6-Diaminopurine`,
-    `5HydMe-dC___Hydroxymethyl dC`,
+    `2-damdA___2,6-Diaminopurine`,
+    `5hMedC___Hydroxymethyl dC`,
     `Super G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
     `Super T___5-hydroxybutynl-2’-deoxyuridine`,
-    `5-Bromo dU___5-Bromo-deoxyuridine`,
+    `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];
 
   for (const monomer of rnaNucleotides2) {
-    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer}`, async ({
-      page,
-    }) => {
+    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer}`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Undo/redo tool works correct with unsplit nucleotide.
     */
       const x = 200;
       const y = 200;
-      await page.getByTestId('RNA-TAB').click();
       await toggleNucleotidesAccordion(page);
       await waitForRender(page, async () => {
         await page.getByTestId(monomer).click();
@@ -1130,26 +1208,28 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
+
+      // Reset to default state
+      await toggleRnaAccordionItem(page, 'Presets', 'expand');
     });
   }
 
-  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Base is selected and we select Sugar)', async ({
-    page,
-  }) => {
+  test('Validate it is not possible to create preset if Sugar is without R3 connection point (Base is selected and we select Sugar)', async () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/3816
     Description: It is not possible to create preset if Sugar is without R3 connection point.
     */
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('rna-builder-slot--base').click();
-    await page.getByTestId(`baA___N-benzyl-adenine`).click();
-    await page.getByTestId('rna-builder-slot--sugar').click();
+    await selectBaseSlot(page);
+    await page.getByTestId(Bases.baA).click();
+    await selectSugarSlot(page);
     await takePresetsScreenshot(page);
+
+    // Reset to default state
+    await toggleRnaBuilder(page, 'collapse');
   });
 
-  test('It is possible to add/remove RNA presets into the Favourite library', async ({
-    page,
-  }) => {
+  test('It is possible to add/remove RNA presets into the Favourite library', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 6-7
      *Description:
@@ -1158,17 +1238,19 @@ test.describe('RNA Library', () => {
      *  Case 7:
      *    It is possible to delete RNA presets from the Favourite library
      */
+    // Reload the page to reset the Favorites elements
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await page.getByText('★').first().click();
-    await page.getByTestId('FAVORITES-TAB').click();
+    await chooseTab(page, Tabs.Favorites);
     await takeMonomerLibraryScreenshot(page);
 
     await page.getByText('★').first().click();
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Check that presets and monomers appear back after cleaning search field', async ({
-    page,
-  }) => {
+  test('Check that presets and monomers appear back after cleaning search field', async () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/4422 - Case 11-12, 27
     Description: 
@@ -1179,14 +1261,18 @@ test.describe('RNA Library', () => {
       Case 27:
         Check that search menu clear button erase all entered text
     */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('No monomers and presets');
     await takeMonomerLibraryScreenshot(page);
 
-    await page.getByTestId('RNA-TAB').click();
+    await chooseTab(page, Tabs.Rna);
     await takeMonomerLibraryScreenshot(page);
 
-    await page.getByTestId('CHEM-TAB').click();
+    await chooseTab(page, Tabs.Chem);
     await takeMonomerLibraryScreenshot(page);
 
     // await rnaLibrarySearch.press('Escape');
@@ -1195,22 +1281,24 @@ test.describe('RNA Library', () => {
     const yCoodinate = 62;
     await page.mouse.click(xCoodinate, yCoodinate);
 
-    await page.getByTestId('RNA-TAB').click();
+    await chooseTab(page, Tabs.Rna);
     await takeMonomerLibraryScreenshot(page);
 
-    await page.getByTestId('PEPTIDES-TAB').click();
+    await chooseTab(page, Tabs.Peptides);
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Check that can delete preset from Presets section', async ({
-    page,
-  }) => {
+  test('Check that can delete preset from Presets section', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 14
      *Description:
      *  Case 14:
      *    Check that can delete preset from Presets section
      */
+    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.Adenine);
@@ -1226,9 +1314,7 @@ test.describe('RNA Library', () => {
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)', async ({
-    page,
-  }) => {
+  test('Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 16
      *Description:
@@ -1242,9 +1328,7 @@ test.describe('RNA Library', () => {
     await takePageScreenshot(page);
   });
 
-  test('Check that After reloading the page, monomers added to the Favorites section not disappear', async ({
-    page,
-  }) => {
+  test('Check that After reloading the page, monomers added to the Favorites section not disappear', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 18
      *Description:
@@ -1252,27 +1336,24 @@ test.describe('RNA Library', () => {
      *    Check that After reloading the page, monomers added to the Favorites section not disappear
      */
     await page.getByText('★').first().click();
-    await page.reload({ waitUntil: 'domcontentloaded' });
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('FAVORITES-TAB').click();
+    await pageReload(page);
+    await chooseTab(page, Tabs.Favorites);
     await takeMonomerLibraryScreenshot(page);
+
+    await configureInitialState(page);
   });
 
-  test('Select all entered text in RNA Builder and delete', async ({
-    page,
-  }) => {
+  test('Select all entered text in RNA Builder and delete', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 20
      *Description:
      *  Case 20:
      *    Select all entered text in RNA Builder and delete
      */
-    await gotoRNA(page);
-
     const rnaNameEditBox = page.getByPlaceholder('Name your structure');
     const rnaName = 'Random Text';
 
+    await toggleRnaBuilder(page, 'expand');
     await rnaNameEditBox.fill(rnaName);
     await takeRNABuilderScreenshot(page);
 
@@ -1280,6 +1361,9 @@ test.describe('RNA Library', () => {
       await rnaNameEditBox.press('Backspace');
     }
     await takeRNABuilderScreenshot(page);
+
+    // Reset to default state
+    await toggleRnaBuilder(page, 'collapse');
   });
 
   async function scrollAccordionContentToTheTop(
@@ -1291,9 +1375,7 @@ test.describe('RNA Library', () => {
     await page.keyboard.press('Home');
   }
 
-  test('Check that preview window disappears when a cursor moves off from RNA in library', async ({
-    page,
-  }) => {
+  test('Check that preview window disappears when a cursor moves off from RNA in library', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 21
      *Description:
@@ -1303,21 +1385,18 @@ test.describe('RNA Library', () => {
      */
     const toolTipPreviewWindow = page.getByTestId('polymer-library-preview');
 
-    await gotoRNA(page);
-    await toggleRnaBuilderAccordion(page);
-
     await toggleSugarsAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Sugars');
     await page.getByText('12ddR').hover();
-    await delay(1);
     await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
+    await goToRNATab(page);
+    await toggleRnaBuilderAccordion(page);
     await toggleBasesAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
     await page.getByText('2imen2').hover();
-    await delay(1);
     await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
@@ -1328,13 +1407,12 @@ test.describe('RNA Library', () => {
     //   'rna-accordion-details-Phosphates',
     // );
     // await page.getByTestId('P___Phosphate').hover();
-    // await delay(1);
     // await expect(toolTipPreviewWindow).toBeVisible();
     // await moveMouseAway(page);
     // await takeMonomerLibraryScreenshot(page);
   });
 
-  test('CHEM tab check at Library', async ({ page }) => {
+  test('CHEM tab check at Library', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 22 - 25
      *Description:
@@ -1343,7 +1421,12 @@ test.describe('RNA Library', () => {
      *  Case 24 - Preview window appearing when hover over CHEM in library
      *  Case 25 - Search CHEM by entering its name in search field
      */
-    await gotoRNA(page);
+    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
+    await clearLocalStorage(page);
+    await reloadPageAndConfigureInitialState(page);
+
+    await toggleRnaBuilder(page, 'expand');
+
     // Case 22
     await page.getByTestId('CHEM-TAB').hover();
     await takeMonomerLibraryScreenshot(page);
@@ -1368,18 +1451,17 @@ test.describe('RNA Library', () => {
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('SMCC');
     await takeMonomerLibraryScreenshot(page);
+
+    // Reset to default
+    await configureInitialState(page);
   });
 
-  test('RNA builder expands when clicking on New Preset button', async ({
-    page,
-  }) => {
+  test('RNA builder expands when clicking on New Preset button', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 26
      *Description:
      *  Case 26 - RNA builder expands when clicking on 'New Preset' button
      */
-    await gotoRNA(page);
-
     await pressNewPresetButton(page);
     await expect(page.getByTestId('cancel-btn')).toBeVisible();
 
@@ -1399,7 +1481,44 @@ test.describe('RNA Library', () => {
     pageReloadNeeded?: boolean;
   }
 
-  async function searchMonomerByName(page: Page, monomerName: string) {
+  async function goToMonomerLocationTab(
+    page: Page,
+    monomerLocation: MonomerLocationTabs,
+  ) {
+    switch (monomerLocation) {
+      case 'Peptides':
+        await goToPeptidesTab(page);
+        break;
+      case 'Presets':
+        await goToRNATab(page);
+        // Presets tab openned by default
+        break;
+      case 'Sugars':
+        await goToRNATab(page);
+        await toggleSugarsAccordion(page);
+        break;
+      case 'Bases':
+        await goToRNATab(page);
+        await toggleBasesAccordion(page);
+        break;
+      case 'Phosphates':
+        await goToRNATab(page);
+        await togglePhosphatesAccordion(page);
+        break;
+      case 'Nucleotides':
+        await goToRNATab(page);
+        await toggleNucleotidesAccordion(page);
+        break;
+      case 'CHEM':
+        await goToCHEMTab(page);
+        break;
+      default:
+        await goToRNATab(page);
+        break;
+    }
+  }
+
+  async function searchMonomerBuName(page: Page, monomerName: string) {
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill(monomerName);
   }
@@ -1476,16 +1595,16 @@ test.describe('RNA Library', () => {
 
   test.describe('Search by IDT alias: ', () => {
     for (const IDTSearchString of IDTSearchStrings) {
-      test(`${IDTSearchString.testDescription}`, async ({ page }) => {
-        /* 
-    Test task: https://github.com/epam/ketcher/issues/5539
-    Verify search by full IDT alias 
-      Case:
-        1. Fill Search field with value
-        2. Switch to monomer's tab to see it
-        3. Take screenshot of the library to make sure search works
-    */
-        await searchMonomerByName(page, IDTSearchString.SearchString);
+      test(`${IDTSearchString.testDescription}`, async () => {
+        /*
+         * Test task: https://github.com/epam/ketcher/issues/5539
+         * Verify search by full IDT alias
+         * Case:
+         * 1. Fill Search field with value
+         * 2. Switch to monomer's tab to see it
+         * 3. Take screenshot of the library to make sure search works
+         */
+        await searchMonomerBuName(page, IDTSearchString.IDTSeatchString);
         await goToMonomerLocationTab(
           page,
           IDTSearchString.ResultMonomerLocationTab,

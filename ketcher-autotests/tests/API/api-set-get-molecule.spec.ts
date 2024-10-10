@@ -28,10 +28,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('Add molecule through API ketcher.setMolecule', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2957
@@ -41,6 +37,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, 'C1C=CC=CC=1'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add SMILES molecule using ketcher.setMolecule() method', async ({
@@ -54,6 +51,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, 'c1ccccc1'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Structure import if dearomotize-on-load is true', async ({ page }) => {
@@ -67,6 +65,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, 'c1ccccc1'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test(
@@ -88,6 +87,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         page,
         async () => await setMolecule(page, MolV2000File),
       );
+      await takeEditorScreenshot(page);
     },
   );
 
@@ -102,6 +102,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, 'CCCC |Sg:gen:0,1,2:|'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add a molecule with custom atom properties', async ({ page }) => {
@@ -113,6 +114,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, 'CCCC |Sg:n:0,1,2:3-6:eu|'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add a fragment using ketcher.addFragment() method', async ({
@@ -126,6 +128,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await addFragment(page, 'c1ccccc1'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add molecules with specified SMARTS patterns using ketcher.setMolecule() method', async ({
@@ -139,6 +142,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, '[#6]~[#6]~[#6]'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add molecules with specified SMARTS patterns', async ({ page }) => {
@@ -150,6 +154,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await setMolecule(page, '[#6]=,:[#6]'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add complex molecule', async ({ page }) => {
@@ -162,6 +167,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () =>
         await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1'),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Set and Get Molecule using V3000 Molfile format', async ({ page }) => {
@@ -193,6 +199,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         fileFormat: 'v3000',
       });
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Set and Get Molecule containing chiral centers V2000', async ({
@@ -226,39 +233,43 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
   });
 
-  test('Set and Get Molecule containing chiral centers V3000', async ({
-    page,
-  }) => {
-    /*
-    Test case: EPMLSOPKET- 10097
-    Description:  Molecule set and get with chiral centers V3000
-    */
+  test.fail(
+    'Set and Get Molecule containing chiral centers V3000',
+    async ({ page }) => {
+      /*
+       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+       * Test case: EPMLSOPKET- 10097
+       * Description:  Molecule set and get with chiral centers V3000
+       */
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () =>
-        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
-    );
-    const molV3000File = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-      molV3000File,
-    );
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await waitForSpinnerFinishedWork(
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+        async () =>
+          await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+      );
+      const molV3000File = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+        molV3000File,
+      );
+      const METADATA_STRING_INDEX = [1];
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Check DisableQueryElements parameter', async ({ page }) => {
     /*
@@ -269,6 +280,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
     await selectAtomInToolbar(AtomButton.Extended, page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule', async ({
@@ -286,6 +298,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add Unknown superatom expanded/contracted through API ketcher.setMolecule', async ({
@@ -303,6 +316,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Unknown Superatom through API ketcher.setMolecule', async ({
@@ -326,6 +340,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Unknown Superatom through API ketcher.setMolecule', async ({
@@ -351,6 +366,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Functional Group through API ketcher.setMolecule', async ({
@@ -374,6 +390,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Functional Group through API ketcher.setMolecule', async ({
@@ -396,6 +413,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (V3000)', async ({
@@ -413,6 +431,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add Unknown superatom expanded/contracted through API ketcher.setMolecule (V3000)', async ({
@@ -430,6 +449,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Unknown Superatom through API ketcher.setMolecule (V3000)', async ({
@@ -453,6 +473,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Unknown Superatom through API ketcher.setMolecule (V3000)', async ({
@@ -478,6 +499,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Functional Group through API ketcher.setMolecule (V3000)', async ({
@@ -501,6 +523,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Functional Group through API ketcher.setMolecule (V3000)', async ({
@@ -523,6 +546,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (.ket)', async ({
@@ -540,6 +564,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add Unknown superatom expanded/contracted through API ketcher.setMolecule (.ket)', async ({
@@ -557,6 +582,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Unknown Superatom through API ketcher.setMolecule (.ket)', async ({
@@ -580,6 +606,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Unknown Superatom through API ketcher.setMolecule (.ket)', async ({
@@ -602,6 +629,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Functional Group through API ketcher.setMolecule (.ket)', async ({
@@ -622,6 +650,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add one expanded Functional Group through API ketcher.setMolecule (.ket)', async ({
@@ -644,6 +673,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (CML)', async ({
@@ -661,6 +691,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Functional Group through API ketcher.setMolecule (CML)', async ({
@@ -681,6 +712,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
 
   test('Add Unknown superatoms expanded/contracted through API ketcher.setMolecule (CML)', async ({
@@ -698,6 +730,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
         ),
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Add one contracted Unknown Superatom through API ketcher.setMolecule (CML)', async ({
@@ -721,6 +754,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     await page.getByText('Some Name').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
   });
   test('Check that "containsReaction" method returns "true" if structure has a reaction in micro mode', async ({
     page,
@@ -738,6 +772,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     });
 
     expect(containsReaction).toBe(true);
+    await takeEditorScreenshot(page);
   });
 
   test('Check that "containsReaction" method returns "false" if structure has not a reaction in micro mode', async ({
@@ -755,5 +790,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     });
 
     expect(containsReaction).not.toBe(true);
+    await takeEditorScreenshot(page);
   });
 });

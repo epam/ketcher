@@ -24,10 +24,6 @@ test.describe('Reagents CML format', () => {
     await waitForPageInit(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
-  });
-
   test('File saves in "CML" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-14793
@@ -53,6 +49,7 @@ test.describe('Reagents CML format', () => {
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);
+    await takeEditorScreenshot(page);
   });
 
   test('Open file in "CML" format', async ({ page }) => {
@@ -64,6 +61,7 @@ test.describe('Reagents CML format', () => {
       'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       page,
     );
+    await takeEditorScreenshot(page);
   });
 
   test('Detection molecule as reagent and write reagent information in CML format in "Preview" tab', async ({
@@ -78,6 +76,7 @@ test.describe('Reagents CML format', () => {
       page,
     );
     await saveFileAsCmlFormat(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Paste from clipboard in "CML" format', async ({ page }) => {
@@ -91,5 +90,6 @@ test.describe('Reagents CML format', () => {
       FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
     );
     await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

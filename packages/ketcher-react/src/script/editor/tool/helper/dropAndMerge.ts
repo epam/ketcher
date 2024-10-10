@@ -21,10 +21,11 @@ export function dropAndMerge(
   editor: Editor,
   mergeItems: any,
   action?: Action,
+  copyAction?: Action,
 ): Action {
   const restruct = editor.render.ctab;
   const isMerging = !!mergeItems;
-  let dropItemAction = new Action();
+  let dropItemAction = copyAction || new Action();
 
   if (isMerging) {
     const expandGroupsAction = getExpandGroupsInMergeAction(

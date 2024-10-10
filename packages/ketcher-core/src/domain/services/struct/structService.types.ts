@@ -36,6 +36,7 @@ export enum ChemicalMimeType {
   PEPTIDE = 'chemical/x-peptide-sequence',
   IDT = 'chemical/x-idt',
   HELM = 'chemical/x-helm',
+  RDF = 'chemical/x-rdf',
 }
 
 export interface WithStruct {
@@ -153,7 +154,6 @@ export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
   outputFormat: OutputFormatType;
   backgroundColor?: string;
-  bondThickness: number;
 }
 
 export interface StructService {

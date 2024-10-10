@@ -90,7 +90,10 @@ export const RnaEditor = ({ duplicatePreset }) => {
         }
       >
         RNA Builder
-        <ExpandButton onClick={expandEditor}>
+        <ExpandButton
+          onClick={expandEditor}
+          data-testid="rna-builder-expand-button"
+        >
           <ExpandIcon expanded={expanded} name="chevron" />
         </ExpandButton>
       </StyledHeader>

@@ -27,7 +27,7 @@ test.describe('ACS Style Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5156
-    Description: add new option AVS style
+    Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
@@ -47,7 +47,7 @@ test.describe('ACS Style Settings', () => {
   }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/5156
-    Description: add new option AVS style
+    Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);

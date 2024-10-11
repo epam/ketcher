@@ -2,8 +2,12 @@ import { test } from '@playwright/test';
 import {
   clickOnSaveFileAndOpenDropdown,
   openFileAndAddToCanvas,
+  openSettings,
+  pressButton,
   selectFormatForSaving,
+  selectTopPanelButton,
   takeEditorScreenshot,
+  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 
@@ -108,6 +112,26 @@ test.describe('Saving in .svg files', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'SVG Document');
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to SVG', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  Need to update screenshots after implementing https://github.com/epam/ketcher/issues/5650 and 
+  https://github.com/epam/Indigo/issues/2458
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
     await clickOnSaveFileAndOpenDropdown(page);
     await selectFormatForSaving(page, 'SVG Document');
     await takeEditorScreenshot(page);

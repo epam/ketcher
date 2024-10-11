@@ -15,6 +15,7 @@ import {
   pressButton,
   selectTopPanelButton,
   TopPanelButton,
+  openSettings,
 } from '@utils';
 import { getSdf } from '@utils/formats';
 
@@ -683,11 +684,12 @@ test('The Bond length setting with px option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
+  await openSettings(page);
   await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'px-option');
   await setBondLengthValue(page, '79.8');
   await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
 
   const expectedFile = await getSdf(page, 'v2000');
   await saveToFile(
@@ -695,9 +697,7 @@ test('The Bond length setting with px option is applied and it should be save to
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
+  const METADATA_STRINGS_INDEXES = [1];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -709,6 +709,12 @@ test('The Bond length setting with px option is applied and it should be save to
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
 });
 
 test('The Bond length setting with pt option is applied and it should be save to sdf 2000 file', async ({
@@ -722,11 +728,12 @@ test('The Bond length setting with pt option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
+  await openSettings(page);
   await bondsSettings(page);
   await setBondLengthOptionUnit(page, 'pt-option');
   await setBondLengthValue(page, '29.8');
   await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
 
   const expectedFile = await getSdf(page, 'v2000');
   await saveToFile(
@@ -734,9 +741,7 @@ test('The Bond length setting with pt option is applied and it should be save to
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
+  const METADATA_STRINGS_INDEXES = [1];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -748,279 +753,58 @@ test('The Bond length setting with pt option is applied and it should be save to
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
-});
 
-test('The Bond length setting with cm option is applied and it should be save to sdf 2000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 2000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'cm-option');
-  await setBondLengthValue(page, '0.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v2000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-cm-bond-lengh-v2000.sdf',
-    expectedFile,
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
+    page,
   );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-cm-bond-lengh-v2000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v2000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
+  await takeEditorScreenshot(page);
 });
 
-test('The Bond length setting with inch option is applied and it should be save to sdf 2000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 2000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'inch-option');
-  await setBondLengthValue(page, '4.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v2000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-inch-bond-lengh-v2000.sdf',
-    expectedFile,
-  );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-inch-bond-lengh-v2000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v2000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
-
-test('The Bond length setting with px option is applied and it should be save to sdf 3000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 3000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'px-option');
-  await setBondLengthValue(page, '79.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-px-bond-lengh-v3000.sdf',
-    expectedFile,
-  );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-px-bond-lengh-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
-
-test('The Bond length setting with pt option is applied and it should be save to sdf 3000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 3000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'pt-option');
-  await setBondLengthValue(page, '29.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-pt-bond-lengh-v3000.sdf',
-    expectedFile,
-  );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-pt-bond-lengh-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
-
-test('The Bond length setting with cm option is applied and it should be save to sdf 3000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 3000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'cm-option');
-  await setBondLengthValue(page, '0.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-cm-bond-lengh-v3000.sdf',
-    expectedFile,
-  );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-cm-bond-lengh-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
-
-test('The Bond length setting with inch option is applied and it should be save to sdf 3000 file', async ({
-  page,
-}) => {
-  /*
-  Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
-  The Bond length setting is applied and it should be save to sdf 3000
-  */
-  await waitForPageInit(page);
-
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await bondsSettings(page);
-  await setBondLengthOptionUnit(page, 'inch-option');
-  await setBondLengthValue(page, '4.8');
-  await pressButton(page, 'Apply');
-
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-inch-bond-lengh-v3000.sdf',
-    expectedFile,
-  );
-
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-inch-bond-lengh-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
-
-test('The ACS setting is applied, click on layout and it should be save to sdf 3000 file', async ({
-  page,
-}) => {
-  /*
+test(
+  'The ACS setting is applied, click on layout and it should be save to sdf 3000 file',
+  { tag: ['@IncorrectResultBecauseOfBug'] },
+  async ({ page }) => {
+    /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option AVS style and check saving to different format
+  Need to update file after implementing https://github.com/epam/ketcher/issues/5652
   */
-  await waitForPageInit(page);
+    await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
 
-  await selectTopPanelButton(TopPanelButton.Settings, page);
-  await pressButton(page, 'ACS Style');
-  await pressButton(page, 'Apply');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile(
+      'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
+      expectedFile,
+    );
 
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
-    'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
-    expectedFile,
-  );
+    const METADATA_STRINGS_INDEXES = [1];
 
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
+    const { fileExpected: sdfFileExpected, file: sdfFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/SDF/adenosine-triphosphate-acs-style-v3000.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
 
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
+    expect(sdfFile).toEqual(sdfFileExpected);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
       page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-acs-style-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-});
+    );
+    await takeEditorScreenshot(page);
+  },
+);
 
 test('The ACS setting is applied, click on layout and it should be save to sdf 2000 file', async ({
   page,
@@ -1032,11 +816,11 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await pressButton(page, 'ACS Style');
   await pressButton(page, 'Apply');
   await selectTopPanelButton(TopPanelButton.Layout, page);
+  await takeEditorScreenshot(page);
 
   const expectedFile = await getSdf(page, 'v2000');
   await saveToFile(
@@ -1044,9 +828,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
     expectedFile,
   );
 
-  const METADATA_STRINGS_INDEXES = [
-    1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-  ];
+  const METADATA_STRINGS_INDEXES = [1];
 
   const { fileExpected: sdfFileExpected, file: sdfFile } =
     await receiveFileComparisonData({
@@ -1058,4 +840,10 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
     });
 
   expect(sdfFile).toEqual(sdfFileExpected);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
 });

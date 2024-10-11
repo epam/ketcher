@@ -28,6 +28,7 @@ import {
   setReactionMarginSizeValue,
   setBondLengthOptionUnit,
   setBondLengthValue,
+  openSettings,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -1202,13 +1203,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1236,13 +1236,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '7.8');
+    await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 44, 106, 128, 135];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1270,12 +1269,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
     const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
+      2, 7, 14, 21, 28, 35, 53, 60, 67, 74, 81, 93, 100,
     ];
 
     const expectedFile = await getRxn(page, 'v2000');
@@ -1304,13 +1304,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1338,14 +1337,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1373,14 +1371,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
-    await setReactionMarginSizeValue(page, '7.8');
+    await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 44, 106, 128, 135];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1408,13 +1405,14 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '7.8');
+    await setReactionMarginSizeValue(page, '3.8');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
+      2, 7, 14, 21, 28, 35, 53, 60, 67, 74, 81, 93, 100,
     ];
 
     const expectedFile = await getRxn(page, 'v2000');
@@ -1443,14 +1441,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
     await bondsSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1469,332 +1466,20 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test('The Bond length setting with px option is applied and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await bondsSettings(page);
-    await setBondLengthOptionUnit(page, 'px-option');
-    await setBondLengthValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-catalyst-px-bond-lengh.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-catalyst-px-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Bond length setting with pt option is applied and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsSettings(page);
-    await setBondLengthOptionUnit(page, 'pt-option');
-    await setBondLengthValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Bond length setting with cm option is applied and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsSettings(page);
-    await setBondLengthOptionUnit(page, 'cm-option');
-    await setBondLengthValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-dif-elements-cm-bond-lengh.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-dif-elements-cm-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Bond length setting with inch option is applied and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsSettings(page);
-    await setBondLengthOptionUnit(page, 'inch-option');
-    await setBondLengthValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-long-molecule-inch-bond-lengh.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-long-molecule-inch-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await bondsSettings(page);
-    await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-catalyst-px-margin-size.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-catalyst-px-margin-size.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await bondsSettings(page);
-    await setReactionMarginSizeOptionUnit(page, 'pt-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-diagonally-arrow-pt-margin-size.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-diagonally-arrow-pt-margin-size.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await bondsSettings(page);
-    await setReactionMarginSizeOptionUnit(page, 'cm-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-dif-elements-cm-margin-size.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-dif-elements-cm-margin-size.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Reaction component margin size setting is applied, click on layout and it should be save to RXN3000
-  */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await bondsSettings(page);
-    await setReactionMarginSizeOptionUnit(page, 'inch-option');
-    await setReactionMarginSizeValue(page, '7.8');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-long-molecule-inch-margin-size.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-long-molecule-inch-margin-size.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
-  test('The ACS setting is applied, click on layout and it should be save to RXN3000', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/ketcher/issues/5156
-  Description: add new option AVS style and check saving to different format
-  */
-    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await selectTopPanelButton(TopPanelButton.Settings, page);
-    await pressButton(page, 'ACS Style');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    await takeEditorScreenshot(page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'Rxn-V3000/layout-with-dif-elements-acs-style.rxn',
-      expectedFile,
-    );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-dif-elements-acs-style.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
-
   test('The ACS setting is applied, click on layout and it should be save to RXN2000', async ({
     page,
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
-  Description: add new option AVS style and check saving to different format
+  Description: add new option ACS style and check saving to different format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await openSettings(page);
     await pressButton(page, 'ACS Style');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
+    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
 
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
@@ -1811,5 +1496,48 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to RXN3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  Need to update file after implementing https://github.com/epam/ketcher/issues/5651
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
+
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
+      expectedFile,
+    );
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

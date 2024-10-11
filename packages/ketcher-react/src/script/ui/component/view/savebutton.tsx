@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import {
-  OutputFormatType,
-  defaultBondThickness,
-  KetcherLogger,
-} from 'ketcher-core';
+import { KetcherLogger, StructServiceOptions } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -28,11 +24,10 @@ import { SaverType } from './saveButton.types';
 type Props = {
   server?: any;
   filename: string;
-  outputFormat?: OutputFormatType;
-  bondThickness?: number;
   data: any;
   type?: string;
   mode?: string;
+  options?: StructServiceOptions;
   onSave?: () => void;
   onError?: (err: any) => void;
   className?: string;
@@ -47,11 +42,10 @@ const SaveButton = (props: SaveButtonProps) => {
   const {
     server,
     filename = 'unnamed',
-    outputFormat,
-    bondThickness,
     data,
     type,
     mode = 'saveFile',
+    options,
     onSave = noop,
     onError = noop,
     className,
@@ -76,14 +70,11 @@ const SaveButton = (props: SaveButtonProps) => {
 
   const saveImage = () => {
     const ketcherInstance = getKetcherInstance();
-    if (outputFormat) {
+    if (options?.outputFormat) {
       ketcherInstance
-        .generateImage(data, {
-          outputFormat,
-          bondThickness: bondThickness || defaultBondThickness,
-        })
+        .generateImage(data, options)
         .then((blob) => {
-          saveAs(blob, `${filename}.${outputFormat}`);
+          saveAs(blob, `${filename}.${options.outputFormat}`);
           onSave();
         })
         .catch((e) => {

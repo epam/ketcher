@@ -34,11 +34,9 @@ import {
   DearomatizeResult,
   ExplicitHydrogensData,
   ExplicitHydrogensResult,
-  GenerateImageOptions,
   InfoResult,
   LayoutData,
   LayoutResult,
-  OutputFormatType,
   RecognizeResult,
   StructService,
   StructServiceOptions,
@@ -385,9 +383,9 @@ export class RemoteStructService implements StructService {
 
   generateImageAsBase64(
     data: string,
-    options?: GenerateImageOptions,
+    options?: StructServiceOptions,
   ): Promise<string> {
-    const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const outputFormat = options?.outputFormat || 'png';
 
     return indigoCall(
       'POST',

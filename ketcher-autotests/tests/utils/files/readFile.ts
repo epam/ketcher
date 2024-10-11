@@ -62,7 +62,7 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
   }
 }
 
-type TypeDropdownOptions = 'RNA' | 'DNA' | 'Peptide';
+export type TypeDropdownOptions = 'RNA' | 'DNA' | 'Peptide';
 export async function selectOptionInTypeDropdown(
   typeDropdownOption: TypeDropdownOptions,
   page: Page,
@@ -91,7 +91,8 @@ export async function selectOptionInTypeDropdown2(
   page: Page,
 ) {
   await page.getByTestId('dropdown-select-type').getByRole('combobox').click();
-  await page.getByText(typeDropdownOption, { exact: true }).click();
+  const menuLocator = page.locator('#menu-');
+  await menuLocator.getByText(typeDropdownOption).click();
 }
 
 /**

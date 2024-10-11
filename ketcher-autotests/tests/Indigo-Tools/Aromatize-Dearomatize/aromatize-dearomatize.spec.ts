@@ -239,41 +239,39 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    '(MolV3000) Save cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-       * Test case: EPMLSOPKET-1877
-       * Description: The structures are saved as mol-file.
-       * The saved mol-file is opened correctly. In Ketcher the saved structures appear
-       * with the circle inside the cycles.
-       */
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/aromatic-benzene-v3000.mol',
+  test('(MolV3000) Save cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1877
+     * Description: The structures are saved as mol-file.
+     * The saved mol-file is opened correctly. In Ketcher the saved structures appear
+     * with the circle inside the cycles.
+     */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/aromatic-benzene-v3000.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getMolfile(page, 'v3000');
-      await saveToFile(
-        'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v3000',
+      });
 
-      const METADATA_STRING_INDEX = [1];
-
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v3000',
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
+  });
 
   test('(Smiles) Save cyclic structures with a circle inside the cycle', async ({
     page,

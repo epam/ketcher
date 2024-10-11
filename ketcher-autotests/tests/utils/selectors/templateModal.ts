@@ -95,6 +95,15 @@ export enum TemplateLibrary {
   Arabinofuranose = 'Arabinofuranose',
 }
 
+export enum Peptides {
+  X = '_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___' +
+    'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
+    '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
+  B = '_D___Aspartic acid_N___Asparagine',
+  J = '_L___Leucine_I___Isoleucine',
+  Z = '_E___Glutamic acid_Q___Glutamine',
+}
+
 export enum Sugars {
   TwelveddR = "12ddR___1',2'-dideoxyribose",
   TwentyFiveR = '25R___Ribose (2,5 connectivity)',
@@ -113,6 +122,24 @@ export enum Bases {
   baA = 'baA___N6-benzyladenine',
   TClampOMe = 'clA___T-clamp OMe',
   meA = 'meA___N6-methyladenine',
+  DNA_N = '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',
+  DNA_B = '_C___Cytosine_G___Guanine_T___Thymine',
+  DNA_D = '_A___Adenine_G___Guanine_T___Thymine',
+  DNA_H = '_A___Adenine_C___Cytosine_T___Thymine',
+  DNA_K = '_G___Guanine_T___Thymine',
+  DNA_W = '_A___Adenine_T___Thymine',
+  DNA_Y = '_C___Cytosine_T___Thymine',
+  RNA_N = '_A___Adenine_C___Cytosine_G___Guanine_U___Uracil',
+  RNA_B = '_C___Cytosine_G___Guanine_U___Uracil',
+  RNA_D = '_A___Adenine_G___Guanine_U___Uracil',
+  RNA_H = '_A___Adenine_C___Cytosine_U___Uracil',
+  RNA_K = '_G___Guanine_U___Uracil',
+  RNA_W = '_A___Adenine_U___Uracil',
+  RNA_Y = '_C___Cytosine_U___Uracil',
+  M = '_A___Adenine_C___Cytosine',
+  R = '_A___Adenine_G___Guanine',
+  S = '_C___Cytosine_G___Guanine',
+  V = '_A___Adenine_C___Cytosine_G___Guanine',
 }
 
 export async function selectBase(baseName: Bases, page: Page) {
@@ -142,13 +169,14 @@ export enum RnaPartDropDown {
 
 export async function selectMonomer(
   page: Page,
-  monomerType: Sugars | Bases | Phosphates,
+  monomerType: Sugars | Bases | Phosphates | Peptides,
 ) {
   const isSugar = Object.values(Sugars).includes(monomerType as Sugars);
   const isBase = Object.values(Bases).includes(monomerType as Bases);
   const isPhosphate = Object.values(Phosphates).includes(
     monomerType as Phosphates,
   );
+  const isPeptide = Object.values(Peptides).includes(monomerType as Peptides);
 
   if (isSugar) {
     await page.getByTestId(RnaPartDropDown.Sugars).click();
@@ -158,6 +186,9 @@ export async function selectMonomer(
   }
   if (isPhosphate) {
     await page.getByTestId(RnaPartDropDown.Phosphates).click();
+  }
+  if (isPeptide) {
+    await page.getByTestId('PEPTIDES-TAB').click();
   }
   await page.getByTestId(monomerType).click();
 }

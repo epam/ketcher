@@ -106,18 +106,16 @@ const App = () => {
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          window.ketcher = ketcher as any;
 
-          window.ketcher.eventBus.on(
-            'CUSTOM_BUTTON_PRESSED',
-            (name: string) => {
-              console.info(name);
+          ketcher.eventBus.on('CUSTOM_BUTTON_PRESSED', (name: string) => {
+            console.info(name);
 
-              if (name.endsWith('0')) {
-                window.ketcher.editor.zoom(2);
-              }
-            },
-          );
+            if (name.endsWith('0')) {
+              ketcher.editor.zoom(2);
+            }
+          });
 
           window.parent.postMessage(
             {

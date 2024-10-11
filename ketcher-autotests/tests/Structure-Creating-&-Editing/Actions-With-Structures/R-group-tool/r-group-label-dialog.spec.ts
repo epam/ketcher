@@ -506,9 +506,8 @@ test.describe('R-Group Label Tool', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.fail('Save as *.rxn V3000 file', async ({ page }) => {
+  test('Save as *.rxn V3000 file', async ({ page }) => {
     /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-1567
     Description: User is able to save the structure with R-group label as .rxn V3000 file
     */

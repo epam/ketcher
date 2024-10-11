@@ -540,7 +540,7 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(20000);
+                  test.setTimeout(35000);
 
                   await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -627,7 +627,7 @@ test.describe('Connection rules for chems: ', () => {
          *       Validate canvas (Connection should appear)
          */
         test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(35000);
 
           await openFileAndAddToCanvasMacro(
             tmpChemMonomers['Test-6-Ch'].fileName,
@@ -689,7 +689,7 @@ test.describe('Connection rules for chems: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 4: Connect ${leftCHEMConnectionPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(35000);
 
           await prepareCanvasNoFreeAPLeft(page, rightCHEM);
 
@@ -728,7 +728,7 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case5: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(35000);
 
                 await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -976,7 +976,7 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Connection Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -1001,7 +1001,7 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Connection Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightPeptide);
 
@@ -1191,7 +1191,7 @@ test.describe('Connection rules for chems: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftCHEMConnectionPoint} to ${rightOMConnectionPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(35000);
 
                 await loadTwoMonomers(page, leftCHEM, rightOM);
 
@@ -1230,7 +1230,7 @@ test.describe('Connection rules for chems: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
 

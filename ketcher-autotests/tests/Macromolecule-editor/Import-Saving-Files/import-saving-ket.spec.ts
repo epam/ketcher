@@ -20,10 +20,14 @@ import {
   selectClearCanvasTool,
   clickUndo,
   dragMouseTo,
+  openFileAndAddToCanvasAsNewProjectMacro,
   Sugars,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  zoomWithMouseWheel,
+} from '@utils/macromolecules';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import {
   markResetToDefaultState,
@@ -356,6 +360,40 @@ test.describe('Import-Saving .ket Files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Verify saving and load to canvas ambiguous monomers in KET format (macro mode)', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 13. Verify saving and load to canvas ambiguous monomers in KET format (macro mode)
+    Case: 1. Load all ambiguous monomers from KET
+          2. Make a screenshot to make sure they loaded
+          3. Save canvas to KET
+          4. Compate result with template
+    */
+    await pageReload(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/AllAmbiguousMonomers.ket',
+      page,
+    );
+
+    await zoomWithMouseWheel(page, -250);
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
+      expectedFile,
+    );
+
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
+      });
+    expect(ketFile).toEqual(ketFileExpected);
+    await zoomWithMouseWheel(page, 250);
   });
 });
 

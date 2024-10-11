@@ -168,6 +168,7 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.RDF,
     ['.rdf'],
     true,
+    { 'molfile-saving-mode': '3000' },
   ),
 };
 

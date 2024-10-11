@@ -43,35 +43,33 @@ test.describe('Reaction validation', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.fail(
-    'Saving reaction with more than one pluses RXN V3000',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+  test('Saving reaction with more than one pluses RXN V3000', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1488
     Description: Structures are on the canvas, pluses and arrows
     */
-      await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
+      expectedFile,
+    );
 
-      const METADATA_STRING_INDEX = [2];
+    const METADATA_STRING_INDEX = [2];
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v3000',
-        });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v3000',
+      });
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test('Only one structure is on canvas and reaction arrow', async ({
     page,
@@ -101,35 +99,33 @@ test.describe('Reaction validation', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.fail(
-    'Only one structure is on canvas and reaction arrow RXN V3000',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+  test('Only one structure is on canvas and reaction arrow RXN V3000', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1489
     Description: Benzene structure is on the canvas and arrow
     */
-      await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Rxn-V3000/benzene-and-one-arrow-expected.rxn',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'Rxn-V3000/benzene-and-one-arrow-expected.rxn',
+      expectedFile,
+    );
 
-      const METADATA_STRING_INDEX = [2];
+    const METADATA_STRING_INDEX = [2];
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V3000/benzene-and-one-arrow-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v3000',
-        });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/benzene-and-one-arrow-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v3000',
+      });
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test('Reaction can have a combination of reactants', async ({ page }) => {
     /*
@@ -157,9 +153,8 @@ test.describe('Reaction validation', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.fail('Reaction can have a combination of products', async ({ page }) => {
+  test('Reaction can have a combination of products', async ({ page }) => {
     /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-1491
     Description: Structures are saved as .rxn v3000
     */

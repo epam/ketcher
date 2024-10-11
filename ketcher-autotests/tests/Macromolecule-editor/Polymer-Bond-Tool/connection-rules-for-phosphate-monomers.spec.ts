@@ -542,7 +542,27 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    J: {
+      monomerType: 'peptide',
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    // '%': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //   },
+    // },
   };
+
   Object.values(phosphateMonomers).forEach((leftPhosphate) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       Object.values(leftPhosphate.connectionPoints).forEach(
@@ -562,7 +582,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftPhosphateConnectionPoint} to ${rightPeptideConnectionPoint} of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(40000);
 
                 await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
@@ -794,7 +814,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
         await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 

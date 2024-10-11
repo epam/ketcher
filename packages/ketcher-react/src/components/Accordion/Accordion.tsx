@@ -27,9 +27,11 @@ export const Accordion = ({
   return (
     <Container className={className}>
       <SummaryContainer onClick={onSummaryClick}>{summary}</SummaryContainer>
-      <DetailsContainer data-testid={dataTestIdDetails} expanded={expanded}>
-        {details}
-      </DetailsContainer>
+      {expanded && (
+        <DetailsContainer data-testid={dataTestIdDetails} expanded={expanded}>
+          {details}
+        </DetailsContainer>
+      )}
     </Container>
   );
 };

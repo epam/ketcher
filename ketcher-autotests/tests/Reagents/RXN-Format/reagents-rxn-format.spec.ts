@@ -88,44 +88,39 @@ test.describe('Reagents RXN format', () => {
     expect(actualComparableData).toEqual(expectedComparableData);
   });
 
-  test.fail(
-    'Detection molecule as reagent and write reagent information in "MDL rxnfile V3000" format',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+  test('Detection molecule as reagent and write reagent information in "MDL rxnfile V3000" format', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-4672
     Description: Files are compared for reagent presence
     */
-      await openFileAndAddToCanvas(
-        'KET/benzene-arrow-benzene-reagent-nh3.ket',
-        page,
-      );
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile('Rxn-V3000/mdl-rxnfile-v3000-expected.rxn', expectedFile);
 
-      const rxnFileExpected = await readFileContents(
-        'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
-      );
-      const COMPARABLE_DATA_START = 5;
-      const COMPARABLE_DATA_END = 58;
-      const rxnFile = await getRxn(page, 'v3000');
+    const rxnFileExpected = await readFileContents(
+      'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+    );
+    const COMPARABLE_DATA_START = 5;
+    const COMPARABLE_DATA_END = 58;
+    const rxnFile = await getRxn(page, 'v3000');
 
-      const actualComparableData = getComparableDataFromRxn(
-        rxnFile,
-        COMPARABLE_DATA_START,
-        COMPARABLE_DATA_END,
-      );
-      const expectedComparableData = getComparableDataFromRxn(
-        rxnFileExpected,
-        COMPARABLE_DATA_START,
-        COMPARABLE_DATA_END,
-      );
-      expect(actualComparableData).toEqual(expectedComparableData);
-    },
-  );
+    const actualComparableData = getComparableDataFromRxn(
+      rxnFile,
+      COMPARABLE_DATA_START,
+      COMPARABLE_DATA_END,
+    );
+    const expectedComparableData = getComparableDataFromRxn(
+      rxnFileExpected,
+      COMPARABLE_DATA_START,
+      COMPARABLE_DATA_END,
+    );
+    expect(actualComparableData).toEqual(expectedComparableData);
+  });
 
   test('File saves in "MDL rxnfile V2000" format', async ({ page }) => {
     /*
@@ -162,9 +157,8 @@ test.describe('Reagents RXN format', () => {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });
 
-  test.fail('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
+  test('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
     /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
     Test case: EPMLSOPKET-4676
     Description: File saved in format (e.g. "ketcher.rxn")
     */

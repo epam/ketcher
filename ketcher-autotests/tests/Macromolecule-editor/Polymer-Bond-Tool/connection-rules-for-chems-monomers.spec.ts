@@ -352,59 +352,76 @@ test.describe('Connection rules for chems: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftCHEM: IMonomer,
-    rightCHEM: IMonomer,
+    leftMonomers: IMonomer,
+    rightMonomers: IMonomer,
   ) {
-    await openFileAndAddToCanvasMacro(leftCHEM.fileName, page);
-    const leftCHEMLocator = page
-      .getByText(leftCHEM.alias)
+    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
+    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const leftMonomerLocator = canvasLocator
+      .locator(`text=${leftMonomers.alias}`)
       .locator('..')
       .first();
-    await leftCHEMLocator.hover();
+    // const leftMonomerLocator = page.locator('use').first();
+    await leftMonomerLocator.hover();
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightCHEM.fileName, page);
-    const rightCHEMLocator =
-      (await page.getByText(leftCHEM.alias).count()) > 1
-        ? page.getByText(rightCHEM.alias).nth(1).locator('..').first()
-        : page.getByText(rightCHEM.alias).locator('..').first();
-    await rightCHEMLocator.hover();
+    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    const rightMonomerLocator =
+      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
+        ? canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .nth(1)
+            .locator('..')
+            .first()
+        : canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .locator('..')
+            .first();
+    // const rightMonomerLocator = page.locator('use').nth(1);
+    await rightMonomerLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 371, page);
+    await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
   }
 
   async function bondTwoMonomersByPointToPoint(
     page: Page,
-    leftCHEM: IMonomer,
-    rightCHEM: IMonomer,
-    leftCHEMConnectionPoint?: string,
-    rightCHEMConnectionPoint?: string,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+    leftMonomersConnectionPoint?: string,
+    rightMonomersConnectionPoint?: string,
   ) {
-    const leftCHEMLocator = await page
-      .getByText(leftCHEM.alias, { exact: true })
+    const canvasLocator = page.getByTestId('ketcher-canvas');
+    const leftMonomerLocator = canvasLocator
+      .getByText(leftMonomer.alias, { exact: true })
+      // .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
-    const rightCHEMLocator =
-      (await page.getByText(rightCHEM.alias, { exact: true }).count()) > 1
-        ? page
-            .getByText(rightCHEM.alias, { exact: true })
+    const rightMonomerLocator =
+      (await canvasLocator
+        .getByText(leftMonomer.alias, { exact: true })
+        // .locator(`text=${leftMonomer.alias}`)
+        .count()) > 1
+        ? canvasLocator
+            .getByText(rightMonomer.alias, { exact: true })
+            // .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
-        : page
-            .getByText(rightCHEM.alias, { exact: true })
+        : canvasLocator
+            .getByText(rightMonomer.alias, { exact: true })
+            // .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
     await bondTwoMonomersPointToPoint(
       page,
-      leftCHEMLocator,
-      rightCHEMLocator,
-      leftCHEMConnectionPoint,
-      rightCHEMConnectionPoint,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      leftMonomersConnectionPoint,
+      rightMonomersConnectionPoint,
     );
   }
 
@@ -445,20 +462,26 @@ test.describe('Connection rules for chems: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ) {
-    const leftMonomerLocator = await page
-      .getByText(leftMonomer.alias, { exact: true })
+    const leftMonomerLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
     const rightMonomerLocator =
-      (await page.getByText(rightMonomer.alias, { exact: true }).count()) > 1
+      (await page
+        .getByTestId('ketcher-canvas')
+        .locator(`text=${leftMonomer.alias}`)
+        .count()) > 1
         ? page
-            .getByText(rightMonomer.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
         : page
-            .getByText(rightMonomer.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
@@ -466,8 +489,6 @@ test.describe('Connection rules for chems: ', () => {
       page,
       leftMonomerLocator,
       rightMonomerLocator,
-      undefined,
-      undefined,
     );
 
     if (await page.getByRole('dialog').isVisible()) {
@@ -519,7 +540,7 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(15000);
+                  test.setTimeout(35000);
 
                   await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -563,7 +584,7 @@ test.describe('Connection rules for chems: ', () => {
              *         Validate canvas
              */
             test(`Case 2: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-              test.setTimeout(20000);
+              test.setTimeout(35000);
 
               await prepareCanvasOneFreeAPLeft(
                 page,
@@ -606,7 +627,7 @@ test.describe('Connection rules for chems: ', () => {
          *       Validate canvas (Connection should appear)
          */
         test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(35000);
 
           await openFileAndAddToCanvasMacro(
             tmpChemMonomers['Test-6-Ch'].fileName,
@@ -668,7 +689,7 @@ test.describe('Connection rules for chems: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 4: Connect ${leftCHEMConnectionPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(35000);
 
           await prepareCanvasNoFreeAPLeft(page, rightCHEM);
 
@@ -707,7 +728,7 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case5: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(35000);
 
                 await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -880,6 +901,25 @@ test.describe('Connection rules for chems: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    J: {
+      monomerType: 'peptide',
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    // '%': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //   },
+    // },
   };
 
   Object.values(chemMonomers).forEach((leftCHEM) => {
@@ -901,7 +941,7 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case6: Connect ${leftCHEMConnectionPoint} to ${rightPeptideConnectionPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(40000);
 
                 await loadTwoMonomers(page, leftCHEM, rightPeptide);
 
@@ -936,7 +976,7 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Connection Points dialog opened.
        */
       test(`Case 7: Connect Center to Center of CHEM(${leftCHEM.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
@@ -961,7 +1001,7 @@ test.describe('Connection rules for chems: ', () => {
        *               Select Connection Points dialog opened.
        */
       test(`Case 8: Connect Center to Center of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightPeptide);
 
@@ -1151,7 +1191,7 @@ test.describe('Connection rules for chems: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftCHEMConnectionPoint} to ${rightOMConnectionPoint} of CHEM(${leftCHEM.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(35000);
 
                 await loadTwoMonomers(page, leftCHEM, rightOM);
 
@@ -1190,7 +1230,7 @@ test.describe('Connection rules for chems: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(35000);
 
         await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
 

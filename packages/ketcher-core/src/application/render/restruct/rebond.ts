@@ -33,6 +33,7 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { RenderOptions, RenderOptionStyles } from '../render.types';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -129,7 +130,7 @@ class ReBond extends ReObject {
     return ret;
   }
 
-  getSelectionPoints(render: Render) {
+  getSelectionPoints(render: Render, isHighlight = false) {
     // please refer to: ketcher-core/docs/data/hover_selection_1.png
     const bond: Bond = this.b;
     const { ctab: restruct, options } = render;
@@ -148,7 +149,9 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS;
 
-    const addPadding = isStereoBond ? 0 : -2;
+    const highlightPadding = isHighlight ? -1 : 0;
+    const stereoPadding = isStereoBond ? 0 : -2;
+    const addPadding = highlightPadding + stereoPadding;
 
     // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(
@@ -164,14 +167,17 @@ class ReBond extends ReObject {
 
     const stereoBondStartHeightCoef = 0.5;
     const bondPadding = 0.5;
-    const addStart = isStereoBond
-      ? stereoBondWidth * stereoBondStartHeightCoef
-      : regularSelectionThikness + bondPadding;
+    const highlightBondPadding = isHighlight ? 0 : 2;
+    const addStart =
+      (isStereoBond
+        ? stereoBondWidth * stereoBondStartHeightCoef
+        : regularSelectionThikness + bondPadding) + highlightBondPadding;
     const stereoBondEndHeightCoef = 1;
-    const addEnd = isStereoBond
-      ? stereoBondWidth +
-        (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
-      : regularSelectionThikness + bondPadding;
+    const addEnd =
+      (isStereoBond
+        ? stereoBondWidth +
+          (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
+        : regularSelectionThikness + bondPadding) + highlightBondPadding;
 
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,
@@ -238,7 +244,7 @@ class ReBond extends ReObject {
     ];
   }
 
-  getSelectionContour(render: Render) {
+  getSelectionContour(render: Render, isHighlight: boolean) {
     const { paper } = render;
     const [
       startPadTop,
@@ -249,7 +255,7 @@ class ReBond extends ReObject {
       endBottom,
       startPadBottom,
       startBottom,
-    ] = this.getSelectionPoints(render);
+    ] = this.getSelectionPoints(render, isHighlight);
 
     // for a visual representation of the points
     // please refer to: ketcher-core/docs/data/hover_selection_exp.png
@@ -267,45 +273,53 @@ class ReBond extends ReObject {
   makeHoverPlate(render: Render) {
     const restruct = render.ctab;
     const options = render.options;
-    ReBond.bondRecalc(this, restruct, options);
-    const bond = this.b;
-    const sgroups = restruct.sgroups;
-    const functionalGroups = restruct.molecule.functionalGroups;
-    if (
-      FunctionalGroup.isBondInContractedFunctionalGroup(
-        bond,
-        sgroups,
-        functionalGroups,
-      ) ||
-      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
-    ) {
+    if (this.isPlateShouldBeHidden(restruct, options)) {
       return null;
     }
 
-    const rect = this.getSelectionContour(render);
+    const rect = this.getSelectionContour(render, false);
 
     return rect.attr({ ...options.hoverStyle });
   }
 
   makeSelectionPlate(restruct: ReStruct, _: any, options: any) {
+    if (this.isPlateShouldBeHidden(restruct, options)) {
+      return null;
+    }
+
+    const rect = this.getSelectionContour(restruct.render, false);
+
+    return rect.attr(options.selectionStyle);
+  }
+
+  private isPlateShouldBeHidden = (
+    restruct: ReStruct,
+    options: RenderOptions,
+  ) => {
     ReBond.bondRecalc(this, restruct, options);
     const bond = this.b;
     const sgroups = restruct.render.ctab.sgroups;
     const functionalGroups = restruct.render.ctab.molecule.functionalGroups;
-    if (
+    return (
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
         functionalGroups,
-      ) ||
-      Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
-    ) {
+      ) || Bond.isBondToHiddenLeavingGroup(restruct.molecule, bond)
+    );
+  };
+
+  private makeHighlitePlate(
+    restruct: ReStruct,
+    highlightStyle: RenderOptionStyles,
+  ) {
+    const options = restruct.render.options;
+    if (this.isPlateShouldBeHidden(restruct, options)) {
       return null;
     }
 
-    const rect = this.getSelectionContour(restruct.render);
-
-    return rect.attr(options.selectionStyle);
+    const rect = this.getSelectionContour(restruct.render, true);
+    return rect.attr(highlightStyle);
   }
 
   show(restruct: ReStruct, bid: number, options: any): void {
@@ -449,23 +463,11 @@ class ReBond extends ReObject {
     if (isHighlighted) {
       const style = {
         fill: highlightColor,
-        stroke: highlightColor,
-        'stroke-width': options.lineattr['stroke-width'] * 3,
-        'stroke-linecap': 'round',
+        stroke: 'none',
       };
 
-      const c = Scale.modelToCanvas(this.b.center, restruct.render.options);
-
-      const highlightPath = getHighlightPath(restruct, hb1, hb2);
-      highlightPath.attr(style);
-
-      restruct.addReObjectPath(
-        LayerMap.hovering,
-        this.visel,
-        highlightPath,
-        c,
-        true,
-      );
+      const ret = this.makeHighlitePlate(restruct, style);
+      render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     }
 
     if (bond.cip) {
@@ -477,19 +479,6 @@ class ReBond extends ReObject {
       });
     }
   }
-}
-
-function getHighlightPath(restruct: ReStruct, hb1: HalfBond, hb2: HalfBond) {
-  const beginning = { x: hb1.p.x, y: hb1.p.y };
-  const end = { x: hb2.p.x, y: hb2.p.y };
-
-  const paper = restruct.render.paper;
-
-  const pathString = `M${beginning.x},${beginning.y} L${end.x},${end.y}`;
-
-  const path = paper.path(pathString);
-
-  return path;
 }
 
 function findIncomingStereoUpBond(

@@ -44,7 +44,7 @@ export const Preview = () => {
       previewRef.current.setAttribute('style', '');
       setIsPreviewVisible(true);
 
-      const PREVIEW_OFFSET = 20;
+      const PREVIEW_OFFSET = 5;
 
       const previewBoundingClientRect =
         previewRef.current?.getBoundingClientRect();

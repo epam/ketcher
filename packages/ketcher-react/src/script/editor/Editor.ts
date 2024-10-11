@@ -162,10 +162,12 @@ class Editor implements KetcherEditor {
     updateFloatingTools: Subscription<FloatingToolsParams>;
   };
 
+  public serverSettings = {};
+
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
-  constructor(clientArea, options) {
+  constructor(clientArea, options, serverSettings) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -186,6 +188,7 @@ class Editor implements KetcherEditor {
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this);
     this.setOptions = this.setOptions.bind(this);
+    this.setServerSettings(serverSettings);
 
     this.lastCursorPosition = {
       x: 0,
@@ -337,6 +340,10 @@ class Editor implements KetcherEditor {
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;
+  }
+
+  public setServerSettings(serverSettings) {
+    this.serverSettings = serverSettings;
   }
 
   private updateToolAfterOptionsChange(wasViewOnlyEnabled: boolean) {

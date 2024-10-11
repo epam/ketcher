@@ -18,7 +18,7 @@ import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { CoreEditor, Editor, defaultBondThickness } from './editor';
+import { CoreEditor, Editor } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { SGroup, Struct } from 'domain/entities';
@@ -465,7 +465,6 @@ export class Ketcher {
     data: string,
     options: GenerateImageOptions = {
       outputFormat: 'png',
-      bondThickness: defaultBondThickness,
     },
   ): Promise<Blob> {
     let meta = '';

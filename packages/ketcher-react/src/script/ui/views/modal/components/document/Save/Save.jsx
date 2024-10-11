@@ -413,12 +413,11 @@ class SaveDialog extends Component {
 
   getButtons = () => {
     const { disableControls, imageFormat, isLoading, structStr } = this.state;
-    const { options, formState, bondThickness } = this.props;
+    const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
 
     options.outputFormat = imageFormat;
-    options.bondThickness = bondThickness;
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading

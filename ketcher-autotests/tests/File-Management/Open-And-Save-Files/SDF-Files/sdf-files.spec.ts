@@ -47,10 +47,7 @@ test.describe('CDF files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Open SDF v3000 file and save it', async ({ page }) => {
-    /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2477
-     */
+  test('Open SDF v3000 file and save it', async ({ page }) => {
     await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
     try {
       const expectedFile = await getSdf(page, 'v3000');

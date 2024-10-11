@@ -43,13 +43,13 @@ export class CanvasMatrix {
     direction: number,
     increaseOffset = (connection: Connection, increaseValue?: number) => {
       if (isNumber(increaseValue)) {
-        connection.offset = increaseValue;
+        connection.xOffset = increaseValue;
       } else {
-        connection.offset++;
+        connection.xOffset++;
       }
     },
-    getOffset = (connection: Connection) => connection.offset,
-  ) {
+    getOffset = (connection: Connection): number => connection.xOffset,
+  ): void {
     // set offsets for connections with overlappings
     const currentConnections = new Map<PolymerBond, Set<Connection>>();
     const iterationMethod =
@@ -61,14 +61,14 @@ export class CanvasMatrix {
 
     iterationMethod((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(
-        (biggestOffset, connection) => {
+        (biggestOffset: number, connection: Connection): number => {
           return getOffset(connection) > biggestOffset
             ? getOffset(connection)
             : biggestOffset;
         },
         0,
       );
-      cell.connections.forEach((connection) => {
+      cell.connections.forEach((connection: Connection): void => {
         if (connection.direction !== direction || connection.connectedNode) {
           return;
         }
@@ -76,16 +76,18 @@ export class CanvasMatrix {
           const polymerBondConnections = this.polymerBondToConnections.get(
             connection.polymerBond,
           );
-          polymerBondConnections?.forEach((polymerBondConnection) => {
-            increaseOffset(polymerBondConnection, biggestOffsetInCell);
-          });
+          polymerBondConnections?.forEach(
+            (polymerBondConnection: Connection): void => {
+              increaseOffset(polymerBondConnection, biggestOffsetInCell);
+            },
+          );
           currentConnections.set(
             connection.polymerBond,
             new Set(polymerBondConnections),
           );
         }
       });
-      cell.connections.forEach((connection) => {
+      cell.connections.forEach((connection: Connection): void => {
         if (
           !connection.connectedNode ||
           (connection.direction !== direction &&
@@ -95,10 +97,12 @@ export class CanvasMatrix {
         }
         if (currentConnections.has(connection.polymerBond)) {
           currentConnections.delete(connection.polymerBond);
-          currentConnections.forEach((connections) => {
-            Array.from(connections.values()).forEach((currentConnection) => {
-              increaseOffset(currentConnection);
-            });
+          currentConnections.forEach((connections: Set<Connection>): void => {
+            Array.from(connections.values()).forEach(
+              (currentConnection: Connection): void => {
+                increaseOffset(currentConnection);
+              },
+            );
           });
         } else {
           currentConnections.set(
@@ -118,7 +122,8 @@ export class CanvasMatrix {
           this.polymerBondToConnections.get(polymerBond);
         if (
           polymerBondConnections?.every(
-            (connection) => !cell.connections.includes(connection),
+            (connection: Connection): boolean =>
+              !cell.connections.includes(connection),
           )
         ) {
           currentConnections.delete(polymerBond);
@@ -133,25 +138,27 @@ export class CanvasMatrix {
 
     this.matrix.forEach((cell) => {
       const biggestOffsetInCell = cell.connections.reduce(
-        (biggestOffset, connection) => {
-          return connection.offset > biggestOffset
-            ? connection.offset
+        (biggestOffset: number, connection: Connection): number => {
+          return connection.xOffset > biggestOffset
+            ? connection.xOffset
             : biggestOffset;
         },
         0,
       );
 
-      cell.connections.forEach((connection) => {
+      cell.connections.forEach((connection: Connection): void => {
         if (connection.direction !== direction) {
           return;
         }
-        if (connection.offset <= biggestOffsetInCell) {
+        if (connection.xOffset <= biggestOffsetInCell) {
           const polymerBondConnections = this.polymerBondToConnections.get(
             connection.polymerBond,
           );
-          polymerBondConnections?.forEach((polymerBondConnection) => {
-            polymerBondConnection.offset = biggestOffsetInCell;
-          });
+          polymerBondConnections?.forEach(
+            (polymerBondConnection: Connection): void => {
+              polymerBondConnection.xOffset = biggestOffsetInCell;
+            },
+          );
           handledConnections.add(connection.polymerBond);
         }
       });
@@ -165,7 +172,7 @@ export class CanvasMatrix {
           return;
         }
 
-        polymerBondConnection.offset++;
+        polymerBondConnection.xOffset++;
       });
     });
   }
@@ -287,14 +294,14 @@ export class CanvasMatrix {
           const isVertical = xDistanceAbsolute === 0;
 
           // fill start cell by connection with direction
-          let connection: Connection = {
-            polymerBond,
+          let connection = new Connection(
             connectedNode,
-            direction: isVertical ? 90 : xDirection,
-            offset: 0,
-            yOffset: 0,
+            isVertical ? 90 : xDirection,
             isVertical,
-          };
+            polymerBond,
+            0,
+            0,
+          );
 
           cell.connections.push(connection);
           this.polymerBondToCells.set(polymerBond, [cell]);
@@ -310,14 +317,14 @@ export class CanvasMatrix {
               nextCellY,
               nextCellX,
             ) as Cell;
-            connection = {
-              polymerBond,
-              connectedNode: null,
-              direction: xDirection,
-              offset: 0,
-              yOffset: 0,
+            connection = new Connection(
+              null,
+              xDirection,
               isVertical,
-            };
+              polymerBond,
+              0,
+              0,
+            );
             nextCellToHandle.connections.push(connection);
             this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
             this.polymerBondToConnections.get(polymerBond)?.push(connection);
@@ -332,14 +339,14 @@ export class CanvasMatrix {
               nextCellY,
               nextCellX,
             ) as Cell;
-            connection = {
-              polymerBond,
-              connectedNode: null,
-              direction: yDirection,
-              offset: 0,
-              yOffset: 0,
+            connection = new Connection(
+              null,
+              yDirection,
               isVertical,
-            };
+              polymerBond,
+              0,
+              0,
+            );
             nextCellToHandle.connections.push(connection);
             this.polymerBondToCells.get(polymerBond)?.push(nextCellToHandle);
             this.polymerBondToConnections.get(polymerBond)?.push(connection);
@@ -355,16 +362,16 @@ export class CanvasMatrix {
             nextCellY,
             nextCellX,
           ) as Cell;
-          connection = {
-            polymerBond,
+          connection = new Connection(
             connectedNode,
-            direction: isVertical
+            isVertical
               ? yDirection
               : { x: xDistance === 0 ? 0 : xDirection, y: yDirection },
-            offset: 0,
-            yOffset: 0,
             isVertical,
-          };
+            polymerBond,
+            0,
+            0,
+          );
           lastCellToHandle.connections.push(connection);
           this.polymerBondToCells.get(polymerBond)?.push(lastCellToHandle);
           this.polymerBondToConnections.get(polymerBond)?.push(connection);
@@ -379,14 +386,14 @@ export class CanvasMatrix {
     this.fillConnectionsOffset(0);
     this.fillConnectionsOffset(
       90,
-      (connection, increaseValue) => {
+      (connection: Connection, increaseValue: number | undefined): void => {
         if (isNumber(increaseValue)) {
           connection.yOffset = increaseValue;
         } else {
           connection.yOffset++;
         }
       },
-      (connection) => connection.yOffset,
+      (connection: Connection): number => connection.yOffset,
     );
   }
 }

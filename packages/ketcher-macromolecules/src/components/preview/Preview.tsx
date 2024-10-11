@@ -67,7 +67,8 @@ export const Preview = () => {
 
       const topPreviewPosition = targetTop - previewHeight - PREVIEW_OFFSET;
       const bottomPreviewPosition = targetBottom + PREVIEW_OFFSET;
-      const leftPreviewPosition = targetLeft - previewWidth / 2;
+      const leftPreviewPosition =
+        targetLeft + targetWidth / 2 - previewWidth / 2;
 
       if (targetTop > previewHeight + PREVIEW_OFFSET) {
         previewRef.current.style.top = `${topPreviewPosition}px`;

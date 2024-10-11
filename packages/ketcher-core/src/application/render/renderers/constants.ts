@@ -15,6 +15,7 @@ export const MONOMER_SYMBOLS_IDS = {
     hover: '#sugar-selection',
     selected: '#sugar-selection',
     body: '#sugar',
+    variant: '#sugar-variant',
   },
   [KetMonomerClass.Base]: {
     hover: '#rna-base-selection',
@@ -26,6 +27,7 @@ export const MONOMER_SYMBOLS_IDS = {
     hover: '#phosphate-selection',
     selected: '#phosphate-selection',
     body: '#phosphate',
+    variant: '#phosphate-variant',
   },
   [KetMonomerClass.RNA]: {
     hover: '#nucleotide-hover',

@@ -74,7 +74,7 @@ exports[`Test Rna Accordion component should render 1`] = `
         </div>
       </div>
       <div
-        class="css-2kwivx"
+        class="css-9jjrem"
         data-testid="rna-accordion-details-Presets"
       >
         <div
@@ -148,14 +148,6 @@ exports[`Test Rna Accordion component should render 1`] = `
         </svg>
       </div>
     </div>
-    <div
-      class="css-4wpvad"
-      data-testid="rna-accordion-details-Sugars"
-    >
-      <div
-        class="css-9bccu"
-      />
-    </div>
   </div>
   <div
     class="css-1svedvx"
@@ -219,14 +211,6 @@ exports[`Test Rna Accordion component should render 1`] = `
         </svg>
       </div>
     </div>
-    <div
-      class="css-4wpvad"
-      data-testid="rna-accordion-details-Bases"
-    >
-      <div
-        class="css-9bccu"
-      />
-    </div>
   </div>
   <div
     class="css-1svedvx"
@@ -288,14 +272,6 @@ exports[`Test Rna Accordion component should render 1`] = `
         </svg>
       </div>
     </div>
-    <div
-      class="css-4wpvad"
-      data-testid="rna-accordion-details-Phosphates"
-    >
-      <div
-        class="css-9bccu"
-      />
-    </div>
   </div>
   <div
     class="css-1svedvx"
@@ -342,14 +318,6 @@ exports[`Test Rna Accordion component should render 1`] = `
           />
         </svg>
       </div>
-    </div>
-    <div
-      class="css-4wpvad"
-      data-testid="rna-accordion-details-Nucleotides"
-    >
-      <div
-        class="css-9bccu"
-      />
     </div>
   </div>
 </div>

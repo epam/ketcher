@@ -1006,8 +1006,6 @@ test.describe('Open and Save file', () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
-  Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/5653
-    After fix we need update file.
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);

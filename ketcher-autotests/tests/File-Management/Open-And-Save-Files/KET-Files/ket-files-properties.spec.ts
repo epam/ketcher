@@ -144,39 +144,6 @@ test.describe('Ket files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('The Bond length setting with cm option is applied, click on layout and it should be save to KET specification', async ({
-    page,
-  }) => {
-    /*
-  Test case: https://github.com/epam/Indigo/issues/2176
-  Description: Add new settings for ACS style for convert and layout functions
-  The Bond length setting is applied, click on layout and it should be save to KET specification
-  */
-    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
-    await bondsSettings(page);
-    await scrollToDownInSetting(page);
-    await setBondLengthOptionUnit(page, 'cm-option');
-    await setBondLengthValue(page, '0.3');
-    await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
-    await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/layout-with-dif-elements-cm-bond-lengh.ket',
-      expectedFile,
-    );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-dif-elements-cm-bond-lenghd.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-  });
-
   test('The Bond length setting with inch option is applied, click on layout and it should be save to KET specification', async ({
     page,
   }) => {

@@ -151,6 +151,10 @@ export interface StructServiceOptions {
 }
 
 export type OutputFormatType = 'png' | 'svg';
+export interface GenerateImageOptions extends StructServiceOptions {
+  outputFormat: OutputFormatType;
+  backgroundColor?: string;
+}
 
 export interface StructService {
   info: () => Promise<InfoResult>;
@@ -194,7 +198,7 @@ export interface StructService {
   getInChIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
-    options?: StructServiceOptions,
+    options?: GenerateImageOptions,
   ) => Promise<string>;
   toggleExplicitHydrogens: (
     data: ExplicitHydrogensData,

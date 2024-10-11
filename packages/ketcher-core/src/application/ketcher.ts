@@ -16,7 +16,7 @@
 
 import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
-import { StructService, StructServiceOptions } from 'domain/services';
+import { GenerateImageOptions, StructService } from 'domain/services';
 
 import { CoreEditor, Editor } from './editor';
 import { Indigo } from 'application/indigo';
@@ -463,7 +463,7 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: StructServiceOptions,
+    options: GenerateImageOptions,
   ): Promise<Blob> {
     let meta = '';
 

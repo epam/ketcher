@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { KetcherLogger, StructServiceOptions } from 'ketcher-core';
+import { KetcherLogger, GenerateImageOptions } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -27,7 +27,7 @@ type Props = {
   data: any;
   type?: string;
   mode?: string;
-  options?: StructServiceOptions;
+  options?: GenerateImageOptions;
   onSave?: () => void;
   onError?: (err: any) => void;
   className?: string;

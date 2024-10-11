@@ -55,7 +55,7 @@ const customButtons = new Array(10)
   .fill({
     id: 'custom',
     title: 'CustomButton',
-    imageLink: '/favicon.ico',
+    imageLink: '/KetcherDemoSA/custom-buttons-example/favicon.ico',
   })
   .map((item, index) => ({ ...item, id: `${item.id}_${index}` }));
 

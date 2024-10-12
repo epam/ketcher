@@ -5,6 +5,10 @@ import {
   openFileAndAddToCanvas,
   selectFormatForSaving,
   clickOnSaveFileAndOpenDropdown,
+  openSettings,
+  pressButton,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 
 test.describe('Saving in .png files', () => {
@@ -146,6 +150,27 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
+    await clickOnSaveFileAndOpenDropdown(page);
+    await selectFormatForSaving(page, 'PNG Image');
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to PNG', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  Need to update screenshots after implementing https://github.com/epam/ketcher/issues/5650 and 
+  https://github.com/epam/Indigo/issues/2458
+  https://github.com/epam/Indigo/issues/2457
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
     await clickOnSaveFileAndOpenDropdown(page);
     await selectFormatForSaving(page, 'PNG Image');
     await takeEditorScreenshot(page);

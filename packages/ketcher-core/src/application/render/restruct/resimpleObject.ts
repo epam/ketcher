@@ -191,15 +191,11 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
-  getHoverPathStyle(
-    path: any,
-    render: Render,
-    isOuterShapeOfHoverPath: boolean,
-  ) {
-    if (isOuterShapeOfHoverPath) {
-      return path.attr(render.options.hoverStyle);
+  getFigureHoverPath(path: any, render: Render, isBorder = true) {
+    if (isBorder) {
+      return path.attr({ ...render.options.hoverStyle, fill: 'none' });
     } else {
-      return path.attr({ ...render.options.hoverStyle, fill: '#fff' });
+      return path.attr(render.options.innerHoverStyle);
     }
   }
 
@@ -214,33 +210,47 @@ class ReSimpleObject extends ReObject {
     const paths: Array<StyledPath> = [];
 
     // TODO: It seems that inheritance will be the better approach here
+    const lineOffset = scaleFactor / 8;
     switch (this.item.mode) {
       case SimpleObjectMode.ellipse: {
         const rad = Vec2.diff(point[1], point[0]);
         const rx = rad.x / 2;
         const ry = rad.y / 2;
-        const outerEllipse = render.paper.ellipse(
-          tfx(point[0].x + rx),
-          tfx(point[0].y + ry),
-          tfx(Math.abs(rx) + scaleFactor / 8),
-          tfx(Math.abs(ry) + scaleFactor / 8),
+        const centerX = tfx(point[0].x + rx);
+        const centerY = tfx(point[0].y + ry);
+        const outerBorderEllipse = render.paper.ellipse(
+          centerX,
+          centerY,
+          tfx(Math.abs(rx) + lineOffset),
+          tfx(Math.abs(ry) + lineOffset),
         );
         paths.push({
-          path: this.getHoverPathStyle(outerEllipse, render, true),
+          path: this.getFigureHoverPath(outerBorderEllipse, render),
+          stylesApplied: true,
+        });
+
+        const fillEllipse = render.paper.ellipse(
+          centerX,
+          centerY,
+          tfx(Math.abs(rx)),
+          tfx(Math.abs(ry)),
+        );
+        paths.push({
+          path: this.getFigureHoverPath(fillEllipse, render, false),
           stylesApplied: true,
         });
         if (
           Math.abs(rx) - scaleFactor / 8 > 0 &&
           Math.abs(ry) - scaleFactor / 8 > 0
         ) {
-          const innerEllipse = render.paper.ellipse(
-            tfx(point[0].x + rx),
-            tfx(point[0].y + ry),
-            tfx(Math.abs(rx) - scaleFactor / 8),
-            tfx(Math.abs(ry) - scaleFactor / 8),
+          const innerBorderEllipse = render.paper.ellipse(
+            centerX,
+            centerY,
+            tfx(Math.abs(rx) - lineOffset),
+            tfx(Math.abs(ry) - lineOffset),
           );
           paths.push({
-            path: this.getHoverPathStyle(innerEllipse, render, false),
+            path: this.getFigureHoverPath(innerBorderEllipse, render),
             stylesApplied: true,
           });
         }
@@ -248,50 +258,40 @@ class ReSimpleObject extends ReObject {
       }
 
       case SimpleObjectMode.rectangle: {
-        const outerRect = render.paper.rect(
-          tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
-          tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
-          tfx(
-            Math.max(point[0].x, point[1].x) -
-              Math.min(point[0].x, point[1].x) +
-              scaleFactor / 4,
-          ),
-          tfx(
-            Math.max(point[0].y, point[1].y) -
-              Math.min(point[0].y, point[1].y) +
-              scaleFactor / 4,
-          ),
+        const leftX = Math.min(point[0].x, point[1].x);
+        const topY = Math.min(point[0].y, point[1].y);
+        const rightX = Math.max(point[0].x, point[1].x) - leftX;
+        const bottomY = Math.max(point[0].y, point[1].y) - topY;
+
+        const outerBorderRect = render.paper.rect(
+          tfx(leftX - lineOffset),
+          tfx(topY - lineOffset),
+          tfx(rightX + 2 * lineOffset),
+          tfx(bottomY + 2 * lineOffset),
         );
         paths.push({
-          path: this.getHoverPathStyle(outerRect, render, true),
+          path: this.getFigureHoverPath(outerBorderRect, render),
           stylesApplied: true,
         });
-        if (
-          Math.max(point[0].x, point[1].x) -
-            Math.min(point[0].x, point[1].x) -
-            scaleFactor / 4 >
-            0 &&
-          Math.max(point[0].y, point[1].y) -
-            Math.min(point[0].y, point[1].y) -
-            scaleFactor / 4 >
-            0
-        ) {
+        const fillRect = render.paper.rect(
+          tfx(leftX),
+          tfx(topY),
+          tfx(rightX),
+          tfx(bottomY),
+        );
+        paths.push({
+          path: this.getFigureHoverPath(fillRect, render, false),
+          stylesApplied: true,
+        });
+        if (rightX - 2 * lineOffset > 0 && bottomY - 2 * lineOffset > 0) {
           const innerRect = render.paper.rect(
-            tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
-            tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
-            tfx(
-              Math.max(point[0].x, point[1].x) -
-                Math.min(point[0].x, point[1].x) -
-                scaleFactor / 4,
-            ),
-            tfx(
-              Math.max(point[0].y, point[1].y) -
-                Math.min(point[0].y, point[1].y) -
-                scaleFactor / 4,
-            ),
+            tfx(leftX + lineOffset),
+            tfx(topY + lineOffset),
+            tfx(rightX - 2 * lineOffset),
+            tfx(bottomY - 2 * lineOffset),
           );
           paths.push({
-            path: this.getHoverPathStyle(innerRect, render, false),
+            path: this.getFigureHoverPath(innerRect, render),
             stylesApplied: true,
           });
         }
@@ -342,7 +342,7 @@ class ReSimpleObject extends ReObject {
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         paths.push({
-          path: this.getHoverPathStyle(render.paper.path(poly), render, true),
+          path: render.paper.path(poly).attr(render.options.hoverStyle),
           stylesApplied: true,
         });
         break;
@@ -390,7 +390,7 @@ class ReSimpleObject extends ReObject {
       );
     });
     restruct.addReObjectPath(
-      LayerMap.selectionPlate,
+      LayerMap.selectionPoints,
       this.visel,
       this.selectionPointsSet,
     );

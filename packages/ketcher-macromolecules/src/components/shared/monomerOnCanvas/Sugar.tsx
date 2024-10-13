@@ -36,5 +36,19 @@ export const SugarAvatar = () => (
         strokeWidth="2.5"
       />
     </symbol>
+    <symbol id="sugar-variant" viewBox="0 0 72 72" width="70" height="70">
+      <rect
+        className="monomer-body"
+        width="28.5"
+        height="28.5"
+        data-actual-width="28.5"
+        data-actual-height="28.5"
+        x="0.5"
+        y="0.5"
+        rx="5"
+        stroke="#585858"
+        strokeWidth="0.5"
+      />
+    </symbol>
   </>
 );

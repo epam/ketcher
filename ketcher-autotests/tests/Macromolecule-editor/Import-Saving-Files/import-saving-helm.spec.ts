@@ -692,10 +692,11 @@ const incorrectHELMStrings: IHELMString[] = [
     helmDescription: '43. Negative probability (CHEM)',
     HELMString: 'CHEM1{([A6OH]:-10,[Az]:20)}$$$$V2.0',
   },
-  {
-    helmDescription: '44. Probability is greater than 100 (CHEM)',
-    HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
-  },
+  // {
+  //   helmDescription: '44. Probability is greater than 100 (CHEM)',
+  //   HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
+  // },
+  // It is not a bug because of Aleksandr Savelev suggestion
   {
     helmDescription: '45. Missing probability token (RNA)',
     HELMString: 'RNA1{R(A:,C:90)P}$$$$V2.0',

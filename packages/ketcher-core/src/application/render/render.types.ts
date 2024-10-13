@@ -1,7 +1,7 @@
 import { RxnArrowMode, Vec2 } from 'domain/entities';
 import { StereLabelStyleType } from 'application/render/restruct';
 
-type RenderOptionStyles = Record<string, string | number>;
+export type RenderOptionStyles = Record<string, string | number>;
 
 export enum MeasurementUnits {
   Px = 'px',
@@ -77,6 +77,7 @@ export type RenderOptions = {
   bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;
   hoverStyle: RenderOptionStyles;
+  innerHoverStyle: RenderOptionStyles;
   movingStyle: RenderOptionStyles;
   sgroupBracketStyle: RenderOptionStyles;
   lassoStyle: RenderOptionStyles;

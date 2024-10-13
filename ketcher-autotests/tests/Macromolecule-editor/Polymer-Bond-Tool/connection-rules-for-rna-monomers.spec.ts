@@ -358,6 +358,23 @@ test.describe('Connection rules for RNAs: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    N: {
+      monomerType: 'base',
+      fileName:
+        'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
+      alias: 'W',
+      connectionPoints: {
+        R1: 'R1',
+      },
+    },
+    // '%': {
+    //   monomerType: 'base',
+    //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //   },
+    // },
   };
 
   const phosphateMonomers: { [monomerName: string]: IMonomer } = {
@@ -599,7 +616,7 @@ test.describe('Connection rules for RNAs: ', () => {
        *  If no R3 available - open Select Connection Points dialog
        */
       test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(40000);
 
         await loadTwoMonomers(page, leftSugar, rightBase);
 

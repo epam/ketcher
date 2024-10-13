@@ -8,6 +8,13 @@ import {
   saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  bondsSettings,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
+  pressButton,
+  selectTopPanelButton,
+  TopPanelButton,
+  openSettings,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -199,39 +206,34 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 
   await takeEditorScreenshot(page);
 });
 
-test.fail(
-  'Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save',
-  async ({ page }) => {
-    /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-     * Test case: EPMLSOPKET-1859(2)
-     * Description: v3000 mol file with abbreviation is opened and saved correctly
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 - save', async ({
+  page,
+}) => {
+  /*
+   * Test case: EPMLSOPKET-1859(2)
+   * Description: v3000 mol file with abbreviation is opened and saved correctly
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/sec-butyl-abr-V3000.mol',
+  await openFileAndAddToCanvas('Molfiles-V3000/sec-butyl-abr-V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile(
+    'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
+    expectedFile,
+  );
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
       page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
+      expectedFileName:
+        'tests/test-data/Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
+      fileFormat: 'v3000',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
+  expect(molFile).toEqual(molFileExpected);
+});
 
 test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
   page,
@@ -332,39 +334,34 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 1/2 -
   await takeEditorScreenshot(page);
 });
 
-test.fail(
-  'Open and Save file - Open/Save V3000 mol file contains attached data 2/2 - save',
-  async ({ page }) => {
-    /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-     * Test case: EPMLSOPKET-1882(2)
-     * Description: Structure with attached data is saved to mol file correctly
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 - save', async ({
+  page,
+}) => {
+  /*
+   * Test case: EPMLSOPKET-1882(2)
+   * Description: Structure with attached data is saved to mol file correctly
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/attached-data-V3000.mol',
+  await openFileAndAddToCanvas('Molfiles-V3000/attached-data-V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile(
+    'Molfiles-V3000/attached-data-V3000-expected.mol',
+    expectedFile,
+  );
+  const METADATA_STRING_INDEX = [1];
+
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
       page,
-    );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/attached-data-V3000-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
+      expectedFileName:
+        'tests/test-data/Molfiles-V3000/attached-data-V3000-expected.mol',
+      fileFormat: 'v3000',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/attached-data-V3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
+  expect(molFile).toEqual(molFileExpected);
+});
 
 test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', async ({
   page,
@@ -380,36 +377,34 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', as
   await takeEditorScreenshot(page);
 });
 
-test.fail(
-  'Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save',
-  async ({ page }) => {
-    /**
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-     * Test case: EPMLSOPKET-1879(2)
-     * Description: Structure with heteroatoms is saved correctly to mol file
-     */
-    await waitForPageInit(page);
+test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', async ({
+  page,
+}) => {
+  /**
+   * Test case: EPMLSOPKET-1879(2)
+   * Description: Structure with heteroatoms is saved correctly to mol file
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/heteroatoms-V3000-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
+  await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile(
+    'Molfiles-V3000/heteroatoms-V3000-expected.mol',
+    expectedFile,
+  );
+  const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/heteroatoms-V3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Molfiles-V3000/heteroatoms-V3000-expected.mol',
+      fileFormat: 'v3000',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
 
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
+  expect(molFile).toEqual(molFileExpected);
+});
 
 test('Open and Save file - Open/Save file with Attached data 1/2 - open', async ({
   page,
@@ -504,61 +499,56 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
   await takeEditorScreenshot(page);
 });
 
-test.fail(
-  'Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 2/2 - save',
-  async ({ page }) => {
-    /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-     * Test case: EPMLSOPKET-1884(2)
-     * Description: Structure with abs stereochemistry is saved correctly to mol file
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry 2/2 - save', async ({
+  page,
+}) => {
+  /*
+   * Test case: EPMLSOPKET-1884(2)
+   * Description: Structure with abs stereochemistry is saved correctly to mol file
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/V3000-abs-expected.mol', expectedFile);
-    const METADATA_STRING_INDEX = [1];
+  await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('Molfiles-V3000/V3000-abs-expected.mol', expectedFile);
+  const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/V3000-abs-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: 'tests/test-data/Molfiles-V3000/V3000-abs-expected.mol',
+      fileFormat: 'v3000',
+      metaDataIndexes: METADATA_STRING_INDEX,
+    });
 
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
+  expect(molFile).toEqual(molFileExpected);
+});
 
-test.fail(
-  'Open and Save file - Save V2000 molfile as V3000 molfile',
-  async ({ page }) => {
-    /*
-     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-     * Test case: EPMLSOPKET-1985
-     * Description: Structure opened from V2000 molfile can be saved to V3000 molfile
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
+  page,
+}) => {
+  /*
+   * Test case: EPMLSOPKET-1985
+   * Description: Structure opened from V2000 molfile can be saved to V3000 molfile
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/spiro2.mol', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/spiro-expected.mol', expectedFile);
+  await openFileAndAddToCanvas('Molfiles-V2000/spiro2.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('Molfiles-V3000/spiro-expected.mol', expectedFile);
 
-    const METADATA_STRINGS_INDEXES = [1, 3];
+  const METADATA_STRINGS_INDEXES = [1, 3];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/Molfiles-V3000/spiro-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: 'tests/test-data/Molfiles-V3000/spiro-expected.mol',
+      metaDataIndexes: METADATA_STRINGS_INDEXES,
+      fileFormat: 'v3000',
+    });
 
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
+  expect(molFile).toEqual(molFileExpected);
+});
 
 test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
   page,
@@ -730,8 +720,6 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
-        // IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-        if (file.format === 'v3000') test.fail();
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
         const expectedFile = await getMolfile(
@@ -890,5 +878,164 @@ test.describe('Open and Save file', () => {
     const isCorrectPadding = expectedFile.includes('N   ');
 
     expect(isCorrectPadding).toEqual(true);
+  });
+
+  test('The Bond length setting with px option is applied and it should be save to MOL v2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5435
+  Description: Change bond length for ACS styles settings
+  The Bond length setting is applied and it should be save to mol 2000
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'px-option');
+    await setBondLengthValue(page, '79.8');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Bond length setting with cm option is applied and it should be save to MOL v3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5435
+  Description: Change bond length for ACS styles settings
+  The Bond length setting is applied and it should be save to mol 3000
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'cm-option');
+    await setBondLengthValue(page, '1.8');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to MOL v2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to MOL v3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

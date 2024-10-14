@@ -326,14 +326,7 @@ export class CoreEditor {
     initialFirstMonomerAttachmentPoint?: AttachmentPointName;
     initialSecondMonomerAttachmentPoint?: AttachmentPointName;
   }) {
-    if (
-      payload.isReconnection &&
-      payload.polymerBond &&
-      (payload.firstSelectedAttachmentPoint !==
-        payload.initialFirstMonomerAttachmentPoint ||
-        payload.secondSelectedAttachmentPoint !==
-          payload.initialSecondMonomerAttachmentPoint)
-    ) {
+    if (payload.isReconnection && payload.polymerBond) {
       const command = new Command();
       const history = new EditorHistory(this);
 

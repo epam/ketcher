@@ -147,7 +147,7 @@ test.describe('Sequence edit mode', () => {
   test('Supported nucleotides for Peptides', async ({ page }) => {
     /*
     Test case: #3650
-    Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, O, X, U, Z
+    Description: After entering, only letters allowed for Peptides are present on the canvas. Except unsupported: B, J, X, Z
     */
     await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
@@ -602,14 +602,14 @@ test.describe('Sequence edit mode', () => {
     }
   });
 
-  test('Switch to Peptide mode, type any non-Peptide symbol  (i.e. any but A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y) Verify that nothing happens', async ({
+  test('Switch to Peptide mode, type any non-Peptide symbol  (i.e. any but A, C, D, E, F, G, H, I, K, L, M, N, O, P, Q, R, S, T, V, U, W, Y) Verify that nothing happens', async ({
     page,
   }) => {
     /*
     Test case: #5136
     Description: Nothing happens. Monomer not added to canvas.
     */
-    const sequenceSymbols = ['b', 'j', 'u', 'z'];
+    const sequenceSymbols = ['b', 'j', 'z'];
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
       await enterSequence(page, symbol);

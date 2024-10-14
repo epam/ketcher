@@ -67,8 +67,8 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
 async function hoverMouseOverMonomer(page: Page, monomerLocatorIndex: number) {
   await page.locator('use').nth(monomerLocatorIndex).hover();
 }
-async function hoverMouseOverSequenceModeMonomer(page: Page, monomerLocatorIndex: number) {
-  await page.locator('text').nth(monomerLocatorIndex).hover();
+async function hoverMouseOverSequenceModeMonomer(page: Page) {
+  await page.locator('text').first().hover();
 }
 
 interface IHELMString {
@@ -360,10 +360,7 @@ test.describe('Preview tooltips checks: ', () => {
 
       await selectSequenceLayoutModeTool(page);
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
-      await hoverMouseOverSequenceModeMonomer(
-        page,
-        ambiguousMonomer.monomerLocatorIndex,
-      );
+      await hoverMouseOverSequenceModeMonomer(page);
       await delay(1);
 
       await takeEditorScreenshot(page);

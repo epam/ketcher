@@ -84,7 +84,7 @@ class ReStruct {
   public multitailArrows = new Map<number, ReMultitailArrow>();
 
   private initialized = false;
-  private layers: Array<any> = [];
+  private layers: Record<LayerMap, any> = {} as Record<LayerMap, unknown>;
   public connectedComponents: Pool = new Pool();
   private ccFragmentType: Pool = new Pool();
   private structChanged = false;
@@ -789,7 +789,6 @@ class ReStruct {
           }
 
           this.showItemSelection(item, selected);
-          item.selectionPlate?.toBack();
         });
       }
     });

@@ -162,46 +162,63 @@ export class ReImage extends ReObject {
       this.selectionPointsSet.push(element);
     });
     reStruct.addReObjectPath(
-      LayerMap.selectionPlate,
+      LayerMap.selectionPoints,
       this.visel,
       this.selectionPointsSet,
     );
   }
 
-  show(restruct: ReStruct, renderOptions: RenderOptions) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  show(restruct: ReStruct, renderOptions: RenderOptions, nextPath?: any) {
     const scaledTopLeftWithOffset = this.getScaledPointWithOffset(
       this.image.getTopLeftPosition(),
       renderOptions,
     );
     const dimensions = this.getDimensions(renderOptions);
 
-    restruct.addReObjectPath(
-      LayerMap.images,
-      this.visel,
-      restruct.render.paper.image(
-        this.image.bitmap,
-        scaledTopLeftWithOffset.x,
-        scaledTopLeftWithOffset.y,
-        dimensions.x,
-        dimensions.y,
-      ),
+    const image = restruct.render.paper.image(
+      this.image.bitmap,
+      scaledTopLeftWithOffset.x,
+      scaledTopLeftWithOffset.y,
+      dimensions.x,
+      dimensions.y,
     );
+    restruct.addReObjectPath(LayerMap.images, this.visel, image);
+
+    if (nextPath) {
+      image.insertBefore(nextPath);
+    }
   }
 
   drawHover(render: Render) {
     const offset =
       this.getScale(render.options) *
       (1 + REFERENCE_POINT_LINE_WIDTH_MULTIPLIER);
+    const STROKE_WIDTH = 0.6;
+    const FILL_WIDTH = 2 * offset - STROKE_WIDTH;
     const { topLeftPosition, bottomRightPosition } =
       this.getSelectionReferencePositions(render.options);
     const outerBorderOffset = new Vec2(offset, offset);
     const topLeftCorner = topLeftPosition.sub(outerBorderOffset);
-    const dimensions = bottomRightPosition
-      .sub(topLeftPosition)
-      .add(outerBorderOffset.scaled(2));
-    const paths = render.paper
-      .rect(topLeftCorner.x, topLeftCorner.y, dimensions.x, dimensions.y)
-      .attr({ ...render.options.hoverStyle, fill: '#fff' });
+    const dimensions = bottomRightPosition.sub(topLeftPosition);
+    const dimensionsWithBorders = dimensions.add(outerBorderOffset.scaled(2));
+
+    const paths = [
+      render.paper
+        .rect(
+          topLeftCorner.x,
+          topLeftCorner.y,
+          dimensionsWithBorders.x,
+          dimensionsWithBorders.y,
+        )
+        .attr({ ...render.options.hoverStyle, fill: 'none' }),
+      render.paper
+        .rect(topLeftPosition.x, topLeftPosition.y, dimensions.x, dimensions.y)
+        .attr({
+          ...render.options.innerHoverStyle,
+          'stroke-width': FILL_WIDTH,
+        }),
+    ];
 
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, paths);
 

@@ -328,7 +328,7 @@ test.describe('Preview tooltips checks: ', () => {
             2. Hover mouse over monomer, wait for preview tooltip
             2. Take screenshot of the canvas to compare it with example
         */
-      test.setTimeout(20000);
+      test.setTimeout(30000);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);

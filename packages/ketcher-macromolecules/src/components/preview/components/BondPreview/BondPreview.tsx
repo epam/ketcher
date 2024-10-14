@@ -101,11 +101,8 @@ const BondPreview = ({ className }: Props) => {
 };
 
 const StyledPreview = styled(BondPreview)`
-  z-index: 5;
-  position: absolute;
   width: ${preview.widthForBond}px;
   height: ${preview.heightForBond}px;
-  transform: translate(-50%, 0);
 `;
 
 export default StyledPreview;

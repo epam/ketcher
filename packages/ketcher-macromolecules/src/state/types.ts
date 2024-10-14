@@ -22,6 +22,7 @@ export interface PreviewStyle {
 
 interface BasePreviewState {
   readonly type: PreviewType;
+  readonly target?: Element;
   readonly style?: PreviewStyle;
 }
 

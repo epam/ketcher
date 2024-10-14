@@ -151,32 +151,30 @@ test.describe('Save files', () => {
     expect(smiFile).toEqual(smiFileExpected);
   });
 
-  test.fail(
-    'Save as a .rxn file if reaction consists of two or more reaction arrows',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2483
+  test('Save as a .rxn file if reaction consists of two or more reaction arrows', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-4729
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
-      await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-      const expectedFile = await getRxn(page);
-      await saveToFile(
-        'Rxn-V2000/two-arrows-and-plus-expected.rxn',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
+    const expectedFile = await getRxn(page);
+    await saveToFile(
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
+      expectedFile,
+    );
 
-      const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          metaDataIndexes: METADATA_STRING_INDEX,
-          expectedFileName:
-            'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
-        });
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test.fail(
     'Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999',

@@ -1851,43 +1851,31 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeTopToolbarScreenshot(page);
   });
 
-  test(
-    'Check saving to SVG Document format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Check saving to SVG Document format', async () => {
+    /*
     Test case: #4530
     Description: Structure saves in SVG Document format.
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
-    After the fix, you need to update test.
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
-        page,
-      );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    'Check saving to PNG Image format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Check saving to PNG Image format', async () => {
+    /*
     Test case: #4530
     Description: Structure saves in PNG Image format.
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/1991
-    After the fix, you need to update test.
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
-        page,
-      );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+    await takeEditorScreenshot(page);
+  });
 
   test.fail(
     'Check that Aromatize/Dearomatize works for molecules with AP',

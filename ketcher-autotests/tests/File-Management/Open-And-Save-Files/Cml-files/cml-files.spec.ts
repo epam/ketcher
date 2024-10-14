@@ -100,34 +100,31 @@ test.describe('CML files', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test.fail(
-    'Open and Save file - CML - CML for R-group and other features',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1948
-       * Description: Saved cml file with structure is compering with paste R-group from a mol file
-       * It needs to be investigated why the test is failing.
-       * We have bug https://github.com/epam/Indigo/issues/2497
-       */
+  test('Open and Save file - CML - CML for R-group and other features', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1948
+     * Description: Saved cml file with structure is compering with paste R-group from a mol file
+     */
 
-      await openFileAddToCanvasTakeScreenshot(
+    await openFileAddToCanvasTakeScreenshot(
+      page,
+      'Molfiles-V2000/cml-1948-R-group.mol',
+    );
+    // check that structure opened from file is displayed correctly
+
+    const expectedFile = await getCml(page);
+    await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
+    const { file: cmlFile, fileExpected: cmlFileExpected } =
+      await receiveFileComparisonData({
         page,
-        'Molfiles-V2000/cml-1948-R-group.mol',
-      );
-      // check that structure opened from file is displayed correctly
+        expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
+      });
+    // comparing cml file with golden cml file
 
-      const expectedFile = await getCml(page);
-      await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
-      const { file: cmlFile, fileExpected: cmlFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
-        });
-      // comparing cml file with golden cml file
-
-      expect(cmlFile).toEqual(cmlFileExpected);
-    },
-  );
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back', async ({
     page,

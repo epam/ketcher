@@ -885,7 +885,7 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for Set ACS Settings settings
+  Description: Change bond length for Set ACS Settings
   The Bond length setting is applied and it should be save to mol 2000
   */
 
@@ -925,7 +925,7 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for Set ACS Settings settings
+  Description: Change bond length for Set ACS Settings
   The Bond length setting is applied and it should be save to mol 3000
   */
 

@@ -142,6 +142,7 @@ test.describe('Saving in .svg files', () => {
       filename:
         'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       description: '11. RNA ambigous bases connected to DNA sugar (mixed)',
+      pageReloadNeeded: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
@@ -151,7 +152,7 @@ test.describe('Saving in .svg files', () => {
     },
   ];
 
-  for (const { filename, description } of testData) {
+  for (const { filename, description, pageReloadNeeded } of testData) {
     test(`Export to SVG: Verify it is possible to export Flex mode canvas with ${description} to SVG`, async () => {
       /*
       Description: Verify import of Sequence files works correct
@@ -160,6 +161,8 @@ test.describe('Saving in .svg files', () => {
             3. Open Save dialog and choose SVG format
             2. Take screenshot to make sure export works correct
       */
+      if (pageReloadNeeded) await pageReload(page);
+
       await openFileAndAddToCanvasMacro(filename, page);
 
       await takeEditorScreenshot(page);

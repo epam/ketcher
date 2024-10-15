@@ -8,6 +8,7 @@ import {
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
+  FileFormatOption,
   LeftPanelButton,
   moveOnAtom,
   openFile,
@@ -27,6 +28,7 @@ import {
   selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectRing,
+  selectSaveFileFormat,
   selectTopPanelButton,
   selectWithLasso,
   setZoomInputValue,
@@ -302,9 +304,7 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
      */
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('Ket Format-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.KET);
     await takeEditorScreenshot(page);
   });
 
@@ -1778,9 +1778,7 @@ test.describe('Image files', () => {
      * Description: Added from KET SVG images are displayed on preview and saved to SVG files with correct positions and layers
      */
     await openFileAndAddToCanvas('KET/svg-images-black-and-colored.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1798,9 +1796,7 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1811,9 +1807,7 @@ test.describe('Image files', () => {
      * Description: Added from KET SVG images with elements are displayed on preview and saved together to SVG file with the correct positions and layers
      */
     await openFileAndAddToCanvas('KET/images-svg-with-elements.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1839,9 +1833,7 @@ test.describe('Image files', () => {
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1873,9 +1865,7 @@ test.describe('Image files', () => {
 
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1902,9 +1892,7 @@ test.describe('Image files', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1928,9 +1916,7 @@ test.describe('Image files', () => {
     await copyAndPaste(page);
     await page.mouse.click(500, 500);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1955,9 +1941,7 @@ test.describe('Image files', () => {
     await page.mouse.click(500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SVG Document-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -1983,9 +1967,7 @@ test.describe('Image files', () => {
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('PNG Image-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2017,9 +1999,7 @@ test.describe('Image files', () => {
 
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('PNG Image-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2046,9 +2026,7 @@ test.describe('Image files', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('PNG Image-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2072,9 +2050,7 @@ test.describe('Image files', () => {
     await copyAndPaste(page);
     await page.mouse.click(500, 500);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('PNG Image-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2099,9 +2075,7 @@ test.describe('Image files', () => {
     await page.mouse.click(500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('PNG Image-option').click();
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });

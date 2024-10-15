@@ -244,7 +244,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Check, page),
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+    });
     await closeErrorAndInfoModals(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -303,7 +305,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await enableViewOnlyModeBySetOptions(page);
         await page.keyboard.press('Control+a');
         await page.keyboard.press(hotkey.keys);
-        await takePageScreenshot(page);
+        await takePageScreenshot(page, {
+          masks: [
+            page.locator('[class*="Check-module_checkInfo"] > span'),
+            page.getByTestId('mol-preview-area-text'),
+          ],
+        });
         await closeErrorAndInfoModals(page);
       });
     }

@@ -10,6 +10,7 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
+  selectSequenceLayoutModeTool,
   selectClearCanvasTool,
   delay,
 } from '@utils';
@@ -65,6 +66,9 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
 }
 async function hoverMouseOverMonomer(page: Page, monomerLocatorIndex: number) {
   await page.locator('use').nth(monomerLocatorIndex).hover();
+}
+async function hoverMouseOverSequenceModeMonomer(page: Page) {
+  await page.locator('text').first().hover();
 }
 
 interface IHELMString {
@@ -169,12 +173,14 @@ const ambiguousMonomers: IHELMString[] = [
       '13. RNA Base N (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{R(U,G,C,A)P}$$$$V2.0',
     monomerLocatorIndex: 1,
+    pageReloadNeeded: true,
   },
   {
     testDescription:
       '14. RNA Base B (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{R(U,G,C)P}$$$$V2.0',
     monomerLocatorIndex: 1,
+    pageReloadNeeded: true,
   },
   {
     testDescription:
@@ -327,6 +333,36 @@ test.describe('Preview tooltips checks: ', () => {
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
       await hoverMouseOverMonomer(page, ambiguousMonomer.monomerLocatorIndex);
+      await delay(1);
+
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        ambiguousMonomer.shouldFail === true,
+        `That test fails because of ${ambiguousMonomer.issueNumber} issue.`,
+      );
+    });
+  }
+});
+
+test.describe('Preview tooltips checks: ', () => {
+  for (const ambiguousMonomer of ambiguousMonomers) {
+    test(`${ambiguousMonomer.testDescription} in sequence view`, async () => {
+      /* 
+        Test case1: https://github.com/epam/ketcher/issues/5604
+        Description: Verify that the ambiguous monomer preview displays a list of full names of monomers making up the ambiguous
+        Case:
+            1. Load correct HELM via paste from clipboard way
+            2. Hover mouse over monomer, wait for preview tooltip
+            2. Take screenshot of the canvas to compare it with example
+        */
+      test.setTimeout(20000);
+      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
+
+      await selectSequenceLayoutModeTool(page);
+      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await hoverMouseOverSequenceModeMonomer(page);
       await delay(1);
 
       await takeEditorScreenshot(page);

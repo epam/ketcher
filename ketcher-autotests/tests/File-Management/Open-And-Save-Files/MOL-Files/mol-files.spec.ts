@@ -885,7 +885,7 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
+  Description: Change bond length for Set ACS Settings settings
   The Bond length setting is applied and it should be save to mol 2000
   */
 
@@ -925,7 +925,7 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5435
-  Description: Change bond length for ACS styles settings
+  Description: Change bond length for Set ACS Settings settings
   The Bond length setting is applied and it should be save to mol 3000
   */
 
@@ -966,12 +966,12 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
-  Description: add new option ACS style and check saving to different format
+  Description: add new option Set ACS Settings and check saving to different format
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
@@ -1005,12 +1005,12 @@ test.describe('Open and Save file', () => {
   }) => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
-  Description: add new option ACS style and check saving to different format
+  Description: add new option Set ACS Settings and check saving to different format
   */
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);

@@ -77,6 +77,7 @@ export type RenderOptions = {
   bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;
   hoverStyle: RenderOptionStyles;
+  innerHoverStyle: RenderOptionStyles;
   movingStyle: RenderOptionStyles;
   sgroupBracketStyle: RenderOptionStyles;
   lassoStyle: RenderOptionStyles;

@@ -63,6 +63,8 @@ import {
   Bases,
   Phosphates,
   getControlModifier,
+  readFileContents,
+  openPasteFromClipboard,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -2182,6 +2184,40 @@ test.describe('Macro-Micro-Switcher', () => {
      */
 
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro
+     */
+
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro
+     */
+
+    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

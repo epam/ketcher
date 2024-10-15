@@ -8,6 +8,13 @@ import {
   saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  bondsSettings,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
+  pressButton,
+  selectTopPanelButton,
+  TopPanelButton,
+  openSettings,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -871,5 +878,164 @@ test.describe('Open and Save file', () => {
     const isCorrectPadding = expectedFile.includes('N   ');
 
     expect(isCorrectPadding).toEqual(true);
+  });
+
+  test('The Bond length setting with px option is applied and it should be save to MOL v2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5435
+  Description: Change bond length for ACS styles settings
+  The Bond length setting is applied and it should be save to mol 2000
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'px-option');
+    await setBondLengthValue(page, '79.8');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/adenosine-triphosphate-px-bond-lengh.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Bond length setting with cm option is applied and it should be save to MOL v3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5435
+  Description: Change bond length for ACS styles settings
+  The Bond length setting is applied and it should be save to mol 3000
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'cm-option');
+    await setBondLengthValue(page, '1.8');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to MOL v2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/adenosine-triphosphate-acs-style.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to MOL v3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  */
+
+    await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

@@ -13,7 +13,9 @@ export async function pageReload(page: Page) {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  await turnOnMacromoleculesEditor(page);
+  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
+    await turnOnMacromoleculesEditor(page);
+  }
 }
 
 /**
@@ -49,4 +51,16 @@ export async function closeOpenStructure(page: Page) {
   });
   await closeWindowButton.click();
   await openStructure.waitFor({ state: 'hidden' });
+}
+
+export async function closeErrorAndInfoModals(page: Page) {
+  const closeButton = page.getByRole('button', { name: 'Close' });
+  if (await closeButton.isVisible()) {
+    await closeButton.click();
+  }
+
+  const closeIcon = page.locator('[data-testid="close-icon"]');
+  if (await closeIcon.isVisible()) {
+    await closeIcon.click();
+  }
 }

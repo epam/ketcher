@@ -19,6 +19,7 @@ import ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import Visel from './visel';
+import { IMAGE_KEY } from 'domain/constants';
 
 class ReObject {
   public visel: Visel;
@@ -33,7 +34,7 @@ class ReObject {
 
   changeSelectionStyle(options: any) {
     const { hoverStyle } = options;
-    if (this.visel.type === 'simpleObject') {
+    if (['simpleObject', IMAGE_KEY].includes(this.visel.type)) {
       this.hovering?.attr({
         'fill-opacity': this.selected ? 1 : 0,
       });

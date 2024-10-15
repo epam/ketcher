@@ -41,3 +41,21 @@ export class BondAddOperation implements Operation {
     }
   }
 }
+
+export class BondDeleteOperation implements Operation {
+  constructor(
+    public bond: Bond,
+    public deleteBondChangeModel: (bond?: Bond) => void,
+    public addBondChangeModel: (bond?: Bond) => Bond,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.deleteBondChangeModel(this.bond);
+    renderersManager.deleteBond(this.bond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.addBondChangeModel(this.bond);
+    renderersManager.addBond(this.bond);
+  }
+}

@@ -17,6 +17,7 @@
 export * from './atom';
 export * from './atomList';
 export * from './bond';
+export * from './fixedPrecision';
 export * from './fragment';
 export * from './functionalGroup';
 export * from './halfBond';

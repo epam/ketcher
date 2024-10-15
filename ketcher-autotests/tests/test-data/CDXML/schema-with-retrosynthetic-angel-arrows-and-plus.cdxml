@@ -201,8 +201,8 @@
             <b id="129" B="60" E="40"/>
         </fragment>
         <arrow id="64" BoundingBox="295.414886 263.738037 243.767273 263.738037" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="295.414886 263.738037 0.000000" Tail3D="243.767273 263.738037 0.000000"/>
-        <arrow id="67" BoundingBox="789.514099 257.285614 730.457520 257.285614" FillType="None" ArrowheadHead="Full" ArrowheadType="Angle" HeadSize="600" ArrowheadCenterSize="600" ArrowheadWidth="150" ArrowShaftSpacing="600" Head3D="789.014099 257.285614 0.000000" Tail3D="730.957520 257.285614 0.000000"/>
-        <graphic id="130" SupersededBy="67" GraphicType="Line" ArrowType="RetroSynthetic" HeadSize="600" BoundingBox="789.014099 257.285614 730.957520 257.285614"/>
+        <arrow id="67" BoundingBox="789.514099 257.285614 730.457520 257.285614" FillType="None" ArrowheadHead="Full" ArrowheadType="Angle" HeadSize="600" ArrowheadCenterSize="600" ArrowheadWidth="150" ArrowShaftSpacing="600" Head3D="789.514099 257.285614 0.000000" Tail3D="730.457520 257.285614 0.000000"/>
+        <graphic id="130" SupersededBy="67" GraphicType="Line" ArrowType="RetroSynthetic" HeadSize="600" BoundingBox="789.514099 257.285614 730.457520 257.285614"/>
         <graphic id="70" BoundingBox="924.974243 261.558594 924.974243 254.058609" GraphicType="Symbol" SymbolType="Plus"/>
         <scheme>
             <step ReactionStepReactants="4 6" ReactionStepProducts="34" ReactionStepArrows="64"/>

@@ -31,7 +31,7 @@ test.describe('ACS Style Settings', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await page.waitForTimeout(3000);
     await takeEditorScreenshot(page);
     await bondsSettings(page);
@@ -51,7 +51,7 @@ test.describe('ACS Style Settings', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);

@@ -38,8 +38,8 @@ export const Card = styled.div<{
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   margin: 0;
   user-select: none;
-  border-color: ${({ theme }) => theme.ketcher.color.button.primary.active};
-  border-width: ${({ selected }) => (selected ? '0px 2px 2px' : '0px')};
+  border-color: #167782;
+  border-width: ${({ selected }) => (selected ? '2px 2px 2px' : '0px')};
   border-style: solid;
   box-sizing: border-box;
   z-index: ${({ selected }) => (selected ? 2 : undefined)};
@@ -50,13 +50,6 @@ export const Card = styled.div<{
 
   &:hover {
     outline: 1px solid #b4b9d6;
-    &::after {
-      content: '';
-      background: ${({ code, theme, selected }) =>
-        selected
-          ? theme.ketcher.color.button.primary.active
-          : theme.ketcher.monomer.color[code as string]?.hover};
-    }
     > .star {
       visibility: visible;
       opacity: 1;
@@ -72,10 +65,8 @@ export const Card = styled.div<{
     height: 8px;
     border-bottom: ${({ isVariantMonomer }) =>
       isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
-    background: ${({ code, theme, selected }) =>
-      selected
-        ? theme.ketcher.color.button.primary.active
-        : theme.ketcher.monomer.color[code as string]?.regular};
+    background: ${({ code, theme }) =>
+      theme.ketcher.monomer.color[code as string]?.regular};
   }
   > span {
     position: absolute;

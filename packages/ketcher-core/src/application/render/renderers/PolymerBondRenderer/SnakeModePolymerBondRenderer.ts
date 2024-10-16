@@ -19,6 +19,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
+import { Cell } from 'domain/entities/canvas-matrix/Cell';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -115,8 +116,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    if (this.polymerBond.isSideChainConnection) {
-      this.appendSideConnectionBond(rootElement);
+    const editor = CoreEditor.provideEditorInstance();
+    const matrix = editor.drawingEntitiesManager.canvasMatrix;
+    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
+
+    if (this.polymerBond.isSideChainConnection && cells) {
+      this.appendSideConnectionBond(rootElement, cells);
     } else if (
       this.isSnakeBond &&
       this.polymerBond.finished &&
@@ -200,15 +205,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   // TODO: Specify the types.
-  private appendSideConnectionBond(rootElement) {
-    const editor = CoreEditor.provideEditorInstance();
-    const matrix = editor.drawingEntitiesManager.canvasMatrix;
-    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
-
-    if (!cells) {
-      return;
-    }
-
+  private appendSideConnectionBond(rootElement, cells: Cell[]) {
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find(
       (connection: Connection): boolean => {

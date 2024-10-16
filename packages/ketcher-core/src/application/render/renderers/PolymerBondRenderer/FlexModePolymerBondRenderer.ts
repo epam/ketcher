@@ -97,7 +97,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     return this.bodyElement;
   }
@@ -118,10 +118,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
       })
-      .attr('pointer-events', 'stroke') as never as D3SvgElementSelection<
-      SVGGElement,
-      void
-    >;
+      .attr(
+        'pointer-events',
+        this.polymerBond.finished ? 'stroke' : 'none',
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   public show(): void {
@@ -232,7 +232,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    this.bodyElement.attr('stroke', '#333333').attr('pointer-events', 'stroke');
+    this.bodyElement
+      .attr('stroke', '#333333')
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
       this.selectionElement.attr('stroke', '#57FF8F');

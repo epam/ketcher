@@ -41,7 +41,10 @@ function setupEditor(editor, props, oldProps = {}) {
     }
   }
 
-  if (oldProps.options && options !== oldProps.options) editor.options(options);
+  if (oldProps.options && options !== oldProps.options) {
+    editor.options(options);
+    editor.setServerSettings(props.serverSettings);
+  }
 
   Object.keys(editor.event).forEach((name) => {
     const eventName = `on${upperFirst(name)}`;
@@ -147,9 +150,13 @@ class StructEditor extends Component {
   }
 
   componentDidMount() {
-    this.editor = new Editor(this.editorRef.current, {
-      ...this.props.options,
-    });
+    this.editor = new Editor(
+      this.editorRef.current,
+      {
+        ...this.props.options,
+      },
+      { ...this.props.serverSettings },
+    );
     const ketcher = ketcherProvider.getKetcher();
     if (ketcher?.editor.macromoleculeConvertionError) {
       this.props.onShowMacromoleculesErrorMessage(
@@ -287,6 +294,7 @@ class StructEditor extends Component {
       showAttachmentPoints = true,
       onUpdateFloatingTools,
       onShowMacromoleculesErrorMessage,
+      serverSettings,
       /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props;

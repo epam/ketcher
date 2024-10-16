@@ -113,12 +113,15 @@ export class Indigo {
     });
   }
 
-  layout(struct: StructOrString): Promise<Struct> {
+  layout(struct: StructOrString, options): Promise<Struct> {
     return this.#structService
-      .layout({
-        struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET,
-      })
+      .layout(
+        {
+          struct: convertStructToString(struct, this.#ketSerializer),
+          output_format: ChemicalMimeType.KET,
+        },
+        options,
+      )
       .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 

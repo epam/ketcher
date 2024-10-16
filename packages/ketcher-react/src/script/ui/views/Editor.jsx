@@ -35,12 +35,14 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const Editor = connect(
-  (state) => ({
+const Editor = connect((state) => {
+  const serverSettings = state.options.getServerSettings();
+
+  return {
     options: state.options.settings,
+    serverSettings,
     indigoVerification: state.requestsStatuses.indigoVerification,
-  }),
-  mapDispatchToProps,
-)(StructEditor);
+  };
+}, mapDispatchToProps)(StructEditor);
 
 export default Editor;

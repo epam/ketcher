@@ -44,7 +44,7 @@ export const ACS_STYLE_DEFAULT_SETTINGS = {
   reactionComponentMarginSize: 1.6,
   reactionComponentMarginSizeUnit: 'pt',
   imageResolution: '600',
-  bondLength: 14.4,
+  bondLength: 30,
   bondLengthUnit: 'pt',
   bondSpacing: 18,
   bondThickness: 0.6,

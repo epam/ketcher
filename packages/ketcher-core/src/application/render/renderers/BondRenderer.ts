@@ -199,10 +199,11 @@ export class BondRenderer extends BaseRenderer {
   private appendRootElement() {
     return this.canvas
       .append('g')
+      .data([this])
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
-      );
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   getSelectionPoints() {
@@ -646,6 +647,7 @@ export class BondRenderer extends BaseRenderer {
   public remove() {
     super.remove();
     this.removeHover();
+    this.removeSelection();
   }
 
   public move() {

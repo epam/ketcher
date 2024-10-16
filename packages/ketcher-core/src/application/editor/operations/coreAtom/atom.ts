@@ -41,3 +41,21 @@ export class AtomAddOperation implements Operation {
     }
   }
 }
+
+export class AtomDeleteOperation implements Operation {
+  constructor(
+    public atom: Atom,
+    public deleteAtomChangeModel: () => void,
+    public addAtomChangeModel: (atom?: Atom) => Atom,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.deleteAtomChangeModel();
+    renderersManager.deleteAtom(this.atom);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.addAtomChangeModel(this.atom);
+    renderersManager.addAtom(this.atom);
+  }
+}

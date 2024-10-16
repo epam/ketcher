@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import {
   Container,
   Content,
@@ -11,9 +11,10 @@ import { AmbiguousMonomerPreviewState } from './types';
 interface Props {
   className?: string;
   preview: AmbiguousMonomerPreviewState;
+  style?: CSSProperties;
 }
 
-const AmbiguousMonomerPreview = ({ className, preview }: Props) => {
+const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
   const { monomer, presetMonomers } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
@@ -77,7 +78,11 @@ const AmbiguousMonomerPreview = ({ className, preview }: Props) => {
   }, [previewData, isAlternatives]);
 
   return (
-    <Container className={className} data-testid="polymer-library-preview">
+    <Container
+      style={style}
+      className={className}
+      data-testid="polymer-library-preview"
+    >
       <Header>{header}</Header>
       <Content>
         {fallback ??

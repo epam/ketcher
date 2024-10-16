@@ -2,28 +2,28 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer154"
+                "$ref": "monomer156"
             },
             {
-                "$ref": "monomer155"
+                "$ref": "monomer157"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer154",
+                    "monomerId": "monomer157",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer155",
+                    "monomerId": "monomer156",
                     "attachmentPointId": "R1"
                 }
             }
         ],
         "templates": [
             {
-                "$ref": "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino__bP___Boranophosphate_"
+                "$ref": "ambiguousMonomerTemplate-mixture__bnn___Benzylamino_3_bP___Boranophosphate_5"
             },
             {
                 "$ref": "monomerTemplate-bnn___Benzylamino"
@@ -32,31 +32,33 @@
                 "$ref": "monomerTemplate-bP___Boranophosphate"
             },
             {
-                "$ref": "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__bP___Boranophosphate_"
+                "$ref": "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70"
             }
         ]
     },
-    "monomer154": {
+    "monomer156": {
         "type": "ambiguousMonomer",
-        "id": "154",
+        "id": "156",
         "position": {
-            "x": 15.731250000000003,
-            "y": -8.688750000000002
+            "x": 17.50625000000001,
+            "y": -10.188750000000006
         },
         "alias": "%",
-        "templateId": "alternatives__bnn___Benzylamino__bP___Boranophosphate_"
+        "templateId": "mixture__bnn___Benzylamino_3_bP___Boranophosphate_5"
     },
-    "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino__bP___Boranophosphate_": {
+    "ambiguousMonomerTemplate-mixture__bnn___Benzylamino_3_bP___Boranophosphate_5": {
         "type": "ambiguousMonomerTemplate",
-        "id": "alternatives__bnn___Benzylamino__bP___Boranophosphate_",
+        "id": "mixture__bnn___Benzylamino_3_bP___Boranophosphate_5",
         "alias": "%",
-        "subtype": "alternatives",
+        "subtype": "mixture",
         "options": [
             {
-                "templateId": "bnn___Benzylamino"
+                "templateId": "bnn___Benzylamino",
+                "ratio": 3
             },
             {
-                "templateId": "bP___Boranophosphate"
+                "templateId": "bP___Boranophosphate",
+                "ratio": 5
             }
         ]
     },
@@ -344,27 +346,29 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer155": {
+    "monomer157": {
         "type": "ambiguousMonomer",
-        "id": "155",
+        "id": "157",
         "position": {
-            "x": 17.53125,
-            "y": -8.688750000000006
+            "x": 15.881250000000005,
+            "y": -10.21375
         },
         "alias": "%",
-        "templateId": "mixture__bnn___Benzylamino__bP___Boranophosphate_"
+        "templateId": "alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70"
     },
-    "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__bP___Boranophosphate_": {
+    "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70": {
         "type": "ambiguousMonomerTemplate",
-        "id": "mixture__bnn___Benzylamino__bP___Boranophosphate_",
+        "id": "alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70",
         "alias": "%",
-        "subtype": "mixture",
+        "subtype": "alternatives",
         "options": [
             {
-                "templateId": "bnn___Benzylamino"
+                "templateId": "bnn___Benzylamino",
+                "probability": 30
             },
             {
-                "templateId": "bP___Boranophosphate"
+                "templateId": "bP___Boranophosphate",
+                "probability": 70
             }
         ]
     }

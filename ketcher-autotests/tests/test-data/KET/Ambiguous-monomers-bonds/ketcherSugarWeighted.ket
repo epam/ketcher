@@ -2,28 +2,28 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer178"
+                "$ref": "monomer180"
             },
             {
-                "$ref": "monomer179"
+                "$ref": "monomer181"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer178",
+                    "monomerId": "monomer180",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer179",
+                    "monomerId": "monomer181",
                     "attachmentPointId": "R1"
                 }
             }
         ],
         "templates": [
             {
-                "$ref": "ambiguousMonomerTemplate-alternatives__3FAM___6-FAM (3' end)__R___Ribose_"
+                "$ref": "ambiguousMonomerTemplate-alternatives__3FAM___6-FAM (3' end)_30_R___Ribose_70"
             },
             {
                 "$ref": "monomerTemplate-3FAM___6-FAM (3' end)"
@@ -32,37 +32,33 @@
                 "$ref": "monomerTemplate-R___Ribose"
             },
             {
-                "$ref": "ambiguousMonomerTemplate-mixture__3A6___6-amino-hexanol (3' end)__25R___Ribose (2,5 connectivity)_"
-            },
-            {
-                "$ref": "monomerTemplate-3A6___6-amino-hexanol (3' end)"
-            },
-            {
-                "$ref": "monomerTemplate-25R___Ribose (2,5 connectivity)"
+                "$ref": "ambiguousMonomerTemplate-mixture__3FAM___6-FAM (3' end)_1_R___Ribose_3"
             }
         ]
     },
-    "monomer178": {
+    "monomer180": {
         "type": "ambiguousMonomer",
-        "id": "178",
+        "id": "180",
         "position": {
-            "x": 15.918750000000006,
-            "y": -8.663750000000002
+            "x": 15.918750000000001,
+            "y": -10.238749999999996
         },
         "alias": "%",
-        "templateId": "alternatives__3FAM___6-FAM (3' end)__R___Ribose_"
+        "templateId": "alternatives__3FAM___6-FAM (3' end)_30_R___Ribose_70"
     },
-    "ambiguousMonomerTemplate-alternatives__3FAM___6-FAM (3' end)__R___Ribose_": {
+    "ambiguousMonomerTemplate-alternatives__3FAM___6-FAM (3' end)_30_R___Ribose_70": {
         "type": "ambiguousMonomerTemplate",
-        "id": "alternatives__3FAM___6-FAM (3' end)__R___Ribose_",
+        "id": "alternatives__3FAM___6-FAM (3' end)_30_R___Ribose_70",
         "alias": "%",
         "subtype": "alternatives",
         "options": [
             {
-                "templateId": "3FAM___6-FAM (3' end)"
+                "templateId": "3FAM___6-FAM (3' end)",
+                "probability": 30
             },
             {
-                "templateId": "R___Ribose"
+                "templateId": "R___Ribose",
+                "probability": 70
             }
         ]
     },
@@ -927,458 +923,30 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer179": {
+    "monomer181": {
         "type": "ambiguousMonomer",
-        "id": "179",
+        "id": "181",
         "position": {
-            "x": 17.34375,
-            "y": -8.713749999999997
+            "x": 17.343749999999996,
+            "y": -10.238749999999992
         },
         "alias": "%",
-        "templateId": "mixture__3A6___6-amino-hexanol (3' end)__25R___Ribose (2,5 connectivity)_"
+        "templateId": "mixture__3FAM___6-FAM (3' end)_1_R___Ribose_3"
     },
-    "ambiguousMonomerTemplate-mixture__3A6___6-amino-hexanol (3' end)__25R___Ribose (2,5 connectivity)_": {
+    "ambiguousMonomerTemplate-mixture__3FAM___6-FAM (3' end)_1_R___Ribose_3": {
         "type": "ambiguousMonomerTemplate",
-        "id": "mixture__3A6___6-amino-hexanol (3' end)__25R___Ribose (2,5 connectivity)_",
+        "id": "mixture__3FAM___6-FAM (3' end)_1_R___Ribose_3",
         "alias": "%",
         "subtype": "mixture",
         "options": [
             {
-                "templateId": "3A6___6-amino-hexanol (3' end)"
+                "templateId": "3FAM___6-FAM (3' end)",
+                "ratio": 1
             },
             {
-                "templateId": "25R___Ribose (2,5 connectivity)"
+                "templateId": "R___Ribose",
+                "ratio": 3
             }
         ]
-    },
-    "monomerTemplate-3A6___6-amino-hexanol (3' end)": {
-        "type": "monomerTemplate",
-        "atoms": [
-            {
-                "label": "C",
-                "location": [
-                    -3.6321,
-                    -0.532,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -2.3982,
-                    0.3223,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -1.041,
-                    -0.3184,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    0.193,
-                    0.5359,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    1.5502,
-                    -0.1048,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    2.7842,
-                    0.7494,
-                    0
-                ]
-            },
-            {
-                "label": "N",
-                "location": [
-                    4.1414,
-                    0.1087,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    5.128,
-                    0.7918,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    -4.9894,
-                    0.1087,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    -5.976,
-                    -0.5743,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    4.24,
-                    -1.0872,
-                    0
-                ]
-            }
-        ],
-        "bonds": [
-            {
-                "type": 1,
-                "atoms": [
-                    0,
-                    1
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    1,
-                    2
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    3
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    3,
-                    4
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    4,
-                    5
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    5,
-                    6
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    6,
-                    7
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    0,
-                    8
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    8,
-                    9
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    6,
-                    10
-                ]
-            }
-        ],
-        "class": "Sugar",
-        "classHELM": "RNA",
-        "id": "3A6___6-amino-hexanol (3' end)",
-        "fullName": "6-amino-hexanol (3' end)",
-        "alias": "3A6",
-        "attachmentPoints": [
-            {
-                "attachmentAtom": 8,
-                "type": "left",
-                "leavingGroup": {
-                    "atoms": [
-                        9
-                    ]
-                }
-            },
-            {
-                "attachmentAtom": 6,
-                "type": "right",
-                "leavingGroup": {
-                    "atoms": [
-                        7
-                    ]
-                }
-            },
-            {
-                "attachmentAtom": 6,
-                "type": "side",
-                "leavingGroup": {
-                    "atoms": [
-                        10
-                    ]
-                }
-            }
-        ],
-        "naturalAnalogShort": "R"
-    },
-    "monomerTemplate-25R___Ribose (2,5 connectivity)": {
-        "type": "monomerTemplate",
-        "atoms": [
-            {
-                "label": "O",
-                "location": [
-                    -0.6295,
-                    -1.1398,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -0.8657,
-                    0.3416,
-                    0
-                ],
-                "stereoLabel": "abs"
-            },
-            {
-                "label": "C",
-                "location": [
-                    0.8523,
-                    -1.3729,
-                    0
-                ],
-                "stereoLabel": "abs"
-            },
-            {
-                "label": "C",
-                "location": [
-                    0.4701,
-                    1.024,
-                    0
-                ],
-                "stereoLabel": "abs"
-            },
-            {
-                "label": "C",
-                "location": [
-                    1.5319,
-                    -0.0356,
-                    0
-                ],
-                "stereoLabel": "abs"
-            },
-            {
-                "label": "O",
-                "location": [
-                    0.6566,
-                    2.2094,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    3.0119,
-                    0.1971,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -2.2027,
-                    1.0176,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    1.3982,
-                    -2.4414,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    -3.4595,
-                    0.1971,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    -4.5303,
-                    0.7385,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    3.7667,
-                    -0.7357,
-                    0
-                ]
-            }
-        ],
-        "bonds": [
-            {
-                "type": 1,
-                "atoms": [
-                    0,
-                    1
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    0,
-                    2
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    1,
-                    3
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    1,
-                    7
-                ],
-                "stereo": 6
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    4
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    8
-                ],
-                "stereo": 6
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    3,
-                    4
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    3,
-                    5
-                ],
-                "stereo": 1
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    4,
-                    6
-                ],
-                "stereo": 1
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    7,
-                    9
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    9,
-                    10
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    6,
-                    11
-                ]
-            }
-        ],
-        "class": "Sugar",
-        "classHELM": "RNA",
-        "id": "25R___Ribose (2,5 connectivity)",
-        "fullName": "Ribose (2,5 connectivity)",
-        "alias": "25R",
-        "attachmentPoints": [
-            {
-                "attachmentAtom": 9,
-                "type": "left",
-                "leavingGroup": {
-                    "atoms": [
-                        10
-                    ]
-                }
-            },
-            {
-                "attachmentAtom": 6,
-                "type": "right",
-                "leavingGroup": {
-                    "atoms": [
-                        11
-                    ]
-                }
-            },
-            {
-                "attachmentAtom": 2,
-                "type": "side",
-                "leavingGroup": {
-                    "atoms": [
-                        8
-                    ]
-                }
-            }
-        ],
-        "naturalAnalogShort": "R"
     }
 }

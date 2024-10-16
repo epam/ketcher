@@ -2,28 +2,28 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer118"
+                "$ref": "monomer120"
             },
             {
-                "$ref": "monomer119"
+                "$ref": "monomer121"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer118",
+                    "monomerId": "monomer120",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer119",
+                    "monomerId": "monomer121",
                     "attachmentPointId": "R1"
                 }
             }
         ],
         "templates": [
             {
-                "$ref": "ambiguousMonomerTemplate-alternatives__A6OH___6-amino-hexanol__SMPEG2___SM(PEG)2_"
+                "$ref": "ambiguousMonomerTemplate-alternatives__A6OH___6-amino-hexanol_30_SMPEG2___SM(PEG)2_70"
             },
             {
                 "$ref": "monomerTemplate-A6OH___6-amino-hexanol"
@@ -32,7 +32,7 @@
                 "$ref": "monomerTemplate-SMPEG2___SM(PEG)2"
             },
             {
-                "$ref": "ambiguousMonomerTemplate-mixture__Az___4-azidobutyric acid__EG___Ethylene Glycol_"
+                "$ref": "ambiguousMonomerTemplate-mixture__Az___4-azidobutyric acid_1_EG___Ethylene Glycol_3"
             },
             {
                 "$ref": "monomerTemplate-Az___4-azidobutyric acid"
@@ -42,27 +42,29 @@
             }
         ]
     },
-    "monomer118": {
+    "monomer120": {
         "type": "ambiguousMonomer",
-        "id": "118",
+        "id": "120",
         "position": {
-            "x": 9.46875,
-            "y": -5.938750000000001
+            "x": 9.51170018094338,
+            "y": -8.055653334043301
         },
         "alias": "%",
-        "templateId": "alternatives__A6OH___6-amino-hexanol__SMPEG2___SM(PEG)2_"
+        "templateId": "alternatives__A6OH___6-amino-hexanol_30_SMPEG2___SM(PEG)2_70"
     },
-    "ambiguousMonomerTemplate-alternatives__A6OH___6-amino-hexanol__SMPEG2___SM(PEG)2_": {
+    "ambiguousMonomerTemplate-alternatives__A6OH___6-amino-hexanol_30_SMPEG2___SM(PEG)2_70": {
         "type": "ambiguousMonomerTemplate",
-        "id": "alternatives__A6OH___6-amino-hexanol__SMPEG2___SM(PEG)2_",
+        "id": "alternatives__A6OH___6-amino-hexanol_30_SMPEG2___SM(PEG)2_70",
         "alias": "%",
         "subtype": "alternatives",
         "options": [
             {
-                "templateId": "A6OH___6-amino-hexanol"
+                "templateId": "A6OH___6-amino-hexanol",
+                "probability": 30
             },
             {
-                "templateId": "SMPEG2___SM(PEG)2"
+                "templateId": "SMPEG2___SM(PEG)2",
+                "probability": 70
             }
         ]
     },
@@ -633,27 +635,29 @@
             }
         ]
     },
-    "monomer119": {
+    "monomer121": {
         "type": "ambiguousMonomer",
-        "id": "119",
+        "id": "121",
         "position": {
-            "x": 11.099101232911584,
-            "y": -5.952346940185441
+            "x": 11.210775107675262,
+            "y": -8.065813543806769
         },
         "alias": "%",
-        "templateId": "mixture__Az___4-azidobutyric acid__EG___Ethylene Glycol_"
+        "templateId": "mixture__Az___4-azidobutyric acid_1_EG___Ethylene Glycol_3"
     },
-    "ambiguousMonomerTemplate-mixture__Az___4-azidobutyric acid__EG___Ethylene Glycol_": {
+    "ambiguousMonomerTemplate-mixture__Az___4-azidobutyric acid_1_EG___Ethylene Glycol_3": {
         "type": "ambiguousMonomerTemplate",
-        "id": "mixture__Az___4-azidobutyric acid__EG___Ethylene Glycol_",
+        "id": "mixture__Az___4-azidobutyric acid_1_EG___Ethylene Glycol_3",
         "alias": "%",
         "subtype": "mixture",
         "options": [
             {
-                "templateId": "Az___4-azidobutyric acid"
+                "templateId": "Az___4-azidobutyric acid",
+                "ratio": 1
             },
             {
-                "templateId": "EG___Ethylene Glycol"
+                "templateId": "EG___Ethylene Glycol",
+                "ratio": 3
             }
         ]
     },

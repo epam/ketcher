@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page, BrowserContext, chromium } from '@playwright/test';
+import { test, expect, Page, BrowserContext, chromium, Locator } from '@playwright/test';
 import {
   selectSingleBondTool,
   takeEditorScreenshot,
@@ -116,6 +116,10 @@ async function saveAndCompareMolfile(
 }
 async function getConnectionLine(page: Page, nth = 0) {
   return await page.locator('g[pointer-events="stroke"]').nth(nth);
+}
+async function openEditConnectionPointsMenu(page: Page, bondLine: Locator) {
+  await bondLine.click({ button: 'right' });
+  await page.getByText('Edit Connection Points...').click();
 }
 
 test('Create bond between two peptides', async () => {
@@ -341,8 +345,7 @@ test('Verify that clicking on the "Edit Connection Points..." option opens the d
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
@@ -355,8 +358,7 @@ test('Verify that the user can interact with teal and white attachment points in
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
@@ -374,8 +376,7 @@ test('Verify that if there are no available (white) connection points on both mo
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-connected-bases.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
@@ -389,8 +390,7 @@ test('Verify that clicking "Reconnect" with different attachment points chosen r
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
@@ -411,8 +411,7 @@ test('Verify that clicking "Reconnect" without changing the attachment points re
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await pressButton(page, 'Reconnect');
   await selectSingleBondTool(page);
   await bondLine.hover();
@@ -430,8 +429,7 @@ test('Verify that clicking "Cancel" in the dialog results in no change to the bo
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await takeEditorScreenshot(page, {
@@ -454,8 +452,7 @@ test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" do
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await takeEditorScreenshot(page, {
@@ -476,8 +473,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog can be und
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -508,8 +504,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await pageReload(page);
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -532,8 +527,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -560,8 +554,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -605,8 +598,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -644,8 +636,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('MOE(A)P_A_MOE_P').click();
   await clickInTheMiddleOfTheScreen(page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -677,8 +668,7 @@ test('Verify changing connection points of a side chain bond', async () => {
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/side-chain-peptide-chem.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R1' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -696,8 +686,7 @@ test('Verify editing of a cyclic structure', async () => {
     */
   const bondLine = await getConnectionLine(page, 2);
   await openFileAndAddToCanvasMacro('KET/cyclic-three-chems-chain.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page
     .locator('div')
     .filter({ hasText: /^R3H$/ })
@@ -723,8 +712,7 @@ test('Verify correct display and changing of connection points in the dialog for
     */
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-nucleotides-connected.ket', page);
-  await bondLine.click({ button: 'right' });
-  await page.getByText('Edit Connection Points...').click();
+  await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
@@ -772,33 +760,62 @@ const ambiguousMonomers: KETPath[] = [
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherCHEM.ket',
   },
   {
-    testDescription: '2. Ambiguous Sugar',
+    testDescription: '2. Ambiguous CHEM Weighted',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherCHEMWeighted.ket',
+  },
+  {
+    testDescription: '3. Ambiguous Sugar',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherSugar.ket',
     pageReloadNeeded: true,
   },
   {
-    testDescription: '3. Ambiguous Base',
-    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherBaseTBD.ket',
+    testDescription: '4. Ambiguous Sugar Weighted',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherSugarWeighted.ket',
+  },
+  {
+    testDescription: '5. Ambiguous Base',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherBase.ket',
     pageReloadNeeded: true,
   },
   {
-    testDescription: '4. Ambiguous Phosphate',
+    testDescription: '6. Ambiguous Base Weighted',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherBaseWeightedTBD.ket',
+  },
+  {
+    testDescription: '7. Ambiguous Phosphate',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPhosphate.ket',
     pageReloadNeeded: true,
   },
+  {
+    testDescription: '8. Ambiguous Phosphate Weighted',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPhosphateWeighted.ket',
+  },
   /*
   {
-    testDescription: '5. Ambiguous Nucleotide',
+    testDescription: '9. Ambiguous Nucleotide',
+    KETFile:'',
+  },
+  {
+    testDescription: '10. Ambiguous Nucleotide Weighted',
     KETFile:'',
   },
   */
   {
-    testDescription: '6. Ambiguous Peptide',
+    testDescription: '11. Ambiguous Peptide',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPeptide.ket',
+    pageReloadNeeded: true,
+  },
+  {
+    testDescription: '12. Ambiguous Peptide Weighted',
+    KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPeptideWeighted.ket',
   },
   /*
   {
-    testDescription: '7. Ambiguous Monomer',
+    testDescription: '13. Ambiguous Monomer',
+    KETFile: '',
+  },
+  {
+    testDescription: '14. Ambiguous Monomer Weighted',
     KETFile: '',
   },
   */
@@ -821,13 +838,14 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await openFileAndAddToCanvasMacro(ambiguousMonomer.KETFile, page);
       await moveMouseAway(page);
-      (await getConnectionLine(page)).hover();
+      const bondLine = await getConnectionLine(page);
+      await bondLine.hover();
       await delay(1);
       await takeEditorScreenshot(page);
-      await moveMouseAway(page);
-      (await getConnectionLine(page, 1)).hover();
-      await delay(1);
+      await bondLine.click({ button: 'right' });
+      await page.getByText('Edit Connection Points...').click();
       await takeEditorScreenshot(page);
+      await pressButton(page, 'Cancel');
     });
   }
 });

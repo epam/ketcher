@@ -70,8 +70,14 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { KetMonomerClass } from 'application/formatters';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
-import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
-import { BondAddOperation } from 'application/editor/operations/coreBond/bond';
+import {
+  AtomAddOperation,
+  AtomDeleteOperation,
+} from 'application/editor/operations/coreAtom/atom';
+import {
+  BondAddOperation,
+  BondDeleteOperation,
+} from 'application/editor/operations/coreBond/bond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import {
   MonomerToAtomBondAddOperation,
@@ -252,6 +258,10 @@ export class DrawingEntitiesManager {
       return this.deletePolymerBond(drawingEntity);
     } else if (drawingEntity instanceof MonomerToAtomBond) {
       return this.deleteMonomerToAtomBond(drawingEntity);
+    } else if (drawingEntity instanceof Bond) {
+      return this.deleteBond(drawingEntity);
+    } else if (drawingEntity instanceof Atom) {
+      return this.deleteAtom(drawingEntity);
     } else {
       return new Command();
     }
@@ -2124,6 +2134,32 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private deleteAtomChangeModel(atom: Atom) {
+    this.atoms.delete(atom.id);
+
+    return atom;
+  }
+
+  private deleteAtom(atom: Atom) {
+    const command = new Command();
+
+    command.addOperation(
+      new AtomDeleteOperation(
+        atom,
+        this.deleteAtomChangeModel.bind(this, atom),
+        this.addAtomChangeModel.bind(
+          this,
+          atom.position,
+          atom.monomer,
+          atom.atomIdInMicroMode,
+          atom.label,
+        ),
+      ),
+    );
+
+    return command;
+  }
+
   private addBondChangeModel(
     firstAtom: Atom,
     secondAtom: Atom,
@@ -2159,6 +2195,32 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(bondAddOperation);
+
+    return command;
+  }
+
+  private deleteBondChangeModel(bond: Bond) {
+    this.bonds.delete(bond.id);
+
+    return bond;
+  }
+
+  private deleteBond(bond: Bond) {
+    const command = new Command();
+
+    command.addOperation(
+      new BondDeleteOperation(
+        bond,
+        this.deleteBondChangeModel.bind(this, bond),
+        this.addBondChangeModel.bind(
+          this,
+          bond.firstAtom,
+          bond.secondAtom,
+          bond.type,
+          bond.stereo,
+        ),
+      ),
+    );
 
     return command;
   }

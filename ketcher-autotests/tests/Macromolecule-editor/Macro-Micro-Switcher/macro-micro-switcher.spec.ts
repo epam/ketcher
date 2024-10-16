@@ -62,6 +62,9 @@ import {
   Sugars,
   Bases,
   Phosphates,
+  getControlModifier,
+  readFileContents,
+  openPasteFromClipboard,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -949,13 +952,14 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('R1').locator('..').click();
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await page.keyboard.press(`${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -1709,44 +1713,39 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files',
-    async () => {
-      /*
+  test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of SDF V3000 molecular structure files', async () => {
+    /*
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in SDF V3000 format.
-    
-    IMPORTANT: This test fails because of https://github.com/epam/Indigo/issues/2477 issue
     */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      expectedFile,
+    );
+
+    const METADATA_STRINGS_INDEXES = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getSdf(page, 'v3000');
-      await saveToFile(
-        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+        fileFormat: 'v3000',
+      });
 
-      const METADATA_STRINGS_INDEXES = [1];
-
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v3000',
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-      await openFileAndAddToCanvasAsNewProject(
-        'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
     /* 
@@ -2185,6 +2184,40 @@ test.describe('Macro-Micro-Switcher', () => {
      */
 
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Added to Canvas (from CDX file) of allowed formats (PNG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro
+     */
+
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Added to Canvas (from CDXML file) of allowed formats (PNG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro
+     */
+
+    await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

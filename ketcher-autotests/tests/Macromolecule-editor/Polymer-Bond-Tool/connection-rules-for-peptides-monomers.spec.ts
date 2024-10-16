@@ -210,6 +210,25 @@ test.describe('Connection rules for peptides: ', () => {
     //     R5: 'R5',
     //   },
     // },
+    J: {
+      monomerType: 'peptide',
+      fileName:
+        'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
+      alias: 'J',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+      },
+    },
+    // '%': {
+    //   monomerType: 'peptide',
+    //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
+    //   alias: '%',
+    //   connectionPoints: {
+    //     R1: 'R1',
+    //     R2: 'R2',
+    //   },
+    // },
   };
 
   const tmpPeptideMonomers: { [monomerName: string]: IMonomer } = {
@@ -391,59 +410,75 @@ test.describe('Connection rules for peptides: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftPeptide: IMonomer,
-    rightPeptide: IMonomer,
+    leftMonomers: IMonomer,
+    rightMonomers: IMonomer,
   ) {
-    await openFileAndAddToCanvasMacro(leftPeptide.fileName, page);
-    const leftpeptideLocator = page
-      .getByText(leftPeptide.alias)
+    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
+    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const leftMonomerLocator = canvasLocator
+      .locator(`text=${leftMonomers.alias}`)
       .locator('..')
       .first();
-    await leftpeptideLocator.hover();
+    // const leftMonomerLocator = page.locator('use').first();
+    await leftMonomerLocator.hover();
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightPeptide.fileName, page);
-    const rightpeptideLocator =
-      (await page.getByText(leftPeptide.alias).count()) > 1
-        ? page.getByText(rightPeptide.alias).nth(1).locator('..').first()
-        : page.getByText(rightPeptide.alias).locator('..').first();
-    await rightpeptideLocator.hover();
+    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    const rightMonomerLocator =
+      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
+        ? canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .nth(1)
+            .locator('..')
+            .first()
+        : canvasLocator
+            .locator(`text=${rightMonomers.alias}`)
+            .locator('..')
+            .first();
+    // const rightMonomerLocator = page.locator('use').nth(1);
+    await rightMonomerLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 371, page);
+    await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
   }
 
   async function bondTwoMonomersByPointToPoint(
     page: Page,
-    leftPeptide: IMonomer,
-    rightPeptide: IMonomer,
-    leftPeptideConnectionPoint?: string,
-    rightPeptideConnectionPoint?: string,
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+    leftMonomersConnectionPoint?: string,
+    rightMonomersConnectionPoint?: string,
   ) {
-    const leftPeptideLocator = await page
-      .getByText(leftPeptide.alias, { exact: true })
+    const leftMonomerLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
-    const rightPeptideLocator =
-      (await page.getByText(rightPeptide.alias, { exact: true }).count()) > 1
+    const rightMonomerLocator =
+      (await page
+        .getByTestId('ketcher-canvas')
+        .locator(`text=${leftMonomer.alias}`)
+        .count()) > 1
         ? page
-            .getByText(rightPeptide.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
         : page
-            .getByText(rightPeptide.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
     await bondTwoMonomersPointToPoint(
       page,
-      leftPeptideLocator,
-      rightPeptideLocator,
-      leftPeptideConnectionPoint,
-      rightPeptideConnectionPoint,
+      leftMonomerLocator,
+      rightMonomerLocator,
+      leftMonomersConnectionPoint,
+      rightMonomersConnectionPoint,
     );
   }
 
@@ -516,20 +551,26 @@ test.describe('Connection rules for peptides: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ) {
-    const leftMonomerLocator = await page
-      .getByText(leftMonomer.alias, { exact: true })
+    const leftMonomerLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(`text=${leftMonomer.alias}`)
       .locator('..')
       .first();
 
     const rightMonomerLocator =
-      (await page.getByText(rightMonomer.alias, { exact: true }).count()) > 1
+      (await page
+        .getByTestId('ketcher-canvas')
+        .locator(`text=${leftMonomer.alias}`)
+        .count()) > 1
         ? page
-            .getByText(rightMonomer.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .nth(1)
             .locator('..')
             .first()
         : page
-            .getByText(rightMonomer.alias, { exact: true })
+            .getByTestId('ketcher-canvas')
+            .locator(`text=${rightMonomer.alias}`)
             .locator('..')
             .first();
 
@@ -537,8 +578,6 @@ test.describe('Connection rules for peptides: ', () => {
       page,
       leftMonomerLocator,
       rightMonomerLocator,
-      undefined,
-      undefined,
     );
 
     if (await page.getByRole('dialog').isVisible()) {
@@ -583,7 +622,7 @@ test.describe('Connection rules for peptides: ', () => {
         Object.values(rightPeptide.connectionPoints).includes('R1')
       ) {
         test(`Case 1: Connect Center to Center of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(40000);
 
           await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -618,7 +657,7 @@ test.describe('Connection rules for peptides: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 2: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                  test.setTimeout(15000);
+                  test.setTimeout(35000);
 
                   await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -663,7 +702,7 @@ test.describe('Connection rules for peptides: ', () => {
              *         Validate canvas
              */
             test(`Case 3: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
-              test.setTimeout(20000);
+              test.setTimeout(30000);
 
               await prepareCanvasOneFreeAPLeft(
                 page,
@@ -824,7 +863,7 @@ test.describe('Connection rules for peptides: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 5: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(30000);
 
           await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 
@@ -858,7 +897,7 @@ test.describe('Connection rules for peptides: ', () => {
          */
 
         test(`Case 6: Connect Center to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and Test-6-P`, async () => {
-          test.setTimeout(20000);
+          test.setTimeout(30000);
 
           await loadTwoMonomers(
             page,
@@ -915,7 +954,7 @@ test.describe('Connection rules for peptides: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 7: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                test.setTimeout(15000);
+                test.setTimeout(25000);
 
                 await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
@@ -1183,7 +1222,7 @@ test.describe('Connection rules for peptides: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Peptide(${leftPeptide.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
         await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
 

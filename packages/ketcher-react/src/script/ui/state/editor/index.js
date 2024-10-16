@@ -49,7 +49,7 @@ export default function initEditor(dispatch, getState) {
       // eslint-disable-line no-shadow
       const state = global.currentState;
       const activeTool = state.actionState.activeTool.tool;
-      if (activeTool === 'select') return;
+      if (activeTool === 'select' && !force) return;
       const selectMode = state.toolbar.visibleTools.select;
       const resetOption = state.options.settings.resetToSelect;
       if (resetOption === true || resetOption === activeTool || force === true)

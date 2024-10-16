@@ -37,7 +37,12 @@ export default function ButtonGroup<T>({
           className={clsx(classes.button, {
             [classes.selected]: buttonValue === value,
           })}
-          style={{ flex: '1 0 25%', margin: '2px', borderRadius: '3px' }}
+          style={{
+            display: 'flex',
+            flex: '1 0 25%',
+            margin: '2px',
+            borderRadius: '3px',
+          }}
         >
           {label || 'none'}
         </ToggleButton>

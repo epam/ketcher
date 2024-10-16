@@ -20,9 +20,10 @@
 */
 export enum LayerMap {
   background = 'background',
-  selectionPlate = 'selectionPlate',
-  hovering = 'hovering',
   images = 'images',
+  selectionPlate = 'selectionPlate',
+  selectionPoints = 'selectionPoints',
+  hovering = 'hovering',
   atom = 'atom',
   bondSkeleton = 'bondSkeleton',
   warnings = 'warnings',

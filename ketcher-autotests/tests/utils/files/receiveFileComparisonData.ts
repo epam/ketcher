@@ -1,6 +1,43 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
-import { readFileContents } from './readFile';
+import { readFileContents, saveToFile } from './readFile';
+import { getCdx, getCdxml, getKet } from '@utils/formats';
+
+export enum FileType {
+  KET = 'ket',
+  CDX = 'cdx',
+  CDXML = 'cdxml',
+}
+
+const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
+  {
+    [FileType.KET]: getKet,
+    [FileType.CDX]: getCdx,
+    [FileType.CDXML]: getCdxml,
+  };
+
+export async function verifyFile(
+  page: Page,
+  filename: string,
+  expectedFilename: string,
+  fileType: FileType,
+) {
+  const getFileContent = fileTypeHandlers[fileType];
+
+  if (!getFileContent) {
+    throw new Error(`Unsupported file type: ${fileType}`);
+  }
+
+  const expectedFile = await getFileContent(page);
+  await saveToFile(filename, expectedFile);
+
+  const { fileExpected, file } = await receiveFileComparisonData({
+    page,
+    expectedFileName: expectedFilename,
+  });
+
+  expect(file).toEqual(fileExpected);
+}
 
 const GetFileMethod: Record<string, keyof Ketcher> = {
   mol: 'getMolfile',

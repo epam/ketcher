@@ -41,5 +41,19 @@ export const PhosphateAvatar = () => (
         strokeWidth="1.5"
       />
     </symbol>
+    <symbol id="phosphate-variant" viewBox="0 0 70 70" width="70" height="70">
+      <rect
+        className="monomer-body"
+        width="27"
+        height="27"
+        data-actual-width="27"
+        data-actual-height="27"
+        stroke="#585858"
+        strokeWidth="0.5"
+        x="0.5"
+        y="0.5"
+        rx="15"
+      />
+    </symbol>
   </>
 );

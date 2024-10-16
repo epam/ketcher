@@ -3,7 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Pool } from 'domain/entities/pool';
 import { getNodeWithInvertedYCoord, KetFileNode } from 'domain/serializers';
 import { MULTITAIL_ARROW_SERIALIZE_KEY } from 'domain/constants';
-import { FixedPrecisionCoordinates } from 'domain/entities/fixedPrecision';
+import { FixedPrecisionCoordinates } from 'domain/entities';
 
 export type Line = [Vec2, Vec2];
 
@@ -365,7 +365,16 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
     );
   }
 
-  addTail(id?: number): number {
+  getTailCoordinate(id: number): FixedPrecisionCoordinates | undefined {
+    return this.tailsYOffset.get(id);
+  }
+
+  addTail(id?: number, coordinate?: FixedPrecisionCoordinates): number {
+    // Coordinate can only be present for undo\redo
+    if (typeof id === 'number' && coordinate) {
+      this.tailsYOffset.set(id, coordinate);
+      return id;
+    }
     const { center, distance } = this.getTailsMaxDistance();
     if (!MultitailArrow.canAddTail(distance)) {
       throw new Error('Cannot add tail because no minimal distance found');

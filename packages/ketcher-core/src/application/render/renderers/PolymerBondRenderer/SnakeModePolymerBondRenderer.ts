@@ -1,10 +1,19 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import {
+  BaseMonomerRenderer,
+  BaseSequenceItemRenderer,
+} from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import { Vec2 } from 'domain/entities';
-import { Connection } from 'domain/entities/canvas-matrix/Connection';
+import { BaseMonomer, Vec2 } from 'domain/entities';
+import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import {
+  Connection,
+  ConnectionDirectionInDegrees,
+  ConnectionDirectionOfLastCell,
+} from 'domain/entities/canvas-matrix/Connection';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -138,40 +147,48 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  // TODO: Specify the types.
   private drawPartOfSideConnection(
     isHorizontal: boolean,
-    connection,
-    cell,
-    direction,
+    connection: Connection,
+    cell: Cell,
+    direction: ConnectionDirectionInDegrees,
   ): string {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
-    const maxXOffset = cell.connections.reduce((max, connection) => {
-      return max > connection.offset ? max : connection.offset;
-    }, 0);
-    const maxYOffset = cell.connections.reduce((max, connection) => {
-      const connectionYOffset = connection.yOffset || 0;
-      return max > connectionYOffset ? max : connectionYOffset;
-    }, 0);
+    const maxXOffset = cell.connections.reduce(
+      (max: number, connection: Connection): number => {
+        return max > connection.xOffset ? max : connection.xOffset;
+      },
+      0,
+    );
+    const maxYOffset = cell.connections.reduce(
+      (max: number, connection: Connection): number => {
+        const connectionYOffset = connection.yOffset || 0;
+        return max > connectionYOffset ? max : connectionYOffset;
+      },
+      0,
+    );
 
-    let endOfPathPart = isHorizontal
-      ? this.sideConnectionBondTurnPoint ||
-        cell.monomer.renderer?.scaledMonomerPosition.x +
-          cell.monomer.renderer?.monomerSize.width / 2 +
-          xOffset
-      : cell.monomer.renderer?.scaledMonomerPosition.y +
-        cell.monomer.renderer?.monomerSize.height / 2 +
-        yOffset;
+    let endOfPathPart: number;
+    if (isHorizontal && this.sideConnectionBondTurnPoint) {
+      endOfPathPart = this.sideConnectionBondTurnPoint;
+    } else {
+      const { monomerSize, scaledMonomerPosition } = (
+        cell.monomer as BaseMonomer
+      ).renderer as BaseMonomerRenderer | BaseSequenceItemRenderer;
+      endOfPathPart = isHorizontal
+        ? scaledMonomerPosition.x + monomerSize.width / 2 + xOffset
+        : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
+    }
 
     this.sideConnectionBondTurnPoint = endOfPathPart;
 
     if (isHorizontal) {
       endOfPathPart +=
         -(connection.yOffset || 0) * 3 +
-        cos * -connection.offset * 3 +
+        cos * -connection.xOffset * 3 +
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;
     }
@@ -193,9 +210,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     }
 
     const firstCell = cells[0];
-    const firstCellConnection = firstCell.connections.find((connection) => {
-      return connection.polymerBond === this.polymerBond;
-    }) as Connection;
+    const firstCellConnection = firstCell.connections.find(
+      (connection: Connection): boolean => {
+        return connection.polymerBond === this.polymerBond;
+      },
+    ) as Connection;
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
       cells.length === 2 && isVerticalConnection;
@@ -219,11 +238,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
-    // TODO: Specify the types.
-    let previousConnection;
-    let previousCell;
+    let previousConnection: Connection;
+    let previousCell: Cell;
 
-    const horizontalPartIntersectionsOffset = firstCellConnection.offset;
+    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
@@ -266,21 +284,26 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     let maxHorizontalOffset = 0;
 
-    cells.forEach((cell, cellIndex) => {
-      const cellConnection = cell.connections.find((connection) => {
-        return connection.polymerBond === this.polymerBond;
-      }) as Connection;
+    cells.forEach((cell: Cell, cellIndex: number): void => {
+      const cellConnection = cell.connections.find(
+        (connection: Connection): boolean => {
+          return connection.polymerBond === this.polymerBond;
+        },
+      ) as Connection;
       const isLastCell = cellIndex === cells.length - 1;
       const _xDirection = this.sideConnectionBondTurnPoint
         ? endPosition.x < this.sideConnectionBondTurnPoint
           ? 180
           : 0
         : xDirection;
-      const maxXOffset = cell.connections.reduce((max, connection) => {
-        return connection.isVertical || max > connection.offset
-          ? max
-          : connection.offset;
-      }, 0);
+      const maxXOffset = cell.connections.reduce(
+        (max: number, connection: Connection): number => {
+          return connection.isVertical || max > connection.xOffset
+            ? max
+            : connection.xOffset;
+        },
+        0,
+      );
 
       maxHorizontalOffset =
         maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
@@ -290,10 +313,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           return;
         }
 
-        const directionObject = cellConnection.direction as {
-          x: number;
-          y: number;
-        };
+        const directionObject =
+          cellConnection.direction as ConnectionDirectionOfLastCell;
         const yDirection = isVerticalConnection ? 90 : directionObject.y;
         const sin = Math.sin((yDirection * Math.PI) / 180);
         const cos = Math.cos((_xDirection * Math.PI) / 180);
@@ -305,8 +326,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             SMOOTH_CORNER_SIZE -
             sin * (cellConnection.yOffset || 0) * 3 -
             (isTwoNeighborRowsConnection
-              ? maxHorizontalOffset - cellConnection.offset
-              : cellConnection.offset) *
+              ? maxHorizontalOffset - cellConnection.xOffset
+              : cellConnection.xOffset) *
               3
           } `;
           dAttributeForPath += generateBend(0, sin, cos, 1);
@@ -333,7 +354,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           isHorizontal,
           previousConnection,
           previousCell,
-          isHorizontal ? xDirection : previousConnection.direction,
+          // FIXME: Check. Is it correct to use `as ConnectionDirectionInDegrees` here?
+          isHorizontal
+            ? xDirection
+            : (previousConnection.direction as ConnectionDirectionInDegrees),
         );
       }
       previousCell = cell;
@@ -951,7 +975,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.isSnakeBond = true;
   }
 
-  public remove() {
+  public remove(): void {
     super.remove();
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();

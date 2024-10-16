@@ -2,9 +2,14 @@
 import { BaseOperation } from 'application/editor/operations/base';
 import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
+import { FixedPrecisionCoordinates } from 'domain/entities';
 
 export class MultitailArrowAddTail extends BaseOperation {
-  constructor(private itemId: number, private tailId?: number) {
+  constructor(
+    private itemId: number,
+    private tailId?: number,
+    private coordinate?: FixedPrecisionCoordinates,
+  ) {
     super(OperationType.MULTITAIL_ARROW_ADD_TAIL);
   }
 
@@ -15,8 +20,7 @@ export class MultitailArrowAddTail extends BaseOperation {
     if (!reMultitailArrow || !multitailArrow) {
       return;
     }
-
-    this.tailId = multitailArrow.addTail(this.tailId);
+    this.tailId = multitailArrow.addTail(this.tailId, this.coordinate);
     BaseOperation.invalidateItem(reStruct, 'multitailArrows', this.itemId, 1);
   }
 
@@ -26,6 +30,7 @@ export class MultitailArrowAddTail extends BaseOperation {
 }
 
 export class MultitailArrowRemoveTail extends BaseOperation {
+  private coordinate?: FixedPrecisionCoordinates;
   constructor(private itemId: number, private tailId: number) {
     super(OperationType.MULTITAIL_ARROW_REMOVE_TAIL);
   }
@@ -33,8 +38,9 @@ export class MultitailArrowRemoveTail extends BaseOperation {
   execute(reStruct: ReStruct) {
     const reMultitailArrow = reStruct.multitailArrows.get(this.itemId);
     const multitailArrow = reStruct.molecule.multitailArrows.get(this.itemId);
+    this.coordinate = multitailArrow?.getTailCoordinate(this.tailId);
 
-    if (!reMultitailArrow || !multitailArrow) {
+    if (!reMultitailArrow || !multitailArrow || !this.coordinate) {
       return;
     }
 
@@ -43,6 +49,6 @@ export class MultitailArrowRemoveTail extends BaseOperation {
   }
 
   invert(): BaseOperation {
-    return new MultitailArrowAddTail(this.itemId, this.tailId);
+    return new MultitailArrowAddTail(this.itemId, this.tailId, this.coordinate);
   }
 }

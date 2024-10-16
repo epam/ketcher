@@ -64,8 +64,9 @@ export class ImageResize extends BaseOperation {
     }
 
     item.resize(topLeftPosition, bottomRightPosition);
+    const next = renderItem.visel.paths[0].next;
     reStruct.clearVisel(renderItem.visel);
-    renderItem.show(reStruct, reStruct.render.options);
+    renderItem.show(reStruct, reStruct.render.options, next);
   }
 
   invert(): BaseOperation {

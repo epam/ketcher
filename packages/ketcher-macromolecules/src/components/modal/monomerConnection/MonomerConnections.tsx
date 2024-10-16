@@ -118,6 +118,17 @@ const MonomerConnection = ({
       throw new Error('Attachment points cannot be falsy');
     }
 
+    if (
+      firstSelectedAttachmentPoint ===
+        initialFirstMonomerAttachmentPointRef.current &&
+      secondSelectedAttachmentPoint ===
+        initialSecondMonomerAttachmentPointRef.current
+    ) {
+      cancelBondCreationAndClose();
+
+      return;
+    }
+
     editor.events.createBondViaModal.dispatch({
       firstMonomer,
       secondMonomer,

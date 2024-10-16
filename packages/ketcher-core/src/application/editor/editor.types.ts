@@ -82,4 +82,5 @@ export interface Editor {
   macromoleculeConvertionError: string | null | undefined;
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;
+  serverSettings: object;
 }

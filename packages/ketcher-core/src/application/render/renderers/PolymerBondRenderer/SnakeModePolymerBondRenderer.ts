@@ -19,7 +19,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
 
 enum LineDirection {
   Horizontal = 'Horizontal',

@@ -14,8 +14,21 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   openFile,
+  moveOnAtom,
+  setZoomInputValue,
+  resetCurrentTool,
+  clickOnAtom,
+  pressButton,
+  selectRectangleSelectionTool,
+  selectFragmentSelection,
+  dragMouseTo,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import {
+  FileType,
+  verifyFile,
+  verifyMolfile,
+} from '@utils/files/receiveFileComparisonData';
 import {
   disableViewOnlyMode,
   disableViewOnlyModeBySetOptions,
@@ -314,5 +327,218 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await closeErrorAndInfoModals(page);
       });
     }
+  });
+
+  test('Verify that hotkeys for editing works after switching from View only mode to normal mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: Hotkeys for editing works after switching from View only mode to normal mode
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await disableViewOnlyModeBySetOptions(page);
+    await moveOnAtom(page, 'C', 1);
+    await page.keyboard.press('Delete');
+    await moveOnAtom(page, 'C', 4);
+    await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that editing-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: Eiting-related hotkeys (e.g., adding or modifying elements) are disabled in view-only mode
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await moveOnAtom(page, 'C', 1);
+    await page.keyboard.press('Delete');
+    await moveOnAtom(page, 'C', 4);
+    await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify zoom functionality in view-only mode', async ({ page }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: ZoomIn and ZoomOut works as expected.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '350');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the right-click context menu is fully blocked in view-only mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: The right-click context menu is fully blocked in view-only mode
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await clickOnAtom(page, 'C', 1, 'right');
+    await takeEditorScreenshot(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await clickOnAtom(page, 'C', 1, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the rotation tool is fully blocked in view-only mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: When we select structure there is no rotation tool above.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that in view-only mode, when user clicks and holds on an atom for several seconds, atoms edit window does not appear', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: In view-only mode, when user clicks and holds on an atom for several seconds, atom's edit window does not appear.
+    */
+    const timeout = 2000;
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await moveOnAtom(page, 'C', 1);
+    await page.mouse.down();
+    await page.waitForTimeout(timeout);
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Cancel');
+    await enableViewOnlyModeBySetOptions(page);
+    await moveOnAtom(page, 'C', 1);
+    await page.mouse.down();
+    await page.waitForTimeout(timeout);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that when view mode is triggered tool should reset to selection', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: When view mode is triggered tool reset to selection (from Fragment to Rectangle).
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectFragmentSelection(page);
+    await takeLeftToolbarScreenshot(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await takeLeftToolbarScreenshot(page);
+  });
+
+  test('Check that after disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: After disabling View Only mode, it’s possible to select all structures and move them together to a new place on the canvas.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await disableViewOnlyModeBySetOptions(page);
+    await selectRectangleSelectionTool(page);
+    await page.keyboard.press('Control+a');
+    await moveOnAtom(page, 'C', 1);
+    await dragMouseTo(300, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check saving in KET format in View only mode', async ({ page }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: Structure saved and opened from KET.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await verifyFile(
+      page,
+      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
+      'tests/test-data/KET/benzene-ring-saved-in-view-only-mode-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check saving in MOL V2000 format in View only mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: Structure saved and opened from MOL V2000.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await verifyMolfile(
+      page,
+      'v2000',
+      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+      'tests/test-data/Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+      [1],
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check saving in MOL V3000 format in View only mode', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/4965
+    Description: Structure saved and opened from MOL V3000.
+    */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await enableViewOnlyModeBySetOptions(page);
+    await verifyMolfile(
+      page,
+      'v3000',
+      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+      'tests/test-data/Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+      [1],
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

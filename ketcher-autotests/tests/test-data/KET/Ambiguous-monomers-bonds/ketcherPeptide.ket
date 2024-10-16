@@ -1,0 +1,624 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer44"
+            },
+            {
+                "$ref": "monomer45"
+            },
+            {
+                "$ref": "monomer46"
+            },
+            {
+                "$ref": "monomer47"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer44",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer45",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer46",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer47",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_"
+            },
+            {
+                "$ref": "monomerTemplate-Phe4Me___p-Methylphenylalanine"
+            },
+            {
+                "$ref": "monomerTemplate-meE___N-Methyl-Glutamic acid"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-mixture__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__Phe4Me___p-Methylphenylalanine_70_meE___N-Methyl-Glutamic acid_30"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-mixture__Phe4Me___p-Methylphenylalanine_1_meE___N-Methyl-Glutamic acid_3"
+            }
+        ]
+    },
+    "monomer44": {
+        "type": "ambiguousMonomer",
+        "id": "44",
+        "position": {
+            "x": 18.750000000000004,
+            "y": -10.837500000000002
+        },
+        "alias": "%",
+        "templateId": "alternatives__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_"
+    },
+    "ambiguousMonomerTemplate-alternatives__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "Phe4Me___p-Methylphenylalanine"
+            },
+            {
+                "templateId": "meE___N-Methyl-Glutamic acid"
+            }
+        ]
+    },
+    "monomerTemplate-Phe4Me___p-Methylphenylalanine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -3.8113,
+                    -3.0442,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.5101,
+                    -2.298,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2133,
+                    -3.0518,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.0879,
+                    -2.3056,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.0923,
+                    -0.8056,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.3927,
+                    -0.0563,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.395,
+                    1.4445,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "N",
+                "location": [
+                    0.0946,
+                    2.1938,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.2043,
+                    1.4435,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.6954,
+                    2.1938,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    3.9936,
+                    1.4422,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.6977,
+                    3.6938,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.2045,
+                    -0.0518,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.5057,
+                    -0.798,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    5
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    12
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    13
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "Phe4Me___p-Methylphenylalanine",
+        "fullName": "p-Methylphenylalanine",
+        "alias": "Phe4Me",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 9,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "F"
+    },
+    "monomerTemplate-meE___N-Methyl-Glutamic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.435,
+                    -0.8758,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.4328,
+                    0.625,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.8676,
+                    1.3743,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.8699,
+                    2.8751,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.7354,
+                    -1.6251,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.1686,
+                    3.4764,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.9097,
+                    3.4742,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.7372,
+                    -2.8251,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.8654,
+                    -1.6251,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.7739,
+                    -1.0238,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.866,
+                    -2.8251,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.9045,
+                    -1.0249,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    11
+                ]
+            }
+        ],
+        "class": "AminoAcid",
+        "classHELM": "PEPTIDE",
+        "id": "meE___N-Methyl-Glutamic acid",
+        "fullName": "N-Methyl-Glutamic acid",
+        "alias": "meE",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 8,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        10
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 4,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "type": "side",
+                "leavingGroup": {
+                    "atoms": [
+                        5
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "E"
+    },
+    "monomer45": {
+        "type": "ambiguousMonomer",
+        "id": "45",
+        "position": {
+            "x": 20.324999999999996,
+            "y": -10.837499999999995
+        },
+        "alias": "%",
+        "templateId": "mixture__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_"
+    },
+    "ambiguousMonomerTemplate-mixture__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "mixture__Phe4Me___p-Methylphenylalanine__meE___N-Methyl-Glutamic acid_",
+        "alias": "%",
+        "subtype": "mixture",
+        "options": [
+            {
+                "templateId": "Phe4Me___p-Methylphenylalanine"
+            },
+            {
+                "templateId": "meE___N-Methyl-Glutamic acid"
+            }
+        ]
+    },
+    "monomer46": {
+        "type": "ambiguousMonomer",
+        "id": "46",
+        "position": {
+            "x": 18.775000000000002,
+            "y": -12.3375
+        },
+        "alias": "%",
+        "templateId": "alternatives__Phe4Me___p-Methylphenylalanine_70_meE___N-Methyl-Glutamic acid_30"
+    },
+    "ambiguousMonomerTemplate-alternatives__Phe4Me___p-Methylphenylalanine_70_meE___N-Methyl-Glutamic acid_30": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__Phe4Me___p-Methylphenylalanine_70_meE___N-Methyl-Glutamic acid_30",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "Phe4Me___p-Methylphenylalanine",
+                "probability": 70
+            },
+            {
+                "templateId": "meE___N-Methyl-Glutamic acid",
+                "probability": 30
+            }
+        ]
+    },
+    "monomer47": {
+        "type": "ambiguousMonomer",
+        "id": "47",
+        "position": {
+            "x": 20.375000000000004,
+            "y": -12.3125
+        },
+        "alias": "%",
+        "templateId": "mixture__Phe4Me___p-Methylphenylalanine_1_meE___N-Methyl-Glutamic acid_3"
+    },
+    "ambiguousMonomerTemplate-mixture__Phe4Me___p-Methylphenylalanine_1_meE___N-Methyl-Glutamic acid_3": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "mixture__Phe4Me___p-Methylphenylalanine_1_meE___N-Methyl-Glutamic acid_3",
+        "alias": "%",
+        "subtype": "mixture",
+        "options": [
+            {
+                "templateId": "Phe4Me___p-Methylphenylalanine",
+                "ratio": 1
+            },
+            {
+                "templateId": "meE___N-Methyl-Glutamic acid",
+                "ratio": 3
+            }
+        ]
+    }
+}

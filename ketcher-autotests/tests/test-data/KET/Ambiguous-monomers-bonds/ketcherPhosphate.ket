@@ -1,0 +1,446 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer25"
+            },
+            {
+                "$ref": "monomer70"
+            },
+            {
+                "$ref": "monomer99"
+            },
+            {
+                "$ref": "monomer111"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer25",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer70",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer111",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer99",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino__bP___Boranophosphate_"
+            },
+            {
+                "$ref": "monomerTemplate-bnn___Benzylamino"
+            },
+            {
+                "$ref": "monomerTemplate-bP___Boranophosphate"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__bP___Boranophosphate_"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-mixture__bnn___Benzylamino_3_bP___Boranophosphate_5"
+            },
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70"
+            }
+        ]
+    },
+    "monomer25": {
+        "type": "ambiguousMonomer",
+        "id": "25",
+        "position": {
+            "x": 5.9812499999999975,
+            "y": -2.501249999999996
+        },
+        "alias": "%",
+        "templateId": "alternatives__bnn___Benzylamino__bP___Boranophosphate_"
+    },
+    "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino__bP___Boranophosphate_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__bnn___Benzylamino__bP___Boranophosphate_",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "bnn___Benzylamino"
+            },
+            {
+                "templateId": "bP___Boranophosphate"
+            }
+        ]
+    },
+    "monomerTemplate-bnn___Benzylamino": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -2.8595,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.5606,
+                    1.7994,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.2616,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5598,
+                    0.2986,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2602,
+                    -0.452,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2574,
+                    -1.952,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0374,
+                    0.3004,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0431,
+                    -2.6995,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3407,
+                    -1.9471,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3379,
+                    -0.4471,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    6
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "bnn___Benzylamino",
+        "fullName": "Benzylamino",
+        "alias": "bnn",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomerTemplate-bP___Boranophosphate": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "P",
+                "location": [
+                    -0.2399,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.4399,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.3598,
+                    -1.0394,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.9601,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "B",
+                "location": [
+                    0.3598,
+                    1.0394,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "bP___Boranophosphate",
+        "fullName": "Boranophosphate",
+        "alias": "bP",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        1
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 0,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomer70": {
+        "type": "ambiguousMonomer",
+        "id": "70",
+        "position": {
+            "x": 7.781249999999996,
+            "y": -2.501250000000001
+        },
+        "alias": "%",
+        "templateId": "mixture__bnn___Benzylamino__bP___Boranophosphate_"
+    },
+    "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__bP___Boranophosphate_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "mixture__bnn___Benzylamino__bP___Boranophosphate_",
+        "alias": "%",
+        "subtype": "mixture",
+        "options": [
+            {
+                "templateId": "bnn___Benzylamino"
+            },
+            {
+                "templateId": "bP___Boranophosphate"
+            }
+        ]
+    },
+    "monomer99": {
+        "type": "ambiguousMonomer",
+        "id": "99",
+        "position": {
+            "x": 7.756250000000002,
+            "y": -4.00125
+        },
+        "alias": "%",
+        "templateId": "mixture__bnn___Benzylamino_3_bP___Boranophosphate_5"
+    },
+    "ambiguousMonomerTemplate-mixture__bnn___Benzylamino_3_bP___Boranophosphate_5": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "mixture__bnn___Benzylamino_3_bP___Boranophosphate_5",
+        "alias": "%",
+        "subtype": "mixture",
+        "options": [
+            {
+                "templateId": "bnn___Benzylamino",
+                "ratio": 3
+            },
+            {
+                "templateId": "bP___Boranophosphate",
+                "ratio": 5
+            }
+        ]
+    },
+    "monomer111": {
+        "type": "ambiguousMonomer",
+        "id": "111",
+        "position": {
+            "x": 6.1312500000000005,
+            "y": -4.026249999999994
+        },
+        "alias": "%",
+        "templateId": "alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70"
+    },
+    "ambiguousMonomerTemplate-alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__bnn___Benzylamino_30_bP___Boranophosphate_70",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "bnn___Benzylamino",
+                "probability": 30
+            },
+            {
+                "templateId": "bP___Boranophosphate",
+                "probability": 70
+            }
+        ]
+    }
+}

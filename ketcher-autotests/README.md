@@ -143,6 +143,7 @@ Run this command in the directory "ketcher-autotests"
 - `npm run docker:test file_name:N` run specific test in a file (N - line on which test starts)
 - `npm run report` show report
 - `npm run docker:update` update all snapshots
+- `npm run docker:update file_name:N` update specific test in a file (N - line on which test starts)
 - `npm run docker:update:test -- "test_title"` update only 1 snapshot with test_title
 
 ### Known issues

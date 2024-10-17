@@ -18,107 +18,107 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="5" Element="8" NumHydrogens="2" p="167.102234 239.250000">
-                <t p="167.102234 239.250000" LabelJustification="Left">
+            <n id="5" Element="8" NumHydrogens="2" p="645.312012 503.684235">
+                <t p="645.312012 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>
             </n>
         </fragment>
         <fragment id="6">
-            <n id="7" Element="8" NumHydrogens="2" p="215.302231 239.250000">
-                <t p="215.302231 239.250000" LabelJustification="Left">
+            <n id="7" Element="8" NumHydrogens="2" p="696.978638 503.684235">
+                <t p="696.978638 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>
             </n>
         </fragment>
         <fragment id="8">
-            <n id="9" Element="7" NumHydrogens="3" p="263.502258 239.250000">
-                <t p="263.502258 239.250000" LabelJustification="Left">
+            <n id="9" Element="7" NumHydrogens="3" p="748.645386 503.684235">
+                <t p="748.645386 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">NH</s>
                     <s font="3" size="10" face="32">3</s>
                 </t>
             </n>
         </fragment>
         <fragment id="10">
-            <n id="11" Element="7" NumHydrogens="3" p="311.702240 239.250000">
-                <t p="311.702240 239.250000" LabelJustification="Left">
+            <n id="11" Element="7" NumHydrogens="3" p="800.312073 503.684235">
+                <t p="800.312073 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">NH</s>
                     <s font="3" size="10" face="32">3</s>
                 </t>
             </n>
         </fragment>
         <fragment id="12">
-            <n id="13" Element="1" p="445.063721 222.649994">
-                <t p="445.063721 222.649994" LabelJustification="Left">
+            <n id="13" Element="1" p="940.606934 485.350861">
+                <t p="940.606934 485.350861" LabelJustification="Left">
                     <s font="3" size="10" face="96">H</s>
                 </t>
             </n>
         </fragment>
         <fragment id="14">
-            <n id="15" Element="1" p="476.663696 222.649994">
-                <t p="476.663696 222.649994" LabelJustification="Left">
+            <n id="15" Element="1" p="973.940308 485.350861">
+                <t p="973.940308 485.350861" LabelJustification="Left">
                     <s font="3" size="10" face="96">H</s>
                 </t>
             </n>
         </fragment>
         <fragment id="16">
-            <n id="17" Element="9" NumHydrogens="1" p="509.863647 239.250000">
-                <t p="509.863647 239.250000" LabelJustification="Left">
+            <n id="17" Element="9" NumHydrogens="1" p="1010.606934 503.684235">
+                <t p="1010.606934 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="18">
-            <n id="19" Element="9" NumHydrogens="1" p="558.063599 239.250000">
-                <t p="558.063599 239.250000" LabelJustification="Left">
+            <n id="19" Element="9" NumHydrogens="1" p="1062.273560 503.684235">
+                <t p="1062.273560 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="20">
-            <n id="21" Element="9" NumHydrogens="1" p="606.263550 239.250000">
-                <t p="606.263550 239.250000" LabelJustification="Left">
+            <n id="21" Element="9" NumHydrogens="1" p="1113.940186 503.684235">
+                <t p="1113.940186 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="22">
-            <n id="23" Element="9" NumHydrogens="1" p="654.463440 239.250000">
-                <t p="654.463440 239.250000" LabelJustification="Left">
+            <n id="23" Element="9" NumHydrogens="1" p="1165.606812 503.684235">
+                <t p="1165.606812 503.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
         </fragment>
         <fragment id="24">
-            <n id="25" Element="35" NumHydrogens="0" p="385.882996 209.250000">
-                <t p="385.882996 209.250000" LabelJustification="Left">
+            <n id="25" Element="35" NumHydrogens="0" p="877.959534 473.684204">
+                <t p="877.959534 473.684204" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
-            <n id="26" Element="35" NumHydrogens="0" p="359.902252 254.250015">
-                <t p="359.902252 254.250015" LabelJustification="Left">
+            <n id="26" Element="35" NumHydrogens="0" p="851.978760 518.684204">
+                <t p="851.978760 518.684204" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
-            <n id="27" Element="35" NumHydrogens="0" p="359.902252 224.250000">
-                <t p="359.902252 224.250000" LabelJustification="Left">
+            <n id="27" Element="35" NumHydrogens="0" p="851.978760 488.684235">
+                <t p="851.978760 488.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
-            <n id="28" Element="35" NumHydrogens="0" p="385.882996 269.250000">
-                <t p="385.882996 269.250000" LabelJustification="Left">
+            <n id="28" Element="35" NumHydrogens="0" p="877.959534 533.684204">
+                <t p="877.959534 533.684204" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
-            <n id="29" Element="35" NumHydrogens="0" p="411.863739 224.250015">
-                <t p="411.863739 224.250015" LabelJustification="Left">
+            <n id="29" Element="35" NumHydrogens="0" p="903.940247 488.684235">
+                <t p="903.940247 488.684235" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
-            <n id="30" Element="35" NumHydrogens="0" p="411.863739 254.250015">
-                <t p="411.863739 254.250015" LabelJustification="Left">
+            <n id="30" Element="35" NumHydrogens="0" p="903.940247 518.684204">
+                <t p="903.940247 518.684204" LabelJustification="Left">
                     <s font="3" size="10" face="96">Br</s>
                 </t>
             </n>
@@ -130,22 +130,22 @@
             <b id="67" B="26" E="27"/>
         </fragment>
         <fragment id="31">
-            <n id="32" p="717.663330 226.259628"/>
-            <n id="33" p="702.663391 252.240372"/>
-            <n id="34" p="732.663391 252.240372"/>
+            <n id="32" p="1232.273438 490.693817"/>
+            <n id="33" p="1217.273438 516.674622"/>
+            <n id="34" p="1247.273438 516.674622"/>
             <b id="68" B="32" E="33"/>
             <b id="69" B="33" E="34"/>
             <b id="70" B="34" E="32"/>
         </fragment>
-        <arrow id="35" BoundingBox="493.263641 239.250000 428.463745 239.250000" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="493.263641 239.250000 0.000000" Tail3D="428.463745 239.250000 0.000000"/>
-        <graphic id="38" BoundingBox="191.202240 243.000015 191.202240 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="41" BoundingBox="239.402237 243.000015 239.402237 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="44" BoundingBox="287.602234 243.000015 287.602234 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="47" BoundingBox="335.802246 243.000015 335.802246 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="50" BoundingBox="533.963623 243.000015 533.963623 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="53" BoundingBox="582.163513 243.000015 582.163513 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="56" BoundingBox="630.363464 243.000015 630.363464 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="59" BoundingBox="678.563416 243.000015 678.563416 235.500000" GraphicType="Symbol" SymbolType="Plus"/>
+        <arrow id="35" BoundingBox="992.273621 503.684235 922.273560 503.684235" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="992.273621 503.684235 0.000000" Tail3D="922.273560 503.684235 0.000000"/>
+        <graphic id="38" BoundingBox="671.145325 507.434235 671.145325 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="41" BoundingBox="722.812012 507.434235 722.812012 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="44" BoundingBox="774.478699 507.434235 774.478699 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="47" BoundingBox="826.145386 507.434235 826.145386 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="50" BoundingBox="1036.440186 507.434235 1036.440186 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="53" BoundingBox="1088.106934 507.434235 1088.106934 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="56" BoundingBox="1139.773560 507.434235 1139.773560 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
+        <graphic id="59" BoundingBox="1191.440186 507.434235 1191.440186 499.934235" GraphicType="Symbol" SymbolType="Plus"/>
         <scheme>
             <step ReactionStepReactants="4 6 8 10 24" ReactionStepProducts="16 18 20 22 31" ReactionStepObjectsAboveArrow="12 14" ReactionStepArrows="35"/>
         </scheme>

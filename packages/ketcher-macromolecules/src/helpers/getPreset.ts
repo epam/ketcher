@@ -29,17 +29,24 @@ export const getPresets = (
     }),
   );
 
-  return rnaPresetsTemplates.map(
-    (rnaPresetsTemplate: RnaPresetsTemplatesType): IRnaPreset => {
+  return rnaPresetsTemplates
+    .filter((rnaPresetsTemplate) => {
+      return rnaPresetsTemplate.templates.every((rnaPartsMonomerTemplateRef) =>
+        Boolean(
+          monomerLibraryItemByMonomerIDMap.get(rnaPartsMonomerTemplateRef.$ref),
+        ),
+      );
+    })
+    .map((rnaPresetsTemplate: RnaPresetsTemplatesType): IRnaPreset => {
       const rnaPartsMonomerLibraryItemByMonomerClassMap = new Map<
         KetMonomerClass,
         MonomerItemType
       >(
         rnaPresetsTemplate.templates.map((rnaPartsMonomerTemplateRef) => {
-          // TODO: Do we need to check for existence? Suddenly there is `undefined`.
           const monomer = monomerLibraryItemByMonomerIDMap.get(
             rnaPartsMonomerTemplateRef.$ref,
           ) as MonomerItemType;
+
           const [, , monomerClass] = monomerFactory(monomer);
 
           return [monomerClass, monomer];
@@ -76,6 +83,5 @@ export const getPresets = (
         ...result,
         idtAliases: rnaPresetsTemplate.idtAliases,
       };
-    },
-  );
+    });
 };

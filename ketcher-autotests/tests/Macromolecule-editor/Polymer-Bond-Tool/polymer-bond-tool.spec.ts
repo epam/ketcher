@@ -842,8 +842,7 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       await bondLine.hover();
       await delay(1);
       await takeEditorScreenshot(page);
-      await bondLine.click({ button: 'right' });
-      await page.getByText('Edit Connection Points...').click();
+      await openEditConnectionPointsMenu(page, bondLine);
       await takeEditorScreenshot(page);
       await pressButton(page, 'Cancel');
     });

@@ -40,6 +40,7 @@ export function useLayoutMode() {
     },
     [setLayoutMode],
   );
+
   useEffect(() => {
     editor?.events.layoutModeChange.add(onLayoutModeChange);
 
@@ -47,10 +48,6 @@ export function useLayoutMode() {
       editor?.events.layoutModeChange.remove(onLayoutModeChange);
     };
   }, [onLayoutModeChange, editor?.events.layoutModeChange]);
-
-  useEffect(() => {
-    editor?.events.selectMode.dispatch(layoutMode);
-  }, [editor?.events.selectMode, layoutMode]);
 
   return layoutMode;
 }

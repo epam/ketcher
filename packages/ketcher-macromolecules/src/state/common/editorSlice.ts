@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { CoreEditor, LayoutMode } from 'ketcher-core';
+import { CoreEditor, LayoutMode, modesMap } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
@@ -75,6 +75,9 @@ export const editorSlice: Slice = createSlice({
       state.editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
+        mode: state.editorLayoutMode
+          ? new modesMap[state.editorLayoutMode]()
+          : undefined,
       });
     },
     destroyEditor: (state) => {

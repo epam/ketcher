@@ -1372,7 +1372,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
@@ -1409,7 +1409,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);

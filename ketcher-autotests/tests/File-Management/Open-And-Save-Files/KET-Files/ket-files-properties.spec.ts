@@ -318,7 +318,7 @@ test.describe('Ket files', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);

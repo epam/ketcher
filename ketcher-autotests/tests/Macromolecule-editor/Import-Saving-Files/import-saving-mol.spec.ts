@@ -23,7 +23,6 @@ import {
   selectClearCanvasTool,
   delay,
   selectFlexLayoutModeTool,
-  moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';

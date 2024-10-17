@@ -1,5 +1,4 @@
-import { useMemo } from 'react';
-import styled from '@emotion/styled';
+import { CSSProperties, useMemo } from 'react';
 import {
   Container,
   Content,
@@ -12,28 +11,14 @@ import { AmbiguousMonomerPreviewState } from './types';
 interface Props {
   className?: string;
   preview: AmbiguousMonomerPreviewState;
+  style?: CSSProperties;
 }
 
-const UnstyledAmbiguousMonomerPreview = ({ className, preview }: Props) => {
-  const { monomer, presetMonomers, style } = preview;
+const AmbiguousMonomerPreview = ({ className, preview, style }: Props) => {
+  const { monomer, presetMonomers } = preview;
 
   const isAlternatives = monomer.subtype === 'alternatives';
-
-  const ContainerDynamic = useMemo(() => {
-    if (!style) {
-      return styled(Container)``;
-    }
-
-    return styled(Container)`
-      top: ${style?.top || ''};
-      left: ${style?.left || ''};
-      right: ${style?.right || ''};
-      transform: ${style.transform || ''};
-    `;
-  }, [style]);
-
   const header = isAlternatives ? 'Alternatives' : 'Mixed';
-
   const aminoAcidFallback = monomer.label === 'X' ? 'Any amino acid' : null;
   const baseFallback = monomer.label === 'N' ? 'Any base' : null;
   const fallback = aminoAcidFallback || baseFallback;
@@ -93,7 +78,8 @@ const UnstyledAmbiguousMonomerPreview = ({ className, preview }: Props) => {
   }, [previewData, isAlternatives]);
 
   return (
-    <ContainerDynamic
+    <Container
+      style={style}
       className={className}
       data-testid="polymer-library-preview"
     >
@@ -109,11 +95,8 @@ const UnstyledAmbiguousMonomerPreview = ({ className, preview }: Props) => {
             </ContentLine>
           ))}
       </Content>
-    </ContainerDynamic>
+    </Container>
   );
 };
 
-export const AmbiguousMonomerPreview = styled(UnstyledAmbiguousMonomerPreview)`
-  z-index: 5;
-  position: absolute;
-`;
+export { AmbiguousMonomerPreview };

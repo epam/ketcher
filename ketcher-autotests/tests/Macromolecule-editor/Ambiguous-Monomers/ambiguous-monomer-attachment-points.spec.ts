@@ -266,6 +266,7 @@ const ambiguousMonomers: IHELMString[] = [
       '31. Ambiguous alternatives base made of base(R1) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2],[5meC])P}$$$$V2.0',
     monomerLocatorIndex: 1,
+    pageReloadNeeded: true,
   },
   {
     testDescription:

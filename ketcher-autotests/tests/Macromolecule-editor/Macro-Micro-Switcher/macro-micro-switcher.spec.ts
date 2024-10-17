@@ -1,10 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import {
+  chooseTab,
   enterSequence,
+  Tabs,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   TopPanelButton,
@@ -57,14 +59,13 @@ import {
   takeTopToolbarScreenshot,
   setAttachmentPoints,
   selectClearCanvasTool,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   Sugars,
   Bases,
   Phosphates,
   getControlModifier,
   readFileContents,
   openPasteFromClipboard,
+  waitForPageInit,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -198,40 +199,26 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
 }
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
   await selectClearCanvasTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -2359,4 +2346,121 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
   });
+});
+
+async function expandMonomer(page: Page, locatorText: string) {
+  await page.getByText(locatorText, { exact: true }).click({
+    button: 'right',
+  });
+  await page.getByText('Expand monomer').click();
+}
+interface IMonomer {
+  monomerDescription: string;
+  KETFile: string;
+  monomerLocatorText: string;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+  shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
+  issueNumber?: string;
+  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+  pageReloadNeeded?: boolean;
+}
+const expandableMonomers: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide D (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+    monomerLocatorText: 'D',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
+    monomerLocatorText: 'UNA',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+  {
+    monomerDescription: '3. Base hU (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
+    monomerLocatorText: 'hU',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
+    monomerLocatorText: 'bnn',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
+    monomerLocatorText: '5hMedC',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+  {
+    monomerDescription: '6. CHEM 4aPEGMal (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
+    monomerLocatorText: '4aPEGMal',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5792, ' +
+      'https://github.com/epam/ketcher/issues/5782',
+  },
+];
+
+test.describe('Uncollapse on Micro canvas: ', () => {
+  test.beforeEach(async () => {
+    await turnOnMicromoleculesEditor(page);
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/5773
+       * Description: That test validates the following checks:
+       *       1. [indirectly] Verify that the "Expand Monomer" option is available in the right-click context
+       *          menu over the monomer in micro mode
+       *       2. Verify that clicking on "Expand monomer" replaces the monomer abbreviation with its full structure of atoms and bonds grouped together
+       *       3. Verify that the structure bounding box of the expanded monomer is centered by the
+       *          position of the previously collapsed monomer
+       *       4. Verify that square brackets are not present for expanded monomers and the monomer label is retained
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Take screenshot it was loaded
+       *       3. Call context menu for appeared monomer and click Uncollapse monomer
+       *       4. Take screenshot to make sure it works
+       *       Molecule should appear
+       */
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await takeEditorScreenshot(page);
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test fails because of ${expandableMonomer.issueNumber} issue.`,
+      );
+    });
+  }
 });

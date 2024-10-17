@@ -239,7 +239,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Check that preview window of macro structure does not change in micro mode ',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async () => {
-      /*
+    /* 
     Test case: https://github.com/epam/ketcher/issues/3603
     Description: Preview window of macro structure doesn't change in micro mode
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3603
@@ -259,7 +259,7 @@ test.describe('Macro-Micro-Switcher', () => {
   );
 
   test('Check that macromolecule structures in micromode are represented as S-Groups with bonds', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Macromolecule structures in micromode are represented as S-Groups with bonds
     */
@@ -277,7 +277,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Micromolecules in macromode will be represented as CHEMs with generated name(F1, F2, ...Fn)',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
@@ -294,7 +294,7 @@ test.describe('Macro-Micro-Switcher', () => {
   );
 
   test('Check that After hiding Library in Macro mode possible to see Show Library button', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
@@ -305,7 +305,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode
     */
@@ -315,7 +315,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that the Ket-structure opened from the file in Macro mode is visible in Micro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
@@ -326,7 +326,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and move it to a new position', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3654
@@ -346,7 +346,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Add monomers in macro mode then switch to micro mode and check that it can not be expanded and abreviation can not be removed', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
@@ -361,7 +361,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Add monomers in macro mode then switch to micro mode and check that it can not be moved', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Sequence of monomers moved to a new position in Micro mode
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3658
@@ -384,7 +384,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (UI Buttons) after switching to Macro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
@@ -423,7 +423,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (Mouse scroll) after switching to Macro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
@@ -448,7 +448,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that the zoomed in/out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
     */
@@ -474,7 +474,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs
     when switching from Macro mode to Micro mode and back to Macro is saved
@@ -489,7 +489,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
@@ -504,7 +504,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
@@ -527,7 +527,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
   for (const testInfo of tests) {
     test(`Check that Pressing ${testInfo.description} button not erase all macromolecules from canvas`, async () => {
-      /*
+      /* 
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
@@ -544,7 +544,7 @@ test.describe('Macro-Micro-Switcher', () => {
   }
 
   test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
@@ -563,7 +563,7 @@ test.describe('Macro-Micro-Switcher', () => {
       tag: ['@IncorrectResultBecauseOfBug'],
     },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher/#4203
     Description: The 3D view works for micromolecules when there are macromolecules on the canvas.
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/4203
@@ -585,7 +585,7 @@ test.describe('Macro-Micro-Switcher', () => {
   );
 
   test('Check that there are no errors in DevTool console when switching to full screen mode after switching from micro mode', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher/#4094
     Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
     */
@@ -606,7 +606,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher/#4173
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
@@ -636,7 +636,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Check that the Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
@@ -656,7 +656,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Check that the Ket-structure opened from the file in Micro mode  is visible in Macro mode when hover on it',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+      /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
@@ -676,7 +676,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create two Benzene rings structure with Charge Plus (+) and Charge Plus (-) Tool added in Micro mode and switch to Macro mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+      /* 
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
@@ -696,7 +696,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create two Benzene rings structure with some text added in Micro mode and switch to Macro mode.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+      /* 
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without text.
     */
@@ -716,7 +716,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create two Benzene rings structure with Shape Ellipse Tool added in Micro mode and switch to Macro mode.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without Shape Ellipse.
     */
@@ -735,7 +735,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create two Benzene rings structure with Arrow Open Angle Tool added in Micro mode and switch to Macro mode.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
@@ -754,7 +754,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create ABS, new OR Group, new AND Group. Switch to Macro mode and check that ABS, AND and OR isn not appear.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
@@ -778,7 +778,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Create two Benzene rings structure with Reaction Plus Tool in Micro mode and switch to Macro mode.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: In Macro mode plus sign is not appear
     */
@@ -797,7 +797,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Check that the Ket-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
@@ -820,7 +820,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Check that the Mol-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
@@ -846,7 +846,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Make full screen mode in micro mode and switch to macro mode.',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
@@ -868,7 +868,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher
     Description: Atoms displayed as dots, without any text or other additional information.
     Bonds displayed as one line regardless which type of bond it is.
@@ -889,7 +889,7 @@ test.describe('Macro-Micro-Switcher', () => {
   );
 
   test('Open a macro file and put in center of canvas in micro mode then switch to macro', async () => {
-    /*
+    /* 
     Test case: Macro-Micro-Switcher/#3902
     Description: Structure is in left upper corner of canvas
     */
@@ -905,9 +905,9 @@ test.describe('Macro-Micro-Switcher', () => {
     'Settings related to atom and bond display are ignored in macromolecules mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /*
     Test case: Macro-Micro-Switcher
-    Description: Settings related to atom and bond display are ignored in macromolecules mode,
+    Description: Settings related to atom and bond display are ignored in macromolecules mode, 
     and display is consistently set to dots for atoms and single lines for bonds.
     Now test working not properly because we have open ticket https://github.com/epam/ketcher/issues/3618
     After closing the ticket, should update the screenshots.
@@ -1062,7 +1062,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Make sure that micro structure Ring when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Ring moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
@@ -1087,7 +1087,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Make sure that micro structure Atom when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /* 
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Atom moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
@@ -1112,7 +1112,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Micro structure Functional Group when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+    /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Functional Group moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
@@ -1137,7 +1137,7 @@ test.describe('Macro-Micro-Switcher', () => {
     'Micro structure Salt and Solvent when moving in macro mode then switching to micro mode is correctly displayed in place where it was moved in macro mode',
     { tag: ['@NeedToBeUpdated'] },
     async () => {
-      /*
+     /*
     Test case: Macro-Micro-Switcher/#4531
     Description: Micro structure Salt and Solvent moved in macro mode then switching to micro mode is correctly displayed in coords where it was moved in macro mode.
     */
@@ -1646,7 +1646,7 @@ test.describe('Macro-Micro-Switcher', () => {
       /*
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in Mol V2000 format.
-    The structure after opening is not similar to the original one.
+    The structure after opening is not similar to the original one. 
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
       await openFileAndAddToCanvas(
@@ -1748,7 +1748,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDX molecular structure files', async () => {
-    /*
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
                  CDX does not support R-groups, so R1 converts to H (hydrogen)
@@ -1777,7 +1777,7 @@ test.describe('Macro-Micro-Switcher', () => {
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
-    /*
+    /* 
     Test case: #4530
     Description: Attachment points and leaving groups are correctly represented in CDX format.
     */

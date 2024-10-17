@@ -55,6 +55,7 @@ export const LayoutModeButton = () => {
         testId="layout-mode"
         vertical={true}
         needOpenByMenuItemClick={true}
+        layoutModeButton={true}
       >
         <Menu.Item
           itemId="sequence-layout-mode"

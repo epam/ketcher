@@ -763,7 +763,6 @@ async function selectAndReplaceAllSymbolsInEditMode(
     sequence.ReplacementPositions.RightEnd,
   );
   await page.keyboard.up('Shift');
-  await page.keyboard.up('LeftArrow');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {

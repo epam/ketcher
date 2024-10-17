@@ -99,13 +99,29 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public get textColor() {
     const WHITE = 'white';
+    const BLACK = '#333333';
     const colorsMap = {
-      D: WHITE,
+      A: WHITE,
+      C: WHITE,
+      D: BLACK,
       F: WHITE,
-      K: WHITE,
+      G: BLACK,
+      E: WHITE,
+      H: WHITE,
+      I: WHITE,
+      K: BLACK,
+      L: BLACK,
+      M: BLACK,
+      N: WHITE,
+      P: BLACK,
+      S: WHITE,
+      O: WHITE,
       Q: WHITE,
       R: WHITE,
-      W: WHITE,
+      T: WHITE,
+      U: BLACK,
+      V: BLACK,
+      W: BLACK,
       Y: WHITE,
     };
     return (

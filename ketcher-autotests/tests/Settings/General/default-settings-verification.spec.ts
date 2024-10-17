@@ -18,7 +18,6 @@ import {
   setReactionMarginSizeValue,
   moveMouseAway,
   openSettings,
-  delay,
 } from '@utils';
 
 async function resetSelectToolOff(page: Page) {

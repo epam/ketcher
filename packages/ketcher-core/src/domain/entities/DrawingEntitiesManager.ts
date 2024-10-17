@@ -346,11 +346,11 @@ export class DrawingEntitiesManager {
     offset?: Vec2,
   ) {
     if (drawingEntity instanceof PolymerBond) {
-      drawingEntity.moveToLinkedMonomers();
+      drawingEntity.moveToLinkedEntities();
     } else if (drawingEntity instanceof Bond) {
       drawingEntity.moveToLinkedAtoms();
     } else if (drawingEntity instanceof MonomerToAtomBond) {
-      drawingEntity.moveToLinkedMonomerAndAtom();
+      drawingEntity.moveToLinkedEntities();
     } else {
       assert(offset);
       drawingEntity.moveRelative(offset);
@@ -770,7 +770,7 @@ export class DrawingEntitiesManager {
     polymerBond.secondMonomer.removePotentialBonds(true);
     polymerBond.firstMonomer.setChosenFirstAttachmentPoint(null);
     polymerBond.secondMonomer?.setChosenSecondAttachmentPoint(null);
-    polymerBond.moveToLinkedMonomers();
+    polymerBond.moveToLinkedEntities();
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
     polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
@@ -1358,7 +1358,7 @@ export class DrawingEntitiesManager {
     let nextPositionAndDistance;
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
-      const nextMonomer = polymerBond?.getAnotherMonomer(monomer);
+      const nextMonomer = polymerBond?.getAnotherEntity(monomer);
       if (
         !polymerBond ||
         polymerBond instanceof MonomerToAtomBond ||
@@ -1538,7 +1538,7 @@ export class DrawingEntitiesManager {
     endPosition?: Vec2,
   ) {
     if (bond instanceof MonomerToAtomBond) {
-      bond.moveToLinkedMonomerAndAtom();
+      bond.moveToLinkedEntities();
 
       return bond;
     }
@@ -1547,7 +1547,7 @@ export class DrawingEntitiesManager {
       bond.moveBondStartAbsolute(startPosition.x, startPosition.y);
       bond.moveBondEndAbsolute(endPosition.x, endPosition.y);
     } else {
-      bond.moveToLinkedMonomers();
+      bond.moveToLinkedEntities();
     }
 
     return bond;
@@ -1934,6 +1934,7 @@ export class DrawingEntitiesManager {
           if (
             !selectedDrawingEntities?.includes(polymerBond) &&
             !drawingEntities.includes(polymerBond) &&
+            polymerBond instanceof PolymerBond &&
             polymerBond.getAnotherMonomer(monomer)?.selected
           ) {
             drawingEntities.push(polymerBond);
@@ -2246,7 +2247,7 @@ export class DrawingEntitiesManager {
 
     this.monomerToAtomBonds.set(monomerToAtomBond.id, monomerToAtomBond);
 
-    monomerToAtomBond.moveToLinkedMonomerAndAtom();
+    monomerToAtomBond.moveToLinkedEntities();
     monomer.setBond(attachmentPoint, monomerToAtomBond);
     monomer.turnOffAttachmentPointsVisibility();
     monomer.turnOffHover();

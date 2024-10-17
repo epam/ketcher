@@ -30,9 +30,6 @@ const useMonomerExpansionHandlers = () => {
 
       editor.update(action);
       editor.rotateController.rerender();
-      editor.selection({
-        sgroups: selectedFunctionalGroups?.map((fg) => fg.relatedSGroup),
-      });
     },
     [getKetcherInstance],
   );

@@ -481,20 +481,27 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
   normalizeTailPosition(
     proposedPosition: FixedPrecisionCoordinates,
     tailId: number,
-  ): FixedPrecisionCoordinates {
+  ): FixedPrecisionCoordinates | null {
     const proposedPositionFloatingPrecision =
       proposedPosition.getFloatingPrecision();
+    const getDistanceToTailDistance = (tailDistance: TailDistance): number =>
+      Math.abs(tailDistance.center - proposedPositionFloatingPrecision) -
+      tailDistance.distance / 2;
+
     const tailsWithoutCurrent = Array.from(this.tailsYOffset.entries())
       .filter(([key]) => key !== tailId)
       .map(([_, value]) => value);
     const tailMinDistance = this.getTailsDistance(tailsWithoutCurrent)
       .filter((item) => MultitailArrow.canAddTail(item.distance))
       .sort(
-        (a, b) =>
-          Math.abs(a.center - proposedPositionFloatingPrecision) -
-          Math.abs(b.center - proposedPositionFloatingPrecision),
+        (a, b) => getDistanceToTailDistance(a) - getDistanceToTailDistance(b),
       )
-      .at(0) as TailDistance;
+      .at(0);
+
+    if (!tailMinDistance) {
+      return null;
+    }
+
     const positionCenter = FixedPrecisionCoordinates.fromFloatingPrecision(
       tailMinDistance.center,
     );
@@ -568,7 +575,11 @@ export class MultitailArrow extends BaseMicromoleculeEntity {
         ),
       );
       if (normalize) {
-        updatedHeight = this.normalizeTailPosition(updatedHeight, second);
+        const result = this.normalizeTailPosition(updatedHeight, second);
+        if (result === null) {
+          return originalValue.getFloatingPrecision();
+        }
+        updatedHeight = result;
       }
 
       const realOffset = updatedHeight.sub(originalValue);

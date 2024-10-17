@@ -263,6 +263,17 @@ export class Ketcher {
     return getStructure(format, this.#formatterFactory, this.#editor.struct());
   }
 
+  getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SDF format is not available in macro mode');
+    }
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.rdf
+        : SupportedFormat.rdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
   getCDXml(): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('CDXML format is not available in macro mode');

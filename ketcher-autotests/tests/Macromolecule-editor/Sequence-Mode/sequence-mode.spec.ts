@@ -537,6 +537,7 @@ test.describe('Sequence Mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Delete');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
@@ -558,6 +559,7 @@ test.describe('Sequence Mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);

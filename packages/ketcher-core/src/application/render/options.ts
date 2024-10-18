@@ -145,8 +145,10 @@ function convertValue(
   measureTo: keyof typeof measureMap,
 ) {
   const convertedValue =
-    measureTo === 'px' || measureTo === 'pt'
-      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
+    measureTo === 'px'
+      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(1)
+      : measureTo === 'pt'
+      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(0)
       : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3);
 
   return Number(convertedValue);

@@ -255,6 +255,10 @@ export class ZoomTool implements BaseTool {
     );
   }
 
+  public scrollBy(x: number, y: number) {
+    this.zoom?.translateBy(this.canvasWrapper, x, y);
+  }
+
   public scrollToVerticalCenter(structCenterY: number) {
     const centerPointOfModel =
       this.drawingEntitiesManager.getCurrentCenterPointOfCanvas();

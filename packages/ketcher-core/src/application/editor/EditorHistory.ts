@@ -76,6 +76,7 @@ export class EditorHistory {
 
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.execute(this.editor.renderersContainer);
+    lastCommand.executeAfterAllOperations(this.editor.renderersContainer);
     this.historyPointer++;
   }
 

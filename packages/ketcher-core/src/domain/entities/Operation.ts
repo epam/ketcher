@@ -14,4 +14,5 @@ export interface Operation {
   polymerBond?: PolymerBond;
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;
+  executeAfterAllOperations?(renderersManager: RenderersManager): void;
 }

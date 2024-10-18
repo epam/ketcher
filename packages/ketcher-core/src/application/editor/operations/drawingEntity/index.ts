@@ -31,10 +31,15 @@ export class DrawingEntityMoveOperation implements Operation {
     private drawingEntity: DrawingEntity,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.wasInverted
       ? this.redoDrawingEntityChangeModel()
       : this.moveDrawingEntityChangeModel();
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.invertMoveDrawingEntityChangeModel();
+
     if (
       this.drawingEntity instanceof PolymerBond ||
       this.drawingEntity instanceof MonomerToAtomBond
@@ -43,11 +48,11 @@ export class DrawingEntityMoveOperation implements Operation {
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);
     }
+
+    this.wasInverted = true;
   }
 
-  public invert(renderersManager: RenderersManager) {
-    this.invertMoveDrawingEntityChangeModel();
-
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
     // Redraw Polymer bonds instead of moving needed here because
     // they have two drawing modes: straight and curved.
     // During switching snake/flex layout modes and undo/redo
@@ -60,10 +65,9 @@ export class DrawingEntityMoveOperation implements Operation {
     } else {
       renderersManager.moveDrawingEntity(this.drawingEntity);
     }
-
-    this.wasInverted = true;
   }
 }
+
 export class DrawingEntityRedrawOperation implements Operation {
   constructor(
     private drawingEntityRedrawModelChange: () => DrawingEntity,

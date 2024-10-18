@@ -43,6 +43,14 @@ export class Command {
     renderersManagers.runPostRenderMethods();
   }
 
+  public executeAfterAllOperations(renderersManagers: RenderersManager) {
+    this.operations.forEach((operation) => {
+      if (operation.executeAfterAllOperations) {
+        operation.executeAfterAllOperations(renderersManagers);
+      }
+    });
+  }
+
   public clear() {
     this.operations = [];
   }

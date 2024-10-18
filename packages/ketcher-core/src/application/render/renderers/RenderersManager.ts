@@ -436,7 +436,13 @@ export class RenderersManager {
   }
 
   public update(modelChanges?: Command) {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+
     modelChanges?.execute(this);
+    viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
+    modelChanges?.executeAfterAllOperations(this);
+
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

@@ -66,6 +66,7 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
+  getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -2360,6 +2361,32 @@ async function expandMonomer(page: Page, locatorText: string) {
   await page.getByText('Expand monomer').click();
 }
 
+async function collapseMonomer(page: Page) {
+  // await clickInTheMiddleOfTheScreen(page, 'right');
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const attachmentPoint = canvasLocator
+    .getByText('R1', { exact: true })
+    .first();
+
+  if (await attachmentPoint.isVisible()) {
+    await attachmentPoint.click({
+      button: 'right',
+    });
+  } else {
+    await canvasLocator.getByText('R2', { exact: true }).first().click({
+      button: 'right',
+    });
+  }
+
+  const collapseMonomerMenu = page.getByText('Collapse monomer');
+  if (await collapseMonomerMenu.isVisible()) {
+    await page.getByText('Collapse monomer').click();
+  } else {
+    // This hack should be removed after https://github.com/epam/ketcher/issues/5809 fix.
+    // Only Collapse monomer menu should remain
+    await page.getByText('Contract abbreviation').click();
+  }
+}
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;
@@ -2643,6 +2670,109 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
 
       const disableState = await page.getByText('Expand monomer').isDisabled();
       expect(disableState).toBe(true);
+    });
+  }
+});
+
+const collapsableMonomers: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide D (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+    monomerLocatorText: 'D',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
+    monomerLocatorText: 'UNA',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+  {
+    monomerDescription: '3. Base hU (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
+    monomerLocatorText: 'hU',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
+    monomerLocatorText: 'bnn',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
+    monomerLocatorText: '5hMedC',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+  {
+    monomerDescription: '6. CHEM 4aPEGMal (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
+    monomerLocatorText: '4aPEGMal',
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/5809, ' +
+      'https://github.com/epam/ketcher/issues/5810',
+  },
+];
+
+test.describe('Collapse on Micro canvas: ', () => {
+  test.beforeEach(async () => {
+    await turnOnMicromoleculesEditor(page);
+  });
+
+  for (const collapsableMonomer of collapsableMonomers) {
+    test(`${collapsableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/5773
+       * Description: That test validates the following checks:
+       *       1. [indirectly] Verify that the "Collapse monomer" option is present in the context menu over the expanded monomer
+       *       2. Verify that clicking "Collapse monomer" contracts the structure back to its abbreviation
+       *       3. Verify that the contracted monomer is positioned in the center of the bounding box, and
+       *          adjacent atoms are moved back to their initial positions
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       3. Call context menu for appeared monomer and click Uncollapse monomer
+       *       4. Take screenshot to make sure it works
+       *       5. Call context menu for appeared molecule and click Collapse monomer
+       *       6. Take screenshot to make sure it works
+       *       Molecule got collapsed
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        collapsableMonomer.KETFile,
+        page,
+      );
+      await expandMonomer(page, collapsableMonomer.monomerLocatorText);
+      await takeEditorScreenshot(page);
+      await collapseMonomer(page);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        collapsableMonomer.shouldFail === true,
+        `That test results are wrong because of ${collapsableMonomer.issueNumber} issue(s).`,
+      );
     });
   }
 });

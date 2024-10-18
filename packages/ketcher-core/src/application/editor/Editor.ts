@@ -395,7 +395,7 @@ export class CoreEditor {
     const history = new EditorHistory(this);
     this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
-    const command = this.mode.initialize();
+    const command = this.mode.initialize(true, false, false);
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,

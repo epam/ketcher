@@ -118,7 +118,8 @@ export class SequenceMode extends BaseMode {
 
     const chainsCollection =
       editor.drawingEntitiesManager.applyMonomersSequenceLayout();
-    const firstMonomerPosition = chainsCollection.firstNode?.monomer.position;
+    const firstMonomerPosition =
+      chainsCollection.firstNode?.monomer.renderer?.scaledMonomerPosition;
 
     if (firstMonomerPosition && needScroll) {
       zoom.scrollTo(firstMonomerPosition);

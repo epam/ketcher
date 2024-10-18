@@ -70,6 +70,9 @@ export type RenderOptions = {
   fontRLabel: number;
   fontRLogic: number;
 
+  hashSpacing: number;
+  hashSpacingUnit: MeasurementUnits;
+
   /* styles */
   lineattr: RenderOptionStyles;
   multitailArrow: RenderOptionStyles;
@@ -101,6 +104,7 @@ export type RenderOptions = {
   bondSpacingInPx: number;
   bondThicknessInPx: number;
   stereoBondWidthInPx: number;
+  hashSpacingInPx: number;
   usageInMacromolecule?: UsageInMacromolecule;
   viewOnlyMode?: boolean;
 };

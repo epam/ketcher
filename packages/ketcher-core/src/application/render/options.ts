@@ -148,8 +148,15 @@ function convertValue(
     measureTo === 'px' || measureTo === 'pt'
       ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
       : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3);
-
   return Number(convertedValue);
+}
+
+function convertHashSpacingToPx(
+  value: number,
+  measureFrom: keyof typeof measureMap,
+) {
+  const convertedValue = (value * measureMap[measureFrom]) / measureMap.px;
+  return Number(convertedValue.toFixed(1));
 }
 
 export function getOptionsWithConvertedUnits(
@@ -164,6 +171,7 @@ export function getOptionsWithConvertedUnits(
       | 'bondThicknessInPx'
       | 'stereoBondWidthInPx'
       | 'microModeScale'
+      | 'hashSpacingInPx'
     >
   > = {};
   const defaultUnit = 'px';
@@ -226,6 +234,12 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
+  if (typeof options.hashSpacing !== 'undefined') {
+    convertedOptions.hashSpacingInPx = convertHashSpacingToPx(
+      options.hashSpacing,
+      options.hashSpacingUnit || defaultUnit,
+    );
+  }
   return {
     ...options,
     ...convertedOptions,

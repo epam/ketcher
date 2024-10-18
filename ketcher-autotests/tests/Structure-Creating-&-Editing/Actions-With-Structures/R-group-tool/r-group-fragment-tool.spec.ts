@@ -22,6 +22,7 @@ import {
   waitForPageInit,
   selectDropdownTool,
   waitForRender,
+  resetCurrentTool,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -34,12 +35,6 @@ async function openRGroupModalForTopAtom(page: Page) {
   await page.mouse.click(x, y);
 
   return { x, y };
-}
-
-async function selectRGroupFragmentTool(page: Page) {
-  await page.getByTestId('rgroup-attpoints-in-toolbar').first().click();
-  await page.getByTestId('rgroup-attpoints').first().click();
-  await page.getByTestId('rgroup-fragment').click();
 }
 
 const rGroupFromFile = 'R8';
@@ -147,7 +142,8 @@ test.describe('Open Ketcher', () => {
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByTestId('OK').click();
-    await selectRGroupFragmentTool(page);
+    await resetCurrentTool(page);
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();

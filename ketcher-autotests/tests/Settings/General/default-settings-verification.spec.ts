@@ -18,6 +18,7 @@ import {
   setReactionMarginSizeValue,
   moveMouseAway,
   openSettings,
+  delay,
 } from '@utils';
 
 async function resetSelectToolOff(page: Page) {
@@ -1409,6 +1410,7 @@ test.describe('Negative cases for General Settings', () => {
     const Apply = page.getByRole('button', { name: 'Apply' });
     const isDisabled = await Apply.isDisabled();
     expect(isDisabled).toBe(true);
+    await delay(2);
     await takeEditorScreenshot(page);
   });
 });

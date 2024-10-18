@@ -332,7 +332,7 @@ const SettingsDialog = (props: Props) => {
       key="acsstylebutton"
       onClick={onACSStyle}
     >
-      ACS Style
+      Set ACS Settings
     </button>
   );
 

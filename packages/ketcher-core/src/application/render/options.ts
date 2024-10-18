@@ -145,13 +145,18 @@ function convertValue(
   measureTo: keyof typeof measureMap,
 ) {
   const convertedValue =
-    measureTo === 'px'
-      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(1)
-      : measureTo === 'pt'
-      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(0)
+    measureTo === 'px' || measureTo === 'pt'
+      ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed()
       : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3);
-
   return Number(convertedValue);
+}
+
+function convertHashSpacingToPx(
+  value: number,
+  measureFrom: keyof typeof measureMap,
+) {
+  const convertedValue = (value * measureMap[measureFrom]) / measureMap.px;
+  return Number(convertedValue.toFixed(1));
 }
 
 export function getOptionsWithConvertedUnits(
@@ -230,10 +235,9 @@ export function getOptionsWithConvertedUnits(
   }
 
   if (typeof options.hashSpacing !== 'undefined') {
-    convertedOptions.hashSpacingInPx = convertValue(
+    convertedOptions.hashSpacingInPx = convertHashSpacingToPx(
       options.hashSpacing,
       options.hashSpacingUnit || defaultUnit,
-      defaultUnit,
     );
   }
   return {

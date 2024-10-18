@@ -5,7 +5,7 @@ import {
 } from 'application/editor/constants';
 import { D3DragEvent, drag, DragBehavior, select } from 'd3';
 
-export class Hand implements BaseTool {
+export class HandTool implements BaseTool {
   private readonly dragBehavior: DragBehavior<SVGSVGElement, unknown, unknown>;
 
   constructor(private editor: CoreEditor) {

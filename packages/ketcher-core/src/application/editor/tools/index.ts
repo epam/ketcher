@@ -20,7 +20,7 @@ import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { PolymerBond } from 'application/editor/tools/Bond';
 import { EraserTool } from 'application/editor/tools/Erase';
 import { ClearTool } from 'application/editor/tools/Clear';
-import { Hand } from 'application/editor/tools/Hand';
+import { HandTool } from 'application/editor/tools/Hand';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   monomer: MonomerTool,
@@ -29,7 +29,7 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   'bond-single': PolymerBond,
   erase: EraserTool,
   clear: ClearTool,
-  hand: Hand,
+  hand: HandTool,
 };
 
 export * from './Tool';

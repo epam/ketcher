@@ -164,6 +164,7 @@ export function getOptionsWithConvertedUnits(
       | 'bondThicknessInPx'
       | 'stereoBondWidthInPx'
       | 'microModeScale'
+      | 'hashSpacingInPx'
     >
   > = {};
   const defaultUnit = 'px';
@@ -226,6 +227,13 @@ export function getOptionsWithConvertedUnits(
     );
   }
 
+  if (typeof options.hashSpacing !== 'undefined') {
+    convertedOptions.hashSpacingInPx = convertValue(
+      options.hashSpacing,
+      options.hashSpacingUnit || defaultUnit,
+      defaultUnit,
+    );
+  }
   return {
     ...options,
     ...convertedOptions,

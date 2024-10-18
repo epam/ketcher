@@ -955,7 +955,8 @@ function getBondSingleDownPath(
   let d = b.sub(a);
   const len = d.length() + 0.2;
   d = d.normalized();
-  const interval = 1.2 * options.lineWidth;
+  const hashSpacingInPx = options.hashSpacingInPx ?? options.hashSpacing;
+  const interval = hashSpacingInPx * options.lineWidth;
   const nlines =
     Math.max(
       Math.floor((len - options.lineWidth) / (options.lineWidth + interval)),

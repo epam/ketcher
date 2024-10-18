@@ -265,7 +265,7 @@ export class Ketcher {
 
   getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
-      throw new Error('SDF format is not available in macro mode');
+      throw new Error('RDF format is not available in macro mode');
     }
     const format =
       molfileFormat === 'v2000'

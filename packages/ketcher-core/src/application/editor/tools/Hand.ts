@@ -3,7 +3,7 @@ import {
   HandBase64Image,
   HandDraggingBase64Image,
 } from 'application/editor/constants';
-import { drag, DragBehavior, select } from 'd3';
+import { D3DragEvent, drag, DragBehavior, select } from 'd3';
 
 export class Hand implements BaseTool {
   private readonly dragBehavior: DragBehavior<SVGSVGElement, unknown, unknown>;
@@ -23,7 +23,7 @@ export class Hand implements BaseTool {
     this.editor.canvas.style.cursor = `url(${HandDraggingBase64Image}), auto`;
   }
 
-  private handleDragging(event: any) {
+  private handleDragging(event: D3DragEvent<SVGSVGElement, unknown, unknown>) {
     ZoomTool.instance.scrollBy(event.dx, event.dy);
   }
 

@@ -263,6 +263,17 @@ export class Ketcher {
     return getStructure(format, this.#formatterFactory, this.#editor.struct());
   }
 
+  getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('RDF format is not available in macro mode');
+    }
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.rdf
+        : SupportedFormat.rdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
   getCDXml(): Promise<string> {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('CDXML format is not available in macro mode');
@@ -413,7 +424,10 @@ export class Ketcher {
     }
 
     runAsyncAction<void>(async () => {
-      const struct = await this._indigo.layout(this.#editor.struct());
+      const struct = await this._indigo.layout(
+        this.#editor.struct(),
+        this.editor.serverSettings,
+      );
       const ketSerializer = new KetSerializer();
       this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
@@ -480,11 +494,12 @@ export class Ketcher {
         meta = 'image/png';
         options.outputFormat = 'png';
     }
+    const serverSettings = this.editor.serverSettings;
 
-    const base64 = await this.structService.generateImageAsBase64(
-      data,
-      options,
-    );
+    const base64 = await this.structService.generateImageAsBase64(data, {
+      ...serverSettings,
+      ...options,
+    });
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {

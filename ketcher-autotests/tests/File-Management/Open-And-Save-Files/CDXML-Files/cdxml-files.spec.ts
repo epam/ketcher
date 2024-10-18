@@ -13,6 +13,13 @@ import {
   saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  bondsSettings,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
+  pressButton,
+  openSettings,
+  setReactionMarginSizeOptionUnit,
+  setReactionMarginSizeValue,
 } from '@utils';
 import { getCdxml } from '@utils/formats';
 
@@ -543,4 +550,113 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       await takeEditorScreenshot(page);
     },
   );
+
+  test('The Bond length setting with pt option is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Bond length setting is applied, click on layout and it should be save to CDXML specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'pt-option');
+    await setBondLengthValue(page, '54.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'px-option');
+    await setReactionMarginSizeValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/layout-with-catalyst-px-margin-size.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-catalyst-px-margin-size.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS setting is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option ACS style and check saving to different format
+  Need to update screenshots after implementing https://github.com/epam/ketcher/issues/5650 and 
+  https://github.com/epam/Indigo/issues/2458
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/layout-with-dif-elements-acs-style.cdxml',
+      expectedFile,
+    );
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/layout-with-dif-elements-acs-style.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-dif-elements-acs-style.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

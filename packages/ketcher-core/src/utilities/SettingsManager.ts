@@ -56,9 +56,21 @@ export class SettingsManager {
 
   static getOptions(): SavedOptions {
     try {
-      return JSON.parse(
+      const optionsFromLocalStorage = JSON.parse(
         localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
       );
+
+      // In 2.25 default bondLength was set to 2.1 by mistake.
+      // Current code reset it to 40px
+      // Can be removed in future versions
+      if (
+        optionsFromLocalStorage.bondLength === 2.1 &&
+        optionsFromLocalStorage.bondLengthUnit === 'px'
+      ) {
+        optionsFromLocalStorage.bondLength = 40;
+      }
+
+      return optionsFromLocalStorage;
     } catch (e) {
       KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
       return {} as SavedOptions;

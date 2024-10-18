@@ -36,7 +36,9 @@ export function getStructure(
   drawingEntitiesManager?: DrawingEntitiesManager,
   selection?: EditorSelection,
 ): Promise<string> {
-  const formatter = formatterFactory.create(structureFormat);
+  const serverSettings = ketcherProvider.getKetcher().editor.serverSettings;
+  const formatter = formatterFactory.create(structureFormat, serverSettings);
+
   return formatter.getStructureFromStructAsync(
     struct,
     drawingEntitiesManager,

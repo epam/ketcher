@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useMemo } from 'react';
 import {
   PresetMonomerRow,
   PresetMonomerLabel,
@@ -24,7 +23,7 @@ import {
 } from './PresetPreview.styles';
 import styled from '@emotion/styled';
 import { selectShowPreview } from 'state/common';
-import { IconName, preview } from 'ketcher-react';
+import { IconName } from 'ketcher-react';
 import useIDTAliasesTextForPreset from '../../hooks/useIDTAliasesTextForPreset';
 import { useAppSelector } from 'hooks';
 import IDTAliases from '../IDTAliases/IDTAliases';
@@ -43,20 +42,7 @@ interface Props {
 const PresetPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as PresetPreviewState;
 
-  const { monomers, name, position, idtAliases, style } = preview;
-
-  const ContainerDynamic = useMemo(() => {
-    if (!style) {
-      return styled(PresetContainer)``;
-    }
-
-    return styled(PresetContainer)`
-      left: ${style.left || ''};
-      right: ${style.right || ''};
-      top: ${style.top || ''};
-      transform: ${style.transform || ''};
-    `;
-  }, [style]);
+  const { monomers, name, position, idtAliases } = preview;
 
   const [, baseMonomer] = monomers;
   const presetName = name ?? baseMonomer?.props.Name;
@@ -68,9 +54,9 @@ const PresetPreview = ({ className }: Props) => {
   });
 
   return (
-    <ContainerDynamic
+    <PresetContainer
       className={className}
-      style={{ alignItems: 'flex-start', height: 'auto', width: 'auto' }}
+      style={{ alignItems: 'flex-start' }}
       data-testid="polymer-library-preview"
     >
       <PresetName>{presetName}</PresetName>
@@ -85,15 +71,10 @@ const PresetPreview = ({ className }: Props) => {
           ),
       )}
       {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} preset />}
-    </ContainerDynamic>
+    </PresetContainer>
   );
 };
 
-const PresetStyledPreview = styled(PresetPreview)`
-  z-index: 5;
-  position: absolute;
-  width: ${preview.width}px;
-  height: ${preview.height}px;
-`;
+const PresetStyledPreview = styled(PresetPreview)``;
 
 export default PresetStyledPreview;

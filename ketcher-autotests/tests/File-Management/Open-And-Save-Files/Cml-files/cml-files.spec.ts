@@ -6,6 +6,15 @@ import {
   saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  setReactionMarginSizeOptionUnit,
+  bondsSettings,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
+  pressButton,
+  selectTopPanelButton,
+  TopPanelButton,
+  setReactionMarginSizeValue,
+  openSettings,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -100,34 +109,31 @@ test.describe('CML files', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test.fail(
-    'Open and Save file - CML - CML for R-group and other features',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1948
-       * Description: Saved cml file with structure is compering with paste R-group from a mol file
-       * It needs to be investigated why the test is failing.
-       * We have bug https://github.com/epam/Indigo/issues/2497
-       */
+  test('Open and Save file - CML - CML for R-group and other features', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1948
+     * Description: Saved cml file with structure is compering with paste R-group from a mol file
+     */
 
-      await openFileAddToCanvasTakeScreenshot(
+    await openFileAddToCanvasTakeScreenshot(
+      page,
+      'Molfiles-V2000/cml-1948-R-group.mol',
+    );
+    // check that structure opened from file is displayed correctly
+
+    const expectedFile = await getCml(page);
+    await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
+    const { file: cmlFile, fileExpected: cmlFileExpected } =
+      await receiveFileComparisonData({
         page,
-        'Molfiles-V2000/cml-1948-R-group.mol',
-      );
-      // check that structure opened from file is displayed correctly
+        expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
+      });
+    // comparing cml file with golden cml file
 
-      const expectedFile = await getCml(page);
-      await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
-      const { file: cmlFile, fileExpected: cmlFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
-        });
-      // comparing cml file with golden cml file
-
-      expect(cmlFile).toEqual(cmlFileExpected);
-    },
-  );
+    expect(cmlFile).toEqual(cmlFileExpected);
+  });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back', async ({
     page,
@@ -549,4 +555,113 @@ test.describe('CML files', () => {
       await takeEditorScreenshot(page);
     },
   );
+
+  test('The Bond length setting with px option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Bond length setting is applied, click on layout and it should be save to CML specification
+    After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
+    */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setBondLengthOptionUnit(page, 'px-option');
+    await setBondLengthValue(page, '67.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-catalyst-px-bond-lengh.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-catalyst-px-bond-lengh.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/layout-with-catalyst-px-bond-lengh.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Reaction component margin size setting is applied, click on layout and it should be save to CML specification
+    After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
+    */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setReactionMarginSizeOptionUnit(page, 'cm-option');
+    await setReactionMarginSizeValue(page, '1.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-dif-elements-cm-margin-size.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The ACS Style setting is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/5156
+  Description: add new option AVS style and check saving to different format
+  Need to update file after implementing https://github.com/epam/ketcher/issues/5652
+  After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await pressButton(page, 'ACS Style');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getCml(page);
+    await saveToFile(
+      'CML/layout-with-dif-elements-acs-style.cml',
+      expectedFile,
+    );
+    const { fileExpected: cmlFileExpected, file: cmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CML/layout-with-dif-elements-acs-style.cml',
+      });
+
+    expect(cmlFile).toEqual(cmlFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/layout-with-dif-elements-acs-style.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

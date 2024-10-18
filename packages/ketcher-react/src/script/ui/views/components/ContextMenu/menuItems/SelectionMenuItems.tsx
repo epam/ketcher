@@ -31,9 +31,10 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const handleDelete = useDelete();
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
+    const atomIds = props.propsFromTrigger?.atomIds || [];
 
     editor.highlights.create({
-      atoms: [],
+      atoms: atomIds,
       bonds: bondIds,
       color: color === '' ? 'transparent' : color,
     });

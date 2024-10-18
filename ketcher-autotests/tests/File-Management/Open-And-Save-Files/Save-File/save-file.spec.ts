@@ -178,35 +178,33 @@ test.describe('Save files', () => {
     },
   );
 
-  test.fail(
-    'Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999',
-    async ({ page }) => {
-      /**
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2494
-       * Test case: EPMLSOPKET-5260
-       * Description: Structure is saved according to automated selected format MDL Molfile v3000
-       */
+  test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-5260
+     * Description: Structure is saved according to automated selected format MDL Molfile v3000
+     */
 
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+      expectedFile,
+    );
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
-        'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-        expectedFile,
-      );
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('The file formats in the Save Structure window match the mockup', async ({
     page,

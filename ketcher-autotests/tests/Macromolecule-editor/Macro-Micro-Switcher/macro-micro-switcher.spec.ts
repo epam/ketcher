@@ -67,6 +67,9 @@ import {
   openPasteFromClipboard,
   waitForPageInit,
   getCoordinatesOfTheMiddleOfTheScreen,
+  moveOnAtom,
+  moveOnBond,
+  BondType,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -1524,7 +1527,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await selectEraseTool(page);
-    await page.mouse.click(675, 330);
+    // await page.mouse.click(675, 330);
+    const canvasLocator = page.getByTestId('ketcher-canvas');
+    await canvasLocator.locator('path').first().click();
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
@@ -2959,6 +2964,88 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
       test.fixme(
         movableCollapsedMonomer.shouldFail === true,
         `That test results are wrong because of ${movableCollapsedMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
+  await moveOnBond(page, BondType.SINGLE, 1);
+  await dragMouseTo(x, y, page);
+}
+
+const movableExpandedMonomers: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide D (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+    monomerLocatorText: 'D',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
+    monomerLocatorText: 'UNA',
+  },
+  {
+    monomerDescription: '3. Base hU (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
+    monomerLocatorText: 'hU',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
+    monomerLocatorText: 'bnn',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
+    monomerLocatorText: '5hMedC',
+  },
+  {
+    monomerDescription: '6. CHEM 4aPEGMal (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
+    monomerLocatorText: '4aPEGMal',
+  },
+];
+
+test.describe('Move in expanded state on Micro canvas: ', () => {
+  test.beforeEach(async () => {
+    await turnOnMicromoleculesEditor(page);
+  });
+
+  for (const movableExpandedMonomer of movableExpandedMonomers) {
+    test(`${movableExpandedMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/5773
+       * Description: Verify that expanded macromolecules can be moved across the canvas
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       2. Take screenshot to witness initial position
+       *       3. Grab it and move it to the top left corner
+       *       6. Take screenshot to witness final position
+       */
+      await openFileAndAddToCanvasAsNewProject(
+        movableExpandedMonomer.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
+      await takeEditorScreenshot(page);
+
+      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        movableExpandedMonomer.shouldFail === true,
+        `That test results are wrong because of ${movableExpandedMonomer.issueNumber} issue(s).`,
       );
     });
   }

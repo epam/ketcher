@@ -32,7 +32,6 @@ import {
   MonomerGroups,
   AmbiguousMonomerType,
   isAmbiguousMonomerLibraryItem,
-  IKetIdtAliases,
 } from 'ketcher-core';
 import {
   LibraryNameType,
@@ -171,12 +170,9 @@ export const getSearchTermValue = (state): string => {
 };
 
 export const selectMonomersInCategory = (
-  items: MonomerOrAmbiguousType[],
+  items: MonomerItemType[],
   category: LibraryNameType,
-) =>
-  items.filter(
-    (item) => !item.isAmbiguous && item.props?.MonomerType === category,
-  ) as MonomerItemType[];
+) => items.filter((item) => item.props?.MonomerType === category);
 
 export const selectAmbiguousMonomersInCategory = (
   libraryItems: MonomerOrAmbiguousType[],
@@ -277,13 +273,12 @@ export const selectAmbiguousMonomersInCategory = (
   return groupedAmbiguousMonomerLibraryItems;
 };
 
-export const selectUnsplitNucleotides = (items: MonomerOrAmbiguousType[]) =>
+export const selectUnsplitNucleotides = (items: MonomerItemType[]) =>
   items.filter(
     (item) =>
-      !item.isAmbiguous &&
-      (item.props?.MonomerClass === KetMonomerClass.RNA ||
-        item.props?.MonomerClass === KetMonomerClass.DNA),
-  ) as MonomerItemType[];
+      item.props?.MonomerClass === KetMonomerClass.RNA ||
+      item.props?.MonomerClass === KetMonomerClass.DNA,
+  );
 
 export const selectMonomersInFavorites = (items: MonomerOrAmbiguousType[]) =>
   items.filter((item) => item.favorite && !item.isAmbiguous);
@@ -314,171 +309,133 @@ export const selectAmbiguousMonomersInFavorites = (
 
 export const selectFilteredMonomers = createSelector(
   (state: RootState) => state.library,
-  (state): Array<MonomerOrAmbiguousType & { favorite: boolean }> => {
+  (state): Array<MonomerItemType & { favorite: boolean }> => {
     const { searchFilter, monomers, favorites } = state;
     const normalizedSearchFilter = searchFilter.toLowerCase();
 
-    const checkMonomerMatch = (
-      name = '',
-      fullName = '',
-      idtAliases: IKetIdtAliases | undefined,
-      searchFilter: string,
-    ) => {
-      const monomerName = name.toLowerCase();
-      const monomerNameFull = fullName.toLowerCase();
+    return monomers
+      .filter((item: MonomerItemType) => {
+        const { Name = '', MonomerName = '', idtAliases } = item.props;
+        const monomerName = Name.toLowerCase();
+        const monomerNameFull = MonomerName.toLowerCase();
 
-      const idtBase = idtAliases?.base?.toLowerCase();
+        const idtBase = idtAliases?.base?.toLowerCase();
 
-      const idtModifications = idtAliases?.modifications
-        ? Object.values(idtAliases.modifications)
-            .map((mod) => mod.toLowerCase())
-            .join(' ')
-        : '';
+        const idtModifications = idtAliases?.modifications
+          ? Object.values(idtAliases.modifications)
+              .map((mod) => mod.toLowerCase())
+              .join(' ')
+          : '';
 
-      if (searchFilter === '/') {
-        return Boolean(idtBase || idtModifications);
-      }
-
-      if (searchFilter.includes('/')) {
-        const parts = searchFilter.split('/');
-
-        if (parts.length > 3 || (parts.length === 3 && parts[2] !== '')) {
-          return false;
+        if (normalizedSearchFilter === '/') {
+          return Boolean(idtBase || idtModifications);
         }
 
-        if (parts.length === 3 && parts[1] !== '') {
-          const textBetweenSlashes = parts[1];
+        if (normalizedSearchFilter.includes('/')) {
+          const parts = normalizedSearchFilter.split('/');
+
+          if (parts.length > 3 || (parts.length === 3 && parts[2] !== '')) {
+            return false;
+          }
+
+          if (parts.length === 3 && parts[1] !== '') {
+            const textBetweenSlashes = parts[1];
+
+            const matchesIdtBase =
+              idtBase &&
+              idtBase.length === textBetweenSlashes.length &&
+              Array.from(idtBase).every(
+                (char, index) => char === textBetweenSlashes[index],
+              );
+
+            const matchesIdtModifications = idtModifications
+              ? idtModifications
+                  .split(' ')
+                  .some(
+                    (mod) =>
+                      mod.length === textBetweenSlashes.length &&
+                      Array.from(mod).every(
+                        (char, index) => char === textBetweenSlashes[index],
+                      ),
+                  )
+              : false;
+
+            return matchesIdtBase || matchesIdtModifications;
+          }
+
+          const searchBeforeSlash = parts[0];
+          const searchAfterSlash = parts[1];
+
+          if (
+            normalizedSearchFilter.startsWith('/') &&
+            normalizedSearchFilter.length > 1
+          ) {
+            const aliasRest = normalizedSearchFilter.slice(1);
+            return (
+              (idtBase && idtBase.startsWith(aliasRest)) ||
+              (idtModifications &&
+                idtModifications
+                  .split(' ')
+                  .some((mod) => mod.startsWith(aliasRest)))
+            );
+          }
+
+          if (
+            normalizedSearchFilter.endsWith('/') &&
+            normalizedSearchFilter.length > 1
+          ) {
+            const aliasRest = normalizedSearchFilter.slice(0, -1);
+            const aliasLastSymbol =
+              normalizedSearchFilter[normalizedSearchFilter.length - 2];
+
+            return (
+              (idtBase &&
+                idtBase.endsWith(aliasRest) &&
+                idtBase[idtBase.length - 1] === aliasLastSymbol) ||
+              (idtModifications &&
+                idtModifications
+                  .split(' ')
+                  .some(
+                    (mod) =>
+                      mod.endsWith(aliasRest) &&
+                      mod[mod.length - 1] === aliasLastSymbol,
+                  ))
+            );
+          }
 
           const matchesIdtBase =
             idtBase &&
-            idtBase.length === textBetweenSlashes.length &&
-            Array.from(idtBase).every(
-              (char, index) => char === textBetweenSlashes[index],
-            );
-
+            idtBase.startsWith(searchAfterSlash) &&
+            idtBase.endsWith(searchBeforeSlash);
           const matchesIdtModifications = idtModifications
             ? idtModifications
                 .split(' ')
                 .some(
                   (mod) =>
-                    mod.length === textBetweenSlashes.length &&
-                    Array.from(mod).every(
-                      (char, index) => char === textBetweenSlashes[index],
-                    ),
+                    mod.startsWith(searchAfterSlash) &&
+                    mod.endsWith(searchBeforeSlash),
                 )
             : false;
 
           return matchesIdtBase || matchesIdtModifications;
         }
 
-        const searchBeforeSlash = parts[0];
-        const searchAfterSlash = parts[1];
-
-        if (searchFilter.startsWith('/') && searchFilter.length > 1) {
-          const aliasRest = searchFilter.slice(1);
-          return (
-            (idtBase && idtBase.startsWith(aliasRest)) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some((mod) => mod.startsWith(aliasRest)))
-          );
-        }
-
-        if (searchFilter.endsWith('/') && searchFilter.length > 1) {
-          const aliasRest = searchFilter.slice(0, -1);
-          const aliasLastSymbol = searchFilter[searchFilter.length - 2];
-
-          return (
-            (idtBase &&
-              idtBase.endsWith(aliasRest) &&
-              idtBase[idtBase.length - 1] === aliasLastSymbol) ||
-            (idtModifications &&
-              idtModifications
-                .split(' ')
-                .some(
-                  (mod) =>
-                    mod.endsWith(aliasRest) &&
-                    mod[mod.length - 1] === aliasLastSymbol,
-                ))
-          );
-        }
-
-        const matchesIdtBase =
-          idtBase &&
-          idtBase.startsWith(searchAfterSlash) &&
-          idtBase.endsWith(searchBeforeSlash);
+        const matchesIdtBase = idtBase
+          ? idtBase.includes(normalizedSearchFilter)
+          : false;
         const matchesIdtModifications = idtModifications
-          ? idtModifications
-              .split(' ')
-              .some(
-                (mod) =>
-                  mod.startsWith(searchAfterSlash) &&
-                  mod.endsWith(searchBeforeSlash),
-              )
+          ? idtModifications.includes(normalizedSearchFilter)
           : false;
 
-        return matchesIdtBase || matchesIdtModifications;
-      }
+        const cond =
+          monomerName.includes(normalizedSearchFilter) ||
+          monomerNameFull.includes(normalizedSearchFilter) ||
+          matchesIdtBase ||
+          matchesIdtModifications;
 
-      const matchesIdtBase = idtBase ? idtBase.includes(searchFilter) : false;
-      const matchesIdtModifications = idtModifications
-        ? idtModifications.includes(searchFilter)
-        : false;
-
-      const cond =
-        monomerName.includes(searchFilter) ||
-        monomerNameFull.includes(searchFilter) ||
-        matchesIdtBase ||
-        matchesIdtModifications;
-
-      return cond;
-    };
-
-    return monomers
-      .filter((item: MonomerOrAmbiguousType) => {
-        if (item.isAmbiguous) {
-          const {
-            label,
-            id,
-            idtAliases,
-            monomers: components,
-          } = item as AmbiguousMonomerType;
-
-          const matchesMonomer = checkMonomerMatch(
-            label,
-            id,
-            idtAliases,
-            normalizedSearchFilter,
-          );
-
-          return (
-            matchesMonomer ||
-            components.some((monomer) => {
-              const { Name, MonomerName, idtAliases } =
-                monomer.monomerItem.props;
-
-              return checkMonomerMatch(
-                Name,
-                MonomerName,
-                idtAliases,
-                normalizedSearchFilter,
-              );
-            })
-          );
-        } else {
-          const { Name, MonomerName, idtAliases } = (item as MonomerItemType)
-            .props;
-
-          return checkMonomerMatch(
-            Name,
-            MonomerName,
-            idtAliases,
-            normalizedSearchFilter,
-          );
-        }
+        return cond;
       })
-      .map((item: MonomerOrAmbiguousType) => {
+      .map((item: MonomerItemType) => {
         return {
           ...item,
           favorite: !!favorites[getMonomerUniqueKey(item)],

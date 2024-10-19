@@ -405,9 +405,8 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = await getControlModifier();
-  // await delay(10);
-  // await page.keyboard.press(`${modifier}+KeyC`, options);
+  const modifier = getControlModifier();
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyC`, options),

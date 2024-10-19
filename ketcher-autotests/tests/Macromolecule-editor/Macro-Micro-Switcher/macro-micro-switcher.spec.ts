@@ -66,10 +66,12 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  moveOnAtom,
   moveOnBond,
   BondType,
+  copyToClipboardByKeyboard,
+  cutToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  delay,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -80,7 +82,11 @@ import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { pageReload } from '@utils/common/helpers';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
-import { moveMonomer, moveMonomerOnMicro } from '@utils/macromolecules/monomer';
+import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const topLeftCorner = {
   x: -325,
@@ -2393,6 +2399,11 @@ async function collapseMonomer(page: Page) {
     await page.getByText('Contract abbreviation').click();
   }
 }
+
+async function selectMonomerOnMicro(page: Page, monomerName: string) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator.getByText(monomerName, { exact: true }).click();
+}
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;
@@ -3049,4 +3060,100 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
       );
     });
   }
+});
+
+const expandableMonomer: IMonomer = {
+  monomerDescription: '1. Petide D (from library)',
+  KETFile:
+    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+  monomerLocatorText: 'D',
+};
+
+test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Expand it
+   *       2. Take screenshot to witness initial state
+   *       3. Press Undo button
+   *       6. Take screenshot to witness final position
+   *       7. Press Redo button
+   */
+  await turnOnMicromoleculesEditor(page);
+  await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+  await expandMonomer(page, expandableMonomer.monomerLocatorText);
+  await takeEditorScreenshot(page);
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page);
+});
+
+const copiebleMonomer: IMonomer = {
+  monomerDescription: '1. Petide D (from library)',
+  KETFile:
+    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+  monomerLocatorText: 'D',
+};
+
+test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       2. Copy monomer to clipboard
+   *       2. Take screenshot to witness initial state
+   *       3. Press Undo button
+   *       6. Take screenshot to witness final position
+   *       7. Press Redo button
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(copiebleMonomer.KETFile, page);
+  await takeEditorScreenshot(page);
+  await selectMonomerOnMicro(page, copiebleMonomer.monomerLocatorText);
+  await copyToClipboardByKeyboard(page);
+  await delay(1);
+  await pasteFromClipboardByKeyboard(page);
+  await delay(1);
+  await page.mouse.move(100, 100);
+  await page.mouse.click(100, 100);
+  await delay(1);
+  await takeEditorScreenshot(page);
+});
+
+const cutableMonomer: IMonomer = {
+  monomerDescription: '1. Petide D (from library)',
+  KETFile:
+    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+  monomerLocatorText: 'D',
+};
+
+test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       2. Copy monomer to clipboard
+   *       2. Take screenshot to witness initial state
+   *       3. Press Undo button
+   *       6. Take screenshot to witness final position
+   *       7. Press Redo button
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
+  await takeEditorScreenshot(page);
+  await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
+  // await takeEditorScreenshot(page);
+  await cutToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+  await page.mouse.click(200, 200);
+  await takeEditorScreenshot(page);
 });

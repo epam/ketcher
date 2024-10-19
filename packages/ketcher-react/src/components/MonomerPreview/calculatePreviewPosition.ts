@@ -107,6 +107,12 @@ export const calculateBondPreviewPosition = (
   const firstMonomerCoordinates = firstMonomer.renderer?.rootBoundingClientRect;
   const secondMonomerCoordinates =
     secondMonomer.renderer?.rootBoundingClientRect;
+  const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
+    .node()
+    ?.getBoundingClientRect();
+  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
+  const canvasWrapperTop = canvasWrapperBoundingClientRect?.top || 0;
+  const canvasWrapperRight = canvasWrapperBoundingClientRect?.right || 0;
 
   assert(firstMonomerCoordinates);
   assert(secondMonomerCoordinates);
@@ -138,8 +144,9 @@ export const calculateBondPreviewPosition = (
   let style: PreviewStyle = {};
 
   if (width > height) {
+    const leftValue = left + width / 2;
     let topValue: number;
-    if (top > preview.height + preview.gap) {
+    if (top + canvasWrapperTop > preview.height) {
       topValue = top - preview.heightForBond - preview.gap;
     } else {
       topValue = bottom + preview.gap;
@@ -147,9 +154,17 @@ export const calculateBondPreviewPosition = (
 
     style = {
       top: `${topValue}px`,
-      left: `${left + width / 2}px`,
+      left: `${leftValue}px`,
+      transform: `translate(${
+        leftValue + preview.width > canvasWrapperRight
+          ? '-100%'
+          : leftValue > preview.width / 2
+          ? '-50%'
+          : 0
+      }, 0)`,
     };
   } else {
+    const topValue = top + height / 2;
     let leftValue: number;
     if (left > preview.widthForBond + preview.gap) {
       leftValue = left - preview.widthForBond / 2 - preview.gap;
@@ -158,8 +173,15 @@ export const calculateBondPreviewPosition = (
     }
 
     style = {
-      top: `${top + height / 2}px`,
+      top: `${topValue}px`,
       left: `${leftValue}px`,
+      transform: `translate(${leftValue > preview.width / 2 ? '-50%' : 0}, ${
+        topValue + preview.height / 2 > canvasWrapperBottom
+          ? '-100%'
+          : topValue > preview.height / 2
+          ? '-50%'
+          : 0
+      })`,
     };
   }
 

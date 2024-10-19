@@ -102,7 +102,7 @@ const MonomerGroup = ({
       style = { left, top, transform: 'translate(-50%, 0)' };
     } else {
       top = monomer ? calculateMonomerPreviewTop(cardCoordinates) : '';
-      style = { right: '-88px', top };
+      style = { right: '-88px', top, transform: 'translate(-50%, 0)' };
       previewType = PreviewType.Monomer;
     }
 

@@ -32,6 +32,7 @@ import {
   waitForKetcherInit,
   waitForIndigoToLoad,
   selectClearCanvasTool,
+  selectOptionInTypeDropdown2,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -625,7 +626,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   expect(fastaFile).toEqual(fastaFileExpected);
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile('FASTA/two-peptides-connected-expected.fasta', page);
-  await selectOptionInTypeDropdown('Peptide', page);
+  await selectOptionInTypeDropdown2('Peptide', page);
   await pressButton(page, 'Open as New');
   await selectSingleBondTool(page);
   await bondLine.hover();

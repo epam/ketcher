@@ -941,6 +941,15 @@ function stereoUpBondGetCoordinates(
   return sin > 0 ? [a1, a2] : [a2, a1];
 }
 
+function calculateLines(length: number, lineWidth: number, interval: number) {
+  const usableLength = length - lineWidth;
+  const linesCount = Math.max(
+    Math.floor(usableLength / (lineWidth + interval)),
+    0,
+  );
+  return linesCount + 2;
+}
+
 function getBondSingleDownPath(
   render: Render,
   hb1: HalfBond,
@@ -961,24 +970,24 @@ function getBondSingleDownPath(
   const interval = hashSpacingInPx * options.lineWidth;
   const gaps = MIN_LINES - 1;
   const isHashSpacingTooLarge = interval >= len / gaps;
-  if (isHashSpacingTooLarge) {
+
+  const nlines = calculateLines(len, options.lineWidth, interval);
+
+  if (isHashSpacingTooLarge && nlines < MIN_LINES) {
     const averageSpacing = (len - options.lineWidth) / gaps;
     hashSpacingInPx = averageSpacing / options.lineWidth;
   }
+
   const intervalAdjusted = hashSpacingInPx * options.lineWidth;
-  const nlines =
-    Math.max(
-      Math.floor(
-        (len - options.lineWidth) / (options.lineWidth + intervalAdjusted),
-      ),
-      0,
-    ) + 2;
-  const step = len / (nlines - 1);
+
+  const finalLines = calculateLines(len, options.lineWidth, intervalAdjusted);
+
+  const step = len / (finalLines - 1);
   return draw.bondSingleDown(
     render.paper,
     hb1,
     d,
-    nlines,
+    finalLines,
     step,
     options,
     isSnapping,

@@ -1,5 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page, BrowserContext, chromium, Locator } from '@playwright/test';
+import {
+  test,
+  expect,
+  Page,
+  BrowserContext,
+  chromium,
+  Locator,
+} from '@playwright/test';
 import {
   selectSingleBondTool,
   takeEditorScreenshot,

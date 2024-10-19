@@ -23,7 +23,6 @@ import {
   getMolfile,
   getSequence,
   openFile,
-  selectOptionInTypeDropdown,
   getFasta,
   getIdt,
   openFileAndAddToCanvasAsNewProjectMacro,

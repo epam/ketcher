@@ -144,17 +144,18 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       preview={{
         type: PreviewType.AmbiguousMonomer,
         monomer: sGroup.monomer.variantMonomerItem,
-        style: {
-          left: `${clientX - 50}px`,
-          top: calculateAmbiguousMonomerPreviewTop(
-            sGroup.monomer.variantMonomerItem,
-          )({
-            left: clientX - 50,
-            top: clientY - 65,
-            bottom: clientY - 25,
-          }),
-          transform: 'translate(-50%, 0)',
-        },
+      }}
+      style={{
+        position: 'absolute',
+        left: `${clientX - 50}px`,
+        top: calculateAmbiguousMonomerPreviewTop(
+          sGroup.monomer.variantMonomerItem,
+        )({
+          left: clientX - 50,
+          top: clientY - 65,
+          bottom: clientY - 25,
+        }),
+        transform: 'translate(-50%, 0)',
       }}
     />
   ) : showMolecule ? (

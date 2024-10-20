@@ -1718,31 +1718,23 @@ test.describe('RNA Library', () => {
       testDescription: "1. Search 'J' ambiguous peptide",
       SearchString: 'J',
       ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
     },
     {
       testDescription:
         "2. Search 'Leucine' as component of ambiguous peptide (should be J ambiguous monomer)",
       SearchString: 'Leucine',
       ResultMonomerLocationTab: MonomerLocationTabs.PEPTIDES,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
     },
     {
       testDescription: "3. Search 'W' ambiguous DNA and RNA bases",
       SearchString: 'W',
       ResultMonomerLocationTab: MonomerLocationTabs.BASES,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
     },
     {
       testDescription:
         "4. Search 'Thymine'  as component of ambiguous DNA base",
       SearchString: 'Thymine',
       ResultMonomerLocationTab: MonomerLocationTabs.BASES,
-      shouldFail: true,
-      issueNumber: 'https://github.com/epam/ketcher/issues/5564',
     },
   ];
 

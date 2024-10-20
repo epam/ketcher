@@ -71,7 +71,6 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  delay,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -80,7 +79,7 @@ import {
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
-import { emptyFunction, pageReload } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
 import {

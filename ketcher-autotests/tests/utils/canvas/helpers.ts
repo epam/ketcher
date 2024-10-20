@@ -406,6 +406,9 @@ export async function copyToClipboardByKeyboard(
     | undefined,
 ) {
   const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. Sometimes - select object on the screen took time
+  await waitForRender(page, emptyFunction);
 
   await waitForSpinnerFinishedWork(
     page,
@@ -422,6 +425,10 @@ export async function cutToClipboardByKeyboard(
     | undefined,
 ) {
   const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. Sometimes - select object on the screen took time
+  await waitForRender(page, emptyFunction);
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyX`, options),
@@ -437,6 +444,10 @@ export async function pasteFromClipboardByKeyboard(
     | undefined,
 ) {
   const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. For ex. - select object on the screen can took time
+  await waitForRender(page, emptyFunction);
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyV`, options),

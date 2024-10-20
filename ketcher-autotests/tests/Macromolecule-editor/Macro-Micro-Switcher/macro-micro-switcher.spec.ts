@@ -80,7 +80,7 @@ import {
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
-import { pageReload } from '@utils/common/helpers';
+import { emptyFunction, pageReload } from '@utils/common/helpers';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
 import {
@@ -2402,7 +2402,9 @@ async function collapseMonomer(page: Page) {
 
 async function selectMonomerOnMicro(page: Page, monomerName: string) {
   const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator.getByText(monomerName, { exact: true }).click();
+  await waitForRender(page, async () => {
+    await canvasLocator.getByText(monomerName, { exact: true }).click();
+  });
 }
 interface IMonomer {
   monomerDescription: string;
@@ -3117,12 +3119,10 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await takeEditorScreenshot(page);
   await selectMonomerOnMicro(page, copiebleMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
-  await delay(3);
   await pasteFromClipboardByKeyboard(page);
-  await delay(1);
-  // await page.mouse.move(100, 100);
-  await page.mouse.click(100, 100);
-  await delay(1);
+  await waitForRender(page, async () => {
+    await page.mouse.click(200, 200);
+  });
   await takeEditorScreenshot(page);
 });
 
@@ -3151,9 +3151,11 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
   await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
-  // await takeEditorScreenshot(page);
+
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await page.mouse.click(200, 200);
+  await waitForRender(page, async () => {
+    await page.mouse.click(200, 200);
+  });
   await takeEditorScreenshot(page);
 });

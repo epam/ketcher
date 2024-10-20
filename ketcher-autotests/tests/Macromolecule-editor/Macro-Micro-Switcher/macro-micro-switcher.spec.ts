@@ -3117,10 +3117,10 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await takeEditorScreenshot(page);
   await selectMonomerOnMicro(page, copiebleMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
-  await delay(1);
+  await delay(3);
   await pasteFromClipboardByKeyboard(page);
   await delay(1);
-  await page.mouse.move(100, 100);
+  // await page.mouse.move(100, 100);
   await page.mouse.click(100, 100);
   await delay(1);
   await takeEditorScreenshot(page);

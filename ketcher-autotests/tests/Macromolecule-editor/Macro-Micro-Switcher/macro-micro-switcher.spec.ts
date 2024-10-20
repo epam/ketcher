@@ -86,6 +86,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { goToCHEMTab } from '@utils/macromolecules/library';
 
 const topLeftCorner = {
   x: -325,
@@ -295,10 +296,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
+    await pageReload(page);
     await page.getByText('Hide').click();
     await takePageScreenshot(page);
-    await page.getByText('Show Library').click();
-    await page.getByText('Show Library').isVisible();
+    expect(page.getByText('Show Library')).toBeVisible();
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
@@ -348,6 +349,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
+    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
@@ -1520,7 +1522,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await page.mouse.click(x, y);
     await bondTwoMonomersPointToPoint(
@@ -1534,7 +1536,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectEraseTool(page);
     // await page.mouse.click(675, 330);
     const canvasLocator = page.getByTestId('ketcher-canvas');
-    await canvasLocator.locator('path').first().click();
+    const bondLocator = canvasLocator.locator('path');
+    await bondLocator.nth(6).click();
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
@@ -2831,12 +2834,14 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
     monomerLocatorText: '4aPEGMal',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '7. Peptide X (ambiguouse, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
     monomerLocatorText: 'X',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2844,6 +2849,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '9. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
@@ -2857,6 +2863,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '11. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
@@ -2956,6 +2963,11 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
        */
+      if (movableCollapsedMonomer.pageReloadNeeded) {
+        await pageReload(page);
+        await turnOnMicromoleculesEditor(page);
+      }
+
       await openFileAndAddToCanvasAsNewProject(
         movableCollapsedMonomer.KETFile,
         page,
@@ -2992,6 +3004,7 @@ const movableExpandedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
@@ -3042,6 +3055,10 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
        */
+      if (movableExpandedMonomer.pageReloadNeeded) {
+        await pageReload(page);
+        await turnOnMicromoleculesEditor(page);
+      }
       await openFileAndAddToCanvasAsNewProject(
         movableExpandedMonomer.KETFile,
         page,

@@ -2822,6 +2822,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
     monomerLocatorText: 'bnn',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
@@ -2920,12 +2921,14 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '20. Phosphate bnn+cmp+nen (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '21. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)',
@@ -2938,6 +2941,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '23. Unknown nucleotide',

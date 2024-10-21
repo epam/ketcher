@@ -50,7 +50,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private sideConnectionBondTurnPoint?: number;
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
-  constructor(public readonly polymerBond: PolymerBond) {
+  constructor(
+    public readonly polymerBond: PolymerBond,
+    private isHydrogenBond = false,
+  ) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
@@ -119,7 +122,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
-    if (this.polymerBond.isSideChainConnection && cells) {
+    if (
+      (this.isHydrogenBond || this.polymerBond.isSideChainConnection) &&
+      cells
+    ) {
       this.appendSideConnectionBond(rootElement, cells);
     } else if (
       this.isSnakeBond &&
@@ -365,10 +371,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
-      .attr('stroke', '#43B5C0')
+      .attr('stroke', this.isHydrogenBond ? '#333333' : '#43B5C0')
       .attr('stroke-width', 1)
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
+      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
       .attr('pointer-events', 'stroke');
 
     this.path = dAttributeForPath;
@@ -698,6 +705,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .append('line')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
+      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
       .attr('class', 'selection-area')
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y)
@@ -903,12 +911,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          bondBodyElement.setAttribute('stroke', '#C0E2E6');
+          bondBodyElement.setAttribute(
+            'stroke',
+            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
+          );
         },
       );
     }
 
-    this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
+    this.bodyElement
+      .attr('stroke', this.isHydrogenBond ? '#333333' : '#0097A8')
+      .attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
       this.selectionElement.attr('stroke', '#CCFFDD');
@@ -934,7 +947,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
+              ? '#43B5C0'
+              : '#333333',
           );
         },
       );
@@ -943,7 +958,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+        this.polymerBond.isSideChainConnection && !this.isHydrogenBond
+          ? '#43B5C0'
+          : '#333333',
       )
       .attr('pointer-events', 'stroke');
 

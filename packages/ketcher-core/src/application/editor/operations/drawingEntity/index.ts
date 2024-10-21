@@ -3,6 +3,7 @@ import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 export class DrawingEntityHoverOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
 
@@ -42,6 +43,7 @@ export class DrawingEntityMoveOperation implements Operation {
 
     if (
       this.drawingEntity instanceof PolymerBond ||
+      this.drawingEntity instanceof HydrogenBond ||
       this.drawingEntity instanceof MonomerToAtomBond
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);

@@ -315,6 +315,13 @@ export async function clickOnSaveFileAndOpenDropdown(page: Page) {
 
 export async function openSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
+  // Wait while system loads list of values (i.e. Arial in particular) in Font combobox
+  await page.waitForSelector('div[role="combobox"]', {
+    state: 'attached',
+  });
+  await page.waitForSelector('div[role="combobox"]:has-text("Arial")', {
+    timeout: 5000,
+  });
 }
 export async function bondsSettings(page: Page) {
   await page.getByText('Bonds', { exact: true }).click();

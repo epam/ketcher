@@ -30,6 +30,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseAway,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -193,9 +194,17 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Not able to perform undo
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
-    await page.keyboard.press('Control+a');
+    // 1. Loaded reaction
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await screenshotBetweenUndoRedo(page);
+    // 2. Empty canvas - We removed all from canvas by Cut to clipboard
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    // 3. Reaction on the canvas - We returned all back to canvas
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+    // 4. Emty canvas - We Undo previus Redo
     await takeEditorScreenshot(page);
   });
 
@@ -239,7 +248,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });

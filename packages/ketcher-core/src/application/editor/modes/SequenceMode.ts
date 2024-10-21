@@ -131,7 +131,7 @@ export class SequenceMode extends BaseMode {
     this.isEditMode = true;
     this.initialize(false, needToRemoveSelection);
     if (sequenceItemRenderer) {
-      SequenceRenderer.setCaretPositionByMonomer(
+      SequenceRenderer.setCaretPositionNextToMonomer(
         sequenceItemRenderer.node.monomer,
       );
     }

@@ -1506,8 +1506,6 @@ const incorrectIDTStrings: IIDTString[] = [
   {
     idtDescription: '7. Doubled IUBcode',
     IDTString: '(YY:00330067)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2331',
   },
   {
     idtDescription: '8. Digit as IUBcode',

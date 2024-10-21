@@ -307,32 +307,36 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       detailedDescription: `Multi-Tailed Arrow with different x-coordinates of spine can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
     },
-    {
+    // TODO
+    /* {
       description:
-        'Multi-Tailed Arrow with head less than 0.5 cannot be added from KET file to Canvas',
+        'Multi-Tailed Arrow with head less than 0.5 cannot be added from KET file to Canvas  - no longer applicable since 0.01 is the new limit',
       file: 'KET/multi-tailed-arrow-invalid-head-0.49.ket',
       detailedDescription: `Multi-Tailed Arrow with head less than 0.5 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
-    },
-    {
+    }, */
+    // TODO
+    /* {
       description:
-        'Multi-Tailed Arrow with head positioned less than 0.15 to top tail cannot be added from KET file',
+        'Multi-Tailed Arrow with head positioned less than 0.15 to top tail cannot be added from KET file - no longer applicable since 0.01 is the new limit',
       file: 'KET/multi-tailed-arrow-invalid-head-position-0.14.ket',
       detailedDescription: `Multi-Tailed Arrow with head is positioned less than 0.15 to top tail can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
-    },
-    {
+    }, */
+    // TODO
+    /* {
       description:
-        'Multi-Tailed Arrow with tail less than 0.4 cannot be added from KET file to Canvas',
+        'Multi-Tailed Arrow with tail less than 0.4 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
       file: 'KET/multi-tailed-arrow-invalid-tails-0.39.ket',
       detailedDescription: `Multi-Tailed Arrow with tail less than 0.4 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
-    },
-    {
+    }, */
+    // TODO
+    /* {
       description:
-        'Multi-Tailed Arrow with tail distance less than 0.35 cannot be added from KET file to Canvas',
+        'Multi-Tailed Arrow with tail distance less than 0.35 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
       file: 'KET/multi-tailed-arrow-invalid-tails-distance.ket',
       detailedDescription: `Multi-Tailed Arrow with tail distance less than 0.35 can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
-    },
+    }, */
     {
       description:
         'Multi-Tailed Arrow with different lengths of tails cannot be added from KET file to Canvas',

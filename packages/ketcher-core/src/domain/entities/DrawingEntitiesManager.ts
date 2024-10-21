@@ -2237,6 +2237,7 @@ export class DrawingEntitiesManager {
   ) {
     if (_monomerToAtomBond) {
       this.monomerToAtomBonds.set(_monomerToAtomBond.id, _monomerToAtomBond);
+      monomer.setBond(attachmentPoint, _monomerToAtomBond);
 
       return _monomerToAtomBond;
     }

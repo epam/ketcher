@@ -946,8 +946,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -973,8 +971,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -998,8 +994,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1023,8 +1017,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1048,8 +1040,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1073,8 +1063,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1098,8 +1086,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1123,8 +1109,6 @@ test.describe('Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5152
         Description: add new setting Hash spacing
         require a number input should allow entering the whole values
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1149,8 +1133,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place,
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1175,8 +1157,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1201,8 +1181,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1227,8 +1205,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1253,8 +1229,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1279,8 +1253,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1305,8 +1277,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',
@@ -1331,8 +1301,6 @@ test.describe('Bonds Settings', () => {
         Description: add new setting Hash spacing
         require a number input should allow entering values with one decimal place, 
         the second number from the value entered after the dot is substituted
-        Screenshot after applying the settings should be update 
-        after implementing https://github.com/epam/ketcher/issues/5354
         */
     await openFileAndAddToCanvasAsNewProject(
       'KET/mixed-or-stereomarks.ket',

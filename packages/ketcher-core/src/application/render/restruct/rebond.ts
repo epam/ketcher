@@ -941,6 +941,15 @@ function stereoUpBondGetCoordinates(
   return sin > 0 ? [a1, a2] : [a2, a1];
 }
 
+function calculateLines(length: number, lineWidth: number, interval: number) {
+  const usableLength = length - lineWidth;
+  const linesCount = Math.max(
+    Math.floor(usableLength / (lineWidth + interval)),
+    0,
+  );
+  return linesCount + 2;
+}
+
 function getBondSingleDownPath(
   render: Render,
   hb1: HalfBond,
@@ -949,24 +958,36 @@ function getBondSingleDownPath(
   struct: Struct,
   isSnapping: boolean,
 ) {
+  const MIN_LINES = 4;
+  const DEFAULT_HASH_SPACING_IN_PX = 1.2;
   const a = hb1.p;
   const b = hb2.p;
   const options = render.options;
   let d = b.sub(a);
   const len = d.length() + 0.2;
   d = d.normalized();
-  const interval = 1.2 * options.lineWidth;
-  const nlines =
-    Math.max(
-      Math.floor((len - options.lineWidth) / (options.lineWidth + interval)),
-      0,
-    ) + 2;
-  const step = len / (nlines - 1);
+  let hashSpacingInPx = options.hashSpacingInPx ?? DEFAULT_HASH_SPACING_IN_PX;
+  const interval = hashSpacingInPx * options.lineWidth;
+  const gaps = MIN_LINES - 1;
+  const isHashSpacingTooLarge = interval >= len / gaps;
+
+  const nlines = calculateLines(len, options.lineWidth, interval);
+
+  if (isHashSpacingTooLarge && nlines < MIN_LINES) {
+    const averageSpacing = (len - options.lineWidth) / gaps;
+    hashSpacingInPx = averageSpacing / options.lineWidth;
+  }
+
+  const intervalAdjusted = hashSpacingInPx * options.lineWidth;
+
+  const finalLines = calculateLines(len, options.lineWidth, intervalAdjusted);
+
+  const step = len / (finalLines - 1);
   return draw.bondSingleDown(
     render.paper,
     hb1,
     d,
-    nlines,
+    finalLines,
     step,
     options,
     isSnapping,

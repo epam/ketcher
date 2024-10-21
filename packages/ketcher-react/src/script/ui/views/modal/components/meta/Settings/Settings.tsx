@@ -175,6 +175,7 @@ const SettingsDialog = (props: Props) => {
         />
         <Field
           name="imageResolution"
+          tooltip="option applicable to PNG/SVG pictures renderer"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
         />

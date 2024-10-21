@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   receiveFileComparisonData,
   saveToFile,

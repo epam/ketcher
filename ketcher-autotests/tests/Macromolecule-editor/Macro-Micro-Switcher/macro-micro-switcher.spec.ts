@@ -80,13 +80,22 @@ import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { pageReload } from '@utils/common/helpers';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
+import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { goToCHEMTab } from '@utils/macromolecules/library';
+import {
+  goToCHEMTab,
+  goToPeptidesTab,
+  goToRNATab,
+} from '@utils/macromolecules/library';
+import {
+  toggleBasesAccordion,
+  togglePhosphatesAccordion,
+  toggleSugarsAccordion,
+} from '@utils/macromolecules/rnaBuilder';
 
 const topLeftCorner = {
   x: -325,
@@ -123,21 +132,19 @@ async function pasteFromClipboard(
 }
 
 async function addToFavoritesMonomers(page: Page) {
+  await goToPeptidesTab(page);
   await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
-  await page
-    .getByTestId('Phe4Me___p-Methylphenylalanine')
-    .getByText('★')
-    .click();
-  await page.getByTestId('meM___N-Methyl-Methionine').getByText('★').click();
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Sugars').click();
+  await page.getByTestId(Peptides.Phe4Me).getByText('★').click();
+  await page.getByTestId(Peptides.meM).getByText('★').click();
+  await goToRNATab(page);
+  await toggleSugarsAccordion(page);
   await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
-  await page.getByTestId('summary-Bases').click();
+  await toggleBasesAccordion(page);
   await page.getByTestId(Bases.baA).getByText('★').click();
-  await page.getByTestId('summary-Phosphates').click();
-  await page.getByTestId('bP___Boranophosphate').getByText('★').click();
-  await page.getByTestId('CHEM-TAB').click();
-  await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').getByText('★').click();
+  await togglePhosphatesAccordion(page);
+  await page.getByTestId(Phosphates.bP).getByText('★').click();
+  await goToCHEMTab(page);
+  await page.getByTestId(Chems.Test_6_Ch).getByText('★').click();
 }
 
 async function setAtomAndBondSettings(page: Page) {
@@ -2865,6 +2872,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2879,6 +2887,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '12. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',

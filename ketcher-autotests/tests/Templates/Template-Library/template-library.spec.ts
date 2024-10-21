@@ -7,10 +7,8 @@ import {
   openSettings,
   pressButton,
   selectFunctionalGroups,
-  selectTopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
   waitForRender,
 } from '@utils';

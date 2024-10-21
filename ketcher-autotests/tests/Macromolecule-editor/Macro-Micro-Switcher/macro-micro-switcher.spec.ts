@@ -209,6 +209,12 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   }
 }
 
+async function selectExpandedMonomer(page: Page) {
+  await moveOnBond(page, BondType.SINGLE, 1);
+  await page.mouse.down();
+  await page.mouse.up();
+}
+
 let page: Page;
 
 async function configureInitialState(page: Page) {
@@ -2372,7 +2378,9 @@ async function callContexMenu(page: Page, locatorText: string) {
 
 async function expandMonomer(page: Page, locatorText: string) {
   await callContexMenu(page, locatorText);
-  await page.getByText('Expand monomer').click();
+  await waitForRender(page, async () => {
+    await page.getByText('Expand monomer').click();
+  });
 }
 
 async function collapseMonomer(page: Page) {
@@ -3128,10 +3136,8 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
    * Case: 1. Load monomer on Molecules canvas
    *       2. Take screenshot to witness initial state
    *       3. Copy monomer to clipboard
-   *       4. Take screenshot to witness initial state
-   *       5. Press Undo button
-   *       6. Take screenshot to witness final position
-   *       7. Press Redo button
+   *       4. Paste it to the canvas
+   *       5. Take screenshot to witness final position
    */
   await turnOnMicromoleculesEditor(page);
 
@@ -3160,11 +3166,9 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
    *
    * Case: 1. Load monomer on Molecules canvas
    *       2. Take screenshot to witness initial state
-   *       3. Copy monomer to clipboard
-   *       4. Take screenshot to witness initial state
-   *       5. Press Undo button
-   *       6. Take screenshot to witness final position
-   *       7. Press Redo button
+   *       3. Cut monomer to clipboard
+   *       4. Paste it to the canvas
+   *       5. Take screenshot to witness final position
    */
   await turnOnMicromoleculesEditor(page);
 
@@ -3187,25 +3191,30 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
    *
    * Case: 1. Load monomer on Molecules canvas
    *       2. Expand monomer
-   *       2. Take screenshot to witness initial state
-   *       2. Copy monomer to clipboard
-   *       2. Take screenshot to witness initial state
-   *       3. Press Undo button
-   *       6. Take screenshot to witness final position
-   *       7. Press Redo button
+   *       3. Click on any monomer bond to select it
+   *       4. Take screenshot to witness initial state
+   *       5. Copy monomer to clipboard
+   *       6. Paste it to the canvas
+   *       7. Take screenshot to witness final position
    */
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await expandMonomer(page, copyableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
+  await selectExpandedMonomer(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await waitForRender(page, async () => {
     await page.mouse.click(200, 200);
   });
   await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
+  );
 });
 
 test(`Verify that the system supports cut/paste functionality for expanded monomers in micro mode`, async () => {
@@ -3215,24 +3224,54 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
    *
    * Case: 1. Load monomer on Molecules canvas
    *       2. Expand monomer
-   *       3. Take screenshot to witness initial state
-   *       4. Copy monomer to clipboard
-   *       5. Take screenshot to witness initial state
-   *       6. Press Undo button
+   *       3. Click on any monomer bond to select it
+   *       4. Take screenshot to witness initial state
+   *       5. Cut monomer to clipboard
+   *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
-   *       8. Press Redo button
    */
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await expandMonomer(page, cutableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
-
+  await selectExpandedMonomer(page);
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await waitForRender(page, async () => {
     await page.mouse.click(200, 200);
   });
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
+  );
+});
+
+test(`Verify that "Expand monomer" does not break cyclic structures when the ring is expanded`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that "Expand monomer" does not break cyclic structures when the ring is expanded
+   *
+   * Case: 1. Load monomer cycle on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Expand all monomers from cycle
+   *       4. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await expandMonomer(page, 'A');
+  await expandMonomer(page, '5hMedC');
+  await expandMonomer(page, 'gly');
+  await expandMonomer(page, 'Mal');
+  await expandMonomer(page, '12ddR');
+  await expandMonomer(page, 'oC64m5');
   await takeEditorScreenshot(page);
 });

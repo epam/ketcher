@@ -348,11 +348,7 @@ export class DrawingEntitiesManager {
     if (drawingEntity instanceof PolymerBond) {
       drawingEntity.moveToLinkedMonomers();
     } else if (drawingEntity instanceof Bond) {
-      const editor = CoreEditor.provideEditorInstance();
-      const viewModel = editor.viewModel;
-
       drawingEntity.moveToLinkedAtoms();
-      viewModel.initialize([...this.bonds.values()]);
     } else if (drawingEntity instanceof MonomerToAtomBond) {
       drawingEntity.moveToLinkedMonomerAndAtom();
     } else {
@@ -389,6 +385,14 @@ export class DrawingEntitiesManager {
 
     [...this.atoms.values(), ...this.monomers.values()].forEach(
       (drawingEntity) => {
+        if (
+          drawingEntity instanceof BaseMonomer &&
+          drawingEntity.monomerItem.props.isMicromoleculeFragment &&
+          !isMonomerSgroupWithAttachmentPoints(drawingEntity)
+        ) {
+          return;
+        }
+
         if (drawingEntity.selected) {
           command.merge(
             this.createDrawingEntityMovingCommand(
@@ -2233,6 +2237,7 @@ export class DrawingEntitiesManager {
   ) {
     if (_monomerToAtomBond) {
       this.monomerToAtomBonds.set(_monomerToAtomBond.id, _monomerToAtomBond);
+      monomer.setBond(attachmentPoint, _monomerToAtomBond);
 
       return _monomerToAtomBond;
     }

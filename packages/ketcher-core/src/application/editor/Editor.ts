@@ -1,5 +1,5 @@
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { Editor } from 'application/editor/editor.types';
+import { Editor, EditorType } from 'application/editor/editor.types';
 import {
   editorEvents,
   hotkeysConfiguration,
@@ -66,6 +66,7 @@ let editor;
 export class CoreEditor {
   public events;
 
+  public _type: EditorType;
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
@@ -93,6 +94,7 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
   constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
+    this._type = EditorType.Macromolecules;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -597,6 +599,7 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
     this._monomersLibraryParsedJson = undefined;
+    this._type = EditorType.Micromolecules;
   }
 
   private switchToMacromolecules() {
@@ -609,6 +612,7 @@ export class CoreEditor {
       );
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
+    this._type = EditorType.Macromolecules;
   }
 
   private rerenderSequenceMode() {

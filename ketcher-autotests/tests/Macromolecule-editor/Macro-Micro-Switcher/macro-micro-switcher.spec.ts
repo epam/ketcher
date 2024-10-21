@@ -3113,7 +3113,7 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
   await takeEditorScreenshot(page);
 });
 
-const copiebleMonomer: IMonomer = {
+const copyableMonomer: IMonomer = {
   monomerDescription: '1. Petide D (from library)',
   KETFile:
     'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
@@ -3123,21 +3123,21 @@ const copiebleMonomer: IMonomer = {
 test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
+   * Description: Verify that the system supports copy/paste functionality for collapsed monomers in micro mode
    *
    * Case: 1. Load monomer on Molecules canvas
    *       2. Take screenshot to witness initial state
-   *       2. Copy monomer to clipboard
-   *       2. Take screenshot to witness initial state
-   *       3. Press Undo button
+   *       3. Copy monomer to clipboard
+   *       4. Take screenshot to witness initial state
+   *       5. Press Undo button
    *       6. Take screenshot to witness final position
    *       7. Press Redo button
    */
   await turnOnMicromoleculesEditor(page);
 
-  await openFileAndAddToCanvasAsNewProject(copiebleMonomer.KETFile, page);
+  await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, copiebleMonomer.monomerLocatorText);
+  await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await waitForRender(page, async () => {
@@ -3156,9 +3156,37 @@ const cutableMonomer: IMonomer = {
 test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
+   * Description: Verify that the system supports cut/paste functionality for collapsed monomers in micro mode
    *
    * Case: 1. Load monomer on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Copy monomer to clipboard
+   *       4. Take screenshot to witness initial state
+   *       5. Press Undo button
+   *       6. Take screenshot to witness final position
+   *       7. Press Redo button
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
+  await takeEditorScreenshot(page);
+  await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
+
+  await cutToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+  await waitForRender(page, async () => {
+    await page.mouse.click(200, 200);
+  });
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify that the system supports copy/paste functionality for expanded monomers in micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that the system supports copy/paste functionality for expanded monomers in micro mode
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Expand monomer
    *       2. Take screenshot to witness initial state
    *       2. Copy monomer to clipboard
    *       2. Take screenshot to witness initial state
@@ -3168,7 +3196,36 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
    */
   await turnOnMicromoleculesEditor(page);
 
+  await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
+  await expandMonomer(page, copyableMonomer.monomerLocatorText);
+  await takeEditorScreenshot(page);
+  await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+  await waitForRender(page, async () => {
+    await page.mouse.click(200, 200);
+  });
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify that the system supports cut/paste functionality for expanded monomers in micro mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that the system supports cut/paste functionality for expanded monomers in micro mode
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Expand monomer
+   *       3. Take screenshot to witness initial state
+   *       4. Copy monomer to clipboard
+   *       5. Take screenshot to witness initial state
+   *       6. Press Undo button
+   *       7. Take screenshot to witness final position
+   *       8. Press Redo button
+   */
+  await turnOnMicromoleculesEditor(page);
+
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
+  await expandMonomer(page, cutableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
   await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
 

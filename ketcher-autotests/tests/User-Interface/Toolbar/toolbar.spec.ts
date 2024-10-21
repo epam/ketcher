@@ -1,10 +1,8 @@
 import { test } from '@playwright/test';
 import {
   openSettings,
-  selectTopPanelButton,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 

@@ -5,6 +5,7 @@ import {
   clickInTheMiddleOfTheScreen,
   copyAndPaste,
   cutAndPaste,
+  openSettings,
   pressButton,
   selectTopPanelButton,
   takeEditorScreenshot,
@@ -84,6 +85,3 @@ test.describe('Ignore Chiral Flag', () => {
     await takeEditorScreenshot(page);
   });
 });
-function openSettings(page: Page) {
-  throw new Error('Function not implemented.');
-}

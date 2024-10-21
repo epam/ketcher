@@ -33,7 +33,7 @@ export function LeftMenuComponent() {
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {
-    editor.events.selectTool.dispatch(name);
+    editor.events.selectTool.dispatch(name, { toolName: name });
   };
 
   return (
@@ -57,12 +57,24 @@ export function LeftMenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item
-          itemId="bond-single"
-          title="Single Bond (1)"
-          testId="single-bond"
+        <Menu.Submenu
           disabled={isSequenceMode}
-        />
+          testId="bond-tool-submenu"
+          needOpenByMenuItemClick={true}
+        >
+          <Menu.Item
+            itemId="bond-single"
+            title="Single Bond (1)"
+            testId="single-bond"
+            disabled={isSequenceMode}
+          />
+          <Menu.Item
+            itemId="bond-hydrogen"
+            title="Hydrogen Bond (2)"
+            testId="hydrogen-bond"
+            disabled={isSequenceMode}
+          />
+        </Menu.Submenu>
       </Menu.Group>
     </Menu>
   );

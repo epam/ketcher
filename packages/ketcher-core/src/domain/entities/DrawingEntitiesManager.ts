@@ -85,6 +85,7 @@ import {
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -345,7 +346,10 @@ export class DrawingEntitiesManager {
     drawingEntity: DrawingEntity,
     offset?: Vec2,
   ) {
-    if (drawingEntity instanceof PolymerBond) {
+    if (
+      drawingEntity instanceof PolymerBond ||
+      drawingEntity instanceof HydrogenBond
+    ) {
       drawingEntity.moveToLinkedEntities();
     } else if (drawingEntity instanceof Bond) {
       drawingEntity.moveToLinkedAtoms();
@@ -747,6 +751,7 @@ export class DrawingEntitiesManager {
     secondMonomer: BaseMonomer,
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
+    bondType: string,
     _polymerBond?: PolymerBond,
   ) {
     if (_polymerBond) {
@@ -756,7 +761,10 @@ export class DrawingEntitiesManager {
       return _polymerBond;
     }
 
-    const polymerBond = new PolymerBond(firstMonomer);
+    const polymerBond =
+      bondType === 'hydrogen'
+        ? new HydrogenBond(firstMonomer)
+        : new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     polymerBond.setSecondMonomer(secondMonomer);
     polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
@@ -787,6 +795,7 @@ export class DrawingEntitiesManager {
     secondMonomer: BaseMonomer,
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
+    bondType = 'polymer',
   ) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
@@ -800,6 +809,7 @@ export class DrawingEntitiesManager {
         secondMonomer,
         firstMonomerAttachmentPoint,
         secondMonomerAttachmentPoint,
+        bondType,
       ),
       this.deletePolymerBondChangeModel.bind(this),
     );
@@ -818,6 +828,7 @@ export class DrawingEntitiesManager {
     secondMonomer: BaseMonomer,
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
+    bondType = 'polymer',
   ) {
     const command = new Command();
 
@@ -828,6 +839,7 @@ export class DrawingEntitiesManager {
         secondMonomer,
         firstMonomerAttachmentPoint,
         secondMonomerAttachmentPoint,
+        bondType,
       ),
       this.deletePolymerBondChangeModel.bind(this),
     );

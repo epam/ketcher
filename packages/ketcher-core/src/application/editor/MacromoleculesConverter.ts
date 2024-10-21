@@ -29,6 +29,7 @@ import { CoreEditor } from 'application/editor/Editor';
 import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class MacromoleculesConverter {
   private static convertMonomerToMonomerMicromolecule(
@@ -221,7 +222,10 @@ export class MacromoleculesConverter {
       }
 
       const bond = new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
+        type:
+          polymerBond instanceof HydrogenBond
+            ? Bond.PATTERN.TYPE.HYDROGEN
+            : Bond.PATTERN.TYPE.SINGLE,
         begin: beginAtom,
         end: endAtom,
         beginSuperatomAttachmentPointNumber,

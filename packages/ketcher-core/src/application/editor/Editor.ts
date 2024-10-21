@@ -237,7 +237,9 @@ export class CoreEditor {
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
-    this.events.selectTool.add((tool) => this.onSelectTool(tool));
+    this.events.selectTool.add((tool, options) =>
+      this.onSelectTool(tool, options),
+    );
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
     this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
       this.onCancelBondCreation(secondMonomer),
@@ -315,8 +317,8 @@ export class CoreEditor {
     }
   }
 
-  public onSelectTool(tool: ToolName) {
-    this.selectTool(tool);
+  public onSelectTool(tool: ToolName, options?: {}) {
+    this.selectTool(tool, options);
   }
 
   private onCreateBond(payload: {
@@ -431,6 +433,7 @@ export class CoreEditor {
   }
 
   public selectTool(name: ToolName, options?) {
+    console.log(options);
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 

@@ -43,11 +43,13 @@ type FlexModeOrSnakeModePolymerBondRenderer =
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
-  history: EditorHistory;
+  private history: EditorHistory;
+  private bondType: string;
 
-  constructor(private editor: CoreEditor) {
+  constructor(private editor: CoreEditor, options: { toolName: string }) {
     this.editor = editor;
     this.history = new EditorHistory(this.editor);
+    this.bondType = options.toolName === 'bond-single' ? 'single' : 'hydrogen';
   }
 
   public mouseDownAttachmentPoint(event) {
@@ -343,6 +345,7 @@ class PolymerBond implements BaseTool {
       secondMonomer,
       firstMonomerAttachmentPoint,
       secondMonomerAttachmentPoint,
+      this.bondType,
     );
   }
 

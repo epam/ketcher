@@ -22,6 +22,7 @@ import {
   BondTool,
   selectNestedTool,
   waitForPageInit,
+  openSettings,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -29,7 +30,7 @@ async function selectLabelDisplayAtStereogenicCenters(
   page: Page,
   label: string,
 ) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('stereo-label-style-input-span').click();
   await page.getByRole('option', { name: label }).click();
@@ -37,7 +38,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 }
 
 async function selectColorOfStereogenicCenters(page: Page, color: string) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('color-stereogenic-centers-input-span').click();
   await page.getByRole('option', { name: color }).click();
@@ -45,21 +46,21 @@ async function selectColorOfStereogenicCenters(page: Page, color: string) {
 }
 
 async function uncheckShowStereoFlag(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByText('Show the Stereo flags').click();
   await pressButton(page, 'Apply');
 }
 
 async function autoFadeCenterLabelsOff(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByText('Auto fade And/Or center labels').click();
   await pressButton(page, 'Apply');
 }
 
 async function editMixedFlagText(page: Page, text: string) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByLabel('Text of Mixed flag').click();
   await page.getByLabel('Text of Mixed flag').fill(text);
@@ -67,7 +68,7 @@ async function editMixedFlagText(page: Page, text: string) {
 }
 
 async function editAbsoluteFlagText(page: Page, text: string) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByLabel('Text of Absolute flag').click();
   await page.getByLabel('Text of Absolute flag').fill(text);
@@ -539,7 +540,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     const deltaX = 0;
     const deltaY = 100;
-    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await openSettings(page);
     await page.getByText('Stereochemistry', { exact: true }).click();
     await page.mouse.wheel(deltaX, deltaY);
     await takeEditorScreenshot(page);

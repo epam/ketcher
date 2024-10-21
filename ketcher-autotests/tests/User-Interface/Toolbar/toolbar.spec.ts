@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import {
+  openSettings,
   selectTopPanelButton,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -17,7 +18,7 @@ test.describe('Toolbar palette and settings', () => {
       Test case: EPMLSOPKET-1329
       Description:  'Settings': UI verification
       */
-    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await openSettings(page);
     await takeEditorScreenshot(page);
   });
 

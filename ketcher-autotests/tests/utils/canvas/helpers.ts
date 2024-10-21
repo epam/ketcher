@@ -26,6 +26,7 @@ import {
   getControlModifier,
 } from '..';
 import {
+  openSettings,
   selectAtomInToolbar,
   selectRectangleSelectionTool,
   selectTopPanelButton,
@@ -299,7 +300,7 @@ export async function screenshotBetweenUndoRedoInMacro(page: Page) {
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
 }

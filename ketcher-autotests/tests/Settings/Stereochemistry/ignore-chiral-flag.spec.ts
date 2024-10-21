@@ -27,7 +27,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 }
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await scrollSettingBar(page, 80);
   await page
@@ -84,3 +84,6 @@ test.describe('Ignore Chiral Flag', () => {
     await takeEditorScreenshot(page);
   });
 });
+function openSettings(page: Page) {
+  throw new Error('Function not implemented.');
+}

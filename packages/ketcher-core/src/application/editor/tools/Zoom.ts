@@ -256,7 +256,11 @@ export class ZoomTool implements BaseTool {
   }
 
   public scrollBy(x: number, y: number) {
-    this.zoom?.translateBy(this.canvasWrapper, x, y);
+    this.zoom?.translateBy(
+      this.canvasWrapper,
+      this.unzoomValue(x),
+      this.unzoomValue(y),
+    );
   }
 
   public scrollToVerticalCenter(structCenterY: number) {

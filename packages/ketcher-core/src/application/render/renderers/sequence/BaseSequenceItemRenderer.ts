@@ -99,7 +99,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       ) as never as D3SvgElementSelection<SVGGElement, void>;
 
     if (this.isSequenceEditModeTurnedOn || this.isSingleEmptyNode) {
-      rootElement.attr('pointer-events', 'all').attr('cursor', 'text');
+      rootElement.style('pointer-events', 'all').style('cursor', 'text');
     }
 
     return rootElement;

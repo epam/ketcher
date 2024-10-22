@@ -582,6 +582,10 @@ export class CoreEditor {
     eventHandlerName: ToolEventHandlerName,
     event: Event,
   ) {
+    if (this.isHandToolSelected) {
+      return;
+    }
+
     this.mode?.[eventHandlerName]?.(event);
   }
 

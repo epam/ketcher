@@ -162,10 +162,6 @@ export const EditorEvents = () => {
 
   const handleOpenPreview = useCallback(
     (e) => {
-      if (editor.isHandToolSelected) {
-        return;
-      }
-
       const polymerBond = e.target.__data__?.polymerBond;
 
       if (polymerBond && !polymerBond.finished) {

@@ -1,15 +1,11 @@
 import { BaseTool, CoreEditor, ZoomTool } from 'application/editor';
-import {
-  HandBase64Image,
-  HandDraggingBase64Image,
-} from 'application/editor/constants';
 import { D3DragEvent, drag, DragBehavior, select } from 'd3';
 
 export class HandTool implements BaseTool {
   private readonly dragBehavior: DragBehavior<SVGSVGElement, unknown, unknown>;
 
   constructor(private editor: CoreEditor) {
-    this.editor.canvas.style.cursor = `url(${HandBase64Image}), auto`;
+    this.editor.canvas.classList.add('handCursor');
 
     this.dragBehavior = drag<SVGSVGElement, unknown, unknown>()
       .on('start', this.handleDragStart.bind(this))
@@ -20,7 +16,7 @@ export class HandTool implements BaseTool {
   }
 
   private handleDragStart() {
-    this.editor.canvas.style.cursor = `url(${HandDraggingBase64Image}), auto`;
+    this.editor.canvas.classList.add('handCursorGrabbing');
   }
 
   private handleDragging(event: D3DragEvent<SVGSVGElement, unknown, unknown>) {
@@ -28,11 +24,11 @@ export class HandTool implements BaseTool {
   }
 
   private handleDragEnd() {
-    this.editor.canvas.style.cursor = `url(${HandBase64Image}), auto`;
+    this.editor.canvas.classList.remove('handCursorGrabbing');
   }
 
   destroy() {
-    this.editor.canvas.style.cursor = 'auto';
+    this.editor.canvas.classList.remove('handCursor');
     select(this.editor.canvas).on('.drag', null);
   }
 }

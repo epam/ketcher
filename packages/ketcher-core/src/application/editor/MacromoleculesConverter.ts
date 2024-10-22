@@ -1,5 +1,6 @@
 import {
   AmbiguousMonomer,
+  Atom as MicromoleculesAtom,
   Bond,
   FunctionalGroup,
   Pile,
@@ -7,7 +8,6 @@ import {
   SGroupAttachmentPoint,
   Struct,
   Vec2,
-  Atom as MicromoleculesAtom,
 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
@@ -30,6 +30,7 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 
 export class MacromoleculesConverter {
   private static convertMonomerToMonomerMicromolecule(
@@ -114,6 +115,10 @@ export class MacromoleculesConverter {
     reStruct?: ReStruct,
   ) {
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
+    const monomerToMonomerMicromolecule = new Map<
+      BaseMonomer,
+      MonomerMicromolecule
+    >();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
@@ -148,6 +153,8 @@ export class MacromoleculesConverter {
           monomer instanceof AmbiguousMonomer
             ? monomer.monomers[0].monomerItem.struct.bonds
             : monomer.monomerItem.struct.bonds;
+
+        monomerToMonomerMicromolecule.set(monomer, monomerMicromolecule);
 
         monomerAtoms.forEach((oldAtom, oldAtomId) => {
           const { atom, atomId } = this.addMonomerAtomToStruct(
@@ -197,6 +204,26 @@ export class MacromoleculesConverter {
 
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
+
+      if (polymerBond instanceof HydrogenBond) {
+        const bond = new Bond({
+          type: Bond.PATTERN.TYPE.HYDROGEN,
+          begin: monomerToAtomIdMap
+            .get(polymerBond.firstMonomer)
+            ?.values()
+            .next().value,
+          end: monomerToAtomIdMap
+            .get(polymerBond.secondMonomer)
+            ?.values()
+            .next().value,
+        });
+        const bondId = struct.bonds.add(bond);
+
+        reStruct?.bonds.set(bondId, new ReBond(bond));
+
+        return;
+      }
+
       const {
         globalAttachmentAtomId: beginAtom,
         attachmentPointNumber: beginSuperatomAttachmentPointNumber,
@@ -623,6 +650,9 @@ export class MacromoleculesConverter {
             secondMonomer,
             getAttachmentPointLabel(beginAtomAttachmentPointNumber),
             getAttachmentPointLabel(endAtomAttachmentPointNumber),
+            bond.type === Bond.PATTERN.TYPE.HYDROGEN
+              ? MACROMOLECULES_BOND_TYPES.HYDROGEN
+              : MACROMOLECULES_BOND_TYPES.SINGLE,
           ),
         );
       }

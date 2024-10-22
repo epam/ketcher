@@ -6,6 +6,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnFileFormatDropdown,
   copyAndPaste,
+  copyToClipboardByKeyboard,
   cutAndPaste,
   dragMouseTo,
   FileFormatOption,
@@ -16,6 +17,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   openPasteFromClipboard,
+  pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
   resetCurrentTool,
@@ -23,6 +25,7 @@ import {
   RingButton,
   saveToTemplates,
   screenshotBetweenUndoRedo,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectEraseTool,
   selectLeftPanelButton,
@@ -280,10 +283,10 @@ test.describe('Image files', () => {
       'tests/test-data/KET/images-png-svg.ket',
     );
     await openPasteFromClipboard(page, fileContent);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.getByTestId('close-icon').click();
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -327,10 +330,10 @@ test.describe('Image files', () => {
       'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
     await openPasteFromClipboard(page, fileContent);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.getByTestId('close-icon').click();
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -526,7 +529,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(600, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -706,7 +709,7 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
@@ -719,7 +722,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
   });
@@ -2245,9 +2248,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -2266,9 +2267,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -2288,9 +2287,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -2309,9 +2306,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -2331,9 +2326,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -2352,9 +2345,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });

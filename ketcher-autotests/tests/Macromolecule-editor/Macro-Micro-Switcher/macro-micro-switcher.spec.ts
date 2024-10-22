@@ -3283,4 +3283,106 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
   await expandMonomer(page, '12ddR');
   await expandMonomer(page, 'oC64m5');
   await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});
+
+test(`Verify that expanding multiple monomers works in a left-to-right order within a chain`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that expanding multiple monomers works in a left-to-right order within a chain
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Expand all monomers from  chain (from right to left)
+   *       4. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await expandMonomer(page, '12ddR');
+  await expandMonomer(page, 'Mal');
+  await expandMonomer(page, 'A');
+  await expandMonomer(page, '5hMedC');
+  await expandMonomer(page, 'gly');
+  await expandMonomer(page, 'oC64m5');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});
+
+test(`Verify that expanding multiple monomers works in a top-to-bottom order within a chain`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that expanding multiple monomers works in a top-to-bottom order within a chain
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Expand all monomers from chain (from top to bottom)
+   *       4. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in vertical chain.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await expandMonomer(page, 'oC64m5');
+  await expandMonomer(page, 'gly');
+  await expandMonomer(page, '5hMedC');
+  await expandMonomer(page, 'A');
+  await expandMonomer(page, 'Mal');
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});
+
+test(`Verify that expanding monomers with big mircomolecule ring structures in the middle behaves correctly without breaking the chain`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that expanding monomers with big mircomolecule ring structures in the middle behaves correctly without breaking the chain
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Expand all monomers from chain (from right to left)
+   *       4. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain and large micromolecule in the middle.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await expandMonomer(page, 'oC64m5');
+  await expandMonomer(page, 'gly');
+  await expandMonomer(page, '5hMedC');
+  await expandMonomer(page, 'A');
+  await expandMonomer(page, 'Mal');
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
 });

@@ -1,9 +1,9 @@
 import { Page } from '@playwright/test';
-import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
-import { moveMouseAway, waitForRender } from '..';
+import { moveMouseAway, waitForRender, waitForSpinnerFinishedWork } from '..';
+import { emptyFunction } from '@utils/common/helpers';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -107,12 +107,21 @@ export async function copyAndPaste(page: Page) {
   });
 }
 
-export async function selectAllStructuresOnCanvas(page: Page) {
+export async function selectAllStructuresOnCanvas(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
   const modifier = getControlModifier();
-  await page.getByTestId(TestIdSelectors.RectangleSelection).click();
-  // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
-  });
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. Sometimes - select object on the screen took time
+  await waitForRender(page, emptyFunction);
+
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await page.keyboard.press(`${modifier}+KeyA`, options),
+  );
 }

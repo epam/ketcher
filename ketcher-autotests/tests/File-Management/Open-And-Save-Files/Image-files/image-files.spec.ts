@@ -685,6 +685,42 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
+    /**
+     * Test case: #2209
+     * Description: Loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDX/image-png-svg-together.cdx',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
+    /**
+     * Test case: #2209
+     * Description: Loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-svg-together.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that adding to selected place on Canvas images of (PNG, SVG) using "Add Image" can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
     /**
      * Test case: #4897
@@ -708,6 +744,38 @@ test.describe('Image files', () => {
      * can be deleted using "Erase" (or Delete, Backspace buttons)
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG)
+     * can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDX/image-png-svg-together.cdx',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG)
+     * can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-svg-together.cdxml',
+      page,
+    );
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
@@ -909,6 +977,63 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after moving of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * moving of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-moving-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-moving-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-moving-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after moving of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * moving of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-moving-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-moving-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-moving-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async () => {
     /**
      * Test case: #4897
@@ -941,6 +1066,69 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after scaling of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-scaling-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-scaling-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-scaling-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after scaling of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.click(200, 200);
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-scaling-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-scaling-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-scaling-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async () => {
     /**
      * Test case: #4897
@@ -966,6 +1154,61 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after deleting of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * deleting of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-deleting-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-deleting-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-deleting-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after deleting of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * deleting of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-deleting-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-deleting-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-deleting-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after copying of them and then opened', async () => {
     /**
      * Test case: #4897
@@ -986,6 +1229,61 @@ test.describe('Image files', () => {
     );
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-svg-png-after-copying-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after copying of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * copying of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-copying-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-copying-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-copying-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after copying of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * copying of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await page.mouse.click(200, 500);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-copying-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-copying-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-copying-expected.cdxml',
       page,
     );
     await takeEditorScreenshot(page);

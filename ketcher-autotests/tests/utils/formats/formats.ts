@@ -134,6 +134,34 @@ export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   );
 }
 
+export async function enableViewOnlyMode(page: Page): Promise<void> {
+  return await page.evaluate(() =>
+    window.ketcher.editor.options({ viewOnlyMode: true }),
+  );
+}
+
+export async function disableViewOnlyMode(page: Page): Promise<void> {
+  return await page.evaluate(() =>
+    window.ketcher.editor.options({ viewOnlyMode: false }),
+  );
+}
+
+export async function enableViewOnlyModeBySetOptions(
+  page: Page,
+): Promise<void> {
+  return await page.evaluate(() =>
+    window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })),
+  );
+}
+
+export async function disableViewOnlyModeBySetOptions(
+  page: Page,
+): Promise<void> {
+  return await page.evaluate(() =>
+    window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false })),
+  );
+}
+
 export async function disableQueryElements(page: Page): Promise<void> {
   return await page.evaluate(() => {
     return window.ketcher.setSettings({

@@ -37,7 +37,8 @@ export async function selectRectangleSelection(page: Page) {
 
   await page
     .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Rectangle"]`)
-    .nth(1) // Select the second matched element (zero-based index)
+    // Select the second matched element (zero-based index)
+    .nth(1)
     .click();
 }
 

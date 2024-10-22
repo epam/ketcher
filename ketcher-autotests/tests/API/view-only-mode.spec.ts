@@ -22,6 +22,8 @@ import {
   selectRectangleSelectionTool,
   selectFragmentSelection,
   dragMouseTo,
+  selectAllStructuresOnCanvas,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -157,7 +159,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await expect(page.getByTestId('open-file-button')).toBeEnabled();
     await expect(page.getByTestId('save-file-button')).toBeEnabled();
     await expect(page.getByTitle('Copy (Ctrl+C)')).toBeEnabled();
@@ -187,11 +189,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
     await disableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
   });
@@ -206,11 +208,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await page.getByTitle('Copy as KET (Ctrl+Shift+K)').click();
     await disableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await page.mouse.click(200, 200);
     await takeEditorScreenshot(page);
   });
@@ -290,12 +292,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   });
 
   const hotkeys = [
-    { keys: 'Control+o', action: 'Open' },
-    { keys: 'Control+s', action: 'Save As' },
     { keys: 'Control+c', action: 'Copy' },
     { keys: 'Control+Shift+f', action: 'Copy Image' },
-    { keys: 'Control+m', action: 'Copy as MOL' },
     { keys: 'Control+Shift+k', action: 'Copy as KET' },
+    { keys: 'Control+m', action: 'Copy as MOL' },
+    { keys: 'Control+o', action: 'Open' },
+    { keys: 'Control+s', action: 'Save As' },
     { keys: 'Control+a', action: 'Select All' },
     { keys: 'Control+Shift+a', action: 'Deselect All' },
     { keys: 'Alt+s', action: 'Check structure' },
@@ -317,7 +319,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
         await page.keyboard.press('Control+a');
-        await page.keyboard.press(hotkey.keys);
+        await waitForSpinnerFinishedWork(
+          page,
+          async () => await page.keyboard.press(hotkey.keys),
+        );
         await takePageScreenshot(page, {
           masks: [
             page.locator('[class*="Check-module_checkInfo"] > span'),
@@ -408,10 +413,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -465,7 +470,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
     await selectRectangleSelectionTool(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 1);
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);

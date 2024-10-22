@@ -4,19 +4,18 @@ import {
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
+  openSettings,
   pressButton,
   selectFunctionalGroups,
-  selectTopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
   waitForRender,
 } from '@utils';
 import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('stereo-label-style-input-span').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
@@ -25,7 +24,7 @@ async function setDisplayStereoFlagsSettingToOn(page: Page) {
 }
 
 async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await page.getByText('Stereochemistry', { exact: true }).click();
 
   const checkLocator = page.getByText('Ignore the chiral flag');

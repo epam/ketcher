@@ -1,6 +1,8 @@
 import { Locator, Page } from '@playwright/test';
 import {
   dragMouseTo,
+  LeftPanelButton,
+  selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectSingleBondTool,
 } from '@utils';
@@ -11,6 +13,18 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
+  await selectRectangleSelectionTool(page);
+  await monomer.click();
+  await dragMouseTo(x, y, page);
+}
+
+export async function moveMonomerOnMicro(
+  page: Page,
+  monomer: Locator,
+  x: number,
+  y: number,
+) {
+  await selectLeftPanelButton(LeftPanelButton.HandTool, page);
   await selectRectangleSelectionTool(page);
   await monomer.click();
   await dragMouseTo(x, y, page);

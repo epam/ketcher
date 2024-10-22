@@ -153,6 +153,7 @@ export enum Phosphates {
   Phosphate = 'P___Phosphate',
   Boranophosphate = 'bP___Boranophosphate',
   sP_ = 'sP-___Dihydrogen phosphorothioate',
+  bP = 'bP___Boranophosphate',
 }
 
 export async function selectPhosphate(phosphateName: Phosphates, page: Page) {

@@ -26,6 +26,7 @@ import {
   getControlModifier,
 } from '..';
 import {
+  openSettings,
   selectAtomInToolbar,
   selectRectangleSelectionTool,
   selectTopPanelButton,
@@ -157,7 +158,7 @@ export async function takeElementScreenshot(
   elementId: string,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 3000;
+  const maxTimeout = 1500;
   const element = page.getByTestId(elementId).first();
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(element).toHaveScreenshot({
@@ -299,7 +300,7 @@ export async function screenshotBetweenUndoRedoInMacro(page: Page) {
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await openSettings(page);
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
 }
@@ -405,9 +406,11 @@ export async function copyToClipboardByKeyboard(
       }
     | undefined,
 ) {
-  const modifier = await getControlModifier();
-  // await delay(10);
-  // await page.keyboard.press(`${modifier}+KeyC`, options);
+  const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. Sometimes - select object on the screen took time
+  await waitForRender(page, emptyFunction);
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyC`, options),
@@ -423,6 +426,10 @@ export async function cutToClipboardByKeyboard(
     | undefined,
 ) {
   const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. Sometimes - select object on the screen took time
+  await waitForRender(page, emptyFunction);
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyX`, options),
@@ -438,6 +445,10 @@ export async function pasteFromClipboardByKeyboard(
     | undefined,
 ) {
   const modifier = getControlModifier();
+  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
+  // before proceeding next. For ex. - select object on the screen can took time
+  await waitForRender(page, emptyFunction);
+
   await waitForSpinnerFinishedWork(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyV`, options),

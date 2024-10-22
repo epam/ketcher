@@ -770,7 +770,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await pressButton(page, 'ACS Style');
+  await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
@@ -812,7 +812,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await pressButton(page, 'ACS Style');
+  await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);

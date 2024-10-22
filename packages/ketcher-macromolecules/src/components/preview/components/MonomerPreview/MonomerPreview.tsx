@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useMemo } from 'react';
 import {
   Container,
   InfoBlock,
@@ -40,19 +39,7 @@ interface Props {
 const MonomerPreview = ({ className }: Props) => {
   const preview = useAppSelector(selectShowPreview) as MonomerPreviewState;
 
-  const { monomer, attachmentPointsToBonds, style } = preview;
-
-  const ContainerDynamic = useMemo(() => {
-    if (!style) {
-      return styled(Container)``;
-    }
-
-    return styled(Container)`
-      top: ${style?.top || ''};
-      left: ${style?.left || ''};
-      right: ${style?.right || ''};
-    `;
-  }, [style]);
+  const { monomer, attachmentPointsToBonds } = preview;
 
   const idtAliases = monomer?.props.idtAliases;
 
@@ -77,10 +64,7 @@ const MonomerPreview = ({ className }: Props) => {
 
   return (
     (monomer.struct || isUnresolved) && (
-      <ContainerDynamic
-        className={className}
-        data-testid="polymer-library-preview"
-      >
+      <Container className={className} data-testid="polymer-library-preview">
         {monomerName && <MonomerName>{monomerName}</MonomerName>}
         {isUnresolved ? (
           <UnresolvedMonomerPreview />
@@ -101,17 +85,14 @@ const MonomerPreview = ({ className }: Props) => {
           />
           {idtAliasesText && <IDTAliases idtAliasesText={idtAliasesText} />}
         </InfoBlock>
-      </ContainerDynamic>
+      </Container>
     )
   );
 };
 
 const StyledPreview = styled(MonomerPreview)`
-  z-index: 5;
-  position: absolute;
   width: ${preview.width + 'px'};
   height: ${preview.height + 'px'};
-  transform: translate(-50%, 0);
 `;
 
 export default StyledPreview;

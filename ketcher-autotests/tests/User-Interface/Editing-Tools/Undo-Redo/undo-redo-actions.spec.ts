@@ -34,6 +34,7 @@ import {
   BondTool,
   waitForPageInit,
   waitForRender,
+  openSettings,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -742,7 +743,7 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await openSettings(page);
     await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);

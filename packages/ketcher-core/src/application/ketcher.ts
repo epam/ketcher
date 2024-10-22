@@ -37,7 +37,7 @@ import {
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
-import { EditorSelection } from './editor/editor.types';
+import { EditorSelection, EditorType } from './editor/editor.types';
 import {
   BlobTypes,
   ExportImageParams,
@@ -206,8 +206,14 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
-      this.#editor.struct(),
-      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
+      (CoreEditor.provideEditorInstance()?._type ??
+        EditorType.Micromolecules) === EditorType.Micromolecules
+        ? this.#editor.struct()
+        : CoreEditor.provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
+      (CoreEditor.provideEditorInstance()?._type ??
+        EditorType.Micromolecules) === EditorType.Micromolecules
+        ? undefined
+        : CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
       this.#editor.selection() as EditorSelection,
     );
   }
@@ -260,6 +266,17 @@ export class Ketcher {
       molfileFormat === 'v2000'
         ? SupportedFormat.sdf
         : SupportedFormat.sdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
+  getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('RDF format is not available in macro mode');
+    }
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.rdf
+        : SupportedFormat.rdfV3000;
     return getStructure(format, this.#formatterFactory, this.#editor.struct());
   }
 

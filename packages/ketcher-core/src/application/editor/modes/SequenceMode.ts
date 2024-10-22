@@ -93,17 +93,25 @@ export class SequenceMode extends BaseMode {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
   }
 
-  public initialize(needScroll = true, needRemoveSelection = true) {
+  public initialize(
+    needScroll = true,
+    needRemoveSelection = true,
+    needReArrangeChains = true,
+  ) {
     const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
     editor.drawingEntitiesManager.clearCanvas();
 
-    const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
-      editor.canvas.width.baseVal.value,
-      true,
-      false,
-    );
+    // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
+    // only recalculate after changes in the sequence
+    const modelChanges = needReArrangeChains
+      ? editor.drawingEntitiesManager.reArrangeChains(
+          editor.canvas.width.baseVal.value,
+          true,
+          false,
+        )
+      : new Command();
     const zoom = ZoomTool.instance;
 
     editor.renderersContainer.update(modelChanges);
@@ -129,7 +137,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = true;
-    this.initialize(false, needToRemoveSelection);
+    this.initialize(false, needToRemoveSelection, false);
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionNextToMonomer(
         sequenceItemRenderer.node.monomer,
@@ -143,7 +151,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false);
+    this.initialize(true, true, false);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -151,7 +159,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = true;
-    this.initialize(false, false);
+    this.initialize(false, false, false);
 
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(true);
   }
@@ -160,7 +168,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(false);
+    this.initialize(true, true, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 

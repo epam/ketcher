@@ -1948,7 +1948,7 @@ test.describe('Image files', () => {
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2161
+     * Test case: https://github.com/epam/Indigo/issues/2162
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after selection, moving actions of images.
      */
@@ -1974,7 +1974,7 @@ test.describe('Image files', () => {
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2161
+     * Test case: https://github.com/epam/Indigo/issues/2162
      * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file
      * with the correct positions and layers after scaling actions of images.
      */
@@ -2006,7 +2006,7 @@ test.describe('Image files', () => {
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2161
+     * Test case: https://github.com/epam/Indigo/issues/2162
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after deleting actions of images.
      */
@@ -2033,7 +2033,7 @@ test.describe('Image files', () => {
 
   test('Verify that added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2161
+     * Test case: https://github.com/epam/Indigo/issues/2162
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after copying actions of images.
      */
@@ -2089,6 +2089,270 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/saved-svg-images-as-png.png', page);
     await setZoomInputValue(page, '30');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images are displayed on preview and can be saved to PNG file with correct positions and layers', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images are displayed on preview and can be saved to PNG file with correct positions and layers
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images are displayed on preview and can be saved to SVG file with correct positions and layers', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images are displayed on preview and can be saved to SVG file with correct positions and layers
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to PNG file with the correct positions and layers', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added from KET PNG images with elements are displayed on preview and saved together to PNG file with the correct positions and layers
+     */
+    await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET PNG images with elements are displayed on preview and can be saved together to SVG file with the correct positions and layers', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added from KET PNG images with elements are displayed on preview and saved together to SVG file with the correct positions and layers
+     */
+    await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after selection, moving actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to PNG file
+     * with the correct positions and layers after selection, moving actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(300, 300);
+    await dragMouseTo(600, 500, page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after selection, moving actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to SVG file
+     * with the correct positions and layers after selection, moving actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(300, 300);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(300, 300);
+    await dragMouseTo(600, 500, page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after scaling actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file
+     * with the correct positions and layers after scaling actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(300, 300);
+
+    // Ensure the element is in view
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+
+    await dragMouseTo(600, 500, page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after scaling actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file
+     * with the correct positions and layers after scaling actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.click(300, 300);
+
+    // Ensure the element is in view
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+
+    await dragMouseTo(600, 500, page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after deleting actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to PNG file
+     * with the correct positions and layers after deleting actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after deleting actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to SVG file
+     * with the correct positions and layers after deleting actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to PNG file with the correct positions and layers after copying actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to PNG file
+     * with the correct positions and layers after copying actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images with Benzene Ring are displayed on preview and can be saved together to SVG file with the correct positions and layers after copying actions of images', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool PNG images with elements are displayed on preview and saved together to SVG file
+     * with the correct positions and layers after copying actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images can be saved to PNG file after undo/redo actions', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool SVG images with Benzene Ring are displayed on preview and saved together to PNG file
+     * with the correct positions and layers after undo/redo actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool PNG images can be saved to SVG file after undo/redo actions', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2029
+     * Description: Added by Tool SVG images with Benzene Ring are displayed on preview and saved together to SVG file
+     * with the correct positions and layers after undo/redo actions of images.
+     */
+    await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
+    await openImageAndAddToCanvas('Images/image-png-demo.png', page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await page.mouse.click(500, 400);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
     await takeEditorScreenshot(page);
   });
 });

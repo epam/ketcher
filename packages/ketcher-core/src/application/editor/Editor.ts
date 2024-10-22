@@ -14,7 +14,7 @@ import {
   SnakeMode,
 } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import { toolsMap } from 'application/editor/tools';
+import { ToolName, toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
@@ -51,6 +51,7 @@ import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
+import { HandTool } from 'application/editor/tools/Hand';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -298,7 +299,7 @@ export class CoreEditor {
     if (this.mode instanceof SequenceMode) {
       this.mode.insertMonomerFromLibrary(monomer);
     } else {
-      this.selectTool('monomer', monomer);
+      this.selectTool(ToolName.monomer, monomer);
     }
   }
 
@@ -307,14 +308,14 @@ export class CoreEditor {
       this.mode.insertPresetFromLibrary(preset);
     } else {
       if (preset) {
-        this.selectTool('preset', preset);
+        this.selectTool(ToolName.preset, preset);
       } else {
         this.tool = undefined;
       }
     }
   }
 
-  public onSelectTool(tool: string) {
+  public onSelectTool(tool: ToolName) {
     this.selectTool(tool);
   }
 
@@ -429,7 +430,7 @@ export class CoreEditor {
     }
   }
 
-  public selectTool(name: string, options?) {
+  public selectTool(name: ToolName, options?) {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 
@@ -438,6 +439,10 @@ export class CoreEditor {
     if (isBaseTool(oldTool)) {
       oldTool?.destroy();
     }
+  }
+
+  public get isHandToolSelected() {
+    return this.selectedTool instanceof HandTool;
   }
 
   public unsubscribeEvents() {

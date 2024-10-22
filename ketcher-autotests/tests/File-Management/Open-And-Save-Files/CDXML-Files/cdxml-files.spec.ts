@@ -20,7 +20,9 @@ import {
   openSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
+  readFileContents,
 } from '@utils';
+import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
@@ -655,6 +657,56 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/layout-with-dif-elements-acs-style.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Single reaction containing only reactants can be saved/loaded from CDXML with appropriate positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/reactant-single-reaction.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/reactant-single-reaction-expected.cdxml',
+      'tests/test-data/CDXML/reactant-single-reaction-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/reactant-single-reaction-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a single reaction containing only products can be saved/loaded from CDXML with appropriate positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Single reaction containing only products can be saved/loaded from CDXML with appropriate positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/products-single-reaction.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/products-single-reaction-expected.cdxml',
+      'tests/test-data/CDXML/products-single-reaction-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/products-single-reaction-expected.cdxml',
       page,
     );
     await takeEditorScreenshot(page);

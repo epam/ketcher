@@ -7,7 +7,12 @@ import {
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
+  readFileContents,
+  openPasteFromClipboard,
+  pressButton,
 } from '@utils';
+import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdx } from '@utils/formats';
 
 test.describe('CDX files', () => {
@@ -458,4 +463,82 @@ test.describe('CDX files without screenshots', () => {
       expect(cdxFile).toEqual(cdxFileExpected);
     },
   );
+
+  test('Verify that a single reaction containing only reactants can be saved/loaded from CDX with appropriate positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Single reaction containing only reactants can be saved/loaded from CDX with appropriate positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/reactant-single-reaction.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/reactant-single-reaction-expected.cdx',
+      'tests/test-data/CDX/reactant-single-reaction-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/reactant-single-reaction-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a single reaction containing only products can be saved/loaded from CDX with appropriate positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Single reaction containing only products can be saved/loaded from CDX with appropriate positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/products-single-reaction.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/products-single-reaction-expected.cdx',
+      'tests/test-data/CDX/products-single-reaction-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/products-single-reaction-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDX, ignoring the MTA.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
+      'tests/test-data/CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
 });

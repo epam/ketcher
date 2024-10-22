@@ -60,7 +60,7 @@ export function LeftMenuComponent() {
         <Menu.Submenu
           disabled={isSequenceMode}
           testId="bond-tool-submenu"
-          needOpenByMenuItemClick={true}
+          needOpenByMenuItemClick={false}
         >
           <Menu.Item
             itemId="bond-single"

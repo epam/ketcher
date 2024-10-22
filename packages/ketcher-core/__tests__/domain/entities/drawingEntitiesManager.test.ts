@@ -22,6 +22,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { CoreEditor } from 'application/editor';
 import { FlexMode } from 'application/editor/modes/FlexMode';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -42,6 +43,7 @@ describe('Drawing Entities Manager', () => {
         new Peptide(peptideMonomerItem),
         new Vec2(0, 0),
         new Vec2(10, 10),
+        MACROMOLECULES_BOND_TYPES.SINGLE,
       );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondAddOperation);
@@ -64,6 +66,7 @@ describe('Drawing Entities Manager', () => {
       firstPeptide,
       new Vec2(0, 0),
       new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
     );
 
     const resultingOperations =
@@ -118,6 +121,7 @@ describe('Drawing Entities Manager', () => {
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
       new Vec2(10, 10),
+      MACROMOLECULES_BOND_TYPES.SINGLE,
     );
     expect(
       Array.from(drawingEntitiesManager.polymerBonds)[0][1],

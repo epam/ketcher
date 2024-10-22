@@ -51,7 +51,7 @@ export const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
   position: absolute;
   left: ${({ isVertical }) => (isVertical ? '-34px' : '5px')};
-  top: ${({ isVertical }) => (isVertical ? '38px' : '0')};
+  top: ${({ isVertical }) => (isVertical ? '38px' : '-19px')};
   border-radius: 4px;
   flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
   z-index: 1;

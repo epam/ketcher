@@ -49,7 +49,7 @@ class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
   private history: EditorHistory;
-  private bondType: string;
+  private bondType: MACROMOLECULES_BOND_TYPES;
 
   constructor(private editor: CoreEditor, options: { toolName: string }) {
     this.editor = editor;
@@ -110,6 +110,7 @@ class PolymerBond implements BaseTool {
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
           Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+          this.bondType,
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -438,7 +439,10 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAtom(event) {
-    if (!this.bondRenderer) {
+    if (
+      !this.bondRenderer ||
+      this.bondType === MACROMOLECULES_BOND_TYPES.HYDROGEN
+    ) {
       return;
     }
 

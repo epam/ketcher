@@ -537,7 +537,7 @@ export class DrawingEntitiesManager {
         // This check helps to avoid operations duplication
         if (bond.selected) return;
 
-        if (bond instanceof PolymerBond) {
+        if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
           // We need to remove connected bond when doing a group selection even if it is not selected
           // and mark it as selected to avoid operations duplication
           bond.turnOnSelection();
@@ -631,6 +631,7 @@ export class DrawingEntitiesManager {
     firstMonomer,
     startPosition,
     endPosition,
+    bondType = MACROMOLECULES_BOND_TYPES.SINGLE,
     _polymerBond?: PolymerBond,
   ) {
     if (_polymerBond) {
@@ -638,7 +639,10 @@ export class DrawingEntitiesManager {
       return _polymerBond;
     }
 
-    const polymerBond = new PolymerBond(firstMonomer);
+    const polymerBond =
+      bondType === MACROMOLECULES_BOND_TYPES.HYDROGEN
+        ? new HydrogenBond(firstMonomer)
+        : new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     // If we started from a specific AP, we need to 'attach' the bond to the first monomer
     if (firstMonomer.chosenFirstAttachmentPointForBond) {
@@ -651,7 +655,12 @@ export class DrawingEntitiesManager {
     return polymerBond;
   }
 
-  public startPolymerBondCreation(firstMonomer, startPosition, endPosition) {
+  public startPolymerBondCreation(
+    firstMonomer: BaseMonomer,
+    startPosition: Vec2,
+    endPosition: Vec2,
+    bondType: MACROMOLECULES_BOND_TYPES,
+  ) {
     const command = new Command();
 
     const operation = new PolymerBondAddOperation(
@@ -660,6 +669,7 @@ export class DrawingEntitiesManager {
         firstMonomer,
         startPosition,
         endPosition,
+        bondType,
       ),
       this.deletePolymerBondChangeModel.bind(this),
     );
@@ -692,7 +702,7 @@ export class DrawingEntitiesManager {
     }
   }
 
-  public deletePolymerBond(polymerBond: PolymerBond) {
+  public deletePolymerBond(polymerBond: PolymerBond | HydrogenBond) {
     const command = new Command();
 
     const operation = new PolymerBondDeleteOperation(
@@ -1020,12 +1030,15 @@ export class DrawingEntitiesManager {
 
     polymerBond.turnOnHover();
     polymerBond.firstMonomer.turnOnHover();
-    polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
 
     assert(polymerBond.secondMonomer);
 
     polymerBond.secondMonomer.turnOnHover();
-    polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
+
+    if (!(polymerBond instanceof HydrogenBond)) {
+      polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
+      polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
+    }
 
     const operation = new PolymerBondShowInfoOperation(polymerBond);
 

@@ -52,6 +52,7 @@ import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -223,7 +224,8 @@ export class CoreEditor {
         );
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
-        eventData instanceof SnakeModePolymerBondRenderer
+        (eventData instanceof SnakeModePolymerBondRenderer &&
+          !(eventData.polymerBond instanceof HydrogenBond))
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
       } else if (isClickOnCanvas) {
@@ -317,7 +319,7 @@ export class CoreEditor {
     }
   }
 
-  public onSelectTool(tool: ToolName, options?: {}) {
+  public onSelectTool(tool: ToolName, options?: object) {
     this.selectTool(tool, options);
   }
 
@@ -433,7 +435,6 @@ export class CoreEditor {
   }
 
   public selectTool(name: ToolName, options?) {
-    console.log(options);
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 

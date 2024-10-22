@@ -20,6 +20,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { SnakeMode } from 'application/editor';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -125,7 +126,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
     if (
-      (this.isHydrogenBond || this.polymerBond.isSideChainConnection) &&
+      this.polymerBond.isSideChainConnection &&
+      (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
       cells
     ) {
       this.appendSideConnectionBond(rootElement, cells);
@@ -755,7 +757,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.selectionElement?.remove();
       if (
         (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
-        this.polymerBond.isSideChainConnection
+        (this.polymerBond.isSideChainConnection && this.path)
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
@@ -865,7 +867,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   protected appendHoverAreaElement(): void {
     if (
       (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
-      this.polymerBond.isSideChainConnection
+      (this.polymerBond.isSideChainConnection && this.path)
     ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
         this.hoverAreaElement
@@ -921,9 +923,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       );
     }
 
-    this.bodyElement
-      .attr('stroke', this.isHydrogenBond ? '#333333' : '#0097A8')
-      .attr('pointer-events', 'none');
+    this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
       this.selectionElement.attr('stroke', '#CCFFDD');

@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
 import { readFileContents, saveToFile } from './readFile';
-import { getCdx, getCdxml, getKet } from '@utils/formats';
+import { getCdx, getCdxml, getKet, getMolfile } from '@utils/formats';
 
 export enum FileType {
   KET = 'ket',
@@ -37,6 +37,27 @@ export async function verifyFile(
   });
 
   expect(file).toEqual(fileExpected);
+}
+
+export async function verifyMolfile(
+  page: Page,
+  format: 'v2000' | 'v3000',
+  filename: string,
+  expectedFilename: string,
+  metaDataIndexes: number[] = [],
+) {
+  const expectedFile = await getMolfile(page, format);
+  await saveToFile(filename, expectedFile);
+
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: expectedFilename,
+      fileFormat: format,
+      metaDataIndexes,
+    });
+
+  expect(molFile).toEqual(molFileExpected);
 }
 
 const GetFileMethod: Record<string, keyof Ketcher> = {

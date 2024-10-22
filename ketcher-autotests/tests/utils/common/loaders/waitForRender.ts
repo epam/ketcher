@@ -7,7 +7,7 @@ const emptyFunction: AnyFunction = async () => {};
 export const waitForRender = async (
   page: Page,
   callback = emptyFunction,
-  timeout = 3000,
+  timeout = 1000,
 ) => {
   await Promise.all([
     waitForCustomEvent(page, 'renderComplete', timeout),

@@ -413,9 +413,11 @@ class SaveDialog extends Component {
 
   getButtons = () => {
     const { disableControls, imageFormat, isLoading, structStr } = this.state;
-    const { formState, bondThickness } = this.props;
+    const { options, formState } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
+
+    options.outputFormat = imageFormat;
 
     const savingStruct =
       this.isBinaryCdxFormat(format) && !isLoading
@@ -451,10 +453,9 @@ class SaveDialog extends Component {
       buttons.push(
         <SaveButton
           mode="saveImage"
+          options={options}
           data={structStr}
           filename={filename}
-          outputFormat={imageFormat}
-          bondThickness={bondThickness}
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}

@@ -74,6 +74,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await page.keyboard.press('ArrowLeft');
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {

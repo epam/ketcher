@@ -30,6 +30,7 @@ import {
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
   fromMultitailArrowDeletion,
+  MonomerMicromolecule,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -359,7 +360,10 @@ class EraserTool implements Tool {
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
       const sGroup = sgroups.get(ci.id);
 
-      if (FunctionalGroup.isFunctionalGroup(sGroup?.item)) {
+      if (
+        FunctionalGroup.isFunctionalGroup(sGroup?.item) ||
+        sGroup?.item instanceof MonomerMicromolecule
+      ) {
         this.editor.event.removeFG.dispatch({ fgIds: [ci.id] });
       } else {
         this.editor.update(fromSgroupDeletion(restruct, ci.id));

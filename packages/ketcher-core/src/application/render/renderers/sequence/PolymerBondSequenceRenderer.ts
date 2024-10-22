@@ -4,6 +4,7 @@ import { BaseSequenceRenderer } from 'application/render/renderers/sequence/Base
 import { D3SvgElementSelection } from 'application/render/types';
 import { SubChainNode, Vec2 } from 'domain/entities';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
   private selectionElement:
@@ -16,6 +17,10 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
     private secondNode?: SubChainNode,
   ) {
     super(polymerBond);
+  }
+
+  private get isHydrogenBond() {
+    return this.polymerBond instanceof HydrogenBond;
   }
 
   private get firstMonomer() {
@@ -93,7 +98,8 @@ export class PolymerBondSequenceRenderer extends BaseSequenceRenderer {
       ?.append('path')
       .attr('stroke', 'black')
       .attr('fill', 'none')
-      .attr('d', this.getBondPath());
+      .attr('d', this.getBondPath())
+      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0');
   }
 
   public drawSelection() {

@@ -61,6 +61,7 @@ export class DrawingEntityMoveOperation implements Operation {
     // we need to redraw them to apply the correct drawing mode.
     if (
       this.drawingEntity instanceof PolymerBond ||
+      this.drawingEntity instanceof HydrogenBond ||
       this.drawingEntity instanceof MonomerToAtomBond
     ) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);

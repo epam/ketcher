@@ -19,6 +19,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -50,10 +51,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private sideConnectionBondTurnPoint?: number;
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
-  constructor(
-    public readonly polymerBond: PolymerBond,
-    private isHydrogenBond = false,
-  ) {
+  constructor(public readonly polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
@@ -63,6 +61,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   // TODO: Delete.
   public get isSnake(): true {
     return true;
+  }
+
+  private get isHydrogenBond() {
+    return this.polymerBond instanceof HydrogenBond;
   }
 
   public get rootBBox(): DOMRect | undefined {
@@ -376,7 +378,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', 'all');
 
     this.path = dAttributeForPath;
 

@@ -33,6 +33,7 @@ export enum AttachmentPointName {
   R6 = 'R6',
   R7 = 'R7',
   R8 = 'R8',
+  HYDROGEN = 'hydrogen',
 }
 
 export type MonomerItemType = {

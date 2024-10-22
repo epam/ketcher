@@ -365,6 +365,22 @@ export class SequenceRenderer {
     this.setCaretPosition(newCaretPosition);
   }
 
+  public static setCaretPositionNextToMonomer(monomer: BaseMonomer) {
+    let newCaretPosition = -1;
+
+    SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
+      if (node.monomer === monomer) {
+        newCaretPosition = nodeIndexOverall;
+      }
+    });
+
+    if (newCaretPosition === -1) {
+      return;
+    }
+
+    this.setCaretPosition(newCaretPosition + 1);
+  }
+
   public static setCaretPositionByNode(nodeToCompare: SubChainNode) {
     let newCaretPosition = -1;
 

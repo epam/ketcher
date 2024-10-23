@@ -711,4 +711,154 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Verify that a single reaction containing reactants and products with multi-tail arrows (MTA) can be saved/loaded correctly from CDXML, ignoring the MTA.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
+      'tests/test-data/CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDXML with correct positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multiple-individual-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/multiple-individual-reactions-expected.cdxml',
+      'tests/test-data/CDXML/multiple-individual-reactions-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/multiple-individual-reactions-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Several cascaded reactions can be saved/loaded from CDXML, ignoring multi-tail arrows.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/several-cascade-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/several-cascade-reactions-expected.cdxml',
+      'tests/test-data/CDXML/several-cascade-reactions-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/several-cascade-reactions-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDXML with correct positioning, ignoring MTAs.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/combination-of-single-and-cascade-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
+      'tests/test-data/CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDXML, ignoring MTAs.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/cascade-of-multiple-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
+      'tests/test-data/CDXML/cascade-of-multiple-reactions-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Saving/loading a pathway with mixed single reactions and cascades from CDXML,  MTAs are ignored.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
+      'tests/test-data/CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

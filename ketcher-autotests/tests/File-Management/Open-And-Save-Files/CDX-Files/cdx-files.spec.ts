@@ -541,4 +541,134 @@ test.describe('CDX files without screenshots', () => {
     await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Multiple individual reactions (without any cascading) can be saved/loaded from CDX with correct positions.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multiple-individual-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/multiple-individual-reactions-expected.cdx',
+      'tests/test-data/CDX/multiple-individual-reactions-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/multiple-individual-reactions-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Several cascaded reactions can be saved/loaded from CDX, ignoring multi-tail arrows.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/several-cascade-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/several-cascade-reactions-expected.cdx',
+      'tests/test-data/CDX/several-cascade-reactions-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/several-cascade-reactions-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Combination of a single reaction and a cascaded reaction can be saved/loaded from CDX with correct positioning, ignoring MTAs.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/combination-of-single-and-cascade-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/combination-of-single-and-cascade-reactions-expected.cdx',
+      'tests/test-data/CDX/combination-of-single-and-cascade-reactions-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/combination-of-single-and-cascade-reactions-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that a cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Cascade of multiple reactions, each containing reactants and products, saved/loaded properly from CDX, ignoring MTAs.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/cascade-of-multiple-reactions.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/cascade-of-multiple-reactions-expected.cdx',
+      'tests/test-data/CDX/cascade-of-multiple-reactions-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/cascade-of-multiple-reactions-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2238
+     * Description: Saving/loading a pathway with mixed single reactions and cascades from CDX,  MTAs are ignored.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/pathway-with-mixed-single-reactions-and-cascades.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
+      'tests/test-data/CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
 });

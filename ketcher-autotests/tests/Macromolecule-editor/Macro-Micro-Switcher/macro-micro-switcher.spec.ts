@@ -3434,13 +3434,13 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     await expandMonomer(page, monomer.name);
     await selectEraseTool(page);
     // await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnExpandedMonomer(page, monomer.x, monomer.y);
+    await clickOnExpandedMonomer(page);
     await pressCancelAtEditAbbreviationDialog(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
   }
 });
-async function clickOnExpandedMonomer(page: Page, x: number, y: number) {
+async function clickOnExpandedMonomer(page: Page) {
   // await page.mouse.click(x, y);
   await clickOnAtom(page, 'C', 1);
 }

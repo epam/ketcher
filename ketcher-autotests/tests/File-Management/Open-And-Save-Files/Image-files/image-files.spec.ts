@@ -2719,6 +2719,58 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements
+     */
+    await openImageAndAddToCanvas(
+      'Images/svg-colored-images-with-elements.svg',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements
+     */
+    await openImageAndAddToCanvas(
+      'Images/svg-colored-images-with-elements.png',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to SVG can be viewed on preview and Save button is enabled', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be viewed on preview and Save button is enabled
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/svg-colored-images-with-elements.ket',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/svg-colored-images-with-elements.ket',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that added by Tool SVG images are displayed on preview and can be saved to SVG files with correct positions and layers', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2161

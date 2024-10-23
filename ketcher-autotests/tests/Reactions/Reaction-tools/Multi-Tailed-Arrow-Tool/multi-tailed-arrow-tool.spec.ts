@@ -11,6 +11,7 @@ import {
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
+  openImageAndAddToCanvas,
   openPasteFromClipboard,
   pressButton,
   readFileContents,
@@ -34,7 +35,13 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { clickOnFileFormatDropdown, getKet } from '@utils/formats';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import {
+  clickOnFileFormatDropdown,
+  FileFormatOption,
+  getKet,
+  selectSaveFileFormat,
+} from '@utils/formats';
 import { openStructureLibrary } from '@utils/templates';
 
 async function saveToTemplates(page: Page) {
@@ -3474,5 +3481,101 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-extra-tails-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-extra-tails-expected.ket',
     );
+  });
+
+  test('Verify that added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2129
+     * Description: Added from KET file default Multi-Tailed Arrow is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-to-compare.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2129
+     * Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
+     */
+    await selectDropdownTool(
+      page,
+      'reaction-arrow-open-angle',
+      'reaction-arrow-multitail',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2129
+     * Description: Added from KET Multi-Tailed Arrows with elements saved to PNG/SVG can be added to Canvas by Tool as PNG/SVG images with the correct positions of elements.
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrows-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
+    await selectClearCanvasTool(page);
+    await openImageAndAddToCanvas(
+      'Images/multi-tailed-arrows-with-elements.svg',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await openImageAndAddToCanvas(
+      'Images/multi-tailed-arrows-with-elements.png',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened from SVG/PNG file with the correct size of file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2129
+     * Description: 15 Multi-Tailed Arrows with 80 images of allowed format (PNG, SVG) and 50 structures can be opened together from SVG/PNG file with the correct size of file.
+     */
+    await openImageAndAddToCanvas(
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
+      page,
+    );
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await openImageAndAddToCanvas(
+      'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
+      page,
+    );
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
   });
 });

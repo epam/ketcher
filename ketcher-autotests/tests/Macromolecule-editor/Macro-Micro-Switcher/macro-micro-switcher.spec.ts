@@ -71,6 +71,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  clickOnBond,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -96,6 +97,7 @@ import {
   togglePhosphatesAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 
 const topLeftCorner = {
   x: -325,
@@ -216,10 +218,12 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   }
 }
 
-async function selectExpandedMonomer(page: Page) {
-  await moveOnBond(page, BondType.SINGLE, 1);
-  await page.mouse.down();
-  await page.mouse.up();
+async function selectExpandedMonomer(
+  page: Page,
+  bondType: number = BondType.SINGLE,
+  bondNumber = 1,
+) {
+  await clickOnBond(page, bondType, bondNumber);
 }
 
 let page: Page;
@@ -3386,3 +3390,57 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
 });
+
+type monomer = {
+  name: string;
+  x: number;
+  y: number;
+};
+
+const monomers: monomer[] = [
+  { name: '12ddR', x: 850, y: 230 },
+  { name: 'Mal', x: 1150, y: 475 },
+  { name: 'A', x: 600, y: 200 },
+  { name: '5hMedC', x: 600, y: 200 },
+  { name: 'gly', x: 600, y: 200 },
+  { name: 'oC64m5', x: 600, y: 200 },
+];
+
+test(`Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. For each monomer do the following:
+   *           3.1 Expand monomer
+   *           3.2 Select Erase tool and click on expanded monomer
+   *           3.3 Take screenshot to witness opened dialog
+   *           3.4 Press Cancel in appeared Abbriviation dialog
+   *           3.5 Undo changes to collapse momomer back
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+    page,
+  );
+  // await selectRing(RingButton.Benzene, page);
+  // await page.mouse.click(200, 200);
+  // await takeEditorScreenshot(page);
+
+  for (const monomer of monomers) {
+    await expandMonomer(page, monomer.name);
+    await selectEraseTool(page);
+    // await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnExpandedMonomer(page, monomer.x, monomer.y);
+    await pressCancelAtEditAbbreviationDialog(page);
+    await takeEditorScreenshot(page);
+    await pressUndoButton(page);
+  }
+});
+async function clickOnExpandedMonomer(page: Page, x: number, y: number) {
+  // await page.mouse.click(x, y);
+  await clickOnAtom(page, 'C', 1);
+}

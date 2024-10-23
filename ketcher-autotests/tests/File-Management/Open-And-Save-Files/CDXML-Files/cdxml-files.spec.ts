@@ -20,7 +20,6 @@ import {
   openSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
-  readFileContents,
 } from '@utils';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';

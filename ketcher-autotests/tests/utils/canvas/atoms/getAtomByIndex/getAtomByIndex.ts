@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
 import { AtomAttributes, AtomXy } from '@utils/canvas/types';
+import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 
 /**
  * Filter atoms by its attributes and then get atom by index.
@@ -27,4 +28,27 @@ export async function getAtomByIndex(
   }
 
   return result[index];
+}
+
+export async function getAtomById(page: Page, id: number): Promise<AtomXy> {
+  const { atoms, scale, offset } = await page.evaluate(() => {
+    return {
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      atoms: [...window.ketcher?.editor?.struct()?.atoms.entries()],
+      scale: window.ketcher?.editor?.options()?.microModeScale,
+      offset: window.ketcher?.editor?.options()?.offset,
+    };
+  });
+  const atom = atoms.find(([atomId]) => atomId === id)?.[1];
+
+  if (!atom) {
+    throw Error('Incorrect atom id');
+  }
+
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+  return {
+    ...atom,
+    x: atom.pp.x * scale + offset.x + leftBarWidth,
+    y: atom.pp.y * scale + offset.y + topBarHeight,
+  };
 }

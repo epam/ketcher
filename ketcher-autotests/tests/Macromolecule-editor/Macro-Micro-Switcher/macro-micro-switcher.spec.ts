@@ -98,6 +98,7 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
+import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 
 const topLeftCorner = {
   x: -325,
@@ -3392,17 +3393,16 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
 
 type monomer = {
   name: string;
-  x: number;
-  y: number;
+  AtomId: number;
 };
 
 const monomers: monomer[] = [
-  { name: '12ddR', x: 850, y: 230 },
-  { name: 'Mal', x: 1150, y: 475 },
-  { name: 'A', x: 600, y: 200 },
-  { name: '5hMedC', x: 600, y: 200 },
-  { name: 'gly', x: 600, y: 200 },
-  { name: 'oC64m5', x: 600, y: 200 },
+  { name: '12ddR', AtomId: 70 },
+  { name: 'Mal', AtomId: 5 },
+  { name: 'A', AtomId: 58 },
+  { name: '5hMedC', AtomId: 53 },
+  { name: 'gly', AtomId: 30 },
+  { name: 'oC64m5', AtomId: 14 },
 ];
 
 test(`Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear`, async () => {
@@ -3425,21 +3425,26 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
     page,
   );
-  // await selectRing(RingButton.Benzene, page);
-  // await page.mouse.click(200, 200);
-  // await takeEditorScreenshot(page);
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
     await selectEraseTool(page);
-    // await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnExpandedMonomer(page);
+    await clickOnExpandedMonomer(page, monomer.AtomId);
     await pressCancelAtEditAbbreviationDialog(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
   }
 });
-async function clickOnExpandedMonomer(page: Page) {
+async function clickOnExpandedMonomer(page: Page, atomId: number) {
   // await page.mouse.click(x, y);
-  await clickOnAtom(page, 'C', 1);
+  const point = await getAtomById(page, atomId);
+  await waitForRender(page, async () => {
+    await page.mouse.move(point.x, point.y);
+  });
+  await waitForRender(page, async () => {
+    await page.mouse.down();
+  });
+  await page.mouse.up();
+
+  // await clickOnAtomById(page, atomId);
 }

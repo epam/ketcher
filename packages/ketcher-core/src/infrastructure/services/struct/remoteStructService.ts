@@ -249,6 +249,11 @@ export class RemoteStructService implements StructService {
     const expandedOptions = {
       ...this.getStandardServerOptions(options),
 
+      'render-label-mode': getLabelRenderModeForIndigo(),
+      'render-font-size': options?.['render-font-size'],
+      'render-font-size-unit': options?.['render-font-size-unit'],
+      'render-font-size-sub': options?.['render-font-size-sub'],
+      'render-font-size-sub-unit': options?.['render-font-size-sub-unit'],
       'output-content-type': 'application/json',
       'bond-length-unit': options?.['bond-length-unit'],
       'bond-length': options?.['bond-length'],

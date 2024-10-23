@@ -854,27 +854,22 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test(
-    'Make full screen mode in micro mode and switch to macro mode.',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /* 
+  test('Make full screen mode in micro mode and switch to macro mode.', async () => {
+    /* 
     Test case: Macro-Micro-Switcher
     Description:  Full screen mode is not reset
-    Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
-      test.fail();
-      await openFileAndAddToCanvas(
-        'KET/two-benzene-and-plus.ket',
-        page,
-        topLeftCorner.x,
-        topLeftCorner.y,
-      );
-      await page.getByTestId('fullscreen-mode-button').click();
-      await turnOnMacromoleculesEditor(page);
-      await takePageScreenshot(page);
-    },
-  );
+
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-plus.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
+    await page.getByTestId('fullscreen-mode-button').click();
+    await turnOnMacromoleculesEditor(page);
+    await takePageScreenshot(page);
+  });
 
   test.skip(
     'Confirm that in macromolecules mode, atoms are displayed as dots without any accompanying text or additional information bonds as one line',
@@ -1905,25 +1900,20 @@ test.describe('Macro-Micro-Switcher', () => {
     },
   );
 
-  test.fail(
-    'Check that Aromatize/Dearomatize works for molecules with AP',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2027
-       * Test case: #4530
-       * Description: Aromatize/Dearomatize works for molecules with AP.
-       */
-      await openFileAndAddToCanvas(
-        'KET/one-attachment-point-added-in-micro-mode.ket',
-        page,
-      );
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Check that Aromatize/Dearomatize works for molecules with AP', async () => {
+    /*
+     * Test case: #4530
+     * Description: Aromatize/Dearomatize works for molecules with AP.
+     */
+    await openFileAndAddToCanvas(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Check that Layout works for molecules with AP', async () => {
     /*

@@ -1551,10 +1551,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await selectEraseTool(page);
-    // await page.mouse.click(675, 330);
     const canvasLocator = page.getByTestId('ketcher-canvas');
-    const bondLocator = canvasLocator.locator('path');
-    await bondLocator.nth(6).click();
+    await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
@@ -1590,7 +1588,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await selectDropdownTool(page, 'bonds', 'bond-double');
-    await page.mouse.click(675, 330);
+    const canvasLocator = page.getByTestId('ketcher-canvas');
+    await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
   });
 

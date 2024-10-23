@@ -351,6 +351,11 @@ test.describe('Import-Saving .seq Files', () => {
     await chooseFileFormat(page, 'Sequence');
     await takeEditorScreenshot(page);
 
+    test.fixme(
+      true,
+      `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
+    );
+
     await closeErrorMessage(page);
 
     await pressButton(page, 'Cancel');
@@ -383,14 +388,15 @@ test.describe('Import-Saving .seq Files', () => {
       await chooseFileFormat(page, 'Sequence');
       await takeEditorScreenshot(page);
 
-      await closeErrorMessage(page);
-
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 200);
       test.fixme(
         true,
         `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
       );
+
+      await closeErrorMessage(page);
+
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 200);
     },
   );
 

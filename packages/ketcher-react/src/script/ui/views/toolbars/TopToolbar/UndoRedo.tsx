@@ -42,6 +42,7 @@ export const UndoRedo = ({
         disabled={disabledButtons.includes('undo')}
         isHidden={hiddenButtons.includes('undo')}
         shortcut={shortcuts.undo}
+        testId="undo"
       />
       <TopToolbarIconButton
         title="Redo"
@@ -50,6 +51,7 @@ export const UndoRedo = ({
         disabled={disabledButtons.includes('redo')}
         isHidden={hiddenButtons.includes('redo')}
         shortcut={shortcuts.redo}
+        testId="redo"
       />
       <Divider />
     </>

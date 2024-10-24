@@ -12,6 +12,10 @@ export class Phosphate extends BaseMonomer {
   }
 
   public getValidSourcePoint(secondMonomer: BaseMonomer) {
+    if (!secondMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
     return this.getValidPoint(
       secondMonomer,
       secondMonomer.potentialSecondAttachmentPointForBond,
@@ -19,6 +23,10 @@ export class Phosphate extends BaseMonomer {
   }
 
   public getValidTargetPoint(firstMonomer: BaseMonomer) {
+    if (!firstMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
     // same implementation for both source and target attachment points
     return this.getValidPoint(
       firstMonomer,

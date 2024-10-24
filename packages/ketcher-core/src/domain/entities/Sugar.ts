@@ -9,7 +9,11 @@ import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 
 export class Sugar extends BaseMonomer {
-  public getValidSourcePoint(secondMonomer: BaseMonomer & IVariantMonomer) {
+  public getValidSourcePoint(secondMonomer?: BaseMonomer & IVariantMonomer) {
+    if (!secondMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
     return this.getValidPoint(
       secondMonomer,
       secondMonomer.potentialSecondAttachmentPointForBond,
@@ -17,6 +21,10 @@ export class Sugar extends BaseMonomer {
   }
 
   public getValidTargetPoint(firstMonomer: BaseMonomer & IVariantMonomer) {
+    if (!firstMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
     // same implementation for both source and target attachment points
     return this.getValidPoint(
       firstMonomer,

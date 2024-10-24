@@ -5,12 +5,20 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Peptide } from 'domain/entities/Peptide';
 
 export class UnresolvedMonomer extends BaseMonomer {
-  public getValidSourcePoint(monomer?: BaseMonomer) {
-    return Peptide.prototype.getValidSourcePoint.call(this, monomer);
+  public getValidSourcePoint(secondMonomer?: BaseMonomer) {
+    if (!secondMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    return Peptide.prototype.getValidSourcePoint.call(this, secondMonomer);
   }
 
-  public getValidTargetPoint(monomer: BaseMonomer) {
-    return Peptide.prototype.getValidTargetPoint.call(this, monomer);
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
+    if (!firstMonomer) {
+      return this.firstFreeAttachmentPoint;
+    }
+
+    return Peptide.prototype.getValidTargetPoint.call(this, firstMonomer);
   }
 
   public get SubChainConstructor() {

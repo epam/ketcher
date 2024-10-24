@@ -35,7 +35,12 @@ import {
   MonomerLibrary,
   MonomerLibraryToggle,
 } from 'components/monomerLibrary';
-import { createEditor, destroyEditor, selectEditor } from 'state/common';
+import {
+  createEditor,
+  destroyEditor,
+  selectEditor,
+  selectIsHandToolSelected,
+} from 'state/common';
 import {
   useAppDispatch,
   useAppSelector,
@@ -62,6 +67,7 @@ import {
 } from 'components/shared/monomerOnCanvas';
 import { ErrorModal } from 'components/modal/Error';
 import {
+  CanvasWrapper,
   EditorWrapper,
   TogglerComponentWrapper,
   TopMenuRightWrapper,
@@ -132,6 +138,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const isHandToolSelected = useAppSelector(selectIsHandToolSelected);
   const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
@@ -228,7 +235,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 
         <Layout.Main>
           <EditorEvents />
-          <svg
+          <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             preserveAspectRatio="xMidYMid meet"
@@ -251,7 +258,17 @@ function Editor({ theme, togglerComponent }: EditorProps) {
               <SequenceStartArrow />
             </defs>
             <g className="drawn-structures"></g>
-          </svg>
+            {isHandToolSelected && (
+              <rect
+                x={0}
+                y={0}
+                width="100%"
+                height="100%"
+                fill="transparent"
+                pointerEvents="all"
+              />
+            )}
+          </CanvasWrapper>
           {isLoading && <Loader />}
         </Layout.Main>
 

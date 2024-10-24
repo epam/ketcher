@@ -3,6 +3,7 @@ import { ToolEventHandlerName } from 'application/editor/tools/Tool';
 import { CoreEditor } from 'application/editor/Editor';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities';
+import { ToolName } from 'application/editor/tools';
 
 export let editorEvents;
 
@@ -112,7 +113,7 @@ export const hotkeysConfiguration = {
   exit: {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(ToolName.selectRectangle);
     },
   },
   undo: {
@@ -132,15 +133,15 @@ export const hotkeysConfiguration = {
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
       if (editor.isSequenceEditMode) return;
-      editor.events.selectTool.dispatch('erase');
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(ToolName.erase);
+      editor.events.selectTool.dispatch(ToolName.selectRectangle);
     },
   },
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch('clear');
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(ToolName.clear);
+      editor.events.selectTool.dispatch(ToolName.selectRectangle);
     },
   },
   'zoom-plus': {
@@ -167,6 +168,12 @@ export const hotkeysConfiguration = {
       const modelChanges =
         editor.drawingEntitiesManager.selectAllDrawingEntities();
       editor.renderersContainer.update(modelChanges);
+    },
+  },
+  hand: {
+    shortcut: 'Mod+Alt+h',
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch(ToolName.hand);
     },
   },
 };

@@ -13,6 +13,9 @@ import {
   takePageScreenshot,
   moveMouseAway,
   openStructurePasteFromClipboard,
+  dragMouseTo,
+  clickOnMiddleOfCanvas,
+  zoomWithMouseWheel,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
@@ -39,7 +42,7 @@ test.describe('Zoom Tool', () => {
   test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Zoom in, Zoom out, Reset buttons tooltips are located in the top toolbar.
     */
@@ -67,10 +70,10 @@ test.describe('Zoom Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into center of current view', async ({
+  test('Validate that clicking "Zoom In"/"Zoom Out" buttons zooms into top left corner of canvas', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: "Zoom In"/"Zoom Out" buttons zooms into center of current view
     */
@@ -99,7 +102,7 @@ test.describe('Zoom Tool', () => {
   test('Check that minimum value for zoom out is 20% and maximum value for zoom in is 400%', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
     */
@@ -109,9 +112,13 @@ test.describe('Zoom Tool', () => {
     );
     await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.getByTestId('zoom-out-button').click();
+        },
+        1,
+      );
     }
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await page.getByTestId('zoom-selector').textContent();
@@ -123,9 +130,13 @@ test.describe('Zoom Tool', () => {
       await page.getByTestId('reset-zoom-button').click();
     });
     for (let i = 0; i < 30; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.getByTestId('zoom-in-button').click();
+        },
+        1,
+      );
     }
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await page.getByTestId('zoom-selector').textContent();
@@ -136,7 +147,7 @@ test.describe('Zoom Tool', () => {
   test('Validate that mouse scrolling IN/OUT - zooms into center of current mouse position', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Mouse scrolling IN/OUT - zooms into center of current mouse position
     */
@@ -151,7 +162,7 @@ test.describe('Zoom Tool', () => {
   test('Check that button "Reset zoom" is reset zoom settings to 100%', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Button "Reset zoom" is reset zoom settings to 100%
     */
@@ -174,7 +185,7 @@ test.describe('Zoom Tool', () => {
   test('Check that hotkey "Ctrl + 0" is reset zoom settings to 100%', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Hotkey "Ctrl + 0" is reset zoom settings to 100%
     */
@@ -195,9 +206,9 @@ test.describe('Zoom Tool', () => {
   test('Check that after open monomers structure from a  .mol  file you are able to zoom in and zoom out', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: After open monomers structure from a  .mol  file you are able 
+    Description: After open monomers structure from a  .mol  file you are able
     to zoom in and zoom out by hot keys.
     */
     await openFileAndAddToCanvasMacro(
@@ -221,7 +232,7 @@ test.describe('Zoom Tool', () => {
   test('Check after zoom in on created long snake chain of peptides you can use scroll with Shift', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: After zoom in on created long snake chain of peptides you can use scroll with Shift
     */
@@ -247,20 +258,19 @@ test.describe('Zoom Tool', () => {
   test('Check when you zoom in on created structure as much as possible, its elements still remain clear and accurate view', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: When you zoom in on created structure as much as possible, 
+    Description: When you zoom in on created structure as much as possible,
     its elements still remain clear and accurate view.
     */
+    const MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM = -1000;
+
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-through-chem.ket',
       page,
     );
-    for (let i = 0; i < 30; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
-    }
+    await clickOnMiddleOfCanvas(page);
+    await zoomWithMouseWheel(page, MOUSE_WHEEL_VALUE_FOR_MAX_ZOOM);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -268,7 +278,7 @@ test.describe('Zoom Tool', () => {
   test('Check that is possible to zoom in and out on empty canvas and it wont cause any errors', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: Zoom in and out on empty canvas wont cause any errors.
     */
@@ -291,9 +301,9 @@ test.describe('Zoom Tool', () => {
   test('Check if you create a peptide chain, zoom in and add new elements to chain then zoom out and add another elements', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: After create a peptide chain, zoom in and add new elements to chain then zoom out and add 
+    Description: After create a peptide chain, zoom in and add new elements to chain then zoom out and add
     another elements, then after back to zoom 100% all structure is create properly.
     */
     const x = 800;
@@ -322,9 +332,9 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Undo not undoing zoom', async ({ page }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: After creating structure on canvas and then 
+    Description: After creating structure on canvas and then
     click zoom in, and then Undo, Redo the structure is the same size as before.
     */
     const x = 800;
@@ -347,9 +357,9 @@ test.describe('Zoom Tool', () => {
   test('After zooming out to maximum canvas zoom level, preview of monomer entities remains same as before zoom out', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: After zooming out to maximum canvas 
+    Description: After zooming out to maximum canvas
     zoom level, preview of monomer entities under mouse cursor remains same as before zoom out.
     */
     for (let i = 0; i < 8; i++) {
@@ -373,7 +383,7 @@ test.describe('Zoom Tool', () => {
   test('After zooming in to maximum on monomer, connection points looks undistorted', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: After zooming in to maximum on monomer, connection points looks undistorted.
     */
@@ -381,10 +391,16 @@ test.describe('Zoom Tool', () => {
       `KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket`,
       page,
     );
+    await clickOnMiddleOfCanvas(page);
+    await dragMouseTo(100, 100, page);
     for (let i = 0; i < 30; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await waitForRender(
+        page,
+        async () => {
+          await page.keyboard.press('Control+=');
+        },
+        1,
+      );
     }
     await selectSingleBondTool(page);
     await page.getByText('(R').locator('..').first().hover();

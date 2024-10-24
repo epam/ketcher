@@ -113,6 +113,8 @@ const config: PlaywrightTestConfig = {
         open: process.env.DOCKER ? 'never' : 'on-failure',
       },
     ],
+    ['line'],
+    ['./reporters/TimeReporter.ts'],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {

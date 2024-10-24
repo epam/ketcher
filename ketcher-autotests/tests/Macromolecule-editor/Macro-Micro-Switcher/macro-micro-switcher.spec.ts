@@ -99,7 +99,6 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
-import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 
 const topLeftCorner = {
   x: -325,

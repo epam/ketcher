@@ -13,6 +13,7 @@ import {
   clickOnTheCanvas,
   selectMacromoleculesPanelButton,
   selectImageTool,
+  clickOnCanvas,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -196,7 +197,7 @@ export async function openImageAndAddToCanvas(
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }

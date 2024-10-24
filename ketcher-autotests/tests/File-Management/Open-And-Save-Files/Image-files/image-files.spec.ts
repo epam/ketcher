@@ -4,8 +4,10 @@ import { test, expect, Page } from '@playwright/test';
 import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   clickOnFileFormatDropdown,
   copyAndPaste,
+  copyToClipboardByKeyboard,
   cutAndPaste,
   dragMouseTo,
   FileFormatOption,
@@ -16,6 +18,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   openPasteFromClipboard,
+  pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
   resetCurrentTool,
@@ -23,6 +26,7 @@ import {
   RingButton,
   saveToTemplates,
   screenshotBetweenUndoRedo,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectEraseTool,
   selectLeftPanelButton,
@@ -280,10 +284,57 @@ test.describe('Image files', () => {
       'tests/test-data/KET/images-png-svg.ket',
     );
     await openPasteFromClipboard(page, fileContent);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.getByTestId('close-icon').click();
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"
+     * (SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Add to Canvas');
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"
+     * (SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images together (PNG, SVG) are copied from .cdxml format and added from clipboard directly to selected place on Canvas with correct positions', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images together (PNG, SVG) are copied from .cdxml format and added from clipboard directly to selected place on Canvas with correct positions
+     * (SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await page.getByTestId('close-icon').click();
+    await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -479,7 +530,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(600, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -526,7 +577,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
@@ -571,7 +622,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
@@ -593,7 +644,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -614,7 +665,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -626,6 +677,42 @@ test.describe('Image files', () => {
      * Description: Loaded from .ket file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
+    /**
+     * Test case: #2209
+     * Description: Loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDX/image-png-svg-together.cdx',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)', async () => {
+    /**
+     * Test case: #2209
+     * Description: Loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-svg-together.cdxml',
+      page,
+    );
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
@@ -659,7 +746,39 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .cdx file and added to selected place on Canvas images of (PNG, SVG)
+     * can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDX/image-png-svg-together.cdx',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press('Delete');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG) can be deleted using "Erase" (or Delete, Backspace buttons)', async () => {
+    /**
+     * Test case: #4897
+     * Description: Loaded from .cdxml file and added to selected place on Canvas images of (PNG, SVG)
+     * can be deleted using "Erase" (or Delete, Backspace buttons)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-svg-together.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
@@ -672,7 +791,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
   });
@@ -751,7 +870,7 @@ test.describe('Image files', () => {
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Shift+Tab');
     }
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -820,7 +939,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 400);
+    await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await openStructureLibrary(page);
@@ -859,6 +978,63 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after moving of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * moving of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-moving-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-moving-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-moving-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after moving of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * moving of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(200, 200);
+    await dragMouseTo(200, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-moving-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-moving-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-moving-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after scaling of them and then opened', async () => {
     /**
      * Test case: #4897
@@ -868,7 +1044,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
@@ -891,6 +1067,69 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after scaling of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await clickOnCanvas(page, 200, 200);
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-scaling-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-scaling-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-scaling-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after scaling of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * scaling of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+    await clickOnCanvas(page, 200, 200);
+    const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
+    await resizeHandle.scrollIntoViewIfNeeded();
+    await resizeHandle.hover({ force: true });
+    await dragMouseTo(500, 500, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-scaling-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-scaling-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-scaling-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of (PNG, SVG) with elements can be saved to .ket file with correct coordinates of images after deleting of them and then opened', async () => {
     /**
      * Test case: #4897
@@ -901,7 +1140,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -911,6 +1150,61 @@ test.describe('Image files', () => {
     );
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-svg-png-after-deleting-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after deleting of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * deleting of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-deleting-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-deleting-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-deleting-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after deleting of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * deleting of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-deleting-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-deleting-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-deleting-expected.cdxml',
       page,
     );
     await takeEditorScreenshot(page);
@@ -926,7 +1220,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -936,6 +1230,61 @@ test.describe('Image files', () => {
     );
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-svg-png-after-copying-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after copying of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdx file with correct coordinates of images after
+     * copying of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-after-copying-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-after-copying-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-copying-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after copying of them and then opened', async () => {
+    /**
+     * Test case: #2209
+     * Description: Images of (PNG, SVG) with elements can be saved to .cdxml file with correct coordinates of images after
+     * copying of them and after that can be loaded from .ket file with correct positions and layer level.
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 500);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-after-copying-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-after-copying-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-after-copying-expected.cdxml',
       page,
     );
     await takeEditorScreenshot(page);
@@ -1014,7 +1363,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -1271,6 +1620,98 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of allowed format (SVG) can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG) saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openImageAndAddToCanvas('Images/image-svg-colored.svg', page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-colored-expected.cdx',
+      'tests/test-data/CDX/image-svg-colored-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-colored-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (SVG) can be saved to CDXML file with correct coordinates of images, formats and sizes of files, after that loaded from CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG) saved to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openImageAndAddToCanvas('Images/image-svg-colored.svg', page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-colored-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-colored-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-colored-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of allowed format (PNG, SVG) can be saved together to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (PNG, SVG) can be saved together to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-svg-colored-above-png.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/images-svg-colored-above-png-expected.cdx',
+      'tests/test-data/CDX/images-svg-colored-above-png-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/images-svg-colored-above-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (PNG, SVG) can be saved together to CDXML file with correct coordinates of images, formats and sizes of files, after that loaded from CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (PNG, SVG) can be saved together to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/images-svg-colored-above-png.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/images-svg-colored-above-png-expected.cdxml',
+      'tests/test-data/CDXML/images-svg-colored-above-png-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/images-svg-colored-above-png-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Images of allowed format (PNG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
@@ -1320,6 +1761,104 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Images of allowed format (SVG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG) with elements saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-with-elements-expected.cdx',
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (SVG) with elements can be saved to CDXML file with correct coordinates of images, formats and sizes of files, and loaded from CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG) with elements saved to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed format (SVG, PNG) with elements can be saved to CDX file with correct coordinates of images, formats and sizes of files, after that loaded from CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG, PNG) with elements saved to CDX files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDX file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/image-svg-png-with-elements-expected.cdx',
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Image of allowed format (SVG, PNG) with elements can be saved to CDXML file with correct coordinates of images, formats and sizes of files, and loaded from CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed format (SVG, PNG) with elements saved to CDXML files with correct coordinates of images, formats and sizes of files,
+     * after that loaded from CDXML file and added to selected place on Canvas.(SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/image-svg-png-with-elements.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/image-svg-png-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Images of allowed formats (PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
@@ -1334,9 +1873,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-png-with-elements-expected.cdxml',
@@ -1373,9 +1910,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-png-with-elements-expected.cdxml',
@@ -1397,6 +1932,152 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Images of allowed formats (SVG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats (SVG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
+     * correct coordinates of images and file size.(SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await clickOnCanvas(page, 200, 200);
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/two-images-svg-with-elements-expected.cdx',
+      'tests/test-data/CDX/two-images-svg-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-images-svg-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (SVG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats (SVG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
+     * correct coordinates of images and file size.(SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await clickOnCanvas(page, 200, 200);
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/two-images-svg-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/two-images-svg-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/two-images-svg-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (SVG, PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDX', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats (SVG, PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
+     * correct coordinates of images and file size.(SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await clickOnCanvas(page, 200, 200);
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/two-image-svg-png-with-elements-expected.cdx',
+      'tests/test-data/CDX/two-image-svg-png-with-elements-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-image-svg-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (SVG, PNG) with different elements together can be added to selected place on Canvas from 2 different CDX/CDXML and save to CDXML', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats (SVG, PNG) with different elements together added to selected place on Canvas from 2 different CDX/CDXML
+     * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
+     * correct coordinates of images and file size.(SVG image replaced by placeholder)
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await clickOnCanvas(page, 200, 200);
+
+    await openFileAndAddToCanvas(
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
+      page,
+    );
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/two-image-svg-png-with-elements-expected.cdxml',
+      'tests/test-data/CDXML/two-image-svg-png-with-elements-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/two-image-svg-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   const testCases = [
     {
       description:
@@ -1412,6 +2093,18 @@ test.describe('Image files', () => {
     },
     {
       description:
+        'Verify that images of allowed formats (SVG) are correctly displayed in CDX format in Open Structure Preview',
+      file: 'CDX/image-svg-expected.cdx',
+      action: 'open',
+    },
+    {
+      description:
+        'Verify that images of allowed formats (SVG) are correctly displayed in CDXML format in Open Structure Preview',
+      file: 'CDXML/image-svg-expected.cdxml',
+      action: 'open',
+    },
+    {
+      description:
         'Verify that images of allowed formats (PNG) are correctly displayed in CDXML format in Save Structure Preview',
       file: 'KET/image-png-with-elements.ket',
       action: 'save',
@@ -1421,6 +2114,20 @@ test.describe('Image files', () => {
       description:
         'Verify that images of allowed formats (PNG) are correctly displayed in Base 64 CDX format in Save Structure Preview',
       file: 'KET/image-png-with-elements.ket',
+      action: 'save',
+      dropdownOption: 'Base64 CDX-option',
+    },
+    {
+      description:
+        'Verify that images of allowed together (PNG, SVG) are correctly displayed in CDXML format in Save Structure Preview',
+      file: 'KET/images-svg-colored-above-png.ket',
+      action: 'save',
+      dropdownOption: 'CDXML-option',
+    },
+    {
+      description:
+        'Verify that images of allowed together (PNG, SVG) are correctly displayed in Base 64 CDX format in Save Structure Preview',
+      file: 'KET/images-svg-colored-above-png.ket',
       action: 'save',
       dropdownOption: 'Base64 CDX-option',
     },
@@ -1580,12 +2287,51 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that images of allowed formats (SVG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats (SVG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDX/image-svg-expected.cdx',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that images of allowed formats (PNG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
      */
     await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '20');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '400');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '100');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that images of allowed formats together (PNG, SVG) can be zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Images of allowed formats together (PNG, SVG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDXML file
+     */
+    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
     await takeEditorScreenshot(page);
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
@@ -1619,6 +2365,54 @@ test.describe('Image files', () => {
      * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDXML file can be Undo/Redo
      */
     await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (SVG) together from CDX file can be Undo/Redo', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Action of adding to Canvas images of allowed formats (SVG) together from CDX file can be Undo/Redo
+     * (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDX/image-svg-expected.cdx', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (SVG) together from CDXML file can be Undo/Redo', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Action of adding to Canvas images of allowed formats (SVG) together from CDXML file can be Undo/Redo
+     * (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDXML/image-svg-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (SVG, PNG) together from CDX file can be Undo/Redo', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Action of adding to Canvas images of allowed formats (SVG, PNG) together from CDX file can be Undo/Redo
+     * (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDX/image-png-svg-together.cdx', page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that action of adding to Canvas images of allowed formats (SVG, PNG) together from CDXML file can be Undo/Redo', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Action of adding to Canvas images of allowed formats (SVG, PNG) together from CDXML file can be Undo/Redo
+     * (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -1669,6 +2463,63 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Images of allowed formats (SVG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDX file', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (SVG) added to different selected places on Canvas one by one using "Add Image" button
+     *  and saved together to CDX file with the correct coordinates of images and sizes of files.
+     * (SVG image replaced by placeholder)
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas(
+      'Images/image-svg-colored.svg',
+      page,
+      200,
+      200,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDX/two-image-svg-expected.cdx',
+      'tests/test-data/CDX/two-image-svg-expected.cdx',
+      FileType.CDX,
+    );
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/two-image-svg-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Images of allowed formats (SVG) can be added to different selected places on Canvas one by one using "Add Image" button and can be saved together to CDXML file', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2028
+     * Description: Images of allowed formats (SVG) added to different selected places on Canvas one by one using "Add Image" button
+     *  and saved together to CDXML file with the correct coordinates of images and sizes of files.
+     * (SVG image replaced by placeholder)
+     */
+    await openImageAndAddToCanvas('Images/image-svg.svg', page);
+    await openImageAndAddToCanvas(
+      'Images/image-svg-colored.svg',
+      page,
+      200,
+      200,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'CDXML/two-image-svg-expected.cdxml',
+      'tests/test-data/CDXML/two-image-svg-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/two-image-svg-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Loaded from CDX file and added to selected place on Canvas images (PNG) with elements can be selected and moved together and separately to other places', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2028
@@ -1684,9 +2535,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -1705,9 +2554,85 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDX file and added to selected place on Canvas images (SVG) with elements can be selected and moved together and separately to other places', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (SVG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDXML file and added to selected place on Canvas images (SVG) with elements can be selected and moved together and separately to other places', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (SVG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDX file and added to selected place on Canvas images (SVG, PNG) with elements can be selected and moved together and separately to other places', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (SVG, PNG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await dragMouseTo(700, 300, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Loaded from CDXML file and added to selected place on Canvas images (SVG, PNG) with elements can be selected and moved together and separately to other places', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Loaded from CDXML file and added to selected place on Canvas images of allowed formats (SVG, PNG) with
+     * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-png-with-elements-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(900, 300, page);
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(700, 300, page);
     await takeEditorScreenshot(page);
   });
@@ -1783,6 +2708,58 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as SVG images with the correct positions and layers of elements
+     */
+    await openImageAndAddToCanvas(
+      'Images/svg-colored-images-with-elements.svg',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be added to Canvas by Tool as PNG images with the correct positions and layers of elements
+     */
+    await openImageAndAddToCanvas(
+      'Images/svg-colored-images-with-elements.png',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to SVG can be viewed on preview and Save button is enabled', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to SVG can be viewed on preview and Save button is enabled
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/svg-colored-images-with-elements.ket',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2162
+     * Description: Added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/svg-colored-images-with-elements.ket',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await expect(page.getByText('Save', { exact: true })).toBeEnabled();
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify that added by Tool SVG images are displayed on preview and can be saved to SVG files with correct positions and layers', async () => {
     /**
      * Test case: https://github.com/epam/Indigo/issues/2161
@@ -1828,7 +2805,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1856,7 +2833,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1886,11 +2863,11 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -1914,7 +2891,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -1938,7 +2915,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
@@ -1962,7 +2939,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1990,7 +2967,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -2020,11 +2997,11 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2048,7 +3025,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2072,7 +3049,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -2151,7 +3128,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
@@ -2172,7 +3149,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
@@ -2195,7 +3172,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -2222,7 +3199,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -2290,7 +3267,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2309,7 +3286,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2328,7 +3305,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -2348,7 +3325,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);

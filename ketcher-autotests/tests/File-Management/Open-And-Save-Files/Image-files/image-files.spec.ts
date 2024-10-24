@@ -4,6 +4,7 @@ import { test, expect, Page } from '@playwright/test';
 import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   clickOnFileFormatDropdown,
   copyAndPaste,
   copyToClipboardByKeyboard,
@@ -576,7 +577,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
@@ -621,7 +622,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
@@ -643,7 +644,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -664,7 +665,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -869,7 +870,7 @@ test.describe('Image files', () => {
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Shift+Tab');
     }
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -938,7 +939,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 400);
+    await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await openStructureLibrary(page);
@@ -986,7 +987,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await selectRectangleSelectionTool(page);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1015,7 +1016,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await selectRectangleSelectionTool(page);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -1043,7 +1044,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
     // Ensure the element is in view
@@ -1075,10 +1076,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await selectRectangleSelectionTool(page);
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
@@ -1107,10 +1108,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await selectRectangleSelectionTool(page);
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
     await resizeHandle.scrollIntoViewIfNeeded();
     await resizeHandle.hover({ force: true });
@@ -1139,7 +1140,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1163,10 +1164,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1191,10 +1192,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1219,7 +1220,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1243,10 +1244,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1271,10 +1272,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 500);
+    await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1362,7 +1363,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -1872,9 +1873,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-png-with-elements-expected.cdxml',
@@ -1911,9 +1910,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-png-with-elements-expected.cdxml',
@@ -1949,9 +1946,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-svg-with-elements-expected.cdxml',
@@ -1988,9 +1983,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-svg-with-elements-expected.cdxml',
@@ -2026,9 +2019,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-svg-png-with-elements-expected.cdxml',
@@ -2065,9 +2056,7 @@ test.describe('Image files', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
       'CDXML/image-svg-png-with-elements-expected.cdxml',
@@ -2816,7 +2805,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -2844,7 +2833,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -2874,11 +2863,11 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2902,7 +2891,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -2926,7 +2915,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
@@ -2950,7 +2939,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -2978,7 +2967,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -3008,11 +2997,11 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -3036,7 +3025,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -3060,7 +3049,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 500);
+    await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3139,7 +3128,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
@@ -3160,7 +3149,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
@@ -3183,7 +3172,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -3210,7 +3199,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -3278,7 +3267,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -3297,7 +3286,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
     await expect(page.getByText('Save', { exact: true })).toBeEnabled();
@@ -3316,7 +3305,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3336,7 +3325,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);

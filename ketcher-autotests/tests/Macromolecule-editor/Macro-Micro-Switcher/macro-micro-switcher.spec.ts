@@ -75,6 +75,7 @@ import {
   clickOnBond,
   clickOnAtomById,
   clickOnCanvas,
+  delay,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -3282,8 +3283,8 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
    *       2. Expand it
    *       2. Take screenshot to witness initial state
    *       3. Press Undo button
-   *       6. Take screenshot to witness final position
-   *       7. Press Redo button
+   *       4. Take screenshot to witness final position
+   *       5. Press Redo button
    */
   await turnOnMicromoleculesEditor(page);
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
@@ -3293,6 +3294,33 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
   await takeEditorScreenshot(page);
   await pressRedoButton(page);
   await takeEditorScreenshot(page);
+});
+
+test(`Verify switching back from micro mode to macro mode with expanded and collapsed monomers`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify switching back from micro mode to macro mode with expanded and collapsed monomers
+   *
+   * Case: 1. Load monomer on Molecules canvas
+   *       2. Expand it
+   *       2. Take screenshot to witness initial state
+   *       3. Switch to Macro mode
+   *       4. Switch to Micro mode
+   *       6. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+  await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+  await expandMonomer(page, expandableMonomer.monomerLocatorText);
+  await takeEditorScreenshot(page);
+  await turnOnMacromoleculesEditor(page);
+  await turnOnMicromoleculesEditor(page);
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5849 issue(s).`,
+  );
 });
 
 const copyableMonomer: IMonomer = {

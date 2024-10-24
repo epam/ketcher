@@ -2,6 +2,7 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
@@ -67,11 +68,11 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
     'reaction-arrow-open-angle',
     'reaction-arrow-multitail',
   );
-  await page.mouse.click(600, 400);
+  await clickOnCanvas(page, 600, 400);
   await selectRing(RingButton.Benzene, page);
-  await page.mouse.click(200, 400);
+  await clickOnCanvas(page, 200, 400);
   await selectRectangleSelectionTool(page);
-  await page.mouse.click(600, 400);
+  await clickOnCanvas(page, 600, 400);
   await page.getByTestId('head-resize').hover({ force: true });
   await dragMouseTo(800, 500, page);
   await page.getByTestId('head-move').hover({ force: true });
@@ -81,7 +82,7 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await takeEditorScreenshot(page);
   await page.mouse.move(610, 350);
   await dragMouseTo(610, 100, page);
-  await page.mouse.click(100, 100);
+  await clickOnCanvas(page, 100, 100);
 }
 
 async function addTail(page: Page, x: number, y: number) {
@@ -152,7 +153,7 @@ async function addTails(page: Page, count: number) {
 }
 
 async function addTailToArrow(page: Page, arrowIndex: number) {
-  await page.mouse.click(200, 200);
+  await clickOnCanvas(page, 200, 200);
   await selectPartOfMolecules(page);
   await hoverOverArrowSpine(page, arrowIndex, 'right');
   await page.getByText('Add new tail').click();
@@ -242,7 +243,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await page.mouse.click(200, 300);
+    await clickOnCanvas(page, 200, 300);
 
     await verifyFile(
       page,
@@ -272,12 +273,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
   });
 
-  test('Verify that Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.5, tail - 0.4, head - 0.5), its a minimal size', async ({
+  test('Verify that Multi-Tailed Arrow with minimal sizes can be loaded without errors (spine - 0.01, tail - 0.01, head - 0.01), its a minimal size', async ({
     page,
   }) => {
     /**
      * Test case: https://github.com/epam/ketcher/issues/5104
-     * Description: Multi-Tailed Arrow with minimal sizes loaded without errors (spine - 0.5, tail - 0.4, head - 0.5), it's a minimal size.
+     * Description: Multi-Tailed Arrow with minimal sizes can be loaded without errors (minimal sizes: spine - 0.01
+     * (can't check because of distance between head and top/bottom tail), tail - 0.01, head - 0.01, distance between tails - 0.01,
+     * distance between head and top/bottom tail - 0.01) and head, spine and tails can be changed to bigger size.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/multi-tailed-arrow-minimal.ket',
@@ -296,9 +299,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     },
     {
       description:
-        'Multi-Tailed Arrow with spine less than 0.5 cannot be added from KET file to Canvas',
-      file: 'KET/multi-tailed-arrow-invalid-spine-0.49.ket',
-      detailedDescription: `Multi-Tailed Arrow with spine less than 0.5 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+        'Verify that Multi-Tailed Arrow with minimal sizes for UI can be loaded without errors',
+      file: 'KET/multi-tailed-arrow-minimal-on-ui.ket',
+      detailedDescription: `Verify that Multi-Tailed Arrow with minimal sizes for UI can be loaded without errors 
+      (minimal sizes: spine - 0.5, tail - 0.4, head - 0.5, distance between tails - 0.35, distance between head and top/bottom tail - 0.15)`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with spine less than 0.01 cannot be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-spine-0.009.ket',
+      detailedDescription: `Multi-Tailed Arrow with spine less than 0.01 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
     },
     {
       description:
@@ -314,42 +324,65 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       detailedDescription: `Multi-Tailed Arrow with different x-coordinates of spine can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
     },
-    // TODO
-    /* {
+    {
       description:
-        'Multi-Tailed Arrow with head less than 0.5 cannot be added from KET file to Canvas  - no longer applicable since 0.01 is the new limit',
-      file: 'KET/multi-tailed-arrow-invalid-head-0.49.ket',
-      detailedDescription: `Multi-Tailed Arrow with head less than 0.5 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
-    }, */
-    // TODO
-    /* {
+        'Multi-Tailed Arrow with head less than 0.01 cannot be added from KET file to Canvas  - no longer applicable since 0.01 is the new limit',
+      file: 'KET/multi-tailed-arrow-invalid-head-0.009.ket',
+      detailedDescription: `Multi-Tailed Arrow with head less than 0.01 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
       description:
-        'Multi-Tailed Arrow with head positioned less than 0.15 to top tail cannot be added from KET file - no longer applicable since 0.01 is the new limit',
-      file: 'KET/multi-tailed-arrow-invalid-head-position-0.14.ket',
-      detailedDescription: `Multi-Tailed Arrow with head is positioned less than 0.15 to top tail can't be added from KET file to Canvas and error message 
+        'Multi-Tailed Arrow with head positioned less than 0.01 to top tail cannot be added from KET file - no longer applicable since 0.01 is the new limit',
+      file: 'KET/multi-tailed-arrow-head-position-0.01.ket',
+      detailedDescription: `Multi-Tailed Arrow with head is positioned less than 0.011 to top tail can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
-    }, */
-    // TODO
-    /* {
+    },
+    {
       description:
-        'Multi-Tailed Arrow with tail less than 0.4 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
-      file: 'KET/multi-tailed-arrow-invalid-tails-0.39.ket',
-      detailedDescription: `Multi-Tailed Arrow with tail less than 0.4 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
-    }, */
-    // TODO
-    /* {
+        'Verify that Multi-Tailed Arrow with head thats positioned at 0.01 to bottom tail can be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-head-position-0.49.ket',
+      detailedDescription: `Multi-Tailed Arrow with head that's positioned at 0.01 to bottom tail can be added from KET file to Canvas`,
+    },
+    {
       description:
-        'Multi-Tailed Arrow with tail distance less than 0.35 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
+        'Verify that Multi-Tailed Arrow with head thats positioned less then 0.01 to bottom tail cant be added from KET file to Canvas',
+      file: 'KET/multi-tailed-arrow-invalid-head-position-0.009.ket',
+      detailedDescription: `Multi-Tailed Arrow with head that's positioned less then 0.01 to bottom tail can't be added from KET file to Canvas
+       and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Verify that Multi-Tailed Arrow with head thats out of spine cant be added from KET file to Canvas and error message is displayed',
+      file: 'KET/multi-tailed-arrow-invalid-head-out-of-spine.ket',
+      detailedDescription: `Verify that Multi-Tailed Arrow with head that's out of spine can't be added from KET file to Canvas 
+      and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with tail less than 0.01 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
+      file: 'KET/multi-tailed-arrow-invalid-tails-0.009.ket',
+      detailedDescription: `Multi-Tailed Arrow with tail less than 0.01 can't be added from KET file to Canvas and error message is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Multi-Tailed Arrow with tail distance less than 0.01 cannot be added from KET file to Canvas - no longer applicable since 0.01 is the new limit',
       file: 'KET/multi-tailed-arrow-invalid-tails-distance.ket',
-      detailedDescription: `Multi-Tailed Arrow with tail distance less than 0.35 can't be added from KET file to Canvas and error message 
+      detailedDescription: `Multi-Tailed Arrow with tail distance less than 0.01 can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
-    }, */
+    },
     {
       description:
         'Multi-Tailed Arrow with different lengths of tails cannot be added from KET file to Canvas',
       file: 'KET/multi-tailed-arrow-invalid-tails-different-length.ket',
       detailedDescription: `Multi-Tailed Arrow with different length of tails can't be added from KET file to Canvas and error message 
       is displayed - "Cannot deserialize input JSON."`,
+    },
+    {
+      description:
+        'Verify that Multi-Tailed Arrow with tail distance less = 0.01 can be added from KET file to Canvas and head, spine and tails can be changed to bigger size',
+      file: 'KET/multi-tailed-arrow-4-tails-minimal-distance.ket',
+      detailedDescription: `Multi-Tailed Arrow with tail distance less = 0.01 can be added from KET file to Canvas 
+      and head, spine and tails can be changed to bigger size`,
     },
     {
       description:
@@ -694,9 +727,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -720,7 +751,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await page.mouse.click(300, 350);
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -743,9 +774,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -768,7 +797,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await page.mouse.click(300, 350);
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -785,7 +814,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(300, 350);
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -802,7 +831,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
-    await page.mouse.click(300, 350);
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -819,7 +848,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
 
     await verifyFile(
       page,
@@ -841,9 +870,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
-    await page.mouse.click(500, 600);
-    await page.mouse.click(700, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 500, 600);
+    await clickOnCanvas(page, 700, 500);
 
     await verifyFile(
       page,
@@ -869,9 +898,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
-    await page.mouse.click(500, 600);
-    await page.mouse.click(700, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 500, 600);
+    await clickOnCanvas(page, 700, 500);
 
     await verifyFile(
       page,
@@ -899,9 +928,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -926,9 +953,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -946,7 +971,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
@@ -955,9 +980,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -975,7 +998,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
@@ -984,9 +1007,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(300, 350);
-    });
+    await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -1004,7 +1025,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
@@ -1065,34 +1086,34 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(200, 400);
+    await clickOnCanvas(page, 200, 400);
     await selectRectangleSelectionTool(page);
     await addTail(page, 500, 600);
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(200, 600, page);
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(500, 500, page);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await addTail(page, 500, 600);
     /* We need to click on the multi-tailed arrow here to select it, as the testId only appears after selection */
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     /* Here we erase multi-tailed arrow */
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     });
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(500, 200);
+    await clickOnCanvas(page, 500, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -1114,7 +1135,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.mouse.click(640, 350);
+    await clickOnCanvas(page, 640, 350);
     await dragMouseTo(300, 100, page);
     await takeEditorScreenshot(page);
   });
@@ -1133,28 +1154,22 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(200, 200);
-    await page.mouse.click(400, 400);
-    await page.mouse.click(600, 600);
+    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 400, 400);
+    await clickOnCanvas(page, 600, 600);
     await takeEditorScreenshot(page);
     await selectRectangleSelectionTool(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
     });
     await dragMouseTo(400, 200, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(400, 400);
-    });
+    await clickOnCanvas(page, 400, 400);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 1);
     });
     await dragMouseTo(600, 400, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(600, 600);
-    });
+    await clickOnCanvas(page, 600, 600);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 2);
     });
@@ -1176,16 +1191,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(200, 200);
-    await page.mouse.click(800, 200);
-    await page.mouse.click(800, 300);
+    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 800, 200);
+    await clickOnCanvas(page, 800, 300);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await selectRectangleSelectionTool(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
     });
@@ -1248,16 +1261,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(200, 200);
-    await page.mouse.click(800, 200);
-    await page.mouse.click(800, 300);
+    await clickOnCanvas(page, 200, 200);
+    await clickOnCanvas(page, 800, 200);
+    await clickOnCanvas(page, 800, 300);
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await selectRectangleSelectionTool(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(200, 200);
-    });
+    await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
     });
@@ -1448,12 +1459,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       .getByTestId('bottomTail-resize')
       .click({ force: true, button: 'right' });
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await page
       .getByTestId('topTail-resize')
       .click({ force: true, button: 'right' });
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
     await verifyFile(
@@ -1482,12 +1493,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       .getByTestId('bottomTail-resize')
       .click({ force: true, button: 'right' });
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await page
       .getByTestId('topTail-resize')
       .click({ force: true, button: 'right' });
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     for (const tailId of tailIds) {
       await clickInTheMiddleOfTheScreen(page);
@@ -1668,7 +1679,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-1-resize');
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -1693,7 +1704,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-1-resize');
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
-    await page.mouse.click(300, 300);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -1710,9 +1721,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
-    await page.mouse.click(500, 600);
-    await page.mouse.click(700, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 500, 600);
+    await clickOnCanvas(page, 700, 500);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1745,8 +1756,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 500, 600);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1758,10 +1769,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
     await removeTail(page, 'tails-0-move');
 
-    await page.mouse.click(500, 600);
+    await clickOnCanvas(page, 500, 600);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move', 1);
 
@@ -1787,7 +1798,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1795,7 +1806,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 300, 400);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
@@ -1825,7 +1836,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1833,7 +1844,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 300, 400);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
@@ -1862,9 +1873,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
-    await page.mouse.click(500, 600);
-    await page.mouse.click(700, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 500, 600);
+    await clickOnCanvas(page, 700, 500);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1877,7 +1888,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 700, 500);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(700, 500);
+    await clickOnCanvas(page, 700, 500);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
@@ -1905,7 +1916,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1913,13 +1924,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 300, 400);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
 
     await copyAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -1936,7 +1947,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-open-angle',
       'reaction-arrow-multitail',
     );
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
 
     await selectRectangleSelectionTool(page);
     await addTail(page, 300, 400);
@@ -1944,13 +1955,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 300, 400);
     await takeEditorScreenshot(page);
 
-    await page.mouse.click(300, 400);
+    await clickOnCanvas(page, 300, 400);
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
 
     await cutAndPaste(page);
-    await page.mouse.click(500, 400);
+    await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -2242,7 +2253,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').first().hover({ force: true });
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await verifyFile(
       page,
       'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
@@ -2265,8 +2276,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(300, 400);
-    await page.mouse.click(400, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 400, 500);
 
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2393,7 +2404,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(300, 600, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(750, 600);
+    await clickOnCanvas(page, 750, 600);
     await takeEditorScreenshot(page);
   });
 
@@ -2427,7 +2438,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(300, 600, page);
     await takeEditorScreenshot(page);
     await cutAndPaste(page);
-    await page.mouse.click(750, 600);
+    await clickOnCanvas(page, 750, 600);
     await takeEditorScreenshot(page);
   });
 
@@ -2500,8 +2511,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(300, 400);
-    await page.mouse.click(400, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 400, 500);
 
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2547,8 +2558,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(300, 400);
-    await page.mouse.click(400, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 400, 500);
 
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2571,7 +2582,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     await copyAndPaste(page);
-    await page.mouse.click(650, 300);
+    await clickOnCanvas(page, 650, 300);
     await takeEditorScreenshot(page);
   });
 
@@ -2590,8 +2601,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(300, 400);
-    await page.mouse.click(400, 500);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 400, 500);
 
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2614,7 +2625,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     await cutAndPaste(page);
-    await page.mouse.click(900, 400);
+    await clickOnCanvas(page, 900, 400);
     await takeEditorScreenshot(page);
   });
 
@@ -2864,7 +2875,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(400, 500, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2887,8 +2898,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(500, 300);
-    await page.mouse.click(600, 450);
+    await clickOnCanvas(page, 500, 300);
+    await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -2908,7 +2919,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
     await dragMouseTo(400, 500, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await verifyFile(
       page,
@@ -2940,7 +2951,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(400, 300, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
@@ -2981,7 +2992,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(400, 300, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
@@ -3022,9 +3033,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(400, 300, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await copyAndPaste(page);
-    await page.mouse.click(700, 350);
+    await clickOnCanvas(page, 700, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -3056,9 +3067,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('bottomTail-resize').first().hover({ force: true });
     await dragMouseTo(400, 300, page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await cutAndPaste(page);
-    await page.mouse.click(700, 350);
+    await clickOnCanvas(page, 700, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -3143,8 +3154,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(500, 300);
-    await page.mouse.click(600, 450);
+    await clickOnCanvas(page, 500, 300);
+    await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -3164,7 +3175,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
     await dragMouseTo(400, 500, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
@@ -3190,8 +3201,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(500, 300);
-    await page.mouse.click(600, 450);
+    await clickOnCanvas(page, 500, 300);
+    await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -3211,11 +3222,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
     await dragMouseTo(400, 500, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
 
     await copyAndPaste(page);
-    await page.mouse.click(800, 350);
+    await clickOnCanvas(page, 800, 350);
     await takeEditorScreenshot(page);
   });
 
@@ -3232,8 +3243,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.click(500, 300);
-    await page.mouse.click(600, 450);
+    await clickOnCanvas(page, 500, 300);
+    await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -3253,11 +3264,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(500, 200, page);
     await page.getByTestId('topTail-resize').nth(1).hover({ force: true });
     await dragMouseTo(400, 500, page);
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
 
     await cutAndPaste(page);
-    await page.mouse.click(800, 350);
+    await clickOnCanvas(page, 800, 350);
     await takeEditorScreenshot(page);
   });
 

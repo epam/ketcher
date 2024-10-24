@@ -74,6 +74,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnBond,
   clickOnAtomById,
+  clickOnCanvas,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -831,7 +832,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
-      await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').click();
       await takeEditorScreenshot(page);
@@ -855,9 +856,7 @@ test.describe('Macro-Micro-Switcher', () => {
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
         '.mol',
       );
-      await waitForRender(page, async () => {
-        await page.mouse.click(coordsToClick.x, coordsToClick.y);
-      });
+      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
       await takeEditorScreenshot(page);
@@ -1093,7 +1092,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectRing(RingButton.Benzene, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1118,7 +1117,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectAtomInToolbar(AtomButton.Oxygen, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1143,7 +1142,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1168,7 +1167,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1225,7 +1224,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1260,7 +1259,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1319,7 +1318,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1353,7 +1352,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectSnakeLayoutModeTool(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1411,7 +1410,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1447,7 +1446,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1508,7 +1507,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1547,7 +1546,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1584,7 +1583,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1607,7 +1606,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(645, 318);
+    await clickOnCanvas(page, 645, 318);
     await takeEditorScreenshot(page);
   });
 
@@ -3081,6 +3080,58 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
   }
 });
 
+test.describe('Move collapsed monomer on Micro and Undo: ', () => {
+  test.beforeEach(async () => {
+    await turnOnMicromoleculesEditor(page);
+  });
+
+  for (const movableCollapsedMonomer of movableCollapsedMonomers) {
+    test(`${movableCollapsedMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/5773
+       * Description: Verify that moving a collapsed monomer (abbreviation) to a new location
+       *              on the canvas and then using Undo correctly repositions the monomer back to
+       *              its original position, then Redo moves it back to the new location
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Take screenshot to witness initial position
+       *       3. Grab it and move it to the top left corner
+       *       6. Take screenshot to witness final position
+       *       7. Press Undo button to witness initial position
+       */
+      if (movableCollapsedMonomer.pageReloadNeeded) {
+        await pageReload(page);
+        await turnOnMicromoleculesEditor(page);
+      }
+
+      await openFileAndAddToCanvasAsNewProject(
+        movableCollapsedMonomer.KETFile,
+        page,
+      );
+      await takeEditorScreenshot(page);
+
+      const canvasLocator = page.getByTestId('ketcher-canvas');
+      const monomerLocator = canvasLocator.getByText(
+        movableCollapsedMonomer.monomerLocatorText,
+        { exact: true },
+      );
+
+      await moveMonomerOnMicro(page, monomerLocator, 100, 100);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+
+      await pressUndoButton(page);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        movableCollapsedMonomer.shouldFail === true,
+        `That test results are wrong because of ${movableCollapsedMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
 async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
   await moveOnBond(page, BondType.SINGLE, 1);
   await dragMouseTo(x, y, page);
@@ -3222,9 +3273,7 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
   await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
+  await clickOnCanvas(page, 200, 200);
   await takeEditorScreenshot(page);
 });
 
@@ -3254,9 +3303,7 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
 
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
+  await clickOnCanvas(page, 200, 200);
   await takeEditorScreenshot(page);
 });
 
@@ -3281,9 +3328,8 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
   await selectExpandedMonomer(page);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
+  await clickOnCanvas(page, 200, 200);
+
   await takeEditorScreenshot(page);
 
   test.fixme(
@@ -3314,9 +3360,7 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
   await selectExpandedMonomer(page);
   await cutToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
+  await clickOnCanvas(page, 200, 200);
   await takeEditorScreenshot(page);
 
   test.fixme(

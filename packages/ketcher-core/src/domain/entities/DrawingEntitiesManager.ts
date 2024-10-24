@@ -1075,7 +1075,6 @@ export class DrawingEntitiesManager {
   ) => {
     // TODO: Consider combining it with the method below to avoid code duplication
     const command = new Command();
-    let previousMonomer: BaseMonomer | undefined;
     const sugarMonomer = node.monomers.find(
       (monomer) => monomer instanceof Sugar,
     ) as Sugar | AmbiguousMonomer;
@@ -1089,7 +1088,7 @@ export class DrawingEntitiesManager {
       (monomer) => monomer !== undefined,
     ) as BaseMonomer[];
 
-    monomers.forEach((monomer) => {
+    monomers.forEach((monomer, monomerIndex) => {
       const monomerAddOperation =
         monomer instanceof AmbiguousMonomer
           ? new MonomerAddOperation(
@@ -1112,7 +1111,8 @@ export class DrawingEntitiesManager {
             );
 
       command.addOperation(monomerAddOperation);
-      if (previousMonomer) {
+      if (monomerIndex > 0) {
+        const previousMonomer = monomers[monomerIndex - 1];
         const attPointStart = previousMonomer.getValidSourcePoint(monomer);
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
@@ -1133,7 +1133,6 @@ export class DrawingEntitiesManager {
         );
         command.addOperation(operation);
       }
-      previousMonomer = monomer;
     });
 
     return command;
@@ -1157,10 +1156,9 @@ export class DrawingEntitiesManager {
       monomersToAdd.push([phosphate, phosphatePosition]);
     }
 
-    let previousMonomer: BaseMonomer | undefined;
     const monomers: BaseMonomer[] = [];
 
-    monomersToAdd.forEach(([monomerItem, monomerPosition]) => {
+    monomersToAdd.forEach(([monomerItem, monomerPosition], monomerIndex) => {
       const monomerAddOperation = new MonomerAddOperation(
         this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
         this.deleteMonomerChangeModel.bind(this),
@@ -1168,7 +1166,8 @@ export class DrawingEntitiesManager {
       const monomer = monomerAddOperation.monomer;
       monomers.push(monomer);
       command.addOperation(monomerAddOperation);
-      if (previousMonomer) {
+      if (monomerIndex > 0) {
+        const previousMonomer = monomers[monomerIndex - 1];
         // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
         const attPointStart = previousMonomer.getValidSourcePoint(monomer);
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
@@ -1190,7 +1189,6 @@ export class DrawingEntitiesManager {
         );
         command.addOperation(operation);
       }
-      previousMonomer = monomer;
     });
 
     return { command, monomers };

@@ -777,7 +777,9 @@ class ReStruct {
             const sGroupAtoms = atoms.filter(
               (atom) => atom.sgroup === item?.item?.id,
             );
-            item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
+            item.selected =
+              sGroupAtoms.length > 0 &&
+              sGroupAtoms.some((atom) => atom.selected);
           }
 
           let selected = selection?.[map]

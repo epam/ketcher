@@ -788,28 +788,17 @@ export class Atom extends BaseMicromoleculeEntity {
       attachmentPointAtomBonds.filter((_, bond) => {
         const beginAtom = struct.atoms.get(bond.begin);
         const endAtom = struct.atoms.get(bond.end);
-
-        if (
-          Atom.isAtomInMonomer(struct, bond.begin) ||
-          Atom.isAtomInMonomer(struct, bond.end)
-        ) {
-          const sGroup1 = struct.getGroupFromAtomId(bond.begin);
-          const sGroup2 = struct.getGroupFromAtomId(bond.end);
-          return sGroup1 !== sGroup2;
-        }
+        const isExternalBondBetweenMonomers =
+          bond.isExternalBondBetweenMonomers(struct);
 
         return (
+          isExternalBondBetweenMonomers ||
           beginAtom?.fragment !== atom?.fragment ||
           endAtom?.fragment !== atom?.fragment
         );
       });
 
     return attachmentAtomExternalConnection;
-  }
-
-  public static isAtomInMonomer(struct: Struct, atomId: number) {
-    const sGroup = struct.getGroupFromAtomId(atomId);
-    return sGroup instanceof MonomerMicromolecule;
   }
 
   public static isHiddenLeavingGroupAtom(struct: Struct, atomId: number) {

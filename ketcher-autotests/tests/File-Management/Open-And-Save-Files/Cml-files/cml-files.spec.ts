@@ -365,7 +365,6 @@ test.describe('CML files', () => {
     'Validate that the simple schema with retrosynthetic, angel arrows and plus could be saved to CML file and loaded back',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
-      test.fail();
       /*
     Test case: #2071
     Description: Validate that the schema with retrosynthetic arrow could be saved to CML file and loaded back
@@ -396,6 +395,11 @@ test.describe('CML files', () => {
         page,
       );
       await takeEditorScreenshot(page);
+      test.fixme(
+        // eslint-disable-next-line no-self-compare
+        true === true,
+        `That test result is incorrect because of https://github.com/epam/Indigo/issues/2206 issue.`,
+      );
     },
   );
 

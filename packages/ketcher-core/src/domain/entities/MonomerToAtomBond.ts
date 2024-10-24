@@ -3,7 +3,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseRenderer } from 'application/render';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
-import { BaseBond } from 'domain/entities/BaseBond';
+import { BaseBond } from './BaseBond';
 
 export class MonomerToAtomBond extends BaseBond {
   public renderer?:

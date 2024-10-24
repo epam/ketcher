@@ -704,6 +704,14 @@ export class DrawingEntitiesManager {
 
   public deletePolymerBond(polymerBond: PolymerBond | HydrogenBond) {
     const command = new Command();
+    const firstAttachmentPoint =
+      polymerBond.firstMonomer.getAttachmentPointByBond(
+        polymerBond,
+      ) as AttachmentPointName;
+    const secondAttachmentPoint =
+      polymerBond.secondMonomer?.getAttachmentPointByBond(
+        polymerBond,
+      ) as AttachmentPointName;
 
     const operation = new PolymerBondDeleteOperation(
       polymerBond,
@@ -712,12 +720,8 @@ export class DrawingEntitiesManager {
         this.finishPolymerBondCreationModelChange(
           polymerBond.firstMonomer,
           polymerBond.secondMonomer as BaseMonomer,
-          polymerBond.firstMonomer.getAttachmentPointByBond(
-            polymerBond,
-          ) as AttachmentPointName,
-          polymerBond.secondMonomer?.getAttachmentPointByBond(
-            polymerBond,
-          ) as AttachmentPointName,
+          firstAttachmentPoint,
+          secondAttachmentPoint,
           MACROMOLECULES_BOND_TYPES.SINGLE,
           _polymerBond,
         ),

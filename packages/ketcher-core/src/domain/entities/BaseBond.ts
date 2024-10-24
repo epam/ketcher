@@ -1,5 +1,5 @@
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { Vec2 } from 'domain/entities';
+import { DrawingEntity } from './DrawingEntity';
+import { Vec2 } from 'domain/entities/vec2';
 
 export abstract class BaseBond extends DrawingEntity {
   public endPosition: Vec2 = new Vec2();

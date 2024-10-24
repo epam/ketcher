@@ -134,4 +134,7 @@ export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
   return state.editor.editorLayoutMode;
 };
 
+export const selectIsHandToolSelected = (state: RootState) =>
+  state.editor.editor?.isHandToolSelected;
+
 export const editorReducer = editorSlice.reducer;

@@ -31,6 +31,13 @@ export async function getAtomByIndex(
   return result[index];
 }
 
+type BoundingBox = {
+  width: number;
+  height: number;
+  y: number;
+  x: number;
+};
+
 export async function getAtomById(page: Page, id: number): Promise<AtomXy> {
   const { atoms, scale, offset, zoom } = await page.evaluate(() => {
     return {

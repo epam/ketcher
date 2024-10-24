@@ -72,6 +72,7 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnBond,
+  clickOnAtomById,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -197,6 +198,10 @@ async function openCdxmlFile(page: Page) {
     page,
   );
   await pressButton(page, 'Open as New Project');
+}
+
+async function clickOnExpandedMonomer(page: Page, atomId: number) {
+  await clickOnAtomById(page, atomId);
 }
 
 enum FileFormat {
@@ -3425,26 +3430,14 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
     page,
   );
+  await takeEditorScreenshot(page);
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
     await selectEraseTool(page);
     await clickOnExpandedMonomer(page, monomer.AtomId);
-    await pressCancelAtEditAbbreviationDialog(page);
     await takeEditorScreenshot(page);
+    await pressCancelAtEditAbbreviationDialog(page);
     await pressUndoButton(page);
   }
 });
-async function clickOnExpandedMonomer(page: Page, atomId: number) {
-  // await page.mouse.click(x, y);
-  const point = await getAtomById(page, atomId);
-  await waitForRender(page, async () => {
-    await page.mouse.move(point.x, point.y);
-  });
-  await waitForRender(page, async () => {
-    await page.mouse.down();
-  });
-  await page.mouse.up();
-
-  // await clickOnAtomById(page, atomId);
-}

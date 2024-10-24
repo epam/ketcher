@@ -55,6 +55,12 @@ export async function clickInTheMiddleOfTheScreen(
   });
 }
 
+export async function clickOnCanvas(page: Page, x: number, y: number) {
+  await waitForRender(page, async () => {
+    await page.mouse.click(x, y);
+  });
+}
+
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
   return {

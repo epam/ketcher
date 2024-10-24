@@ -3219,6 +3219,53 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
   }
 });
 
+test.describe('Move expanded monomer on Micro and Undo: ', () => {
+  test.beforeEach(async () => {
+    await turnOnMicromoleculesEditor(page);
+  });
+
+  for (const movableExpandedMonomer of movableExpandedMonomers) {
+    test(`${movableExpandedMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/5773
+       * Description: Verify that expanded macromolecules can be moved across the canvas
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       2. Take screenshot to witness initial position
+       *       3. Grab it and move it to the top left corner
+       *       6. Take screenshot to witness final position
+       *       7. Press Undo button
+       *       8. Take screenshot to witness initial position
+       */
+      if (movableExpandedMonomer.pageReloadNeeded) {
+        await pageReload(page);
+        await turnOnMicromoleculesEditor(page);
+      }
+      await openFileAndAddToCanvasAsNewProject(
+        movableExpandedMonomer.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
+      await takeEditorScreenshot(page);
+
+      await moveExpandedMonomerOnMicro(page, 200, 200);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
+
+      await pressUndoButton(page);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        movableExpandedMonomer.shouldFail === true,
+        `That test results are wrong because of ${movableExpandedMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
 const expandableMonomer: IMonomer = {
   monomerDescription: '1. Petide D (from library)',
   KETFile:

@@ -199,7 +199,7 @@ async function openCdxmlFile(page: Page) {
   await pressButton(page, 'Open as New Project');
 }
 
-async function clickOnExpandedMonomer(page: Page, atomId: number) {
+async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
 }
 
@@ -3402,11 +3402,11 @@ type monomer = {
 
 const monomers: monomer[] = [
   { name: '12ddR', AtomId: 70 },
-  { name: 'Mal', AtomId: 5 },
+  { name: 'Mal', AtomId: 0 },
   { name: 'A', AtomId: 58 },
   { name: '5hMedC', AtomId: 53 },
   { name: 'gly', AtomId: 30 },
-  { name: 'oC64m5', AtomId: 14 },
+  { name: 'oC64m5', AtomId: 25 },
 ];
 
 test(`Verify that deleting an expanded monomer in a chain structure using the Erase tool cause Edit Abbreviations dialog to appear`, async () => {
@@ -3434,9 +3434,147 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
     await selectEraseTool(page);
-    await clickOnExpandedMonomer(page, monomer.AtomId);
+    await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
     await takeEditorScreenshot(page);
     await pressCancelAtEditAbbreviationDialog(page);
     await pressUndoButton(page);
   }
 });
+
+// NOT ACTUAL BECAUSE OF BUG: https://github.com/epam/ketcher/issues/5849
+// async function clickOnBondOfExpandedMonomer(page: Page, bondId: number) {
+//   await clickOnBondById(page, bondId);
+// }
+// const tryToChangeMonomers: IMonomer[] = [
+//   {
+//     monomerDescription: '1. Petide D (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+//     monomerLocatorText: 'D',
+//   },
+//   {
+//     monomerDescription: '2. Sugar UNA (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
+//     monomerLocatorText: 'UNA',
+//   },
+//   {
+//     monomerDescription: '3. Base hU (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
+//     monomerLocatorText: 'hU',
+//   },
+//   {
+//     monomerDescription: '4. Phosphate bnn (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
+//     monomerLocatorText: 'bnn',
+//   },
+//   {
+//     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
+//     monomerLocatorText: '5hMedC',
+//   },
+//   {
+//     monomerDescription: '6. CHEM 4aPEGMal (from library)',
+//     KETFile:
+//       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
+//     monomerLocatorText: '4aPEGMal',
+//   },
+// ];
+
+// test.describe('Trying to change: ', () => {
+//   test.beforeEach(async () => {
+//     await turnOnMicromoleculesEditor(page);
+//   });
+
+//   for (const tryToChangeMonomer of tryToChangeMonomers) {
+//     test(`${tryToChangeMonomer.monomerDescription}`, async () => {
+//       /*
+//        * Test task: https://github.com/epam/ketcher/issues/5773
+//        * Description: Verify that no atoms or bonds can be added/removed from the expanded monomer
+//        *
+//        * Case: 1. Load monomer Molecules canvas
+//        *       2. Expand it
+//        *       2. Take screenshot to witness initial state
+//        *       3. For each monomer do the following:
+//        *           3.1 Select atom from right tool bar (Br) and click on any atom of expanded monomer
+//        *           3.2 Take screenshot to witness opened dialog
+//        *           3.3 Press Cancel on appeared dialog
+//        *           3.4 Select triple bond from left menu and click on any bond of expanded monomer
+//        *           3.5 Take screenshot to witness opened dialog
+//        *           3.6 Press Cancel on appeared dialog
+//        */
+
+//       await openFileAndAddToCanvasAsNewProject(
+//         tryToChangeMonomer.KETFile,
+//         page,
+//       );
+//       await expandMonomer(page, tryToChangeMonomer.monomerLocatorText);
+//       await takeEditorScreenshot(page);
+
+//       await selectAtomInToolbar(AtomButton.Bromine, page);
+//       await clickOnAtomOfExpandedMonomer(page, 1);
+//       await takeEditorScreenshot(page);
+//       await pressCancelAtEditAbbreviationDialog(page);
+
+//       await selectBond(BondTypeName.Triple, page);
+//       await clickOnBondOfExpandedMonomer(page, 1);
+//       await takeEditorScreenshot(page);
+//       await pressCancelAtEditAbbreviationDialog(page);
+
+//       // Test should be skipped if related bug exists
+//       test.fixme(
+//         expandableMonomer.shouldFail === true,
+//         `That test results are wrong because of ${tryToChangeMonomer.issueNumber} issue(s).`,
+//       );
+//     });
+//   }
+// });
+
+test(
+  `Verify that after using the Erase tool to delete an expanded monomer in both chain and ring structures, ` +
+    `the Undo and Redo functionality works correctly, restoring or re-removing the expanded monomer and its bonds`,
+  async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/5773
+     * Description: Verify that after using the Erase tool to delete an expanded monomer in both chain and ring structures,
+     *              the Undo and Redo functionality works correctly, restoring or re-removing the expanded monomer and its bonds
+     *
+     * Case: 1. Load monomer chain on Molecules canvas
+     *       2. Take screenshot to witness initial state
+     *         3. For each monomer do the following:
+     *           3.1 Expand monomer
+     *           3.2 Click on any atom to select molecule inside monomer
+     *           3.3 Press Erase tool button to delete expanded monomer
+     *           3.4 Take screenshot to witness monomer erase
+     *           3.5 Press Undo button
+     *           3.6 Take screenshot to witness monomer got back
+     *           3.7 Press Undo button
+     *           3.8 Take screenshot to witness monomer got collapsed
+     */
+    await turnOnMicromoleculesEditor(page);
+
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+      page,
+    );
+    // Pic 1
+    await takeEditorScreenshot(page);
+
+    for (const monomer of monomers) {
+      await expandMonomer(page, monomer.name);
+      await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
+      await selectEraseTool(page);
+      // Pic 2, 5, 8, 11, 14, 17
+      await takeEditorScreenshot(page);
+      await pressUndoButton(page);
+      // Pic 3, 6, 9, 12, 15, 18
+      await takeEditorScreenshot(page);
+      await pressUndoButton(page);
+      // Pic 4, 6, 10, 13, 16, 19
+      await takeEditorScreenshot(page);
+    }
+  },
+);

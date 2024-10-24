@@ -13,6 +13,7 @@ import {
 import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
+import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
 
 type BoundingBox = {
   width: number;
@@ -123,6 +124,17 @@ export async function clickOnBond(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await waitForRender(page, async () => {
+    await page.mouse.click(point.x, point.y, { button: buttonSelect });
+  });
+}
+
+export async function clickOnBondById(
+  page: Page,
+  bondId: number,
+  buttonSelect?: 'left' | 'right' | 'middle',
+) {
+  const point = await getBondById(page, bondId);
   await waitForRender(page, async () => {
     await page.mouse.click(point.x, point.y, { button: buttonSelect });
   });

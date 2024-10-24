@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import {
   chooseTab,
@@ -2232,6 +2233,64 @@ test.describe('Macro-Micro-Switcher', () => {
      */
 
     await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Added to Canvas (from CDX file) of allowed formats (SVG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDX/image-svg-expected.cdx', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDXML file) of allowed formats (SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Added to Canvas (from CDXML file) of allowed formats (SVG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+     */
+
+    await openFileAndAddToCanvas('CDXML/image-svg-expected.cdxml', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Added to Canvas (from CDX file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+     */
+    await openFileAndAddToCanvas('CDX/image-png-svg-together.cdx', page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Added to Canvas (from CDXML file) of allowed formats together (PNG, SVG) are not presented on Canvas after switching to Macro mode and presented after returning to Micro ', async () => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2209
+     * Description: Added to Canvas (from CDXML file) of allowed formats together (PNG, SVG) are not presented on the Canvas after switching
+     * to Macro mode and presented after returning to Micro (SVG image replaced by placeholder)
+     */
+
+    await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

@@ -6,7 +6,7 @@ describe('Polymer Bond', () => {
     createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(0.25, 0.25, 2.25, 2.5);
 
-    polymerBond.moveToLinkedMonomers();
+    polymerBond.moveToLinkedEntities();
 
     expect(polymerBond.finished).toBe(true);
     expect(polymerBond.startPosition.x).toBe(0.25);

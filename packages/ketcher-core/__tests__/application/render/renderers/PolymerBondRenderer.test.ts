@@ -12,7 +12,7 @@ describe('Polymer Bond Renderer', () => {
   it('should render bond', () => {
     const canvas = createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(10, 10, 90, 100);
-    polymerBond.moveToLinkedMonomers();
+    polymerBond.moveToLinkedEntities();
     const polymerBondRenderer =
       polymerBond.renderer as FlexModeOrSnakeModePolymerBondRenderer;
     global.SVGElement.prototype.getBBox = jest.fn();

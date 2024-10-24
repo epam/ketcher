@@ -242,7 +242,7 @@ export class SequenceRenderer {
               return;
             }
 
-            const anotherMonomer = polymerBond.getAnotherMonomer(
+            const anotherMonomer = polymerBond.getAnotherEntity(
               node.monomer,
             ) as BaseMonomer;
 

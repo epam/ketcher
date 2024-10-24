@@ -25,6 +25,7 @@ import { ChemicalMimeType } from 'domain/services';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -110,7 +111,10 @@ export abstract class BaseMode {
           entity.position,
           entity,
         );
-      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
+      } else if (
+        (entity instanceof PolymerBond || entity instanceof HydrogenBond) &&
+        entity.secondMonomer
+      ) {
         const firstAttachmentPoint =
           entity.firstMonomer.getAttachmentPointByBond(entity);
         const secondAttachmentPoint =
@@ -126,6 +130,7 @@ export abstract class BaseMode {
             entity.secondMonomer,
             firstAttachmentPoint,
             secondAttachmentPoint,
+            undefined,
             entity,
           );
         }

@@ -67,6 +67,16 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
   };
 }
 
+export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {
+  const canvas = (await page
+    .getByTestId('ketcher-canvas')
+    .boundingBox()) as BoundingBox;
+  return {
+    x: canvas.x + canvas.width / HALF_DIVIDER,
+    y: canvas.y + canvas.height / HALF_DIVIDER,
+  };
+}
+
 /* Usage: await pressButton(page, 'Add to Canvas')
   Click on specified button in Open Structure dialog
 */
@@ -114,6 +124,13 @@ export async function clickOnTheCanvas(
       secondStructureCoordinates.x + xOffsetFromCenter,
       secondStructureCoordinates.y + yOffsetFromCenter,
     );
+  });
+}
+
+export async function clickOnMiddleOfCanvas(page: Page) {
+  const middleOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
+  await waitForRender(page, async () => {
+    await page.mouse.click(middleOfCanvas.x, middleOfCanvas.y);
   });
 }
 

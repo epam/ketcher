@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import * as os from 'os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
@@ -104,7 +103,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
+  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : 12,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

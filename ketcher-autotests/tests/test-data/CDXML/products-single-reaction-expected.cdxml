@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" p="487.943237 224.252228"/>
+            <n id="6" p="539.852234 224.237686"/>
+            <n id="7" p="513.946838 209.249008"/>
+            <n id="8" p="539.852234 254.265976"/>
+            <n id="9" p="487.943237 254.400620"/>
+            <n id="10" p="514.012329 269.250977"/>
+            <b id="14" B="7" E="5" Order="2"/>
+            <b id="15" B="5" E="9"/>
+            <b id="16" B="9" E="10" Order="2"/>
+            <b id="17" B="10" E="8"/>
+            <b id="18" B="8" E="6" Order="2"/>
+            <b id="19" B="6" E="7"/>
+        </fragment>
+        <arrow id="11" BoundingBox="465.954559 238.500000 342.147736 238.500000" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="465.954559 238.500000 0.000000" Tail3D="342.147736 238.500000 0.000000"/>
+        <scheme>
+            <step ReactionStepProducts="4" ReactionStepArrows="11"/>
+        </scheme>
+    </page>
+</CDXML>

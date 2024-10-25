@@ -360,41 +360,43 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdxml file and loaded back', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdxml file and loaded back',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdxml file and loaded back
-
-    Valence is not displayed. After fixing https://github.com/epam/Indigo/issues/2205 need to update a screenshot.
+    IMPORTANT: Valences are not displayed. After fixing https://github.com/epam/Indigo/issues/2205 need to update a screenshot.
+    https://github.com/epam/Indigo/issues/2582
     */
 
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
-      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
-      expectedFile,
-    );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
-        expectedFileName:
-          'tests/test-data/CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
-      });
+      );
+      const expectedFile = await getCdxml(page);
+      await saveToFile(
+        'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
+        expectedFile,
+      );
 
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
+        });
 
-    await openFileAndAddToCanvasAsNewProject(
-      'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      expect(cdxmlFile).toEqual(cdxmlFileExpected);
+
+      await openFileAndAddToCanvasAsNewProject(
+        'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to Cdxml file and loaded back', async ({
     page,

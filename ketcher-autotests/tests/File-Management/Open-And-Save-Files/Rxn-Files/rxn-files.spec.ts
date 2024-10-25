@@ -792,7 +792,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 14, 21, 79];
+    const METADATA_STRINGS_INDEXES = [2, 7, 65, 72, 79];
 
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({

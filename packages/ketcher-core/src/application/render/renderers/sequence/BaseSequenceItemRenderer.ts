@@ -156,7 +156,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   ) {
     return rootElement
       .append('text')
-      .attr('x', '-2')
+      .attr('x', '2')
       .attr('y', '-24')
       .text(this.monomerIndexInChain + 1)
       .attr('font-family', 'Courier New')

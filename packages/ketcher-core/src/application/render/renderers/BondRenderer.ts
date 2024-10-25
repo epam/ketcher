@@ -198,7 +198,7 @@ export class BondRenderer extends BaseRenderer {
 
   private appendRootElement() {
     return this.canvas
-      .append('g')
+      .insert('g', ':first-child')
       .data([this])
       .attr(
         'transform',

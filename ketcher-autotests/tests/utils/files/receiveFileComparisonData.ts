@@ -83,6 +83,7 @@ export async function receiveFileComparisonData({
 }: {
   page: Page;
   expectedFileName: string;
+  // INDEXES starts from 0 (i.e. 1 line should be set as 0)
   metaDataIndexes?: number[];
   fileFormat?: MolfileFormat;
 }): Promise<{

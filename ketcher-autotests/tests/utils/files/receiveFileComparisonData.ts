@@ -28,9 +28,12 @@ export async function verifyFile(
     throw new Error(`Unsupported file type: ${fileType}`);
   }
 
-  const expectedFile = await getFileContent(page);
-  await saveToFile(filename, expectedFile);
+  // This two lines for creating from scratch or for updating exampled files
+  const expectedFileContent = await getFileContent(page);
+  await saveToFile(expectedFilename, expectedFileContent);
 
+  // This line for filtering out example file content (named as fileExpected)
+  // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
     expectedFileName: expectedFilename,

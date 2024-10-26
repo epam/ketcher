@@ -274,12 +274,18 @@ class ReAtom extends ReObject {
             : this.a.pp,
           render.options,
         );
+        const fontFamily = options.font.substr(
+          options.font.indexOf(' ') + 1,
+          options.font.length,
+        );
         const path = render.paper
           .text(position.x, position.y, sgroup.data.name)
           .attr({
             'font-weight': 700,
-            'font-size': 14,
+            'font-size': options.fontszInPx,
+            'font-family': fontFamily,
           });
+
         restruct.addReObjectPath(
           LayerMap.data,
           this.visel,

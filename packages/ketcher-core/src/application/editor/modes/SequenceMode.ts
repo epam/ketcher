@@ -118,9 +118,11 @@ export class SequenceMode extends BaseMode {
 
     const chainsCollection =
       editor.drawingEntitiesManager.applyMonomersSequenceLayout();
-    const firstMonomerPosition = chainsCollection.firstNode?.monomer.position;
+    const firstMonomerPosition = (
+      chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
+    )?.scaledMonomerPositionForSequence;
 
-    if (firstMonomerPosition && needScroll) {
+    if (firstMonomerPosition && (needScroll || needReArrangeChains)) {
       zoom.scrollTo(firstMonomerPosition);
     }
 
@@ -150,7 +152,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(true, true, false);
+    this.initialize(false, true, false);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -167,7 +169,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditInRNABuilderMode = false;
-    this.initialize(true, true, false);
+    this.initialize(false, true, false);
     editor.events.toggleSequenceEditInRNABuilderMode.dispatch(false);
   }
 

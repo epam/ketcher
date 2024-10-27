@@ -393,9 +393,10 @@ export class CoreEditor {
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
+    const hasModeChanged = this.mode.modeName !== mode;
     this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
-    const command = this.mode.initialize(true, false, false);
+    const command = this.mode.initialize(true, false, !hasModeChanged);
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,

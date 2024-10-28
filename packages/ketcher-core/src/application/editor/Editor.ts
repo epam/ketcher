@@ -648,7 +648,13 @@ export class CoreEditor {
   }
 
   public zoomToStructuresIfNeeded() {
-    if (!this.isCurrentModeWithAutozoom()) {
+    if (
+      // Temporary solution to disable autozoom for the polymer editor in e2e tests
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window._ketcher_isAutozoomDisabled ||
+      !this.isCurrentModeWithAutozoom()
+    ) {
       return;
     }
     const structureBbox = RenderersManager.getRenderedStructuresBbox();

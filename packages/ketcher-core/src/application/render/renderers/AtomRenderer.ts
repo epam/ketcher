@@ -2,7 +2,7 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor } from 'application/editor';
-import { AtomLabel, ElementColor } from 'domain/constants';
+import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 
 export class AtomRenderer extends BaseRenderer {
@@ -76,6 +76,29 @@ export class AtomRenderer extends BaseRenderer {
     this.hoverElement?.attr('opacity', '0');
   }
 
+  private get shouldHydrogenBeOnLeft() {
+    const viewModel = CoreEditor.provideEditorInstance().viewModel;
+    const atomHaldEdges = viewModel.atomsToHalfEdges.get(this.atom);
+
+    if (atomHaldEdges?.length === 0) {
+      if (this.atom.label === AtomLabel.D || this.atom.label === AtomLabel.T) {
+        return false;
+      } else {
+        const element = Elements.get(this.atom.label);
+
+        return !element || Boolean(element.leftH);
+      }
+    }
+
+    if (atomHaldEdges?.length === 1) {
+      const firstHalfEdge = atomHaldEdges[0];
+
+      return firstHalfEdge.direction.x > 0;
+    }
+
+    return false;
+  }
+
   public get isLabelVisible() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
@@ -102,17 +125,22 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     const { hydrogenAmount } = this.atom.calculateValence();
+    const shouldHydrogenBeOnLeft = this.shouldHydrogenBeOnLeft;
 
     const textElement = this.rootElement
       ?.append('text')
-      .attr('text-anchor', 'middle')
       .attr('y', 5)
       .attr('fill', ElementColor[this.atom.label])
-      .attr('style', 'user-select: none; font-family: Arial')
+      .attr(
+        'style',
+        'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
+      )
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
 
-    textElement?.append('tspan').text(this.atom.label);
+    if (!shouldHydrogenBeOnLeft) {
+      textElement?.append('tspan').text(this.atom.label);
+    }
 
     if (hydrogenAmount > 0) {
       textElement?.append('tspan').text('H');
@@ -121,6 +149,18 @@ export class AtomRenderer extends BaseRenderer {
     if (hydrogenAmount > 1) {
       textElement?.append('tspan').text(hydrogenAmount).attr('dy', 5);
     }
+
+    if (shouldHydrogenBeOnLeft) {
+      textElement
+        ?.append('tspan')
+        .text(this.atom.label)
+        .attr('dy', hydrogenAmount > 1 ? -5 : 0);
+    }
+
+    textElement?.attr(
+      'text-anchor',
+      shouldHydrogenBeOnLeft ? 'end' : hydrogenAmount > 0 ? 'start' : 'middle',
+    );
 
     return textElement;
   }

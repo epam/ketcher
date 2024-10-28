@@ -151,6 +151,11 @@ export type EditorTheme = {
       [key: string]: MonomerColorScheme;
     };
   };
+  peptide: {
+    color: {
+      [key: string]: MonomerColorScheme;
+    };
+  };
   border: {
     regular: string;
     small: string;

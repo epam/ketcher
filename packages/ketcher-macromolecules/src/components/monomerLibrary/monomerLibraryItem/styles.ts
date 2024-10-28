@@ -20,6 +20,7 @@ export const Card = styled.div<{
   selected?: boolean;
   disabled?: boolean;
   isVariantMonomer?: boolean;
+  isPeptideTab?: boolean;
 }>`
   background: white;
   height: 48px;
@@ -65,9 +66,21 @@ export const Card = styled.div<{
     height: 8px;
     border-bottom: ${({ isVariantMonomer }) =>
       isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
-    background: ${({ code, theme }) =>
-      theme.ketcher.monomer.color[code as string]?.regular};
+    background: ${({ code, theme, isPeptideTab }) => {
+      if (
+        isPeptideTab &&
+        theme.ketcher.peptide.color[code as string]?.regular
+      ) {
+        return theme.ketcher.peptide.color[code as string]?.regular;
+      }
+
+      const monomerColor =
+        theme.ketcher.monomer.color[code as string]?.regular ||
+        theme.ketcher.monomer.color.default?.regular;
+      return monomerColor;
+    }};
   }
+  ,
   > span {
     position: absolute;
     bottom: ${({ selected }) => (selected ? '4px' : '6px')};

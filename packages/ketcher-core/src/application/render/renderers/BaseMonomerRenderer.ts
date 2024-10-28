@@ -99,29 +99,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public get textColor() {
     const WHITE = 'white';
-    const BLACK = '#333333';
     const colorsMap = {
-      A: WHITE,
-      C: WHITE,
-      D: BLACK,
+      D: WHITE,
       F: WHITE,
-      G: BLACK,
-      E: WHITE,
-      H: WHITE,
-      I: WHITE,
-      K: BLACK,
-      L: BLACK,
-      M: BLACK,
-      N: WHITE,
-      P: BLACK,
-      S: WHITE,
-      O: WHITE,
+      K: WHITE,
       Q: WHITE,
       R: WHITE,
-      T: WHITE,
-      U: BLACK,
-      V: BLACK,
-      W: BLACK,
+      W: WHITE,
       Y: WHITE,
     };
     return (
@@ -136,6 +120,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomer.monomerItem.props.MonomerNaturalAnalogCode
       ]?.regular || theme.monomer.color.X.regular
     );
+  }
+
+  protected getPeptideColor(theme) {
+    const naturalAnalogCode =
+      this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const peptideColor = theme.peptide.color[naturalAnalogCode]?.regular;
+    return peptideColor || this.getMonomerColor(theme);
   }
 
   public redrawAttachmentPoints(): void {

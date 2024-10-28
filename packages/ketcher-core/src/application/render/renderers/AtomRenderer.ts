@@ -101,14 +101,28 @@ export class AtomRenderer extends BaseRenderer {
       return;
     }
 
-    return this.rootElement
+    const { hydrogenAmount } = this.atom.calculateValence();
+
+    const textElement = this.rootElement
       ?.append('text')
-      .text(this.atom.label)
       .attr('text-anchor', 'middle')
       .attr('y', 5)
       .attr('fill', ElementColor[this.atom.label])
-      .attr('style', 'user-select: none')
+      .attr('style', 'user-select: none; font-family: Arial')
+      .attr('font-size', '13px')
       .attr('pointer-events', 'none');
+
+    textElement?.append('tspan').text(this.atom.label);
+
+    if (hydrogenAmount > 0) {
+      textElement?.append('tspan').text('H');
+    }
+
+    if (hydrogenAmount > 1) {
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 5);
+    }
+
+    return textElement;
   }
 
   public appendSelection() {

@@ -47,7 +47,6 @@ const MonomerGroup = ({
   const editor = useAppSelector(selectEditor);
   const activeGroupItemValidations = useAppSelector(selectGroupItemValidations);
   const isPeptideTab = libraryName === MONOMER_LIBRARY_PEPTIDES;
-  console.log('isPeptideTab:', isPeptideTab);
   const isMonomerDisabled = (monomer: MonomerOrAmbiguousType) => {
     let monomerDisabled = false;
     if (isAmbiguousMonomerLibraryItem(monomer)) {

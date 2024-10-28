@@ -752,12 +752,16 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.drawSelection();
   }
 
+  private get isSideConnectionBondDrawn() {
+    return this.polymerBond.isSideChainConnection && this.path;
+  }
+
   public drawSelection(): void {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       if (
         (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
-        (this.polymerBond.isSideChainConnection && this.path)
+        this.isSideConnectionBondDrawn
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
@@ -867,7 +871,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   protected appendHoverAreaElement(): void {
     if (
       (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
-      (this.polymerBond.isSideChainConnection && this.path)
+      this.isSideConnectionBondDrawn
     ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
         this.hoverAreaElement

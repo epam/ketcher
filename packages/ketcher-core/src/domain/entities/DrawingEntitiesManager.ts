@@ -716,7 +716,7 @@ export class DrawingEntitiesManager {
     const operation = new PolymerBondDeleteOperation(
       polymerBond,
       this.deletePolymerBondChangeModel.bind(this, polymerBond),
-      (_polymerBond?: PolymerBond) =>
+      (_polymerBond?: PolymerBond | HydrogenBond) =>
         this.finishPolymerBondCreationModelChange(
           polymerBond.firstMonomer,
           polymerBond.secondMonomer as BaseMonomer,
@@ -771,7 +771,7 @@ export class DrawingEntitiesManager {
     secondMonomer: BaseMonomer,
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
-    bondType?: string,
+    bondType?: MACROMOLECULES_BOND_TYPES,
     _polymerBond?: PolymerBond,
   ) {
     if (_polymerBond) {
@@ -781,7 +781,7 @@ export class DrawingEntitiesManager {
       return _polymerBond;
     }
 
-    const isHydrogenBond = bondType === 'hydrogen';
+    const isHydrogenBond = bondType === MACROMOLECULES_BOND_TYPES.HYDROGEN;
     const polymerBond = isHydrogenBond
       ? new HydrogenBond(firstMonomer)
       : new PolymerBond(firstMonomer);
@@ -849,7 +849,7 @@ export class DrawingEntitiesManager {
     secondMonomer: BaseMonomer,
     firstMonomerAttachmentPoint: AttachmentPointName,
     secondMonomerAttachmentPoint: AttachmentPointName,
-    bondType = 'polymer',
+    bondType = MACROMOLECULES_BOND_TYPES.SINGLE,
   ) {
     const command = new Command();
 

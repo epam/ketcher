@@ -352,6 +352,13 @@ class ReBond extends ReObject {
       return;
     }
 
+    if (
+      bond.type === Bond.PATTERN.TYPE.HYDROGEN &&
+      Bond.isBondToExpandedMonomer(struct, bond)
+    ) {
+      return;
+    }
+
     const paper = render.paper;
     const hb1 =
       this.b.hb1 !== undefined ? struct.halfBonds.get(this.b.hb1) : null;

@@ -35,22 +35,41 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import { ToolName } from 'application/editor';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
 
+export enum MACROMOLECULES_BOND_TYPES {
+  SINGLE = 'single',
+  HYDROGEN = 'hydrogen',
+}
+
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
   private isBondConnectionModalOpen = false;
-  history: EditorHistory;
+  private history: EditorHistory;
+  private bondType: MACROMOLECULES_BOND_TYPES;
 
-  constructor(private editor: CoreEditor) {
+  constructor(private editor: CoreEditor, options: { toolName: ToolName }) {
     this.editor = editor;
     this.history = new EditorHistory(this.editor);
+    this.bondType =
+      options.toolName === ToolName.bondSingle
+        ? MACROMOLECULES_BOND_TYPES.SINGLE
+        : MACROMOLECULES_BOND_TYPES.HYDROGEN;
+  }
+
+  get isHydrogenBond() {
+    return this.bondType === MACROMOLECULES_BOND_TYPES.HYDROGEN;
   }
 
   public mouseDownAttachmentPoint(event) {
+    if (this.isHydrogenBond) {
+      return;
+    }
+
     const selectedRenderer = event.target.__data__;
     if (
       selectedRenderer instanceof AttachmentPoint &&
@@ -96,6 +115,7 @@ class PolymerBond implements BaseTool {
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
           Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
+          this.bondType,
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -159,7 +179,7 @@ class PolymerBond implements BaseTool {
         this.editor.drawingEntitiesManager.intendToFinishBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
-          shouldCalculateBonds,
+          this.isHydrogenBond ? false : shouldCalculateBonds,
         );
     } else {
       modelChanges =
@@ -173,6 +193,10 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseOverAttachmentPoint(event) {
+    if (this.isHydrogenBond) {
+      return;
+    }
+
     const renderer: AttachmentPoint = event.target.__data__;
     let modelChanges;
 
@@ -323,17 +347,22 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     }
-    const firstMonomerAttachmentPoint =
-      this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        this.bondRenderer.polymerBond,
-      );
-    const secondMonomerAttachmentPoint =
-      secondMonomer.getPotentialAttachmentPointByBond(
-        this.bondRenderer.polymerBond,
-      );
+    const firstMonomerAttachmentPoint = this.isHydrogenBond
+      ? AttachmentPointName.HYDROGEN
+      : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+          this.bondRenderer.polymerBond,
+        );
+    const secondMonomerAttachmentPoint = this.isHydrogenBond
+      ? AttachmentPointName.HYDROGEN
+      : secondMonomer.getPotentialAttachmentPointByBond(
+          this.bondRenderer.polymerBond,
+        );
     assert(firstMonomerAttachmentPoint);
     assert(secondMonomerAttachmentPoint);
-    if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {
+    if (
+      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint &&
+      !this.isHydrogenBond
+    ) {
       this.editor.events.error.dispatch(
         'You have connected monomers with attachment points of the same group',
       );
@@ -342,7 +371,10 @@ class PolymerBond implements BaseTool {
       this.bondRenderer.polymerBond,
       secondMonomer,
       firstMonomerAttachmentPoint,
-      secondMonomerAttachmentPoint,
+      this.isHydrogenBond
+        ? AttachmentPointName.HYDROGEN
+        : secondMonomerAttachmentPoint,
+      this.bondType,
     );
   }
 
@@ -408,7 +440,7 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAtom(event) {
-    if (!this.bondRenderer) {
+    if (!this.bondRenderer || this.isHydrogenBond) {
       return;
     }
 
@@ -507,6 +539,10 @@ class PolymerBond implements BaseTool {
     secondMonomer: BaseMonomer,
     checkForPotentialBonds = true,
   ) {
+    if (this.isHydrogenBond) {
+      return;
+    }
+
     // No Modal: no free attachment point on second monomer
     if (!secondMonomer.hasFreeAttachmentPoint) {
       return false;

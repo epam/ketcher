@@ -22,8 +22,10 @@ import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubCh
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export type BaseMonomerConfig = DrawingEntityConfig;
+export const HYDROGEN_BOND_ATTACHMENT_POINT = 'hydrogen';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
@@ -220,9 +222,13 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public setBond(
     attachmentPointName: AttachmentPointName,
-    bond: PolymerBond | MonomerToAtomBond,
+    bond: PolymerBond | MonomerToAtomBond | HydrogenBond,
   ) {
-    this.attachmentPointsToBonds[attachmentPointName] = bond;
+    this.attachmentPointsToBonds[
+      bond instanceof HydrogenBond
+        ? AttachmentPointName.HYDROGEN
+        : attachmentPointName
+    ] = bond;
   }
 
   public unsetBond(attachmentPointName: AttachmentPointName) {
@@ -280,25 +286,25 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get usedAttachmentPointsNamesList() {
     const list: AttachmentPointName[] = [];
-    for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (
-        this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
-      ) {
-        list.push(attachmentPointName as AttachmentPointName);
+
+    this.listOfAttachmentPoints.forEach((attachmentPointName) => {
+      if (this.isAttachmentPointUsed(attachmentPointName)) {
+        list.push(attachmentPointName);
       }
-    }
+    });
+
     return list;
   }
 
   public get unUsedAttachmentPointsNamesList() {
     const list: AttachmentPointName[] = [];
-    for (const attachmentPointName in this.attachmentPointsToBonds) {
-      if (
-        !this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
-      ) {
-        list.push(attachmentPointName as AttachmentPointName);
+
+    this.listOfAttachmentPoints.forEach((attachmentPointName) => {
+      if (!this.isAttachmentPointUsed(attachmentPointName)) {
+        list.push(attachmentPointName);
       }
-    }
+    });
+
     return list;
   }
 

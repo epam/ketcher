@@ -52,6 +52,7 @@ import { Coordinates } from './shared/coordinates';
 import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -223,7 +224,8 @@ export class CoreEditor {
         );
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
-        eventData instanceof SnakeModePolymerBondRenderer
+        (eventData instanceof SnakeModePolymerBondRenderer &&
+          !(eventData.polymerBond instanceof HydrogenBond))
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
       } else if (isClickOnCanvas) {
@@ -237,7 +239,9 @@ export class CoreEditor {
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
-    this.events.selectTool.add((tool) => this.onSelectTool(tool));
+    this.events.selectTool.add((tool, options) =>
+      this.onSelectTool(tool, options),
+    );
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
     this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
       this.onCancelBondCreation(secondMonomer),
@@ -315,8 +319,8 @@ export class CoreEditor {
     }
   }
 
-  public onSelectTool(tool: ToolName) {
-    this.selectTool(tool);
+  public onSelectTool(tool: ToolName, options?: object) {
+    this.selectTool(tool, options);
   }
 
   private onCreateBond(payload: {

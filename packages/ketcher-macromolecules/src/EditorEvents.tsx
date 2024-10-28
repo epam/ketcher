@@ -33,6 +33,7 @@ import {
   Nucleoside,
   Nucleotide,
   PolymerBond,
+  HydrogenBond,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -164,7 +165,10 @@ export const EditorEvents = () => {
     (e) => {
       const polymerBond = e.target.__data__?.polymerBond;
 
-      if (polymerBond && !polymerBond.finished) {
+      if (
+        (polymerBond && !polymerBond.finished) ||
+        polymerBond instanceof HydrogenBond
+      ) {
         return;
       }
 

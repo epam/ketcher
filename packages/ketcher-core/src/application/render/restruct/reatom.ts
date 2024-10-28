@@ -205,6 +205,35 @@ class ReAtom extends ReObject {
     return this.getSelectionContour(render, false).attr(options.selectionStyle);
   }
 
+  private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
+    const MIN_BOND_LENGTH = 24;
+    const isBondLengthTooShort = bondLength <= MIN_BOND_LENGTH;
+    const hasCharge = this.a.charge !== null && this.a.charge !== 0;
+    return showCharge && isBondLengthTooShort && hasCharge;
+  }
+
+  private getRatio(
+    renderOptions: RenderOptions,
+    bondLen: number | null,
+  ): number {
+    const DEFAULT_BOND_LENGTH = 40;
+    const DEFAULT_SUB_FONT_SIZE = 13;
+    const subFontSize = renderOptions.fontszsubInPx || DEFAULT_SUB_FONT_SIZE;
+    if (!bondLen) return 1;
+    const showCharge = renderOptions.showCharge;
+
+    const isNeedShift = this.isNeedShiftForCharge(showCharge, bondLen);
+
+    if (!isNeedShift) {
+      return 1;
+    }
+
+    const DEFAULT_PROPORTION = DEFAULT_BOND_LENGTH / DEFAULT_SUB_FONT_SIZE;
+    const currentProportion = bondLen / subFontSize;
+    const ratio = currentProportion / DEFAULT_PROPORTION;
+    return ratio;
+  }
+
   /**
    * if atom is rendered as Abbreviation: O, NH, ...
    * In this case we need to shift the bond render start position to free space for Atom,
@@ -214,6 +243,7 @@ class ReAtom extends ReObject {
     renderOptions: RenderOptions,
     direction: Vec2,
     _atomPosition?: Vec2,
+    bondLen: number | null = null,
   ): Vec2 {
     const atomPosition = Scale.modelToCanvas(
       _atomPosition || this.a.pp,
@@ -221,14 +251,14 @@ class ReAtom extends ReObject {
     );
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
+    const ratio = this.getRatio(renderOptions, bondLen);
     for (let k = 0; k < exts.length; ++k) {
       const box = exts[k].translate(atomPosition);
-
-      atomSymbolShift = Math.max(
-        atomSymbolShift,
-        util.shiftRayBox(atomPosition, direction, box),
-      );
+      const shiftRayBox = util.shiftRayBox(atomPosition, direction, box);
+      const shift = shiftRayBox * ratio;
+      atomSymbolShift = Math.max(atomSymbolShift, shift);
     }
+
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,

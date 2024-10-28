@@ -1319,8 +1319,11 @@ export class Struct {
     return sgroup instanceof MonomerMicromolecule;
   }
 
-  isBondFromMacromolecule(bondId: number) {
-    const bond = this.bonds.get(bondId);
+  isBondFromMacromolecule(bondOrBondId: Bond | number) {
+    const bond =
+      bondOrBondId instanceof Bond
+        ? bondOrBondId
+        : this.bonds.get(bondOrBondId);
 
     assert(bond);
 

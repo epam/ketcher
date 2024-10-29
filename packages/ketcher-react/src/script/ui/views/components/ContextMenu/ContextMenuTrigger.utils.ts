@@ -196,6 +196,7 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_SELECTION,
       bondIds: bonds,
       atomIds: atoms,
+      rgroupAttachmentPoints,
     };
   }
 }

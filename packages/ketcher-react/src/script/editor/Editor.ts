@@ -68,6 +68,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  'rgroupAttachmentPoints',
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];

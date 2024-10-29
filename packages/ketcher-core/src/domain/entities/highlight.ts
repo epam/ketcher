@@ -17,18 +17,21 @@
 export interface HighlightAttributes {
   atoms: Array<number>;
   bonds: Array<number>;
+  rgroupAttachmentPoints: Array<number>;
   color: string;
 }
 
 export class Highlight {
   atoms: Array<number>;
   bonds: Array<number>;
+  rgroupAttachmentPoints: Array<number>;
   color: string;
 
   constructor(attributes: HighlightAttributes) {
-    const { atoms, bonds, color } = attributes;
+    const { atoms, bonds, rgroupAttachmentPoints, color } = attributes;
     this.color = color;
     this.atoms = atoms;
     this.bonds = bonds;
+    this.rgroupAttachmentPoints = rgroupAttachmentPoints;
   }
 }

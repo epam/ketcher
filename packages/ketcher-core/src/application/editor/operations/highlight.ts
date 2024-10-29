@@ -24,6 +24,7 @@ import { OperationType } from './OperationType';
 type Data = {
   atoms: Array<number>;
   bonds: Array<number>;
+  rgroupAttachmentPoints: Array<number>;
   color: string;
   highlightId?: number;
 };
@@ -34,6 +35,7 @@ export class HighlightAdd extends BaseOperation {
   constructor(
     atoms: Array<number>,
     bonds: Array<number>,
+    rgroupAttachmentPoints: Array<number>,
     color: string,
     highlightId?: number,
   ) {
@@ -41,13 +43,14 @@ export class HighlightAdd extends BaseOperation {
     this.data = {
       atoms,
       bonds,
+      rgroupAttachmentPoints,
       color,
       highlightId,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, color } = this.data;
+    const { atoms, bonds, rgroupAttachmentPoints, color } = this.data;
 
     if (!color) {
       return;
@@ -57,6 +60,7 @@ export class HighlightAdd extends BaseOperation {
     const highlight = new Highlight({
       atoms,
       bonds,
+      rgroupAttachmentPoints,
       color,
     });
 
@@ -66,12 +70,19 @@ export class HighlightAdd extends BaseOperation {
       struct.highlights.set(this.data.highlightId, highlight);
     }
 
-    notifyChanged(restruct, atoms, bonds);
+    notifyChanged(restruct, atoms, bonds, rgroupAttachmentPoints);
   }
 
   invert() {
-    const { atoms, bonds, color, highlightId } = this.data;
-    const inverted = new HighlightDelete(highlightId, atoms, bonds, color);
+    const { atoms, bonds, rgroupAttachmentPoints, color, highlightId } =
+      this.data;
+    const inverted = new HighlightDelete(
+      highlightId,
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+    );
     return inverted;
   }
 }
@@ -83,6 +94,7 @@ export class HighlightDelete extends BaseOperation {
     highlightId?: number,
     atoms?: Array<number>,
     bonds?: Array<number>,
+    rgroupAttachmentPoints?: Array<number>,
     color?: string,
   ) {
     super(OperationType.REMOVE_HIGHLIGHT, 5);
@@ -90,6 +102,7 @@ export class HighlightDelete extends BaseOperation {
       highlightId,
       atoms: atoms || [],
       bonds: bonds || [],
+      rgroupAttachmentPoints: rgroupAttachmentPoints || [],
       color: color || 'white',
     };
   }
@@ -115,8 +128,15 @@ export class HighlightDelete extends BaseOperation {
   }
 
   invert() {
-    const { atoms, bonds, color, highlightId } = this.data;
-    const inverted = new HighlightAdd(atoms, bonds, color, highlightId);
+    const { atoms, bonds, rgroupAttachmentPoints, color, highlightId } =
+      this.data;
+    const inverted = new HighlightAdd(
+      atoms,
+      bonds,
+      rgroupAttachmentPoints,
+      color,
+      highlightId,
+    );
     inverted.data = this.data;
     return inverted;
   }
@@ -131,12 +151,14 @@ export class HighlightUpdate extends BaseOperation {
     highlightId: number,
     atoms: Array<number>,
     bonds: Array<number>,
+    rgroupAttachmentPoints: Array<number>,
     color: string,
   ) {
     super(OperationType.UPDATE_HIGHLIGHT);
     this.newData = {
       atoms,
       bonds,
+      rgroupAttachmentPoints,
       color,
       highlightId,
     };
@@ -145,13 +167,14 @@ export class HighlightUpdate extends BaseOperation {
     this.oldData = {
       atoms,
       bonds,
+      rgroupAttachmentPoints,
       color,
       highlightId,
     };
   }
 
   execute(restruct: ReStruct) {
-    const { atoms, bonds, color } = this.newData;
+    const { atoms, bonds, rgroupAttachmentPoints, color } = this.newData;
     if (!color) {
       return;
     }
@@ -166,11 +189,13 @@ export class HighlightUpdate extends BaseOperation {
       const {
         atoms: oldAtoms,
         bonds: oldBonds,
+        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
         color: oldColor,
       } = highlightToUpdate;
       this.oldData = {
         atoms: oldAtoms,
         bonds: oldBonds,
+        rgroupAttachmentPoints: oldRgroupAttachmentPoints,
         color: oldColor,
         highlightId,
       };
@@ -179,6 +204,7 @@ export class HighlightUpdate extends BaseOperation {
       const updatedHighlight = new Highlight({
         atoms,
         bonds,
+        rgroupAttachmentPoints,
         color,
       });
 
@@ -191,21 +217,28 @@ export class HighlightUpdate extends BaseOperation {
   }
 
   invert() {
-    const { atoms, bonds, color } = this.oldData;
+    const { atoms, bonds, rgroupAttachmentPoints, color } = this.oldData;
     const inverted = new HighlightUpdate(
       this.newData.highlightId,
       atoms,
       bonds,
+      rgroupAttachmentPoints,
       color,
     );
     return inverted;
   }
 }
 
-function notifyChanged(restruct: ReStruct, atoms?: number[], bonds?: number[]) {
+function notifyChanged(
+  restruct: ReStruct,
+  atoms?: number[],
+  bonds?: number[],
+  rgroupAttachmentPoints?: number[],
+) {
   // Notifying ReStruct that repaint needed
   const reAtoms = restruct.atoms;
   const reBonds = restruct.bonds;
+  const reRgroupAttachmentPoints = restruct.rgroupAttachmentPoints;
 
   if (atoms) {
     atoms.forEach((atomId) => {
@@ -219,6 +252,14 @@ function notifyChanged(restruct: ReStruct, atoms?: number[], bonds?: number[]) {
     bonds.forEach((bondId) => {
       if (typeof reBonds.get(bondId) !== 'undefined') {
         restruct.markBond(bondId, 1);
+      }
+    });
+  }
+
+  if (rgroupAttachmentPoints) {
+    rgroupAttachmentPoints.forEach((rgroupAPid) => {
+      if (typeof reRgroupAttachmentPoints.get(rgroupAPid) !== 'undefined') {
+        restruct.markRgroupAttachmentPoint(rgroupAPid, 1);
       }
     });
   }

@@ -40,10 +40,14 @@ export abstract class BaseMode {
     const ModeConstructor = modesMap[modeName];
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo);
+    editor.mode.initialize(true, isUndo, false);
   }
 
-  public initialize(needRemoveSelection = true, _isUndo = false) {
+  public initialize(
+    needRemoveSelection = true,
+    _isUndo = false,
+    _needReArrangeChains = false,
+  ) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 

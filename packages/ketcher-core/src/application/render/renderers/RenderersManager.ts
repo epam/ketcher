@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import {
   PeptideRenderer,
@@ -35,6 +35,7 @@ import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { StructureBbox } from 'application/render/renderers/types';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -492,7 +493,7 @@ export class RenderersManager {
     }
   }
 
-  public static getRenderedStructuresBbox() {
+  public static getRenderedStructuresBbox(): StructureBbox {
     let left;
     let right;
     let top;
@@ -502,12 +503,19 @@ export class RenderersManager {
     editor.drawingEntitiesManager.monomers.forEach((monomer) => {
       const monomerPosition = monomer.renderer?.scaledMonomerPosition;
 
-      assert(monomerPosition);
+      if (!monomerPosition || !monomer.renderer) {
+        return;
+      }
 
-      left = left ? Math.min(left, monomerPosition.x) : monomerPosition.x;
-      right = right ? Math.max(right, monomerPosition.x) : monomerPosition.x;
-      top = top ? Math.min(top, monomerPosition.y) : monomerPosition.y;
-      bottom = bottom ? Math.max(bottom, monomerPosition.y) : monomerPosition.y;
+      const monomerLeft = monomerPosition.x - monomer.renderer.width / 2;
+      const monomerRight = monomerPosition.x + monomer.renderer.width / 2;
+      const monomerTop = monomerPosition.y - monomer.renderer.height / 2;
+      const monomerBottom = monomerPosition.y + monomer.renderer.height / 2;
+
+      left = left ? Math.min(left, monomerLeft) : monomerLeft;
+      right = right ? Math.max(right, monomerRight) : monomerRight;
+      top = top ? Math.min(top, monomerTop) : monomerTop;
+      bottom = bottom ? Math.max(bottom, monomerBottom) : monomerBottom;
     });
     return {
       left,

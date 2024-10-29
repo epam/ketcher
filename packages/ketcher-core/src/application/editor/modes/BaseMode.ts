@@ -152,23 +152,40 @@ export abstract class BaseMode {
   }
 
   async onPaste(event: ClipboardEvent) {
-    if (!this.checkIfTargetIsInput(event)) {
-      if (isClipboardAPIAvailable()) {
-        const isSequenceEditInRNABuilderMode =
-          CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    if (this.checkIfTargetIsInput(event)) {
+      return;
+    }
+    const editor = CoreEditor.provideEditorInstance();
+    const isCanvasEmptyBeforePaste =
+      !editor.drawingEntitiesManager.hasDrawingEntities;
 
-        if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
-        this._pasteIsInProgress = true;
+    if (isClipboardAPIAvailable()) {
+      const isSequenceEditInRNABuilderMode =
+        CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
 
-        const clipboardData = await navigator.clipboard.read();
-        this.pasteFromClipboard(clipboardData).finally(() => {
-          this._pasteIsInProgress = false;
-        });
-      } else {
-        const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
-        this.pasteFromClipboard(clipboardData);
-        event.preventDefault();
+      if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
+      this._pasteIsInProgress = true;
+
+      const clipboardData = await navigator.clipboard.read();
+      this.pasteFromClipboard(clipboardData).finally(() => {
+        this._pasteIsInProgress = false;
+
+        if (!isCanvasEmptyBeforePaste) {
+          return;
+        }
+
+        editor.zoomToStructuresIfNeeded();
+      });
+    } else {
+      const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
+      this.pasteFromClipboard(clipboardData);
+      event.preventDefault();
+
+      if (!isCanvasEmptyBeforePaste) {
+        return;
       }
+
+      editor.zoomToStructuresIfNeeded();
     }
   }
 

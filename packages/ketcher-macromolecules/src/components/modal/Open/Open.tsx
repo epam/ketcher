@@ -126,6 +126,8 @@ const addToCanvas = ({
   editor: CoreEditor;
   struct: string;
 }) => {
+  const isCanvasEmptyBeforeOpenStructure =
+    !editor.drawingEntitiesManager.hasDrawingEntities;
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
 
   if (!deserialisedKet) {
@@ -158,6 +160,10 @@ const addToCanvas = ({
       mode: ModeTypes.snake,
       mergeWithLatestHistoryCommand: true,
     });
+  }
+
+  if (isCanvasEmptyBeforeOpenStructure) {
+    editor.zoomToStructuresIfNeeded();
   }
 };
 
@@ -302,6 +308,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
 
     history.update(modelChanges);
     editor.renderersContainer.update(modelChanges);
+    editor.zoomToStructuresIfNeeded();
 
     onOk({
       struct: structStr,

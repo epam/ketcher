@@ -70,12 +70,16 @@ const FooterSelectorContainer = styled.div({
 const FooterFormatSelector = styled(StyledDropdown)((props) => ({
   width:
     props.currentSelection === 'seq' || props.currentSelection === 'fasta'
-      ? `170px`
+      ? `140px`
       : '180px',
 }));
 
 const FooterSequenceSelector = styled(StyledDropdown)({
   width: '110px',
+});
+
+const FooterPeptideLettersSelector = styled(StyledDropdown)({
+  width: '105px',
 });
 
 const FooterButtonContainer = styled('div')({
@@ -90,7 +94,9 @@ const FooterButton = styled(ActionButton)({
 const KET = 'ket';
 const SEQ = 'seq';
 const RNA = 'rna';
+const PEPTIDE = 'peptide';
 const FASTA = 'fasta';
+const ONE_LETTER = 'one-letter';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -102,9 +108,14 @@ const options: Array<Option> = [
 ];
 
 const additionalOptions: Array<Option> = [
-  { id: 'rna', label: 'RNA' },
+  { id: RNA, label: 'RNA' },
   { id: 'dna', label: 'DNA' },
-  { id: 'peptide', label: 'Peptide' },
+  { id: PEPTIDE, label: 'Peptide' },
+];
+
+const peptideLettersFormatOptions: Array<Option> = [
+  { id: ONE_LETTER, label: '1-letter code' },
+  { id: 'three-letter', label: '3-letter code' },
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
@@ -252,6 +263,8 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   );
   const [formatSelection, setFormatSelection] = useState(KET);
   const [additionalSelection, setAdditionalSelection] = useState(RNA);
+  const [peptideLettersFormatSelection, setPeptideLettersFormatSelection] =
+    useState(ONE_LETTER);
 
   useEffect(() => {
     const splittedFilenameByDot = fileName?.split('.');
@@ -338,6 +351,14 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             customStylesForExpanded={stylesForExpanded}
             key={additionalSelection}
             testId="dropdown-select-type"
+          />
+        ) : null}
+        {formatSelection === SEQ && additionalSelection === PEPTIDE ? (
+          <FooterPeptideLettersSelector
+            options={peptideLettersFormatOptions}
+            currentSelection={peptideLettersFormatSelection}
+            selectionHandler={setPeptideLettersFormatSelection}
+            testId="dropdown-select-peptide-letters-format"
           />
         ) : null}
       </FooterSelectorContainer>

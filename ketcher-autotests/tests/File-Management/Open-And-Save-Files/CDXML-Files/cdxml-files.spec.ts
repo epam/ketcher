@@ -178,7 +178,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       });
 
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back', async ({

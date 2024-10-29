@@ -1,12 +1,13 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, ZoomTool } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 
 export class AtomRenderer extends BaseRenderer {
-  private selectionElement?: D3SvgElementSelection<SVGCircleElement, void>;
+  private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
+  private textElement?: D3SvgElementSelection<SVGTextElement, void>;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -25,7 +26,7 @@ export class AtomRenderer extends BaseRenderer {
     const editor = CoreEditor.provideEditorInstance();
 
     const rootElement = this.canvas
-      .append('g')
+      .insert('g', ':first-child')
       .data([this])
       .attr('pointer-events', 'all')
       .attr(
@@ -56,16 +57,50 @@ export class AtomRenderer extends BaseRenderer {
       .attr('cy', 0);
   }
 
+  private appendSelectionContour() {
+    if (this.labelLength < 2 || !this.isLabelVisible) {
+      return this.rootElement
+        ?.insert('circle', ':first-child')
+        .attr('r', 10)
+        .attr('cx', 0)
+        .attr('cy', 0);
+    } else {
+      const labelBbox = this.textElement?.node()?.getBoundingClientRect();
+      const labelX = labelBbox?.x || 0;
+      const labelWidth = labelBbox?.width || 8;
+      const labelHeight = labelBbox?.height || 8;
+      const canvasBoundingClientRect = ZoomTool.instance.canvasWrapper
+        .node()
+        ?.getBoundingClientRect();
+      const canvasX = canvasBoundingClientRect?.x || 0;
+      const HOVER_PADDING = 4;
+      const HOVER_RECTANGLE_RADIUS = 10;
+
+      return this.rootElement
+        ?.insert('rect', ':first-child')
+        .attr('x', labelX - this.scaledPosition.x - canvasX - HOVER_PADDING)
+        .attr('y', -(labelHeight / 2 + HOVER_PADDING))
+        .attr('width', labelWidth + HOVER_PADDING * 2)
+        .attr('height', labelHeight + HOVER_PADDING * 2)
+        .attr('rx', HOVER_RECTANGLE_RADIUS)
+        .attr('ry', HOVER_RECTANGLE_RADIUS);
+    }
+  }
+
   protected appendHover() {
-    return this.rootElement
-      ?.append('circle')
-      .attr('r', 10)
-      .attr('cx', 0)
-      .attr('cy', 0)
-      .attr('stroke', '#0097a8')
-      .attr('stroke-width', '1.2')
-      .attr('fill', 'none')
-      .attr('opacity', '0');
+    const selectionContourElement = this.appendSelectionContour();
+
+    return (
+      selectionContourElement
+        ?.attr('stroke', '#0097a8')
+        // selectionContourElement is union type here. For some reason for union selection types
+        // ts shows error that first call of attr can return string.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        .attr('stroke-width', '1.2')
+        .attr('fill', 'none')
+        .attr('opacity', '0')
+    );
   }
 
   public showHover() {
@@ -119,6 +154,16 @@ export class AtomRenderer extends BaseRenderer {
     return false;
   }
 
+  public get labelLength() {
+    const { hydrogenAmount } = this.atom.calculateValence();
+
+    if (hydrogenAmount === 0) {
+      return 1;
+    }
+
+    return hydrogenAmount === 1 ? 2 : 3;
+  }
+
   private appendLabel() {
     if (!this.isLabelVisible) {
       return;
@@ -147,34 +192,40 @@ export class AtomRenderer extends BaseRenderer {
     }
 
     if (hydrogenAmount > 1) {
-      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 5);
+      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
     }
 
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
         .text(this.atom.label)
-        .attr('dy', hydrogenAmount > 1 ? -5 : 0);
+        .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
-    textElement?.attr(
-      'text-anchor',
-      shouldHydrogenBeOnLeft ? 'end' : hydrogenAmount > 0 ? 'start' : 'middle',
-    );
+    textElement
+      ?.attr(
+        'text-anchor',
+        shouldHydrogenBeOnLeft
+          ? 'end'
+          : hydrogenAmount > 0
+          ? 'start'
+          : 'middle',
+      )
+      .attr('x', shouldHydrogenBeOnLeft ? 5 : hydrogenAmount > 0 ? -5 : 0);
 
     return textElement;
   }
 
   public appendSelection() {
-    if (this.selectionElement) {
-      this.selectionElement.attr('cx', this.center.x).attr('cy', this.center.y);
-    } else {
-      this.selectionElement = this.canvas
-        ?.insert('circle', ':first-child')
-        .attr('r', '13px')
-        .attr('cx', this.center.x)
-        .attr('cy', this.center.y)
-        .attr('fill', '#57FF8F')
+    if (!this.selectionElement) {
+      const selectionContourElement = this.appendSelectionContour();
+
+      this.selectionElement = selectionContourElement
+        ?.attr('fill', '#57FF8F')
+        // selectionContourElement is union type here. For some reason for union selection types
+        // ts shows error that first call of attr can return string.
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         .attr('class', 'dynamic-element');
     }
   }
@@ -207,8 +258,8 @@ export class AtomRenderer extends BaseRenderer {
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
+    this.textElement = this.appendLabel();
     this.hoverElement = this.appendHover();
-    this.appendLabel();
     this.drawSelection();
   }
 

@@ -6,7 +6,6 @@ import { Bond as MicromoleculesBond } from 'domain/entities/bond';
 import { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { radicalElectrons } from 'domain/entities/atom';
 
 export class Atom extends DrawingEntity {
   public bonds: Bond[] = [];

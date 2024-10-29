@@ -7,7 +7,6 @@ import {
   PolymerBondDeleteOperation,
 } from 'application/editor/operations/polymerBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import {
   DrawingEntityHoverOperation,
   DrawingEntityMoveOperation,
@@ -135,7 +134,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should select drawing entity', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const drawingEntity = new Peptide(peptideMonomerItem) as DrawingEntity;
+    const drawingEntity = new Peptide(peptideMonomerItem);
     const command = drawingEntitiesManager.selectDrawingEntity(drawingEntity);
     expect(drawingEntity.selected).toBeTruthy();
     expect(command.operations.length).toEqual(1);

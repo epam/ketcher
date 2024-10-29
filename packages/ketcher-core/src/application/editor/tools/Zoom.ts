@@ -21,6 +21,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp, isNumber } from 'lodash';
 import { notifyRenderComplete } from 'application/render/internal';
+import { StructureBbox } from 'application/render/renderers/types';
 
 export enum SCROLL_POSITION {
   CENTER = 'CENTER',
@@ -418,12 +419,39 @@ export class ZoomTool implements BaseTool {
     );
   }
 
+  public zoomStructureToFitHalfOfCanvas(structureBbox: StructureBbox) {
+    const MAX_AUTOSCALE = 2;
+    const OFFSET_FROM_CANVAS_BORDER = 2;
+    const canvasWrapperSize = this.canvasWrapperSize;
+
+    if (structureBbox.width < canvasWrapperSize.width / 2) {
+      const scale = canvasWrapperSize.width / 2 / structureBbox.width;
+      this.zoomTo(Math.min(scale, MAX_AUTOSCALE));
+      this.scrollTo(
+        new Vec2(structureBbox.left, structureBbox.top),
+        false,
+        OFFSET_FROM_CANVAS_BORDER,
+        OFFSET_FROM_CANVAS_BORDER,
+      );
+    }
+  }
+
   private get canvasWrapperHeight() {
     // TODO create class for Canvas and move this getter there
     const canvasWrapperBbox = this.canvasWrapper
       .node()
       ?.getBoundingClientRect();
     return canvasWrapperBbox?.height || 0;
+  }
+
+  private get canvasWrapperSize() {
+    const canvasWrapperBbox = this.canvasWrapper
+      .node()
+      ?.getBoundingClientRect();
+    return {
+      width: canvasWrapperBbox?.width || 0,
+      height: canvasWrapperBbox?.height || 0,
+    };
   }
 }
 

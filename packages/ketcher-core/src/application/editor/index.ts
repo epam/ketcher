@@ -34,3 +34,4 @@ export * from './modes';
 export * from './editorEvents';
 export * from './editorSettings';
 export * from './tools';
+export * from 'application/editor/tools/types';

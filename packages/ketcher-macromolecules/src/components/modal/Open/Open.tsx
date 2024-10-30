@@ -50,6 +50,7 @@ const OpenModal = styled(Modal)(
   ({ modalWidth }) => `
     .MuiPaper-root {
       width: ${modalWidth};
+      max-width: ${modalWidth};
     }`,
 );
 
@@ -67,19 +68,18 @@ const FooterSelectorContainer = styled.div({
   fontSize: '12px',
 });
 
-const FooterFormatSelector = styled(StyledDropdown)((props) => ({
-  width:
-    props.currentSelection === 'seq' || props.currentSelection === 'fasta'
-      ? `140px`
-      : '180px',
+const FooterFormatSelector = styled(StyledDropdown)(() => ({
+  width: '140px',
 }));
 
 const FooterSequenceSelector = styled(StyledDropdown)({
-  width: '110px',
+  width: '76px',
+  marginLeft: '8px',
 });
 
 const FooterPeptideLettersSelector = styled(StyledDropdown)({
   width: '105px',
+  marginLeft: '8px',
 });
 
 const FooterButtonContainer = styled('div')({
@@ -97,6 +97,7 @@ const RNA = 'rna';
 const PEPTIDE = 'peptide';
 const FASTA = 'fasta';
 const ONE_LETTER = 'one-letter';
+const THREE_LETTER = 'three-letter';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -115,7 +116,7 @@ const additionalOptions: Array<Option> = [
 
 const peptideLettersFormatOptions: Array<Option> = [
   { id: ONE_LETTER, label: '1-letter code' },
-  { id: 'three-letter', label: '3-letter code' },
+  { id: THREE_LETTER, label: '3-letter code' },
 ];
 
 const inputFormats = macromoleculesFilesInputFormats;
@@ -183,6 +184,7 @@ const onOk = async ({
   struct,
   formatSelection,
   additionalSelection,
+  peptideLettersFormatSelection,
   onCloseCallback,
   setIsLoading,
   dispatch,
@@ -190,6 +192,7 @@ const onOk = async ({
   struct: string;
   formatSelection: string;
   additionalSelection: string;
+  peptideLettersFormatSelection: string;
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
   dispatch: Dispatch<AnyAction>;
@@ -220,9 +223,14 @@ const onOk = async ({
       showParsingError('Error during file parsing.');
     }
     return;
-  } else if (isSeq || isFasta) {
+  } else if (
+    isFasta ||
+    (isSeq && peptideLettersFormatSelection !== THREE_LETTER)
+  ) {
     inputFormat = inputFormats[formatSelection][additionalSelection];
     fileData = fileData.toUpperCase();
+  } else if (isSeq && peptideLettersFormatSelection === THREE_LETTER) {
+    inputFormat = inputFormats.seq.peptide3Letter;
   } else {
     inputFormat = inputFormats[formatSelection];
   }
@@ -303,11 +311,12 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     opener?.chosenOpener(files[0]).then(onLoad, onError);
   };
 
-  const copyHandler = () => {
+  const addToCanvasHandler = () => {
     onOk({
       struct: structStr,
       formatSelection,
       additionalSelection,
+      peptideLettersFormatSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
@@ -327,6 +336,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       struct: structStr,
       formatSelection,
       additionalSelection,
+      peptideLettersFormatSelection,
       onCloseCallback,
       setIsLoading,
       dispatch,
@@ -373,7 +383,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
         <FooterButton
           key="copyButton"
           disabled={!structStr}
-          clickHandler={copyHandler}
+          clickHandler={addToCanvasHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
           data-testid="add-to-canvas-button"
@@ -387,7 +397,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       isOpen={isModalOpen}
       title="Open Structure"
       onClose={onCloseCallback}
-      modalWidth={currentState === MODAL_STATES.textEditor ? '600px' : ''}
+      modalWidth={currentState === MODAL_STATES.textEditor ? '620px' : ''}
     >
       <Modal.Content>
         <OpenFileWrapper currentState={currentState}>

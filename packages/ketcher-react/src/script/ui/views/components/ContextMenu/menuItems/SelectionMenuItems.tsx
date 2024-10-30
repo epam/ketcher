@@ -32,10 +32,13 @@ const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   const highlightBondWithColor = (color: string) => {
     const bondIds = props.propsFromTrigger?.bondIds || [];
     const atomIds = props.propsFromTrigger?.atomIds || [];
+    const rgroupAttachmentPoints =
+      props.propsFromTrigger?.rgroupAttachmentPoints || [];
 
     editor.highlights.create({
       atoms: atomIds,
       bonds: bondIds,
+      rgroupAttachmentPoints,
       color: color === '' ? 'transparent' : color,
     });
   };

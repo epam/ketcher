@@ -8,13 +8,14 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  FlexMode,
   LayoutMode,
   modesMap,
   SequenceMode,
   SnakeMode,
 } from 'application/editor/modes/';
 import { BaseMode } from 'application/editor/modes/internal';
-import { ToolName, toolsMap } from 'application/editor/tools';
+import { toolsMap } from 'application/editor/tools';
 import { PolymerBond as PolymerBondTool } from 'application/editor/tools/Bond';
 import {
   BaseTool,
@@ -53,6 +54,7 @@ import ZoomTool from './tools/Zoom';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { ToolName } from 'application/editor/tools/types';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -391,9 +393,10 @@ export class CoreEditor {
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
+    const hasModeChanged = this.mode.modeName !== mode;
     this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
-    const command = this.mode.initialize();
+    const command = this.mode.initialize(true, false, !hasModeChanged);
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,
@@ -639,5 +642,24 @@ export class CoreEditor {
       this.renderersContainer.update(modelChanges);
       this.drawingEntitiesManager.applyMonomersSequenceLayout();
     }
+  }
+
+  public isCurrentModeWithAutozoom(): boolean {
+    return this.mode instanceof FlexMode || this.mode instanceof SnakeMode;
+  }
+
+  public zoomToStructuresIfNeeded() {
+    if (
+      // Temporary solution to disable autozoom for the polymer editor in e2e tests
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      window._ketcher_isAutozoomDisabled ||
+      !this.isCurrentModeWithAutozoom()
+    ) {
+      return;
+    }
+    const structureBbox = RenderersManager.getRenderedStructuresBbox();
+
+    ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
   }
 }

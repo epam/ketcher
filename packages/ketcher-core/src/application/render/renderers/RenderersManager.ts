@@ -1,4 +1,4 @@
-import { CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import {
   PeptideRenderer,

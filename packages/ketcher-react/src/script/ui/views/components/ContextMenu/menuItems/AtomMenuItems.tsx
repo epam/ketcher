@@ -174,9 +174,9 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   const highlightAtomWithColor = (color: string) => {
     const atomIds = props.propsFromTrigger?.atomIds || [];
-
     editor.highlights.create({
       atoms: atomIds,
+      rgroupAttachmentPoints: [],
       bonds: [],
       color: color === '' ? 'transparent' : color,
     });
@@ -184,9 +184,12 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
-      <Item {...props} onClick={handleDelete}>
-        Delete
-      </Item>
+      <>
+        <HighlightMenu onHighlight={highlightAtomWithColor} />
+        <Item {...props} onClick={handleDelete}>
+          Delete
+        </Item>
+      </>
     );
   }
 

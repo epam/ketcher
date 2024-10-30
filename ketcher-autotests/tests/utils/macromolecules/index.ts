@@ -22,6 +22,11 @@ export async function turnOnMacromoleculesEditor(page: Page) {
   await page.getByTestId(MACROMOLECULES_MODE).click();
   await expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
   await selectFlexLayoutModeTool(page);
+  await page.evaluate(() => {
+    // Temporary solution to disable autozoom for the polymer editor in e2e tests
+    // @ts-ignore
+    window._ketcher_isAutozoomDisabled = true;
+  });
 }
 
 export async function turnOnMicromoleculesEditor(page: Page) {

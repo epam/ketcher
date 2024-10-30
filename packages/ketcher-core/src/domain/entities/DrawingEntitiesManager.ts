@@ -146,13 +146,13 @@ export class DrawingEntitiesManager {
     return selectedEntities;
   }
 
-  get selectedEntities() {
+  public get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
     );
   }
 
-  get allEntities() {
+  public get allEntities() {
     return [
       ...(this.monomers as Map<number, DrawingEntity>),
       ...(this.polymerBonds as Map<number, DrawingEntity>),
@@ -160,6 +160,10 @@ export class DrawingEntitiesManager {
       ...(this.bonds as Map<number, DrawingEntity>),
       ...(this.atoms as Map<number, DrawingEntity>),
     ];
+  }
+
+  public get hasDrawingEntities() {
+    return this.allEntities.length !== 0;
   }
 
   public get allBondsToMonomers() {

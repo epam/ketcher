@@ -62,6 +62,7 @@ const BondMenuItems: FC<MenuItemsProps<BondsContextMenuProps>> = (props) => {
     editor.highlights.create({
       atoms: [],
       bonds: bondIds,
+      rgroupAttachmentPoints: [],
       color: color === '' ? 'transparent' : color,
     });
   };

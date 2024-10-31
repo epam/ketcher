@@ -533,6 +533,11 @@ class Editor implements KetcherEditor {
     };
   }
 
+  clearHistoryStack() {
+    this.historyStack = [];
+    this.historyPtr = 0;
+  }
+
   undo() {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');

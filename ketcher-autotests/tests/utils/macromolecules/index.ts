@@ -67,6 +67,7 @@ export async function chooseFileFormat(
     | 'MDL Molfile V3000'
     | 'FASTA'
     | 'Sequence'
+    | 'Sequence (1-letter code)'
     | 'IDT'
     | 'HELM'
     | 'SVG Document',

@@ -183,7 +183,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await page
       .getByTestId('dropdown-select')
       .getByRole('combobox')
@@ -204,7 +204,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
 
     await takeEditorScreenshot(page);
   });
@@ -215,7 +215,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
 
     await takeEditorScreenshot(page);
   });
@@ -282,7 +282,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
@@ -311,7 +311,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -348,7 +348,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
     test.fixme(
@@ -385,7 +385,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -421,7 +421,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
@@ -450,7 +450,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -486,7 +486,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
@@ -515,7 +515,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -551,7 +551,7 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence');
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
     await pressButton(page, 'Cancel');
@@ -580,7 +580,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence');
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
       await takeEditorScreenshot(page);
 
       test.fixme(

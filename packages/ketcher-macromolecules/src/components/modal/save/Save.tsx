@@ -49,7 +49,8 @@ import { openErrorModal } from 'state/modal';
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'sequence', label: 'Sequence' },
+  { id: 'sequence', label: 'Sequence (1-letter code)' },
+  { id: 'sequence-3-letter', label: 'Sequence (3-letter code)' },
   { id: 'fasta', label: 'FASTA' },
   { id: 'idt', label: 'IDT' },
   { id: 'svg', label: 'SVG Document' },
@@ -60,6 +61,7 @@ const formatDetector = {
   mol: ChemicalMimeType.Mol,
   fasta: ChemicalMimeType.FASTA,
   sequence: ChemicalMimeType.SEQUENCE,
+  'sequence-3-letter': ChemicalMimeType.PeptideSequenceThreeLetter,
   idt: ChemicalMimeType.IDT,
   helm: ChemicalMimeType.HELM,
 };

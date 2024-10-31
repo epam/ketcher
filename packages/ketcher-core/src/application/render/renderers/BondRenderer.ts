@@ -135,7 +135,7 @@ export class BondRenderer extends BaseRenderer {
     if (atom.renderer?.isLabelVisible) {
       return position.addScaled(
         halfEdge.direction,
-        BOND_WIDTH * 3 + this.bond.firstAtom.label.length * 8,
+        BOND_WIDTH * 3 + (this.bond.firstAtom.renderer?.labelLength || 0) * 4,
       );
     }
 
@@ -198,7 +198,7 @@ export class BondRenderer extends BaseRenderer {
 
   private appendRootElement() {
     return this.canvas
-      .insert('g', ':first-child')
+      .append('g')
       .data([this])
       .attr(
         'transform',

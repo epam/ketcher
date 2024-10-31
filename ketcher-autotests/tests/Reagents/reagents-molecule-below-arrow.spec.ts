@@ -13,17 +13,21 @@ test.describe('Reagents molecule below arrow', () => {
     await waitForPageInit(page);
   });
 
-  test('Open File RXN v3000 with reagent HCl below arrow', async ({ page }) => {
-    /*
+  test.fail(
+    'Open File RXN v3000 with reagent HCl below arrow',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent HCl below the arrow
+      We have a bug https://github.com/epam/Indigo/issues/2591
     */
-    await openFileAndAddToCanvas(
-      'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
     /*

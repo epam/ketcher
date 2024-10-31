@@ -26,6 +26,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     | D3SvgElementSelection<SVGUseElement, void>
     | D3SvgElementSelection<SVGGElement, void>
     | D3SvgElementSelection<SVGCircleElement, void>
+    | D3SvgElementSelection<SVGRectElement, void>
     | D3SvgElementSelection<SVGPathElement, void>;
 
   protected hoverAreaElement?: D3SvgElementSelection<
@@ -90,6 +91,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     | D3SvgElementSelection<SVGGElement, void>
     | D3SvgElementSelection<SVGUseElement, void>
     | D3SvgElementSelection<SVGCircleElement, void>
+    | D3SvgElementSelection<SVGRectElement, void>
     | D3SvgElementSelection<SVGPathElement, void>
     | void;
 

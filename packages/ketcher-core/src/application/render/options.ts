@@ -66,12 +66,12 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     lineWidth: scaleFactorMicro / 20,
     bondSpace: options.bondSpacingInPx || scaleFactorMicro / 7,
     stereoBond: options.stereoBondWidthInPx || scaleFactorMicro / 7,
-    subFontSize,
+    subFontSize: options.fontszsubInPx || subFontSize,
     font: '30px Arial',
-    fontszInPx: labelFontSize,
-    fontszsubInPx: subFontSize,
-    fontRLabel: labelFontSize * 1.2,
-    fontRLogic: labelFontSize * 0.7,
+    fontszInPx: options.fontszInPx || labelFontSize,
+    fontszsubInPx: options.fontszsubInPx || subFontSize,
+    fontRLabel: (options.fontszInPx || labelFontSize) * 1.2,
+    fontRLogic: (options.fontszInPx || labelFontSize) * 0.7,
 
     radiusScaleFactor: 0.38,
 
@@ -122,7 +122,7 @@ function defaultOptions(renderOptions: RenderOptions): RenderOptions {
     movingStyle: {
       cursor: 'all-scroll',
     },
-    atomSelectionPlateRadius: labelFontSize,
+    atomSelectionPlateRadius: options.fontszInPx || labelFontSize,
     contractedFunctionalGroupSize: 50,
 
     previewOpacity: 0.5,

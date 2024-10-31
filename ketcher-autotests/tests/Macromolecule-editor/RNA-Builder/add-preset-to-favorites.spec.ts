@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { waitForPageInit } from '@utils/common';
-import { takeMonomerLibraryScreenshot } from '@utils';
+import { takeMonomerLibraryScreenshot, waitForPageInit } from '@utils';
 import { gotoRNA } from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Macromolecules add RNA presets to Favorites', () => {

@@ -235,12 +235,12 @@ test.describe('Import-Saving .seq Files', () => {
       await selectTopPanelButton(TopPanelButton.Open, page);
       await page.getByTestId('paste-from-clipboard-button').click();
       await page.getByTestId('open-structure-textarea').fill(Rna);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      await chooseFileFormat(page, 'Sequence');
       await page.getByTestId('add-to-canvas-button').click();
       await selectTopPanelButton(TopPanelButton.Open, page);
       await page.getByTestId('paste-from-clipboard-button').click();
       await page.getByTestId('open-structure-textarea').fill(Dna);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      await chooseFileFormat(page, 'Sequence');
       await page.getByTestId('add-to-canvas-button').click();
       await takeEditorScreenshot(page);
     },

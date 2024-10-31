@@ -1,0 +1,67 @@
+name: Test GH Actions
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+  pull_request:
+    branches:
+      - master
+      - 'release/**'
+env:
+  # Warnings breaks build on CI
+  # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://host.docker.internal:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
+  ENABLE_POLYMER_EDITOR: true
+  USE_SEPARATE_INDIGO_WASM: true
+jobs:
+  playwright_tests_1:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ]
+        shardTotal: [ 20 ]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.0
+      - name: Install dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Run example in standalone mode
+        run: cd example/ && nohup npm run serve:standalone &
+      - name: Create env file
+        run: |
+          cd ketcher-autotests
+          echo "DOCKER=true" > .env
+          echo "KETCHER_URL=$KETCHER_URL" >> .env
+          echo "MODE=$MODE" >> .env
+          echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
+          echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
+          echo "ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR" >> .env
+          echo "USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM" >> .env
+      - name: Build autotests for docker
+        run: cd ketcher-autotests && npm run docker:build
+      - name: Run playwright tests in docker
+        run: cd ketcher-autotests && npm run docker:test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - uses: actions/upload-artifact@v3
+        # run even if previous steps fails
+        if: always()
+        with:
+          name: playwright-report
+          path: ketcher-autotests/playwright-report/
+          retention-days: 5
+      - name: Remove unused docker images
+        if: always()
+        run: docker system prune -f

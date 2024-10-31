@@ -23,6 +23,7 @@ import { ChevronIcon } from './styledIcons';
 
 const StyledFormControl = styled(FormControl)`
   width: 100%;
+  padding: 0 8px;
 
   & label {
     font-size: 12px;
@@ -34,7 +35,7 @@ const DropDownSelect = styled(Select)`
   height: 24px;
   border: 1px solid #5b6077;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
 
   ${({ open }) =>
     open &&
@@ -45,15 +46,12 @@ const DropDownSelect = styled(Select)`
     `}
 
   & .MuiSelect-select {
-    display: flex;
-    align-items: center;
-    padding: 0 20px 0 8px;
-    padding-right: 20px !important; // override MUI styles
+    padding: 0 24px 0 8px;
     height: 100%;
   }
 
   & span {
-    font-size: 12px;
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.medium}`}
   }
 
   & .MuiOutlinedInput-notchedOutline {

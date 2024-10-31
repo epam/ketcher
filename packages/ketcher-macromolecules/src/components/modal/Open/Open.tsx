@@ -33,7 +33,11 @@ import {
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
-import { Loader, StyledDropdown, stylesForExpanded } from '../save/Save.styles';
+import {
+  Loader,
+  StyledDropdown as SaveDropdown,
+  stylesForExpanded,
+} from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
 import { openErrorModal } from 'state/modal';
@@ -66,6 +70,23 @@ const FooterSelectorContainer = styled.div({
   display: 'flex',
   height: '24px',
   fontSize: '12px',
+});
+
+const StyledDropdown = styled(SaveDropdown)({
+  padding: 0,
+  fontSize: '12px',
+
+  '& .MuiSelect-select': {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 20px 0 8px',
+    paddingRight: '20px !important', // override MUI styles
+    height: '100%',
+  },
+
+  '& span': {
+    fontSize: '12px',
+  },
 });
 
 const FooterFormatSelector = styled(StyledDropdown)(() => ({

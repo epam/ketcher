@@ -168,7 +168,8 @@ test.describe('Import-Saving .idt Files', () => {
     const expectedValues = [
       'Ket',
       'MDL Molfile V3000',
-      'Sequence',
+      'Sequence (1-letter code)',
+      'Sequence (3-letter code)',
       'FASTA',
       'IDT',
       'SVG Document',
@@ -979,7 +980,10 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  const testFormats: Array<'FASTA' | 'Sequence'> = ['FASTA', 'Sequence'];
+  const testFormats: Array<'FASTA' | 'Sequence (1-letter code)'> = [
+    'FASTA',
+    'Sequence (1-letter code)',
+  ];
 
   for (const format of testFormats) {
     test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format}`, async () => {

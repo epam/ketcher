@@ -57,6 +57,7 @@ function setupEditor(editor, props, oldProps = {}) {
     }
   });
 
+  editor.clearHistoryStack();
   editor.render.unobserveCanvasResize();
   editor.render.observeCanvasResize();
 }

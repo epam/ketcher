@@ -398,7 +398,7 @@ function fromBondType(type, stereo) {
 }
 
 export function fromSgroup(ssgroup) {
-  const type = ssgroup.type || 'DAT';
+  const type = ssgroup.type || 'SRU';
   const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
   if (absolute === false && attached === false)
@@ -419,6 +419,11 @@ export function fromSgroup(ssgroup) {
             fieldName || getSdataDefault(sdataCustomSchema, 'fieldName'),
           fieldValue:
             fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue'),
+        }
+      : type === 'SRU'
+      ? {
+          subscript: 'n',
+          connectivity: 'ht',
         }
       : {};
 

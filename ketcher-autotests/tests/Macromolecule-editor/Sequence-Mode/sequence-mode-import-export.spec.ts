@@ -286,7 +286,8 @@ test.describe('Import/export sequence:', () => {
     const expectedValues = [
       'Ket',
       'MDL Molfile V3000',
-      'Sequence',
+      'Sequence (1-letter code)',
+      'Sequence (3-letter code)',
       'FASTA',
       'IDT',
     ];

@@ -10,6 +10,7 @@ import {
   openFile,
   pressButton,
   openFileAndAddToCanvas,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
@@ -27,6 +28,7 @@ test.describe('Cascade Reactions', () => {
   test.afterEach(async ({ context: _ }) => {
     await closeErrorAndInfoModals(page);
     await selectClearCanvasTool(page);
+    await resetZoomLevelToDefault(page);
   });
 
   test.afterAll(async ({ browser }) => {

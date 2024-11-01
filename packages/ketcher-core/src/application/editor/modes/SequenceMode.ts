@@ -1095,6 +1095,46 @@ export class SequenceMode extends BaseMode {
     const hasNextNodeInChain =
       selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
+    let newSequenceNode;
+
+    if (selection.node instanceof LinkerSequenceNode) {
+      const addedMonomers: BaseMonomer[] = [];
+
+      selection.node.monomers.forEach((_, monomerIndex) => {
+        const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+          monomerItem,
+          position,
+        );
+        const newMonomer = monomerAddCommand.operations[0]
+          .monomer as BaseMonomer;
+
+        modelChanges.merge(monomerAddCommand);
+        addedMonomers.push(newMonomer);
+
+        if (monomerIndex > 0) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.createPolymerBond(
+              addedMonomers[monomerIndex - 1],
+              newMonomer,
+              AttachmentPointName.R2,
+              AttachmentPointName.R1,
+            ),
+          );
+        }
+      });
+
+      newSequenceNode = new LinkerSequenceNode(addedMonomers[0]);
+    } else {
+      const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
+        monomerItem,
+        position,
+      );
+      const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
+      modelChanges.merge(monomerAddCommand);
+
+      newSequenceNode = new MonomerSequenceNode(newMonomer);
+    }
+
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
       monomer.forEachBond((polymerBond) => {
@@ -1104,17 +1144,9 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const monomerAddCommand = editor.drawingEntitiesManager.addMonomer(
-      monomerItem,
-      position,
-    );
-    const newMonomer = monomerAddCommand.operations[0].monomer as BaseMonomer;
-    const newMonomerSequenceNode = new MonomerSequenceNode(newMonomer);
-
-    modelChanges.merge(monomerAddCommand);
     modelChanges.merge(
       this.insertNewSequenceFragment(
-        newMonomerSequenceNode,
+        newSequenceNode,
         nextNode || null,
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
@@ -1131,7 +1163,7 @@ export class SequenceMode extends BaseMode {
       } = sideConnectionData;
       if (
         !this.isConnectionPossible(
-          newMonomer,
+          newSequenceNode.monomer,
           firstMonomerAttachmentPointName,
           secondMonomer,
           secondMonomerAttachmentPointName,
@@ -1142,7 +1174,7 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.merge(
         editor.drawingEntitiesManager.createPolymerBond(
-          newMonomer,
+          newSequenceNode.monomer,
           secondMonomer,
           firstMonomerAttachmentPointName,
           secondMonomerAttachmentPointName,
@@ -1150,7 +1182,7 @@ export class SequenceMode extends BaseMode {
       );
     });
 
-    return newMonomerSequenceNode;
+    return newSequenceNode;
   }
 
   private replaceSelectionsWithMonomer(
@@ -1488,6 +1520,43 @@ export class SequenceMode extends BaseMode {
       selection.node.lastMonomerInNode.attachmentPointsToBonds.R2;
 
     const sideChainConnections = this.preserveSideChainConnections(selection);
+    const newPresetNodes: Array<Nucleoside | Nucleotide | LinkerSequenceNode> =
+      [];
+
+    if (selection.node instanceof LinkerSequenceNode) {
+      selection.node.monomers.forEach((_, monomerIndex) => {
+        const newPresetNode = this.createRnaPresetNode(preset, position);
+
+        assert(newPresetNode);
+
+        const rnaPresetAddModelChanges =
+          editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+        modelChanges.merge(rnaPresetAddModelChanges);
+        newPresetNodes.push(newPresetNode);
+
+        if (monomerIndex > 0) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.createPolymerBond(
+              newPresetNodes[monomerIndex - 1].lastMonomerInNode,
+              newPresetNode.firstMonomerInNode,
+              AttachmentPointName.R2,
+              AttachmentPointName.R1,
+            ),
+          );
+        }
+      });
+    } else {
+      const newPresetNode = this.createRnaPresetNode(preset, position);
+
+      assert(newPresetNode);
+
+      const rnaPresetAddModelChanges =
+        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+      modelChanges.merge(rnaPresetAddModelChanges);
+      newPresetNodes.push(newPresetNode);
+    }
 
     selection.node.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -1498,31 +1567,44 @@ export class SequenceMode extends BaseMode {
       });
     });
 
-    const newPresetNode = this.createRnaPresetNode(preset, position);
-
-    assert(newPresetNode);
-
-    const rnaPresetAddModelChanges =
-      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
-
-    modelChanges.merge(rnaPresetAddModelChanges);
-    modelChanges.merge(
-      this.insertNewSequenceFragment(
-        newPresetNode,
-        nextNode || null,
-        previousSelectionNode,
-        Boolean(hasPreviousNodeInChain),
-        Boolean(hasNextNodeInChain),
-      ),
-    );
+    if (newPresetNodes.length > 1) {
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNodes[0],
+          null,
+          previousSelectionNode,
+          Boolean(hasPreviousNodeInChain),
+          Boolean(hasNextNodeInChain),
+        ),
+      );
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNodes[newPresetNodes.length - 1],
+          nextNode,
+          undefined,
+          Boolean(hasPreviousNodeInChain),
+          Boolean(hasNextNodeInChain),
+        ),
+      );
+    } else {
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPresetNodes[0],
+          nextNode || null,
+          previousSelectionNode,
+          Boolean(hasPreviousNodeInChain),
+          Boolean(hasNextNodeInChain),
+        ),
+      );
+    }
 
     // TODO: This check breaks some side chains (e.g. Sugar-to-Sugar for Nucleotides), need another way of preserving connections
     const monomerForSideConnections =
-      newPresetNode instanceof Nucleotide
-        ? newPresetNode.phosphate
-        : newPresetNode instanceof Nucleoside
-        ? newPresetNode.sugar
-        : newPresetNode.monomer;
+      newPresetNodes[0] instanceof Nucleotide
+        ? newPresetNodes[0].phosphate
+        : newPresetNodes[0] instanceof Nucleoside
+        ? newPresetNodes[0].sugar
+        : newPresetNodes[0].monomer;
 
     sideChainConnections?.forEach((sideConnectionData) => {
       const {
@@ -1551,7 +1633,7 @@ export class SequenceMode extends BaseMode {
       );
     });
 
-    return newPresetNode;
+    return newPresetNodes.at(-1);
   }
 
   private replaceSelectionsWithPreset(

@@ -107,6 +107,7 @@ const App = () => {
                 externalZoomScale: EXTERNAL_ZOOM_SCALE,
               }),
             );
+            ketcher.editor.clearHistory();
             window.ketcher = ketcher;
             window.parent.postMessage(
               {

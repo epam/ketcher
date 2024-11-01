@@ -380,7 +380,7 @@ function showValue(
 ): any {
   const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
     font: options.font,
-    'font-size': options.fontszInPx,
+    'font-size': options.fontszsubInPx,
   });
   const box = text.getBBox();
   let rect = paper.rect(

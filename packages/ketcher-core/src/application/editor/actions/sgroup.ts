@@ -196,7 +196,10 @@ export function setExpandMonomerSGroup(
       atom.a.neighbors.forEach((halfBondId) => {
         const neighborAtomId =
           restruct.molecule?.halfBonds?.get(halfBondId)?.end;
-        if (!neighborAtomId || sGroupAtoms.includes(neighborAtomId)) {
+        if (
+          neighborAtomId === undefined ||
+          sGroupAtoms.includes(neighborAtomId)
+        ) {
           return;
         }
 

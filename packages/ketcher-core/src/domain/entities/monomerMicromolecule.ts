@@ -24,6 +24,10 @@ export class MonomerMicromolecule extends SGroup {
     this.data.attached = false;
   }
 
+  public get isMonomer() {
+    return true;
+  }
+
   public override getContractedPosition(struct: Struct) {
     assert(this.pp);
     const sgroupContractedPosition = super.getContractedPosition(struct);

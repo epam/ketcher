@@ -22,12 +22,7 @@ import { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
 import { ReStruct } from '../../application/render';
-import {
-  FunctionalGroup,
-  MonomerMicromolecule,
-  Pool,
-  SGroupAttachmentPoint,
-} from 'domain/entities';
+import { FunctionalGroup, Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
@@ -373,6 +368,10 @@ export class SGroup {
     return this.type === SGroup.TYPES.SUP && !this.data.name;
   }
 
+  public get isMonomer() {
+    return false;
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp || !sgroup.bracketBox) return null;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
@@ -510,11 +509,7 @@ export class SGroup {
       ? Object.values(crossBondsPerAtom).flat()
       : null;
     // TODO: Overall cross bonds logic seems unclear and not-correct for s groups in general leading to tilted hover plate
-    if (
-      sGroup instanceof MonomerMicromolecule ||
-      !crossBonds ||
-      crossBonds.length !== 2
-    ) {
+    if (sGroup.isMonomer || !crossBonds || crossBonds.length !== 2) {
       sGroup.bracketDirection = new Vec2(1, 0);
     } else {
       const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol);

@@ -18,6 +18,7 @@ export const waitForSpinnerFinishedWork = async (
 ) => {
   await callback();
   await page.waitForSelector('.loading-spinner', { state: 'detached' });
-  const maxTimeout = 1000;
+  // TODO: It was reduced to a 1000 to make overall tests execution faster. However, it resulted in some tests failing. Make it configurable?
+  const maxTimeout = 3000;
   await waitForRender(page, emptyFunction, maxTimeout);
 };

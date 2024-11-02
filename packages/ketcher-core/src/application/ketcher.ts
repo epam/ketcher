@@ -16,7 +16,12 @@
 
 import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
-import { GenerateImageOptions, StructService } from 'domain/services';
+import {
+  GenerateImageOptions,
+  StructService,
+  CalculateData,
+  type CalculateResult,
+} from 'domain/services';
 
 import { CoreEditor, Editor } from './editor';
 import { Indigo } from 'application/indigo';
@@ -437,6 +442,13 @@ export class Ketcher {
       const ketSerializer = new KetSerializer();
       this.setMolecule(ketSerializer.serialize(struct));
     }, this.eventBus);
+  }
+
+  async calculate(options?: CalculateData): Promise<CalculateResult> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Calculate is not available in macro mode');
+    }
+    return await this._indigo.calculate(this.#editor.struct(), options);
   }
 
   /**

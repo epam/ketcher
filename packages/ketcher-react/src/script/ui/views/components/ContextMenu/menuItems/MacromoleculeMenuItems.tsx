@@ -10,6 +10,17 @@ const MacromoleculeMenuItems = (
 ) => {
   const [action, hidden] = useMonomerExpansionHandlers();
 
+  const multipleMonomersSelected =
+    props?.propsFromTrigger?.functionalGroups &&
+    props.propsFromTrigger.functionalGroups.length > 1;
+
+  const expandText = multipleMonomersSelected
+    ? 'Expand monomers'
+    : 'Expand monomer';
+  const collapseText = multipleMonomersSelected
+    ? 'Collapse monomers'
+    : 'Collapse monomer';
+
   return (
     <>
       <Item
@@ -17,14 +28,14 @@ const MacromoleculeMenuItems = (
         hidden={(params) => hidden(params, true)}
         onClick={(params) => action(params, true)}
       >
-        Expand monomer
+        {expandText}
       </Item>
       <Item
         {...props}
         hidden={(params) => hidden(params, false)}
         onClick={(params) => action(params, false)}
       >
-        Collapse monomer
+        {collapseText}
       </Item>
     </>
   );

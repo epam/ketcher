@@ -24,4 +24,5 @@ export interface IMonomerGroupProps {
   libraryName?: LibraryNameType;
   disabled?: boolean;
   selectedMonomerUniqueKey?: string;
+  isPeptideTab?: boolean;
 }

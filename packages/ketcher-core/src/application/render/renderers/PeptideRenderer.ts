@@ -32,7 +32,40 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       .append('use')
       .data([this])
       .attr('href', PEPTIDE_SYMBOL_ELEMENT_ID)
-      .attr('fill', this.getMonomerColor(theme));
+      .attr('fill', this.getPeptideColor(theme));
+  }
+
+  public get textColor() {
+    const WHITE = 'white';
+    const BLACK = '#333333';
+    const peptideColorsMap: { [key: string]: string } = {
+      D: BLACK,
+      E: WHITE,
+      K: BLACK,
+      H: WHITE,
+      O: WHITE,
+      R: WHITE,
+      Q: BLACK,
+      Y: WHITE,
+      U: BLACK,
+      S: WHITE,
+      C: WHITE,
+      N: WHITE,
+      T: WHITE,
+      L: BLACK,
+      I: WHITE,
+      F: WHITE,
+      A: WHITE,
+      W: BLACK,
+      P: BLACK,
+      G: BLACK,
+      M: BLACK,
+      V: BLACK,
+    };
+
+    const peptideTextColor =
+      peptideColorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode];
+    return peptideTextColor || super.textColor;
   }
 
   show(theme) {

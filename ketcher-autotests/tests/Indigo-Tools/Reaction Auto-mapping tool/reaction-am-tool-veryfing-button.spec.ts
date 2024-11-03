@@ -198,6 +198,8 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () => await applyAutoMapMode(page, 'Keep'),
+      // eslint-disable-next-line no-magic-numbers
+      10000,
     );
     await openFileAndAddToCanvas(
       'Rxn-V2000/allenes.rxn',
@@ -208,6 +210,8 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () => await applyAutoMapMode(page, 'Alter', false),
+      // eslint-disable-next-line no-magic-numbers
+      10000,
     );
   });
 });

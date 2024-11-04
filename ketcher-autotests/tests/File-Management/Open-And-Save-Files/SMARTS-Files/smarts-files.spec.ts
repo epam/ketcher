@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -561,6 +561,7 @@ async function expandMonomer(page: Page, locatorText: string) {
     await page.getByText('Expand monomer').click();
   });
 }
+
 test.describe('Saving expanded monomer to SMARTS: ', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

@@ -75,7 +75,6 @@ import {
   clickOnBond,
   clickOnAtomById,
   clickOnCanvas,
-  delay,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,

@@ -1,12 +1,19 @@
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
 import { readFileContents, saveToFile } from './readFile';
-import { getCdx, getCdxml, getKet, getMolfile } from '@utils/formats';
+import {
+  getCdx,
+  getCdxml,
+  getKet,
+  getMolfile,
+  getSmarts,
+} from '@utils/formats';
 
 export enum FileType {
   KET = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
+  SMARTS = 'smarts',
 }
 
 const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
@@ -14,11 +21,25 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.KET]: getKet,
     [FileType.CDX]: getCdx,
     [FileType.CDXML]: getCdxml,
+    [FileType.SMARTS]: getSmarts,
   };
 
 export async function verifyFile(
   page: Page,
   filename: string,
+  expectedFilename: string,
+  fileType: FileType,
+) {
+  // line below for backward compatibility (to comply with prettier)
+  // due to mistake - filename parameter was never make sence,
+  // since we took the original "filename" file directly from the memory but not from file
+  filename = '';
+
+  verifyFile2(page, expectedFilename, fileType);
+}
+
+export async function verifyFile2(
+  page: Page,
   expectedFilename: string,
   fileType: FileType,
 ) {

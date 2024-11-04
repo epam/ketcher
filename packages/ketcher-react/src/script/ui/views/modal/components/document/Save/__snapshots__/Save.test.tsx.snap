@@ -43,9 +43,13 @@ Object {
               <label
                 class=""
               >
-                <span>
-                  File name:
-                </span>
+                <div
+                  class="divWithTooltipAndAboutIcon"
+                >
+                  <span>
+                    File name:
+                  </span>
+                </div>
                 <span
                   class="inputWrapper"
                   data-testid="undefined-input-span"
@@ -63,9 +67,13 @@ Object {
                 class="file-format-list"
                 data-testid="file-format-list"
               >
-                <span>
-                  File format:
-                </span>
+                <div
+                  class="divWithTooltipAndAboutIcon"
+                >
+                  <span>
+                    File format:
+                  </span>
+                </div>
                 <span
                   class="inputWrapper"
                   data-testid="file-format-list-input-span"
@@ -437,9 +445,13 @@ Object {
             <label
               class=""
             >
-              <span>
-                File name:
-              </span>
+              <div
+                class="divWithTooltipAndAboutIcon"
+              >
+                <span>
+                  File name:
+                </span>
+              </div>
               <span
                 class="inputWrapper"
                 data-testid="undefined-input-span"
@@ -457,9 +469,13 @@ Object {
               class="file-format-list"
               data-testid="file-format-list"
             >
-              <span>
-                File format:
-              </span>
+              <div
+                class="divWithTooltipAndAboutIcon"
+              >
+                <span>
+                  File format:
+                </span>
+              </div>
               <span
                 class="inputWrapper"
                 data-testid="file-format-list-input-span"

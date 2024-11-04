@@ -14,7 +14,7 @@
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
-    "docker": "docker-compose run --rm autotests",
+    "docker": "docker compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test --",
     "docker:trace": "npm run docker npm run test:trace",

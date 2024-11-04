@@ -19,6 +19,8 @@ import {
   selectAllStructuresOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  moveOnAtom,
+  dragMouseTo,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
@@ -907,6 +909,37 @@ test.describe('Cascade Reactions', () => {
       await selectAllStructuresOnCanvas(page);
       await cutAndPaste(page);
       await page.mouse.click(500, 500);
+      await takeEditorScreenshot(page);
+      await screenshotBetweenUndoRedo(page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases15 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
+      testCaseDescription:
+        'RDF RXN V2000 file with cascade reaction with reagents',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
+      testCaseDescription:
+        'RDF RXN V3000 file with cascade reaction with reagents',
+    },
+  ];
+
+  testCases15.forEach(({ rdfFile, testCaseDescription }) => {
+    test(`Verify that ${testCaseDescription} can be loaded, after that they can be selected/moved and Undo/Redo`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2102
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      and correct positions, after that they can be selected/moved and Undo/Redo. 
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await selectAllStructuresOnCanvas(page);
+      await moveOnAtom(page, 'C', 2);
+      await dragMouseTo(300, 600, page);
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);

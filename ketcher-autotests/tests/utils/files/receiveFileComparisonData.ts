@@ -1,7 +1,7 @@
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
 import { readFileContents, saveToFile } from './readFile';
-import { getCdx, getCdxml, getKet, getMolfile } from '@utils/formats';
+import { getCdx, getCdxml, getKet, getMolfile, getRdf } from '@utils/formats';
 
 export enum FileType {
   KET = 'ket',
@@ -58,6 +58,27 @@ export async function verifyMolfile(
     });
 
   expect(molFile).toEqual(molFileExpected);
+}
+
+export async function verifyRdfFile(
+  page: Page,
+  format: 'v2000' | 'v3000',
+  filename: string,
+  expectedFilename: string,
+  metaDataIndexes: number[] = [],
+) {
+  const expectedFile = await getRdf(page, format);
+  await saveToFile(filename, expectedFile);
+
+  const { fileExpected: rdfFileExpected, file: rdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: expectedFilename,
+      fileFormat: format,
+      metaDataIndexes,
+    });
+
+  expect(rdfFile).toEqual(rdfFileExpected);
 }
 
 const GetFileMethod: Record<string, keyof Ketcher> = {

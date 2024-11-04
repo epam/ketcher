@@ -858,7 +858,7 @@ export class KetSerializer implements Serializer<Struct> {
         } as IKetConnectionEndPoint,
         endpoint2: {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
-          atomId: monomerToAtomBond.atom.atomIdInMicroMode,
+          atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
       });
     });

@@ -26,14 +26,14 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
 
 export async function verifyFile(
   page: Page,
-  filename: string,
+  _filename: string,
   expectedFilename: string,
   fileType: FileType,
 ) {
   // line below for backward compatibility (to comply with prettier)
   // due to mistake - filename parameter was never make sence,
   // since we took the original "filename" file directly from the memory but not from file
-  filename = '';
+  _filename = '';
 
   verifyFile2(page, expectedFilename, fileType);
 }

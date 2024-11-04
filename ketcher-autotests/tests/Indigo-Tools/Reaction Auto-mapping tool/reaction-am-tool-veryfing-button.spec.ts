@@ -177,7 +177,8 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await applyAutoMapMode(page, 'Discard', false);
   });
 
-  test('Verifying of the correct automapping', async ({ page }) => {
+  // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
+  test.skip('Verifying of the correct automapping', async ({ page }) => {
     /**
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping

@@ -122,6 +122,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
+  protected getPeptideColor(theme) {
+    const naturalAnalogCode =
+      this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const peptideColor = theme.peptide.color[naturalAnalogCode]?.regular;
+    return peptideColor || this.getMonomerColor(theme);
+  }
+
   public redrawAttachmentPoints(): void {
     this.hoveredAttachmentPoint = null;
     if (!this.rootElement) return;

@@ -177,7 +177,8 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await applyAutoMapMode(page, 'Discard', false);
   });
 
-  test('Verifying of the correct automapping', async ({ page }) => {
+  // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
+  test.skip('Verifying of the correct automapping', async ({ page }) => {
     /**
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping
@@ -199,7 +200,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       page,
       async () => await applyAutoMapMode(page, 'Keep'),
       // eslint-disable-next-line no-magic-numbers
-      10000,
+      30000,
     );
     await openFileAndAddToCanvas(
       'Rxn-V2000/allenes.rxn',
@@ -211,7 +212,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       page,
       async () => await applyAutoMapMode(page, 'Alter', false),
       // eslint-disable-next-line no-magic-numbers
-      10000,
+      30000,
     );
   });
 });

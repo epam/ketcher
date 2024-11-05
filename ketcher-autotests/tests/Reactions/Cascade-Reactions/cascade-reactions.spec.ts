@@ -23,7 +23,11 @@ import {
   dragMouseTo,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
-import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFile,
+  verifyRdfFile,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Cascade Reactions', () => {
   let page: Page;
@@ -944,5 +948,47 @@ test.describe('Cascade Reactions', () => {
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
     });
+  });
+
+  test('Verify that empty Canvas with single Arrow (0:0 reactions) can be saved to RDF RXN V2000', async () => {
+    /* 
+    Test case: https://github.com/epam/Indigo/issues/2102
+    Description: Empty Canvas with single Arrow (0:0 reactions) can be saved to RDF RXN V2000. 
+    */
+    await openFileAndAddToCanvasAsNewProject('KET/single-arrow.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyRdfFile(
+      page,
+      'v2000',
+      'RDF-V2000/single-arrow-expected.rdf',
+      'tests/test-data/RDF-V2000/single-arrow-expected.rdf',
+      [1, 5],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V2000/single-arrow-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that empty Canvas with single Arrow (0:0 reactions) can be saved to RDF RXN V3000', async () => {
+    /* 
+    Test case: https://github.com/epam/Indigo/issues/2102
+    Description: Empty Canvas with single Arrow (0:0 reactions) can be saved to RDF RXN V3000. 
+    */
+    await openFileAndAddToCanvasAsNewProject('KET/single-arrow.ket', page);
+    await takeEditorScreenshot(page);
+    await verifyRdfFile(
+      page,
+      'v3000',
+      'RDF-V3000/single-arrow-expected.rdf',
+      'tests/test-data/RDF-V3000/single-arrow-expected.rdf',
+      [1, 5],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V3000/single-arrow-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

@@ -239,7 +239,7 @@ export abstract class BaseMode {
       return;
     }
 
-    this.updateMonomersPosition(drawingEntitiesManager);
+    this.updateEntitiesPosition(drawingEntitiesManager);
     const { command: modelChanges, mergedDrawingEntities } =
       drawingEntitiesManager.mergeInto(editor.drawingEntitiesManager);
 
@@ -277,24 +277,19 @@ export abstract class BaseMode {
     }
   }
 
-  private updateMonomersPosition(
+  private updateEntitiesPosition(
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
-    let offset: Vec2;
-    let index = 0;
     const newNodePosition = this.getNewNodePosition();
-    drawingEntitiesManager.monomers.forEach((monomer) => {
-      let position;
-      if (index === 0) {
-        offset = Vec2.diff(newNodePosition, new Vec2(monomer.position));
-        position = newNodePosition;
-      } else {
-        position = offset
-          ? new Vec2(monomer.position).add(offset)
-          : new Vec2(monomer.position);
-      }
-      drawingEntitiesManager.moveMonomer(monomer, position);
-      index++;
+    const firstEntityPosition =
+      drawingEntitiesManager.allEntities[0]?.[1].position;
+    const offset = Vec2.diff(newNodePosition, new Vec2(firstEntityPosition));
+
+    drawingEntitiesManager.allEntities.forEach(([, drawindEntity]) => {
+      drawingEntitiesManager.moveDrawingEntityModelChange(
+        drawindEntity,
+        offset,
+      );
     });
   }
 

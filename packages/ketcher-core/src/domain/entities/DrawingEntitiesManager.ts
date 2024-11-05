@@ -168,8 +168,8 @@ export class DrawingEntitiesManager {
 
   public get allBondsToMonomers() {
     return [
-      ...(this.polymerBonds as Map<number, DrawingEntity>),
-      ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
+      ...(this.polymerBonds as Map<number, PolymerBond>),
+      ...(this.monomerToAtomBonds as Map<number, MonomerToAtomBond>),
     ];
   }
 
@@ -1808,14 +1808,9 @@ export class DrawingEntitiesManager {
     );
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
-    this.monomers.forEach((monomer: BaseMonomer) => {
-      this.moveMonomer(monomer, new Vec2(monomer.position).add(offset));
-    });
-    this.polymerBonds.forEach((bond: PolymerBond) => {
-      const { x: startX, y: startY } = new Vec2(bond.position).add(offset);
-      bond.moveBondStartAbsolute(startX, startY);
-      const { x: endX, y: endY } = new Vec2(bond.endPosition).add(offset);
-      bond.moveBondEndAbsolute(endX, endY);
+
+    this.allEntities.forEach(([, entity]) => {
+      this.moveDrawingEntityModelChange(entity, offset);
     });
   }
 

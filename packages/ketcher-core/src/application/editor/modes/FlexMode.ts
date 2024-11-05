@@ -25,6 +25,7 @@ export class FlexMode extends BaseMode {
 
   getNewNodePosition() {
     const editor = CoreEditor.provideEditorInstance();
+
     return Coordinates.canvasToModel(editor.lastCursorPositionOfCanvas);
   }
 

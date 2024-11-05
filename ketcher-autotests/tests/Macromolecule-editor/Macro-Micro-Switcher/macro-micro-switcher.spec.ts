@@ -2881,6 +2881,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
     monomerLocatorText: 'UNA',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '3. Base hU (from library)',
@@ -2900,6 +2901,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
     monomerLocatorText: '5hMedC',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
@@ -2970,18 +2972,21 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'M',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '16. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '17. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '18. Base A+C (ambiguous, mixed)',
@@ -3008,6 +3013,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '22. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
@@ -3021,6 +3027,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
     monomerLocatorText: 'Unknown',
+    pageReloadNeeded: true,
   },
 ];
 

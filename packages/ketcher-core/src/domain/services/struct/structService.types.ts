@@ -31,6 +31,7 @@ export enum ChemicalMimeType {
   SDF = 'chemical/x-sdf',
   FASTA = 'chemical/x-fasta',
   SEQUENCE = 'chemical/x-sequence',
+  PeptideSequenceThreeLetter = 'chemical/x-peptide-sequence-3-letter',
   RNA = 'chemical/x-rna-sequence',
   DNA = 'chemical/x-dna-sequence',
   PEPTIDE = 'chemical/x-peptide-sequence',

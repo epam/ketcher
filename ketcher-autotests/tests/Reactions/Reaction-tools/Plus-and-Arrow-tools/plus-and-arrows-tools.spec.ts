@@ -631,9 +631,8 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test.fail('open files', async ({ page }) => {
+    test('open files', async ({ page }) => {
       /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2479
        */
       await openFileAndAddToCanvas(
         `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,

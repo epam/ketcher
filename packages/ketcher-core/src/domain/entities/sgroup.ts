@@ -368,6 +368,10 @@ export class SGroup {
     return this.type === SGroup.TYPES.SUP && !this.data.name;
   }
 
+  public get isMonomer() {
+    return false;
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp || !sgroup.bracketBox) return null;
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1);
@@ -504,7 +508,8 @@ export class SGroup {
     const crossBonds = crossBondsPerAtom
       ? Object.values(crossBondsPerAtom).flat()
       : null;
-    if (!crossBonds || crossBonds.length !== 2) {
+    // TODO: Overall cross bonds logic seems unclear and not-correct for s groups in general leading to tilted hover plate
+    if (sGroup.isMonomer || !crossBonds || crossBonds.length !== 2) {
       sGroup.bracketDirection = new Vec2(1, 0);
     } else {
       const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol);

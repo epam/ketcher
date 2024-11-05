@@ -13,6 +13,7 @@ import {
   mapTwoAtoms,
   waitForPageInit,
   clickOnAtom,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
@@ -184,20 +185,33 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     const yOffsetFromCenter1 = 100;
     const yOffsetFromCenter2 = 300;
     await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
-    await applyAutoMapMode(page, 'Discard');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await applyAutoMapMode(page, 'Discard'),
+    );
     await openFileAndAddToCanvas(
       'Rxn-V2000/mapping-4-benzene.rxn',
       page,
       0,
       yOffsetFromCenter1,
     );
-    await applyAutoMapMode(page, 'Keep');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await applyAutoMapMode(page, 'Keep'),
+      // eslint-disable-next-line no-magic-numbers
+      10000,
+    );
     await openFileAndAddToCanvas(
       'Rxn-V2000/allenes.rxn',
       page,
       0,
       yOffsetFromCenter2,
     );
-    await applyAutoMapMode(page, 'Alter', false);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await applyAutoMapMode(page, 'Alter', false),
+      // eslint-disable-next-line no-magic-numbers
+      10000,
+    );
   });
 });

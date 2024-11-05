@@ -36,6 +36,30 @@ const monomerColors: Record<string, MonomerColorScheme> = {
   default: { regular: '#CCCBD6', hover: '#B8BBCC' },
 };
 
+const peptideColorScheme: Record<string, MonomerColorScheme> = {
+  D: { regular: '#FF8C69', hover: '#0097A8' },
+  E: { regular: '#DC143C', hover: '#0097A8' },
+  K: { regular: '#B0E0E6', hover: '#0097A8' },
+  H: { regular: '#007FFF', hover: '#0097A8' },
+  O: { regular: '#2A52BE', hover: '#0097A8' },
+  R: { regular: '#0A12FF', hover: '#0097A8' },
+  Q: { regular: '#EDB4ED', hover: '#0097A8' },
+  Y: { regular: '#D65CBC', hover: '#0097A8' },
+  U: { regular: '#CA7DE3', hover: '#0097A8' },
+  S: { regular: '#9966CC', hover: '#0097A8' },
+  C: { regular: '#BF00FF', hover: '#0097A8' },
+  N: { regular: '#800080', hover: '#0097A8' },
+  T: { regular: '#FF00FF', hover: '#0097A8' },
+  L: { regular: '#7FFF00', hover: '#0097A8' },
+  I: { regular: '#4CBB17', hover: '#0097A8' },
+  F: { regular: '#008A00', hover: '#0097A8' },
+  A: { regular: '#008080', hover: '#0097A8' },
+  P: { regular: '#D2D900', hover: '#0097A8' },
+  G: { regular: '#BDB76B', hover: '#0097A8' },
+  M: { regular: '#FFF600', hover: '#0097A8' },
+  V: { regular: '#FFD700', hover: '#0097A8' },
+};
+
 export const defaultTheme: EditorTheme = {
   color: {
     background: {
@@ -192,6 +216,31 @@ export const defaultTheme: EditorTheme = {
       U: monomerColors.colorU,
       CHEM: monomerColors.chem,
       default: monomerColors.default,
+    },
+  },
+  peptide: {
+    color: {
+      D: peptideColorScheme.D,
+      E: peptideColorScheme.E,
+      K: peptideColorScheme.K,
+      H: peptideColorScheme.H,
+      O: peptideColorScheme.O,
+      R: peptideColorScheme.R,
+      Q: peptideColorScheme.Q,
+      Y: peptideColorScheme.Y,
+      U: peptideColorScheme.U,
+      S: peptideColorScheme.S,
+      C: peptideColorScheme.C,
+      N: peptideColorScheme.N,
+      T: peptideColorScheme.T,
+      L: peptideColorScheme.L,
+      I: peptideColorScheme.I,
+      F: peptideColorScheme.F,
+      A: peptideColorScheme.A,
+      P: peptideColorScheme.P,
+      G: peptideColorScheme.G,
+      M: peptideColorScheme.M,
+      V: peptideColorScheme.V,
     },
   },
   border: {

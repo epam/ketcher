@@ -24,17 +24,21 @@ test.describe('Reagents molecule above arrow', () => {
     await waitForPageInit(page);
   });
 
-  test('Open File RXN v3000 with reagent NH3 above arrow', async ({ page }) => {
-    /*
+  test.fail(
+    'Open File RXN v3000 with reagent NH3 above arrow',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-4680
       Description: File opens with the reagent NH3 on top of the arrow
+      We have a bug https://github.com/epam/Indigo/issues/2591
     */
-    await openFileAndAddToCanvas(
-      'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Open File CDXML with reagent NH3 above arrow', async ({ page }) => {
     /*

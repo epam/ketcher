@@ -29,6 +29,7 @@ const MonomerItem = ({
   onMouseLeave,
   onMouseMove,
   isSelected,
+  isPeptideTab,
   disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
@@ -50,6 +51,7 @@ const MonomerItem = ({
       disabled={isDisabled}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
+      isPeptideTab={isPeptideTab}
       isVariantMonomer={item.isAmbiguous}
       code={colorCode}
       onMouseLeave={onMouseLeave}

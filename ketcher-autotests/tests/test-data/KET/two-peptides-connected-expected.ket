@@ -2,21 +2,21 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer3"
+                "$ref": "monomer0"
             },
             {
-                "$ref": "monomer4"
+                "$ref": "monomer1"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer3",
+                    "monomerId": "monomer0",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer4",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R2"
                 }
             }
@@ -30,9 +30,9 @@
             }
         ]
     },
-    "monomer3": {
+    "monomer0": {
         "type": "monomer",
-        "id": "3",
+        "id": "0",
         "position": {
             "x": 10.487500000000026,
             "y": -7.499999999999992
@@ -285,9 +285,9 @@
         ],
         "naturalAnalogShort": "F"
     },
-    "monomer4": {
+    "monomer1": {
         "type": "monomer",
-        "id": "4",
+        "id": "1",
         "position": {
             "x": 13.312499999999973,
             "y": -9.15000000000001

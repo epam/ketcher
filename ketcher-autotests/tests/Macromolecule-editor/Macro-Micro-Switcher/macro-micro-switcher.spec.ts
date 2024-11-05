@@ -3483,6 +3483,7 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
+  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -3515,6 +3516,7 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
+  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -3547,6 +3549,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
+  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -3597,6 +3600,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
+  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -3728,6 +3732,7 @@ test(
      *           3.7 Press Undo button
      *           3.8 Take screenshot to witness monomer got collapsed
      */
+    await pageReload(page);
     await turnOnMicromoleculesEditor(page);
 
     await openFileAndAddToCanvasAsNewProject(

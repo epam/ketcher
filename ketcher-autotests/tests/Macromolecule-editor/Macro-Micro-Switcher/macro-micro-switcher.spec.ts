@@ -2875,6 +2875,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
@@ -2888,6 +2889,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
     monomerLocatorText: 'hU',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
@@ -2952,6 +2954,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2959,6 +2962,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2966,6 +2970,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '15. Base M (ambiguous, alternatives, from library)',

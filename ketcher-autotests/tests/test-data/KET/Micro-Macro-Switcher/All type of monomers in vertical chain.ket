@@ -2,77 +2,77 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer44"
+                "$ref": "monomer22"
             },
             {
-                "$ref": "monomer45"
+                "$ref": "monomer23"
             },
             {
-                "$ref": "monomer46"
+                "$ref": "monomer24"
             },
             {
-                "$ref": "monomer47"
+                "$ref": "monomer25"
             },
             {
-                "$ref": "monomer48"
+                "$ref": "monomer26"
             },
             {
-                "$ref": "monomer49"
+                "$ref": "monomer27"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer44",
+                    "monomerId": "monomer22",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer49",
+                    "monomerId": "monomer27",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer47",
+                    "monomerId": "monomer25",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer48",
+                    "monomerId": "monomer26",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer48",
+                    "monomerId": "monomer26",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer44",
+                    "monomerId": "monomer22",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer46",
+                    "monomerId": "monomer24",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer47",
+                    "monomerId": "monomer25",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer46",
+                    "monomerId": "monomer24",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer45",
+                    "monomerId": "monomer23",
                     "attachmentPointId": "R2"
                 }
             }
@@ -98,12 +98,12 @@
             }
         ]
     },
-    "monomer44": {
+    "monomer22": {
         "type": "monomer",
-        "id": "44",
+        "id": "22",
         "position": {
-            "x": 7.367891362261068,
-            "y": -15.401979605339001
+            "x": 7.389821186822468,
+            "y": -11.961655693790593
         },
         "alias": "Mal",
         "templateId": "Mal___Maleimide"
@@ -275,12 +275,12 @@
             }
         ]
     },
-    "monomer45": {
+    "monomer23": {
         "type": "monomer",
-        "id": "45",
+        "id": "23",
         "position": {
-            "x": 7.5313529007226165,
-            "y": 1.540062834979297
+            "x": 7.5094230761612115,
+            "y": 1.4187044406722669
         },
         "alias": "oC64m5",
         "templateId": "oC64m5___4-Hexan-6-ol-5-methylcytosine"
@@ -588,12 +588,12 @@
         ],
         "naturalAnalogShort": "C"
     },
-    "monomer46": {
+    "monomer24": {
         "type": "monomer",
-        "id": "46",
+        "id": "24",
         "position": {
-            "x": 7.4813529007226185,
-            "y": -1.534937165020699
+            "x": 7.503282725284022,
+            "y": -0.7443458737931397
         },
         "alias": "gly",
         "templateId": "gly___N-Hydroxyglycine"
@@ -714,12 +714,12 @@
         ],
         "naturalAnalogShort": "P"
     },
-    "monomer47": {
+    "monomer25": {
         "type": "monomer",
-        "id": "47",
+        "id": "25",
         "position": {
-            "x": 7.556352900722618,
-            "y": -4.359937165020705
+            "x": 7.578282725284021,
+            "y": -3.5693458737931425
         },
         "alias": "5hMedC",
         "templateId": "5hMedC___5-Hydroxymethyl dC"
@@ -1118,12 +1118,12 @@
         },
         "naturalAnalogShort": "C"
     },
-    "monomer48": {
+    "monomer26": {
         "type": "monomer",
-        "id": "48",
+        "id": "26",
         "position": {
-            "x": 7.506352900722603,
-            "y": -7.3599371650207015
+            "x": 7.528282725284006,
+            "y": -6.569345873793143
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -1261,12 +1261,12 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer49": {
+    "monomer27": {
         "type": "monomer",
-        "id": "49",
+        "id": "27",
         "position": {
-            "x": 7.283121247318533,
-            "y": -20.103460595613093
+            "x": 7.347423953235869,
+            "y": -14.142229708023102
         },
         "alias": "12ddR",
         "templateId": "12ddR___1',2'-dideoxyribose"

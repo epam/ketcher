@@ -4,8 +4,6 @@ import {
   selectNestedTool,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectTopPanelButton,
-  TopPanelButton,
   clickOnTheCanvas,
   applyAutoMapMode,
   selectLeftPanelButton,

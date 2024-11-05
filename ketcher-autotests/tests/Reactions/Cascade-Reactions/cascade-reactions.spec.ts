@@ -991,4 +991,202 @@ test.describe('Cascade Reactions', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Verify that empty Canvas with Multi-Tailed Arrow (0:0 reactions) can be saved to RDF RXN V2000', async () => {
+    /* 
+    Test case: https://github.com/epam/Indigo/issues/2237
+    Description: Empty Canvas with Multi-Tailed Arrow (0:0 reactions) can be saved to RDF RXN V2000. 
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyRdfFile(
+      page,
+      'v2000',
+      'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
+      'tests/test-data/RDF-V2000/multi-tailed-arrow-default-expected.rdf',
+      [1, 5],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that empty Canvas with Multi-Tailed Arrow (0:0 reactions) can be saved to RDF RXN V3000', async () => {
+    /* 
+    Test case: https://github.com/epam/Indigo/issues/2237
+    Description: Empty Canvas with Multi-Tailed Arrow (0:0 reactions) can be saved to RDF RXN V3000. 
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/multi-tailed-arrow-default.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyRdfFile(
+      page,
+      'v3000',
+      'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
+      'tests/test-data/RDF-V3000/multi-tailed-arrow-default-expected.rdf',
+      [1, 5],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  const testCases16 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x0.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-1x0-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:0)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-1x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:1)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x2.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-1x2-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:2)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x0.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-2x0-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:0)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-2x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:1)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:2)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:1)',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:3)',
+    },
+  ];
+
+  testCases16.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
+    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V2000`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2102
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V2000 with correct sizes and positions. 
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyRdfFile(
+        page,
+        'v2000',
+        `${rdfFileExpected}`,
+        `tests/test-data/${rdfFileExpected}`,
+        [
+          1, 5, 10, 25, 27, 28, 35, 41, 43, 52, 59, 60, 68, 107, 119, 149, 174,
+          225,
+        ],
+      );
+      await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases17 = [
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x0.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-1x0-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:0)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:1)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x2.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-1x2-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:2)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x0.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-2x0-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:0)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-2x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:1)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:2)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:1)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:3)',
+    },
+  ];
+
+  testCases17.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
+    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V3000`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2102
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V3000 with correct sizes and positions. 
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyRdfFile(
+        page,
+        'v3000',
+        `${rdfFileExpected}`,
+        `tests/test-data/${rdfFileExpected}`,
+        [
+          1, 5, 10, 25, 27, 28, 35, 41, 43, 52, 59, 60, 68, 107, 119, 149, 174,
+          225,
+        ],
+      );
+      await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
+      await takeEditorScreenshot(page);
+    });
+  });
 });

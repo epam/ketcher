@@ -110,13 +110,20 @@ class ReBond extends ReObject {
 
     if (!hb1?.dir || !hb2?.dir) return;
 
-    hb1.p = beginAtom.getShiftedSegmentPosition(options, hb1.dir, p1);
-    hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2);
     bond.b.center = Vec2.lc2(p1, 0.5, p2, 0.5);
     bond.b.len = Vec2.dist(
       Scale.modelToCanvas(p1, render.options),
       Scale.modelToCanvas(p2, render.options),
     );
+
+    hb1.p = beginAtom.getShiftedSegmentPosition(
+      options,
+      hb1.dir,
+      p1,
+      bond.b.len,
+    );
+    hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2, bond.b.len);
+
     bond.b.sb = options.lineWidth * 5;
     /* eslint-disable no-mixed-operators */
     bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
@@ -341,6 +348,13 @@ class ReBond extends ReObject {
         sgroups,
         functionalGroups,
       )
+    ) {
+      return;
+    }
+
+    if (
+      bond.type === Bond.PATTERN.TYPE.HYDROGEN &&
+      Bond.isBondToExpandedMonomer(struct, bond)
     ) {
       return;
     }

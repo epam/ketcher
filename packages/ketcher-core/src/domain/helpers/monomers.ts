@@ -27,9 +27,11 @@ export function checkIsR2R1Connection(
   monomer: BaseMonomer,
   nextMonomer: BaseMonomer,
 ) {
+  const r1PolymerBond = nextMonomer.attachmentPointsToBonds.R1;
+
   return (
-    nextMonomer.attachmentPointsToBonds.R1?.getAnotherMonomer(nextMonomer) ===
-    monomer
+    r1PolymerBond instanceof PolymerBond &&
+    r1PolymerBond?.getAnotherMonomer(nextMonomer) === monomer
   );
 }
 
@@ -61,13 +63,13 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   }
 
   const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
+  const r2PolymerBond = R1ConnectedMonomer?.attachmentPointsToBonds.R2;
 
   return (
     isRnaBaseOrAmbiguousRnaBase(R1ConnectedMonomer) &&
     getSugarFromRnaBase(R1ConnectedMonomer) &&
-    R1ConnectedMonomer.attachmentPointsToBonds.R2?.getAnotherMonomer(
-      R1ConnectedMonomer,
-    ) === monomer
+    r2PolymerBond instanceof PolymerBond &&
+    r2PolymerBond?.getAnotherMonomer(R1ConnectedMonomer) === monomer
   );
 }
 
@@ -78,7 +80,10 @@ export function getNextMonomerInChain(
   if (!monomer) return undefined;
 
   const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
-  const nextMonomer = r2PolymerBond?.getAnotherMonomer?.(monomer);
+  const nextMonomer =
+    r2PolymerBond instanceof PolymerBond
+      ? r2PolymerBond?.getAnotherMonomer?.(monomer)
+      : undefined;
 
   if (
     !nextMonomer ||
@@ -97,7 +102,10 @@ export function getNextMonomerInChain(
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   if (!monomer || !(monomer instanceof Sugar)) return undefined;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
-  const r3ConnectedMonomer = r3PolymerBond?.getAnotherMonomer(monomer);
+  const r3ConnectedMonomer =
+    r3PolymerBond instanceof PolymerBond
+      ? r3PolymerBond?.getAnotherMonomer(monomer)
+      : undefined;
 
   if (!r3ConnectedMonomer) {
     return undefined;
@@ -106,7 +114,9 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   const r1PolymerBondOfConnectedMonomer =
     r3ConnectedMonomer?.attachmentPointsToBonds.R1;
   const r1ConnectedMonomer =
-    r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer);
+    r1PolymerBondOfConnectedMonomer instanceof PolymerBond
+      ? r1PolymerBondOfConnectedMonomer?.getAnotherMonomer(r3ConnectedMonomer)
+      : undefined;
 
   return isRnaBaseOrAmbiguousRnaBase(r3ConnectedMonomer) &&
     r1ConnectedMonomer === monomer
@@ -117,7 +127,10 @@ export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
 export function getSugarFromRnaBase(monomer?: BaseMonomer) {
   if (!monomer || !isRnaBaseOrAmbiguousRnaBase(monomer)) return undefined;
   const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
-  const r1ConnectedMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
+  const r1ConnectedMonomer =
+    r1PolymerBond instanceof PolymerBond
+      ? r1PolymerBond?.getAnotherMonomer(monomer)
+      : undefined;
 
   if (!r1ConnectedMonomer) {
     return undefined;
@@ -126,7 +139,9 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
   const r3PolymerBondOfConnectedMonomer =
     r1ConnectedMonomer?.attachmentPointsToBonds.R3;
   const r3ConnectedMonomer =
-    r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer);
+    r3PolymerBondOfConnectedMonomer instanceof PolymerBond
+      ? r3PolymerBondOfConnectedMonomer?.getAnotherMonomer(r1ConnectedMonomer)
+      : undefined;
 
   return r1ConnectedMonomer instanceof Sugar && r3ConnectedMonomer === monomer
     ? r1ConnectedMonomer

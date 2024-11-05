@@ -21,6 +21,7 @@ import type { Editor } from './Editor';
 type HighlightAttributes = {
   atoms: number[];
   bonds: number[];
+  rgroupAttachmentPoints: number[];
   color: string;
 };
 
@@ -44,28 +45,39 @@ export class Highlighter {
     const createdHighlights: HighlightAttributes[] = [];
 
     args.forEach((arg) => {
-      const { atoms, bonds, color } = arg;
+      const { atoms, bonds, rgroupAttachmentPoints, color } = arg;
       if (typeof color !== 'string') {
         return;
       }
 
-      if (!atoms && !bonds) {
+      if (!atoms && !bonds && !rgroupAttachmentPoints) {
         return;
       }
 
       const restruct = this.editor.render.ctab;
 
-      const { validAtoms, validBonds } = getValidInputOnly(
-        restruct.molecule,
-        atoms,
-        bonds,
-      );
+      const { validAtoms, validBonds, validRgroupAttachmentPoints } =
+        getValidInputOnly(
+          restruct.molecule,
+          atoms,
+          bonds,
+          rgroupAttachmentPoints,
+        );
 
-      if (validAtoms.length === 0 && validBonds.length === 0) {
+      if (
+        validAtoms.length === 0 &&
+        validBonds.length === 0 &&
+        validRgroupAttachmentPoints.length === 0
+      ) {
         return;
       }
 
-      createdHighlights.push({ atoms: validAtoms, bonds: validBonds, color });
+      createdHighlights.push({
+        atoms: validAtoms,
+        bonds: validBonds,
+        rgroupAttachmentPoints: validRgroupAttachmentPoints,
+        color,
+      });
     });
     const action = fromHighlightCreate(
       this.editor.render.ctab,
@@ -185,9 +197,15 @@ export class Highlighter {
 type ValidInput = {
   validAtoms: number[];
   validBonds: number[];
+  validRgroupAttachmentPoints: number[];
 };
 
-function getValidInputOnly(struct: Struct, atoms, bonds): ValidInput {
+function getValidInputOnly(
+  struct: Struct,
+  atoms,
+  bonds,
+  rgroupAttachmentPoints,
+): ValidInput {
   if (!Array.isArray(atoms)) {
     atoms = [];
   }
@@ -196,7 +214,15 @@ function getValidInputOnly(struct: Struct, atoms, bonds): ValidInput {
     bonds = [];
   }
 
-  const { atoms: structAtoms, bonds: structBonds } = struct;
+  if (!Array.isArray(rgroupAttachmentPoints)) {
+    rgroupAttachmentPoints = [];
+  }
+
+  const {
+    atoms: structAtoms,
+    bonds: structBonds,
+    rgroupAttachmentPoints: structRgroupAttachmentPoints,
+  } = struct;
 
   // Filter out atom ids that are not in struct
   if (atoms.length > 0) {
@@ -208,8 +234,15 @@ function getValidInputOnly(struct: Struct, atoms, bonds): ValidInput {
     bonds = bonds.filter((bid) => structBonds.has(bid));
   }
 
+  if (rgroupAttachmentPoints.length > 0) {
+    rgroupAttachmentPoints = rgroupAttachmentPoints.filter((rgroupAPId) =>
+      structRgroupAttachmentPoints.has(rgroupAPId),
+    );
+  }
+
   return {
     validAtoms: atoms,
     validBonds: bonds,
+    validRgroupAttachmentPoints: rgroupAttachmentPoints,
   };
 }

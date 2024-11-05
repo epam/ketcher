@@ -22,6 +22,8 @@ import {
   BaseMicromoleculeEntity,
   initiallySelectedType,
 } from 'domain/entities/BaseMicromoleculeEntity';
+import { SGroup } from 'domain/entities/sgroup';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 enum CIP {
   E = 'E',
@@ -44,6 +46,8 @@ export interface BondAttributes {
   initiallySelected?: initiallySelectedType;
   beginSuperatomAttachmentPointNumber?: number;
   endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
 }
 
 export class Bond extends BaseMicromoleculeEntity {
@@ -114,6 +118,8 @@ export class Bond extends BaseMicromoleculeEntity {
   isPreview: boolean;
   beginSuperatomAttachmentPointNumber?: number;
   endSuperatomAttachmentPointNumber?: number;
+  beginSgroup?: SGroup;
+  endSgroup?: SGroup;
 
   constructor(attributes: BondAttributes) {
     super(attributes.initiallySelected);
@@ -323,6 +329,21 @@ export class Bond extends BaseMicromoleculeEntity {
     return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
 
+  isExternalBondBetweenMonomers(struct: Struct) {
+    if (!struct.isBondFromMacromolecule(this)) {
+      return false;
+    }
+
+    const sGroup1 = struct.getGroupFromAtomId(this.begin);
+    const sGroup2 = struct.getGroupFromAtomId(this.end);
+
+    if (!sGroup1 || !sGroup2) {
+      return false;
+    }
+
+    return sGroup1 !== sGroup2;
+  }
+
   public static isBondToHiddenLeavingGroup(struct: Struct, bond: Bond) {
     const beginSuperatomAttachmentPoint =
       Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, bond.begin);
@@ -337,5 +358,18 @@ export class Bond extends BaseMicromoleculeEntity {
         Atom.isHiddenLeavingGroupAtom(struct, bond.end) &&
         bond.begin === endSuperatomAttachmentPoint.atomId)
     );
+  }
+
+  public static isBondToExpandedMonomer(struct: Struct, bond: Bond) {
+    return [...struct.sgroups.values()].some((sgroup) => {
+      return (
+        ((sgroup.atoms.includes(bond.begin) &&
+          !sgroup.atoms.includes(bond.end)) ||
+          (sgroup.atoms.includes(bond.end) &&
+            !sgroup.atoms.includes(bond.begin))) &&
+        sgroup.isExpanded() &&
+        sgroup instanceof MonomerMicromolecule
+      );
+    });
   }
 }

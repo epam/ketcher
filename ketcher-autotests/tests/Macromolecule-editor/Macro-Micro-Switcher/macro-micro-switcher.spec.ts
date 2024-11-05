@@ -555,6 +555,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
       await turnOnMacromoleculesEditor(page);
+      await chooseTab(page, Tabs.Peptides);
       await page.getByTestId('A___Alanine').click();
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);
@@ -1060,10 +1061,11 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that in context menu for AP - only Delete avaliable', async () => {
+  test('Check that in context menu for AP - only Delete and Highlight avaliable', async () => {
     /*
     Test case: Macro-Micro-Switcher/#4530
-    Description: In context menu for AP - only Delete avaliable.
+    update: add Highlight option - https://github.com/epam/ketcher/issues/5605
+    Description: In context menu for AP - only Delete and Highlight avaliable.
     */
     await openFileAndAddToCanvas(
       'KET/structure-with-two-attachment-points.ket',

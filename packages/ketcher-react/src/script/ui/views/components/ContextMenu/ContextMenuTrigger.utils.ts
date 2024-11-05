@@ -54,16 +54,28 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      return functionalGroup === null ||
-        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel
-        ? {
-            id: CONTEXT_MENU_ID.FOR_BONDS,
-            bondIds: [closestItem.id],
-          }
-        : {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup],
-          };
+      const noFunctionalGroup =
+        functionalGroup === null ||
+        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
+      const isMonomer =
+        functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
+
+      if (noFunctionalGroup) {
+        return {
+          id: CONTEXT_MENU_ID.FOR_BONDS,
+          bondIds: [closestItem.id],
+        };
+      } else if (isMonomer) {
+        return {
+          id: CONTEXT_MENU_ID.FOR_MACROMOLECULE,
+          functionalGroups: [functionalGroup],
+        };
+      } else {
+        return {
+          id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+          functionalGroups: [functionalGroup],
+        };
+      }
     }
 
     case 'atoms': {
@@ -73,16 +85,28 @@ export function getMenuPropsForClosestItem(
         true,
       );
 
-      return functionalGroup === null ||
-        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel
-        ? {
-            id: CONTEXT_MENU_ID.FOR_ATOMS,
-            atomIds: [closestItem.id],
-          }
-        : {
-            id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup],
-          };
+      const noFunctionalGroup =
+        functionalGroup === null ||
+        functionalGroup?.relatedSGroup.isSuperatomWithoutLabel;
+      const isMonomer =
+        functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
+
+      if (noFunctionalGroup) {
+        return {
+          id: CONTEXT_MENU_ID.FOR_ATOMS,
+          atomIds: [closestItem.id],
+        };
+      } else if (isMonomer) {
+        return {
+          id: CONTEXT_MENU_ID.FOR_MACROMOLECULE,
+          functionalGroups: [functionalGroup],
+        };
+      } else {
+        return {
+          id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
+          functionalGroups: [functionalGroup],
+        };
+      }
     }
 
     case 'sgroups':
@@ -196,6 +220,7 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_SELECTION,
       bondIds: bonds,
       atomIds: atoms,
+      rgroupAttachmentPoints,
     };
   }
 }

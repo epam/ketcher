@@ -2175,7 +2175,10 @@ test.describe('Image files', () => {
       'tests/test-data/CDX/images-png-50-with-50-structures-expected.cdx',
     );
     await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await pressButton(page, 'Open as New Project'),
+    );
     await takeEditorScreenshot(page);
   });
 

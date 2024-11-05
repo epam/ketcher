@@ -16,20 +16,20 @@
 
 import {
   Action,
-  FloatingToolsParams,
   Editor as KetcherEditor,
-  Pile,
-  Render,
-  Scale,
-  Struct,
-  Vec2,
+  FloatingToolsParams,
   fromDescriptorsAlign,
   fromMultipleMove,
   fromNewCanvas,
-  provideEditorSettings,
-  ReStruct,
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
+  Pile,
+  provideEditorSettings,
+  Render,
+  ReStruct,
+  Scale,
+  Struct,
+  Vec2,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -68,6 +68,7 @@ const structObjects: Array<keyof typeof ReStruct.maps> = [
   'enhancedFlags',
   'simpleObjects',
   'texts',
+  'rgroupAttachmentPoints',
   IMAGE_KEY,
   MULTITAIL_ARROW_KEY,
 ];
@@ -446,7 +447,6 @@ class Editor implements KetcherEditor {
       return this._selection; // eslint-disable-line
     }
 
-    const struct = this.struct();
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
@@ -454,12 +454,7 @@ class Editor implements KetcherEditor {
       selectAll = true;
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
-        let restructItemsIds: number[] = Array.from(ReStruct[key].keys());
-        restructItemsIds = restructItemsIds.filter(
-          (restructItemId) =>
-            !struct.isTargetFromMacromolecule({ map: key, id: restructItemId }),
-        );
-        res[key] = restructItemsIds;
+        res[key] = Array.from(ReStruct[key].keys());
         return res;
       }, {});
     }

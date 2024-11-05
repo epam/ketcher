@@ -1,13 +1,11 @@
-import { Vec2 } from 'domain/entities/vec2';
 import { Atom } from 'domain/entities/CoreAtom';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseRenderer } from 'application/render';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
+import { BaseBond } from './BaseBond';
 
-export class MonomerToAtomBond extends DrawingEntity {
-  public endPosition: Vec2 = new Vec2();
+export class MonomerToAtomBond extends BaseBond {
   public renderer?:
     | MonomerToAtomBondRenderer
     | MonomerToAtomBondSequenceRenderer = undefined;
@@ -23,30 +21,11 @@ export class MonomerToAtomBond extends DrawingEntity {
     this.renderer = renderer;
   }
 
-  public moveBondStartAbsolute(x, y) {
-    this.moveAbsolute(new Vec2(x, y));
+  get firstEndEntity(): BaseMonomer {
+    return this.monomer;
   }
 
-  public moveBondEndAbsolute(x, y) {
-    this.endPosition = new Vec2(x, y);
+  get secondEndEntity(): Atom {
+    return this.atom;
   }
-
-  public get startPosition() {
-    return this.position;
-  }
-
-  public get center() {
-    return this.position;
-  }
-
-  public moveToLinkedMonomerAndAtom() {
-    const firstMonomerCenter = this.monomer.position;
-    const secondMonomerCenter = this.atom?.position;
-    this.moveBondStartAbsolute(firstMonomerCenter.x, firstMonomerCenter.y);
-    if (secondMonomerCenter) {
-      this.moveBondEndAbsolute(secondMonomerCenter.x, secondMonomerCenter.y);
-    }
-  }
-
-  public getAnotherMonomer() {}
 }

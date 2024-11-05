@@ -25,6 +25,7 @@ import { ChemicalMimeType } from 'domain/services';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -39,10 +40,14 @@ export abstract class BaseMode {
     const ModeConstructor = modesMap[modeName];
     editor.mode.destroy();
     editor.setMode(new ModeConstructor());
-    editor.mode.initialize(true, isUndo);
+    editor.mode.initialize(true, isUndo, false);
   }
 
-  public initialize(needRemoveSelection = true, _isUndo = false) {
+  public initialize(
+    needRemoveSelection = true,
+    _isUndo = false,
+    _needReArrangeChains = false,
+  ) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
 
@@ -110,7 +115,10 @@ export abstract class BaseMode {
           entity.position,
           entity,
         );
-      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
+      } else if (
+        (entity instanceof PolymerBond || entity instanceof HydrogenBond) &&
+        entity.secondMonomer
+      ) {
         const firstAttachmentPoint =
           entity.firstMonomer.getAttachmentPointByBond(entity);
         const secondAttachmentPoint =
@@ -126,6 +134,7 @@ export abstract class BaseMode {
             entity.secondMonomer,
             firstAttachmentPoint,
             secondAttachmentPoint,
+            undefined,
             entity,
           );
         }
@@ -147,23 +156,40 @@ export abstract class BaseMode {
   }
 
   async onPaste(event: ClipboardEvent) {
-    if (!this.checkIfTargetIsInput(event)) {
-      if (isClipboardAPIAvailable()) {
-        const isSequenceEditInRNABuilderMode =
-          CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    if (this.checkIfTargetIsInput(event)) {
+      return;
+    }
+    const editor = CoreEditor.provideEditorInstance();
+    const isCanvasEmptyBeforePaste =
+      !editor.drawingEntitiesManager.hasDrawingEntities;
 
-        if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
-        this._pasteIsInProgress = true;
+    if (isClipboardAPIAvailable()) {
+      const isSequenceEditInRNABuilderMode =
+        CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
 
-        const clipboardData = await navigator.clipboard.read();
-        this.pasteFromClipboard(clipboardData).finally(() => {
-          this._pasteIsInProgress = false;
-        });
-      } else {
-        const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
-        this.pasteFromClipboard(clipboardData);
-        event.preventDefault();
+      if (isSequenceEditInRNABuilderMode || this._pasteIsInProgress) return;
+      this._pasteIsInProgress = true;
+
+      const clipboardData = await navigator.clipboard.read();
+      this.pasteFromClipboard(clipboardData).finally(() => {
+        this._pasteIsInProgress = false;
+
+        if (!isCanvasEmptyBeforePaste) {
+          return;
+        }
+
+        editor.zoomToStructuresIfNeeded();
+      });
+    } else {
+      const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
+      this.pasteFromClipboard(clipboardData);
+      event.preventDefault();
+
+      if (!isCanvasEmptyBeforePaste) {
+        return;
       }
+
+      editor.zoomToStructuresIfNeeded();
     }
   }
 

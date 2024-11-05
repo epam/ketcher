@@ -36,10 +36,20 @@ export interface AtomContextMenuProps
   atomIds: Array<number>;
 }
 
+export interface RGroupAttachmentPointContextMenuProps
+  extends BaseContextMenuProps,
+    WithExtraItems {
+  id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT;
+  rgroupAttachmentPoints: Array<number>;
+  atomIds?: AtomContextMenuProps['atomIds'];
+}
 export interface SelectionContextMenuProps
   extends BaseContextMenuProps,
     Partial<Pick<BondsContextMenuProps, 'bondIds'>>,
-    Partial<Pick<AtomContextMenuProps, 'atomIds'>> {
+    Partial<Pick<AtomContextMenuProps, 'atomIds'>>,
+    Partial<
+      Pick<RGroupAttachmentPointContextMenuProps, 'rgroupAttachmentPoints'>
+    > {
   id: CONTEXT_MENU_ID.FOR_SELECTION;
 }
 
@@ -51,14 +61,6 @@ export interface FunctionalGroupsContextMenuProps extends BaseContextMenuProps {
 export interface MacromoleculeContextMenuProps extends BaseContextMenuProps {
   id: CONTEXT_MENU_ID.FOR_MACROMOLECULE;
   functionalGroups: FunctionalGroup[];
-}
-
-export interface RGroupAttachmentPointContextMenuProps
-  extends BaseContextMenuProps,
-    WithExtraItems {
-  id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT;
-  rgroupAttachmentPoints: Array<number>;
-  atomIds?: AtomContextMenuProps['atomIds'];
 }
 
 export interface MultitailArrowContextMenuProps {

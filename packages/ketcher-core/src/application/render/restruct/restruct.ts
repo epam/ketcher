@@ -335,6 +335,10 @@ class ReStruct {
     this.markItem('atoms', aid, mark);
   }
 
+  markRgroupAttachmentPoint(rgAPid: number, mark: number): void {
+    this.markItem('rgroupAttachmentPoints', rgAPid, mark);
+  }
+
   markItem(map: string, id: number, mark: number): void {
     const mapChanged = this[map + 'Changed'];
 
@@ -697,7 +701,7 @@ class ReStruct {
         return;
       }
 
-      rgroupAttachmentPoint?.show(this);
+      rgroupAttachmentPoint?.show(this, id);
     });
   }
 
@@ -777,7 +781,9 @@ class ReStruct {
             const sGroupAtoms = atoms.filter(
               (atom) => atom.sgroup === item?.item?.id,
             );
-            item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
+            item.selected =
+              sGroupAtoms.length > 0 &&
+              sGroupAtoms.some((atom) => atom.selected);
           }
 
           let selected = selection?.[map]

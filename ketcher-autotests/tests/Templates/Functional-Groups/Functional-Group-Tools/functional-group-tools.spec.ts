@@ -29,6 +29,7 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -803,12 +804,12 @@ test.describe('Templates - Functional Group Tools3', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await waitForRender(page, async () => {
+    await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Layout, page);
     });
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
+    await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Clean, page);
     });
     await takeEditorScreenshot(page);

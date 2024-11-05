@@ -5,6 +5,7 @@ export const macromoleculesFilesInputFormats = {
     rna: 'chemical/x-rna-sequence',
     dna: 'chemical/x-dna-sequence',
     peptide: 'chemical/x-peptide-sequence',
+    peptide3Letter: 'chemical/x-peptide-sequence-3-letter',
   },
   fasta: {
     rna: 'chemical/x-rna-fasta',

@@ -36,6 +36,7 @@ import { simpleObjectToStruct } from './fromKet/simpleObjectToStruct';
 import { textToKet } from './toKet/textToKet';
 import { textToStruct } from './fromKet/textToStruct';
 import {
+  IKetAmbiguousMonomerTemplate,
   IKetConnection,
   IKetConnectionEndPoint,
   IKetConnectionMoleculeEndPoint,
@@ -44,7 +45,6 @@ import {
   IKetMacromoleculesContentRootProperty,
   IKetMonomerNode,
   IKetMonomerTemplate,
-  IKetAmbiguousMonomerTemplate,
   KetConnectionType,
   KetNodeType,
   KetTemplateType,
@@ -67,9 +67,9 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   getKetRef,
   populateStructWithSelection,
+  setAmbiguousMonomerTemplatePrefix,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
-  setAmbiguousMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -78,9 +78,9 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { getAttachmentPointLabelWithBinaryShift } from 'domain/helpers/attachmentPointCalculations';
 import { isNumber } from 'lodash';
 import {
-  MonomerItemType,
   AmbiguousMonomerType,
   AttachmentPointName,
+  MonomerItemType,
 } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { imageToKet } from 'domain/serializers/ket/toKet/imageToKet';
@@ -93,6 +93,8 @@ import { multitailArrowToKet } from 'domain/serializers/ket/toKet/multitailArrow
 import { multitailArrowToStruct } from 'domain/serializers/ket/fromKet/multitailArrowToStruct';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -239,7 +241,10 @@ export class KetSerializer implements Serializer<Struct> {
     connection: IKetConnection,
     editor: CoreEditor,
   ) {
-    if (connection.connectionType !== KetConnectionType.SINGLE) {
+    if (
+      connection.connectionType !== KetConnectionType.SINGLE &&
+      connection.connectionType !== KetConnectionType.HYDROGEN
+    ) {
       editor.events.error.dispatch('Error during file parsing');
       return true;
     }
@@ -613,6 +618,30 @@ export class KetSerializer implements Serializer<Struct> {
 
           break;
         }
+        case KetConnectionType.HYDROGEN: {
+          const firstMonomer = drawingEntitiesManager.monomers.get(
+            Number(monomerIdsMap[connection.endpoint1.monomerId]),
+          );
+          const secondMonomer = drawingEntitiesManager.monomers.get(
+            Number(monomerIdsMap[connection.endpoint2.monomerId]),
+          );
+
+          if (!firstMonomer || !secondMonomer) {
+            return;
+          }
+
+          command.merge(
+            drawingEntitiesManager.createPolymerBond(
+              firstMonomer,
+              secondMonomer,
+              AttachmentPointName.HYDROGEN,
+              AttachmentPointName.HYDROGEN,
+              MACROMOLECULES_BOND_TYPES.HYDROGEN,
+            ),
+          );
+
+          break;
+        }
         default:
           break;
       }
@@ -631,7 +660,10 @@ export class KetSerializer implements Serializer<Struct> {
   ): IKetConnectionMonomerEndPoint {
     return {
       monomerId: setMonomerPrefix(monomer.id),
-      attachmentPointId: monomer.getAttachmentPointByBond(polymerBond),
+      attachmentPointId:
+        polymerBond instanceof HydrogenBond
+          ? undefined
+          : monomer.getAttachmentPointByBond(polymerBond),
     };
   }
 
@@ -808,7 +840,10 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
       fileContent.root.connections.push({
-        connectionType: KetConnectionType.SINGLE,
+        connectionType:
+          polymerBond instanceof HydrogenBond
+            ? KetConnectionType.HYDROGEN
+            : KetConnectionType.SINGLE,
         endpoint1: polymerBond.firstMonomer.monomerItem.props
           .isMicromoleculeFragment
           ? (this.getConnectionMoleculeEndpoint(
@@ -858,7 +893,7 @@ export class KetSerializer implements Serializer<Struct> {
         } as IKetConnectionEndPoint,
         endpoint2: {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
-          atomId: monomerToAtomBond.atom.atomIdInMicroMode,
+          atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
       });
     });

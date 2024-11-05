@@ -1076,6 +1076,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2-expected.rdf',
       testCaseDescription: 'RDF file with RXN V2000 single reactions (2:2)',
+      // We have a bug https://github.com/epam/Indigo/issues/2412
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1.rdf',
@@ -1088,6 +1089,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3-expected.rdf',
       testCaseDescription: 'RDF file with RXN V2000 single reactions (3:3)',
+      // We have a bug https://github.com/epam/Indigo/issues/2412
     },
   ];
 
@@ -1151,6 +1153,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2-expected.rdf',
       testCaseDescription: 'RDF file with RXN V3000 single reactions (2:2)',
+      // We have a bug https://github.com/epam/Indigo/issues/2412
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1.rdf',
@@ -1163,6 +1166,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3-expected.rdf',
       testCaseDescription: 'RDF file with RXN V3000 single reactions (3:3)',
+      // We have a bug https://github.com/epam/Indigo/issues/2412
     },
   ];
 

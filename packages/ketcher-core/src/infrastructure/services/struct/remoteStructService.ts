@@ -231,6 +231,7 @@ export class RemoteStructService implements StructService {
       'reaction-component-margin-size':
         options?.['reaction-component-margin-size'],
       'image-resolution': options?.['image-resolution'],
+      'molfile-saving-mode': options?.['molfile-saving-mode'],
     };
 
     return indigoCall(

@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer9"
+                "$ref": "monomer0"
             },
             {
-                "$ref": "monomer10"
+                "$ref": "monomer1"
             },
             {
-                "$ref": "monomer11"
+                "$ref": "monomer2"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer9",
+                    "monomerId": "monomer0",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer11",
+                    "monomerId": "monomer2",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer11",
+                    "monomerId": "monomer2",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer10",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R1"
                 }
             }
@@ -41,9 +41,9 @@
             }
         ]
     },
-    "monomer9": {
+    "monomer0": {
         "type": "monomer",
-        "id": "9",
+        "id": "0",
         "position": {
             "x": 11.012499999999994,
             "y": -3.637500000000003
@@ -226,9 +226,9 @@
             }
         ]
     },
-    "monomer10": {
+    "monomer1": {
         "type": "monomer",
-        "id": "10",
+        "id": "1",
         "position": {
             "x": 3.737499999999997,
             "y": -9.662499999999998
@@ -236,9 +236,9 @@
         "alias": "A6OH",
         "templateId": "A6OH___6-amino-hexanol"
     },
-    "monomer11": {
+    "monomer2": {
         "type": "monomer",
-        "id": "11",
+        "id": "2",
         "position": {
             "x": 11.012500000000001,
             "y": -9.6625

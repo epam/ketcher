@@ -1096,7 +1096,7 @@ test.describe('Cascade Reactions', () => {
   testCases16.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
     test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V2000`, async () => {
       /* 
-      Test case: https://github.com/epam/Indigo/issues/2102
+      Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
       and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V2000 with correct sizes and positions. 
       */
@@ -1107,10 +1107,6 @@ test.describe('Cascade Reactions', () => {
         'v2000',
         `${rdfFileExpected}`,
         `tests/test-data/${rdfFileExpected}`,
-        [
-          1, 5, 10, 25, 27, 28, 35, 41, 43, 52, 59, 60, 68, 107, 119, 149, 174,
-          225,
-        ],
       );
       await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
       await takeEditorScreenshot(page);
@@ -1173,7 +1169,7 @@ test.describe('Cascade Reactions', () => {
   testCases17.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
     test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V3000`, async () => {
       /* 
-      Test case: https://github.com/epam/Indigo/issues/2102
+      Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
       and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V3000 with correct sizes and positions. 
       */
@@ -1184,12 +1180,205 @@ test.describe('Cascade Reactions', () => {
         'v3000',
         `${rdfFileExpected}`,
         `tests/test-data/${rdfFileExpected}`,
-        [
-          1, 5, 10, 25, 27, 28, 35, 41, 43, 52, 59, 60, 68, 107, 119, 149, 174,
-          225,
-        ],
       );
       await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases18 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-24x24.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-single-reaction-24x24-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V2000 single reactions (24:24)',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-24x24.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-single-reaction-24x24-expected.rdf',
+      testCaseDescription: 'RDF file with RXN V3000 single reactions (24:24)',
+    },
+  ];
+
+  testCases18.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
+    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2237
+      Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
+      and correct positions, after that they can be saved to RDF with correct sizes and positions, after that loaded from RDF with correct sizes and positions. 
+      Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2412
+      After fix we should update snapshots and test files
+      */
+      const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyRdfFile(
+        page,
+        fileFormat,
+        `${rdfFileExpected}`,
+        `tests/test-data/${rdfFileExpected}`,
+      );
+      await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases19 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-1-1',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-2-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-3-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-2-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-2-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-1-2-1',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-3-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-3-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-2-3-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-4-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-4-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 2-3-4-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-7-1.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-7-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 7-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-5.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-5-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 5 tails',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-12.rdf',
+      rdfFileExpected:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-12-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V2000 single cascade reaction 12 tails',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-1-1',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-2-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-3-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-2-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-2-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-1-2-1',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-3-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-3-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-2-3-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-4-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-4-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 2-3-4-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-7-1.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-7-1-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 7-1',
+      // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-5.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-5-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 5 tails',
+    },
+    {
+      rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-12.rdf',
+      rdfFileExpected:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-12-expected.rdf',
+      testCaseDescription:
+        'RDF file with RXN V3000 single cascade reaction 12 tails',
+    },
+  ];
+
+  testCases19.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
+    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2237
+      Description: ${testCaseDescription} RDF file with RXN V2000/V3000 can be loaded, after that they can be saved/loaded to RDF.
+      */
+      const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyRdfFile(
+        page,
+        fileFormat,
+        `${rdfFileExpected}`,
+        `tests/test-data/${rdfFileExpected}`,
+      );
+      await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
       await takeEditorScreenshot(page);
     });
   });

@@ -78,7 +78,19 @@ export async function verifyRdfFile(
       metaDataIndexes,
     });
 
-  expect(rdfFile).toEqual(rdfFileExpected);
+  const filterLines = (lines: string[], indexes: number[]) => {
+    if (indexes.length === 0) {
+      return lines.filter(
+        (line) => !line.includes('-INDIGO-') && !line.includes('$DATM'),
+      );
+    }
+    return filterByIndexes(lines, indexes);
+  };
+
+  const filteredRdfFile = filterLines(rdfFile, metaDataIndexes);
+  const filteredRdfFileExpected = filterLines(rdfFileExpected, metaDataIndexes);
+
+  expect(filteredRdfFile).toEqual(filteredRdfFileExpected);
 }
 
 const GetFileMethod: Record<string, keyof Ketcher> = {

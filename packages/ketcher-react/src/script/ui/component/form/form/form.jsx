@@ -117,20 +117,22 @@ function Label({ labelPos, title, children, ...props }) {
   return (
     <label {...props}>
       {title && labelPos !== 'after' ? (
-        <div
-          className={clsx({
-            [classes.divWithTooltipAndAboutIcon]: true,
-          })}
-        >
-          <span>{title}</span>
-          {tooltip ? (
+        tooltip ? (
+          <div
+            className={clsx({
+              [classes.divWithTooltipAndAboutIcon]: true,
+            })}
+          >
+            <span>{title}</span>
             <Tooltip title={tooltip}>
               <div>
                 <Icon name="about"></Icon>
               </div>
             </Tooltip>
-          ) : null}
-        </div>
+          </div>
+        ) : (
+          <span>{title}</span>
+        )
       ) : (
         ''
       )}

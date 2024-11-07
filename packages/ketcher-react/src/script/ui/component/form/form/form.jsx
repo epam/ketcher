@@ -113,7 +113,6 @@ export default connect(null, (dispatch) => ({
 
 function Label({ labelPos, title, children, ...props }) {
   const tooltip = props.tooltip ? props.tooltip : null;
-
   return (
     <label {...props}>
       {title && labelPos !== 'after' ? (
@@ -138,7 +137,22 @@ function Label({ labelPos, title, children, ...props }) {
       )}
       {children}
       {title && labelPos === 'after' ? (
-        <span title={tooltip}>{title}</span>
+        tooltip ? (
+          <div
+            className={clsx({
+              [classes.divWithTooltipAndAboutIcon]: true,
+            })}
+          >
+            <Tooltip title={tooltip}>
+              <div>
+                <Icon name="about"></Icon>
+              </div>
+            </Tooltip>
+            <span>{title}</span>
+          </div>
+        ) : (
+          <span>{title}</span>
+        )
       ) : (
         ''
       )}

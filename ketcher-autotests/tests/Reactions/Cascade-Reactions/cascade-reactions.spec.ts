@@ -21,6 +21,7 @@ import {
   cutAndPaste,
   moveOnAtom,
   dragMouseTo,
+  clickOnFileFormatDropdown,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -1379,6 +1380,263 @@ test.describe('Cascade Reactions', () => {
         `tests/test-data/${rdfFileExpected}`,
       );
       await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases20 = [
+    {
+      ketFile: 'KET/ket-single-reaction-1x1-with-several-tails.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
+      testCaseDescription: 'KET single reaction (1:1) with several tails',
+    },
+  ];
+
+  testCases20.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are only one reactant`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2237
+          Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2426
+          After fix we should update snapshots and test files.
+          */
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases21 = [
+    {
+      ketFile: 'KET/ket-cascade-reaction-with-reagents.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-with-reagents-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reaction-with-reagents-expected.rdf',
+      testCaseDescription: 'KET cascade reaction with reagents',
+    },
+  ];
+
+  testCases21.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be save/load to/from ${format.toUpperCase()} and verify that there are no reagents and cascade reactions`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2237
+          Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2550
+          After fix we should update snapshots and test files.
+          */
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases22 = [
+    {
+      ketFile: 'KET/ket-cascade-single-reactions-with-matching.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-single-reactions-with-matching-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-single-reactions-with-matching-expected.rdf',
+      testCaseDescription:
+        'KET several single and cascade reactions with single and Multi-Tailed arrows, pluses and with matched products/reactants',
+    },
+    {
+      ketFile: 'KET/ket-cascade-single-reactions-without-matching.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-single-reactions-without-matching-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-single-reactions-without-matching-expected.rdf',
+      testCaseDescription:
+        'KET several single and cascade reactions with single and Multi-Tailed arrows, pluses and without matched products/reactants',
+    },
+  ];
+
+  testCases22.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2237
+          Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          */
+
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases23 = [
+    {
+      ketFile: 'KET/ket-single-reaction-0x1.ket',
+      rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-0x1-expected.rdf',
+      rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-0x1-expected.rdf',
+      testCaseDescription: 'KET single reaction (0:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-0x2.ket',
+      rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-0x2-expected.rdf',
+      rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-0x2-expected.rdf',
+      testCaseDescription: 'KET single reaction (0:2)',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x0.ket',
+      rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-2x0-expected.rdf',
+      rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-2x0-expected.rdf',
+      testCaseDescription: 'KET single reaction (2:0)',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-1x1-with-several-tails.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
+      testCaseDescription: 'KET single reaction (1:1 with several tails)',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x2-with-pluses.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x2-with-pluses-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-2x2-with-pluses-expected.rdf',
+      testCaseDescription: 'KET single reaction (2:2 with pluses)',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-3x1.ket',
+      rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-3x1-expected.rdf',
+      rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-3x1-expected.rdf',
+      testCaseDescription: 'KET single reaction (3:1)',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-3-1-2-1-1.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-3-1-2-1-1-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reaction-3-1-2-1-1-expected.rdf',
+      testCaseDescription: 'KET cascade reaction (3-1-2-1-1)',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-row.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-row-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-row-expected.rdf',
+      testCaseDescription:
+        'KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-row)',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-bottom-top.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-bottom-top-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-bottom-top-expected.rdf',
+      testCaseDescription:
+        'KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-bottom-top)',
+    },
+  ];
+
+  testCases23.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2237
+          Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
+          */
+
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  ['RDF V2000', 'RDF V3000'].forEach((format) => {
+    test(`Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
+      /**
+       * Test case: https://github.com/epam/Indigo/issues/2237
+       * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
+       * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
+       */
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await clickOnFileFormatDropdown(page);
+      await takeEditorScreenshot(page);
+
+      await page.getByTestId(`${format}-option`).click();
       await takeEditorScreenshot(page);
     });
   });

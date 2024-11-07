@@ -1634,8 +1634,6 @@ test.describe('Cascade Reactions', () => {
        */
       await selectTopPanelButton(TopPanelButton.Save, page);
       await clickOnFileFormatDropdown(page);
-      await takeEditorScreenshot(page);
-
       await page.getByTestId(`${format}-option`).click();
       await takeEditorScreenshot(page);
     });

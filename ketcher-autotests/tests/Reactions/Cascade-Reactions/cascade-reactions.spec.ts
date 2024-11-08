@@ -22,6 +22,11 @@ import {
   moveOnAtom,
   dragMouseTo,
   clickOnFileFormatDropdown,
+  clickOnCanvas,
+  selectRing,
+  RingButton,
+  selectRectangleSelectionTool,
+  waitForRender,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -29,6 +34,13 @@ import {
   verifyFile,
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
+
+async function addTail(page: Page, x: number, y: number) {
+  await page.mouse.click(x, y, { button: 'right' });
+  await waitForRender(page, async () => {
+    await page.getByText('Add new tail').click();
+  });
+}
 
 test.describe('Cascade Reactions', () => {
   let page: Page;
@@ -1638,4 +1650,161 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
     });
   });
+
+  const testCases24 = [
+    {
+      rdfFileV2000: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
+      rdfFileV3000: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
+      rdfFileExpectedV2000:
+        'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-expected1.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-expected1.rdf',
+      testCaseDescription:
+        'Cascade reaction with elements saved to RDF V2000/V3000 after various operations of adding tail, deleted structures, copy/paste, undo/redo on the canvas',
+    },
+  ];
+
+  testCases24.forEach(
+    ({
+      rdfFileV2000,
+      rdfFileV3000,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /*
+            Test case: https://github.com/epam/Indigo/issues/2237
+            Description: Loaded from RDF RXN file, added cascade reaction to Canvas, added other elements,
+            cascade reactions with elements saved to RDF formats with the correct positions.
+          */
+          const rdfFile = format === 'v2000' ? rdfFileV2000 : rdfFileV3000;
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvas(rdfFile, page);
+          await clickOnCanvas(page, 500, 600);
+          await selectRing(RingButton.Benzene, page);
+          await clickOnCanvas(page, 200, 600);
+          await selectRectangleSelectionTool(page);
+          await addTail(page, 482, 464);
+          await takeEditorScreenshot(page);
+          await selectPartOfMolecules(page);
+          await selectEraseTool(page);
+          await takeEditorScreenshot(page);
+          await waitForRender(page, async () => {
+            await selectTopPanelButton(TopPanelButton.Undo, page);
+          });
+          await takeEditorScreenshot(page);
+          await copyAndPaste(page);
+          await clickOnCanvas(page, 500, 200);
+          await takeEditorScreenshot(page);
+          await waitForRender(page, async () => {
+            await selectTopPanelButton(TopPanelButton.Undo, page);
+          });
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases25 = [
+    {
+      ketFile: 'KET/ket-single-reaction-5x3-with-pluses.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-5x3-with-pluses-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-5x3-with-pluses-expected.rdf',
+      testCaseDescription:
+        'KET single reaction with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+    },
+    {
+      ketFile: 'KET/ket-single-reactions-2-5x3-with-pluses-top-bottom.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reactions-2-5x3-with-pluses-top-bottom-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reactions-2-5x3-with-pluses-top-bottom-expected.rdf',
+      testCaseDescription:
+        'KET two single reactions (one under another) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+    },
+    {
+      ketFile: 'KET/ket-single-reactions-2-5x3-with-pluses-left-right.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reactions-2-5x3-with-pluses-left-right-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reactions-2-5x3-with-pluses-left-right-expected.rdf',
+      testCaseDescription:
+        'KET two single reactions (two in a row) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-tails-5-with-pluses.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-tails-5-with-pluses-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (5 tails with pluses) with single/Multi-Tailed arrows and pluses near reactants and products',
+    },
+    {
+      ketFile:
+        'KET/ket-single-cascade-reactions-with-pluses-5x3-tails-5-top-bottom.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-top-bottom-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-top-bottom-expected.rdf',
+      testCaseDescription:
+        'KET cascade and single reactions (one under another 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
+    },
+    {
+      ketFile:
+        'KET/ket-single-cascade-reactions-with-pluses-5x3-tails-5-row.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-row-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-row-expected.rdf',
+      testCaseDescription:
+        'KET two cascade and single reactions (two in a row 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
+    },
+  ];
+
+  testCases25.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2237
+          Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
+          */
+
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
 });

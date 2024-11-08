@@ -16,7 +16,6 @@ import {
   Sugars,
   TopPanelButton,
   selectMonomer,
-  waitForRender,
   AtomButton,
   RingButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -25,6 +24,7 @@ import {
   waitForSpinnerFinishedWork,
   getControlModifier,
 } from '..';
+import { waitForRender } from '@utils/common';
 import {
   openSettings,
   selectAtomInToolbar,

@@ -72,7 +72,11 @@ export function couldBeSaved(
     if (hasRxnArrow) {
       const arrayOfArrows: Array<any> = Array.from(struct.rxnArrows.values());
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode;
-      if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
+      if (
+        ![RxnArrowMode.OpenAngle, RxnArrowMode.Retrosynthetic].includes(
+          rxnArrowMode,
+        )
+      ) {
         warnings.push(
           `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`,
         );

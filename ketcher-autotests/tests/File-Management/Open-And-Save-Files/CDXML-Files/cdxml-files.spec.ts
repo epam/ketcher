@@ -601,6 +601,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCdxml(page);
@@ -637,6 +638,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCdxml(page);

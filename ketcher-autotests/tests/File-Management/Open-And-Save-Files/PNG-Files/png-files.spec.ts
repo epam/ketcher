@@ -169,6 +169,7 @@ test.describe('Saving in .png files', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     await clickOnSaveFileAndOpenDropdown(page);

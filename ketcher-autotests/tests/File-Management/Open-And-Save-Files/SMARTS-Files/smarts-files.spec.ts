@@ -461,6 +461,7 @@ const allTypesExpandableOfMonomers: IMonomer[] = [
     SMARTSFile_Expected:
       'SMARTS/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library)-expected.smarts',
     monomerLocatorText: 'D',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',

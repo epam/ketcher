@@ -236,40 +236,39 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Set and Get Molecule containing chiral centers V3000',
-    async ({ page }) => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
-       * Test case: EPMLSOPKET- 10097
-       * Description:  Molecule set and get with chiral centers V3000
-       */
+  test('Set and Get Molecule containing chiral centers V3000', async ({
+    page,
+  }) => {
+    /*
+     * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
+     * Test case: EPMLSOPKET- 10097
+     * Description:  Molecule set and get with chiral centers V3000
+     */
 
-      await waitForSpinnerFinishedWork(
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+    );
+    const molV3000File = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+      molV3000File,
+    );
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-        async () =>
-          await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
-      );
-      const molV3000File = await getMolfile(page, 'v3000');
-      await saveToFile(
-        'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-        molV3000File,
-      );
-      const METADATA_STRING_INDEX = [1];
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-          fileFormat: 'v3000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+    await takeEditorScreenshot(page);
+  });
 
   test('Check DisableQueryElements parameter', async ({ page }) => {
     /*

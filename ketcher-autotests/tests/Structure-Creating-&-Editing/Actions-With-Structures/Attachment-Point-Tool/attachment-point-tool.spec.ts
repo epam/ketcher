@@ -291,7 +291,7 @@ test.describe('Attachment Point Tool', () => {
   test('Create reaction with Attachment point', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1647
-    Description: Attachment points are created correctly if the reaction arrow 
+    Description: Attachment points are created correctly if the reaction arrow
     and plus sign(s) are present on the canvas.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
@@ -500,7 +500,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail('Save as *.rxn file V3000', async ({ page }) => {
+  test('Save as *.rxn file V3000', async ({ page }) => {
     /*
      * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2490
      * Test case: EPMLSOPKET-1652
@@ -805,7 +805,7 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15519
-    Description: Visualization updates accordingly, displaying 
+    Description: Visualization updates accordingly, displaying
     the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
@@ -831,7 +831,7 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15520
-    Description: visualization updates accordingly, 
+    Description: visualization updates accordingly,
     removing the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
@@ -857,7 +857,7 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15521
-    Description:  Visualization no longer displays any 
+    Description:  Visualization no longer displays any
     attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);

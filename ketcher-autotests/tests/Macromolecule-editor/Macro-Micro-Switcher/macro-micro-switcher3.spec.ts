@@ -231,6 +231,7 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
       monomerLocatorText: '%',
+      pageReloadNeeded: true,
     },
     {
       monomerDescription:

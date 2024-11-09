@@ -112,12 +112,14 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
       monomerLocatorText: 'D',
+      pageReloadNeeded: true,
     },
     {
       monomerDescription: '2. Sugar UNA (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
       monomerLocatorText: 'UNA',
+      pageReloadNeeded: true,
     },
     {
       monomerDescription: '3. Base hU (from library)',

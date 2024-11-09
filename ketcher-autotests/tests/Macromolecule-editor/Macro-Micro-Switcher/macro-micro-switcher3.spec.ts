@@ -112,42 +112,36 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
       monomerLocatorText: 'D',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '2. Sugar UNA (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
       monomerLocatorText: 'UNA',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '3. Base hU (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
       monomerLocatorText: 'hU',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '4. Phosphate bnn (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
       monomerLocatorText: 'bnn',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
       monomerLocatorText: '5hMedC',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '6. CHEM 4aPEGMal (from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
       monomerLocatorText: '4aPEGMal',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -155,7 +149,6 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
       monomerLocatorText: 'X',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -163,14 +156,12 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '9. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -178,21 +169,18 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '11. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '12. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -200,7 +188,6 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
       monomerLocatorText: 'N',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -208,28 +195,24 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
       monomerLocatorText: 'N',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '15. Base M (ambiguous, alternatives, from library)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
       monomerLocatorText: 'M',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '16. DNA base A+C+G+T (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '17. RNA base A+C+G+U (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '18. Base A+C (ambiguous, mixed)',
@@ -242,14 +225,12 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '20. Phosphate bnn+cmp+nen (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription:
@@ -257,21 +238,18 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '22. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
       monomerLocatorText: '%',
-      pageReloadNeeded: true,
     },
     {
       monomerDescription: '23. Unknown nucleotide',
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
       monomerLocatorText: 'Unknown',
-      pageReloadNeeded: true,
     },
   ];
 
@@ -925,6 +903,7 @@ test(
      *           3.7 Press Undo button
      *           3.8 Take screenshot to witness monomer got collapsed
      */
+    test.slow();
     await pageReload(page);
     await turnOnMicromoleculesEditor(page);
 

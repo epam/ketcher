@@ -261,7 +261,7 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
        *              on the canvas and then using Undo correctly repositions the monomer back to
        *              its original position, then Redo moves it back to the new location
        *
-       * Case: 1. Load monomer on Molecules canvas
+       * Case: 1. Load monomer on Molecules canvas and move it to certain place
        *       2. Take screenshot to witness initial position
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
@@ -276,13 +276,14 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
         movableCollapsedMonomer.KETFile,
         page,
       );
-      await takeEditorScreenshot(page);
-
       const canvasLocator = page.getByTestId('ketcher-canvas');
       const monomerLocator = canvasLocator.getByText(
         movableCollapsedMonomer.monomerLocatorText,
         { exact: true },
       );
+      await moveMonomerOnMicro(page, monomerLocator, 400, 400);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await takeEditorScreenshot(page);
 
       await moveMonomerOnMicro(page, monomerLocator, 100, 100);
       await moveMouseToTheMiddleOfTheScreen(page);

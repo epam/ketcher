@@ -130,6 +130,7 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
       monomerLocatorText: 'bnn',
+      pageReloadNeeded: true,
     },
     {
       monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
@@ -219,6 +220,7 @@ test.describe('Move collapsed monomer on Micro and Undo: ', () => {
       KETFile:
         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
       monomerLocatorText: '%',
+      pageReloadNeeded: true,
     },
     {
       monomerDescription: '19. Phosphate bnn,cmp,nen (ambiguous, alternatives)',

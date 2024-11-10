@@ -26,7 +26,6 @@ import {
   waitForRender,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
 import {
   pressRedoButton,
   pressUndoButton,

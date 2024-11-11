@@ -22,7 +22,7 @@ import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { IndigoProvider } from 'ketcher-react';
+import { IconButton, IndigoProvider } from 'ketcher-react';
 import {
   ChemicalMimeType,
   KetSerializer,
@@ -30,6 +30,8 @@ import {
   CoreEditor,
   KetcherLogger,
   getSvgFromDrawnStructures,
+  isClipboardAPIAvailable,
+  legacyCopy,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
@@ -37,6 +39,7 @@ import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
 import {
   Form,
   Loader,
+  PreviewContainer,
   Row,
   StyledDropdown,
   stylesForExpanded,
@@ -167,6 +170,23 @@ export const Save = ({
     onClose();
   };
 
+  const handleCopy = (event) => {
+    event.preventDefault();
+
+    try {
+      if (isClipboardAPIAvailable()) {
+        navigator.clipboard.writeText(struct);
+      } else {
+        legacyCopy(event.clipboardData, {
+          'text/plain': struct,
+        });
+      }
+    } catch (e) {
+      KetcherLogger.error('copyAs.js::copyAs', e);
+      dispatch(openErrorModal('This feature is not available in your browser'));
+    }
+  };
+
   useEffect(() => {
     if (currentFileFormat === 'ket') {
       const ketSerializer = new KetSerializer();
@@ -202,19 +222,25 @@ export const Save = ({
           {svgData ? (
             <SvgPreview dangerouslySetInnerHTML={{ __html: svgData }} />
           ) : (
-            <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
+            <PreviewContainer>
               <TextArea
                 testId="preview-area-text"
                 value={struct}
                 readonly
                 selectOnInit
               />
+              <IconButton
+                onClick={handleCopy}
+                iconName="copy"
+                title="Copy to clipboard"
+                testId="copy-to-clipboard"
+              />
               {isLoading && (
                 <Loader>
                   <LoadingCircles />
                 </Loader>
               )}
-            </div>
+            </PreviewContainer>
           )}
         </Form>
       </Modal.Content>

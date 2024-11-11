@@ -62,7 +62,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -157,9 +157,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-    });
+    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -179,9 +177,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-    });
+    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -214,7 +210,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectTopPanelButton(TopPanelButton.Copy, page);
     await takeEditorScreenshot(page);
   });
@@ -305,9 +301,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-    });
+    await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(x, y);
     await takeEditorScreenshot(page);
   });
@@ -1015,7 +1009,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await expect(page).toHaveScreenshot();
   });
@@ -1030,7 +1024,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await expect(page).toHaveScreenshot();
@@ -1049,7 +1043,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await selectTopPanelButton(TopPanelButton.Paste, page);
     await expect(page).toHaveScreenshot();
@@ -1068,7 +1062,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();
     await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pressButton(page, 'Cancel');
     await page.keyboard.press('Control+Alt+v');

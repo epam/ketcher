@@ -449,27 +449,25 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    'Verify that 3 different Multi-Tailed Arrows are copied from .ket ' +
-      'format and added from clipboard directly to selected place on Canvas',
-    async ({ page }) => {
-      /**
-       * Test case: https://github.com/epam/ketcher/issues/5104
-       * Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
-       * with correct positions and sizes of spines, tails and heads
-       */
-      const fileContent = await readFileContents(
-        'tests/test-data/KET/three-different-multi-tail-arrows.ket',
-      );
-      await openPasteFromClipboard(page, fileContent);
-      await page.keyboard.press('Control+a');
-      await copyToClipboardByKeyboard(page);
-      await pressButton(page, 'Cancel');
-      await pasteFromClipboardByKeyboard(page);
-      await clickInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Verify that 3 different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/5104
+     * Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
+     * with correct positions and sizes of spines, tails and heads
+     */
+    const fileContent = await readFileContents(
+      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await page.keyboard.press('Control+a');
+    await copyToClipboardByKeyboard(page);
+    await pressButton(page, 'Cancel');
+    await pasteFromClipboardByKeyboard(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Verify that Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview', async ({
     page,

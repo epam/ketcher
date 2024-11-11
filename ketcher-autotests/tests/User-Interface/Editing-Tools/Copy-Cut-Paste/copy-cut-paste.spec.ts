@@ -1069,7 +1069,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.getByText('Paste from clipboard').click();
     await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await pressButton(page, 'Cancel');
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page);

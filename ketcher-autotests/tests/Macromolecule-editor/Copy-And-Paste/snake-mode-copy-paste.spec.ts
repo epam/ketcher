@@ -8,6 +8,7 @@ import {
   selectRectangleArea,
   clickUndo,
   selectSnakeLayoutModeTool,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -35,7 +36,7 @@ test.describe('Snake mode copy&paste', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
 
@@ -50,7 +51,7 @@ test.describe('Snake mode copy&paste', () => {
     await page.getByText('D').locator('..').first().click();
     await page.getByText('F').locator('..').first().click();
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+v');

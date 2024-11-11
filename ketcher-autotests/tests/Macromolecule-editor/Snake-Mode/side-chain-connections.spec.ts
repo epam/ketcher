@@ -21,6 +21,7 @@ import {
   waitForKetcherInit,
   hideLibrary,
   showLibrary,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -1101,9 +1102,7 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+a');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await copyToClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });

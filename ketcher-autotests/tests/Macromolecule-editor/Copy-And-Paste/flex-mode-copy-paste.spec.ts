@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -6,6 +6,7 @@ import {
   zoomWithMouseWheel,
   selectRectangleArea,
   clickUndo,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -27,7 +28,7 @@ test.describe('Flex mode copy&paste', () => {
     page,
   }) => {
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
 
     await page.mouse.move(-startX, 0);
     await page.keyboard.press('Control+v');
@@ -44,7 +45,7 @@ test.describe('Flex mode copy&paste', () => {
     await page.getByText('SMCC').locator('..').first().click();
     await page.getByText('Test-6-Ch').locator('..').first().click();
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
 
     await page.mouse.move(startX, startY);
     await page.keyboard.press('Control+v');

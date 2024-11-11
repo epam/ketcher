@@ -4,6 +4,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
+  copyToClipboardByKeyboard,
   cutAndPaste,
   dragMouseTo,
   LeftPanelButton,
@@ -459,7 +460,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await openPasteFromClipboard(page, fileContent);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await pressButton(page, 'Cancel');
     await page.keyboard.press('Control+v');
     await clickInTheMiddleOfTheScreen(page);
@@ -721,9 +722,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await copyToClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -768,9 +767,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await copyToClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -922,9 +919,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await copyToClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
@@ -974,9 +969,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
+    await copyToClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });

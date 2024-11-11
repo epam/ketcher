@@ -22,6 +22,7 @@ import {
   zoomWithMouseWheel,
   selectEraseTool,
   Bases,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -432,7 +433,7 @@ test.describe('Undo-Redo tests', () => {
     await page.getByTestId('C_C_R_P').click();
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
     await page.keyboard.press('Control+v');
     await moveMouseAway(page);

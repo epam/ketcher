@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  copyToClipboardByKeyboard,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectClearCanvasTool,
@@ -280,7 +281,7 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
     await enterSequence(page, 'aaaaaaaaaa');
 

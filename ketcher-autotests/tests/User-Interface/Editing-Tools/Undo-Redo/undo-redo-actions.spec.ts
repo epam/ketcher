@@ -35,6 +35,7 @@ import {
   waitForPageInit,
   waitForRender,
   openSettings,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -751,7 +752,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Control+v');
     await page.keyboard.press('Control+z');
     await page.keyboard.press('Control+z');

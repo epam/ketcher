@@ -4,8 +4,6 @@ import {
   selectNestedTool,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectTopPanelButton,
-  TopPanelButton,
   clickOnTheCanvas,
   applyAutoMapMode,
   selectLeftPanelButton,
@@ -15,6 +13,7 @@ import {
   clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -81,7 +80,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         const atomNumber2 = 2;
         await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
-        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await pressUndoButton(page);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
         await clickOnAtom(page, 'C', atomNumber1);
@@ -98,9 +97,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       await takeEditorScreenshot(page);
       await applyAutoMapMode(page, 'Discard');
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await applyAutoMapMode(page, 'Keep');
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await applyAutoMapMode(page, 'Alter', false);
     });
     test('After the manual mapping with incorrect ordering', async ({

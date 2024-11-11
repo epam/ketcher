@@ -158,7 +158,7 @@ Object {
                 </div>
               </div>
               <div
-                style="display: flex; flex-grow: 1; position: relative;"
+                class="css-4ly9h9"
               >
                 <textarea
                   class="css-evzoup"
@@ -173,6 +173,25 @@ Object {
     }
 }
                 </textarea>
+                <button
+                  class="css-1kbfai8"
+                  data-testid="copy-to-clipboard"
+                  title="Copy to clipboard"
+                >
+                  <svg
+                    class="css-2ntgcm"
+                    fill="none"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M17.25 18.75H9V8.25h8.25v10.5zm0-12H9a1.5 1.5 0 00-1.5 1.5v10.5a1.5 1.5 0 001.5 1.5h8.25a1.5 1.5 0 001.5-1.5V8.25a1.5 1.5 0 00-1.5-1.5zm-2.25-3H6a1.5 1.5 0 00-1.5 1.5v10.5H6V5.25h9v-1.5z"
+                      fill="currentcolor"
+                    />
+                  </svg>
+                </button>
               </div>
             </form>
           </div>

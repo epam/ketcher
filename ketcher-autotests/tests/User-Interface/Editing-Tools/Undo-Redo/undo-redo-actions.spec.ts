@@ -36,6 +36,7 @@ import {
   waitForRender,
   openSettings,
   copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -753,7 +754,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await copyToClipboardByKeyboard(page);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await page.keyboard.press('Control+z');
     await page.keyboard.press('Control+z');
   });

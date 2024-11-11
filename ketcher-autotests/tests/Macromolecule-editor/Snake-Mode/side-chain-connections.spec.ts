@@ -22,6 +22,7 @@ import {
   hideLibrary,
   showLibrary,
   copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -1103,9 +1104,7 @@ test.describe('Side chain connections', () => {
 
     await page.keyboard.press('Control+a');
     await copyToClipboardByKeyboard(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

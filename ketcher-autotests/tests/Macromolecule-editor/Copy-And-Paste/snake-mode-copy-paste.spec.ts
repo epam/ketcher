@@ -9,6 +9,7 @@ import {
   clickUndo,
   selectSnakeLayoutModeTool,
   copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -37,7 +38,7 @@ test.describe('Snake mode copy&paste', () => {
     await takeEditorScreenshot(page);
 
     await copyToClipboardByKeyboard(page);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
@@ -54,7 +55,7 @@ test.describe('Snake mode copy&paste', () => {
     await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);

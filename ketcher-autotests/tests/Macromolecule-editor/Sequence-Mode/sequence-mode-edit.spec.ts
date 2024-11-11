@@ -4,6 +4,7 @@ import {
   copyToClipboardByKeyboard,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardByKeyboard,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -288,7 +289,7 @@ test.describe('Sequence edit mode', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowLeft');
 
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

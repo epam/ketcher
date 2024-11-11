@@ -32,6 +32,7 @@ import {
   waitForSpinnerFinishedWork,
   openFileAndAddToCanvasAsNewProjectMacro,
   copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -917,7 +918,7 @@ test.describe('Import-Saving .idt Files', () => {
     await page.keyboard.press('Control+a');
     await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

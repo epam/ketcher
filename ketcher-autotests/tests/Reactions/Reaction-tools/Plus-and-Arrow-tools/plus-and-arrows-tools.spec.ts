@@ -239,17 +239,17 @@ test.describe('Plus and Arrows tools ', () => {
           point.y + 15 + 20,
         );
         await page.keyboard.press('Control+X');
-        await page.keyboard.press('Control+V');
+        await pasteFromClipboardByKeyboard(page);
         // await selectTopPanelButton(TopPanelButton.Cut, page);
         // await waitForSpinnerFinishedWork(
         //   page,
         //   async () => await selectTopPanelButton(TopPanelButton.Cut, page),
         // );
 
-        // await page.keyboard.press('Control+V');
+        // await pasteFromClipboardByKeyboard(page);
         // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await page.keyboard.press('Control+V'),
+        //   async () => await pasteFromClipboardByKeyboard(page);
         // );
 
         await clickOnTheCanvas(page, 0, -100);

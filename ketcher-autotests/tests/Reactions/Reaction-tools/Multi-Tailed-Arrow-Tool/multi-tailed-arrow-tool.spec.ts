@@ -6,6 +6,7 @@ import {
   copyAndPaste,
   copyToClipboardByKeyboard,
   cutAndPaste,
+  cutToClipboardByKeyboard,
   dragMouseTo,
   LeftPanelButton,
   moveOnAtom,
@@ -745,9 +746,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
+    await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
@@ -785,9 +784,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
+    await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
@@ -935,9 +932,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
+    await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
@@ -983,9 +978,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await page.keyboard.press('Control+a');
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+x');
-    });
+    await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);

@@ -238,7 +238,7 @@ test.describe('Plus and Arrows tools ', () => {
           point.x - 200 + 20,
           point.y + 15 + 20,
         );
-        await page.keyboard.press('Control+X');
+        await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
         // await selectTopPanelButton(TopPanelButton.Cut, page);
         // await waitForSpinnerFinishedWork(

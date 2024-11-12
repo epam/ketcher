@@ -130,9 +130,7 @@ export async function selectFlexLayoutModeTool(page: Page) {
 
 export async function selectEraseTool(page: Page) {
   const bondToolButton = page.getByTestId('erase');
-  await waitForRender(page, async () => {
-    await bondToolButton.click();
-  });
+  await bondToolButton.click();
 }
 
 export async function selectImageTool(page: Page) {

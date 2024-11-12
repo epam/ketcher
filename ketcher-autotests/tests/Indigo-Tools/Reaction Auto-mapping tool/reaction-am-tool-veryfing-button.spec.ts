@@ -4,6 +4,8 @@ import {
   selectNestedTool,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  selectTopPanelButton,
+  TopPanelButton,
   clickOnTheCanvas,
   applyAutoMapMode,
   selectLeftPanelButton,
@@ -13,7 +15,6 @@ import {
   clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -80,7 +81,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         const atomNumber2 = 2;
         await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
-        await pressUndoButton(page);
+        await selectTopPanelButton(TopPanelButton.Undo, page);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
         await clickOnAtom(page, 'C', atomNumber1);
@@ -97,9 +98,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       await takeEditorScreenshot(page);
       await applyAutoMapMode(page, 'Discard');
-      await pressUndoButton(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
       await applyAutoMapMode(page, 'Keep');
-      await pressUndoButton(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
       await applyAutoMapMode(page, 'Alter', false);
     });
     test('After the manual mapping with incorrect ordering', async ({
@@ -176,8 +177,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await applyAutoMapMode(page, 'Discard', false);
   });
 
-  // TODO: This test is currently highly unstable, figure out how to wait for rendering to complete properly
-  test.skip('Verifying of the correct automapping', async ({ page }) => {
+  test('Verifying of the correct automapping', async ({ page }) => {
     /**
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping
@@ -199,7 +199,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       page,
       async () => await applyAutoMapMode(page, 'Keep'),
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      10000,
     );
     await openFileAndAddToCanvas(
       'Rxn-V2000/allenes.rxn',
@@ -211,7 +211,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       page,
       async () => await applyAutoMapMode(page, 'Alter', false),
       // eslint-disable-next-line no-magic-numbers
-      30000,
+      10000,
     );
   });
 });

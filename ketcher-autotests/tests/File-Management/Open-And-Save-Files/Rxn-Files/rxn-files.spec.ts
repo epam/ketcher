@@ -1323,7 +1323,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
@@ -1361,7 +1360,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
@@ -1399,7 +1397,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
-    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];

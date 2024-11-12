@@ -16,6 +16,7 @@ import {
   Sugars,
   TopPanelButton,
   selectMonomer,
+  waitForRender,
   AtomButton,
   RingButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -24,7 +25,6 @@ import {
   waitForSpinnerFinishedWork,
   getControlModifier,
 } from '..';
-import { waitForRender } from '@utils/common';
 import {
   openSettings,
   selectAtomInToolbar,
@@ -197,7 +197,7 @@ export async function takePageScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 1500;
+  const maxTimeout = 3000;
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(page).toHaveScreenshot({
     mask: options?.masks,

@@ -42,7 +42,6 @@ import fieldGroups from './fieldGroups';
 import { isEqual } from 'lodash';
 import { Icon } from 'components';
 import { ACS_STYLE_DEFAULT_SETTINGS } from 'src/constants';
-import { onAction } from 'src/script/ui/state/shared';
 
 interface SettingsProps extends BaseProps {
   initState: any;
@@ -351,7 +350,7 @@ const SettingsDialog = (props: Props) => {
   return (
     <Dialog
       className={classes.settings}
-      result={() => [formState.result, initState]}
+      result={() => formState.result}
       valid={() => formState.valid}
       params={prop}
       buttonsNameMap={{ OK: 'Apply' }}
@@ -397,27 +396,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onReset: () => dispatch(setDefaultSettings()),
   onOk: (res) => {
-    const [result, initState] = res;
-
-    dispatch(saveSettings(result));
-    ownProps.onOk(result);
-
-    const showNotification =
-      initState.reactionComponentMarginSize !==
-      result.reactionComponentMarginSize;
-
-    showNotification &&
-      dispatch(
-        onAction({
-          dialog: 'info-modal',
-          prop: {
-            title: '',
-            customText:
-              'To fully apply these changes, you need to apply the layout.',
-            button: 'OK',
-          },
-        }),
-      );
+    dispatch(saveSettings(res));
+    ownProps.onOk(res);
   },
   onACSStyle: (result) => {
     dispatch(updateFormState({ result }));

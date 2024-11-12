@@ -1,19 +1,12 @@
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
 import { readFileContents, saveToFile } from './readFile';
-import {
-  getCdx,
-  getCdxml,
-  getKet,
-  getMolfile,
-  getSmarts,
-} from '@utils/formats';
+import { getCdx, getCdxml, getKet, getMolfile } from '@utils/formats';
 
 export enum FileType {
   KET = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
-  SMARTS = 'smarts',
 }
 
 const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
@@ -21,25 +14,11 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.KET]: getKet,
     [FileType.CDX]: getCdx,
     [FileType.CDXML]: getCdxml,
-    [FileType.SMARTS]: getSmarts,
   };
 
 export async function verifyFile(
   page: Page,
-  _filename: string,
-  expectedFilename: string,
-  fileType: FileType,
-) {
-  // line below for backward compatibility (to comply with prettier)
-  // due to mistake - filename parameter was never make sence,
-  // since we took the original "filename" file directly from the memory but not from file
-  _filename = '';
-
-  verifyFile2(page, expectedFilename, fileType);
-}
-
-export async function verifyFile2(
-  page: Page,
+  filename: string,
   expectedFilename: string,
   fileType: FileType,
 ) {
@@ -49,12 +28,9 @@ export async function verifyFile2(
     throw new Error(`Unsupported file type: ${fileType}`);
   }
 
-  // This two lines for creating from scratch or for updating exampled files
-  const expectedFileContent = await getFileContent(page);
-  await saveToFile(expectedFilename, expectedFileContent);
+  const expectedFile = await getFileContent(page);
+  await saveToFile(filename, expectedFile);
 
-  // This line for filtering out example file content (named as fileExpected)
-  // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
     expectedFileName: expectedFilename,

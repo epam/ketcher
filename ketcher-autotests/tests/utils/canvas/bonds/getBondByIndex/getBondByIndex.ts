@@ -1,7 +1,5 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
-import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { BondAttributes, BondXy } from '@utils/canvas/types';
 
 /**
@@ -29,44 +27,4 @@ export async function getBondByIndex(
   }
 
   return result[index];
-}
-
-type BoundingBox = {
-  width: number;
-  height: number;
-  y: number;
-  x: number;
-};
-
-export async function getBondById(page: Page, id: number): Promise<BondXy> {
-  const { bonds, scale, offset, zoom } = await page.evaluate(() => {
-    return {
-      // eslint-disable-next-line no-unsafe-optional-chaining
-      bonds: [...window.ketcher?.editor?.struct()?.bonds.entries()],
-      scale: window.ketcher?.editor?.options()?.microModeScale,
-      offset: window.ketcher?.editor?.options()?.offset,
-      zoom: window.ketcher?.editor?.options()?.zoom,
-    };
-  });
-  const bond = bonds.find(([bondId]) => bondId === id)?.[1];
-
-  if (!bond) {
-    throw Error('Incorrect bond id');
-  }
-
-  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  const centerX = body.x + body?.width / 2;
-  const centerY = body.y + body?.height / 2;
-
-  const bondX = bond.center.x * scale + offset.x + leftBarWidth;
-  const bondY = bond.center.y * scale + offset.y + topBarHeight;
-
-  const zoomedX = centerX + (bondX - centerX) * zoom;
-  const zoomedY = centerY + (bondY - centerY) * zoom;
-  return {
-    ...bond,
-    x: zoomedX,
-    y: zoomedY,
-  };
 }

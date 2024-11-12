@@ -75,7 +75,6 @@ function SystemFonts(props) {
       const fonts = results
         .filter((i) => i !== null)
         .map((font) => {
-          // TODO remove font-size from here
           return { value: `30px ${font}`, label: font };
         });
       if (mounted) {

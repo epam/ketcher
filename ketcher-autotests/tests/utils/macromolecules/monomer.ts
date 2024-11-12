@@ -5,7 +5,6 @@ import {
   selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectSingleBondTool,
-  waitForRender,
 } from '@utils';
 
 export async function moveMonomer(
@@ -27,9 +26,7 @@ export async function moveMonomerOnMicro(
 ) {
   await selectLeftPanelButton(LeftPanelButton.HandTool, page);
   await selectRectangleSelectionTool(page);
-  await waitForRender(page, async () => {
-    await monomer.click();
-  });
+  await monomer.click();
   await dragMouseTo(x, y, page);
 }
 

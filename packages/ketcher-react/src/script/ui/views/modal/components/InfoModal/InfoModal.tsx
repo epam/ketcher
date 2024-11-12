@@ -28,7 +28,7 @@ function ErrorInfoModal(props) {
 
   const defaultCutCopyMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
 
-  const headerContent = <div>{props.title ?? error.message}</div>;
+  const headerContent = <div>{error.message}</div>;
 
   return (
     <Dialog
@@ -36,7 +36,7 @@ function ErrorInfoModal(props) {
       params={props}
       buttons={[
         <button onClick={props.onOk} className={styles.ok} key="ok">
-          {props.button || 'Close'}
+          Close
         </button>,
       ]}
       headerContent={headerContent}

@@ -2,7 +2,7 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer0"
+                "$ref": "monomer1"
             }
         ],
         "connections": [],
@@ -12,9 +12,9 @@
             }
         ]
     },
-    "monomer0": {
+    "monomer1": {
         "type": "monomer",
-        "id": "0",
+        "id": "1",
         "position": {
             "x": 11.9,
             "y": -8.325

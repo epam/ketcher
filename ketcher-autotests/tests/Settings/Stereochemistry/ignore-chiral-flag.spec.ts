@@ -34,8 +34,7 @@ async function applyIgnoreChiralFlag(page: Page) {
   await page
     .locator('label')
     .filter({ hasText: 'Ignore the chiral flag' })
-    .locator('div >> span, span')
-    .first()
+    .locator('div span')
     .click();
   await pressButton(page, 'Apply');
 }

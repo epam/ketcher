@@ -711,6 +711,25 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('After expand a Functional Group hotkeys not stop working', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-12987
+      Description: After expand a Functional Group hotkeys not stop working
+    */
+    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
+
+    await page.keyboard.press('n');
+    await takeEditorScreenshot(page);
+  });
+
   test('Add a custom structure to a canvas with an expanded functional group and contract it', async ({
     page,
   }) => {

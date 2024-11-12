@@ -657,12 +657,9 @@ export class KetSerializer implements Serializer<Struct> {
   getConnectionMonomerEndpoint(
     monomer: BaseMonomer,
     polymerBond: PolymerBond,
-    monomerIdMap: Map<number, number>,
   ): IKetConnectionMonomerEndPoint {
-    const monomerId = monomerIdMap.get(monomer.id);
-
     return {
-      monomerId: setMonomerPrefix(isNumber(monomerId) ? monomerId : monomer.id),
+      monomerId: setMonomerPrefix(monomer.id),
       attachmentPointId:
         polymerBond instanceof HydrogenBond
           ? undefined
@@ -770,8 +767,6 @@ export class KetSerializer implements Serializer<Struct> {
       },
     };
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
-    const monomerIdMap = new Map<number, number>();
-    let nextMonomerId = 0;
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (
@@ -790,12 +785,10 @@ export class KetSerializer implements Serializer<Struct> {
         monomerToAtomIdMap.set(monomer, atomIdMap);
       } else {
         let templateId;
-        const monomerKey = setMonomerPrefix(nextMonomerId);
+        const monomerName = setMonomerPrefix(monomer.id);
         const position: Vec2 = switchIntoChemistryCoordSystem(
           new Vec2(monomer.position.x, monomer.position.y),
         );
-
-        monomerIdMap.set(monomer.id, nextMonomerId);
 
         if (monomer instanceof AmbiguousMonomer) {
           templateId =
@@ -816,12 +809,12 @@ export class KetSerializer implements Serializer<Struct> {
             getMonomerUniqueKey(monomer.monomerItem);
         }
 
-        fileContent[monomerKey] = {
+        fileContent[monomerName] = {
           type:
             monomer instanceof AmbiguousMonomer
               ? KetNodeType.AMBIGUOUS_MONOMER
               : KetNodeType.MONOMER,
-          id: nextMonomerId.toString(),
+          id: monomer.id.toString(),
           position: {
             x: position.x,
             y: position.y,
@@ -830,9 +823,7 @@ export class KetSerializer implements Serializer<Struct> {
           templateId,
           seqid: monomer.monomerItem.seqId,
         };
-        fileContent.root.nodes.push(getKetRef(monomerKey));
-
-        nextMonomerId++;
+        fileContent.root.nodes.push(getKetRef(monomerName));
 
         if (monomer instanceof AmbiguousMonomer) {
           this.serializeVariantMonomerTemplate(
@@ -864,7 +855,6 @@ export class KetSerializer implements Serializer<Struct> {
           : (this.getConnectionMonomerEndpoint(
               polymerBond.firstMonomer,
               polymerBond,
-              monomerIdMap,
             ) as IKetConnectionEndPoint),
         endpoint2: polymerBond.secondMonomer.monomerItem.props
           .isMicromoleculeFragment
@@ -877,7 +867,6 @@ export class KetSerializer implements Serializer<Struct> {
           : (this.getConnectionMonomerEndpoint(
               polymerBond.secondMonomer,
               polymerBond,
-              monomerIdMap,
             ) as IKetConnectionEndPoint),
       });
     });
@@ -888,16 +877,15 @@ export class KetSerializer implements Serializer<Struct> {
       const globalAtomId = atomIdMap?.get(
         monomerToAtomBond.atom.atomIdInMicroMode,
       );
-      const monomerId = monomerIdMap.get(monomer.id);
 
-      if (!isNumber(globalAtomId) || !isNumber(monomerId)) {
+      if (!isNumber(globalAtomId)) {
         return;
       }
 
       fileContent.root.connections.push({
         connectionType: KetConnectionType.SINGLE,
         endpoint1: {
-          monomerId: setMonomerPrefix(monomerId),
+          monomerId: setMonomerPrefix(monomer.id),
           attachmentPointId:
             monomerToAtomBond.monomer.getAttachmentPointByBond(
               monomerToAtomBond,

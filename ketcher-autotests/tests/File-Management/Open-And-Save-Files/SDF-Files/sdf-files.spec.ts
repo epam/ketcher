@@ -772,7 +772,6 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await openSettings(page);
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
-  await pressButton(page, 'OK');
   await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
 
@@ -815,7 +814,6 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await openSettings(page);
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
-  await pressButton(page, 'OK');
   await selectTopPanelButton(TopPanelButton.Layout, page);
   await takeEditorScreenshot(page);
 

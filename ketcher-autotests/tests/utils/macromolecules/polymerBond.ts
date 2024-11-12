@@ -121,3 +121,23 @@ export async function selectRightConnectionPointAtSelectConnectionPointDialog(
 
   await rightMonomerLocator.click();
 }
+
+export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
+  const bondLocator = page
+    .getByTestId('ketcher-canvas')
+    .locator(`g:nth-child(${bondIndex.toString()}) > path`)
+    .first();
+
+  const boundingBox = await bondLocator.boundingBox();
+
+  await bondLocator.click({ force: true });
+
+  // Simple click on element doesn't work always because only black pixels of bond are clickable (what? YES!)
+  // So, bonds with empty space in the center (for example - double bond) are not clickable
+  if (boundingBox) {
+    await page.mouse.click(
+      boundingBox.x + boundingBox.width / 2 + 2,
+      boundingBox.y + boundingBox.height / 2 + 2,
+    );
+  }
+}

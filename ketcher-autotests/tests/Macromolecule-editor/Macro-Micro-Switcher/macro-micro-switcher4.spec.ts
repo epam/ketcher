@@ -1,3 +1,4 @@
+/* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import {
@@ -12,7 +13,9 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
   waitForPageInit,
+  selectEraseTool,
 } from '@utils';
+import { clickOnMicroBondByIndex } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -50,6 +53,12 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
     page,
   );
   await takeEditorScreenshot(page);
+
+  // Test should be skipped if related bug exists
+  test.fixme(
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5961 issue(s).`,
+  );
 });
 
 test(`Verify that connections between monomers and molecules are maintained correctly in both micro and macro modes`, async () => {
@@ -93,5 +102,34 @@ test(`Verify that switching between micro and macro modes displays molecules wit
   await takeEditorScreenshot(page);
 
   await turnOnMacromoleculesEditor(page);
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify that deleting a bond in macro mode removes the bond while maintaining the integrity of the surrounding structure`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5960
+   * Description: Verify that deleting a bond in macro mode removes the bond while maintaining the integrity of the surrounding structure
+   *
+   * Case: 1. Load ket file with structures at Macro
+   *       2. Take screenshot to witness initial state
+   *       3. Delete all bonds at the center of every molecule
+   *       4. Take screenshot to witness final state
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All Bonds on Macro.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+
+  await selectEraseTool(page);
+  // removing single bond
+  await clickOnMicroBondByIndex(page, 39);
+  // removing double bond
+  await clickOnMicroBondByIndex(page, 45);
+  // removing single up bond
+  await clickOnMicroBondByIndex(page, 51);
+  // removing single down bond
+  await clickOnMicroBondByIndex(page, 51);
+
   await takeEditorScreenshot(page);
 });

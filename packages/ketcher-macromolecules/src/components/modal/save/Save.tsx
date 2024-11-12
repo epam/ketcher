@@ -223,12 +223,7 @@ export const Save = ({
             <SvgPreview dangerouslySetInnerHTML={{ __html: svgData }} />
           ) : (
             <PreviewContainer>
-              <TextArea
-                testId="preview-area-text"
-                value={struct}
-                readonly
-                selectOnInit
-              />
+              <TextArea testId="preview-area-text" value={struct} readonly />
               <IconButton
                 onClick={handleCopy}
                 iconName="copy"

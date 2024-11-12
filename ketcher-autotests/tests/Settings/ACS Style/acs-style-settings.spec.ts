@@ -38,6 +38,7 @@ test.describe('ACS Style Settings', () => {
     await scrollToDownInSetting(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -53,6 +54,7 @@ test.describe('ACS Style Settings', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     await openSettings(page);
@@ -62,6 +64,7 @@ test.describe('ACS Style Settings', () => {
     await scrollToDownInSetting(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await takeEditorScreenshot(page);
   });
 });

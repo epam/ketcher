@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer5"
+                "$ref": "monomer0"
             },
             {
-                "$ref": "monomer6"
+                "$ref": "monomer1"
             },
             {
-                "$ref": "monomer7"
+                "$ref": "monomer2"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer5",
+                    "monomerId": "monomer0",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer6",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R3"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer6",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer7",
+                    "monomerId": "monomer2",
                     "attachmentPointId": "R2"
                 }
             }
@@ -47,9 +47,9 @@
             }
         ]
     },
-    "monomer5": {
+    "monomer0": {
         "type": "monomer",
-        "id": "5",
+        "id": "0",
         "position": {
             "x": 11.45,
             "y": -8.732500000000002
@@ -253,9 +253,9 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer6": {
+    "monomer1": {
         "type": "monomer",
-        "id": "6",
+        "id": "1",
         "position": {
             "x": 11.456666666666665,
             "y": -7.917500000000002
@@ -493,9 +493,9 @@
         ],
         "naturalAnalogShort": "R"
     },
-    "monomer7": {
+    "monomer2": {
         "type": "monomer",
-        "id": "7",
+        "id": "2",
         "position": {
             "x": 12.350000000000001,
             "y": -7.9191666666666745

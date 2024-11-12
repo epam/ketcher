@@ -70,4 +70,28 @@ test(`Verify that connections between monomers and molecules are maintained corr
 
   await turnOnMicromoleculesEditor(page);
   await takeEditorScreenshot(page);
+
+  await turnOnMacromoleculesEditor(page);
+});
+
+test(`Verify that switching between micro and macro modes displays molecules without structural changes`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5960
+   * Description: Verify that switching between micro and macro modes displays molecules without structural changes
+   *
+   * Case: 1. Load ket file with structures at Macro
+   *       2. Take screenshot to witness canvas was rendered correct at macro
+   *       3. Switch to Micromolecules mode
+   *       4. Take screenshot to witness canvas was rendered correct at micro
+   *       Canvases should be equal
+   */
+  await turnOnMicromoleculesEditor(page);
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+
+  await turnOnMacromoleculesEditor(page);
+  await takeEditorScreenshot(page);
 });

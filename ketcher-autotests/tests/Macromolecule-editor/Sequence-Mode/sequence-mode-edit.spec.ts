@@ -5,6 +5,7 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -281,7 +282,7 @@ test.describe('Sequence edit mode', () => {
     Description: It is not possible to add more monomers to cycled structure. Error message appears.
     */
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
     await enterSequence(page, 'aaaaaaaaaa');

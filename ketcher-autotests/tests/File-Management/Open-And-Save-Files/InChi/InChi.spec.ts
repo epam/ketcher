@@ -13,6 +13,7 @@ import {
   openPasteFromClipboard,
   waitForPageInit,
   nonEmptyString,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
@@ -389,8 +390,7 @@ test.describe('Open and Save InChI file', () => {
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
       .inputValue();
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyC`);
+    await copyToClipboardByKeyboard(page);
     await page.getByTestId('close-icon').click();
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pasteFromClipboardAndAddToCanvas(page, inChistring);

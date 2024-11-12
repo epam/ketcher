@@ -37,6 +37,7 @@ import {
   openSettings,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -440,7 +441,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Data S-group is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
@@ -457,7 +458,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Multiple Group is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
     await screenshotBetweenUndoRedo(page);
@@ -472,7 +473,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the SRU Polymer is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
     await screenshotBetweenUndoRedo(page);
@@ -487,7 +488,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Superatom is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await screenshotBetweenUndoRedo(page);
@@ -674,7 +675,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     const yDelta = 300;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
@@ -752,7 +753,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByTestId('OK').click();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await page.keyboard.press('Control+z');

@@ -13,6 +13,7 @@ import {
   selectAtomInToolbar,
   AtomButton,
   clickInTheMiddleOfTheScreen,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 test.describe('getKet', () => {
@@ -155,7 +156,7 @@ test.describe('getKet', () => {
   */
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const expectedFile = await getKet(page);
     await saveToFile('KET/selected-hydrogen-expected.ket', expectedFile);
 

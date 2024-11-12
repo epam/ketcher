@@ -15,6 +15,7 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   openSettings,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -825,7 +826,7 @@ test.describe('Open and Save file', () => {
         page,
       );
       await takeEditorScreenshot(page);
-      await page.keyboard.press('Control+a');
+      await selectAllStructuresOnCanvas(page);
       await page.keyboard.press('Delete');
     });
   }

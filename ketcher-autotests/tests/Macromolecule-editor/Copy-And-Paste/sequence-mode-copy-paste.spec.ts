@@ -17,6 +17,7 @@ import {
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   enterSequence,
@@ -127,7 +128,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
         'tests/test-data/KET/single-fragment-for-paste.ket',
       );
       await openPasteFromClipboard(page, fileContent);
-      await page.keyboard.press('Control+a');
+      await selectAllStructuresOnCanvas(page);
       await copyToClipboardByKeyboard(page);
       await page.getByTitle('Close window').click();
 
@@ -155,7 +156,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   page,
   // }) => {
   //   await openPasteFromClipboard(page, 'atc');
-  //   await page.keyboard.press('Control+a');
+  //   await selectAllStructuresOnCanvas(page);
   //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //
@@ -217,7 +218,7 @@ test.describe('Sequence-edit mode', () => {
   //   Description: Pasted fragment is considered as new chain.
   //   */
   //   await openPasteFromClipboard(page, '>');
-  //   await page.keyboard.press('Control+a');
+  //   await selectAllStructuresOnCanvas(page);
   //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);
@@ -237,7 +238,7 @@ test.describe('Sequence-edit mode', () => {
   //     'tests/test-data/Sequence/sequence-500-symbols.seq',
   //   );
   //   await openPasteFromClipboard(page, fileContent);
-  //   await page.keyboard.press('Control+a');
+  //   await selectAllStructuresOnCanvas(page);
   //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);

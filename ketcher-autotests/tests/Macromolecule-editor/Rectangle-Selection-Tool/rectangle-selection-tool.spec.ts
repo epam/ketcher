@@ -14,6 +14,7 @@ import {
   waitForPageInit,
   selectSnakeLayoutModeTool,
   moveMouseAway,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -30,7 +31,7 @@ async function moveMonomersToNewPosition(
 ) {
   await openFileAndAddToCanvasMacro(filePath, page);
   await selectRectangleSelectionTool(page);
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.getByText(monomerName).locator('..').first().click();
   await dragMouseTo(x, y, page);
   await takeEditorScreenshot(page);
@@ -372,7 +373,7 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 100;
     const y = 100;
     await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await page.mouse.click(x, y);
@@ -407,7 +408,7 @@ test.describe('Rectangle Selection Tool', () => {
     const y = 500;
     await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Hhs').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -436,7 +437,7 @@ test.describe('Rectangle Selection Tool', () => {
     Description: Monomers are deleted from canvas and then appears after pressing Undo.
     */
     await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('erase').click();
     await takeEditorScreenshot(page);
     await page.getByTestId('undo').click();

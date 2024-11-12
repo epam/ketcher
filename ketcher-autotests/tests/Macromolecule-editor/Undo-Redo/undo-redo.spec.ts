@@ -24,6 +24,7 @@ import {
   Bases,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -433,7 +434,7 @@ test.describe('Undo-Redo tests', () => {
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('C_C_R_P').click();
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
     await pasteFromClipboardByKeyboard(page);

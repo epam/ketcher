@@ -24,6 +24,7 @@ import {
   RingButton,
   saveToFile,
   screenshotBetweenUndoRedo,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectDropdownTool,
   selectEraseTool,
@@ -461,7 +462,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'tests/test-data/KET/three-different-multi-tail-arrows.ket',
     );
     await openPasteFromClipboard(page, fileContent);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pressButton(page, 'Cancel');
     await pasteFromClipboardByKeyboard(page);
@@ -665,17 +666,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
   });
@@ -695,17 +696,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
   });
@@ -951,7 +952,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickOnCanvas(page, 500, 600);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -974,7 +975,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickOnCanvas(page, 500, 600);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

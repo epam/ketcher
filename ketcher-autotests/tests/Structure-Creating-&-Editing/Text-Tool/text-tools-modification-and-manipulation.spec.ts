@@ -14,6 +14,7 @@ import {
   RingButton,
   selectDropdownTool,
   waitForRender,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -216,7 +217,7 @@ test.describe('Text tools test cases', () => {
   }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('erase').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -236,7 +237,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);
@@ -256,7 +257,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
     for (let i = 0; i < numberOfPressZoomIn; i++) {

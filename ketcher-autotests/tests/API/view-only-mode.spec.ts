@@ -318,7 +318,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
-        await page.keyboard.press('Control+a');
+        await selectAllStructuresOnCanvas(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),

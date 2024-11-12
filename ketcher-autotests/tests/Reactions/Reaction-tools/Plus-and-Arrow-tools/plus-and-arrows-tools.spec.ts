@@ -29,6 +29,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -217,7 +218,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the whole reaction and move it', async ({ page }) => {
       await waitForRender(page, async () => {
-        await page.keyboard.press(`${modifier}+KeyA`);
+        await selectAllStructuresOnCanvas(page);
         await page.mouse.move(point.x - 20, point.y - 20);
       });
       await dragMouseTo(point.x - 100, point.y - 100, page);
@@ -308,7 +309,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await page.mouse.move(point.x - 20, point.y - 20);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
@@ -386,7 +387,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });

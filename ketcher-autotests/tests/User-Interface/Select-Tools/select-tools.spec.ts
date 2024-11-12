@@ -12,6 +12,7 @@ import {
   clickOnAtom,
   selectDropdownTool,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
@@ -57,7 +58,7 @@ test.describe('Select tools tests', () => {
       Note: At the moment the test is not working correctly until bug is fixed. Attachment points are not fully highlited.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -23,6 +23,7 @@ import {
   showLibrary,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -1102,7 +1103,7 @@ test.describe('Side chain connections', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

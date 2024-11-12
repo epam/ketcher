@@ -100,10 +100,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     Not able to perform undo
     */
-    const modifier = getControlModifier();
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await page.keyboard.press(`${modifier}+KeyA`);
-    await page.keyboard.press(`${modifier}+KeyX`);
+    await selectAllStructuresOnCanvas(page);
+    await cutToClipboardByKeyboard(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -149,14 +148,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Cut button, the selected object disappears.
     */
     const anyAtom = 1;
-    const modifier = getControlModifier();
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
-    });
+    await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -169,14 +165,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Cut button, the selected object disappears.
     */
     const anyBond = 1;
-    const modifier = getControlModifier();
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, anyBond);
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
-    });
+    await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -293,14 +286,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    const modifier = getControlModifier();
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
-    await waitForRender(page, async () => {
-      await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
-    });
+    await copyToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await page.mouse.click(x, y);
     await takeEditorScreenshot(page);

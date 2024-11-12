@@ -16,6 +16,7 @@ import {
   pasteFromClipboard,
   pressButton,
   resetCurrentTool,
+  selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectBond,
   selectDropdownTool,
@@ -118,7 +119,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await selectAtomInToolbar(AtomButton.Carbon, page);
     await page.mouse.click(x + shiftValue, y);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await creatingComponentGroup(page);
     await takeEditorScreenshot(page);

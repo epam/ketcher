@@ -20,6 +20,7 @@ import {
   screenshotBetweenUndoRedo,
   saveToFile,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getKet, getMolfile } from '@utils/formats';
@@ -101,7 +102,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
@@ -154,7 +155,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to delete whole Chain with Superatom S-Group and undo/redo.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
@@ -282,7 +283,7 @@ test.describe('Superatom S-Group tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     const expectedFile = await getKet(page);
@@ -310,7 +311,7 @@ test.describe('Superatom S-Group tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addQueryComponent(page);
     const expectedFile = await getKet(page);

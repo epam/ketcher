@@ -17,6 +17,7 @@ import {
   waitForPageInit,
   selectDropdownTool,
   waitForRender,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -121,7 +122,7 @@ test.describe('Lasso Selection tool', () => {
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

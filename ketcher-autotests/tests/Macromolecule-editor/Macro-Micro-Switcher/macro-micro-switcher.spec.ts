@@ -72,6 +72,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -351,7 +352,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Edc').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

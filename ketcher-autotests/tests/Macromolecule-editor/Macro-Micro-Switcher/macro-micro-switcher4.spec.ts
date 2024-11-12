@@ -4,6 +4,7 @@ import {
   chooseTab,
   Tabs,
   turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
@@ -48,5 +49,25 @@ test(`Verify that bond lines between atoms do not overlap in any angle in macro 
     'KET/Micro-Macro-Switcher/Micro bonds on macro canvas.ket',
     page,
   );
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify that connections between monomers and molecules are maintained correctly in both micro and macro modes`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5960
+   * Description: Verify that connections between monomers and molecules are maintained correctly in both micro and macro modes
+   *
+   * Case: 1. Load ket file with structures
+   *       2. Take screenshot to witness canvas was rendered correct at macro
+   *       3. Switch to Micromolecules mode
+   *       4. Take screenshot to witness canvas was rendered correct at micro
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers connected to micro.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+
+  await turnOnMicromoleculesEditor(page);
   await takeEditorScreenshot(page);
 });

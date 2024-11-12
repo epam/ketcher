@@ -67,11 +67,6 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
-  moveOnBond,
-  BondType,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';

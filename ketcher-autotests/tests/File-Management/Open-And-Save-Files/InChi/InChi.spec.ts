@@ -8,7 +8,6 @@ import {
   pressButton,
   selectOptionByText,
   openFileAndAddToCanvas,
-  getControlModifier,
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,

@@ -10,7 +10,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   BondType,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getControlModifier,
   BondTool,
   selectNestedTool,
   SelectTool,
@@ -31,7 +30,6 @@ test.describe('Lasso Selection tool', () => {
   const yDelta = 60;
   const xAxis = 300;
   const yAxis = 200;
-  const modifier = getControlModifier();
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);

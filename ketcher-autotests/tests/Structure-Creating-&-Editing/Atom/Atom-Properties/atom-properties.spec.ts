@@ -11,7 +11,6 @@ import {
   saveToFile,
   pressButton,
   resetCurrentTool,
-  getControlModifier,
   TopPanelButton,
   selectTopPanelButton,
   selectBond,

@@ -4,7 +4,6 @@ import {
   clickOnAtom,
   clickOnBond,
   dragMouseTo,
-  getControlModifier,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
@@ -22,7 +21,6 @@ test.describe('Rectangle selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const modifier = getControlModifier();
 
   async function selectObjects(
     page: Page,

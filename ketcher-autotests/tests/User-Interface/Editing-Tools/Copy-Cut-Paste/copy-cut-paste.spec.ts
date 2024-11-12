@@ -18,7 +18,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   clickOnBond,
   copyAndPaste,
-  getControlModifier,
   INPUT_DELAY,
   waitForPageInit,
   waitForIndigoToLoad,

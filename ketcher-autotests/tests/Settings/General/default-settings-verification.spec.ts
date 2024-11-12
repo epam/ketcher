@@ -572,6 +572,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -594,6 +595,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -616,6 +618,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -638,6 +641,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -660,6 +664,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -682,6 +687,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -704,6 +710,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -726,6 +733,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -749,6 +757,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -772,6 +781,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -795,6 +805,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -818,6 +829,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -840,6 +852,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -862,6 +875,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -884,6 +898,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
@@ -906,6 +921,7 @@ test.describe('General Settings', () => {
     await page.waitForTimeout(1000);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });

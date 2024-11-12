@@ -61,11 +61,11 @@ export type BondAttributes = {
   hb1?: number;
   hb2?: number;
   len?: number;
-  reactingCenterStatus?: number;
+  reactingCenterStatus?: number | null;
   sa?: number;
   sb?: number;
   stereo?: number;
-  topology?: number;
+  topology?: number | null;
   type?: BondType;
   xxx?: string;
   customQuery?: string | null;

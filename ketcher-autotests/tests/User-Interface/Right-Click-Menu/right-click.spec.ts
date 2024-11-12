@@ -232,7 +232,8 @@ test.describe('Right-click menu', () => {
     await page
       .locator('label')
       .filter({ hasText: 'Ignore the chiral flag' })
-      .locator('div span')
+      .locator('div >> span, span')
+      .first()
       .click();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);

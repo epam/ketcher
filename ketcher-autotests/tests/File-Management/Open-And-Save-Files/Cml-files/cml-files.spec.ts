@@ -605,6 +605,7 @@ test.describe('CML files', () => {
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '1.8');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCml(page);
@@ -640,6 +641,7 @@ test.describe('CML files', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCml(page);

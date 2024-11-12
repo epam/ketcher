@@ -698,11 +698,17 @@ export class DrawingEntitiesManager {
     polymerBond.secondMonomer?.removePotentialBonds();
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.secondMonomer?.turnOffSelection();
-    if (firstMonomerAttachmentPoint) {
-      polymerBond.firstMonomer.unsetBond(firstMonomerAttachmentPoint);
+    if (firstMonomerAttachmentPoint || polymerBond instanceof HydrogenBond) {
+      polymerBond.firstMonomer.unsetBond(
+        firstMonomerAttachmentPoint,
+        polymerBond,
+      );
     }
-    if (secondMonomerAttachmentPoint) {
-      polymerBond.secondMonomer?.unsetBond(secondMonomerAttachmentPoint);
+    if (secondMonomerAttachmentPoint || polymerBond instanceof HydrogenBond) {
+      polymerBond.secondMonomer?.unsetBond(
+        secondMonomerAttachmentPoint,
+        polymerBond,
+      );
     }
   }
 

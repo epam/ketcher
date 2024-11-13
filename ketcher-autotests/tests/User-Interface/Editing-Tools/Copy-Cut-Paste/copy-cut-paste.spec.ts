@@ -102,7 +102,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await screenshotBetweenUndoRedo(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
     await takeEditorScreenshot(page);
   });
 

@@ -28,7 +28,8 @@ import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
 import { cloneDeep } from 'lodash';
-import { IconButton } from 'components';
+import { Icon, IconButton } from 'components';
+import { Tooltip } from '@mui/material';
 
 class Form extends Component {
   constructor(props) {
@@ -112,17 +113,46 @@ export default connect(null, (dispatch) => ({
 
 function Label({ labelPos, title, children, ...props }) {
   const tooltip = props.tooltip ? props.tooltip : null;
-
   return (
     <label {...props}>
       {title && labelPos !== 'after' ? (
-        <span title={tooltip}>{title}</span>
+        tooltip ? (
+          <div
+            className={clsx({
+              [classes.divWithTooltipAndAboutIcon]: true,
+            })}
+          >
+            <span>{title}</span>
+            <Tooltip title={tooltip}>
+              <div>
+                <Icon name="about"></Icon>
+              </div>
+            </Tooltip>
+          </div>
+        ) : (
+          <span>{title}</span>
+        )
       ) : (
         ''
       )}
       {children}
       {title && labelPos === 'after' ? (
-        <span title={tooltip}>{title}</span>
+        tooltip ? (
+          <div
+            className={clsx({
+              [classes.divWithTooltipAndAboutIcon]: true,
+            })}
+          >
+            <Tooltip title={tooltip}>
+              <div>
+                <Icon name="about"></Icon>
+              </div>
+            </Tooltip>
+            <span>{title}</span>
+          </div>
+        ) : (
+          <span>{title}</span>
+        )
       ) : (
         ''
       )}

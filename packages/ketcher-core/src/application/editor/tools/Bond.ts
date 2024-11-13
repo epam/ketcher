@@ -104,7 +104,7 @@ class PolymerBond implements BaseTool {
       const startAttachmentPoint =
         selectedRenderer.monomer.startBondAttachmentPoint;
 
-      if (!startAttachmentPoint) {
+      if (!startAttachmentPoint && !this.isHydrogenBond) {
         this.editor.events.error.dispatch(
           "Selected monomer doesn't have any free attachment points",
         );
@@ -339,14 +339,32 @@ class PolymerBond implements BaseTool {
 
   private finishBondCreation(secondMonomer: BaseMonomer) {
     assert(this.bondRenderer);
-    if (!secondMonomer.hasFreeAttachmentPoint) {
+
+    if (!this.isHydrogenBond && !secondMonomer.hasFreeAttachmentPoint) {
       this.editor.events.error.dispatch(
         "Monomers don't have any connection point available",
       );
+
       return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
       );
     }
+
+    if (
+      this.isHydrogenBond &&
+      secondMonomer.hasHydrogenBondWithMonomer(
+        this.bondRenderer?.polymerBond.firstMonomer,
+      )
+    ) {
+      this.editor.events.error.dispatch(
+        'Unable to establish multiple hydrogen bonds between two monomers',
+      );
+
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+
     const firstMonomerAttachmentPoint = this.isHydrogenBond
       ? AttachmentPointName.HYDROGEN
       : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(

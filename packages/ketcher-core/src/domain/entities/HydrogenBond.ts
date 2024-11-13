@@ -1,11 +1,11 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from './BaseBond';
+import { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
 
 export class HydrogenBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
-  public renderer?: SnakeModePolymerBondRenderer = undefined;
+  public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();
@@ -21,7 +21,9 @@ export class HydrogenBond extends BaseBond {
     this.secondMonomer = monomer;
   }
 
-  public setRenderer(renderer: SnakeModePolymerBondRenderer): void {
+  public setRenderer(
+    renderer: FlexOrSequenceOrSnakeModePolymerBondRenderer,
+  ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

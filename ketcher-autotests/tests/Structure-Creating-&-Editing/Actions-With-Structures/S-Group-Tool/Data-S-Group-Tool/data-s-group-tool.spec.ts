@@ -24,6 +24,7 @@ import {
   screenshotBetweenUndoRedo,
   saveToFile,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getKet, getMolfile } from '@utils/formats';
@@ -52,7 +53,7 @@ async function selectSGroupProperties(
   fieldValue: string,
   radioButton: string,
 ) {
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   await page.getByTestId('context-input-span').click();
   // await pressButton(page, contextName);
@@ -74,7 +75,7 @@ test.describe('Data S-Group tool', () => {
       Description: The Field value appears near bottom right corner of structure.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
@@ -119,7 +120,7 @@ test.describe('Data S-Group tool', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -343,7 +344,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete whole Chain with Data S-Group and undo/redo.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
@@ -424,7 +425,7 @@ test.describe('Data S-Group tool', () => {
       Description: Openns S-Group menu with filled context field Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });

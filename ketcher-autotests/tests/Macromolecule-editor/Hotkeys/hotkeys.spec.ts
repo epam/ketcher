@@ -9,6 +9,7 @@ import {
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 test.describe('Hotkeys', () => {
@@ -140,7 +141,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -155,7 +156,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);

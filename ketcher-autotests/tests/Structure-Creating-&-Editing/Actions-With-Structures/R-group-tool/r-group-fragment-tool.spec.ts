@@ -23,6 +23,7 @@ import {
   selectDropdownTool,
   waitForRender,
   resetCurrentTool,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -261,7 +262,7 @@ test.describe('Open Ketcher', () => {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     });
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });

@@ -67,6 +67,7 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
 import {
@@ -338,7 +339,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Edc').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

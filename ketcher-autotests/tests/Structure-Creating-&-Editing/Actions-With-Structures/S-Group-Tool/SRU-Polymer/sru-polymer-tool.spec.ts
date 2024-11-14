@@ -16,6 +16,7 @@ import {
   RingButton,
   saveToFile,
   screenshotBetweenUndoRedo,
+  selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
@@ -105,7 +106,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(
       page,
@@ -212,7 +213,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete whole Chain with SRU polymer S-Group and undo/redo.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
@@ -307,7 +308,7 @@ test.describe('SRU Polymer tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(
       page,

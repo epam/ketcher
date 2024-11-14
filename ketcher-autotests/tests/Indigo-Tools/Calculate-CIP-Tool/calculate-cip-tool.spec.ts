@@ -25,6 +25,7 @@ import {
   waitForRender,
   clickOnBond,
   openFileAndAddToCanvasAsNewProject,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -394,7 +395,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 

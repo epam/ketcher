@@ -21,6 +21,7 @@ import {
   selectBond,
   waitForRender,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
@@ -179,7 +180,7 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Vertical Flip (Alt+V)');
     });
@@ -317,7 +318,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -361,7 +362,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

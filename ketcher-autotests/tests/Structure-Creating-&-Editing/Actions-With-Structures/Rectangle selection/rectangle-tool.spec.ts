@@ -4,9 +4,9 @@ import {
   clickOnAtom,
   clickOnBond,
   dragMouseTo,
-  getControlModifier,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
   selectDropdownTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -21,7 +21,6 @@ test.describe('Rectangle selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const modifier = getControlModifier();
 
   async function selectObjects(
     page: Page,
@@ -83,7 +82,7 @@ test.describe('Rectangle selection tool', () => {
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

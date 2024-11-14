@@ -4,7 +4,11 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { selectLeftPanelButton, takeEditorScreenshot } from '@utils/canvas';
+import {
+  selectAllStructuresOnCanvas,
+  selectLeftPanelButton,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -77,7 +81,7 @@ test.describe('Draw Ellipse', () => {
     const point1 = { x: 759, y: 183 };
     await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);

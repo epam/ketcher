@@ -24,6 +24,7 @@ import {
   AttachmentPoint,
   setAttachmentPoints,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -48,7 +49,7 @@ async function selectMultipleGroup(
 }
 
 async function changeRepeatCountValue(page: Page, value: string) {
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   await page.getByTestId('s-group-type-input-span').click();
   await page.getByTestId('Multiple group-option').click();
@@ -90,7 +91,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
@@ -104,7 +105,7 @@ test.describe('Multiple S-Group tool', () => {
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await pressButton(page, 'Apply');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
@@ -161,7 +162,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to delete whole Chain with Multiple S-Group and undo/redo.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
@@ -241,7 +242,7 @@ test.describe('Multiple S-Group tool', () => {
       square brackets and displayed next to bracket 1
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
     await takeEditorScreenshot(page);
@@ -254,7 +255,7 @@ test.describe('Multiple S-Group tool', () => {
       square brackets and displayed next to bracket 200
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
     await takeEditorScreenshot(page);
@@ -269,7 +270,7 @@ test.describe('Multiple S-Group tool', () => {
       The field "Repeat count" is empty and is lit in gray, the "Apply" button is not active
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
     await takeEditorScreenshot(page);
@@ -284,7 +285,7 @@ test.describe('Multiple S-Group tool', () => {
       The field "Repeat count" is empty and is lit in gray
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
     await takeEditorScreenshot(page);
@@ -298,7 +299,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: -1 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
     await takeEditorScreenshot(page);
@@ -310,7 +311,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: Attachment points should be inside of S-Group
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
@@ -365,7 +366,7 @@ test.describe('Multiple S-Group tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
     const expectedFile = await getKet(page);

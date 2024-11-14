@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -35,7 +36,7 @@ test.describe('Rotation', () => {
       Description: Rotation is cancelled via "right click"
     */
     await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const screenBeforeRotation = await takeEditorScreenshot(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -292,7 +293,7 @@ test.describe('Rotation', () => {
     */
     const shift = 10;
     await addStructureAndSelect(page, anyStructure);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
 
@@ -551,7 +552,7 @@ test.describe('Rotation snapping', () => {
     await takeEditorScreenshot(page);
     await page.mouse.up();
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('floating-tools').isVisible();
     await takeEditorScreenshot(page);
   });

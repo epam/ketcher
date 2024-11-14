@@ -31,6 +31,9 @@ import {
   resetZoomLevelToDefault,
   waitForSpinnerFinishedWork,
   openFileAndAddToCanvasAsNewProjectMacro,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -913,10 +916,10 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

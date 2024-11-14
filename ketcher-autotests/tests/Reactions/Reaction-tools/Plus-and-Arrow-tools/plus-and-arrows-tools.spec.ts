@@ -29,6 +29,7 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -84,7 +85,6 @@ const formatsForSave = [
 const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
-  const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
   const CANVAS_CLICK_Y = 300;
 
@@ -217,7 +217,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the whole reaction and move it', async ({ page }) => {
       await waitForRender(page, async () => {
-        await page.keyboard.press(`${modifier}+KeyA`);
+        await selectAllStructuresOnCanvas(page);
         await page.mouse.move(point.x - 20, point.y - 20);
       });
       await dragMouseTo(point.x - 100, point.y - 100, page);
@@ -238,18 +238,18 @@ test.describe('Plus and Arrows tools ', () => {
           point.x - 200 + 20,
           point.y + 15 + 20,
         );
-        await page.keyboard.press('Control+X');
-        await page.keyboard.press('Control+V');
+        await cutToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
         // await selectTopPanelButton(TopPanelButton.Cut, page);
         // await waitForSpinnerFinishedWork(
         //   page,
         //   async () => await selectTopPanelButton(TopPanelButton.Cut, page),
         // );
 
-        // await page.keyboard.press('Control+V');
+        // await pasteFromClipboardByKeyboard(page);
         // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await page.keyboard.press('Control+V'),
+        //   async () => await pasteFromClipboardByKeyboard(page);
         // );
 
         await clickOnTheCanvas(page, 0, -100);
@@ -308,7 +308,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await page.mouse.move(point.x - 20, point.y - 20);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
@@ -386,7 +386,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });

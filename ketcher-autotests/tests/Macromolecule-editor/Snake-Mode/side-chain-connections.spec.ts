@@ -21,6 +21,9 @@ import {
   waitForKetcherInit,
   hideLibrary,
   showLibrary,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -1100,13 +1103,9 @@ test.describe('Side chain connections', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

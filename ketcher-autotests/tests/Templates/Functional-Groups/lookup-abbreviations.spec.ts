@@ -6,6 +6,7 @@ import {
   drawBenzeneRing,
   moveOnAtom,
   resetCurrentTool,
+  selectAllStructuresOnCanvas,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -82,7 +83,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15529
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('xyz');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
     await expect(abbreviationLookup).toBeVisible();
@@ -117,7 +118,7 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-15532
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('xyz');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await page.keyboard.type('bro');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');

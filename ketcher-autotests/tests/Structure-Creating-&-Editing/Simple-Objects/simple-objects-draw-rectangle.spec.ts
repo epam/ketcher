@@ -1,6 +1,9 @@
 import { Page, test } from '@playwright/test';
 import { openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import { takeEditorScreenshot } from '@utils/canvas';
+import {
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -98,7 +101,7 @@ test.describe('Draw Rectangle', () => {
     const point1 = { x: 759, y: 183 };
     await setupRectangle(page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
@@ -111,7 +114,7 @@ test.describe('Draw Rectangle', () => {
     const point = { x: 584, y: 371 };
     const point1 = { x: 830, y: 424 };
     await setupRectangle(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await resizeRectangle(page);
     await createSomeStructure(page);
     await page.mouse.click(point.x, point.y);

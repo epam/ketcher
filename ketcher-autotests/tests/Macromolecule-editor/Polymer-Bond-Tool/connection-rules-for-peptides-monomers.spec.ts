@@ -432,23 +432,6 @@ test.describe('Connection rules for peptides: ', () => {
     await moveMouseAway(page);
   }
 
-  async function loadMonomer(page: Page, leftMonomer: IMonomer) {
-    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomer.alias}`)
-      .locator('..')
-      .first();
-    await leftMonomerLocator.hover();
-    await dragMouseTo(300, 380, page);
-    await moveMouseAway(page);
-  }
-
-  async function loadMolecule(page: Page, molecule: IMolecule) {
-    await openFileAndAddToCanvasMacro(molecule.fileName, page);
-    await moveMouseAway(page);
-  }
-
   async function bondTwoMonomersByPointToPoint(
     page: Page,
     leftMonomer: IMonomer,
@@ -517,57 +500,6 @@ test.describe('Connection rules for peptides: ', () => {
       rightPeptideLocator,
       leftPeptideConnectionPoint,
       undefined,
-    );
-  }
-
-  async function bondMonomerCenterToAtom(
-    page: Page,
-    leftPeptide: IMonomer,
-    rightMolecule: IMolecule,
-    atomIndex: number,
-  ) {
-    const leftPeptideLocator = page
-      .getByText(leftPeptide.alias, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
-      .first();
-
-    await bondMonomerPointToMoleculeAtom(
-      page,
-      leftPeptideLocator,
-      rightMoleculeLocator,
-      undefined,
-      rightMolecule.connectionPointShifts[atomIndex],
-    );
-  }
-
-  async function bondMonomerPointToAtom(
-    page: Page,
-    leftPeptide: IMonomer,
-    rightMolecule: IMolecule,
-    attachmentPoint: string,
-    atomIndex: number,
-  ) {
-    const leftPeptideLocator = page
-      .getByText(leftPeptide.alias, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
-      .first();
-
-    await bondMonomerPointToMoleculeAtom(
-      page,
-      leftPeptideLocator,
-      rightMoleculeLocator,
-      attachmentPoint,
-      rightMolecule.connectionPointShifts[atomIndex],
     );
   }
 
@@ -1299,6 +1231,74 @@ test.describe('Connection rules for peptides: ', () => {
       });
     });
   });
+
+  async function loadMonomer(page: Page, leftMonomer: IMonomer) {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const leftMonomerLocator = canvasLocator
+      .locator(`text=${leftMonomer.alias}`)
+      .locator('..')
+      .first();
+    await leftMonomerLocator.hover();
+    await dragMouseTo(300, 380, page);
+    await moveMouseAway(page);
+  }
+
+  async function loadMolecule(page: Page, molecule: IMolecule) {
+    await openFileAndAddToCanvasMacro(molecule.fileName, page);
+    await moveMouseAway(page);
+  }
+
+  async function bondMonomerCenterToAtom(
+    page: Page,
+    leftPeptide: IMonomer,
+    rightMolecule: IMolecule,
+    atomIndex: number,
+  ) {
+    const leftPeptideLocator = page
+      .getByText(leftPeptide.alias, { exact: true })
+      .locator('..')
+      .first();
+
+    const rightMoleculeLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
+
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      leftPeptideLocator,
+      rightMoleculeLocator,
+      undefined,
+      rightMolecule.connectionPointShifts[atomIndex],
+    );
+  }
+
+  async function bondMonomerPointToAtom(
+    page: Page,
+    leftPeptide: IMonomer,
+    rightMolecule: IMolecule,
+    attachmentPoint: string,
+    atomIndex: number,
+  ) {
+    const leftPeptideLocator = page
+      .getByText(leftPeptide.alias, { exact: true })
+      .locator('..')
+      .first();
+
+    const rightMoleculeLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
+
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      leftPeptideLocator,
+      rightMoleculeLocator,
+      attachmentPoint,
+      rightMolecule.connectionPointShifts[atomIndex],
+    );
+  }
 
   Object.values(peptideMonomers).forEach((leftPeptide) => {
     Object.values(molecules).forEach((rightMolecule) => {

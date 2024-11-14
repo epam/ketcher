@@ -66,7 +66,7 @@ export async function bondTwoMonomersPointToPoint(
   }
   await page.mouse.down();
 
-  await secondMonomerElement.hover();
+  await secondMonomerElement.hover({ force: true });
   if (secondMonomerConnectionPoint) {
     const secondConnectionPoint = await secondMonomerElement.locator(
       `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,
@@ -87,6 +87,63 @@ export async function bondTwoMonomersPointToPoint(
     } else {
       console.log(
         'Failed to locate connection point on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.up();
+
+  await moveMouseAway(page);
+}
+
+export async function bondMonomerPointToMoleculeAtom(
+  page: Page,
+  monomer: Locator,
+  atom: Locator,
+  monomerConnectionPoint?: string,
+  connectionPointShift?: { x: number; y: number },
+) {
+  await selectSingleBondTool(page);
+  await monomer.hover();
+
+  if (monomerConnectionPoint) {
+    const firstConnectionPoint = monomer.locator(
+      `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
+    );
+
+    await firstConnectionPoint.hover({ force: true });
+    const firstConnectionPointBoundingBox =
+      await firstConnectionPoint.boundingBox();
+
+    if (firstConnectionPointBoundingBox) {
+      await page.mouse.move(
+        // if we click on the center of R5 connection point - it replace R5 connection point with R1
+        // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
+        firstConnectionPointBoundingBox.x +
+          firstConnectionPointBoundingBox.width / 4,
+        firstConnectionPointBoundingBox.y +
+          firstConnectionPointBoundingBox.height / 4,
+      );
+    } else {
+      console.log(
+        'Failed to locate connection point on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.down();
+
+  // await atom.hover({ force: true });
+  if (connectionPointShift) {
+    const atomBoundingBox = await atom.boundingBox();
+
+    if (atomBoundingBox) {
+      await page.mouse.move(
+        atomBoundingBox.x + atomBoundingBox.width / 2 + connectionPointShift.x,
+        atomBoundingBox.y + atomBoundingBox.height / 2 + connectionPointShift.y,
+      );
+    } else {
+      await atom.hover({ force: true });
+      console.log(
+        'Failed to locate atom on the canvas - using Center instead.',
       );
     }
   }

@@ -27,7 +27,6 @@ import {
   RingButton,
   selectRectangleSelectionTool,
   waitForRender,
-  clickOnTheCanvas,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -895,7 +894,7 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await copyAndPaste(page);
-      await clickOnTheCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500);
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -926,7 +925,7 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
       await cutAndPaste(page);
-      await clickOnTheCanvas(page, 500, 500);
+      await clickOnCanvas(page, 500, 500);
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);

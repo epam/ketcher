@@ -1240,8 +1240,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *        3. Drag center of monomer to first (0th) atom of molecule
        *        Expected result: If monomer has R2 commection point - connection should be established
        */
-
-      test(`Case 10: Connect Center of Peptide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`Case 10: Connect Center of Base(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);
@@ -1267,8 +1266,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *        3. Drag every connection point of monomer to any free atom of molecule
        *        Expected result: Connection should be established
        */
-
-      test(`Case 11: Connect Center of Peptide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`Case 11: Connect Center of Base(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);

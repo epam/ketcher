@@ -2,6 +2,7 @@
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { moveMouseAway, selectSingleBondTool } from '..';
+import { isR2R1ConnectionFromRnaBase } from 'ketcher-core';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -43,7 +44,7 @@ export async function bondTwoMonomersPointToPoint(
   await firstMonomerElement.hover();
 
   if (firstMonomerConnectionPoint) {
-    const firstConnectionPoint = await firstMonomerElement.locator(
+    const firstConnectionPoint = firstMonomerElement.locator(
       `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
     const firstConnectionPointBoundingBox =
@@ -68,7 +69,7 @@ export async function bondTwoMonomersPointToPoint(
 
   await secondMonomerElement.hover({ force: true });
   if (secondMonomerConnectionPoint) {
-    const secondConnectionPoint = await secondMonomerElement.locator(
+    const secondConnectionPoint = secondMonomerElement.locator(
       `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
 
@@ -106,22 +107,34 @@ export async function bondMonomerPointToMoleculeAtom(
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
-    const firstConnectionPoint = monomer.locator(
-      `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
-    );
+    // const connectionPoint = monomer.locator(
+    //   `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
+    // );
+    const connectionPoint = page
+      .locator('g')
+      .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
+      .locator('circle');
 
-    await firstConnectionPoint.hover({ force: true });
-    const firstConnectionPointBoundingBox =
-      await firstConnectionPoint.boundingBox();
+    // await connectionPoint.hover({ force: true });
+    const connectionPointBoundingBox = await connectionPoint.boundingBox();
 
-    if (firstConnectionPointBoundingBox) {
-      await page.mouse.move(
+    if (connectionPointBoundingBox) {
+      let multiplier = 2;
+      switch (monomerConnectionPoint) {
+        case 'R2':
+          multiplier = 3 / 4;
+          break;
         // if we click on the center of R5 connection point - it replace R5 connection point with R1
         // Bug: https://github.com/epam/ketcher/issues/4433, once it fixed - 4 have to be replaced with 2
-        firstConnectionPointBoundingBox.x +
-          firstConnectionPointBoundingBox.width / 4,
-        firstConnectionPointBoundingBox.y +
-          firstConnectionPointBoundingBox.height / 4,
+        case 'R5':
+          multiplier = 4;
+          break;
+      }
+      await page.mouse.move(
+        connectionPointBoundingBox.x +
+          connectionPointBoundingBox.width / multiplier,
+        connectionPointBoundingBox.y +
+          connectionPointBoundingBox.height / multiplier,
       );
     } else {
       console.log(

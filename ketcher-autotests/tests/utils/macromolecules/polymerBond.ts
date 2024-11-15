@@ -103,7 +103,7 @@ export async function bondMonomerPointToMoleculeAtom(
   connectionPointShift?: { x: number; y: number },
 ) {
   await selectSingleBondTool(page);
-  await monomer.hover();
+  await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
     const firstConnectionPoint = monomer.locator(

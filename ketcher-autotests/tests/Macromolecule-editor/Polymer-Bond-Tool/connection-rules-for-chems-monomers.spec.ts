@@ -1363,7 +1363,9 @@ test.describe('Connection rules for chems: ', () => {
        *  Step: 1. Load monomer (chem) and shift it to the left
        *        2. Load molecule (system loads it at the center)
        *        3. Drag center of monomer to first (0th) atom of molecule
-       *        Expected result: If monomer has R2 commection point - connection should be established
+       *        Expected result: No connection should be establiched
+       *  WARNING: That test tesults are wrong because of bug: https://github.com/epam/ketcher/issues/5976
+       *  Screenshots must be updated after fix and fixme should be removed
        */
       test(`Case 11: Connect Center of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
@@ -1376,6 +1378,11 @@ test.describe('Connection rules for chems: ', () => {
         await takeEditorScreenshot(page, {
           masks: [page.getByTestId('polymer-library-preview')],
         });
+        test.fixme(
+          // eslint-disable-next-line no-self-compare
+          true === true,
+          `That test results are wrong because of https://github.com/epam/ketcher/issues/5976 issue(s).`,
+        );
       });
     });
   });

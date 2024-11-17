@@ -53,6 +53,7 @@ export class SugarRenderer extends BaseMonomerRenderer {
   show(theme) {
     super.show(theme);
     this.appendChainBeginning();
+    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

@@ -47,6 +47,7 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
   show(theme) {
     super.show(theme);
     this.appendEnumeration();
+    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

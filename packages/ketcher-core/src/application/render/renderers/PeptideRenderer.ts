@@ -88,6 +88,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     super.show(theme);
     this.appendEnumeration();
     this.appendChainBeginning();
+    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

@@ -49,6 +49,11 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       .attr('fill', this.getMonomerColor(theme));
   }
 
+  show(theme) {
+    super.show(theme);
+    this.highlightIfModified();
+  }
+
   public get enumerationElementPosition() {
     return undefined;
   }

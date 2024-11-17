@@ -269,7 +269,7 @@ test.describe('Side chain connections', () => {
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations. 
     */
-
+    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);

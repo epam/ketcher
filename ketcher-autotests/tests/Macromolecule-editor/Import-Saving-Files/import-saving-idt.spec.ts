@@ -1644,6 +1644,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occur)
           4. Take screenshot to make sure export is correct
     */
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,

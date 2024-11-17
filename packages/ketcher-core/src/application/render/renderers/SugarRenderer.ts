@@ -23,7 +23,7 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    return '#fff';
+    return this.monomer.isModification ? '#333333' : '#fff';
   }
 
   protected getMonomerColor(theme) {
@@ -39,6 +39,15 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr('href', SUGAR_SYMBOL_ELEMENT_ID)
       .attr('fill', this.getMonomerColor(theme));
+  }
+
+  protected highlightIfModified(): void {
+    if (this.monomer.isModification) {
+      this.rootElement
+        ?.append('use')
+        .attr('xlink:href', '#sugar-modified-background')
+        .attr('class', 'modification-background');
+    }
   }
 
   show(theme) {

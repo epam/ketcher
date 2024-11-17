@@ -20,6 +20,10 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     );
   }
 
+  public get textColor() {
+    return this.monomer.isModification ? '#fff' : '#333333';
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
@@ -29,6 +33,15 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr('href', RNABASE_SYMBOL_ELEMENT_ID)
       .attr('fill', this.getMonomerColor(theme));
+  }
+
+  protected highlightIfModified(): void {
+    if (this.monomer.isModification) {
+      this.rootElement
+        ?.append('use')
+        .attr('xlink:href', '#rna-base-modified-background')
+        .attr('class', 'modification-background');
+    }
   }
 
   show(theme) {

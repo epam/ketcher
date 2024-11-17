@@ -503,8 +503,23 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.SubChainConstructor !== monomerToChain.SubChainConstructor;
   }
 
-  public get isModification() {
-    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+  public isRelevantType(): boolean {
+    const relevantTypes = ['PEPTIDE', 'RNA', 'RNA sugar'];
+    const monomerType = this.monomerItem.props.MonomerType;
+    return monomerType !== undefined && relevantTypes.includes(monomerType);
+  }
+
+  public get isModification(): boolean {
+    const monomerNaturalAnalogCode =
+      this.monomerItem.props.MonomerNaturalAnalogCode;
+    const label = this.label;
+    const isRelevant = this.isRelevantType();
+
+    return (
+      monomerNaturalAnalogCode !== undefined &&
+      monomerNaturalAnalogCode !== label &&
+      isRelevant
+    );
   }
 
   public get sideConnections() {

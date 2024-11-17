@@ -25,6 +25,19 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.PHOSPHATE].regular;
   }
 
+  public get textColor() {
+    return this.monomer.isModification ? '#fff' : '#333333';
+  }
+
+  protected highlightIfModified(): void {
+    if (this.monomer.isModification) {
+      this.rootElement
+        ?.append('use')
+        .attr('xlink:href', '#phosphate-modified-background')
+        .attr('class', 'modification-background');
+    }
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,

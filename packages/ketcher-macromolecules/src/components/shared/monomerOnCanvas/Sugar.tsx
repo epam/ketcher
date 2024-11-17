@@ -50,5 +50,19 @@ export const SugarAvatar = () => (
         strokeWidth="0.5"
       />
     </symbol>
+    <symbol
+      id="sugar-modified-background"
+      viewBox="0 0 28 10"
+      width="27"
+      height="10"
+      x="0.7"
+      y="10"
+    >
+      <path
+        d="M1.5 10C0.947715 10 0.5 9.55229 0.5 9V1C0.5 0.447715 0.947715 0 1.5 0H26.5C27.0523 0 27.5 0.447715 27.5 1V9C27.5 9.55228 27.0523 10 26.5 10H1.5Z"
+        fill="white"
+        fillOpacity="0.6"
+      />
+    </symbol>
   </>
 );

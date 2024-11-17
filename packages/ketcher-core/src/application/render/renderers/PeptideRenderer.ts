@@ -63,9 +63,25 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       V: BLACK,
     };
 
-    const peptideTextColor =
-      peptideColorsMap[this.monomer.monomerItem.props.MonomerNaturalAnalogCode];
-    return peptideTextColor || super.textColor;
+    const modificateColorsMap: { [key: string]: string } = {
+      D: WHITE,
+    };
+
+    const monomerCode = this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
+    const colorsMap = this.monomer.isModification
+      ? modificateColorsMap
+      : peptideColorsMap;
+
+    return colorsMap[monomerCode] ?? super.textColor;
+  }
+
+  protected highlightIfModified(): void {
+    if (this.monomer.isModification) {
+      this.rootElement
+        ?.append('use')
+        .attr('xlink:href', '#modified-background')
+        .attr('class', 'modification-background');
+    }
   }
 
   show(theme) {

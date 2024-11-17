@@ -517,11 +517,21 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.beginning);
   }
 
+  protected highlightIfModified(): void {
+    if (this.monomer.isModification) {
+      this.rootElement
+        ?.append('use')
+        .attr('xlink:href', '#modified-background')
+        .attr('class', 'modification-background');
+    }
+  }
+
   public show(theme?) {
     this.rootElement =
       this.rootElement ||
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.highlightIfModified();
     this.appendEvents();
 
     this.appendLabel(this.rootElement);

@@ -21,6 +21,7 @@ import {
   selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -836,7 +837,7 @@ test.describe('Snake Bond Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('DHis1B').locator('..').first().hover();
     await dragMouseTo(x, y, page);
     await page.mouse.click(x2, y2);

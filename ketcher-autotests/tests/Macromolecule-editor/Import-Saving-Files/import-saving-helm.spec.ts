@@ -261,6 +261,7 @@ const correctHELMStrings: IHELMString[] = [
       '35. Simple peptides - The ratio of each element can be given as a numerical value after the monomer' +
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString: 'PEPTIDE1{(A:1.5+C:0.1)}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -268,6 +269,7 @@ const correctHELMStrings: IHELMString[] = [
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:1.1+[Abu]:2.2+[Aca]:3.3+[Aib]:4.4+[Apm]:5.5)}$$$$V2.0',
+    pageReloadNeeded: true,
   },
   {
     helmDescription:

@@ -21,6 +21,7 @@ import {
   clickOnTheCanvas,
   selectRectangleSelectionTool,
   Bases,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   hideMonomerPreview,
@@ -197,7 +198,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
   });
@@ -226,7 +227,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });

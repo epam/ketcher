@@ -10,6 +10,7 @@ import {
   takeLeftToolbarScreenshot,
   clickOnAtom,
   clickOnBond,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
@@ -121,7 +122,7 @@ test.describe('Erase Tool', () => {
       y: (pnt1.y + pnt2.y) / halfDivider,
     };
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
 
     await page.mouse.click(arrowMiddle.x, arrowMiddle.y);

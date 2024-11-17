@@ -27,6 +27,7 @@ import {
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -583,7 +584,7 @@ test.describe('Attachment Point Tool', () => {
     };
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 

@@ -14,6 +14,7 @@ import {
   selectPartOfMolecules,
   waitForRender,
   clickInTheMiddleOfTheScreen,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
@@ -233,7 +234,7 @@ test.describe('Sequence mode selection for view mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('zoom-selector').click();
     for (let i = 0; i < 8; i++) {
       await waitForRender(page, async () => {

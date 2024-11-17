@@ -67,11 +67,8 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
-  moveOnBond,
-  BondType,
-  copyToClipboardByKeyboard,
-  cutToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -83,10 +80,6 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import { pageReload } from '@utils/common/helpers';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
 import {
   goToCHEMTab,
   goToPeptidesTab,
@@ -217,12 +210,6 @@ async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   }
 }
 
-async function selectExpandedMonomer(page: Page) {
-  await moveOnBond(page, BondType.SINGLE, 1);
-  await page.mouse.down();
-  await page.mouse.up();
-}
-
 let page: Page;
 
 async function configureInitialState(page: Page) {
@@ -275,6 +262,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Macromolecule structures in micromode are represented as S-Groups with bonds
     */
+    await pageReload(page);
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
@@ -351,7 +339,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Edc').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -823,7 +811,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
-      await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
+      await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').click();
       await takeEditorScreenshot(page);
@@ -847,9 +835,7 @@ test.describe('Macro-Micro-Switcher', () => {
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
         '.mol',
       );
-      await waitForRender(page, async () => {
-        await page.mouse.click(coordsToClick.x, coordsToClick.y);
-      });
+      await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
       await takeEditorScreenshot(page);
@@ -1081,7 +1067,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectRing(RingButton.Benzene, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1106,7 +1092,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectAtomInToolbar(AtomButton.Oxygen, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1131,7 +1117,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1156,7 +1142,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const x1 = 600;
       const y1 = 600;
       await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
@@ -1213,7 +1199,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1248,7 +1234,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1307,7 +1293,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1341,7 +1327,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectSnakeLayoutModeTool(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1399,7 +1385,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1435,7 +1421,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1496,7 +1482,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
         firstMonomer,
@@ -1535,7 +1521,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1572,7 +1558,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByTestId('CHEM-TAB').click();
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -1595,7 +1581,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(645, 318);
+    await clickOnCanvas(page, 645, 318);
     await takeEditorScreenshot(page);
   });
 
@@ -2467,12 +2453,6 @@ async function collapseMonomer(page: Page) {
   }
 }
 
-async function selectMonomerOnMicro(page: Page, monomerName: string) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await waitForRender(page, async () => {
-    await canvasLocator.getByText(monomerName, { exact: true }).click();
-  });
-}
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;
@@ -2869,18 +2849,21 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
     monomerLocatorText: 'UNA',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
     monomerLocatorText: 'hU',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
@@ -2894,6 +2877,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
     monomerLocatorText: '5hMedC',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
@@ -2944,6 +2928,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2951,6 +2936,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2958,24 +2944,28 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '15. Base M (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'M',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '16. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '17. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '18. Base A+C (ambiguous, mixed)',
@@ -3002,6 +2992,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
+    pageReloadNeeded: true,
   },
   {
     monomerDescription: '22. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
@@ -3015,6 +3006,7 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
     monomerLocatorText: 'Unknown',
+    pageReloadNeeded: true,
   },
 ];
 
@@ -3062,275 +3054,4 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
       );
     });
   }
-});
-
-async function moveExpandedMonomerOnMicro(page: Page, x: number, y: number) {
-  await moveOnBond(page, BondType.SINGLE, 1);
-  await dragMouseTo(x, y, page);
-}
-
-const movableExpandedMonomers: IMonomer[] = [
-  {
-    monomerDescription: '1. Petide D (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-    monomerLocatorText: 'D',
-    pageReloadNeeded: true,
-  },
-  {
-    monomerDescription: '2. Sugar UNA (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
-    monomerLocatorText: 'UNA',
-  },
-  {
-    monomerDescription: '3. Base hU (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
-    monomerLocatorText: 'hU',
-  },
-  {
-    monomerDescription: '4. Phosphate bnn (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
-    monomerLocatorText: 'bnn',
-  },
-  {
-    monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
-    monomerLocatorText: '5hMedC',
-  },
-  {
-    monomerDescription: '6. CHEM 4aPEGMal (from library)',
-    KETFile:
-      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
-    monomerLocatorText: '4aPEGMal',
-  },
-];
-
-test.describe('Move in expanded state on Micro canvas: ', () => {
-  test.beforeEach(async () => {
-    await turnOnMicromoleculesEditor(page);
-  });
-
-  for (const movableExpandedMonomer of movableExpandedMonomers) {
-    test(`${movableExpandedMonomer.monomerDescription}`, async () => {
-      /*
-       * Test task: https://github.com/epam/ketcher/issues/5773
-       * Description: Verify that expanded macromolecules can be moved across the canvas
-       *
-       * Case: 1. Load monomer on Molecules canvas
-       *       2. Expand it
-       *       2. Take screenshot to witness initial position
-       *       3. Grab it and move it to the top left corner
-       *       6. Take screenshot to witness final position
-       */
-      if (movableExpandedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
-      await openFileAndAddToCanvasAsNewProject(
-        movableExpandedMonomer.KETFile,
-        page,
-      );
-
-      await expandMonomer(page, movableExpandedMonomer.monomerLocatorText);
-      await takeEditorScreenshot(page);
-
-      await moveExpandedMonomerOnMicro(page, 200, 200);
-      await moveMouseToTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
-
-      // Test should be skipped if related bug exists
-      test.fixme(
-        movableExpandedMonomer.shouldFail === true,
-        `That test results are wrong because of ${movableExpandedMonomer.issueNumber} issue(s).`,
-      );
-    });
-  }
-});
-
-const expandableMonomer: IMonomer = {
-  monomerDescription: '1. Petide D (from library)',
-  KETFile:
-    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
-};
-
-test(`Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports undo/redo functionality for expanding and collapsing monomers in micro mode
-   *
-   * Case: 1. Load monomer on Molecules canvas
-   *       2. Expand it
-   *       2. Take screenshot to witness initial state
-   *       3. Press Undo button
-   *       6. Take screenshot to witness final position
-   *       7. Press Redo button
-   */
-  await turnOnMicromoleculesEditor(page);
-  await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
-  await expandMonomer(page, expandableMonomer.monomerLocatorText);
-  await takeEditorScreenshot(page);
-  await pressUndoButton(page);
-  await takeEditorScreenshot(page);
-  await pressRedoButton(page);
-  await takeEditorScreenshot(page);
-});
-
-const copyableMonomer: IMonomer = {
-  monomerDescription: '1. Petide D (from library)',
-  KETFile:
-    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
-};
-
-test(`Verify that the system supports copy/paste functionality for collapsed monomers in micro mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports copy/paste functionality for collapsed monomers in micro mode
-   *
-   * Case: 1. Load monomer on Molecules canvas
-   *       2. Take screenshot to witness initial state
-   *       3. Copy monomer to clipboard
-   *       4. Paste it to the canvas
-   *       5. Take screenshot to witness final position
-   */
-  await turnOnMicromoleculesEditor(page);
-
-  await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
-  await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, copyableMonomer.monomerLocatorText);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
-  await takeEditorScreenshot(page);
-});
-
-const cutableMonomer: IMonomer = {
-  monomerDescription: '1. Petide D (from library)',
-  KETFile:
-    'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
-  monomerLocatorText: 'D',
-};
-
-test(`Verify that the system supports cut/paste functionality for collapsed monomers in micro mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports cut/paste functionality for collapsed monomers in micro mode
-   *
-   * Case: 1. Load monomer on Molecules canvas
-   *       2. Take screenshot to witness initial state
-   *       3. Cut monomer to clipboard
-   *       4. Paste it to the canvas
-   *       5. Take screenshot to witness final position
-   */
-  await turnOnMicromoleculesEditor(page);
-
-  await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
-  await takeEditorScreenshot(page);
-  await selectMonomerOnMicro(page, cutableMonomer.monomerLocatorText);
-
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
-  await takeEditorScreenshot(page);
-});
-
-test(`Verify that the system supports copy/paste functionality for expanded monomers in micro mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports copy/paste functionality for expanded monomers in micro mode
-   *
-   * Case: 1. Load monomer on Molecules canvas
-   *       2. Expand monomer
-   *       3. Click on any monomer bond to select it
-   *       4. Take screenshot to witness initial state
-   *       5. Copy monomer to clipboard
-   *       6. Paste it to the canvas
-   *       7. Take screenshot to witness final position
-   */
-  await turnOnMicromoleculesEditor(page);
-
-  await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
-  await expandMonomer(page, copyableMonomer.monomerLocatorText);
-  await takeEditorScreenshot(page);
-  await selectExpandedMonomer(page);
-  await copyToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
-  await takeEditorScreenshot(page);
-
-  test.fixme(
-    // eslint-disable-next-line no-self-compare
-    true === true,
-    `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
-  );
-});
-
-test(`Verify that the system supports cut/paste functionality for expanded monomers in micro mode`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that the system supports cut/paste functionality for expanded monomers in micro mode
-   *
-   * Case: 1. Load monomer on Molecules canvas
-   *       2. Expand monomer
-   *       3. Click on any monomer bond to select it
-   *       4. Take screenshot to witness initial state
-   *       5. Cut monomer to clipboard
-   *       6. Paste it to the canvas
-   *       7. Take screenshot to witness final position
-   */
-  await turnOnMicromoleculesEditor(page);
-
-  await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
-  await expandMonomer(page, cutableMonomer.monomerLocatorText);
-  await takeEditorScreenshot(page);
-  await selectExpandedMonomer(page);
-  await cutToClipboardByKeyboard(page);
-  await pasteFromClipboardByKeyboard(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(200, 200);
-  });
-  await takeEditorScreenshot(page);
-
-  test.fixme(
-    // eslint-disable-next-line no-self-compare
-    true === true,
-    `That test results are wrong because of https://github.com/epam/ketcher/issues/5831 issue(s).`,
-  );
-});
-
-test(`Verify that "Expand monomer" does not break cyclic structures when the ring is expanded`, async () => {
-  /*
-   * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that "Expand monomer" does not break cyclic structures when the ring is expanded
-   *
-   * Case: 1. Load monomer cycle on Molecules canvas
-   *       2. Take screenshot to witness initial state
-   *       3. Expand all monomers from cycle
-   *       4. Take screenshot to witness final position
-   */
-  await turnOnMicromoleculesEditor(page);
-
-  await openFileAndAddToCanvasAsNewProject(
-    'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
-    page,
-  );
-  await takeEditorScreenshot(page);
-  await expandMonomer(page, 'A');
-  await expandMonomer(page, '5hMedC');
-  await expandMonomer(page, 'gly');
-  await expandMonomer(page, 'Mal');
-  await expandMonomer(page, '12ddR');
-  await expandMonomer(page, 'oC64m5');
-  await takeEditorScreenshot(page);
 });

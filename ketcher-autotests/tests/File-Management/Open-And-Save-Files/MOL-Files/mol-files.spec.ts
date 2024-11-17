@@ -15,6 +15,7 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   openSettings,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -825,7 +826,7 @@ test.describe('Open and Save file', () => {
         page,
       );
       await takeEditorScreenshot(page);
-      await page.keyboard.press('Control+a');
+      await selectAllStructuresOnCanvas(page);
       await page.keyboard.press('Delete');
     });
   }
@@ -973,6 +974,7 @@ test.describe('Open and Save file', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
 
@@ -1012,6 +1014,7 @@ test.describe('Open and Save file', () => {
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
+    await pressButton(page, 'OK');
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
 

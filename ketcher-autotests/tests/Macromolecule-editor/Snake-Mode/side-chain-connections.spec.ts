@@ -21,6 +21,9 @@ import {
   waitForKetcherInit,
   hideLibrary,
   showLibrary,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -266,7 +269,7 @@ test.describe('Side chain connections', () => {
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations. 
     */
-
+    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -1100,13 +1103,9 @@ test.describe('Side chain connections', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

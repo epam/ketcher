@@ -15,6 +15,9 @@ import {
   startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   enterSequence,
@@ -47,8 +50,8 @@ test.describe('Sequence mode copy&paste for view mode', () => {
 
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -59,28 +62,30 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that when there is at least one sequence on canvas, pasting is performed in next row, and canvas is moved to make newly added sequence visible', async ({
-    page,
-  }) => {
-    await page.keyboard.down('Control');
-    await getSequenceSymbolLocator(page, 'G').click();
-    await page.keyboard.up('Control');
-    await page.keyboard.press('Control+c');
+  test(
+    'Verify that when there is at least one sequence on canvas, ' +
+      'pasting is performed in next row, and canvas is moved to make newly added sequence visible',
+    async ({ page }) => {
+      await page.keyboard.down('Control');
+      await getSequenceSymbolLocator(page, 'G').click();
+      await page.keyboard.up('Control');
+      await copyToClipboardByKeyboard(page);
 
-    for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('Control+v');
-    }
+      for (let i = 0; i < 10; i++) {
+        await pasteFromClipboardByKeyboard(page);
+      }
 
-    await takeEditorScreenshot(page);
-  });
+      await takeEditorScreenshot(page);
+    },
+  );
 });
 
 test.describe('Sequence mode copy&paste for edit mode', () => {
@@ -102,10 +107,10 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await selectSequenceRangeInEditMode(page, fromSymbol, toSymbol);
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     const cNthNumber = 5;
     await getSequenceSymbolLocator(page, 'C', cNthNumber).click();
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
@@ -123,8 +128,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
         'tests/test-data/KET/single-fragment-for-paste.ket',
       );
       await openPasteFromClipboard(page, fileContent);
-      await page.keyboard.press('Control+a');
-      await page.keyboard.press('Control+c');
+      await selectAllStructuresOnCanvas(page);
+      await copyToClipboardByKeyboard(page);
       await page.getByTitle('Close window').click();
 
       await clickOnSequenceSymbol(page, 'G', { nthNumber: 2 });
@@ -137,7 +142,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await page.keyboard.up('Shift');
       await takeEditorScreenshot(page);
 
-      await page.keyboard.press('Control+v');
+      await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
       await clickUndo(page);
@@ -151,8 +156,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   page,
   // }) => {
   //   await openPasteFromClipboard(page, 'atc');
-  //   await page.keyboard.press('Control+a');
-  //   await page.keyboard.press('Control+c');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //
   //   await clickOnSequenceSymbol(page, 'G');
@@ -166,7 +171,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //
   //   await takeEditorScreenshot(page);
   //
-  //   await page.keyboard.press('Control+v');
+  //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   //
   //   await clickUndo(page);
@@ -195,9 +200,9 @@ test.describe('Sequence-edit mode', () => {
     await page.keyboard.down('Control');
     await clickOnSequenceSymbol(page, 'G');
     await page.keyboard.up('Control');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Enter');
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -213,11 +218,11 @@ test.describe('Sequence-edit mode', () => {
   //   Description: Pasted fragment is considered as new chain.
   //   */
   //   await openPasteFromClipboard(page, '>');
-  //   await page.keyboard.press('Control+a');
-  //   await page.keyboard.press('Control+c');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);
-  //   await page.keyboard.press('Control+v');
+  //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   // });
 
@@ -233,13 +238,11 @@ test.describe('Sequence-edit mode', () => {
   //     'tests/test-data/Sequence/sequence-500-symbols.seq',
   //   );
   //   await openPasteFromClipboard(page, fileContent);
-  //   await page.keyboard.press('Control+a');
-  //   await page.keyboard.press('Control+c');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);
-  //   await waitForRender(page, async () => {
-  //     await page.keyboard.press('Control+v');
-  //   });
+  //   await pasteFromClipboardByKeyboard(page);
   //   await waitForRender(page, async () => {
   //     await takeEditorScreenshot(page);
   //   });
@@ -261,8 +264,8 @@ test.describe('Sequence-edit mode', () => {
     await clickOnSequenceSymbol(page, 'U');
     await clickOnSequenceSymbol(page, 'C');
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -285,11 +288,11 @@ test.describe('Sequence-edit mode', () => {
     await clickOnSequenceSymbol(page, 'U');
     await clickOnSequenceSymbol(page, 'C');
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -308,10 +311,10 @@ test.describe('Sequence-edit mode', () => {
       await page.keyboard.press('ArrowRight');
     }
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
     await clickOnSequenceSymbol(page, 'G');
     await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await waitForRender(page, async () => {
       await takeEditorScreenshot(page);
     });

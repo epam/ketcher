@@ -47,8 +47,8 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  waitForRender,
   selectRingButton,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -146,7 +146,7 @@ test.describe('Template Manupulations', () => {
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
     await dragMouseTo(rotationHandleX, rotationHandleY, page);
@@ -185,8 +185,8 @@ test.describe('Template Manupulations', () => {
       await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
       await page.getByTestId('canvas').getByText('F').first().click();
       await takeEditorScreenshot(page);
-      await page.keyboard.press('Control+a');
-      await page.keyboard.press('Control+a');
+      await selectAllStructuresOnCanvas(page);
+      await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await page.keyboard.press('Control+z');
       await takeEditorScreenshot(page);
@@ -311,7 +311,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await selectAtomInToolbar(AtomButton.Fluorine, page);
     await clickOnAtom(page, 'C', anyAtom);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
@@ -638,9 +638,7 @@ test.describe('Open Ketcher', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       await takePageScreenshot(page);
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
-      });
+      await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
@@ -671,7 +669,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('select-rectangle').click();
     await takePageScreenshot(page);
     await page.getByTestId('select-rectangle').click();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseToTheMiddleOfTheScreen(page);

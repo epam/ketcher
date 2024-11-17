@@ -22,6 +22,7 @@ import {
   waitForRender,
   drawBenzeneRing,
   selectDropdownTool,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 
 test.describe('Selection tools', () => {
@@ -36,7 +37,7 @@ test.describe('Selection tools', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await clickOnAtom(page, 'C', 0, 'right');
     await takeEditorScreenshot(page);
   });
@@ -50,7 +51,7 @@ test.describe('Selection tools', () => {
     are highlighted with rounded rectangles.
     */
     await openFileAndAddToCanvas('KET/atoms-and-bonds.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +62,7 @@ test.describe('Selection tools', () => {
     Selected tool remains active and the atom does not appear under mouse cursor.
     */
     await openFileAndAddToCanvas('KET/two-atoms.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('o');
     await takeEditorScreenshot(page);
   });
@@ -73,7 +74,7 @@ test.describe('Selection tools', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
   });
@@ -85,7 +86,7 @@ test.describe('Selection tools', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveOnBond(page, BondType.SINGLE, 0);
     await takeEditorScreenshot(page);
   });
@@ -98,7 +99,7 @@ test.describe('Selection tools', () => {
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
     await takeEditorScreenshot(page);
   });
@@ -111,7 +112,7 @@ test.describe('Selection tools', () => {
     Description: All selected structures are flipped horizontally based on the selection box origin.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
     await takeEditorScreenshot(page);
   });
@@ -122,7 +123,7 @@ test.describe('Selection tools', () => {
     Description: All selected structures are deleted from the canvas.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
   });
@@ -137,7 +138,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 50; i++) {
       await page.keyboard.press('ArrowDown');
     }
@@ -159,9 +160,7 @@ test.describe('Selection tools', () => {
 
       await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
       await takeEditorScreenshot(page);
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
-      });
+      await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
         await waitForRender(page, async () => {
           await page.keyboard.press('ArrowUp');
@@ -186,9 +185,7 @@ test.describe('Selection tools', () => {
 
       await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
       await takeEditorScreenshot(page);
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
-      });
+      await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
         await waitForRender(page, async () => {
           await page.keyboard.press('ArrowRight');
@@ -213,9 +210,7 @@ test.describe('Selection tools', () => {
 
       await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
       await takeEditorScreenshot(page);
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
-      });
+      await selectAllStructuresOnCanvas(page);
       for (let i = 0; i < 50; i++) {
         await waitForRender(page, async () => {
           await page.keyboard.press('ArrowLeft');
@@ -235,9 +230,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
@@ -258,9 +251,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
@@ -281,9 +272,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
@@ -304,9 +293,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+a');
-    });
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
@@ -362,7 +349,7 @@ test.describe('Selection tools', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Escape');
     }
@@ -499,7 +486,7 @@ test.describe('Selection tools', () => {
       'Molfiles-V2000/several-templates-selection-tool.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -509,7 +496,7 @@ test.describe('Selection tools', () => {
     Description: All chain structures selected on the canvas are highlighted in green.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

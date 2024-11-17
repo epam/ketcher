@@ -6,6 +6,7 @@ import {
   saveToFile,
   receiveFileComparisonData,
   waitForRender,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -66,7 +67,7 @@ test.describe('Attachment Point Tool', () => {
       'KET/S-Group-structure-with-Attachment-point.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('Control++');
       page.getByTestId('floating-tools');

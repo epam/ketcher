@@ -1,6 +1,9 @@
 import { Page, test } from '@playwright/test';
 import { openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import { takeEditorScreenshot } from '@utils/canvas';
+import {
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -79,7 +82,7 @@ test.describe('draw and highlight line', () => {
     const coordinatesWithShift = x + moveTo;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -101,7 +104,7 @@ test.describe('draw and highlight line', () => {
     const point = { x: 251, y: 363 };
     const point1 = { x: 757, y: 362 };
     await setupLine(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
@@ -113,7 +116,7 @@ test.describe('draw and highlight line', () => {
     const point = { x: 302, y: 510 };
     const point1 = { x: 397, y: 220 };
     await setupLine(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);

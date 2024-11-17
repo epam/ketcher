@@ -196,6 +196,7 @@ test.describe('Import-Saving .mol Files', () => {
     In RNA, thymine (T) is replaced by uracil (U).
     We have bug https://github.com/epam/ketcher/issues/3383
     */
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileType}.mol`, page);
       await takeEditorScreenshot(page);
     });
@@ -644,7 +645,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
     */
-
+    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,

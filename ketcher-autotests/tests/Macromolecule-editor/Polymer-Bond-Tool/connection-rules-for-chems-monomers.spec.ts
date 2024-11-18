@@ -1398,7 +1398,7 @@ test.describe('Connection rules for chems: ', () => {
        *        3. Drag every connection point of monomer to any free atom of molecule
        *        Expected result: Connection should be established
        */
-      test(`Case 12: Connect Center of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`Case 12: Connect evey connection point of of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);

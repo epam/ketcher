@@ -1985,7 +1985,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  Screenshots must be updated after fix and fixme should be removed
        *
        */
-      test(`Case 15: Connect Center of Nucleotide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`15 Case: Connect Center of Nucleotide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);
@@ -2017,7 +2017,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *        3. Drag every connection point of monomer to any free atom of molecule
        *        Expected result: Connection should be established
        */
-      test(`Case 16: Connect Center of Nucleotide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`16 Case: Connect evey connection point of Nucleotide(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);

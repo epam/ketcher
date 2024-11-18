@@ -1347,7 +1347,7 @@ test.describe('Connection rules for peptides: ', () => {
        *        Expected result: Connection should be established
        */
 
-      test(`Case 12: Connect Center of Peptide(${leftPeptide.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`Case 12: Connect evey connection point of Peptide(${leftPeptide.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftPeptide);

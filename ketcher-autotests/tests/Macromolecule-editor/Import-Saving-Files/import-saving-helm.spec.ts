@@ -348,24 +348,32 @@ const correctHELMStrings: IHELMString[] = [
     HELMString:
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
     pageReloadNeeded: true,
+    differentHELMExport:
+      'RNA1{R([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])}$$$$V2.0',
   },
   {
     helmDescription: '49. RNA(RAP) with single inline Extended SMILES (A)',
     HELMString:
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])P}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{R([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])P}$$$$V2.0',
   },
   {
     helmDescription: '50. RNA(RP) with single inline Extended SMILES (P)',
     HELMString: 'RNA1{R[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
   },
   {
     helmDescription: '51. RNA(RP) with single inline Extended SMILES (R)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]P}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|]P}$$$$V2.0',
   },
   {
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',
     HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+    differentHELMExport: 'RNA1{R(A)[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -373,30 +381,38 @@ const correctHELMStrings: IHELMString[] = [
       '53. RNA(RAP) with  all monomer inline Extended SMILES (RAP)',
     HELMString:
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
+    differentHELMExport:
+      'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)P}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription:
       '54. Single peptide with inline SMILES (L) without attachment points',
     HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
+    differentHELMExport: 'PEPTIDE1{[C(C(C)C)C(N[H])C(=O)O]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription: '55. Single peptide with inline Extended SMILES (L)',
     HELMString:
       'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    differentHELMExport:
+      'PEPTIDE1{[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription:
       '56. Single CHEM with inline SMILES (A6OH) without attachment points',
     HELMString: 'CHEM1{[N([H])CCCCCCO[H]]}$$$$V2.0',
+    differentHELMExport: 'CHEM1{[N(CCCCCCO[H])[H]]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
     helmDescription: '57. Single CHEM with inline Extended SMILES (A6OH)',
     HELMString:
       'CHEM1{[N%91CCCCCCO%92.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    differentHELMExport:
+      'CHEM1{[N([*:2])CCCCCCO[*:1] |$;_R2;;;;;;;;_R1$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {
@@ -406,6 +422,11 @@ const correctHELMStrings: IHELMString[] = [
       '[C%91([C@H](CS%92)N%93)=O.[*:2]%91.[*:1]%93.[*:3]%92 |$;;;;;;_R2;_R1;_R3$|].' +
       '[C%91([C@H](CC(O%92)=O)N%93)=O.[*:1]%93.[*:2]%91.[*:3]%92 |$;;;;;;;;_R1;_R2;_R3$|].' +
       '[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
+    differentHELMExport:
+      'PEPTIDE1{[N([*:1])C(C)C([*:2])=O |$;_R1;;;;_R2;$|].' +
+      '[C([*:2])(=O)C(N[*:1])CS[*:3] |$;_R2;;;;_R1;;;_R3$|].' +
+      '[C([*:2])(=O)C(N[*:1])CC(=O)O[*:3] |$;_R2;;;;_R1;;;;;_R3$|].' +
+      '[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
     pageReloadNeeded: true,
   },
   {

@@ -1274,7 +1274,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *        3. Drag every connection point of monomer to any free atom of molecule
        *        Expected result: Connection should be established
        */
-      test(`Case 11: Connect Center of Base(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`Case 11: Connect evey connection point of Base(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);

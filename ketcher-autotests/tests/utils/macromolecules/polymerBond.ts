@@ -2,7 +2,6 @@
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { moveMouseAway, selectSingleBondTool } from '..';
-import { isR2R1ConnectionFromRnaBase } from 'ketcher-core';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -97,6 +96,78 @@ export async function bondTwoMonomersPointToPoint(
 }
 
 export async function bondMonomerPointToMoleculeAtom(
+  page: Page,
+  monomer: Locator,
+  atom: Locator,
+  monomerConnectionPoint?: string,
+  connectionPointShift?: { x: number; y: number },
+) {
+  await selectSingleBondTool(page);
+  await monomer.hover({ force: true });
+
+  if (monomerConnectionPoint) {
+    // const connectionPoint = monomer.locator(
+    //   `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
+    // );
+    const connectionPoint = page
+      .locator('g')
+      .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
+      .locator('circle');
+
+    // await connectionPoint.hover({ force: true });
+    const connectionPointBoundingBox = await connectionPoint.boundingBox();
+    const monomerBoundingBox = await monomer.boundingBox();
+
+    if (connectionPointBoundingBox && monomerBoundingBox) {
+      const multiplier = 1 / 5;
+      const connectionPointCenterX =
+        connectionPointBoundingBox.x + connectionPointBoundingBox.width / 2;
+      const connectionPointCenterY =
+        connectionPointBoundingBox.y + connectionPointBoundingBox.height / 2;
+
+      const monomerCenterX =
+        monomerBoundingBox.x + monomerBoundingBox.width / 2;
+      const monomerCenterY =
+        monomerBoundingBox.y + monomerBoundingBox.height / 2;
+
+      const x =
+        connectionPointCenterX +
+        (monomerCenterX - connectionPointCenterX) * multiplier;
+      const y =
+        connectionPointCenterY +
+        (monomerCenterY - connectionPointCenterY) * multiplier;
+
+      await page.mouse.move(x, y);
+    } else {
+      console.log(
+        'Failed to locate connection point on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.down();
+
+  // await atom.hover({ force: true });
+  if (connectionPointShift) {
+    const atomBoundingBox = await atom.boundingBox();
+
+    if (atomBoundingBox) {
+      await page.mouse.move(
+        atomBoundingBox.x + atomBoundingBox.width / 2 + connectionPointShift.x,
+        atomBoundingBox.y + atomBoundingBox.height / 2 + connectionPointShift.y,
+      );
+    } else {
+      await atom.hover({ force: true });
+      console.log(
+        'Failed to locate atom on the canvas - using Center instead.',
+      );
+    }
+  }
+  await page.mouse.up();
+
+  await moveMouseAway(page);
+}
+
+export async function bondNucleotidePointToMoleculeAtom(
   page: Page,
   monomer: Locator,
   atom: Locator,

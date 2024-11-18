@@ -158,7 +158,7 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
 
   while (attempts < maxAttempts) {
     try {
-      await clearCanvasButton.click({ force: false, timeout: 1000 });
+      await clearCanvasButton.click({ force: false, timeout: 100 });
       return;
     } catch (error) {
       attempts++;

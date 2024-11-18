@@ -893,3 +893,22 @@ for (const monomer of allTypesOfMonomers) {
     await takeEditorScreenshot(page);
   });
 }
+
+test(`Verify that user can save/load macromolecule structures with hydrogen bonds to a .ket file`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5984
+   * Description: Verify that user can save/load macromolecule structures with hydrogen bonds to a .ket file
+   * Case: 1. Load KET file on Macro canvas
+   *       2. Take screenshot to witness original state
+   *       3. Save canvas to KET
+   *       4. Verify that export result equal to template
+   */
+  const KETFile =
+    'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers.ket';
+  const KETFileExpected =
+    'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers-expected.ket';
+
+  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await takeEditorScreenshot(page);
+  await verifyFile2(page, `tests/test-data/${KETFileExpected}`, FileType.KET);
+});

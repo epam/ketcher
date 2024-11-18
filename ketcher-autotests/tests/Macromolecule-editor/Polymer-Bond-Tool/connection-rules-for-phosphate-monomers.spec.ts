@@ -1212,7 +1212,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  Screenshots must be updated after fix and fixme should be removed
        *
        */
-      test(`Cse 15: Connect Center of Phosphate(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`15 Case: Connect Center of Phosphate(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);
@@ -1244,7 +1244,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *        3. Drag every connection point of monomer to any free atom of molecule
        *        Expected result: Connection should be established
        */
-      test(`Cs16: Connect Center of Phosphate(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+      test(`16 Case: Connect Center of Phosphate(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
         test.setTimeout(30000);
 
         await loadMonomer(page, leftMonomer);

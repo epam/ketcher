@@ -30,6 +30,7 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   waitForSpinnerFinishedWork,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -103,7 +104,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
@@ -133,7 +134,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
 
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -315,7 +316,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expand-functional-group-with-benzene.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
 
     await resetCurrentTool(page);
@@ -342,7 +343,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
 
     await resetCurrentTool(page);
@@ -385,7 +386,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -707,21 +708,21 @@ test.describe('Templates - Functional Group Tools3', () => {
       'Molfiles-V2000/contracted-fg-abbreviation.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Boc').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await waitForRender(page, async () => {

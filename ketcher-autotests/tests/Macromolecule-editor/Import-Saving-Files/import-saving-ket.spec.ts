@@ -22,6 +22,7 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   Sugars,
+  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
@@ -188,7 +189,7 @@ test.describe('Import-Saving .ket Files', () => {
     );
     await takeEditorScreenshot(page);
     await clickUndo(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Ph').locator('..').first().hover();
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);

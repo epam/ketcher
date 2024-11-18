@@ -21,6 +21,8 @@ import {
   getFasta,
   getKet,
   saveToFile,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 
 import {
@@ -2207,8 +2209,8 @@ test(`26. Copy and paste replaced monomers`, async () => {
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
   await takeEditorScreenshot(page);
   await selectAllSymbols(page, sequence);
-  await page.keyboard.press('Control+c');
-  await page.keyboard.press('Control+v');
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);
   await takeEditorScreenshot(page);

@@ -30,6 +30,7 @@ import {
   selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -376,7 +377,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -392,7 +393,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-contracted.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -702,7 +703,7 @@ test.describe('Functional Groups', () => {
 
     await drawFGAndDrag(FunctionalGroups.Boc, MAX_BOND_LENGTH, page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();

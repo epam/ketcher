@@ -6,6 +6,8 @@ import {
   zoomWithMouseWheel,
   selectRectangleArea,
   clickUndo,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -27,10 +29,10 @@ test.describe('Flex mode copy&paste', () => {
     page,
   }) => {
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
 
     await page.mouse.move(-startX, 0);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
@@ -44,10 +46,10 @@ test.describe('Flex mode copy&paste', () => {
     await page.getByText('SMCC').locator('..').first().click();
     await page.getByText('Test-6-Ch').locator('..').first().click();
     await page.keyboard.up('Shift');
-    await page.keyboard.press('Control+c');
+    await copyToClipboardByKeyboard(page);
 
     await page.mouse.move(startX, startY);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);

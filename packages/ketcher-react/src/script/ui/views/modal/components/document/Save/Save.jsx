@@ -28,6 +28,8 @@ import {
   b64toBlob,
   KetcherLogger,
   Atom,
+  isClipboardAPIAvailable,
+  legacyCopy,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -42,6 +44,7 @@ import { updateFormState } from '../../../../../state/modal/form';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import { IconButton } from 'components';
 
 const saveSchema = {
   title: 'Save',
@@ -332,6 +335,26 @@ class SaveDialog extends Component {
     );
   };
 
+  handleCopy = (event) => {
+    const { structStr } = this.state;
+
+    try {
+      if (isClipboardAPIAvailable()) {
+        navigator.clipboard.writeText(structStr);
+      } else {
+        legacyCopy(event.clipboardData, {
+          'text/plain': structStr,
+        });
+        event.preventDefault();
+      }
+    } catch (e) {
+      KetcherLogger.error('copyAs.js::copyAs', e);
+      this.props.editor.errorHandler(
+        'This feature is not available in your browser',
+      );
+    }
+  };
+
   renderSaveFile = () => {
     const formState = Object.assign({}, this.props.formState);
     delete formState.moleculeErrors;
@@ -377,6 +400,12 @@ class SaveDialog extends Component {
             readOnly
             ref={this.textAreaRef}
             data-testid={`${format}-preview-area-text`}
+          />
+          <IconButton
+            onClick={this.handleCopy}
+            iconName="copy"
+            title="Copy to clipboard"
+            testId="copy-to-clipboard"
           />
         </div>
       );

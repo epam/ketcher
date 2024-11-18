@@ -137,6 +137,15 @@ Object {
                     data-testid="mol-preview-area-text"
                     readonly=""
                   />
+                  <button
+                    class="css-1kbfai8"
+                    data-testid="copy-to-clipboard"
+                    title="Copy to clipboard"
+                  >
+                    <icon-copy.svg
+                      classname="css-2ntgcm"
+                    />
+                  </button>
                 </div>
               </div>
             </div>
@@ -531,6 +540,15 @@ Object {
                   data-testid="mol-preview-area-text"
                   readonly=""
                 />
+                <button
+                  class="css-1kbfai8"
+                  data-testid="copy-to-clipboard"
+                  title="Copy to clipboard"
+                >
+                  <icon-copy.svg
+                    classname="css-2ntgcm"
+                  />
+                </button>
               </div>
             </div>
           </div>

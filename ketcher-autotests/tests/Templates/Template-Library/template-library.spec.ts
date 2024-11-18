@@ -6,6 +6,7 @@ import {
   getEditorScreenshot,
   openSettings,
   pressButton,
+  selectAllStructuresOnCanvas,
   selectFunctionalGroups,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
@@ -76,7 +77,7 @@ async function editAndClearTemplateName(
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
   await page.getByTestId('name-input').click();
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.keyboard.press('Delete');
 }
 

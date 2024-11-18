@@ -117,12 +117,14 @@ test.describe('Saving in .svg files', () => {
       filename:
         'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       description: '7. Peptides (that have mapping to library, alternatives)',
+      pageReload: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       filename:
         'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       description: '8. Peptides (that have mapping to library, mixed)',
+      pageReload: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558

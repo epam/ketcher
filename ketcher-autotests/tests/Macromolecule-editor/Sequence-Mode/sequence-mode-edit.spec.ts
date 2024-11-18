@@ -1,8 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  copyToClipboardByKeyboard,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -279,15 +282,15 @@ test.describe('Sequence edit mode', () => {
     Description: It is not possible to add more monomers to cycled structure. Error message appears.
     */
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
     await enterSequence(page, 'aaaaaaaaaa');
 
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowLeft');
 
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

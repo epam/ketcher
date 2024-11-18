@@ -30,6 +30,7 @@ import {
   TopPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -188,7 +189,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

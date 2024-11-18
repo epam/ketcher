@@ -10,13 +10,13 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   BondType,
   getCoordinatesOfTheMiddleOfTheScreen,
-  getControlModifier,
   BondTool,
   selectNestedTool,
   SelectTool,
   waitForPageInit,
   selectDropdownTool,
   waitForRender,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -30,7 +30,6 @@ test.describe('Lasso Selection tool', () => {
   const yDelta = 60;
   const xAxis = 300;
   const yAxis = 200;
-  const modifier = getControlModifier();
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -121,7 +120,7 @@ test.describe('Lasso Selection tool', () => {
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

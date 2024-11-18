@@ -633,13 +633,7 @@ export class CoreEditor {
 
   private rerenderSequenceMode() {
     if (this.mode instanceof SequenceMode) {
-      const modelChanges = this.drawingEntitiesManager.reArrangeChains(
-        this.canvas.width.baseVal.value,
-        true,
-        false,
-      );
       this.drawingEntitiesManager.clearCanvas();
-      this.renderersContainer.update(modelChanges);
       this.drawingEntitiesManager.applyMonomersSequenceLayout();
     }
   }

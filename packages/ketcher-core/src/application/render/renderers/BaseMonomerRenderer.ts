@@ -18,8 +18,8 @@ import {
   AttachmentPointName,
 } from 'domain/types';
 import { BaseRenderer } from './BaseRenderer';
-import { monomerFactory } from 'application/editor';
-import { AmbiguousMonomer } from 'domain/entities';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};

@@ -8,6 +8,8 @@ import {
   dragMouseTo,
   waitForPageInit,
   resetZoomLevelToDefault,
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -448,6 +450,45 @@ Object.values(monomers).forEach((leftMonomer) => {
         true === true,
         `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
       );
+    });
+  });
+});
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify that hydrogen bonds behave as side-chain connections for layout purposes
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Switch mode to Snake
+     *              5. Take screenshot to witness layout (hydrogen connection should be considered as side-chain)
+     *              6. Switch mode back to Flex for backward compatibility
+     */
+    test(`5. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) and switch to Snake`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await selectSnakeLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      await selectFlexLayoutModeTool(page);
     });
   });
 });

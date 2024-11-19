@@ -122,9 +122,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     if (this.enumerationElementPosition) {
       this.appendEnumeration();
     }
-    if (this.CHAIN_BEGINNING) {
-      this.appendChainBeginning();
-    }
   }
 
   private appendPreviewAttachmentPoint(

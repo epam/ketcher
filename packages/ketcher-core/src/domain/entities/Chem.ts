@@ -18,8 +18,6 @@ export class Chem extends BaseMonomer {
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
-    return ![PeptideSubChain, ChemSubChain].includes(
-      monomerToChain.SubChainConstructor,
-    );
+    return ![ChemSubChain].includes(monomerToChain.SubChainConstructor);
   }
 }

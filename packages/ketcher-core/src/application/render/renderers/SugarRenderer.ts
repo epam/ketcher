@@ -45,11 +45,6 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .attr('fill', this.getMonomerColor(theme));
   }
 
-  show(theme) {
-    super.show(theme);
-    this.appendChainBeginning();
-  }
-
   public get enumerationElementPosition() {
     return undefined;
   }

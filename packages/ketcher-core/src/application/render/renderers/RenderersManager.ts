@@ -12,7 +12,15 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import { Peptide, Phosphate, Sugar, UnsplitNucleotide } from 'domain/entities';
+import {
+  MonomerSequenceNode,
+  Nucleoside,
+  Nucleotide,
+  Peptide,
+  Phosphate,
+  Sugar,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -35,6 +43,8 @@ import { BondRenderer } from 'application/render/renderers/BondRenderer';
 import { Bond } from 'domain/entities/CoreBond';
 import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerToAtomBondRenderer';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -56,7 +66,6 @@ export class RenderersManager {
   public bonds = new Map<number, BondRenderer>();
 
   private needRecalculateMonomersEnumeration = false;
-  private needRecalculateMonomersBeginning = false;
 
   constructor({ theme }) {
     this.theme = theme;
@@ -82,10 +91,6 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = true;
   }
 
-  public markForRecalculateBegin() {
-    this.needRecalculateMonomersBeginning = true;
-  }
-
   public addMonomer(
     monomer: BaseMonomer | AmbiguousMonomer,
     callback?: () => void,
@@ -102,7 +107,6 @@ export class RenderersManager {
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();
-    this.markForRecalculateBegin();
     if (callback) {
       callback();
     }
@@ -131,7 +135,6 @@ export class RenderersManager {
     monomer.renderer?.remove();
     this.monomers.delete(monomer.id);
     this.markForReEnumeration();
-    this.markForRecalculateBegin();
   }
 
   public addPolymerBond(polymerBond: PolymerBond): void {
@@ -141,7 +144,6 @@ export class RenderersManager {
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     this.markForReEnumeration();
-    this.markForRecalculateBegin();
   }
 
   public movePolymerBond(polymerBond: PolymerBond) {
@@ -165,7 +167,6 @@ export class RenderersManager {
   public deletePolymerBond(
     polymerBond: PolymerBond,
     recalculateEnumeration = true,
-    recalculateBeginning = true,
   ) {
     polymerBond.renderer?.remove();
     polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
@@ -174,217 +175,58 @@ export class RenderersManager {
     if (recalculateEnumeration) {
       this.markForReEnumeration();
     }
-    if (recalculateBeginning) {
-      this.markForRecalculateBegin();
-    }
   }
 
-  private recalculatePeptideChainEnumeration(
-    peptideRenderer: PeptideRenderer,
-    _currentEnumeration = 1,
-  ) {
-    let currentEnumeration = _currentEnumeration;
-    const stack = [{ monomerRenderer: peptideRenderer }];
+  private recalculatePeptideChainEnumeration(subChain: PeptideSubChain) {
+    let currentEnumeration = 1;
 
-    while (stack.length > 0) {
-      const stackItem = stack.pop();
-      assert(stackItem);
-      const { monomerRenderer } = stackItem;
+    subChain.nodes.forEach((node) => {
+      const monomerRenderer = node.monomer.renderer;
+
+      if (!monomerRenderer) {
+        return;
+      }
 
       monomerRenderer.setEnumeration(currentEnumeration);
       monomerRenderer.redrawEnumeration();
-
-      const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
-
-      if (
-        !isPeptideOrAmbiguousPeptide(nextMonomer) ||
-        nextMonomer === peptideRenderer.monomer
-      ) {
-        return;
-      }
-
-      const isR2R1Connection = checkIsR2R1Connection(
-        monomerRenderer.monomer,
-        nextMonomer,
-      );
-
-      if (!isR2R1Connection) {
-        return;
-      }
-
-      assert(nextMonomer.renderer);
-
-      stack.push({ monomerRenderer: nextMonomer.renderer as PeptideRenderer });
       currentEnumeration++;
-    }
+    });
   }
 
-  private recalculateRnaChainEnumeration(
-    rnaComponentRenderer: BaseMonomerRenderer,
-    _currentEnumeration = 1,
-  ) {
-    let currentEnumeration = _currentEnumeration;
-    const stack = [{ monomerRenderer: rnaComponentRenderer }];
+  private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
+    let currentEnumeration = 1;
 
-    while (stack.length > 0) {
-      const stackItem = stack.pop();
-      assert(stackItem);
-      const { monomerRenderer } = stackItem;
-
-      if (monomerRenderer instanceof SugarRenderer) {
-        const rnaBaseMonomer = getRnaBaseFromSugar(
-          monomerRenderer.monomer as Sugar,
-        );
-        if (isRnaBaseOrAmbiguousRnaBase(rnaBaseMonomer)) {
-          rnaBaseMonomer.renderer?.setEnumeration(currentEnumeration);
-          rnaBaseMonomer.renderer?.redrawEnumeration();
-          currentEnumeration++;
-        }
-      }
-
-      if (monomerRenderer instanceof UnsplitNucleotideRenderer) {
-        monomerRenderer.setEnumeration(currentEnumeration);
-        monomerRenderer.redrawEnumeration();
+    subChain.nodes.forEach((node) => {
+      if (node instanceof Nucleotide || node instanceof Nucleoside) {
+        node.rnaBase.renderer?.setEnumeration(currentEnumeration);
+        node.rnaBase.renderer?.redrawEnumeration();
+        node.sugar.renderer?.setEnumeration(currentEnumeration);
+        node.sugar.renderer?.redrawEnumeration();
+        currentEnumeration++;
+      } else if (node instanceof MonomerSequenceNode) {
+        node.monomer.renderer?.setEnumeration(currentEnumeration);
+        node.monomer.renderer?.redrawEnumeration();
         currentEnumeration++;
       }
-
-      const nextMonomer = getNextMonomerInChain(monomerRenderer.monomer);
-
-      if (
-        (!(nextMonomer instanceof Sugar) &&
-          !(nextMonomer instanceof Phosphate) &&
-          !(nextMonomer instanceof UnsplitNucleotide)) ||
-        nextMonomer === rnaComponentRenderer.monomer
-      ) {
-        return;
-      }
-
-      const isR2R1Connection = checkIsR2R1Connection(
-        monomerRenderer.monomer,
-        nextMonomer,
-      );
-
-      if (
-        !isR2R1Connection ||
-        !(nextMonomer.renderer instanceof BaseMonomerRenderer)
-      ) {
-        return;
-      }
-
-      stack.push({
-        monomerRenderer: nextMonomer.renderer,
-      });
-    }
-  }
-
-  private recalculatePeptideEnumeration(
-    peptideRenderer: PeptideRenderer,
-    firstMonomers: BaseMonomer[],
-  ) {
-    if (!peptideRenderer.monomer.hasBonds) {
-      peptideRenderer.setEnumeration(null);
-      peptideRenderer.redrawEnumeration();
-    }
-    if (
-      !isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide]) &&
-      !firstMonomers.includes(peptideRenderer.monomer)
-    ) {
-      return;
-    }
-
-    this.recalculatePeptideChainEnumeration(peptideRenderer);
-  }
-
-  private recalculateRnaEnumeration(
-    rnaComponentRenderer: BaseMonomerRenderer,
-    firstMonomers: BaseMonomer[],
-  ) {
-    if (
-      !isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
-        Phosphate,
-        Sugar,
-        UnsplitNucleotide,
-      ]) &&
-      !firstMonomers.includes(rnaComponentRenderer.monomer)
-    ) {
-      return;
-    }
-
-    this.recalculateRnaChainEnumeration(rnaComponentRenderer);
+    });
   }
 
   private recalculateMonomersEnumeration() {
     const editor = CoreEditor.provideEditorInstance();
-    const [, firstMonomersInCyclicChains] =
-      ChainsCollection.getFirstMonomersInChains([
-        ...editor.drawingEntitiesManager.monomers.values(),
-      ]);
-
-    this.monomers.forEach((monomerRenderer) => {
-      if (isPeptideOrAmbiguousPeptide(monomerRenderer.monomer)) {
-        this.recalculatePeptideEnumeration(
-          monomerRenderer as PeptideRenderer,
-          firstMonomersInCyclicChains,
-        );
-      }
-
-      if (
-        monomerRenderer instanceof UnsplitNucleotideRenderer ||
-        monomerRenderer instanceof PhosphateRenderer ||
-        monomerRenderer instanceof SugarRenderer ||
-        monomerRenderer instanceof AmbiguousMonomerRenderer
-      ) {
-        this.recalculateRnaEnumeration(
-          monomerRenderer as BaseMonomerRenderer,
-          firstMonomersInCyclicChains,
-        );
-      }
-
-      if (
-        isRnaBaseOrAmbiguousRnaBase(monomerRenderer.monomer) &&
-        !monomerRenderer.monomer.isAttachmentPointUsed(AttachmentPointName.R1)
-      ) {
-        monomerRenderer.setEnumeration(null);
-        monomerRenderer.redrawEnumeration();
-      }
+    const chainsCollection = ChainsCollection.fromMonomers([
+      ...editor.drawingEntitiesManager.monomers.values(),
+    ]);
+    chainsCollection.chains.forEach((chain) => {
+      chain.subChains.forEach((subChain) => {
+        if (subChain instanceof PeptideSubChain) {
+          this.recalculatePeptideChainEnumeration(subChain);
+        } else if (subChain instanceof RnaSubChain) {
+          this.recalculateRnaChainEnumeration(subChain);
+        }
+      });
     });
 
     this.needRecalculateMonomersEnumeration = false;
-  }
-
-  private isOnlyPartOfRnaChain(sugar: Sugar) {
-    const phosphate = getNextMonomerInChain(sugar);
-    const nextMonomerAfterPhospate = getNextMonomerInChain(phosphate);
-    return !sugar.attachmentPointsToBonds.R1 && !nextMonomerAfterPhospate;
-  }
-
-  private recalculateMonomersBeginning() {
-    this.monomers.forEach((monomerRenderer) => {
-      if (isPeptideOrAmbiguousPeptide(monomerRenderer.monomer)) {
-        if (monomerRenderer.enumeration === 1) {
-          monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
-        } else {
-          monomerRenderer.setBeginning(null);
-        }
-        monomerRenderer.reDrawChainBeginning();
-      }
-      if (monomerRenderer instanceof SugarRenderer) {
-        const rnaBaseMonomer = getRnaBaseFromSugar(
-          monomerRenderer.monomer as Sugar,
-        );
-        if (
-          isRnaBaseOrAmbiguousRnaBase(rnaBaseMonomer) &&
-          rnaBaseMonomer.renderer?.enumeration === 1 &&
-          !this.isOnlyPartOfRnaChain(monomerRenderer.monomer)
-        ) {
-          monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
-        } else {
-          monomerRenderer.setBeginning(null);
-        }
-        monomerRenderer.reDrawChainBeginning();
-      }
-    });
-    this.needRecalculateMonomersBeginning = false;
   }
 
   // FIXME: Specify the types.
@@ -395,7 +237,6 @@ export class RenderersManager {
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
-    this.markForRecalculateBegin();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();
     polymerBond.firstMonomer.renderer?.redrawHover();
@@ -486,9 +327,6 @@ export class RenderersManager {
   public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
-    }
-    if (this.needRecalculateMonomersBeginning) {
-      this.recalculateMonomersBeginning();
     }
   }
 

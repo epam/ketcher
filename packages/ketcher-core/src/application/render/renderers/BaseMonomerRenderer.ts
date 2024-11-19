@@ -493,18 +493,28 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawEnumeration() {
+    this.redrawChainBeginning();
+
     if (!this.enumerationElement) return;
 
     this.enumerationElement.text(this.enumeration);
   }
 
-  public setBeginning(beginning: string | null) {
-    this.beginning = beginning;
-  }
+  public redrawChainBeginning() {
+    if (
+      !this.rootElement ||
+      !this.CHAIN_BEGINNING ||
+      !this.beginningElementPosition
+    ) {
+      return;
+    }
 
-  protected appendChainBeginning() {
-    assert(this.rootElement);
-    assert(this.beginningElementPosition);
+    this.beginningElement?.remove();
+
+    if (this.enumeration !== 1) {
+      return;
+    }
+
     this.beginningElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
@@ -516,16 +526,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
-  }
-
-  public reDrawChainBeginning() {
-    assert(this.beginningElement);
-    assert(this.beginningElementPosition);
-    this.beginningElement
-      .attr('x', this.beginningElementPosition.x)
-      .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
+      .text(this.CHAIN_BEGINNING);
   }
 
   protected abstract get modificationConfig();

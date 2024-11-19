@@ -91,8 +91,6 @@ export class Peptide extends BaseMonomer {
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
-    return ![PeptideSubChain, ChemSubChain].includes(
-      monomerToChain.SubChainConstructor,
-    );
+    return ![PeptideSubChain].includes(monomerToChain.SubChainConstructor);
   }
 }

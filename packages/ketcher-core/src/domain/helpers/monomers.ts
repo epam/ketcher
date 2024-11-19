@@ -27,9 +27,7 @@ export function checkIsR2R1Connection(
   monomer: BaseMonomer,
   nextMonomer: BaseMonomer,
 ) {
-  const r1PolymerBond = nextMonomer.monomerItem.isAntisense
-    ? nextMonomer.attachmentPointsToBonds.R2
-    : nextMonomer.attachmentPointsToBonds.R1;
+  const r1PolymerBond = nextMonomer.attachmentPointsToBonds.R1;
 
   return (
     r1PolymerBond instanceof PolymerBond &&
@@ -81,9 +79,7 @@ export function getNextMonomerInChain(
 ) {
   if (!monomer) return undefined;
 
-  const r2PolymerBond = monomer.monomerItem.isAntisense
-    ? monomer.attachmentPointsToBonds.R1
-    : monomer.attachmentPointsToBonds.R2;
+  const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
   const nextMonomer =
     r2PolymerBond instanceof PolymerBond
       ? r2PolymerBond?.getAnotherMonomer?.(monomer)
@@ -98,9 +94,7 @@ export function getNextMonomerInChain(
 
   return r2PolymerBond &&
     nextMonomer?.getAttachmentPointByBond(r2PolymerBond) ===
-      (monomer.monomerItem.isAntisense
-        ? AttachmentPointName.R2
-        : AttachmentPointName.R1)
+      AttachmentPointName.R1
     ? nextMonomer
     : undefined;
 }

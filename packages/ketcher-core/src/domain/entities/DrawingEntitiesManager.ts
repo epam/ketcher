@@ -220,7 +220,7 @@ export class DrawingEntitiesManager {
     } else {
       const [Monomer] = monomerFactory(monomerItem);
 
-      return new Monomer(monomerItem, position, isAntisense);
+      return new Monomer(monomerItem, position);
     }
   }
 
@@ -2373,7 +2373,7 @@ export class DrawingEntitiesManager {
 
   private get antisenseStrandBasesMap() {
     return {
-      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.THYMINE,
+      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
       [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
       [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,

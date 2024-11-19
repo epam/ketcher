@@ -87,6 +87,7 @@ import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
+import { RnaDnaNaturalAnaloguesEnum } from 'domain/constants/monomers';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -200,19 +201,26 @@ export class DrawingEntitiesManager {
       this.monomers.set(_monomer.id, _monomer);
       return _monomer;
     }
+
     const monomer = this.createMonomer(monomerItem, position);
+
     monomer.moveAbsolute(position);
     this.monomers.set(monomer.id, monomer);
+
     return monomer;
   }
 
-  public createMonomer(monomerItem: MonomerOrAmbiguousType, position: Vec2) {
+  public createMonomer(
+    monomerItem: MonomerOrAmbiguousType,
+    position: Vec2,
+    isAntisense = false,
+  ) {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       return new AmbiguousMonomer(monomerItem, position);
     } else {
       const [Monomer] = monomerFactory(monomerItem);
 
-      return new Monomer(monomerItem, position);
+      return new Monomer(monomerItem, position, isAntisense);
     }
   }
 
@@ -1155,6 +1163,7 @@ export class DrawingEntitiesManager {
     phosphatePosition,
     rnaBase,
     rnaBasePosition,
+    isAntisense,
   }: RnaPresetAdditionParams) {
     const command = new Command();
     const monomersToAdd: Array<[MonomerItemType, Vec2]> = [];
@@ -1170,7 +1179,11 @@ export class DrawingEntitiesManager {
 
     monomersToAdd.forEach(([monomerItem, monomerPosition], monomerIndex) => {
       const monomerAddOperation = new MonomerAddOperation(
-        this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
+        this.addMonomerChangeModel.bind(
+          this,
+          { ...monomerItem, isAntisense },
+          monomerPosition,
+        ),
         this.deleteMonomerChangeModel.bind(this),
       );
       const monomer = monomerAddOperation.monomer;
@@ -2354,6 +2367,66 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(monomerAddToAtomBondOperation);
+
+    return command;
+  }
+
+  private get antisenseStrandBasesMap() {
+    return {
+      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.THYMINE,
+      [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
+      [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
+      [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,
+      [RnaDnaNaturalAnaloguesEnum.URACIL]: RnaDnaNaturalAnaloguesEnum.ADENINE,
+    };
+  }
+
+  public createAntisenseStrand() {
+    const command = new Command();
+    const selectedMonomers = this.selectedEntities
+      .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+      .map(([, monomer]) => monomer as BaseMonomer);
+    const chainsCollection = ChainsCollection.fromMonomers(selectedMonomers);
+    let previousNode;
+
+    chainsCollection.forEachNode(({ node }) => {
+      if (node instanceof Nucleotide || node instanceof Nucleoside) {
+        const { modelChanges: addNucleotideCommand, node: addedNode } = (
+          node instanceof Nucleotide ? Nucleotide : Nucleoside
+        ).createOnCanvas(
+          this.antisenseStrandBasesMap[
+            node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode
+          ],
+          node.monomer.position.add(new Vec2(0, 3)),
+          true,
+        );
+
+        command.merge(addNucleotideCommand);
+
+        if (previousNode) {
+          command.merge(
+            this.createPolymerBond(
+              previousNode.lastMonomerInNode,
+              addedNode.firstMonomerInNode,
+              AttachmentPointName.R2,
+              AttachmentPointName.R1,
+            ),
+          );
+        }
+
+        command.merge(
+          this.createPolymerBond(
+            node.rnaBase,
+            addedNode.rnaBase,
+            AttachmentPointName.HYDROGEN,
+            AttachmentPointName.HYDROGEN,
+            MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          ),
+        );
+
+        previousNode = addedNode;
+      }
+    });
 
     return command;
   }

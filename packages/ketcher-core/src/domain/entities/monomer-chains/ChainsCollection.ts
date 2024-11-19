@@ -177,7 +177,6 @@ export class ChainsCollection {
 
       const isFirstMonomerWithR2R1connection =
         !R1PolymerBond || R1PolymerBond.isSideChainConnection;
-
       const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
       const isRnaBaseConnectedToSugar =
         isRnaBaseOrAmbiguousRnaBase(monomer) &&

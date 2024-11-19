@@ -36,6 +36,7 @@ export function resetEditorEvents() {
     rightClickSequence: new Subscription(),
     rightClickCanvas: new Subscription(),
     rightClickPolymerBond: new Subscription(),
+    rightClickSelectedMonomers: new Subscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
     turnOnSequenceEditInRNABuilderMode: new Subscription(),
@@ -54,6 +55,7 @@ export function resetEditorEvents() {
     openConfirmationDialog: new Subscription(),
     mouseUpAtom: new Subscription(),
     updateMonomersLibrary: new Subscription(),
+    createAntisenseStrand: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -74,6 +76,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'rightClickSequence',
   'rightClickCanvas',
   'rightClickPolymerBond',
+  'rightClickSelectedMonomers',
   'editSequence',
   'startNewSequence',
   'turnOnSequenceEditInRNABuilderMode',

@@ -89,6 +89,7 @@ import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
+import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -157,6 +158,9 @@ function Editor({
   const { show: showPolymerBondContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
+  const { show: showSelectedMonomersContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
+  });
 
   useEffect(() => {
     dispatch(
@@ -193,6 +197,12 @@ function Editor({
         });
       },
     );
+    editor?.events.rightClickSelectedMonomers.add((event) => {
+      showSelectedMonomersContextMenu({
+        event,
+        props: {},
+      });
+    });
     editor?.events.rightClickCanvas.add((event) => {
       showSequenceContextMenu({
         event,
@@ -293,6 +303,7 @@ function Editor({
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />
+      <SelectedMonomersContextMenu />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

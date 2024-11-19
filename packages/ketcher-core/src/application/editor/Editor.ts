@@ -55,6 +55,7 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
+import { BaseMonomerRenderer } from 'application/render';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -327,6 +328,11 @@ export class CoreEditor {
           !(eventData.polymerBond instanceof HydrogenBond))
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
+      } else if (
+        eventData instanceof BaseMonomerRenderer &&
+        eventData.monomer.selected
+      ) {
+        this.events.rightClickSelectedMonomers.dispatch(event);
       } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -368,6 +374,9 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
+    this.events.createAntisenseStrand.add(() => {
+      this.onCreateAntisenseStrand();
+    });
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -396,6 +405,14 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onCreateAntisenseStrand() {
+    const modelChanges = this.drawingEntitiesManager.createAntisenseStrand();
+    const history = new EditorHistory(this);
+
+    this.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {

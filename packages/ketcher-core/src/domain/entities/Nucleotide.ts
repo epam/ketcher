@@ -9,7 +9,7 @@ import {
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { CoreEditor } from 'application/editor/internal';
+import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
 import {
   getRnaPartLibraryItem,
@@ -18,6 +18,9 @@ import {
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
+import { SugarRenderer } from 'application/render';
+import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
 export class Nucleotide {
   constructor(
@@ -47,7 +50,11 @@ export class Nucleotide {
     );
   }
 
-  static createOnCanvas(rnaBaseName: string, position: Vec2) {
+  static createOnCanvas(
+    rnaBaseName: string,
+    position: Vec2,
+    isAntisense = false,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
     const phosphateLibraryItem = getRnaPartLibraryItem(
@@ -63,14 +70,25 @@ export class Nucleotide {
     assert(rnaBaseLibraryItem);
     assert(phosphateLibraryItem);
 
+    const topLeftItemPosition = position;
+    const bottomItemPosition = position.add(
+      Coordinates.canvasToModel(
+        new Vec2(0, RNA_MONOMER_DISTANCE + SugarRenderer.monomerSize.height),
+      ),
+    );
+
     const { command: modelChanges, monomers } =
       editor.drawingEntitiesManager.addRnaPreset({
-        sugar: sugarLibraryItem,
-        sugarPosition: position,
-        rnaBase: rnaBaseLibraryItem,
-        rnaBasePosition: position,
-        phosphate: phosphateLibraryItem,
-        phosphatePosition: position,
+        sugar: { ...sugarLibraryItem, isAntisense },
+        sugarPosition: isAntisense ? bottomItemPosition : topLeftItemPosition,
+        rnaBase: { ...rnaBaseLibraryItem, isAntisense },
+        rnaBasePosition: isAntisense ? topLeftItemPosition : bottomItemPosition,
+        phosphate: { ...phosphateLibraryItem, isAntisense },
+        phosphatePosition: (isAntisense
+          ? bottomItemPosition
+          : topLeftItemPosition
+        ).add(Coordinates.canvasToModel(new Vec2(SNAKE_LAYOUT_CELL_WIDTH, 0))),
+        isAntisense,
       });
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;

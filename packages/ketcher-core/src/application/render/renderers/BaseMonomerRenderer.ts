@@ -24,6 +24,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
+let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -76,6 +77,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
       ),
     };
+    monomerSize = this.monomerSize;
   }
 
   // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -89,6 +91,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
     }
     return false;
+  }
+
+  public static get monomerSize() {
+    return monomerSize;
   }
 
   public get center() {

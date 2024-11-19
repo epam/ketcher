@@ -66,13 +66,13 @@ export class Nucleoside {
 
     modelChanges.merge(
       editor.drawingEntitiesManager.addMonomer(
-        sugarLibraryItem,
+        { ...sugarLibraryItem, isAntisense },
         isAntisense ? bottomItemPosition : topLeftItemPosition,
       ),
     );
     modelChanges.merge(
       editor.drawingEntitiesManager.addMonomer(
-        rnaBaseLibraryItem,
+        { ...rnaBaseLibraryItem, isAntisense },
         isAntisense ? topLeftItemPosition : bottomItemPosition,
       ),
     );

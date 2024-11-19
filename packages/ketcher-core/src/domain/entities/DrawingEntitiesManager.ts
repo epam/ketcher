@@ -103,6 +103,7 @@ type RnaPresetAdditionParams = {
   phosphate: MonomerItemType | undefined;
   phosphatePosition: Vec2 | undefined;
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
+  isAntisense: boolean;
 };
 
 type NucleotideOrNucleoside = {
@@ -210,11 +211,7 @@ export class DrawingEntitiesManager {
     return monomer;
   }
 
-  public createMonomer(
-    monomerItem: MonomerOrAmbiguousType,
-    position: Vec2,
-    isAntisense = false,
-  ) {
+  public createMonomer(monomerItem: MonomerOrAmbiguousType, position: Vec2) {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
       return new AmbiguousMonomer(monomerItem, position);
     } else {
@@ -1322,7 +1319,7 @@ export class DrawingEntitiesManager {
     nucleotide.sugar.isMonomerInRnaChainRow = true;
     nucleotide.rnaBase.isMonomerInRnaChainRow = true;
     const oldSugarPosition = nucleotide.sugar.position;
-    const rnaBasePosition = new Vec2(
+    const bottomItemPosition = new Vec2(
       lastPosition.x,
       lastPosition.y +
         (nucleotide.sugar.renderer?.monomerSize?.height ?? 0) / 2 +
@@ -1332,13 +1329,17 @@ export class DrawingEntitiesManager {
     this.addRnaOperations(
       command,
       oldSugarPosition,
-      lastPosition,
+      nucleotide.sugar.monomerItem.isAntisense
+        ? bottomItemPosition
+        : lastPosition,
       nucleotide.sugar,
     );
     this.addRnaOperations(
       command,
       nucleotide.rnaBase?.position,
-      rnaBasePosition,
+      nucleotide.rnaBase.monomerItem.isAntisense
+        ? lastPosition
+        : bottomItemPosition,
       nucleotide.rnaBase,
     );
     rearrangedMonomersSet.add(nucleotide.sugar.id);
@@ -1361,7 +1362,9 @@ export class DrawingEntitiesManager {
       nucleotide.phosphate.isMonomerInRnaChainRow = true;
       const phosphatePosition = new Vec2(
         lastPosition.x + SNAKE_LAYOUT_CELL_WIDTH,
-        lastPosition.y,
+        nucleotide.phosphate.monomerItem.isAntisense
+          ? bottomItemPosition.y
+          : lastPosition.y,
       );
       this.addRnaOperations(
         command,

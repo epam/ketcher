@@ -353,7 +353,7 @@ Object.values(monomers).forEach((leftMonomer) => {
      *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
      *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
      *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center) one more time
-     *              4. Take screenshot to witness error message
+     *              5. Take screenshot to witness error message
      */
     test(`3. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) twice`, async () => {
       test.setTimeout(25000);
@@ -379,6 +379,75 @@ Object.values(monomers).forEach((leftMonomer) => {
       await takeEditorScreenshot(page, {
         masks: [page.getByTestId('polymer-library-preview')],
       });
+    });
+  });
+});
+
+async function chooseConnectionPointsInConnectionDialog(
+  page: Page,
+  leftMonomerConnectionPointName: string,
+  rightMonomerConnectionPointName: string,
+) {
+  const connectionPointDialog = page.getByRole('dialog');
+  if (await connectionPointDialog.isVisible()) {
+    await page.getByTitle(leftMonomerConnectionPointName).first().click();
+
+    (await page.getByTitle(rightMonomerConnectionPointName).count()) > 1
+      ? await page.getByTitle(rightMonomerConnectionPointName).nth(1).click()
+      : await page.getByTitle(rightMonomerConnectionPointName).first().click();
+
+    const connectButton = page.getByTitle('Connect').first();
+    await connectButton.click();
+  }
+}
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify error message when trying to establish hydrogen bond between monomers
+     *               connected by a single bond(an error message: "Unable to establish a hydrogen bond between two monomers connected with a single bond.)
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish single bond connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              5. Take screenshot to witness error message
+     */
+    // eslint-disable-next-line max-len
+    test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.SINGLE,
+      );
+
+      await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      test.fixme(
+        // eslint-disable-next-line no-self-compare
+        true === true,
+        `That test results are wrong because of https://github.com/epam/ketcher/issues/5934 issue(s).`,
+      );
     });
   });
 });

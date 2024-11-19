@@ -190,6 +190,11 @@ async function bondTwoMonomersByCenterToCenter(
   );
 }
 
+async function hoverOverConnectionLine(page: Page) {
+  const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  await bondLine.hover();
+}
+
 // test(`temporary test for debug purposes`, async () => {
 //   await prepareCanvasOneFreeAPLeft(
 //     page,
@@ -204,13 +209,15 @@ Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
-     *  Description: Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
+     *  Description: 1. Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
+     *               2. Verify that hydrogen bonds are highlighted along with monomers when hovered over
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas
      *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
      *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
-     *              4. Take screenshot to witness established connection
+     *              4. Hover mouse cursor over connection line
+     *              4. Take screenshot to witness established connection and bond selection
      */
     test(`1. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias})`, async () => {
       test.setTimeout(25000);
@@ -225,6 +232,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await zoomWithMouseWheel(page, -600);
+      await hoverOverConnectionLine(page);
 
       await takeEditorScreenshot(page, {
         masks: [page.getByTestId('polymer-library-preview')],

@@ -202,7 +202,7 @@ Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
-     *  Description: Verify that only one hydrogen bond can be established between two monomers
+     *  Description: Verify that user can establish hydrogen bonds between two monomers not connected via a single bond
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas
@@ -323,6 +323,49 @@ Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
       test.setTimeout(25000);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
+  });
+});
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: 1. Verify that only one hydrogen bond can be established between two monomers
+     *               2. Verify error message when trying to establish multiple hydrogen bonds between
+     *                  the same two monomers(error message: "Unable to establish multiple hydrogen bonds between two monomers
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center) one more time
+     *              4. Take screenshot to witness error message
+     */
+    test(`3. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) twice`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
 
       await bondTwoMonomersByCenterToCenter(
         page,

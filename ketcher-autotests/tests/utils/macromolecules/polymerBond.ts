@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { moveMouseAway, selectSingleBondTool } from '..';
+import { moveMouseAway, selectMacroBond, selectSingleBondTool } from '..';
+import { DropdownToolIds } from '@utils/clicks/types';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -38,12 +39,14 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomerElement: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
+  bondType?: DropdownToolIds,
 ) {
-  await selectSingleBondTool(page);
-  await firstMonomerElement.hover();
+  await selectMacroBond(page, bondType);
+  // await selectSingleBondTool(page);
+  await firstMonomerElement.hover({ force: true });
 
   if (firstMonomerConnectionPoint) {
-    const firstConnectionPoint = await firstMonomerElement.locator(
+    const firstConnectionPoint = firstMonomerElement.locator(
       `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
     const firstConnectionPointBoundingBox =
@@ -66,7 +69,7 @@ export async function bondTwoMonomersPointToPoint(
   }
   await page.mouse.down();
 
-  await secondMonomerElement.hover();
+  await secondMonomerElement.hover({ force: true });
   if (secondMonomerConnectionPoint) {
     const secondConnectionPoint = await secondMonomerElement.locator(
       `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,

@@ -202,7 +202,7 @@ Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
     /*
      *  Test task: https://github.com/epam/ketcher/issues/5984
-     *  Description: Verify that only one hydrogen bond can be established between two monomers.
+     *  Description: Verify that only one hydrogen bond can be established between two monomers
      *  Case: For each %monomerType% from the library (leftMonomers)
      *          For each %monomerType% from the library (rightMonomers) do
      *              1. Clear canvas
@@ -211,6 +211,115 @@ Object.values(monomers).forEach((leftMonomer) => {
      *              4. Take screenshot to witness established connection
      */
     test(`1. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias})`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
+  });
+});
+
+const monomersWithNoFreeConnectionPoint: { [monomerName: string]: IMonomer } = {
+  Peptide: {
+    monomerType: 'peptide',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/1. Peptide with no free connection points.ket',
+    alias: 'A',
+  },
+  'Ambiguous Peptide': {
+    monomerType: 'ambiguous peptide',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/2. Ambiguous peptide with no free connection points.ket',
+    alias: '%',
+  },
+  Sugar: {
+    monomerType: 'sugar',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/3. Sugar with no free connection points.ket',
+    alias: 'R',
+  },
+  'Ambiguous sugar': {
+    monomerType: 'ambiguous sugar',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/4. Ambiguous sugar with no free connection points.ket',
+    alias: '%',
+  },
+  Base: {
+    monomerType: 'base',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/5. Base with no free connection points.ket',
+    alias: 'A',
+  },
+  'Ambiguous base': {
+    monomerType: 'ambiguous base',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/6. Ambiguous base with no free connection points.ket',
+    alias: '%',
+  },
+  Phosphate: {
+    monomerType: 'phosphate',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/7. Phosphate with no free connection points.ket',
+    alias: 'P',
+  },
+  'Ambiguous phosphate': {
+    monomerType: 'ambiguous phosphate',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/8. Ambiguous phosphate with no free connection points.ket',
+    alias: '%',
+  },
+  'Unsplit nucleotide': {
+    monomerType: 'nucleotide',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/9. Unsplit nucleotide with no free connection points.ket',
+    alias: '5hMedC',
+  },
+  CHEM: {
+    monomerType: 'CHEM',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/10. CHEM with no free connection points.ket',
+    alias: '4aPEGMal',
+  },
+  'Ambiguous CHEM': {
+    monomerType: 'Ambiguous CHEM',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/11. Ambiguous CHEM with no free connection points.ket',
+    alias: '%',
+  },
+  'Unresolved monomer': {
+    monomerType: 'unresolved monomer',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-no-free-connection-points/12. Unresolved monomer with no free connection points.ket',
+    alias: 'Unknown',
+  },
+};
+
+Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
+  Object.values(monomersWithNoFreeConnectionPoint).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify that hydrogen bonds don't require attachment points and can be established multiple times for one monomer
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Take screenshot to witness established connection
+     */
+    // eslint-disable-next-line max-len
+    test(`2. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) having them no free connection points`, async () => {
       test.setTimeout(25000);
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);

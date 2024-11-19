@@ -182,12 +182,15 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
+      const monomerEnumeration = node.monomer.monomerItem.isAntisense
+        ? subChain.length - currentEnumeration + 1
+        : currentEnumeration;
 
       if (!monomerRenderer) {
         return;
       }
 
-      monomerRenderer.setEnumeration(currentEnumeration);
+      monomerRenderer.setEnumeration(monomerEnumeration);
       monomerRenderer.redrawEnumeration();
       currentEnumeration++;
     });
@@ -197,14 +200,18 @@ export class RenderersManager {
     let currentEnumeration = 1;
 
     subChain.nodes.forEach((node) => {
+      const monomerEnumeration = node.monomer.monomerItem.isAntisense
+        ? subChain.length - currentEnumeration + 1
+        : currentEnumeration;
+
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
-        node.rnaBase.renderer?.setEnumeration(currentEnumeration);
+        node.rnaBase.renderer?.setEnumeration(monomerEnumeration);
         node.rnaBase.renderer?.redrawEnumeration();
-        node.sugar.renderer?.setEnumeration(currentEnumeration);
+        node.sugar.renderer?.setEnumeration(monomerEnumeration);
         node.sugar.renderer?.redrawEnumeration();
         currentEnumeration++;
       } else if (node instanceof MonomerSequenceNode) {
-        node.monomer.renderer?.setEnumeration(currentEnumeration);
+        node.monomer.renderer?.setEnumeration(monomerEnumeration);
         node.monomer.renderer?.redrawEnumeration();
         currentEnumeration++;
       }
@@ -216,6 +223,7 @@ export class RenderersManager {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...editor.drawingEntitiesManager.monomers.values(),
     ]);
+
     chainsCollection.chains.forEach((chain) => {
       chain.subChains.forEach((subChain) => {
         if (subChain instanceof PeptideSubChain) {

@@ -10,11 +10,14 @@ import {
   resetZoomLevelToDefault,
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
+  openFileAndAddToCanvasAsNewProject,
+  waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
 import {
   turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
@@ -31,7 +34,7 @@ test.beforeAll(async ({ browser }) => {
   await turnOnMacromoleculesEditor(page);
 });
 
-test.afterEach(async ({ context: _ }, testInfo) => {
+test.afterEach(async () => {
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
   // await processResetToDefaultState(testInfo, page);
@@ -45,6 +48,12 @@ interface IMonomer {
   monomerType: string;
   fileName: string;
   alias: string;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+  shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
+  issueNumber?: string;
+  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+  pageReloadNeeded?: boolean;
 }
 
 const monomers: { [monomerName: string]: IMonomer } = {
@@ -498,5 +507,113 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await selectFlexLayoutModeTool(page);
     });
+  });
+});
+
+async function callContexMenu(page: Page, locatorText: string) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator.getByText(locatorText, { exact: true }).click({
+    button: 'right',
+  });
+}
+
+async function expandMonomer(page: Page, locatorText: string) {
+  await callContexMenu(page, locatorText);
+  await waitForRender(page, async () => {
+    await page.getByText('Expand monomer').click();
+  });
+}
+
+async function collapseMonomer(page: Page) {
+  // await clickInTheMiddleOfTheScreen(page, 'right');
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const attachmentPoint = canvasLocator
+    .getByText('R1', { exact: true })
+    .first();
+
+  if (await attachmentPoint.isVisible()) {
+    await attachmentPoint.click({
+      button: 'right',
+    });
+  } else {
+    await canvasLocator.getByText('R2', { exact: true }).first().click({
+      button: 'right',
+    });
+  }
+  await waitForRender(page, async () => {
+    await page.getByText('Collapse monomer').click();
+  });
+}
+
+const expandableMonomersWithHydrogenBonds: IMonomer[] = [
+  {
+    monomerType: 'peptide',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/1. Peptide with hydrogen bonds.ket',
+    alias: 'A',
+  },
+  {
+    monomerType: 'sugar',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/2. Sugar with hydrogen bonds.ket',
+    alias: 'R',
+  },
+  {
+    monomerType: 'base',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/3. Base with hydrogen bonds.ket',
+    alias: 'nC6n5C',
+  },
+  {
+    monomerType: 'phosphate',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/4. Phosphate  with hydrogen bonds.ket',
+    alias: 'P',
+  },
+  {
+    monomerType: 'unsplit nucleotide',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/5. Unsplit nucleotide with hydrogen bonds.ket',
+    alias: '5hMedC',
+  },
+  {
+    monomerType: 'CHEM',
+    fileName:
+      'KET/Hydrogen-bonds/Monomer-templates-hydrogen-bonds/6. CHEM with hydrogen bonds.ket',
+    alias: '4aPEGMal',
+  },
+];
+
+expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
+  test(`6.${index + 1} Expand and collapse ${monomer.monomerType}(${
+    monomer.alias
+  }) having it hydrogen bonds on Molecules canvas`, async () => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: 1. Verify that switching from macromolecules mode to small molecules mode hides hydrogen bonds if monomer got expanded
+     *               2. Verify that switching back to macromolecules mode restores the hydrogen bonds after monomer got collapsed
+     *  Case: For each expandable monomer type from the library
+     *          1. Clear canvas
+     *          2. Load target monomer (surrounded by others) on the molecules canvas (micromolecules canvas)
+     *          3. Take screenshot to witness initial state
+     *          3. Expand target monomer (ignoring others)
+     *          4. Take screenshot to witness hydrogen bonds got hidden
+     *          5. Collapce target monomer back
+     *          6. Take screenshot to witness hydrogen bonds got shown
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
+    await takeEditorScreenshot(page);
+    await expandMonomer(page, monomer.alias);
+    await takeEditorScreenshot(page);
+    await collapseMonomer(page);
+    await takeEditorScreenshot(page);
+
+    await turnOnMacromoleculesEditor(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test results are wrong because of ${monomer.issueNumber} issue(s).`,
+    );
   });
 });

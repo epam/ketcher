@@ -21,6 +21,10 @@ import {
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 // import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
@@ -624,5 +628,52 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
       monomer.shouldFail === true,
       `That test results are wrong because of ${monomer.issueNumber} issue(s).`,
     );
+  });
+});
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify undo/redo functionality when adding or removing hydrogen bonds in macromolecules mode
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Take screenshot to witness established connection and bond selection
+     *              5. Press Undo button
+     *              6. Take screenshot to witness hydrigen connection got removed
+     *              7. Press Redo button
+     *              8. Take screenshot to witness hydrigen connection got removed
+     */
+    test(`7. Try Undo/Redo on hydrogen bond between ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias})`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      await pressUndoButton(page);
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      await pressRedoButton(page);
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
   });
 });

@@ -12,6 +12,7 @@ import {
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
+  selectEraseTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -60,6 +61,16 @@ interface IMonomer {
   pageReloadNeeded?: boolean;
 }
 
+/*
+ * According to Ljubica Milovic only
+ * 1. Peptide
+ * 2. Ambiguous peptide
+ * 5. Base
+ * 6. Ambiguous base
+ * 9. Unsplit nucleotide
+ * 12. Unresolved monomer
+ * has high chances to be connected by hydrogen bonds, so I commented out all the rest to minimize number of combinatory tests
+ */
 const monomers: { [monomerName: string]: IMonomer } = {
   Peptide: {
     monomerType: 'peptide',
@@ -71,16 +82,16 @@ const monomers: { [monomerName: string]: IMonomer } = {
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/2. Ambiguous peptide.ket',
     alias: '%',
   },
-  Sugar: {
-    monomerType: 'sugar',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/3. Sugar.ket',
-    alias: 'R',
-  },
-  'Ambiguous sugar': {
-    monomerType: 'ambiguous sugar',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/4. Ambiguous sugar.ket',
-    alias: '%',
-  },
+  // Sugar: {
+  //   monomerType: 'sugar',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/3. Sugar.ket',
+  //   alias: 'R',
+  // },
+  // 'Ambiguous sugar': {
+  //   monomerType: 'ambiguous sugar',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/4. Ambiguous sugar.ket',
+  //   alias: '%',
+  // },
   Base: {
     monomerType: 'base',
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/5. Base.ket',
@@ -91,31 +102,31 @@ const monomers: { [monomerName: string]: IMonomer } = {
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/6. Ambiguous base.ket',
     alias: '%',
   },
-  Phosphate: {
-    monomerType: 'phosphate',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/7. Phosphate.ket',
-    alias: 'P',
-  },
-  'Ambiguous phosphate': {
-    monomerType: 'ambiguous phosphate',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/8. Ambiguous phosphate.ket',
-    alias: '%',
-  },
+  // Phosphate: {
+  //   monomerType: 'phosphate',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/7. Phosphate.ket',
+  //   alias: 'P',
+  // },
+  // 'Ambiguous phosphate': {
+  //   monomerType: 'ambiguous phosphate',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/8. Ambiguous phosphate.ket',
+  //   alias: '%',
+  // },
   'Unsplit nucleotide': {
     monomerType: 'nucleotide',
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/9. Unsplit nucleotide.ket',
     alias: '5hMedC',
   },
-  CHEM: {
-    monomerType: 'CHEM',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/10. CHEM.ket',
-    alias: '4aPEGMal',
-  },
-  'Ambiguous CHEM': {
-    monomerType: 'Ambiguous CHEM',
-    fileName: 'KET/Hydrogen-bonds/Monomer-templates/11. Ambiguous CHEM.ket',
-    alias: '%',
-  },
+  // CHEM: {
+  //   monomerType: 'CHEM',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/10. CHEM.ket',
+  //   alias: '4aPEGMal',
+  // },
+  // 'Ambiguous CHEM': {
+  //   monomerType: 'Ambiguous CHEM',
+  //   fileName: 'KET/Hydrogen-bonds/Monomer-templates/11. Ambiguous CHEM.ket',
+  //   alias: '%',
+  // },
   'Unresolved monomer': {
     monomerType: 'unresolved monomer',
     fileName: 'KET/Hydrogen-bonds/Monomer-templates/12. Unresolved monomer.ket',
@@ -211,6 +222,11 @@ async function hoverOverConnectionLine(page: Page) {
 async function callContexMenuOverConnectionLine(page: Page) {
   const bondLine = page.locator('g[pointer-events="stroke"]').first();
   await bondLine.click({ button: 'right' });
+}
+
+async function clickOnConnectionLine(page: Page) {
+  const bondLine = page.locator('g[pointer-events="stroke"]').first();
+  await bondLine.click();
 }
 
 // test(`temporary test for debug purposes`, async () => {
@@ -671,6 +687,49 @@ Object.values(monomers).forEach((leftMonomer) => {
       });
 
       await pressRedoButton(page);
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
+  });
+});
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify deleting functionality of hydrogen bonds in macromolecules mode
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              4. Take screenshot to witness established connection
+     *              5. Press Erase button
+     *              6. Click on hydrogen bond to delete it
+     *              7. Take screenshot to witness hydrigen connection got removed
+     */
+    test(`8. Delete of hydrogen bond between ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias})`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      await selectEraseTool(page);
+      await clickOnConnectionLine(page);
+
       await takeEditorScreenshot(page, {
         masks: [page.getByTestId('polymer-library-preview')],
       });

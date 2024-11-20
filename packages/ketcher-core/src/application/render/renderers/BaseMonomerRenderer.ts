@@ -43,10 +43,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
   public enumeration: number | null = null;
 
-  private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public beginning: string | null = null;
+  private terminalIndicatorElement?: D3SvgElementSelection<
+    SVGTextElement,
+    void
+  >;
 
-  public CHAIN_BEGINNING = '';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '';
 
   static isSelectable() {
     return true;
@@ -492,30 +495,34 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.enumeration);
   }
 
-  public redrawEnumeration() {
-    this.redrawChainBeginning();
+  public redrawEnumeration(subChainLength: number) {
+    this.redrawChainBeginning(subChainLength);
 
     if (!this.enumerationElement) return;
 
     this.enumerationElement.text(this.enumeration);
   }
 
-  public redrawChainBeginning() {
+  public redrawChainBeginning(subChainLength: number) {
     if (
       !this.rootElement ||
-      !this.CHAIN_BEGINNING ||
+      !this.CHAIN_START_TERMINAL_INDICATOR_TEXT ||
       !this.beginningElementPosition
     ) {
       return;
     }
 
-    this.beginningElement?.remove();
+    this.terminalIndicatorElement?.remove();
 
-    if (this.enumeration !== 1) {
+    if (
+      (this.enumeration !== 1 && !this.monomer.monomerItem.isAntisense) ||
+      (this.enumeration !== subChainLength &&
+        this.monomer.monomerItem.isAntisense)
+    ) {
       return;
     }
 
-    this.beginningElement = this.rootElement
+    this.terminalIndicatorElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
       .attr('fill', '#0097A8')
@@ -526,7 +533,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
-      .text(this.CHAIN_BEGINNING);
+      .text(
+        this.monomer.monomerItem.isAntisense
+          ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
+          : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
+      );
   }
 
   protected abstract get modificationConfig();

@@ -11,10 +11,7 @@ import {
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { Vec2 } from 'domain/entities/vec2';
-import {
-  getRnaPartLibraryItem,
-  getSugarBySequenceType,
-} from 'domain/helpers/rna';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
@@ -53,6 +50,7 @@ export class Nucleotide {
   static createOnCanvas(
     rnaBaseName: string,
     position: Vec2,
+    sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
     isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
@@ -61,9 +59,6 @@ export class Nucleotide {
       editor,
       RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
     );
-    const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
-    assert(sugarName);
-
     const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
 
     assert(sugarLibraryItem);

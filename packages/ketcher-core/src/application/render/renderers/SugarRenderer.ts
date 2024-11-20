@@ -10,7 +10,8 @@ const SUGAR_SELECTED_ELEMENT_ID =
 const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].body;
 
 export class SugarRenderer extends BaseMonomerRenderer {
-  public CHAIN_BEGINNING = '’5';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
   constructor(public monomer: Sugar, scale?: number) {
     super(

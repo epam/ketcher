@@ -32,6 +32,7 @@ import assert from 'assert';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
+  getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import {
   peptideNaturalAnalogues,
@@ -502,11 +503,20 @@ export class SequenceMode extends BaseMode {
       return undefined;
     }
 
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
       currentNode instanceof Nucleotide || currentNode instanceof Nucleoside
-        ? Nucleotide.createOnCanvas(enteredSymbol, newNodePosition)
-        : Nucleoside.createOnCanvas(enteredSymbol, newNodePosition);
+        ? Nucleotide.createOnCanvas(
+            enteredSymbol,
+            newNodePosition,
+            getSugarBySequenceType(editor.sequenceTypeEnterMode),
+          )
+        : Nucleoside.createOnCanvas(
+            enteredSymbol,
+            newNodePosition,
+            getSugarBySequenceType(editor.sequenceTypeEnterMode),
+          );
 
     modelChanges.merge(addedNodeModelChanges);
 

@@ -12,7 +12,8 @@ const PEPTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.AminoAcid].body;
 
 export class PeptideRenderer extends BaseMonomerRenderer {
-  public CHAIN_BEGINNING = 'N';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = 'N';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = 'C';
 
   constructor(public monomer: Peptide, scale?: number) {
     super(

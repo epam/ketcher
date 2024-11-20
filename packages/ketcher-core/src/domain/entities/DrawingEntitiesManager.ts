@@ -87,7 +87,10 @@ import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
-import { RnaDnaNaturalAnaloguesEnum } from 'domain/constants/monomers';
+import {
+  RNA_DNA_NON_MODIFIED_PART,
+  RnaDnaNaturalAnaloguesEnum,
+} from 'domain/constants/monomers';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -2390,7 +2393,8 @@ export class DrawingEntitiesManager {
       .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
       .map(([, monomer]) => monomer as BaseMonomer);
     const chainsCollection = ChainsCollection.fromMonomers(selectedMonomers);
-    let previousNode;
+    let lastAddedNode;
+    let lastAddedMonomer;
 
     chainsCollection.forEachNode(({ node }) => {
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
@@ -2401,15 +2405,16 @@ export class DrawingEntitiesManager {
             node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode
           ],
           node.monomer.position.add(new Vec2(0, 3)),
+          RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
           true,
         );
 
         command.merge(addNucleotideCommand);
 
-        if (previousNode) {
+        if (lastAddedNode) {
           command.merge(
             this.createPolymerBond(
-              previousNode.lastMonomerInNode,
+              lastAddedMonomer || lastAddedNode.lastMonomerInNode,
               addedNode.firstMonomerInNode,
               AttachmentPointName.R2,
               AttachmentPointName.R1,
@@ -2427,7 +2432,36 @@ export class DrawingEntitiesManager {
           ),
         );
 
-        previousNode = addedNode;
+        lastAddedMonomer = null;
+        lastAddedNode = addedNode;
+      } else {
+        lastAddedMonomer = lastAddedMonomer || lastAddedNode.lastMonomerInNode;
+
+        node.monomers.forEach((monomer) => {
+          const monomerAddCommand = this.addMonomer(
+            { ...monomer.monomerItem, isAntisense: true },
+            monomer.position.add(new Vec2(0, 4.25)),
+          );
+          const addedMonomer = monomerAddCommand.operations[0]
+            .monomer as BaseMonomer;
+
+          command.merge(monomerAddCommand);
+
+          if (lastAddedMonomer) {
+            command.merge(
+              this.createPolymerBond(
+                lastAddedMonomer,
+                addedMonomer,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          }
+
+          lastAddedMonomer = addedMonomer;
+        });
+
+        lastAddedNode = node;
       }
     });
 

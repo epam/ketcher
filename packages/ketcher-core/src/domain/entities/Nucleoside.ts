@@ -12,14 +12,12 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import {
-  getRnaPartLibraryItem,
-  getSugarBySequenceType,
-} from 'domain/helpers/rna';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { SugarRenderer } from 'application/render';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleoside {
   constructor(
@@ -44,13 +42,11 @@ export class Nucleoside {
   static createOnCanvas(
     rnaBaseName: string,
     position: Vec2,
+    sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
     isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
-    const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
-    assert(sugarName);
-
     const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
 
     assert(sugarLibraryItem);

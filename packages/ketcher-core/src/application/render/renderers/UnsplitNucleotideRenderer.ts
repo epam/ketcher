@@ -13,7 +13,7 @@ const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].body;
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
-  public CHAIN_BEGINNING = '’5';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
 
   constructor(public monomer: UnsplitNucleotide, scale?: number) {
     super(

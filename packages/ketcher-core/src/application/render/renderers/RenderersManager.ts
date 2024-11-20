@@ -191,7 +191,7 @@ export class RenderersManager {
       }
 
       monomerRenderer.setEnumeration(monomerEnumeration);
-      monomerRenderer.redrawEnumeration();
+      monomerRenderer.redrawEnumeration(subChain.length);
       currentEnumeration++;
     });
   }
@@ -206,13 +206,13 @@ export class RenderersManager {
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         node.rnaBase.renderer?.setEnumeration(monomerEnumeration);
-        node.rnaBase.renderer?.redrawEnumeration();
+        node.rnaBase.renderer?.redrawEnumeration(subChain.length);
         node.sugar.renderer?.setEnumeration(monomerEnumeration);
-        node.sugar.renderer?.redrawEnumeration();
+        node.sugar.renderer?.redrawEnumeration(subChain.length);
         currentEnumeration++;
       } else if (node instanceof MonomerSequenceNode) {
         node.monomer.renderer?.setEnumeration(monomerEnumeration);
-        node.monomer.renderer?.redrawEnumeration();
+        node.monomer.renderer?.redrawEnumeration(subChain.length);
         currentEnumeration++;
       }
     });

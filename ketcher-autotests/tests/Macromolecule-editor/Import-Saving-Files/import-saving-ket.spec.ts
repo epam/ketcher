@@ -912,3 +912,31 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
   await takeEditorScreenshot(page);
   await verifyFile2(page, `tests/test-data/${KETFileExpected}`, FileType.KET);
 });
+
+test(`Verify that the structure in macro mode can be saved as a .ket file, and all elements including bonds and atoms are correctly restored when re-loaded`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5960
+   * Description: Verify that the structure in macro mode can be saved as a .ket file, and all elements including bonds and atoms are correctly restored when re-loaded
+   * Case: 1. Load monomer on Macrolecules mode
+   *       2. Take screenshot to witness original state
+   *       3. Save canvas to KET
+   *       4. Verify that export result equal to template
+   *       5. Load saved KET to the canvas
+   *       6. Take screenshot to witness saved state
+   *        (screenshots have to be equal)
+   */
+
+  const KETFile =
+    'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket';
+  const KETFileExpected =
+    'tests/test-data/KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
+
+  await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await takeEditorScreenshot(page);
+  await verifyFile2(page, KETFileExpected, FileType.KET);
+  await openFileAndAddToCanvasAsNewProject(
+    KETFileExpected.replace('tests/test-data/', ''),
+    page,
+  );
+  await takeEditorScreenshot(page);
+});

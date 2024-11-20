@@ -15,8 +15,9 @@ import {
   selectEraseTool,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
-  pasteFromClipboard,
   pasteFromClipboardByKeyboard,
+  selectSequenceLayoutModeTool,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -781,4 +782,37 @@ Object.values(monomers).forEach((leftMonomer) => {
       });
     });
   });
+});
+
+test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen bonds in macromolecules mode`, async () => {
+  /*
+   *  Test task: https://github.com/epam/ketcher/issues/5984
+   *  Description: Verify switch to flex/snake/sequence modes functionality of hydrogen bonds in macromolecules mode
+   *  Case: 1. Load file with monomers connected with single and hydrogen bonds being at Flex mode
+   *        2. Take screenshot to witness canvas at Flex mode
+   *        3. Switch to Snake mode
+   *        5. Take screenshot to witness canvas at Snake mode
+   *        6. Switch to Sequence mode
+   *        7. Take screenshot to witness canvas at Sequence mode
+   */
+  test.setTimeout(25000);
+
+  await openFileAndAddToCanvasMacro(
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
+    page,
+  );
+  await moveMouseAway(page);
+  await zoomWithMouseWheel(page, 100);
+  await takeEditorScreenshot(page);
+
+  await selectSnakeLayoutModeTool(page);
+  await takeEditorScreenshot(page);
+
+  await selectSequenceLayoutModeTool(page);
+  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page);
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page);
+
+  await selectFlexLayoutModeTool(page);
 });

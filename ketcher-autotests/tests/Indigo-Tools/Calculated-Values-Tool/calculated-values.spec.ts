@@ -15,6 +15,7 @@ import {
   AtomButton,
   waitForPageInit,
   waitForSpinnerFinishedWork,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -127,11 +128,11 @@ test.describe('Calculated Values Tools', () => {
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 4);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
 
     await waitForSpinnerFinishedWork(page, async () => {
@@ -494,7 +495,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });
@@ -512,7 +513,7 @@ test.describe('Calculated Values Tools', () => {
       page,
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });
@@ -527,7 +528,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });
@@ -542,7 +543,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });
@@ -557,7 +558,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });
@@ -572,7 +573,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await takeEditorScreenshot(page);
   });

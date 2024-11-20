@@ -13,6 +13,10 @@ import {
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
   selectEraseTool,
+  selectAllStructuresOnCanvas,
+  copyToClipboardByKeyboard,
+  pasteFromClipboard,
+  pasteFromClipboardByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -729,6 +733,48 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await selectEraseTool(page);
       await clickOnConnectionLine(page);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
+  });
+});
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(monomers).forEach((rightMonomer) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify deleting functionality of hydrogen bonds in macromolecules mode
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %monomerType% from the library (rightMonomers) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
+     *              3. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              5. Select all monomers on the canvas (via Ctrl+A)
+     *              6. Copy selection to clipboard (via Ctrl+C)
+     *              7. Move mouse curson to certan position
+     *              8. Paste from clipboard
+     *              9. Take screenshot to witness copy of monomers connected with hydrogen bonds connected on the canvas
+     */
+    test(`9. Copy and paste ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias})`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMonomer);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMonomer,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await selectAllStructuresOnCanvas(page);
+      await copyToClipboardByKeyboard(page);
+      await page.mouse.move(500, 300);
+      await pasteFromClipboardByKeyboard(page);
+
+      await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
         masks: [page.getByTestId('polymer-library-preview')],

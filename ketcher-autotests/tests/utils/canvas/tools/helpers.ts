@@ -19,6 +19,7 @@ import {
   TopPanelButton,
 } from '@utils/selectors';
 import { MacroBondTool } from './selectNestedTool/types';
+import { closeErrorMessage } from '@utils/common/helpers';
 
 /**
  * Selects an atom from Atom toolbar
@@ -185,6 +186,7 @@ export async function selectImageTool(page: Page) {
  */
 export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
   const clearCanvasButton = page.getByTestId('clear-canvas');
+  const closeWindowXButton = page.getByTestId('close-icon');
   let attempts = 0;
 
   while (attempts < maxAttempts) {
@@ -195,6 +197,9 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
       attempts++;
       await page.mouse.click(0, 0);
       await page.keyboard.press('Escape');
+      if (await closeWindowXButton.isVisible()) {
+        await closeWindowXButton.click();
+      }
       await page.waitForTimeout(100);
     }
   }

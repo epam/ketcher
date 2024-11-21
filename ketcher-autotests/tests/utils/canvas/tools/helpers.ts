@@ -19,7 +19,6 @@ import {
   TopPanelButton,
 } from '@utils/selectors';
 import { MacroBondTool } from './selectNestedTool/types';
-import { closeErrorMessage } from '@utils/common/helpers';
 
 /**
  * Selects an atom from Atom toolbar

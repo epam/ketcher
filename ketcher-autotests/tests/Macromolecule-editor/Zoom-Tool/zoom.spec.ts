@@ -15,6 +15,7 @@ import {
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
+  selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -447,6 +448,3 @@ test.describe('Zoom Tool', () => {
     await takePageScreenshot(page);
   });
 });
-function selectMacroBond(page: Page, SINGLE: string) {
-  throw new Error('Function not implemented.');
-}

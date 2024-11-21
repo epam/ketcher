@@ -1,6 +1,7 @@
-import { Locator, Page, test } from '@playwright/test';
+import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
+  selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -71,6 +72,3 @@ test.describe('Modal window', () => {
     await takeEditorScreenshot(page);
   });
 });
-function selectMacroBond(page: Page, SINGLE: string) {
-  throw new Error('Function not implemented.');
-}

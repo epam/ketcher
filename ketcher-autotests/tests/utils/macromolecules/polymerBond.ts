@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { moveMouseAway, selectMacroBond, selectSingleBondTool } from '..';
+import { moveMouseAway, selectMacroBond } from '..';
 import { DropdownToolIds } from '@utils/clicks/types';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 

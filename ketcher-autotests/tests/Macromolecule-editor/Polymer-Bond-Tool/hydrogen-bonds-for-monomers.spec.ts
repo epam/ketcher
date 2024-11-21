@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -18,6 +18,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectSequenceLayoutModeTool,
   ZoomOutByKeyboard,
+  selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -31,7 +32,6 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-// import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
 test.setTimeout(400000);
@@ -47,7 +47,6 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
-  // await processResetToDefaultState(testInfo, page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -147,7 +146,6 @@ async function loadTwoMonomers(
   await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
   const leftMonomerLocator = canvasLocator
-    // .locator(`text=${leftMonomers.alias}`)
     .getByText(leftMonomers.alias, { exact: true })
     .locator('..')
     .first();
@@ -159,19 +157,16 @@ async function loadTwoMonomers(
   await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
   const rightMonomerLocator =
     (await canvasLocator
-      // locator(`text=${leftMonomers.alias}`)
       .getByText(leftMonomers.alias, {
         exact: true,
       })
       .count()) > 1
       ? canvasLocator
-          // .locator(`text=${rightMonomers.alias}`)
           .getByText(rightMonomers.alias, { exact: true })
           .nth(1)
           .locator('..')
           .first()
       : canvasLocator
-          // .locator(`text=${rightMonomers.alias}`)
           .getByText(rightMonomers.alias, { exact: true })
           .locator('..')
           .first();
@@ -233,16 +228,6 @@ async function clickOnConnectionLine(page: Page) {
   const bondLine = page.locator('g[pointer-events="stroke"]').first();
   await bondLine.click();
 }
-
-// test(`temporary test for debug purposes`, async () => {
-//   await prepareCanvasOneFreeAPLeft(
-//     page,
-//     sugarMonomers['(R1,R2,R3,R4,R5)'],
-//     sugarMonomers['(R1,R2,R3,R4,R5)'],
-//     'R1',
-//     'R5',
-//   );
-// });
 
 Object.values(monomers).forEach((leftMonomer) => {
   Object.values(monomers).forEach((rightMonomer) => {
@@ -815,4 +800,43 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
   await takeEditorScreenshot(page);
 
   await selectFlexLayoutModeTool(page);
+});
+
+const buttonIdToTitle: {
+  [key: string]: string;
+} = {
+  'single-bond': 'Single Bond (1)',
+  'hydrogen-bond': 'Hydrogen Bond (2)',
+};
+
+async function openBondToolDropDown(page: Page) {
+  const handToolButton = page.getByTestId('hand-tool');
+  // to reset Bond tool state
+  await handToolButton.click();
+
+  const bondToolDropdown = page
+    .getByTestId('bond-tool-submenu')
+    .locator('path')
+    .nth(1);
+  await bondToolDropdown.click();
+}
+
+Object.entries(MacroBondTool).forEach(([key, testId]) => {
+  /*
+   *  Test task: https://github.com/epam/ketcher/issues/5984
+   *  Description: Verify that hydrogen bond option located and can be selected from the bond menu in the sidebar
+   *  Case: 1. Open bond drop-down control
+   *        2. Validate that each option has propper title
+   *        3. Select bond
+   *        4. Validate bond button is active
+   */
+  test(`${key} bond tool: verification`, async () => {
+    await openBondToolDropDown(page);
+
+    const button = page.getByTestId(testId).first();
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[testId]);
+
+    await selectMacroBond(page, testId);
+    await expect(button).toHaveAttribute('class', /active/);
+  });
 });

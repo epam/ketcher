@@ -42,7 +42,6 @@ export async function bondTwoMonomersPointToPoint(
   bondType?: DropdownToolIds,
 ) {
   await selectMacroBond(page, bondType);
-  // await selectSingleBondTool(page);
   await firstMonomerElement.hover({ force: true });
 
   if (firstMonomerConnectionPoint) {

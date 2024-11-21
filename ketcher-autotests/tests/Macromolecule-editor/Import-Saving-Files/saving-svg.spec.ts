@@ -262,6 +262,7 @@ test.describe('Saving in .svg files', () => {
     {
       filename: 'KET/all-kind-of-monomers.ket',
       description: 'all kind of monomers',
+      pageReloadNeeded: true,
     },
     { filename: 'KET/all-chems.ket', description: 'all chems' },
     {
@@ -286,8 +287,9 @@ test.describe('Saving in .svg files', () => {
     },
   ];
 
-  for (const { filename, description } of testData3) {
+  for (const { filename, description, pageReloadNeeded } of testData3) {
     test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
+      if (pageReloadNeeded) await pageReload(page);
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);

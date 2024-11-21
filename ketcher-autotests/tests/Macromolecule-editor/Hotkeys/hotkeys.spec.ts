@@ -2,7 +2,6 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  selectSingleBondTool,
   selectSequenceLayoutModeTool,
   typeAllEnglishAlphabet,
   takeEditorScreenshot,
@@ -10,7 +9,9 @@ import {
   takeTopToolbarScreenshot,
   waitForPageInit,
   selectAllStructuresOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
@@ -75,7 +76,7 @@ test.describe('Hotkeys', () => {
     */
     await page.keyboard.press('Delete');
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');

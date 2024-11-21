@@ -3,10 +3,11 @@ import {
   dragMouseTo,
   LeftPanelButton,
   selectLeftPanelButton,
+  selectMacroBond,
   selectRectangleSelectionTool,
-  selectSingleBondTool,
   waitForRender,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export async function moveMonomer(
   page: Page,
@@ -37,7 +38,7 @@ export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
 ) {
-  await selectSingleBondTool(page);
+  await selectMacroBond(page, MacroBondTool.SINGLE);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];

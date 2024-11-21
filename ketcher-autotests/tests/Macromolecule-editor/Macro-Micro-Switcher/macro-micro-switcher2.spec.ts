@@ -14,7 +14,6 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   getKet,
   saveToFile,
@@ -28,8 +27,10 @@ import {
   selectClearCanvasTool,
   Sugars,
   Bases,
+  selectMacroBond,
 } from '@utils';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
@@ -256,7 +257,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });

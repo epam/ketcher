@@ -9,7 +9,6 @@ import {
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
   moveMouseToTheMiddleOfTheScreen,
-  selectSingleBondTool,
   takePageScreenshot,
   moveMouseAway,
   openStructurePasteFromClipboard,
@@ -17,6 +16,7 @@ import {
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
@@ -402,7 +402,7 @@ test.describe('Zoom Tool', () => {
         1,
       );
     }
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('(R').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -447,3 +447,6 @@ test.describe('Zoom Tool', () => {
     await takePageScreenshot(page);
   });
 });
+function selectMacroBond(page: Page, SINGLE: string) {
+  throw new Error('Function not implemented.');
+}

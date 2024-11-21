@@ -3,6 +3,7 @@ import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { moveMouseAway, selectMacroBond, selectSingleBondTool } from '..';
 import { DropdownToolIds } from '@utils/clicks/types';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -13,13 +14,13 @@ export async function bondTwoMonomers(
   needSelectAttachmentPoint = true,
   needConnect = true,
 ) {
-  await selectSingleBondTool(page);
+  await selectMacroBond(page, MacroBondTool.SINGLE);
   await firstMonomerElement.hover();
   await page.mouse.down();
   await secondMonomerElement.hover();
   await page.mouse.up();
   await hideMonomerPreview(page);
-  const dialog = await page.getByRole('dialog');
+  const dialog = page.getByRole('dialog');
   if ((await dialog.isVisible()) && needSelectAttachmentPoint) {
     if (connectTitle1) {
       await page.locator(`button[title='${connectTitle1}']`).nth(0).click();
@@ -104,7 +105,7 @@ export async function bondMonomerPointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await selectSingleBondTool(page);
+  await selectMacroBond(page, MacroBondTool.SINGLE);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
@@ -176,7 +177,7 @@ export async function bondNucleotidePointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await selectSingleBondTool(page);
+  await selectMacroBond(page, MacroBondTool.SINGLE);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {

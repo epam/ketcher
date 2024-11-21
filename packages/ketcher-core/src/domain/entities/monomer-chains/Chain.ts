@@ -175,6 +175,10 @@ export class Chain {
     );
   }
 
+  public get isAntisense() {
+    return this.nodes.some((node) => node.monomer.monomerItem.isAntisense);
+  }
+
   public forEachNode(
     callback: ({
       node,
@@ -182,11 +186,15 @@ export class Chain {
     }: {
       node: SubChainNode;
       subChain: BaseSubChain;
+      nodeIndex: number;
     }) => void,
   ) {
+    let nodeIndex = 0;
+
     this.subChains.forEach((subChain) => {
       subChain.nodes.forEach((node) => {
-        callback({ node, subChain });
+        callback({ node, subChain, nodeIndex });
+        nodeIndex++;
       });
     });
   }

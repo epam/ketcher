@@ -422,7 +422,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
 
     const verticalLineLength = isBondConnectedWithNucleotide
-      ? RNA_CHAIN_VERTICAL_LINE_LENGTH
+      ? RNA_CHAIN_VERTICAL_LINE_LENGTH + 130
       : VERTICAL_LINE_LENGTH + 5;
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {

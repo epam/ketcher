@@ -91,6 +91,8 @@ import {
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
+import { isNumber } from 'lodash';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -1316,7 +1318,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
     const nucleotideSize = this.getNucleotideSize(nucleotide);
     const { height } = nucleotideSize;
-    const heightWithBond = height + VERTICAL_DISTANCE_FROM_MONOMER;
+    const heightWithBond = height + VERTICAL_DISTANCE_FROM_MONOMER + 130;
     const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
     nucleotide.sugar.isMonomerInRnaChainRow = true;
@@ -1518,6 +1520,60 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private rearrangeAntisenseChain(
+    antisenseChain: Chain,
+    startPosition: Vec2,
+    canvasWidth: number,
+    rearrangedMonomersSet: Set<number>,
+    maxVerticalDistance: number,
+    snakeLayoutMatrix: Matrix<Cell>,
+  ) {
+    const command = new Command();
+    let lastPosition = startPosition.add(
+      new Vec2(0, SNAKE_LAYOUT_CELL_WIDTH * 2),
+    );
+
+    antisenseChain.forEachNode(({ node }) => {
+      if (node instanceof Nucleoside || node instanceof Nucleotide) {
+        const rearrangeResult = this.reArrangeRnaChain(
+          {
+            sugar: node.sugar,
+            phosphate:
+              node instanceof Nucleotide
+                ? node.phosphate
+                : getPhosphateFromSugar(node.sugar),
+            rnaBase: node.rnaBase,
+            baseMonomer: node.firstMonomerInNode,
+          },
+          lastPosition,
+          canvasWidth,
+          new Set(),
+          maxVerticalDistance,
+          snakeLayoutMatrix,
+        );
+        lastPosition = rearrangeResult.lastPosition;
+        maxVerticalDistance = rearrangeResult.maxVerticalDistance;
+        command.merge(rearrangeResult.command);
+      } else {
+        node.monomers.forEach((monomer) => {
+          const rearrangeResult = this.reArrangeChain(
+            monomer,
+            lastPosition,
+            canvasWidth,
+            rearrangedMonomersSet,
+            maxVerticalDistance,
+            snakeLayoutMatrix,
+          );
+          lastPosition = rearrangeResult.lastPosition;
+          maxVerticalDistance = rearrangeResult.maxVerticalDistance;
+          command.merge(rearrangeResult.command);
+        });
+      }
+    });
+
+    return command;
+  }
+
   public reArrangeChains(
     canvasWidth: number,
     isSnakeMode: boolean,
@@ -1526,7 +1582,7 @@ export class DrawingEntitiesManager {
     const snakeLayoutMatrix = new Matrix<Cell>();
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
-    let chainsCollection;
+    let chainsCollection: ChainsCollection;
 
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
@@ -1541,9 +1597,99 @@ export class DrawingEntitiesManager {
       chainsCollection.rearrange();
 
       chainsCollection.chains.forEach((chain) => {
-        chain.forEachNode(({ node }) => {
+        if (chain.isAntisense) {
+          return;
+        }
+
+        const antisenseChains = [...chainsCollection.getAntisenseChains(chain)];
+        const antisenseChainsStartIndexes = antisenseChains.map(
+          (antisenseChain) => {
+            const firstConnectedAntisenseNodeIndex =
+              antisenseChain.nodes.findIndex((node) => {
+                return (
+                  (node instanceof Nucleoside || node instanceof Nucleotide) &&
+                  node.getAntisenseRnaBase()
+                );
+              });
+            const firstConnectedAntisenseNode = antisenseChain.nodes[
+              firstConnectedAntisenseNodeIndex
+            ] as Nucleoside | Nucleotide;
+            const senseRnaBase =
+              firstConnectedAntisenseNode.getAntisenseRnaBase();
+            const senseNode =
+              senseRnaBase && chainsCollection.monomerToNode.get(senseRnaBase);
+            const senseNodeIndex = senseNode && chain.nodes.indexOf(senseNode);
+
+            if (!isNumber(senseNodeIndex)) {
+              return -1;
+            }
+
+            return senseNodeIndex - firstConnectedAntisenseNodeIndex;
+          },
+        );
+        const antisenseChainsStartIndexesMap = new Map(
+          antisenseChainsStartIndexes.map(
+            (antisenseChainsStartIndex, index) => [
+              antisenseChainsStartIndex,
+              antisenseChains[index],
+            ],
+          ),
+        );
+
+        // let currentAntisenseChain: Chain | undefined;
+        // let currentAntisenseChainNodeIndex: number | undefined;
+        //
+        // const antisenseNodesArrangedToSenseChain = chain.nodes.map(
+        //   (node, nodeIndex) => {
+        //     if (!currentAntisenseChain) {
+        //       const antisenseChain =
+        //         antisenseChainsStartIndexesMap.get(nodeIndex);
+        //
+        //       if (!antisenseChain) {
+        //         return null;
+        //       }
+        //
+        //       currentAntisenseChain = antisenseChain;
+        //       currentAntisenseChainNodeIndex = 1;
+        //
+        //       return currentAntisenseChain.nodes[0];
+        //     }
+        //
+        //     const antisenseChainNode =
+        //       currentAntisenseChain.nodes[currentAntisenseChainNodeIndex];
+        //
+        //     if (!antisenseChainNode) {
+        //       currentAntisenseChain = undefined;
+        //       currentAntisenseChainNodeIndex = undefined;
+        //
+        //       return null;
+        //     }
+        //
+        //     currentAntisenseChainNodeIndex++;
+        //
+        //     return antisenseChainNode;
+        //   },
+        // );
+        //
+        // console.log(antisenseNodesArrangedToSenseChain);
+
+        chain.forEachNode(({ node, nodeIndex }) => {
           if (rearrangedMonomersSet.has(node.monomer.id)) {
             return;
+          }
+          const antisenseChain = antisenseChainsStartIndexesMap.get(nodeIndex);
+
+          if (antisenseChain) {
+            command.merge(
+              this.rearrangeAntisenseChain(
+                antisenseChain,
+                lastPosition,
+                canvasWidth,
+                rearrangedMonomersSet,
+                maxVerticalDistance,
+                snakeLayoutMatrix,
+              ),
+            );
           }
 
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
@@ -1590,7 +1736,7 @@ export class DrawingEntitiesManager {
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());
     }
-
+    console.log(snakeLayoutMatrix);
     this.snakeLayoutMatrix = snakeLayoutMatrix;
 
     command.merge(
@@ -2379,7 +2525,7 @@ export class DrawingEntitiesManager {
 
   private get antisenseStrandBasesMap() {
     return {
-      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
+      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.THYMINE,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
       [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
       [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,

@@ -18,6 +18,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { SugarRenderer } from 'application/render';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
+import { Nucleoside } from 'domain/entities/Nucleoside';
 
 export class Nucleotide {
   constructor(
@@ -125,5 +126,9 @@ export class Nucleotide {
       this.sugar.isModification ||
       this.phosphate.isModification
     );
+  }
+
+  public getAntisenseRnaBase() {
+    return Nucleoside.prototype.getAntisenseRnaBase.call(this);
   }
 }

@@ -4,6 +4,8 @@ import {
   BaseMonomer,
   Chem,
   IsChainCycled,
+  Nucleoside,
+  Nucleotide,
   Peptide,
   Phosphate,
   RNABase,
@@ -285,5 +287,28 @@ export class ChainsCollection {
         });
       });
     });
+  }
+
+  public getAntisenseChains(chain: Chain) {
+    const antisenseChains: Set<Chain> = new Set();
+    const monomerToChain = this.monomerToChain;
+
+    chain.forEachNode(({ node }) => {
+      if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+        return;
+      }
+
+      const antisenseRnaBase = node.getAntisenseRnaBase();
+      const antisenseChain =
+        antisenseRnaBase && monomerToChain.get(antisenseRnaBase);
+
+      if (!antisenseChain) {
+        return;
+      }
+
+      antisenseChains.add(antisenseChain);
+    });
+
+    return antisenseChains;
   }
 }

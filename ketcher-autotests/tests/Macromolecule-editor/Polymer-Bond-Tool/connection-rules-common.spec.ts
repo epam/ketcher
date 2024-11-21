@@ -18,6 +18,7 @@ import {
   receiveFileComparisonData,
   getMolfile,
   delay,
+  clickOnCanvas,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -170,7 +171,7 @@ test.describe('Common connection rules: ', () => {
       .first();
 
     // removing selections
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
 
     await monomerLocator.click();
     await selectEraseTool(page);

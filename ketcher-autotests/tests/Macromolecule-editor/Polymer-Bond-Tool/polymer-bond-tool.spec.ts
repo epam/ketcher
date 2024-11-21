@@ -32,6 +32,7 @@ import {
   waitForIndigoToLoad,
   selectClearCanvasTool,
   selectOptionInTypeDropdown2,
+  clickOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -203,8 +204,8 @@ test('Create bond between two chems', async () => {
   await page.getByTestId(Chems.hxy).click();
 
   // Create 2 chems on canvas
-  await page.mouse.click(300, 300);
-  await page.mouse.click(400, 400);
+  await clickOnCanvas(page, 300, 300);
+  await clickOnCanvas(page, 400, 400);
 
   // Get 2 chems locators
   const chems = await page.getByText('hxy').locator('..');

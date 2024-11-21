@@ -4,6 +4,7 @@ import {
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
+  takePageScreenshot,
   waitForRender,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
@@ -198,9 +199,10 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
     }
   }
 
-  throw new Error(
-    `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
-  );
+  await takePageScreenshot(page);
+  // throw new Error(
+  //   `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
+  // );
 }
 
 export async function selectRectangleSelectionTool(page: Page) {

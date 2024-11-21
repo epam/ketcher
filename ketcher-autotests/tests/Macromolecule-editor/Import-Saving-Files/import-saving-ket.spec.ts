@@ -891,6 +891,7 @@ for (const monomer of allTypesOfMonomers) {
       page,
     );
     await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
   });
 }
 
@@ -903,6 +904,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
    *       3. Save canvas to KET
    *       4. Verify that export result equal to template
    */
+  await turnOnMacromoleculesEditor(page);
   const KETFile =
     'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers.ket';
   const KETFileExpected =

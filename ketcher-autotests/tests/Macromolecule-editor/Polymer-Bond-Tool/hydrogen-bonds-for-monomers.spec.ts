@@ -830,7 +830,7 @@ Object.entries(MacroBondTool).forEach(([key, testId]) => {
    *        3. Select bond
    *        4. Validate bond button is active
    */
-  test(`${key} bond tool: verification`, async () => {
+  test(`11. ${key} bond tool: verification`, async () => {
     await openBondToolDropDown(page);
 
     const button = page.getByTestId(testId).first();
@@ -838,5 +838,96 @@ Object.entries(MacroBondTool).forEach(([key, testId]) => {
 
     await selectMacroBond(page, testId);
     await expect(button).toHaveAttribute('class', /active/);
+  });
+});
+
+test(`12. Verify that hydrogen bonds cannot be established between small molecules in macromolecules mode`, async () => {
+  /*
+   *  Test task: https://github.com/epam/ketcher/issues/5984
+   *  Description: Verify that hydrogen bonds cannot be established between small molecules in macromolecules mode
+   *  Case: 1. Load file with monomers connected with single and hydrogen bonds being at Flex mode
+   *        2. Take screenshot to witness canvas at Flex mode
+   *        3. Switch to Snake mode
+   *        5. Take screenshot to witness canvas at Snake mode
+   *        6. Switch to Sequence mode
+   *        7. Take screenshot to witness canvas at Sequence mode
+   */
+  test.setTimeout(25000);
+
+  await openFileAndAddToCanvasMacro(
+    'KET/Hydrogen-bonds/All hydrogen connections at once.ket',
+    page,
+  );
+  await moveMouseAway(page);
+  await zoomWithMouseWheel(page, 100);
+  await takeEditorScreenshot(page);
+
+  await selectSnakeLayoutModeTool(page);
+  await takeEditorScreenshot(page);
+
+  await selectSequenceLayoutModeTool(page);
+  await ZoomOutByKeyboard(page);
+  await ZoomOutByKeyboard(page);
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page);
+
+  await selectFlexLayoutModeTool(page);
+});
+
+const molecules: { [monomerName: string]: IMonomer } = {
+  Atom: {
+    monomerType: 'atom',
+    fileName: 'KET/Hydrogen-bonds/Monomer-templates/13. Atom.ket',
+    alias: 'BrH',
+  },
+};
+
+Object.values(monomers).forEach((leftMonomer) => {
+  Object.values(molecules).forEach((rightMolecule) => {
+    /*
+     *  Test task: https://github.com/epam/ketcher/issues/5984
+     *  Description: Verify that hydrogen bonds cannot be established between small molecules in macromolecules mode
+     *  Case: For each %monomerType% from the library (leftMonomers)
+     *          For each %moleculeType% from the library (rightMolecule) do
+     *              1. Clear canvas
+     *              2. Load %leftMonomer% and %rigthMolecule% and put them on the canvas
+     *              3. Establish single bond connection between %leftMonomer%(center) and %rightMolecule%(atom)
+     *              4. Take screenshot to witness established connection and bond selection works fine
+     *              5. Remove  established bond by Undo operation
+     *              6. Establish hydrogen connection between %leftMonomer%(center) and %rightMolecule%(atom)
+     *              7. Take screenshot to witness no connection established
+     */
+    test(`13. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMolecule.monomerType}(${rightMolecule.alias})`, async () => {
+      test.setTimeout(25000);
+
+      await loadTwoMonomers(page, leftMonomer, rightMolecule);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMolecule,
+        MacroBondTool.SINGLE,
+      );
+
+      await zoomWithMouseWheel(page, -600);
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+
+      await selectEraseTool(page);
+      await pressUndoButton(page);
+
+      await bondTwoMonomersByCenterToCenter(
+        page,
+        leftMonomer,
+        rightMolecule,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await takeEditorScreenshot(page, {
+        masks: [page.getByTestId('polymer-library-preview')],
+      });
+    });
   });
 });

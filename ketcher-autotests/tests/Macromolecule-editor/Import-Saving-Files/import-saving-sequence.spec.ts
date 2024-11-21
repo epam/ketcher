@@ -679,3 +679,65 @@ test.describe('Import correct Sequence file: ', () => {
     });
   }
 });
+
+type sequenceType = 'RNA' | 'DNA' | 'Peptide';
+type letterCode = '1-letter code' | '3-letter code';
+interface ISequenceString {
+  sequenceDescription: string;
+  sequenceString: string;
+  sequenceType: sequenceType;
+  numberOfLetterCode: letterCode;
+  // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
+  shouldFail?: boolean;
+  // issueNumber is mandatory if shouldFail === true
+  issueNumber?: string;
+  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
+  pageReloadNeeded?: boolean;
+  // Some times export result is different to import string
+  differentSequenceExport?: string;
+}
+
+const correctSequenceFiles: ISequenceString[] = [
+  {
+    sequenceDescription: 'Three letters peptide codes - part 1',
+    sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
+    sequenceType: 'Peptide',
+    numberOfLetterCode: '3-letter code',
+  },
+  {
+    sequenceDescription: 'Three letters peptide codes - part 2',
+    sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
+    sequenceType: 'Peptide',
+    numberOfLetterCode: '3-letter code',
+  },
+  {
+    sequenceDescription: 'Three letters peptide codes - part 3',
+    sequenceString: 'SerThrSecValTrpXaaTyrGlx',
+    sequenceType: 'Peptide',
+    numberOfLetterCode: '3-letter code',
+  },
+];
+
+for (const correctSequenceFile of correctSequenceFiles) {
+  test(`${correctSequenceFile.SequenceDescription}`, async ({ page }) => {
+    /*
+    Description: Verify import of Sequence files works correct
+    Case: 1. Load Sequence file 
+          2. Take screenshot to make sure import works correct
+    */
+    if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      correctSequenceFile.shouldFail === true,
+      `That test fails because of ${correctSequenceFile.issueNumber} issue.`,
+    );
+
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      correctSequenceFile.SequenceFileName,
+      page,
+      correctSequenceFile.SequenceType,
+    );
+
+    await takeEditorScreenshot(page);
+  });
+}

@@ -1277,9 +1277,9 @@ test.describe('RNA Library', () => {
 
     // await rnaLibrarySearch.press('Escape');
     // Case 27 here. Dirty hack, can't believe I did it.
-    const xCoodinate = 1241;
-    const yCoodinate = 62;
-    await page.mouse.click(xCoodinate, yCoodinate);
+    const xCoordinate = 1241;
+    const yCoordinate = 62;
+    await clickOnCanvas(page, xCoordinate, yCoordinate);
 
     await chooseTab(page, Tabs.Rna);
     await takeMonomerLibraryScreenshot(page);

@@ -178,90 +178,44 @@ export class CanvasMatrix {
   }
 
   private fillCells() {
-    // iterate over each chain and fill matrix with cells
-    let rowNumber = 0;
-    let columnNumber = 0;
-    let rowsWithRnaBases = 0;
-    let wereBasesInRow = false;
-    this.chains.forEach((chain) => {
-      chain.forEachNode(({ node }) => {
-        node.monomers.forEach((monomer) => {
-          if (
-            (node instanceof Nucleotide || node instanceof Nucleoside) &&
-            isRnaBaseOrAmbiguousRnaBase(monomer)
-          ) {
-            const cell = new Cell(
-              node,
-              [],
-              columnNumber - 1,
-              rowNumber + rowsWithRnaBases + 1,
-              monomer,
-            );
-            this.matrix.set(
-              rowNumber + rowsWithRnaBases + 1,
-              columnNumber - 1,
-              cell,
-            );
-            this.monomerToCell.set(monomer, cell);
-            wereBasesInRow = true;
+    // create matrix by initial matrix filling empty cells
 
-            return;
-          }
-
-          const initialMatrixRowLength =
-            this.matrixConfig.initialMatrix?.getRow(rowNumber)?.length || 0;
-
-          if (columnNumber >= initialMatrixRowLength) {
-            let emptyCellsAmount = this.initialMatrixWidth - columnNumber;
-            while (emptyCellsAmount > 0) {
-              this.matrix.set(
-                rowNumber + rowsWithRnaBases,
-                columnNumber,
-                new Cell(null, [], columnNumber, rowNumber + rowsWithRnaBases),
-              );
-              columnNumber++;
-              emptyCellsAmount--;
-            }
-
-            if (wereBasesInRow) {
-              rowsWithRnaBases++;
-              wereBasesInRow = false;
-              let index = 0;
-              while (index < this.initialMatrixWidth) {
-                const cellWithPotentialRnaBase = this.matrix.get(
-                  rowNumber + rowsWithRnaBases,
-                  index,
-                );
-                if (cellWithPotentialRnaBase) {
-                  index++;
-                  continue;
-                }
-                this.matrix.set(
-                  rowNumber + rowsWithRnaBases,
-                  index,
-                  new Cell(null, [], index, rowNumber + rowsWithRnaBases + 1),
-                );
-                index++;
-              }
-            }
-
-            rowNumber++;
-            columnNumber = 0;
-          }
-
-          const cell = new Cell(
-            node,
-            [],
+    for (
+      let rowNumber = 0;
+      rowNumber < this.matrixConfig.initialMatrix.height;
+      rowNumber++
+    ) {
+      for (
+        let columnNumber = 0;
+        columnNumber < this.initialMatrixWidth;
+        columnNumber++
+      ) {
+        const initialMatrixCell = this.matrixConfig.initialMatrix.get(
+          rowNumber,
+          columnNumber,
+        );
+        if (!initialMatrixCell) {
+          this.matrix.set(
+            rowNumber,
             columnNumber,
-            rowNumber + rowsWithRnaBases,
-            monomer,
+            new Cell(null, [], columnNumber, rowNumber),
           );
-          this.matrix.set(rowNumber + rowsWithRnaBases, columnNumber, cell);
-          this.monomerToCell.set(monomer, cell);
-          columnNumber++;
-        });
-      });
-    });
+
+          continue;
+        }
+
+        const cell = new Cell(
+          initialMatrixCell.node,
+          [],
+          columnNumber,
+          rowNumber,
+          initialMatrixCell.monomer,
+        );
+
+        this.matrix.set(rowNumber, columnNumber, cell);
+        this.monomerToCell.set(initialMatrixCell.monomer, cell);
+      }
+    }
 
     const monomerToNode = this.chainsCollection.monomerToNode;
     const handledConnections = new Set<PolymerBond>();
@@ -395,5 +349,6 @@ export class CanvasMatrix {
       },
       (connection: Connection): number => connection.yOffset,
     );
+    console.log(this);
   }
 }

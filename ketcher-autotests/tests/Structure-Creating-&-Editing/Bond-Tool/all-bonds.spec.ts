@@ -42,6 +42,7 @@ import {
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -113,8 +114,8 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const countBonds = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -129,7 +130,7 @@ test.describe(`Bond tool:`, () => {
 
       await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const countBondsWithRing = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -140,7 +141,7 @@ test.describe(`Bond tool:`, () => {
       await selectTool(LeftPanelButton.Erase, page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const sizeAfterErase = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -150,7 +151,7 @@ test.describe(`Bond tool:`, () => {
 
       await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const sizeWithRingAndBond = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -173,7 +174,7 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       await selectAction(TopPanelButton.Clear, page);
 
@@ -209,7 +210,7 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const chainSize = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -224,14 +225,14 @@ test.describe(`Bond tool:`, () => {
       expect(chainSizeAfterUndo).toEqual(chainSizeWithoutBondAfterUndo);
 
       point = await getAtomByIndex(page, { label: 'C' }, 1);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       point = await getAtomByIndex(
         page,
         { label: 'C' },
         DELAY_IN_SECONDS.THREE,
       );
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const editedChain = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -362,9 +363,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
           reactingCenterStatus: 0,
         });
 
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-        });
+        await clickOnCanvas(page, point.x, point.y);
 
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
@@ -398,14 +397,12 @@ test.describe(`Bond tool (copy-paste):`, () => {
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
         await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
+          await clickOnCanvas(page, point.x, point.y);
           await selectTopPanelButton(TopPanelButton.Undo, page);
         });
 
         await selectRing(RingButton.Cyclohexane, page);
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-        });
+        await clickOnCanvas(page, point.x, point.y);
 
         await takeEditorScreenshot(page);
       },

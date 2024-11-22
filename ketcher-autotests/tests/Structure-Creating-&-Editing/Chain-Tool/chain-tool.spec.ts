@@ -8,6 +8,7 @@ import {
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import {
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
@@ -81,12 +82,12 @@ test.describe('Chain Tool drawing', () => {
     */
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
 
     const doubleBond = await getBondByIndex(page, { type: BondType.DOUBLE }, 0);
     expect(doubleBond.type).toEqual(BondType.DOUBLE);
 
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
     expect(tripleBond.type).toEqual(BondType.TRIPLE);
     await takeEditorScreenshot(page);

@@ -156,7 +156,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -173,7 +173,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     });
     await cutToClipboardByKeyboard(page, { delay: INPUT_DELAY });
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -519,7 +519,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -550,7 +550,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -580,7 +580,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -597,10 +597,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 8;
     await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -636,7 +636,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -671,7 +671,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -706,7 +706,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -781,7 +781,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -820,7 +820,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -862,7 +862,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -898,7 +898,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -933,7 +933,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -973,7 +973,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'S', anyAtom);
     await takeEditorScreenshot(page);

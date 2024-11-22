@@ -18,6 +18,10 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  SequenceType,
+  PeptideType,
+  MacroFileType,
 } from '@utils';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
@@ -680,13 +684,12 @@ test.describe('Import correct Sequence file: ', () => {
   }
 });
 
-type sequenceType = 'RNA' | 'DNA' | 'Peptide';
-type letterCode = '1-letter code' | '3-letter code';
 interface ISequenceString {
+  testCaseDescription: string;
   sequenceDescription: string;
   sequenceString: string;
-  sequenceType: sequenceType;
-  numberOfLetterCode: letterCode;
+  sequenceType: SequenceType;
+  peptideType?: PeptideType;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -697,47 +700,57 @@ interface ISequenceString {
   differentSequenceExport?: string;
 }
 
-const correctSequenceFiles: ISequenceString[] = [
+const correctSequences: ISequenceString[] = [
   {
+    testCaseDescription:
+      '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 1',
     sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
-    sequenceType: 'Peptide',
-    numberOfLetterCode: '3-letter code',
+    sequenceType: SequenceType.PEPTIDE,
+    peptideType: PeptideType.threeLetterCode,
   },
   {
+    testCaseDescription:
+      '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 2',
     sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
-    sequenceType: 'Peptide',
-    numberOfLetterCode: '3-letter code',
+    sequenceType: SequenceType.PEPTIDE,
+    peptideType: PeptideType.threeLetterCode,
   },
   {
+    testCaseDescription:
+      '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 3',
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
-    sequenceType: 'Peptide',
-    numberOfLetterCode: '3-letter code',
+    sequenceType: SequenceType.PEPTIDE,
+    peptideType: PeptideType.threeLetterCode,
   },
 ];
 
-for (const correctSequenceFile of correctSequenceFiles) {
-  test(`${correctSequenceFile.SequenceDescription}`, async ({ page }) => {
+for (const correctSequence of correctSequences) {
+  test(`${correctSequence.testCaseDescription} (with ${correctSequence.sequenceDescription})`, async ({
+    page,
+  }) => {
     /*
     Description: Verify import of Sequence files works correct
     Case: 1. Load Sequence file 
           2. Take screenshot to make sure import works correct
     */
-    if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
+    // if (correctSequence.pageReloadNeeded) {
+    //   await pageReload(page);
+    // }
     // Test should be skipped if related bug exists
     test.fixme(
-      correctSequenceFile.shouldFail === true,
-      `That test fails because of ${correctSequenceFile.issueNumber} issue.`,
+      correctSequence.shouldFail === true,
+      `That test fails because of ${correctSequence.issueNumber} issue.`,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      correctSequenceFile.SequenceFileName,
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      correctSequenceFile.SequenceType,
+      correctSequence.sequenceString,
+      MacroFileType.Sequence,
+      [correctSequence.sequenceType, correctSequence.peptideType],
     );
-
     await takeEditorScreenshot(page);
   });
 }

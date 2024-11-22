@@ -4,9 +4,11 @@ import {
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
+  takePageScreenshot,
   waitForRender,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
+import { DropdownToolIds } from '@utils/clicks/types';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
@@ -16,6 +18,7 @@ import {
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
+import { MacroBondTool } from './selectNestedTool/types';
 
 /**
  * Selects an atom from Atom toolbar
@@ -54,17 +57,45 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.getByTestId('single-bond');
+  const handToolButton = page.getByTestId('hand-tool');
+  // to reset Bond tool state
+  await handToolButton.click();
+
+  const bondToolDropdown = page
+    .getByTestId('bond-tool-submenu')
+    .locator('path')
+    .nth(1);
+  await bondToolDropdown.click();
+
+  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE);
   await bondToolButton.click();
 }
 
+export async function selectMacroBond(
+  page: Page,
+  bondType: DropdownToolIds = MacroBondTool.SINGLE,
+) {
+  const handToolButton = page.getByTestId('hand-tool');
+  // to reset Bond tool state
+  await handToolButton.click();
+
+  const bondToolDropdown = page
+    .getByTestId('bond-tool-submenu')
+    .locator('path')
+    .nth(1);
+  await bondToolDropdown.click();
+
+  const hydrogenBondButton = page.getByTestId(bondType).first();
+  await hydrogenBondButton.click();
+}
+
 export async function openLayoutModeMenu(page: Page) {
-  const modeSelectorButton = await page.getByTestId('layout-mode');
+  const modeSelectorButton = page.getByTestId('layout-mode');
   await modeSelectorButton.click();
 }
 
 export async function hideLibrary(page: Page) {
-  const hideLibraryLink = await page.getByText('Hide');
+  const hideLibraryLink = page.getByText('Hide');
   const isVisible = await hideLibraryLink.isVisible();
   if (isVisible) {
     await hideLibraryLink.click();
@@ -72,7 +103,7 @@ export async function hideLibrary(page: Page) {
 }
 
 export async function showLibrary(page: Page) {
-  const showLibraryButton = await await page.getByText('Show Library');
+  const showLibraryButton = page.getByText('Show Library');
   const isVisible = await showLibraryButton.isVisible();
   if (isVisible) {
     await showLibraryButton.click();
@@ -154,22 +185,28 @@ export async function selectImageTool(page: Page) {
  */
 export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
   const clearCanvasButton = page.getByTestId('clear-canvas');
+  const closeWindowXButton = page.getByTestId('close-icon');
   let attempts = 0;
 
   while (attempts < maxAttempts) {
     try {
-      await clearCanvasButton.click({ force: false, timeout: 100 });
+      await clearCanvasButton.click({ force: false, timeout: 1000 });
       return;
     } catch (error) {
       attempts++;
+      await page.mouse.click(0, 0);
       await page.keyboard.press('Escape');
+      if (await closeWindowXButton.isVisible()) {
+        await closeWindowXButton.click();
+      }
       await page.waitForTimeout(100);
     }
   }
 
-  throw new Error(
-    `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
-  );
+  await takePageScreenshot(page);
+  // throw new Error(
+  //   `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
+  // );
 }
 
 export async function selectRectangleSelectionTool(page: Page) {

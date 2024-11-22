@@ -241,7 +241,7 @@ export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
   const button = page.getByTestId(dropdownElementId);
   await button.isVisible();
   await button.click({ delay: 200, clickCount: 2 });
-  const dropdown = await page.locator('.default-multitool-dropdown');
+  const dropdown = page.locator('.default-multitool-dropdown');
   if (!(await dropdown.isVisible({ timeout: 200 }))) {
     await button.click();
   }

@@ -1,10 +1,11 @@
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
-  selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
@@ -39,7 +40,7 @@ test.describe('Check attachment point hover', () => {
       1,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

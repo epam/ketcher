@@ -1,0 +1,208 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-bnn___Benzylamino"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "monomer",
+        "id": "0",
+        "position": {
+            "x": 18.502341345836093,
+            "y": -10.58924558560902
+        },
+        "alias": "bnn",
+        "templateId": "bnn___Benzylamino"
+    },
+    "monomerTemplate-bnn___Benzylamino": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -2.8595,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.5606,
+                    1.7994,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.2616,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5598,
+                    0.2986,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2602,
+                    -0.452,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2574,
+                    -1.952,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0374,
+                    0.3004,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0431,
+                    -2.6995,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3407,
+                    -1.9471,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3379,
+                    -0.4471,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    6
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "bnn___Benzylamino",
+        "fullName": "Benzylamino",
+        "alias": "bnn",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "P"
+    }
+}

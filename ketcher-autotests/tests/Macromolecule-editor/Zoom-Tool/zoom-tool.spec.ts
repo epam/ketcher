@@ -3,7 +3,6 @@ import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
-  selectSingleBondTool,
   selectTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -12,7 +11,9 @@ import {
   clickInTheMiddleOfTheScreen,
   MacromoleculesTopPanelButton,
   moveMouseAway,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   zoomWithMouseWheel,
   turnOnMacromoleculesEditor,
@@ -114,7 +115,7 @@ test.describe('Zoom Tool', () => {
     await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
     await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
@@ -134,7 +135,7 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
     await page.keyboard.down('Control');
     await page.mouse.wheel(deltas.x, deltas.y);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
@@ -152,7 +153,7 @@ test.describe('Zoom Tool', () => {
     await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
     await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -179,7 +180,7 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.down('Control');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);

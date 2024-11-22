@@ -728,7 +728,14 @@ const correctSequences: ISequenceString[] = [
       '2. Verify that spaces separate different amino acid sequences in import',
     sequenceDescription: 'e.g. AlaAla CysCys',
     sequenceString:
-      'AlaAsxCysAsp GluPheGlyHisIle XleLysLeuMet AsnPylProGlnArg SerThrSec ValTrpXaaTyrGlx',
+      'AlaAsx CysAspGlu PheGlyHisIle XleLysLeuMetAsn PylProGlnArgSerThr SecValTrpXaaTyrGlx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription: '3. Verify ignoring of line breaks during import',
+    sequenceDescription: 'e.g. AlaGly\nCys',
+    sequenceString:
+      'Ala\nAsx\n\n Cys\n\n\nAsp\n\n\n\nGlu\n Phe\nGly\nHis\nIle \n\nXle\nLys\nLeu\nMet\nAsn Pyl\nPro\nGln\nArg\nSer\nThr\n SecValTrpXaaTyrGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
 ];

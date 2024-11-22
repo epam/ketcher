@@ -8,7 +8,6 @@ import {
   waitForKetcherInit,
   waitForIndigoToLoad,
   waitForRender,
-  selectSingleBondTool,
   selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectRectangleArea,
@@ -18,7 +17,9 @@ import {
   receiveFileComparisonData,
   getMolfile,
   delay,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -78,7 +79,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     const monomerLocator = page
       .getByText(monomerName, { exact: true })
@@ -97,7 +98,7 @@ test.describe('Common connection rules: ', () => {
     leftMonomerName: string,
     rightMonomerName: string,
   ) {
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     const leftMmonomerLocator = page
       .getByText(leftMonomerName, { exact: true })
@@ -121,7 +122,7 @@ test.describe('Common connection rules: ', () => {
     monomerName: string,
     n: number,
   ) {
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     const monomerLocator = page
       .getByText(monomerName, { exact: true })
@@ -135,7 +136,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomerName: string) {
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     const monomerLocator = page
       .getByText(monomerName, { exact: true })

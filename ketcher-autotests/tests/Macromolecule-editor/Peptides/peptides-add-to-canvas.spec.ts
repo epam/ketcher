@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectSingleBondTool,
+  selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -11,6 +11,7 @@ import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -36,7 +37,7 @@ test.describe('Peptide', () => {
     */
     await page.click(ALANINE);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

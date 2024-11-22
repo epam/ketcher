@@ -55,9 +55,14 @@ export async function clickInTheMiddleOfTheScreen(
   });
 }
 
-export async function clickOnCanvas(page: Page, x: number, y: number) {
+export async function clickOnCanvas(
+  page: Page,
+  x: number,
+  y: number,
+  options?: any,
+) {
   await waitForRender(page, async () => {
-    await page.mouse.click(x, y);
+    await page.mouse.click(x, y, options);
   });
 }
 

@@ -37,6 +37,7 @@ import {
   TopPanelButton,
   selectClearCanvasTool,
   Peptides,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import {
@@ -73,11 +74,11 @@ async function drawThreeMonomers(page: Page) {
   const x3 = 705;
   const y3 = 106;
   await selectMonomer(page, Sugars.ThreeA6);
-  await page.mouse.click(x1, y1);
+  await clickOnCanvas(page, x1, y1);
   await selectMonomer(page, Bases.baA);
-  await page.mouse.click(x2, y2);
+  await clickOnCanvas(page, x2, y2);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x3, y3);
+  await clickOnCanvas(page, x3, y3);
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
@@ -109,7 +110,7 @@ async function drawBasePhosphate(page: Page) {
   await selectMonomer(page, Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectSingleBondTool(page);
   await base1.hover();
   await page.mouse.down();
@@ -129,7 +130,7 @@ async function drawSugarPhosphate(page: Page) {
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
   await page.mouse.down();
@@ -147,7 +148,7 @@ async function drawSugarBase(page: Page) {
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Bases.baA);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
   await page.mouse.down();
@@ -1081,7 +1082,7 @@ test.describe('RNA Library', () => {
       await dragMouseTo(x, y, page);
       await takeEditorScreenshot(page);
       await selectEraseTool(page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
     });
   }
@@ -1203,7 +1204,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Redo, page);
       await selectEraseTool(page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);

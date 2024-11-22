@@ -13,6 +13,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   drawBenzeneRing,
   waitForLoad,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -364,7 +365,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
 
     // eslint-disable-next-line no-magic-numbers
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Contract Abbreviation').click();
     await takeEditorScreenshot(page);
   });

@@ -25,6 +25,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -212,7 +213,7 @@ test.describe('Undo-Redo tests', () => {
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId(Peptides.BetaAlanine).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;
@@ -252,7 +253,7 @@ test.describe('Undo-Redo tests', () => {
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();
       await page.getByTestId('SMPEG2___SM(PEG)2').click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;

@@ -17,6 +17,7 @@ import {
   receiveFileComparisonData,
   saveToFile,
   selectDropdownTool,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn } from '@utils/formats';
@@ -88,7 +89,7 @@ test.describe('Mapping Tools', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);

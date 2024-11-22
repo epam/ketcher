@@ -38,6 +38,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -508,7 +509,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
@@ -528,7 +529,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);

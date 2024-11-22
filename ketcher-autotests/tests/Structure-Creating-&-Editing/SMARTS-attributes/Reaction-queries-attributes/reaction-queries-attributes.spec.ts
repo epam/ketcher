@@ -26,6 +26,7 @@ import {
   takeEditorScreenshot,
   waitForLoad,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
 
@@ -97,7 +98,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type').first().click();
     await page.getByRole('option', { name: 'Query component' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();

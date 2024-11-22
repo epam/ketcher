@@ -31,6 +31,7 @@ import {
   copyToClipboardByKeyboard,
   waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -830,7 +831,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

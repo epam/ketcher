@@ -31,6 +31,7 @@ import {
   clickOnAtom,
   moveOnAtom,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -579,9 +580,7 @@ test.describe('Functional Groups', () => {
     });
 
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -749,9 +748,7 @@ test.describe('Functional Groups', () => {
       await page.getByText('Expand Abbreviation').click();
     });
     await page.keyboard.press('n');
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 });

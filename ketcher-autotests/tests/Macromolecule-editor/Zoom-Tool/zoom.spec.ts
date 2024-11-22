@@ -16,6 +16,7 @@ import {
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
+  clickOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
@@ -318,7 +319,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
@@ -342,7 +343,7 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {

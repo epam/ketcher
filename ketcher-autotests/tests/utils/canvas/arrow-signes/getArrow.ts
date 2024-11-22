@@ -3,6 +3,7 @@ import { getLeftTopBarSize } from '../common/getLeftTopBarSize';
 import { sortItems } from '../common/sortItems';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '../constants';
 import { ArrowXy, SORT_TYPE } from '../types';
+import { clickOnCanvas } from '@utils';
 
 export async function getArrowsByIndex(
   page: Page,
@@ -35,5 +36,5 @@ export async function getArrowsByIndex(
 
 export async function clickOnArrow(page: Page, index: number) {
   const { x, y } = await getArrowsByIndex(page, index);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
 }

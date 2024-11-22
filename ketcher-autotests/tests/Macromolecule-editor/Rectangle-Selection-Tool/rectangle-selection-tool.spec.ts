@@ -15,6 +15,7 @@ import {
   selectSnakeLayoutModeTool,
   moveMouseAway,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -131,10 +132,10 @@ test.describe('Rectangle Selection Tool', () => {
     await page.getByText('Tza').click();
 
     // Create 4 peptides on canvas
-    await page.mouse.click(300, 300);
-    await page.mouse.click(400, 400);
-    await page.mouse.click(500, 500);
-    await page.mouse.click(600, 600);
+    await clickOnCanvas(page, 300, 400);
+    await clickOnCanvas(page, 400, 400);
+    await clickOnCanvas(page, 500, 500);
+    await clickOnCanvas(page, 600, 600);
 
     // Get 4 peptides locators
     const peptides = await page.getByText('Tza').locator('..');
@@ -172,15 +173,15 @@ test.describe('Rectangle Selection Tool', () => {
       y: center.y,
     };
     await page.getByTestId(Peptides.BetaAlanine).click();
-    await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
+    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
 
     await page.getByTestId(Peptides.Ethylthiocysteine).click();
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
-    await page.mouse.click(center.x + shift, center.y);
+    await clickOnCanvas(page, center.x + shift, center.y);
     await page.keyboard.press('Escape');
 
     // Now Beta Alanine must be above Ethylthiocysteine
-    await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
+    await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -244,9 +245,9 @@ test.describe('Rectangle Selection Tool', () => {
     // Select monomers pointly by clicking Shift+LClick
     await page.keyboard.down('Shift');
 
-    await page.mouse.click(300, 300);
-    await page.mouse.click(400, 400);
-    await page.mouse.click(500, 350);
+    await clickOnCanvas(page, 300, 300);
+    await clickOnCanvas(page, 400, 400);
+    await clickOnCanvas(page, 500, 350);
 
     await page.keyboard.up('Shift');
 
@@ -376,7 +377,7 @@ test.describe('Rectangle Selection Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

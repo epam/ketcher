@@ -1,6 +1,7 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
@@ -46,7 +47,7 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   }
   await waitForRender(page, async () => {
     await phenylalanineLocator.first().click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
   });
 }
 

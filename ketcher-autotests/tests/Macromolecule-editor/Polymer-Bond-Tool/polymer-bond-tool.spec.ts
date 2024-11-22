@@ -279,7 +279,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   await page.getByTestId(Peptides.BetaAlanine).click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId(Peptides.Ethylthiocysteine).click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['Bal', 'Edc']);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
@@ -299,7 +299,7 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   await page.getByTestId('MOE(A)P_A_MOE_P').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('dR(U)P_U_dR_P').click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
@@ -319,7 +319,7 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   await page.getByTestId('A6OH___6-amino-hexanol').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await page
     .locator('div')

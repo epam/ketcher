@@ -28,6 +28,7 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -359,7 +360,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -376,7 +377,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

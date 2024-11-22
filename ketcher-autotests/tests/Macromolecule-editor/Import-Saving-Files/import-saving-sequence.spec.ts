@@ -723,6 +723,14 @@ const correctSequences: ISequenceString[] = [
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
+  {
+    testCaseDescription:
+      '2. Verify that spaces separate different amino acid sequences in import',
+    sequenceDescription: 'e.g. AlaAla CysCys',
+    sequenceString:
+      'AlaAsxCysAsp GluPheGlyHisIle XleLysLeuMet AsnPylProGlnArg SerThrSec ValTrpXaaTyrGlx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
 ];
 
 for (const correctSequence of correctSequences) {

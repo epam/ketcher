@@ -688,8 +688,9 @@ interface ISequenceString {
   testCaseDescription: string;
   sequenceDescription: string;
   sequenceString: string;
-  sequenceType: SequenceType;
-  peptideType?: PeptideType;
+  sequenceType:
+    | Exclude<SequenceType, SequenceType.PEPTIDE>
+    | [SequenceType.PEPTIDE, PeptideType];
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -706,24 +707,21 @@ const correctSequences: ISequenceString[] = [
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 1',
     sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
-    sequenceType: SequenceType.PEPTIDE,
-    peptideType: PeptideType.threeLetterCode,
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 2',
     sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
-    sequenceType: SequenceType.PEPTIDE,
-    peptideType: PeptideType.threeLetterCode,
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 3',
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
-    sequenceType: SequenceType.PEPTIDE,
-    peptideType: PeptideType.threeLetterCode,
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
 ];
 
@@ -732,13 +730,13 @@ for (const correctSequence of correctSequences) {
     page,
   }) => {
     /*
-    Description: Verify import of Sequence files works correct
-    Case: 1. Load Sequence file 
-          2. Take screenshot to make sure import works correct
-    */
-    // if (correctSequence.pageReloadNeeded) {
-    //   await pageReload(page);
-    // }
+     * Description: Verify import of Sequence files works correct
+     * Case: 1. Load Sequence file
+     *       2. Take screenshot to make sure import works correct
+     */
+    if (correctSequence.pageReloadNeeded) {
+      await pageReload(page);
+    }
     // Test should be skipped if related bug exists
     test.fixme(
       correctSequence.shouldFail === true,
@@ -747,10 +745,10 @@ for (const correctSequence of correctSequences) {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
+      [MacroFileType.Sequence, correctSequence.sequenceType],
       correctSequence.sequenceString,
-      MacroFileType.Sequence,
-      [correctSequence.sequenceType, correctSequence.peptideType],
     );
+    await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page);
   });
 }

@@ -1183,7 +1183,7 @@ function showHydrogen(
     pathAndRBoxTranslate(
       hydrogen.path,
       hydrogen.rbb,
-      data.rightMargin + 0.5 * hydrogen.rbb.width + delta,
+      data.rightMargin + 0.35 * hydrogen.rbb.width + delta,
       0,
     );
     data.rightMargin += hydrogen.rbb.width + delta;
@@ -1203,7 +1203,7 @@ function showHydrogen(
         hydroIndex.path,
         hydroIndex.rbb,
         data.rightMargin +
-          0.5 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
+          0.15 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
           delta,
         0.2 * atom.label!.rbb.height,
       );
@@ -1215,7 +1215,7 @@ function showHydrogen(
       pathAndRBoxTranslate(
         hydroIndex.path,
         hydroIndex.rbb,
-        data.leftMargin - 0.5 * hydroIndex.rbb.width - delta,
+        data.leftMargin - 0.4 * hydroIndex.rbb.width - delta,
         0.2 * atom.label!.rbb.height,
       );
       data.leftMargin -= hydroIndex.rbb.width + delta;
@@ -1224,7 +1224,7 @@ function showHydrogen(
       hydrogen.path,
       hydrogen.rbb,
       data.leftMargin -
-        0.5 *
+        0.4 *
           hydrogen.rbb.width *
           (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
         delta,

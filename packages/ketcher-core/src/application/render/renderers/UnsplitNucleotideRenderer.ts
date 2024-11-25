@@ -81,8 +81,6 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    return {
-      backgroundId: '',
-    };
+    return undefined;
   }
 }

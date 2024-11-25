@@ -51,8 +51,6 @@ export class ChemRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    return {
-      backgroundId: '',
-    };
+    return undefined;
   }
 }

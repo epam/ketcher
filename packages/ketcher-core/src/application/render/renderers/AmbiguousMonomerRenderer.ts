@@ -165,8 +165,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
   }
 
   protected get modificationConfig() {
-    return {
-      backgroundId: '',
-    };
+    return undefined;
   }
 }

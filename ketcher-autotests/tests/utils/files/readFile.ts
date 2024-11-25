@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
@@ -257,6 +258,34 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   }
 }
 
+/**
+ *  Usage examples:
+ *  1. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    MacroFileType.Ket,
+ *    'Some KET content',
+ *  );
+ *
+ *  2. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.FASTA, SequenceType.DNA],
+ *    'Some FASTA content of DNA type',
+ *  );
+ *  3. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.Sequence, SequenceType.RNA],
+ *    'Some Sequence content of RNA type',
+ *  );
+ *  4. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.Sequence, [SequenceType.PEPTIDE, PeptideType.threeLetterCode]],
+ *    'Some Sequence content of Peptide type of 3-letter code',
+ *  );
+ * @param {Page} page - The Playwright page instance where the button is located.
+ * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceType], if SequenceType === Peptide - requre [MacroFileType, [SequenceType, PeptideType]]
+ * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
+ * @param {errorExpected}  errorExpected - have to be true if you know if error should occure
+ */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
   structureFormat:
@@ -265,6 +294,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     | [MacroFileType.Sequence, Exclude<SequenceType, SequenceType.PEPTIDE>]
     | [MacroFileType.Sequence, [SequenceType.PEPTIDE, PeptideType]],
   fillStructure: string,
+  errorExpected = false,
 ) {
   let structureType: MacroFileType = MacroFileType.Ket;
   let sequenceOrFastaType: SequenceType = SequenceType.RNA;
@@ -314,9 +344,14 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     }
 
     await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
-    await waitForLoad(page, async () => {
+
+    if (!errorExpected) {
+      await waitForLoad(page, async () => {
+        await pressButton(page, 'Add to Canvas');
+      });
+    } else {
       await pressButton(page, 'Add to Canvas');
-    });
+    }
   }
 }
 // export async function pasteFromClipboardAndAddToMacromoleculesCanvas2(

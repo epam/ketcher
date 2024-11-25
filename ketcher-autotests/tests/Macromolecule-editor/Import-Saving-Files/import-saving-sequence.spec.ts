@@ -767,3 +767,92 @@ for (const correctSequence of correctSequences) {
     await takeEditorScreenshot(page);
   });
 }
+
+const incorrectSequences: ISequenceString[] = [
+  {
+    testCaseDescription:
+      '4. Verify error message for unsupported symbols in import',
+    sequenceDescription: 'Zzz',
+    sequenceString: 'Zzz',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '4. Verify error message for unsupported symbols in import',
+    sequenceDescription: 'ala',
+    sequenceString: 'ala',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '4. Verify error message for unsupported symbols in import',
+    sequenceDescription: 'alA',
+    sequenceString: 'alA',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '4. Verify error message for unsupported symbols in import',
+    sequenceDescription: 'aLa',
+    sequenceString: 'aLa',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '4. Verify error message for unsupported symbols in import',
+    sequenceDescription: 'ALA',
+    sequenceString: 'ALA',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription: '5. Verify error for incorrect formatting in import',
+    sequenceDescription: 'uppercase/lowercase mix - CysALAAsx',
+    sequenceString: 'CysALAAsx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '6. Verify export option includes both single-letter and three-letter sequence codes',
+    sequenceDescription: 'CysAAsx',
+    sequenceString: 'CysAAsx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+  {
+    testCaseDescription:
+      '6. Verify export option includes both single-letter and three-letter sequence codes',
+    sequenceDescription: 'Cys A Asx',
+    sequenceString: 'Cys A Asx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+  },
+];
+
+for (const incorrectSequence of incorrectSequences) {
+  test(`${incorrectSequence.testCaseDescription} (with ${incorrectSequence.sequenceDescription})`, async ({
+    page,
+  }) => {
+    /*
+     * Description: Verify import of Sequence files works correct
+     * Case: 1. Load Sequence file
+     *       2. Take screenshot to make sure error message is correct
+     */
+    if (incorrectSequence.pageReloadNeeded) {
+      await pageReload(page);
+    }
+    // Test should be skipped if related bug exists
+    test.fixme(
+      incorrectSequence.shouldFail === true,
+      `That test fails because of ${incorrectSequence.issueNumber} issue.`,
+    );
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      [MacroFileType.Sequence, incorrectSequence.sequenceType],
+      incorrectSequence.sequenceString,
+      true,
+    );
+
+    await takeEditorScreenshot(page);
+
+    await closeErrorMessage(page);
+  });
+}

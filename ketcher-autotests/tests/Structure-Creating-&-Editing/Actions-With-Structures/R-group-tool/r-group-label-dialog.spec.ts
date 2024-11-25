@@ -159,7 +159,7 @@ test.describe('R-Group Label Tool', () => {
     let point: { x: number; y: number };
     // eslint-disable-next-line no-magic-numbers, prefer-const
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await pressButton(page, 'R5');
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
@@ -235,7 +235,7 @@ test.describe('R-Group Label Tool', () => {
     let point: { x: number; y: number };
     // eslint-disable-next-line no-magic-numbers, prefer-const
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await pressButton(page, 'R5');
 
     await waitForRender(page, async () => {

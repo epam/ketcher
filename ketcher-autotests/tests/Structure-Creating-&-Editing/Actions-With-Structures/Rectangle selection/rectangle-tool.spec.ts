@@ -3,6 +3,7 @@ import {
   BondType,
   clickOnAtom,
   clickOnBond,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -74,11 +75,12 @@ test.describe('Rectangle selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       point.x - moveMouseCoordinatesX,
       point.y + moveMouseCoordinatesY,
     );
-    await page.mouse.click(point.x, point.y + atomNumber);
+    await clickOnCanvas(page, point.x, point.y + atomNumber);
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 

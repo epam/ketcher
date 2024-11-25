@@ -737,7 +737,7 @@ test('Verify behaviour when a non-bond is right-clicked', async () => {
     Description: Nothing happen.
     */
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await page.mouse.click(200, 200, { button: 'right' });
+  await clickOnCanvas(page, 200, 200, { button: 'right' });
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });

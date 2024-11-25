@@ -14,6 +14,7 @@ import {
   waitForRender,
   clickOnBond,
   clickOnAtom,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -30,7 +31,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
@@ -41,7 +42,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Query bonds').click();
     await takeEditorScreenshot(page);
   });
@@ -53,7 +54,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
     await page.getByTestId('type-input-span').click();
     await page.getByRole('option', { name: 'Double', exact: true }).click();
@@ -68,7 +69,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
     await takeEditorScreenshot(page);
   });
@@ -80,7 +81,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Delete', { exact: true }).click();
     await takeEditorScreenshot(page);
   });
@@ -118,14 +119,14 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Query properties').click();
     await page.getByText('Ring bond count').click();
     await takeEditorScreenshot(page);
@@ -146,7 +147,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
@@ -166,7 +167,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
@@ -179,7 +180,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
@@ -193,7 +194,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Enhanced stereochemistry...').click();
     await page.getByLabel('Create new AND Group').check();
     await pressButton(page, 'Apply');
@@ -220,7 +221,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Enhanced stereochemistry...').click();
     await page.getByLabel('Create new OR Group').check();
     await pressButton(page, 'Apply');
@@ -246,7 +247,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
   });
@@ -262,12 +263,12 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain-with-stereo-and-atoms.ket', page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getAtomByIndex(page, { label: 'O' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
     point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
   });
@@ -282,8 +283,8 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.mouse.click(canvasClickX, canvasClickY);
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, canvasClickX, canvasClickY);
     await takeEditorScreenshot(page);
   });
 
@@ -297,7 +298,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
@@ -311,7 +312,7 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
   });
 
@@ -324,7 +325,7 @@ test.describe('Right-click menu', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Attach S-Group...', { exact: true }).click();
     await page.getByPlaceholder('Enter name').click();
     await page.getByPlaceholder('Enter name').fill('A!@#$$$test');
@@ -343,15 +344,15 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
 
     point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();
     await page.getByLabel('Label').fill('N');
@@ -368,15 +369,15 @@ test.describe('Right-click menu', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
     await takeEditorScreenshot(page);
   });

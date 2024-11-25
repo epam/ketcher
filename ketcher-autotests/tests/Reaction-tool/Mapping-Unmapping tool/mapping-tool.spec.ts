@@ -75,7 +75,7 @@ test.describe('Mapping Tools', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
     await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await dragMouseTo(x, y, page);
   });

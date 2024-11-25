@@ -9,18 +9,19 @@ import {
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
-  selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
   moveMouseAway,
   selectAllStructuresOnCanvas,
+  selectMacroBond,
   clickOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -87,7 +88,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -145,7 +146,7 @@ test.describe('Rectangle Selection Tool', () => {
     const peptide4 = peptides.nth(3);
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -230,7 +231,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

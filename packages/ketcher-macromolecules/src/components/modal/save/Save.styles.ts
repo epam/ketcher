@@ -50,3 +50,37 @@ export const SvgPreview = styled('div')(({ theme }) => ({
   position: 'relative',
   border: `1px solid ${theme.ketcher.color.input.border.regular}`,
 }));
+
+export const PreviewContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexGrow: 1,
+  position: 'relative',
+
+  '& button': {
+    opacity: 0,
+    position: 'absolute',
+    right: '12px',
+    top: '12px',
+    borderRadius: '4px',
+    padding: '2px',
+    width: '28px',
+    height: '28px',
+
+    '&:not(:active)': {
+      backgroundColor: theme.ketcher.color.background.primary,
+      color: theme.ketcher.color.text.primary,
+    },
+  },
+
+  '&:hover button': {
+    opacity: 1,
+  },
+
+  '&:focus-within button': {
+    opacity: 0,
+  },
+
+  '&:focus-within button:hover': {
+    opacity: 1,
+  },
+}));

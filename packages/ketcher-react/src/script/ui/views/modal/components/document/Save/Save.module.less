@@ -60,14 +60,14 @@
     .tabs {
       outline: none;
       padding-left: 12px;
-    
+
       &[tabindex='0'] {
         a:nth-child(2) {
           color: @error-color;
         }
       }
     }
-    
+
     .warnings {
       max-height: 50px;
       flex-shrink: 0;
@@ -76,13 +76,13 @@
       overflow-x: auto;
       box-sizing: border-box;
       background-color: @color-primary-light;
-    
+
       .scrollbar();
-    
+
       .warningsContainer {
         display: flex;
         padding-bottom: 12px;
-    
+
         .warningsArr {
           color: @color-text-primary;
           white-space: pre-line;
@@ -92,11 +92,40 @@
         }
       }
     }
-    
+
     .previewBackground {
       background-color: @color-primary-light;
+      position: relative;
+
+      button {
+        opacity: 0;
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        border-radius: 4px;
+        padding: 2px;
+        width: 28px;
+        height: 28px;
+
+        &:not(:active) {
+          background-color: @color-background-primary;
+          color: @color-text-primary;
+        }
+      }
+
+      &:hover button {
+        opacity: 1;
+      }
+
+      &:focus-within button {
+        opacity: 0;
+      }
+
+      &:focus-within button:hover {
+        opacity: 1;
+      }
     }
-    
+
     .previewArea {
       padding: 12px;
       display: block;
@@ -115,9 +144,9 @@
       box-shadow: none;
       border: none;
       border-radius: 0;
-    
+
       .scrollbar();
-    
+
       &:hover,
       &:active,
       &:focus {
@@ -126,7 +155,7 @@
         border: none;
       }
     }
-    
+
     .loadingCirclesContainer {
       display: flex;
       flex-direction: column;
@@ -136,7 +165,7 @@
       width: 100%;
       margin-top: 20%;
     }
-    
+
     .imageContainer {
       display: flex;
       flex-direction: column;
@@ -145,7 +174,7 @@
       height: 220px;
       border-top: 1px solid @color-grey-3;
       border-bottom: 1px solid @color-grey-3;
-    
+
       img {
         background-color: @color-background-primary;
         max-height: 220px;

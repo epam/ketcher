@@ -11,7 +11,6 @@ import {
   saveToFile,
   selectEraseTool,
   selectPartOfMolecules,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -23,7 +22,9 @@ import {
   Bases,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
@@ -84,7 +85,7 @@ test.describe('Erase Tool', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

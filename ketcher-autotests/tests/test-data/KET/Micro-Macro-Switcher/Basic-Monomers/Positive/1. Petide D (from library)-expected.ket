@@ -2,7 +2,7 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer2"
+                "$ref": "monomer0"
             }
         ],
         "connections": [],
@@ -12,12 +12,12 @@
             }
         ]
     },
-    "monomer2": {
+    "monomer0": {
         "type": "monomer",
-        "id": "2",
+        "id": "0",
         "position": {
-            "x": 17.888623844398268,
-            "y": -10.316132522921873
+            "x": 17.893213688148265,
+            "y": -10.322382522921874
         },
         "alias": "D",
         "templateId": "D___Aspartic acid"

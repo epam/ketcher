@@ -9,7 +9,6 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectRectangleArea,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
@@ -26,7 +25,9 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
@@ -75,7 +76,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

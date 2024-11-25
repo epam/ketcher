@@ -3,10 +3,11 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectSingleBondTool,
+  selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
@@ -47,7 +48,7 @@ test.describe('Actions with CHEM', () => {
     Description: CHEM name fits in its icon when placed on canvas.
     */
     await openFileAndAddToCanvasMacro('KET/all-chems.ket', page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +61,7 @@ test.describe('Actions with CHEM', () => {
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('Test-6-Ch').locator('..').hover();
     await page.mouse.down();
     await page.getByText('A6OH').locator('..').hover();

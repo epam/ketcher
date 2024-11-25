@@ -562,6 +562,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

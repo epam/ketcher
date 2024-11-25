@@ -3,11 +3,12 @@ import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
+  selectMacroBond,
   selectPartOfMolecules,
-  selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -67,7 +68,7 @@ test.describe('Clear Canvas Tool', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

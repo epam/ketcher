@@ -196,7 +196,7 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
       return;
     } catch (error) {
       attempts++;
-      await page.mouse.click(0, 0);
+      await clickOnCanvas(page, 0, 0);
       await page.keyboard.press('Escape');
       if (await closeWindowXButton.isVisible()) {
         await closeWindowXButton.click();

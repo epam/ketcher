@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
+  clickOnCanvas,
 } from '@utils';
 import { ElementLabel } from 'ketcher-core';
 
@@ -333,12 +334,12 @@ const COORDS_CLICK = {
   Function for attaching structures on top of bonds attached on Benzene ring
   */
 export async function attachOnTopOfBenzeneBonds(page: Page) {
-  await page.mouse.click(COORDS_CLICK.x1, COORDS_CLICK.y1);
-  await page.mouse.click(COORDS_CLICK.x2, COORDS_CLICK.y2);
-  await page.mouse.click(COORDS_CLICK.x3, COORDS_CLICK.y3);
-  await page.mouse.click(COORDS_CLICK.x4, COORDS_CLICK.y4);
-  await page.mouse.click(COORDS_CLICK.x5, COORDS_CLICK.y5);
-  await page.mouse.click(COORDS_CLICK.x6, COORDS_CLICK.y6);
+  await clickOnCanvas(page, COORDS_CLICK.x2, COORDS_CLICK.y2);
+  await clickOnCanvas(page, COORDS_CLICK.x3, COORDS_CLICK.y3);
+  await clickOnCanvas(page, COORDS_CLICK.x1, COORDS_CLICK.y1);
+  await clickOnCanvas(page, COORDS_CLICK.x4, COORDS_CLICK.y4);
+  await clickOnCanvas(page, COORDS_CLICK.x5, COORDS_CLICK.y5);
+  await clickOnCanvas(page, COORDS_CLICK.x6, COORDS_CLICK.y6);
 }
 
 export async function fillFieldByLabel(

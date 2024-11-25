@@ -49,7 +49,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await resetCurrentTool(page);
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
-  await page.mouse.click;
+  await clickOnCanvas;
 
   await selectAtomInToolbar(AtomButton.Oxygen, page);
   await clickOnCanvas(page, x + shiftForOxygen, y, {

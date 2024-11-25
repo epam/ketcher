@@ -77,7 +77,7 @@ export async function clickOnCanvas(
   },
 ) {
   await waitForRender(page, async () => {
-    await clickOnCanvas(page, x, y, options);
+    await page.mouse.click(x, y, options);
   });
 }
 

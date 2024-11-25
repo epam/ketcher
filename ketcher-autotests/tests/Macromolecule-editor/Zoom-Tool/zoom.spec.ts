@@ -327,7 +327,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('meD___N-Methyl-Aspartic acid').click();
-    await page.mouse.click(x1, y1);
+    await clickOnCanvas(page, x1, y1);
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
   });

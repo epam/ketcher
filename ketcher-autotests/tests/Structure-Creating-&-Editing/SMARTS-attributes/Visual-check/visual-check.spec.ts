@@ -2,6 +2,7 @@ import { Page, test, expect } from '@playwright/test';
 import {
   BondTypeName,
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   doubleClickOnAtom,
   getAtomByIndex,
   pressButton,
@@ -223,9 +224,7 @@ test.describe('Checking if atoms are displayed correctly', () => {
     await page.getByTestId('period-table').click();
     await page.getByTestId('Ti-button').click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
-    await waitForRender(page, async () => {
-      await page.mouse.click(point.x, point.y);
-    });
+    await clickOnCanvas(page, point.x, point.y);
     await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
     await takeEditorScreenshot(page);
   });

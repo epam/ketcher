@@ -79,4 +79,10 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public get beginningElementPosition() {
     return undefined;
   }
+
+  protected get modificationConfig() {
+    return {
+      backgroundId: '',
+    };
+  }
 }

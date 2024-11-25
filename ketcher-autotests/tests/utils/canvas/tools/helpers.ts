@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
+  clickOnCanvas,
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
@@ -97,9 +98,10 @@ export async function selectSequenceLayoutModeTool(page: Page) {
 
 export async function startNewSequence(page: Page) {
   const newSequenceCellCoordinates = { x: 50, y: 50 };
-  await page.mouse.click(200, 200, { button: 'right' });
+  await clickOnCanvas(page, 200, 200, { button: 'right' });
   await page.getByTestId('start_new_sequence').click();
-  await page.mouse.click(
+  await clickOnCanvas(
+    page,
     newSequenceCellCoordinates.x,
     newSequenceCellCoordinates.y,
   );

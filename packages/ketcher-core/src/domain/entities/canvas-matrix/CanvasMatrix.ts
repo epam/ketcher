@@ -194,6 +194,7 @@ export class CanvasMatrix {
           rowNumber,
           columnNumber,
         );
+
         if (!initialMatrixCell) {
           this.matrix.set(
             rowNumber,
@@ -349,6 +350,5 @@ export class CanvasMatrix {
       },
       (connection: Connection): number => connection.yOffset,
     );
-    console.log(this);
   }
 }

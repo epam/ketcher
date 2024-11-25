@@ -65,7 +65,7 @@ test.describe('Sequence edit mode', () => {
     */
     const x = 100;
     const y = 100;
-    await page.mouse.click(x, y, { button: 'right' });
+    await clickOnCanvas(page, x, y, { button: 'right' });
     await takeEditorScreenshot(page);
     await page.getByTestId('start_new_sequence').click();
     await enterSequence(page, 'acgtu');

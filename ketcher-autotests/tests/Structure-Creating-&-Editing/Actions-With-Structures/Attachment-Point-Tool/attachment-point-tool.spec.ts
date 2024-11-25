@@ -186,7 +186,11 @@ test.describe('Attachment Point Tool', () => {
     const clickToOutsideStructureY = 100;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
+    await clickOnCanvas(
+      page,
+      clickToOutsideStructureX,
+      clickToOutsideStructureY,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -617,7 +621,7 @@ test.describe('Attachment Point Tool', () => {
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await page.mouse.click(point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y);
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
@@ -704,7 +708,7 @@ test.describe('Attachment Point Tool', () => {
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await page.mouse.click(point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y);
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 

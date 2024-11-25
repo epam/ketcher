@@ -185,12 +185,12 @@ test.describe(`Bond tool:`, () => {
       const doubleBond = await getTopBondByAttributes(page, {
         type: BondType.DOUBLE,
       });
-      await page.mouse.click(doubleBond.x, doubleBond.y);
+      await clickOnCanvas(page, doubleBond.x, doubleBond.y);
 
       const singleBond = await getTopBondByAttributes(page, {
         type: BondType.SINGLE,
       });
-      await page.mouse.click(singleBond.x, singleBond.y);
+      await clickOnCanvas(page, singleBond.x, singleBond.y);
       await takeEditorScreenshot(page);
       await selectAction(TopPanelButton.Clear, page);
     });
@@ -368,9 +368,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
 
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x + DELTA_X, point.y);
-        });
+        await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
           await selectTopPanelButton(TopPanelButton.Undo, page);
         });
@@ -378,7 +376,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        await page.mouse.click(point.x + DELTA_X, point.y);
+        await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
           await selectTopPanelButton(TopPanelButton.Undo, page);
         });

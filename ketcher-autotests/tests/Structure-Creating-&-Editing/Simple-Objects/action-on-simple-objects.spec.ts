@@ -21,6 +21,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -114,8 +115,8 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await clickOnCanvas(page, point2.x, point2.y);
     await waitForRender(page, async () => {
-      await page.mouse.click(point2.x, point2.y);
       await dragMouseTo(point3.x, point3.y, page);
     });
     await takeEditorScreenshot(page);
@@ -156,13 +157,13 @@ test.describe('Action on simples objects', () => {
       });
     }
     await copyAndPaste(page);
-    await page.mouse.click(anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
     await cutAndPaste(page);
-    await page.mouse.click(anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);

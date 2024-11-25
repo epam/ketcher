@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   TopPanelButton,
   openFileAndAddToCanvasMacro,
@@ -22,6 +22,9 @@ import {
   SequenceType,
   PeptideType,
   MacroFileType,
+  MacromoleculesTopPanelButton,
+  selectMacromoleculesPanelButton,
+  selectSaveTool,
 } from '@utils';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
@@ -691,6 +694,7 @@ interface ISequenceString {
   sequenceType:
     | Exclude<SequenceType, SequenceType.PEPTIDE>
     | [SequenceType.PEPTIDE, PeptideType];
+  HELMString?: string;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -772,8 +776,8 @@ const incorrectSequences: ISequenceString[] = [
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'Zzz',
-    sequenceString: 'Zzz',
+    sequenceDescription: 'Ala|',
+    sequenceString: 'Ala|',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
@@ -812,16 +816,9 @@ const incorrectSequences: ISequenceString[] = [
   },
   {
     testCaseDescription:
-      '6. Verify export option includes both single-letter and three-letter sequence codes',
-    sequenceDescription: 'CysAAsx',
-    sequenceString: 'CysAAsx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-  },
-  {
-    testCaseDescription:
-      '6. Verify export option includes both single-letter and three-letter sequence codes',
-    sequenceDescription: 'Cys A Asx',
-    sequenceString: 'Cys A Asx',
+      '6. Verify error when a three-letter sequence cannot be matched to amino acids',
+    sequenceDescription: 'Alx',
+    sequenceString: 'Alx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
 ];
@@ -853,6 +850,214 @@ for (const incorrectSequence of incorrectSequences) {
 
     await takeEditorScreenshot(page);
 
+    await closeErrorMessage(page);
+  });
+}
+
+test(`7. Verify export option includes both single-letter and three-letter sequence codes)`, async ({
+  page,
+}) => {
+  /*
+   * Description: Verify export option includes both single-letter and three-letter sequence codes
+   * Case: 1. Open Save structure dialog
+   *       2. Verify File format list contains single-letter and three-letter Sequence options
+   */
+  await selectSaveTool(page);
+
+  // Click on "File format" dropdown
+  await page.getByRole('combobox').click();
+  const dropdown = page.locator('ul[role="listbox"]');
+  const singleLetter = dropdown.locator('li', {
+    hasText: 'Sequence (1-letter code)',
+  });
+  const threeLetter = dropdown.locator('li', {
+    hasText: 'Sequence (3-letter code)',
+  });
+
+  await expect(singleLetter).toBeVisible();
+  await expect(threeLetter).toBeVisible();
+});
+
+const sequencesToExport: ISequenceString[] = [
+  {
+    testCaseDescription:
+      '8.  Verify export functionality for sequences using three-letter codes only',
+    sequenceDescription: 'Three letters peptide codes - part 1',
+    sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '8.  Verify export functionality for sequences using three-letter codes only',
+    sequenceDescription: 'Three letters peptide codes - part 2',
+    sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '8.  Verify export functionality for sequences using three-letter codes only',
+    sequenceDescription: 'Three letters peptide codes - part 3',
+    sequenceString: 'SerThrSecValTrpXaaTyrGlx',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+];
+
+async function openSaveToSequenceDialog(page: Page, seqeunceType: PeptideType) {
+  await selectSaveTool(page);
+  await chooseFileFormat(page, `Sequence (${seqeunceType})`);
+}
+
+for (const sequenceToExport of sequencesToExport) {
+  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
+    page,
+  }) => {
+    /* 
+  Test case: https://github.com/epam/ketcher/issues/5215
+  Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
+  Case:
+      1. Load correct sequence via paste from clipboard way
+      2. Export canvas to 3-letter sequence
+      2. Compare export result with source sequence string
+  */
+    test.setTimeout(35000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      sequenceToExport.shouldFail === true,
+      `That test fails because of ${sequenceToExport.issueNumber} issue.`,
+    );
+    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      [MacroFileType.Sequence, sequenceToExport.sequenceType],
+      sequenceToExport.sequenceString,
+    );
+
+    await openSaveToSequenceDialog(page, PeptideType.threeLetterCode);
+    const sequenceExportResult = await page
+      .getByTestId('preview-area-text')
+      .textContent();
+
+    if (sequenceToExport.differentSequenceExport) {
+      expect(sequenceExportResult).toEqual(
+        sequenceToExport.differentSequenceExport,
+      );
+    } else {
+      expect(sequenceExportResult).toEqual(sequenceToExport.sequenceString);
+    }
+
+    await pressButton(page, 'Cancel');
+  });
+}
+
+const nonStandardAmbiguousPeptides: ISequenceString[] = [
+  {
+    testCaseDescription:
+      '9. Verify export with non-standard ambiguous amino acids',
+    sequenceDescription: 'ambiguous peptide mixture of A, C, D',
+    HELMString: 'PEPTIDE1{(A+C+D)}$$$$V2.0',
+    sequenceString:
+      'not applicable - export of anmbiguous petide to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '9. Verify export with non-standard ambiguous amino acids',
+    sequenceDescription: 'ambiguous peptide alternative of A, C, D',
+    HELMString: 'PEPTIDE1{(A,C,D)}$$$$V2.0',
+    sequenceString:
+      'not applicable - export of anmbiguous petide to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '10. Verify that non pure peptide sequences are prevented from exporting',
+    sequenceDescription: 'peptide (A) and sugar (R)',
+    HELMString: 'PEPTIDE1{A}|RNA1{R}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
+    sequenceString:
+      'not applicable - export on pure peptide sequences to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '10. Verify that non pure peptide sequences are prevented from exporting',
+    sequenceDescription: 'peptide (A) and phopsphate (P)',
+    HELMString: 'PEPTIDE1{A}|RNA1{P}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
+    sequenceString:
+      'not applicable - export on pure peptide sequences to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '10. Verify that non pure peptide sequences are prevented from exporting',
+    sequenceDescription: 'peptide (A) and unsplit nucleotide (2-damdA)',
+    HELMString: 'PEPTIDE1{A}|RNA1{[2-damdA]}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
+    sequenceString:
+      'not applicable - export on pure peptide sequences to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+  {
+    testCaseDescription:
+      '10. Verify that non pure peptide sequences are prevented from exporting',
+    sequenceDescription: 'peptide (A) and CHEM(4aPEGMal)',
+    HELMString: 'PEPTIDE1{A}|CHEM1{[4aPEGMal]}$PEPTIDE1,CHEM1,1:R2-1:R1$$$V2.0',
+    sequenceString:
+      'not applicable - export on pure peptide sequences to sequence is impossible',
+    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+  },
+];
+
+for (const sequenceToExport of nonStandardAmbiguousPeptides) {
+  test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5215
+     * Description: Verify export with non-standard ambiguous amino acids(error should appear)
+     * Case:
+     *     1. Load correct HELM via paste from clipboard way
+     *     2. Export canvas to 3-letter sequence
+     *     2. Take a screenshot to ensure error message
+     *     For ambigous monomer: "Non-standard ambiguous amino acids cannot be exported to the selected format"
+     *     For non pure peptide chains: "Convert error! Error during sequence type recognition(RNA, DNA or Peptide)"
+     */
+    test.setTimeout(35000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      sequenceToExport.shouldFail === true,
+      `That test fails because of ${sequenceToExport.issueNumber} issue.`,
+    );
+    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
+
+    if (sequenceToExport.HELMString) {
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        sequenceToExport.HELMString,
+      );
+    }
+
+    await openSaveToSequenceDialog(page, PeptideType.threeLetterCode);
+
+    await takeEditorScreenshot(page);
     await closeErrorMessage(page);
   });
 }

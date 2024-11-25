@@ -26,6 +26,10 @@ export class SugarRenderer extends BaseMonomerRenderer {
     return this.monomer.isModification ? '#333333' : '#fff';
   }
 
+  protected get modificationConfig() {
+    return { backgroundId: '#sugar-modified-background' };
+  }
+
   protected getMonomerColor(theme) {
     return theme.monomer.color[RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA].regular;
   }

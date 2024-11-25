@@ -522,19 +522,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.beginning);
   }
 
+  protected abstract get modificationConfig();
+
   protected drawModification() {
+    const config = this.modificationConfig;
     const DARK_COLOR = '#333333';
     const LIGHT_COLOR = 'white';
-
-    const modificationConfigs = {
-      Phosphate: { backgroundId: '#phosphate-modified-background' },
-      Sugar: { backgroundId: '#sugar-modified-background' },
-      RNABase: { backgroundId: '#rna-base-modified-background' },
-      Peptide: { backgroundId: '#modified-background', requiresFill: true },
-    };
-
-    const monomerClassName = this.monomer.constructor.name;
-    const config = modificationConfigs[monomerClassName];
 
     if (config && this.monomer.isModification) {
       let fillColor: string | undefined;

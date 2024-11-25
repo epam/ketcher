@@ -29,6 +29,10 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     return this.monomer.isModification ? '#fff' : '#333333';
   }
 
+  protected get modificationConfig() {
+    return { backgroundId: '#phosphate-modified-background' };
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,

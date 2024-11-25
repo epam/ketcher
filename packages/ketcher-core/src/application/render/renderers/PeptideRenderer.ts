@@ -24,6 +24,10 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     );
   }
 
+  protected get modificationConfig() {
+    return { backgroundId: '#modified-background', requiresFill: true };
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,

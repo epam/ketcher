@@ -59,7 +59,22 @@ export async function clickOnCanvas(
   page: Page,
   x: number,
   y: number,
-  options?: any,
+  options?: {
+    /**
+     * Defaults to `left`.
+     */
+    button?: 'left' | 'right' | 'middle';
+
+    /**
+     * defaults to 1. See [UIEvent.detail].
+     */
+    clickCount?: number;
+
+    /**
+     * Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
+     */
+    delay?: number;
+  },
 ) {
   await waitForRender(page, async () => {
     await page.mouse.click(x, y, options);
@@ -98,6 +113,7 @@ export function selectOption(page: Page, name = '') {
 export function selectOptionByText(page: Page, text = '') {
   return page.getByText(text, { exact: true }).click();
 }
+
 /* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */

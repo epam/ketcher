@@ -2,6 +2,7 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   BondType,
+  clickOnCanvas,
   doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -554,7 +555,7 @@ test.describe('Bond Properties', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
 
       await selectRingButton(RingButton.Benzene, page);
-      await page.mouse.click(x + 150, y + 150);
+      await clickOnCanvas(page, x + 150, y + 150);
 
       const expectedFile = await getRxn(page, 'v2000');
       await saveToFile('Rxn-V2000/rxn-1465-to-open-expected.rxn', expectedFile);

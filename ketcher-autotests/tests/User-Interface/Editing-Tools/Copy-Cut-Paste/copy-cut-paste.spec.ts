@@ -349,7 +349,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
     await pasteFromClipboardByKeyboard(page);
-    await page.mouse.click(x2, y2);
+    await clickOnCanvas(page, x2, y2);
     await takeEditorScreenshot(page);
   });
 

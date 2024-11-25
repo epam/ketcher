@@ -36,59 +36,48 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    const WHITE = 'white';
-    const BLACK = '#333333';
-    const peptideColorsMap: { [key: string]: string } = {
-      D: BLACK,
-      E: WHITE,
-      K: BLACK,
-      H: WHITE,
-      O: WHITE,
-      R: WHITE,
-      Q: BLACK,
-      Y: WHITE,
-      U: BLACK,
-      S: WHITE,
-      C: WHITE,
-      N: WHITE,
-      T: WHITE,
-      L: BLACK,
-      I: WHITE,
-      F: WHITE,
-      A: WHITE,
-      W: BLACK,
-      P: BLACK,
-      G: BLACK,
-      M: BLACK,
-      V: BLACK,
-    };
+    const LIGHT_COLOR = 'white';
+    const DARK_COLOR = '#333333';
 
-    const modificateColorsMap: { [key: string]: string } = {
-      D: WHITE,
+    const peptideColorsMap: { [key: string]: string } = {
+      D: DARK_COLOR,
+      E: LIGHT_COLOR,
+      K: DARK_COLOR,
+      H: LIGHT_COLOR,
+      O: LIGHT_COLOR,
+      R: LIGHT_COLOR,
+      Q: DARK_COLOR,
+      Y: LIGHT_COLOR,
+      U: DARK_COLOR,
+      S: LIGHT_COLOR,
+      C: LIGHT_COLOR,
+      N: LIGHT_COLOR,
+      T: LIGHT_COLOR,
+      L: DARK_COLOR,
+      I: LIGHT_COLOR,
+      F: LIGHT_COLOR,
+      A: LIGHT_COLOR,
+      W: DARK_COLOR,
+      P: DARK_COLOR,
+      G: DARK_COLOR,
+      M: DARK_COLOR,
+      V: DARK_COLOR,
     };
 
     const monomerCode = this.monomer.monomerItem.props.MonomerNaturalAnalogCode;
-    const colorsMap = this.monomer.isModification
-      ? modificateColorsMap
-      : peptideColorsMap;
+    let baseColor = peptideColorsMap[monomerCode] ?? super.textColor;
 
-    return colorsMap[monomerCode] ?? super.textColor;
-  }
-
-  protected highlightIfModified(): void {
     if (this.monomer.isModification) {
-      this.rootElement
-        ?.append('use')
-        .attr('xlink:href', '#modified-background')
-        .attr('class', 'modification-background');
+      baseColor = baseColor === LIGHT_COLOR ? DARK_COLOR : LIGHT_COLOR;
     }
+
+    return baseColor;
   }
 
   show(theme) {
     super.show(theme);
     this.appendEnumeration();
     this.appendChainBeginning();
-    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

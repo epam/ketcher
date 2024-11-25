@@ -29,7 +29,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
   public declare bodyElement?: D3SvgElementSelection<SVGUseElement, this>;
-
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
@@ -517,12 +516,46 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.beginning);
   }
 
+  protected drawModification() {
+    const DARK_COLOR = '#333333';
+    const LIGHT_COLOR = 'white';
+
+    const modificationConfigs = {
+      Phosphate: { backgroundId: '#phosphate-modified-background' },
+      Sugar: { backgroundId: '#sugar-modified-background' },
+      RNABase: { backgroundId: '#rna-base-modified-background' },
+      Peptide: { backgroundId: '#modified-background', requiresFill: true },
+    };
+
+    const monomerClassName = this.monomer.constructor.name;
+    const config = modificationConfigs[monomerClassName];
+
+    if (config && this.monomer.isModification) {
+      let fillColor: string | undefined;
+
+      if (config.requiresFill) {
+        const isTextColorDark = this.textColor === DARK_COLOR;
+        fillColor = isTextColorDark ? LIGHT_COLOR : DARK_COLOR;
+      }
+
+      const useElement = this.rootElement
+        ?.append('use')
+        .attr('xlink:href', config.backgroundId)
+        .attr('class', 'modification-background');
+
+      if (fillColor) {
+        useElement?.attr('fill', fillColor);
+      }
+    }
+  }
+
   public show(theme?) {
     this.rootElement =
       this.rootElement ||
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
     this.appendEvents();
+    this.drawModification();
 
     this.appendLabel(this.rootElement);
     this.appendHoverAreaElement();

@@ -41,19 +41,9 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .attr('fill', this.getMonomerColor(theme));
   }
 
-  protected highlightIfModified(): void {
-    if (this.monomer.isModification) {
-      this.rootElement
-        ?.append('use')
-        .attr('xlink:href', '#sugar-modified-background')
-        .attr('class', 'modification-background');
-    }
-  }
-
   show(theme) {
     super.show(theme);
     this.appendChainBeginning();
-    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

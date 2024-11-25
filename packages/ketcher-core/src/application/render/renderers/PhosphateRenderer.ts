@@ -29,15 +29,6 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     return this.monomer.isModification ? '#fff' : '#333333';
   }
 
-  protected highlightIfModified(): void {
-    if (this.monomer.isModification) {
-      this.rootElement
-        ?.append('use')
-        .attr('xlink:href', '#phosphate-modified-background')
-        .attr('class', 'modification-background');
-    }
-  }
-
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
@@ -51,7 +42,6 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
 
   show(theme) {
     super.show(theme);
-    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

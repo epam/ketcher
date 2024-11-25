@@ -35,19 +35,9 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
       .attr('fill', this.getMonomerColor(theme));
   }
 
-  protected highlightIfModified(): void {
-    if (this.monomer.isModification) {
-      this.rootElement
-        ?.append('use')
-        .attr('xlink:href', '#rna-base-modified-background')
-        .attr('class', 'modification-background');
-    }
-  }
-
   show(theme) {
     super.show(theme);
     this.appendEnumeration();
-    this.highlightIfModified();
   }
 
   public get enumerationElementPosition() {

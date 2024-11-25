@@ -177,7 +177,7 @@ test.describe('Snake Bond Tool', () => {
     );
 
     await selectSnakeLayoutModeTool(page);
-
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -574,6 +574,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -663,6 +664,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -678,6 +680,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -696,6 +699,7 @@ test.describe('Snake Bond Tool', () => {
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -760,6 +764,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1003,7 +1008,7 @@ test.describe('Snake Bond Tool', () => {
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
     await page.mouse.wheel(0, 400);
     await page.mouse.wheel(0, -400);
-
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -1028,6 +1033,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1055,6 +1061,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

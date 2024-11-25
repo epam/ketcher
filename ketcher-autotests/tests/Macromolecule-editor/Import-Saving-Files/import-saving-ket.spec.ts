@@ -272,6 +272,7 @@ test.describe('Import-Saving .ket Files', () => {
 
     await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -28,6 +28,7 @@ import {
   Sugars,
   Bases,
   selectMacroBond,
+  moveMouseAway,
 } from '@utils';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -96,6 +97,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await selectSnakeLayoutModeTool(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
   }

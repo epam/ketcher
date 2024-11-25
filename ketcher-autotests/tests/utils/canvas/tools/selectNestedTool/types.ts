@@ -35,6 +35,11 @@ export const BondTool: toolType = {
   CROSSED: [14, 'bond-crossed'],
 };
 
+export const MacroBondTool: { [key: string]: DropdownToolIds } = {
+  SINGLE: 'single-bond',
+  HYDROGEN: 'hydrogen-bond',
+};
+
 export const SelectTool: toolType = {
   RECTANGLE_SELECTION: [1, 'select-rectangle'],
   LASSO_SELECTION: [2, 'select-lasso'],

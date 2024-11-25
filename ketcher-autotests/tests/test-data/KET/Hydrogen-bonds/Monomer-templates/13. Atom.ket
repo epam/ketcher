@@ -1,0 +1,24 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ],
+        "connections": [],
+        "templates": []
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Br",
+                "location": [
+                    18.675000000000033,
+                    -9.350000000000003,
+                    0
+                ]
+            }
+        ]
+    }
+}

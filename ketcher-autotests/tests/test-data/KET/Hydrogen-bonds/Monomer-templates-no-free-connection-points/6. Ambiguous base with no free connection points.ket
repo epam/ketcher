@@ -1,0 +1,1079 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer1450"
+            },
+            {
+                "$ref": "monomer1452"
+            },
+            {
+                "$ref": "monomer1461"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer1452",
+                    "attachmentPointId": "R1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1450",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer1450",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer1461",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__oC64m5___4-Hexan-6-ol-5-methylcytosine__nC65U___5-Aminohexyluracil_"
+            },
+            {
+                "$ref": "monomerTemplate-oC64m5___4-Hexan-6-ol-5-methylcytosine"
+            },
+            {
+                "$ref": "monomerTemplate-nC65U___5-Aminohexyluracil"
+            },
+            {
+                "$ref": "monomerTemplate-Test-6-Ch___Test-6-AP-Chem"
+            }
+        ]
+    },
+    "monomer1450": {
+        "type": "ambiguousMonomer",
+        "id": "1450",
+        "position": {
+            "x": 39.92724999999998,
+            "y": -35.821999999999996
+        },
+        "alias": "%",
+        "templateId": "alternatives__oC64m5___4-Hexan-6-ol-5-methylcytosine__nC65U___5-Aminohexyluracil_"
+    },
+    "ambiguousMonomerTemplate-alternatives__oC64m5___4-Hexan-6-ol-5-methylcytosine__nC65U___5-Aminohexyluracil_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__oC64m5___4-Hexan-6-ol-5-methylcytosine__nC65U___5-Aminohexyluracil_",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "oC64m5___4-Hexan-6-ol-5-methylcytosine"
+            },
+            {
+                "templateId": "nC65U___5-Aminohexyluracil"
+            }
+        ]
+    },
+    "monomerTemplate-oC64m5___4-Hexan-6-ol-5-methylcytosine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    -4.993,
+                    -0.8266,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.6174,
+                    -1.4246,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.4117,
+                    -0.5323,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -2.5816,
+                    0.9581,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.9572,
+                    1.5561,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -4.1271,
+                    3.0464,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.034,
+                    -1.1278,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -5.1629,
+                    0.6638,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -3.4475,
+                    -2.915,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -6.5386,
+                    1.2618,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.1711,
+                    -0.2333,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.5487,
+                    -0.8288,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.7538,
+                    0.0657,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.1314,
+                    -0.5298,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.3365,
+                    0.3647,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.7141,
+                    -0.2308,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    7.9193,
+                    0.6638,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    9.2961,
+                    0.0686,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    16,
+                    17
+                ]
+            }
+        ],
+        "class": "Base",
+        "classHELM": "RNA",
+        "id": "oC64m5___4-Hexan-6-ol-5-methylcytosine",
+        "fullName": "4-Hexan-6-ol-5-methylcytosine",
+        "alias": "oC64m5",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 16,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "C"
+    },
+    "monomerTemplate-nC65U___5-Aminohexyluracil": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    -4.2493,
+                    1.5455,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -4.663,
+                    0.1037,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -3.6212,
+                    -0.9755,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.1657,
+                    -0.6129,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.752,
+                    0.8289,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -2.7938,
+                    1.9081,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.3801,
+                    3.3499,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -4.0349,
+                    -2.4173,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -6.1185,
+                    -0.259,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2949,
+                    1.1888,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.7459,
+                    0.1075,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.203,
+                    0.4673,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.2438,
+                    -0.6139,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    4.7009,
+                    -0.2541,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.7417,
+                    -1.3354,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    7.1988,
+                    -0.9755,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    8.239,
+                    -2.0562,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            }
+        ],
+        "class": "Base",
+        "classHELM": "RNA",
+        "id": "nC65U___5-Aminohexyluracil",
+        "fullName": "5-Aminohexyluracil",
+        "alias": "nC65U",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 2,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 15,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "U"
+    },
+    "monomer1452": {
+        "type": "monomer",
+        "id": "1452",
+        "position": {
+            "x": 39.16074999999998,
+            "y": -31.524500000000007
+        },
+        "alias": "Test-6-Ch",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem"
+    },
+    "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    12.0838,
+                    -6.55,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.1373,
+                    -6.1032,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.2767,
+                    -6.6989,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.3303,
+                    -6.2522,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.4697,
+                    -6.8478,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.5233,
+                    -6.4011,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.6627,
+                    -6.9968,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    5.7162,
+                    -6.55,
+                    0
+                ]
+            },
+            {
+                "label": "I",
+                "location": [
+                    12.7718,
+                    -6.0736,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    5.0282,
+                    -7.0264,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0233,
+                    -5.5351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.0233,
+                    -4.5351,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.3162,
+                    -3.828,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    6.575,
+                    -2.8621,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.6091,
+                    -2.6032,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    5.8679,
+                    -1.6373,
+                    0
+                ]
+            },
+            {
+                "label": "Br",
+                "location": [
+                    4.8679,
+                    -1.6373,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.2767,
+                    -7.6989,
+                    0
+                ]
+            },
+            {
+                "label": "Cl",
+                "location": [
+                    7.575,
+                    -2.8621,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    8.4697,
+                    -7.8478,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    7.9697,
+                    -8.7139,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    7.9697,
+                    -9.7139,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    10
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    10,
+                    11
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
+                    12
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    12,
+                    13
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    14
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    14,
+                    15
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    15,
+                    16
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    17
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    13,
+                    18
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    19
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    19,
+                    20
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    20,
+                    21
+                ]
+            }
+        ],
+        "class": "CHEM",
+        "classHELM": "CHEM",
+        "id": "Test-6-Ch___Test-6-AP-Chem",
+        "fullName": "Test-6-AP-Chem",
+        "alias": "Test-6-Ch",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 15,
+                "leavingGroup": {
+                    "atoms": [
+                        16
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 13,
+                "leavingGroup": {
+                    "atoms": [
+                        18
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 2,
+                "leavingGroup": {
+                    "atoms": [
+                        17
+                    ]
+                },
+                "type": "side"
+            },
+            {
+                "attachmentAtom": 20,
+                "leavingGroup": {
+                    "atoms": [
+                        21
+                    ]
+                },
+                "type": "side"
+            }
+        ]
+    },
+    "monomer1461": {
+        "type": "monomer",
+        "id": "1461",
+        "position": {
+            "x": 38.97325000000001,
+            "y": -39.7245
+        },
+        "alias": "Test-6-Ch",
+        "templateId": "Test-6-Ch___Test-6-AP-Chem"
+    }
+}

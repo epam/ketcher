@@ -6,12 +6,13 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   selectEraseTool,
+  selectMacroBond,
   selectRectangleSelectionTool,
-  selectSingleBondTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
@@ -136,7 +137,7 @@ test.describe('Peptide library testing', () => {
     */
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await clickInTheMiddleOfTheScreen(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('Edc').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -197,7 +198,7 @@ test.describe('Peptide library testing', () => {
       .getByTestId('MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate')
       .click();
     await clickInTheMiddleOfTheScreen(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('MCC').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -244,7 +245,7 @@ test.describe('Peptide library testing', () => {
       page,
     );
     await page.getByText('Nal').locator('..').first().click();
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await takeEditorScreenshot(page);
   });
 
@@ -260,7 +261,7 @@ test.describe('Peptide library testing', () => {
     const y = 200;
     await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
     await page.getByText('Nal').locator('..').first().click();
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await takeEditorScreenshot(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('Nal').locator('..').first().hover();

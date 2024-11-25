@@ -12,6 +12,7 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForKetcherInit,
+  moveMouseAway,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -197,6 +198,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
   });

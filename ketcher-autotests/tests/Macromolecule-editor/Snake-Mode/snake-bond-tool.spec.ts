@@ -4,7 +4,6 @@ import {
   addRnaPresetOnCanvas,
   clickRedo,
   clickUndo,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
@@ -22,7 +21,9 @@ import {
   waitForIndigoToLoad,
   waitForKetcherInit,
   selectAllStructuresOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
@@ -70,7 +71,7 @@ async function createBondedMonomers(page: Page) {
     0,
   );
 
-  await selectSingleBondTool(page);
+  await selectMacroBond(page, MacroBondTool.SINGLE);
 
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide3, peptide4);
@@ -149,7 +150,7 @@ test.describe('Snake Bond Tool', () => {
       3,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
@@ -176,7 +177,7 @@ test.describe('Snake Bond Tool', () => {
     );
 
     await selectSnakeLayoutModeTool(page);
-
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -241,7 +242,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -334,7 +335,7 @@ test.describe('Snake Bond Tool', () => {
       9,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -402,7 +403,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -457,7 +458,7 @@ test.describe('Snake Bond Tool', () => {
       1,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar);
@@ -560,7 +561,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(page, baseOfNucleoside, peptide, 'R2', 'R1');
 
@@ -573,6 +574,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -605,7 +607,7 @@ test.describe('Snake Bond Tool', () => {
       0,
     );
 
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
 
     await takeEditorScreenshot(page);
@@ -662,6 +664,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -677,6 +680,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -695,6 +699,7 @@ test.describe('Snake Bond Tool', () => {
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -759,6 +764,7 @@ test.describe('Snake Bond Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1002,7 +1008,7 @@ test.describe('Snake Bond Tool', () => {
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
     await page.mouse.wheel(0, 400);
     await page.mouse.wheel(0, -400);
-
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -1027,6 +1033,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1054,6 +1061,7 @@ test.describe('Snake Bond Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

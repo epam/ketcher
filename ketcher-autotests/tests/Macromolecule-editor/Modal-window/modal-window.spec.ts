@@ -1,10 +1,11 @@
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
-  selectSingleBondTool,
+  selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
@@ -37,7 +38,7 @@ test.describe('Modal window', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
   });
 
   test('"Connect" button is disabled', async ({ page }) => {

@@ -728,14 +728,14 @@ const correctSequences: ISequenceString[] = [
   {
     testCaseDescription:
       '2. Verify that spaces separate different amino acid sequences in import',
-    sequenceDescription: 'e.g. AlaAla CysCys',
+    sequenceDescription: 'e.g. AlaAla CysCys (1)',
     sequenceString:
       'AlaAsx CysAspGlu PheGlyHisIle XleLysLeuMetAsn PylProGlnArgSerThr SecValTrpXaaTyrGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription: '3. Verify ignoring of line breaks during import',
-    sequenceDescription: 'e.g. AlaGly\nCys',
+    sequenceDescription: 'e.g. AlaGly\nCys (2)',
     sequenceString:
       'Ala\nAsx\n\n Cys\n\n\nAsp\n\n\n\nGlu\n Phe\nGly\nHis\nIle \n\nXle\nLys\nLeu\nMet\nAsn Pyl\nPro\nGln\nArg\nSer\nThr\n SecValTrpXaaTyrGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
@@ -774,35 +774,35 @@ const incorrectSequences: ISequenceString[] = [
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'Ala|',
+    sequenceDescription: 'Ala| (1)',
     sequenceString: 'Ala|',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'ala',
+    sequenceDescription: 'ala (2)',
     sequenceString: 'ala',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'alA',
+    sequenceDescription: 'alA (3)',
     sequenceString: 'alA',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'aLa',
+    sequenceDescription: 'aLa (4)',
     sequenceString: 'aLa',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
-    sequenceDescription: 'ALA',
+    sequenceDescription: 'ALA  (5)',
     sequenceString: 'ALA',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
   },

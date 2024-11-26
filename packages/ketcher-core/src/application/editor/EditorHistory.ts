@@ -51,14 +51,14 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
-    ketcherProvider.getKetcher().changeEvent.dispatch();
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-    ketcherProvider.getKetcher().changeEvent.dispatch();
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -73,7 +73,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-    ketcherProvider.getKetcher().changeEvent.dispatch();
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

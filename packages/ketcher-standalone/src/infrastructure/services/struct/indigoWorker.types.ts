@@ -66,6 +66,7 @@ export enum SupportedFormat {
   SDF = 'sdf',
   FASTA = 'fasta',
   SEQUENCE = 'sequence',
+  SEQUENCE_3_LETTER = 'peptide-sequence-3-letter',
   IDT = 'idt',
   HELM = 'helm',
   RDF = 'rdf',

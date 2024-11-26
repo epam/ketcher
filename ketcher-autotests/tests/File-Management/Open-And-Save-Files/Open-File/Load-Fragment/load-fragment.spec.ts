@@ -18,6 +18,7 @@ import {
   receiveFileComparisonData,
   saveToFile,
   moveOnAtom,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -197,7 +198,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
     async function addSecondHydrogen() {
       await selectAtomInToolbar(AtomButton.Hydrogen, page);
-      await page.mouse.click(x + shiftForSecondHydrogen, y, {
+      await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
       });
     }

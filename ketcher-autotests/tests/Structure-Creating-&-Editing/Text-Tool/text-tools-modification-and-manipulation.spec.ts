@@ -15,6 +15,7 @@ import {
   selectDropdownTool,
   waitForRender,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -142,7 +143,7 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.type('+++');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByRole('dialog').getByRole('textbox').click();
     const text1 =
       'Ketcher is a tool to draw molecular structures and chemical reactions';

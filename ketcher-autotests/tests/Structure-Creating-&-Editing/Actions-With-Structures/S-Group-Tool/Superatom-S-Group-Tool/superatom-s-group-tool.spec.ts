@@ -21,6 +21,7 @@ import {
   saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getKet, getMolfile } from '@utils/formats';
@@ -57,13 +58,13 @@ async function contractExpandRemoveAbbreviation(
   superatomName: string,
 ) {
   point = await getAtomByIndex(page, { label: 'C' }, 3);
-  await page.mouse.click(point.x, point.y, { button: 'right' });
+  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
   await page.getByText('Contract Abbreviation').click();
   await takeEditorScreenshot(page);
   await page.getByText(superatomName).click({ button: 'right' });
   await page.getByText('Expand Abbreviation').click();
   await takeEditorScreenshot(page);
-  await page.mouse.click(point.x, point.y, { button: 'right' });
+  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
   await page.getByText('Remove Abbreviation').click();
 }
 
@@ -117,7 +118,7 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_Y = 380;
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await fillFieldByLabel(page, 'Name', 'Test@!#$%12345');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -214,7 +215,7 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_Y = 600;
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

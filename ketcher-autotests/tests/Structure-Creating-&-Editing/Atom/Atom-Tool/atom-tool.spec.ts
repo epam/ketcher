@@ -31,6 +31,7 @@ import {
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -272,7 +273,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -290,7 +291,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -307,7 +308,7 @@ test.describe('Atom Tool', () => {
     const bromineCoordinates = { x: x + X_DELTA_ONE, y };
 
     await selectAtomInToolbar(AtomButton.Bromine, page);
-    await page.mouse.click(bromineCoordinates.x, bromineCoordinates.y);
+    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);

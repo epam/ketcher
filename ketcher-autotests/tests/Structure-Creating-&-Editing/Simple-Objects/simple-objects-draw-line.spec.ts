@@ -1,5 +1,5 @@
 import { Page, test } from '@playwright/test';
-import { openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
@@ -41,15 +41,15 @@ async function separetingAndMovingLines(page: Page) {
   const point3 = { x: 267, y: 518 };
   const point4 = { x: 534, y: 467 };
   const point5 = { x: 588, y: 277 };
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
   await dragMouseTo(point1.x, point1.y, page);
-  await page.mouse.click(point2.x, point2.y);
+  await clickOnCanvas(page, point2.x, point2.y);
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await selectLineWithSelectionTool(page);
-  await page.mouse.click(point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y);
   await dragMouseTo(point5.x, point5.y, page);
 }
 
@@ -94,7 +94,7 @@ test.describe('draw and highlight line', () => {
     const LineCoordinates = await setupLine(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(LineCoordinates.x, LineCoordinates.y);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
   });

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvas,
@@ -47,7 +48,7 @@ test.describe('R-Group', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -65,7 +66,7 @@ test.describe('R-Group', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });

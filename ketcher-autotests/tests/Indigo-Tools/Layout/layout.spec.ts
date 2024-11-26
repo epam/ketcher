@@ -18,6 +18,7 @@ import {
   takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
+  clickOnCanvas,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -28,7 +29,7 @@ async function openFileWithShift(filename: string, page: Page) {
   });
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const shift = 150;
-  await page.mouse.click(x + shift, y + shift);
+  await clickOnCanvas(page, x + shift, y + shift);
 }
 
 test.describe('Indigo Tools - Layout', () => {

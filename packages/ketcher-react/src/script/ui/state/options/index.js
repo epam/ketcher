@@ -63,6 +63,12 @@ export const initOptionsState = {
     getDefaultOptions(),
     validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
   ),
+  getSettings() {
+    this.settings = Object.assign(
+      getDefaultOptions(),
+      validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
+    );
+  },
   getServerSettings() {
     const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
     const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
@@ -119,6 +125,7 @@ export function appUpdate(data) {
 export function saveSettings(newSettings) {
   storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
   reinitializeTemplateLibrary();
+  initOptionsState.getSettings();
 
   return {
     type: 'SAVE_SETTINGS',

@@ -204,7 +204,9 @@ export async function doubleClickOnAtom(
   atomNumber: number,
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await clickOnCanvas(page, point.x, point.y);
+  await waitForRender(page, async () => {
+    await page.mouse.dblclick(point.x, point.y);
+  });
 }
 
 export async function doubleClickOnBond(

@@ -25,6 +25,7 @@ import {
   saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getKet, getMolfile } from '@utils/formats';
@@ -142,7 +143,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

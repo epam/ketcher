@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  clickOnCanvas,
   copyToClipboardByKeyboard,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
@@ -64,7 +65,7 @@ test.describe('Sequence edit mode', () => {
     */
     const x = 100;
     const y = 100;
-    await page.mouse.click(x, y, { button: 'right' });
+    await clickOnCanvas(page, x, y, { button: 'right' });
     await takeEditorScreenshot(page);
     await page.getByTestId('start_new_sequence').click();
     await enterSequence(page, 'acgtu');
@@ -104,7 +105,7 @@ test.describe('Sequence edit mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

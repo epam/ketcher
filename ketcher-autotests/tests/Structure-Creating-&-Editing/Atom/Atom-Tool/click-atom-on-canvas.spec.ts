@@ -14,6 +14,7 @@ import {
   FunctionalGroups,
   resetCurrentTool,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Click Atom on canvas', () => {
@@ -100,7 +101,7 @@ test.describe('Click Atom on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await selectAtomInToolbar(AtomButton.Fluorine, page);
-    await page.mouse.click(coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

@@ -15,6 +15,7 @@ import {
   resetCurrentTool,
   moveOnAtom,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -119,7 +120,7 @@ test.describe('Click and drag Atom on canvas', () => {
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.mouse.click(coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

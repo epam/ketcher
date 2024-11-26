@@ -6,6 +6,7 @@ import {
   waitForPageInit,
   selectAtomInToolbar,
   AtomButton,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Track Changes', () => {
@@ -23,7 +24,7 @@ test.describe('Track Changes', () => {
 
     const addAtom = async (x: number, y: number) => {
       await selectAtomInToolbar(atomType, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;

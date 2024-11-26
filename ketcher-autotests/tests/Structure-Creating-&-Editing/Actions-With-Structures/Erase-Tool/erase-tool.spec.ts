@@ -11,6 +11,7 @@ import {
   clickOnAtom,
   clickOnBond,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
@@ -88,7 +89,7 @@ test.describe('Erase Tool', () => {
       y: plusElement.pp.y * scale + topBarHeight,
     };
 
-    await page.mouse.click(plusPnt.x, plusPnt.y);
+    await clickOnCanvas(page, plusPnt.x, plusPnt.y);
 
     const plusDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -125,7 +126,7 @@ test.describe('Erase Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
 
-    await page.mouse.click(arrowMiddle.x, arrowMiddle.y);
+    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y);
 
     const arrowDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

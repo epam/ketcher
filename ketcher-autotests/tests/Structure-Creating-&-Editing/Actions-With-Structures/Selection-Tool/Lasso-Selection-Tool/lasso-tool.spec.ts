@@ -17,6 +17,7 @@ import {
   selectDropdownTool,
   waitForRender,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -45,7 +46,7 @@ test.describe('Lasso Selection tool', () => {
   }
 
   async function clickCanvas(page: Page) {
-    await page.mouse.click(xAxis, yAxis);
+    await clickOnCanvas(page, xAxis, yAxis);
   }
 
   test('Selection of atom/bond/molecule', async ({ page }) => {
@@ -56,19 +57,19 @@ test.describe('Lasso Selection tool', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
-    await page.mouse.click(atomPoint.x, atomPoint.y);
+    await clickOnCanvas(page, atomPoint.x, atomPoint.y);
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     const bondPoint = await getBondByIndex(page, {}, 0);
     await page.mouse.move(bondPoint.x, bondPoint.y);
-    await page.mouse.click(bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await page.mouse.click(atomPoint.x, atomPoint.y);
-    await page.mouse.click(bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, atomPoint.x, atomPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page);
     await clickCanvas(page);
@@ -115,8 +116,8 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x - shiftCoords.x, point.y + shiftCoords.y);
-    await page.mouse.click(point.x, point.y + yShift);
+    await clickOnCanvas(page, point.x - shiftCoords.x, point.y + shiftCoords.y);
+    await clickOnCanvas(page, point.x, point.y + yShift);
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
@@ -166,9 +167,7 @@ test.describe('Lasso Selection tool', () => {
     await drawBenzeneRing(page);
     await selectDropdownTool(page, 'bonds', 'bond-singlearomatic');
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
-    });
+    await clickOnCanvas(page, coordinates.x + xDelta, coordinates.y - yDelta);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, selectCoords.x, selectCoords.y);
     const bondIndex = 3;
@@ -187,7 +186,7 @@ test.describe('Lasso Selection tool', () => {
       { type: BondType.SINGLE_OR_AROMATIC },
       0,
     );
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const shiftCoords2 = { x: 5, y: 15 };
     await dragMouseTo(
       point.x - xDelta + shiftCoords2.x,
@@ -241,7 +240,7 @@ test.describe('Lasso Selection tool', () => {
       { type: BondType.SINGLE },
       bondIndex,
     );
-    await page.mouse.click(bondPoint.x, bondPoint.y);
+    await clickOnCanvas(page, bondPoint.x, bondPoint.y);
     await dragMouseTo(
       bondPoint.x + shiftCoords.x,
       bondPoint.y + shiftCoords.y,
@@ -250,7 +249,8 @@ test.describe('Lasso Selection tool', () => {
 
     await selectObjects(page, yAxis, yAxis);
 
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       bondPoint.x + shiftCoords.x,
       bondPoint.y + shiftCoords.y,
     );
@@ -312,7 +312,7 @@ test.describe('Lasso Selection tool', () => {
     const yShift = 100;
     const xShift = 500;
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
-    await page.mouse.click(xAxis, yAxis);
+    await clickOnCanvas(page, xAxis, yAxis);
     await page.getByTestId('select-rectangle').click();
     // 'Shift+Tab' used for switch from Rectangle selection to Lasso
     await page.keyboard.press('Shift+Tab');

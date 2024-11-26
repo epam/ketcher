@@ -3,6 +3,7 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
   TopPanelButton,
+  clickOnCanvas,
   getControlModifier,
   openFileAndAddToCanvas,
   selectTopPanelButton,
@@ -76,7 +77,7 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
 }
 
 export async function resetSelection(page: Page) {
-  page.mouse.click(EMPTY_SPACE_X, EMPTY_SPACE_Y);
+  await clickOnCanvas(page, EMPTY_SPACE_X, EMPTY_SPACE_Y);
 }
 
 export async function addStructureAndSelect(

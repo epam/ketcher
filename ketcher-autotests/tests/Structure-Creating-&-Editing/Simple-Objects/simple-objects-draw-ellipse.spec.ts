@@ -1,5 +1,6 @@
 import { Page, test } from '@playwright/test';
 import {
+  clickOnCanvas,
   LeftPanelButton,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -48,15 +49,15 @@ async function separetingAndMovingEllipse(page: Page) {
   const point3 = { x: 840, y: 262 };
   const point4 = { x: 509, y: 367 };
   const point5 = { x: 464, y: 239 };
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
   await dragMouseTo(point1.x, point1.y, page);
-  await page.mouse.click(point2.x, point2.y);
+  await clickOnCanvas(page, point2.x, point2.y);
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await createSomeStructure(page);
-  await page.mouse.click(point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();
   await dragMouseTo(point5.x, point5.y, page);
 }
@@ -82,7 +83,7 @@ test.describe('Draw Ellipse', () => {
     await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
   });

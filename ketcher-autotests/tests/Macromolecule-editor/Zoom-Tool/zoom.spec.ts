@@ -15,6 +15,7 @@ import {
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
+  clickOnCanvas,
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -319,7 +320,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
@@ -327,7 +328,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('meD___N-Methyl-Aspartic acid').click();
-    await page.mouse.click(x1, y1);
+    await clickOnCanvas(page, x1, y1);
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
   });
@@ -343,7 +344,7 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {

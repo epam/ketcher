@@ -36,6 +36,7 @@ import {
   TopPanelButton,
   selectClearCanvasTool,
   Peptides,
+  clickOnCanvas,
   selectMacroBond,
 } from '@utils';
 import { getKet } from '@utils/formats';
@@ -74,11 +75,11 @@ async function drawThreeMonomers(page: Page) {
   const x3 = 705;
   const y3 = 106;
   await selectMonomer(page, Sugars.ThreeA6);
-  await page.mouse.click(x1, y1);
+  await clickOnCanvas(page, x1, y1);
   await selectMonomer(page, Bases.baA);
-  await page.mouse.click(x2, y2);
+  await clickOnCanvas(page, x2, y2);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x3, y3);
+  await clickOnCanvas(page, x3, y3);
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
@@ -110,7 +111,7 @@ async function drawBasePhosphate(page: Page) {
   await selectMonomer(page, Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await base1.hover();
   await page.mouse.down();
@@ -130,7 +131,7 @@ async function drawSugarPhosphate(page: Page) {
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.Phosphate);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await sugar1.hover();
   await page.mouse.down();
@@ -148,7 +149,7 @@ async function drawSugarBase(page: Page) {
   await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Bases.baA);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await sugar1.hover();
   await page.mouse.down();
@@ -1082,7 +1083,7 @@ test.describe('RNA Library', () => {
       await dragMouseTo(x, y, page);
       await takeEditorScreenshot(page);
       await selectEraseTool(page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
     });
   }
@@ -1204,7 +1205,7 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Redo, page);
       await selectEraseTool(page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -1277,9 +1278,9 @@ test.describe('RNA Library', () => {
 
     // await rnaLibrarySearch.press('Escape');
     // Case 27 here. Dirty hack, can't believe I did it.
-    const xCoodinate = 1241;
-    const yCoodinate = 62;
-    await page.mouse.click(xCoodinate, yCoodinate);
+    const xCoordinate = 1241;
+    const yCoordinate = 62;
+    await clickOnCanvas(page, xCoordinate, yCoordinate);
 
     await chooseTab(page, Tabs.Rna);
     await takeMonomerLibraryScreenshot(page);

@@ -26,6 +26,7 @@ import {
   waitForAtomPropsModal,
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 import {
@@ -1450,7 +1451,7 @@ test.describe('Atom Properties', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

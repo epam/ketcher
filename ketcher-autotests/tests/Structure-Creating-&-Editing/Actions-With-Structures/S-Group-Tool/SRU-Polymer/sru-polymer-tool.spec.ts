@@ -6,6 +6,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnBond,
+  clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   LeftPanelButton,
@@ -137,7 +138,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.HeadToHead);
     await takeEditorScreenshot(page);
@@ -152,7 +153,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
@@ -168,7 +169,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await page.getByLabel('Polymer label').fill(polymerLabel);
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
@@ -263,7 +264,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

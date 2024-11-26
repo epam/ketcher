@@ -7,6 +7,7 @@ import {
   selectButtonById,
   BondTypeId,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -26,12 +27,12 @@ test.describe('Bonds plus atoms selection ', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
 
       const point = await getBondByIndex(page, {}, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
       const atom1Point = await getAtomByIndex(page, {}, 0);
       const atom2Point = await getAtomByIndex(page, {}, 1);
       await page.keyboard.down('Shift');
-      await page.mouse.click(atom1Point.x, atom1Point.y);
-      await page.mouse.click(atom2Point.x, atom2Point.y);
+      await clickOnCanvas(page, atom1Point.x, atom1Point.y);
+      await clickOnCanvas(page, atom2Point.x, atom2Point.y);
       await takeEditorScreenshot(page);
     });
   }

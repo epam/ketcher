@@ -29,6 +29,7 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   openSettings,
+  clickOnCanvas,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -104,7 +105,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.getByRole('button', { name: 'Cancel' }).click();
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
     await selectTopPanelButton(TopPanelButton.Save, page);
@@ -161,7 +162,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await pressButton(page, 'Cancel');
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
-    await page.mouse.click(xCoordinatesWithShiftHalf, yCoordinatesWithShift);
+    await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
     const ySecondChain = yCoordinatesWithShift + yDelta50;
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await page.mouse.move(x, ySecondChain);
@@ -170,7 +171,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await pressButton(page, 'Cancel');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await page.mouse.click(xCoordinatesWithShiftHalf, yCoordinatesWithShift);
+    await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     const yArrowStart = y + yDelta20;
     const yArrowEnd = yArrowStart + yDelta20;

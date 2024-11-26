@@ -460,8 +460,8 @@ test.describe('Zoom Tool', () => {
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Flex mode)', async () => {
   /*
    *  Test case: https://github.com/epam/ketcher/issues/5590
-   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
-   *               corner of the most top and left monomer in the sequence (in Flex mode)
+   *  Description: Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out )
+   *               and ensure that the zoom focus is correct (in Flex mode)
    *  Case:
    *        1. Load canvas with monomer chains
    *        2. Take screenshot to witness initial state
@@ -495,8 +495,8 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Snake mode)', async () => {
   /*
    *  Test case: https://github.com/epam/ketcher/issues/5590
-   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
-   *               corner of the most top and left monomer in the sequence (in Snake mode)
+   *  Description: Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out )
+   *               and ensure that the zoom focus is correct (in Snake mode)
    *  Case:
    *        1. Load canvas with monomer chains
    *        2. Switch to Snake mode
@@ -533,8 +533,8 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Sequence mode)', async () => {
   /*
    *  Test case: https://github.com/epam/ketcher/issues/5590
-   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
-   *               corner of the most top and left monomer in the sequence (in Sequence mode)
+   *  Description: Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out )
+   *               and ensure that the zoom focus is correct (in Sequence mode)
    *  Case:
    *        1. Load canvas with monomer chains
    *        2. Switch to Sequence mode

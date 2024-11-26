@@ -44,6 +44,7 @@ export class EditorHistory {
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
     console.log('update macro', this.ketcherInstance);
 
+    this.ketcherInstance?.changeEvent?.dispatch();
     const latestCommand = this.historyStack[this.historyStack.length - 1];
     if (megreWithLatestHistoryCommand && latestCommand) {
       latestCommand.merge(command);
@@ -54,14 +55,13 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
-    this.ketcherInstance.changeEvent.dispatch(command.operations);
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-    this.ketcherInstance.changeEvent.dispatch();
+    this.ketcherInstance?.changeEvent?.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -76,7 +76,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-    this.ketcherInstance.changeEvent.dispatch();
+    this.ketcherInstance?.changeEvent?.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

@@ -412,6 +412,9 @@ test.describe('Zoom Tool', () => {
       await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     }
     await takeEditorScreenshot(page);
+
+    await page.keyboard.press('Escape');
+    await selectFlexLayoutModeTool(page);
   });
 
   test('Ensure that the zoom behavior works correctly with large sequences where the top left monomer is off-screen before zooming', async () => {
@@ -448,6 +451,9 @@ test.describe('Zoom Tool', () => {
       await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     }
     await takeEditorScreenshot(page);
+
+    await page.keyboard.press('Escape');
+    await selectFlexLayoutModeTool(page);
   });
 });
 
@@ -521,6 +527,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
     await page.keyboard.press('Control+-');
   }
   await takeEditorScreenshot(page);
+  await selectFlexLayoutModeTool(page);
 });
 
 test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Sequence mode)', async () => {
@@ -558,4 +565,5 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
     await page.keyboard.press('Control+-');
   }
   await takeEditorScreenshot(page);
+  await selectFlexLayoutModeTool(page);
 });

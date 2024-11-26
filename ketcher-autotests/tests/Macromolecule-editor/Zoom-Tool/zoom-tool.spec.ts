@@ -14,6 +14,9 @@ import {
   selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -296,24 +299,140 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence', async () => {
+  test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence (Flex mode)', async () => {
     /*
      *  Test case: https://github.com/epam/ketcher/issues/5590
      *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
-     *               corner of the most top and left monomer in the sequence
+     *               corner of the most top and left monomer in the sequence (in Flex mode)
      *  Case:
      *        1. Load canvas with monomer chains
      *        2. Take screenshot to witness initial state
-     *        3. Zoom In using button
+     *        3. Zoom In using button 5 times
      *        4. Take screenshot to witness the result
-     *        5. Zoom out twice
-     *        6. Take screenshot to witness the result
+     *        5. Reset Zoom to initial
+     *        6. Zoom Out using button 5 times
+     *        7. Take screenshot to witness the result
      */
     await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+
+    const numberOfZooms = 5;
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    }
+    await takeEditorScreenshot(page);
+
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence(Snake mode)', async () => {
+    /*
+     *  Test case: https://github.com/epam/ketcher/issues/5590
+     *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+     *               corner of the most top and left monomer in the sequence (in Snake mode)
+     *  Case:
+     *        1. Load canvas with monomer chains
+     *        2. Switch to Snake mode
+     *        2. Take screenshot to witness initial state
+     *        3. Zoom In using button 5 times
+     *        4. Take screenshot to witness the result
+     *        5. Reset Zoom to initial
+     *        6. Zoom out using button 5 times
+     *        7. Take screenshot to witness the result
+     */
+    await selectClearCanvasTool(page);
+    await selectSnakeLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+
+    const numberOfZooms = 5;
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    }
+    await takeEditorScreenshot(page);
+
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    }
+    await takeEditorScreenshot(page);
+
+    // await page.getByTestId('zoom-selector').click();
+    // await selectFlexLayoutModeTool(page);
+  });
+
+  test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence(Sequence m)', async () => {
+    /*
+     *  Test case: https://github.com/epam/ketcher/issues/5590
+     *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+     *               corner of the most top and left monomer in the sequence (in Sequence mode)
+     *  Case:
+     *        1. Load canvas with monomer chains
+     *        2. Switch to Sequence mode
+     *        2. Take screenshot to witness initial state
+     *        3. Zoom In using button 5 times
+     *        4. Take screenshot to witness the result
+     *        5. Reset Zoom to initial
+     *        6. Zoom out using button 5 times
+     *        7. Take screenshot to witness the result
+     */
+    await selectClearCanvasTool(page);
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+
+    const numberOfZooms = 5;
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    }
+    await takeEditorScreenshot(page);
+
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Ensure that the zoom behavior works correctly with large sequences where the top left monomer is off-screen before zooming', async () => {
+    /*
+     *  Test case: https://github.com/epam/ketcher/issues/5590
+     *  Description: Ensure that the zoom behavior works correctly with large sequences where
+     *               the top left monomer is off-screen before zooming (in Flex mode)
+     *  Case:
+     *        1. Load canvas with very long monomer chain
+     *        2. Take screenshot to witness initial state
+     *        3. Zoom In using button 5 times
+     *        4. Take screenshot to witness the result
+     *        5. Reset Zoom to initial
+     *        6. Zoom Out using button 5 times
+     *        7. Take screenshot to witness the result
+     */
+    await selectClearCanvasTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{G.F.E.D.C.A.M.L.K.I.H.Q.P.O.N.T.S.R.V.U.W.G.F.E.D.C.A.M.L.K.I.H.Q.P.O.N.T.S.R.V.U.W}$$$$V2.0',
     );
     await takeEditorScreenshot(page);
 

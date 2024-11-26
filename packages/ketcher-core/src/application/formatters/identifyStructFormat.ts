@@ -109,9 +109,7 @@ export function identifyStructFormat(
 
   const isSequence = /^[a-zA-Z\s\n]*$/.test(sanitizedString);
   const isThreeLetter = /^(?:(?:[A-Z][a-z]{2})\s?)+$/.test(sanitizedString);
-  const isIdt = /^([a-zA-Z0-9\\*/+-]+(?:\/[a-zA-Z0-9\\*/+-]+)*)$/.test(
-    sanitizedString,
-  );
+  const isIdt = /([a-zA-Z0-9]+)\/*([a-zA-Z0-9*-]+)/.test(sanitizedString);
 
   if (!isThreeLetter && isIdt) {
     return SupportedFormat.idt;

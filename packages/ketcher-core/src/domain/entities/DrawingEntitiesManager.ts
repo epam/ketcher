@@ -99,6 +99,8 @@ const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
 export const SNAKE_LAYOUT_CELL_WIDTH = 60;
+export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
+  SNAKE_LAYOUT_CELL_WIDTH * 2 + 30;
 export const MONOMER_START_X_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
 export const MONOMER_START_Y_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
 
@@ -1289,7 +1291,7 @@ export class DrawingEntitiesManager {
   }
 
   private reArrangeRnaChain(
-    nucleotide: NucleotideOrNucleoside,
+    nucleotideOrNucleoside: Nucleotide | Nucleoside,
     lastPosition: Vec2,
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
@@ -1303,9 +1305,9 @@ export class DrawingEntitiesManager {
       maxVerticalDistance,
       VERTICAL_OFFSET_FROM_ROW_WITH_RNA,
     );
-    nucleotide.sugar.isMonomerInRnaChainRow = true;
-    nucleotide.rnaBase.isMonomerInRnaChainRow = true;
-    const oldSugarPosition = nucleotide.sugar.position;
+    nucleotideOrNucleoside.sugar.isMonomerInRnaChainRow = true;
+    nucleotideOrNucleoside.rnaBase.isMonomerInRnaChainRow = true;
+    const oldSugarPosition = nucleotideOrNucleoside.sugar.position;
     const rnaBasePosition = new Vec2(
       lastPosition.x,
       lastPosition.y + (isAntisense ? -1 : 1) * SNAKE_LAYOUT_CELL_WIDTH,
@@ -1314,51 +1316,47 @@ export class DrawingEntitiesManager {
       command,
       oldSugarPosition,
       lastPosition,
-      nucleotide.sugar,
+      nucleotideOrNucleoside.sugar,
     );
     this.addRnaOperations(
       command,
-      nucleotide.rnaBase?.position,
+      nucleotideOrNucleoside.rnaBase?.position,
       rnaBasePosition,
-      nucleotide.rnaBase,
+      nucleotideOrNucleoside.rnaBase,
     );
-    rearrangedMonomersSet.add(nucleotide.sugar.id);
-    rearrangedMonomersSet.add(nucleotide.rnaBase?.id);
+    rearrangedMonomersSet.add(nucleotideOrNucleoside.sugar.id);
+    rearrangedMonomersSet.add(nucleotideOrNucleoside.rnaBase?.id);
 
-    if (nucleotide.phosphate) {
-      nucleotide.phosphate.isMonomerInRnaChainRow = true;
+    if (nucleotideOrNucleoside instanceof Nucleotide) {
+      nucleotideOrNucleoside.phosphate.isMonomerInRnaChainRow = true;
       const phosphatePosition = new Vec2(
         lastPosition.x + SNAKE_LAYOUT_CELL_WIDTH,
         lastPosition.y,
       );
       this.addRnaOperations(
         command,
-        nucleotide.phosphate?.position,
+        nucleotideOrNucleoside.phosphate?.position,
         phosphatePosition,
-        nucleotide.phosphate,
+        nucleotideOrNucleoside.phosphate,
       );
-      rearrangedMonomersSet.add(nucleotide.phosphate?.id);
+      rearrangedMonomersSet.add(nucleotideOrNucleoside.phosphate?.id);
     }
-    const lastMonomerInNucleotide =
-      nucleotide.baseMonomer === nucleotide.sugar && nucleotide.phosphate
-        ? nucleotide.phosphate
-        : nucleotide.sugar;
 
     const nextMonomerPositionAndVerticalDistance =
       this.getNextMonomerPositionForSnakeLayout(
-        lastMonomerInNucleotide,
+        nucleotideOrNucleoside.lastMonomerInNode,
         lastPosition,
         canvasWidth,
         rearrangedMonomersSet,
         maxVerticalDistance,
         restOfRowsWithAntisense,
-        nucleotide.phosphate
+        nucleotideOrNucleoside instanceof Nucleotide
           ? SNAKE_LAYOUT_CELL_WIDTH * 2
           : SNAKE_LAYOUT_CELL_WIDTH,
       );
 
     const nextMonomer = getNextMonomerInChain(
-      lastMonomerInNucleotide,
+      nucleotideOrNucleoside.lastMonomerInNode,
       firstMonomer,
     );
 
@@ -1494,15 +1492,7 @@ export class DrawingEntitiesManager {
     antisenseChain.forEachNode(({ node }) => {
       if (node instanceof Nucleoside || node instanceof Nucleotide) {
         const rearrangeResult = this.reArrangeRnaChain(
-          {
-            sugar: node.sugar,
-            phosphate:
-              node instanceof Nucleotide
-                ? node.phosphate
-                : getPhosphateFromSugar(node.sugar),
-            rnaBase: node.rnaBase,
-            baseMonomer: node.firstMonomerInNode,
-          },
+          node,
           lastPosition,
           canvasWidth,
           new Set(),
@@ -1514,11 +1504,13 @@ export class DrawingEntitiesManager {
         if (rearrangeResult.lastPosition.y > lastPosition.y) {
           rowsUsedByAntisense++;
         }
+        console.log(lastPosition, node);
 
         lastPosition = rearrangeResult.lastPosition;
         maxVerticalDistance = rearrangeResult.maxVerticalDistance;
         command.merge(rearrangeResult.command);
       } else {
+        console.log(lastPosition, node);
         node.monomers.forEach((monomer) => {
           const rearrangeResult = this.reArrangeChain(
             monomer,
@@ -1659,11 +1651,13 @@ export class DrawingEntitiesManager {
         );
 
         let restOfRowsWithAntisense = 0;
+        let isPreviousChainWithAntisense = false;
 
         chain.forEachNode(({ node, nodeIndex }) => {
           if (rearrangedMonomersSet.has(node.monomer.id)) {
             return;
           }
+
           const antisenseChain = antisenseChainsStartIndexesMap.get(nodeIndex);
 
           if (antisenseChain) {
@@ -1678,19 +1672,13 @@ export class DrawingEntitiesManager {
 
             restOfRowsWithAntisense = rowsUsedByAntisense;
             command.merge(rearrangedAntisenseCommand);
+            isPreviousChainWithAntisense = true;
           }
 
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
+            console.log(restOfRowsWithAntisense);
             const rearrangeResult = this.reArrangeRnaChain(
-              {
-                sugar: node.sugar,
-                phosphate:
-                  node instanceof Nucleotide
-                    ? node.phosphate
-                    : getPhosphateFromSugar(node.sugar),
-                rnaBase: node.rnaBase,
-                baseMonomer: node.firstMonomerInNode,
-              },
+              node,
               lastPosition,
               canvasWidth,
               rearrangedMonomersSet,
@@ -1733,6 +1721,13 @@ export class DrawingEntitiesManager {
         });
         lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
         maxVerticalDistance = 0;
+
+        if (isPreviousChainWithAntisense) {
+          lastPosition = lastPosition.add(
+            new Vec2(0, SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS),
+          );
+          isPreviousChainWithAntisense = false;
+        }
       });
 
       const snakeLayoutMatrix =
@@ -2581,6 +2576,12 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer;
 
     chainsCollection.forEachNode(({ node }) => {
+      if (!node.monomer.selected) {
+        lastAddedMonomer = undefined;
+        lastAddedNode = undefined;
+
+        return;
+      }
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         const { modelChanges: addNucleotideCommand, node: addedNode } = (
           node instanceof Nucleotide ? Nucleotide : Nucleoside
@@ -2628,6 +2629,13 @@ export class DrawingEntitiesManager {
         lastAddedMonomer = lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
         node.monomers.forEach((monomer) => {
+          if (!monomer.selected) {
+            lastAddedMonomer = undefined;
+            lastAddedNode = undefined;
+
+            return;
+          }
+
           const monomerAddCommand = this.addMonomer(
             { ...monomer.monomerItem, isAntisense: true },
             monomer.position.add(new Vec2(0, 4.25)),
@@ -2678,6 +2686,6 @@ function getFirstPosition(
     MONOMER_START_X_POSITION,
     lastPosition.y +
       height +
-      (restOfRowsWithAntisense > 0 ? SNAKE_LAYOUT_CELL_WIDTH * 2 + 30 : 0),
+      (restOfRowsWithAntisense > 0 ? SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS : 0),
   );
 }

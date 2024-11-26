@@ -107,6 +107,11 @@ export class ChainsCollection {
         !monomer.monomerItem.props.isMicromoleculeFragment ||
         isMonomerSgroupWithAttachmentPoints(monomer),
     );
+
+    if (filteredMonomers.length === 0) {
+      return chainsCollection;
+    }
+
     const [firstMonomersInRegularChains, firstMonomersInCycledChains] =
       this.getFirstMonomersInChains(filteredMonomers);
 
@@ -117,6 +122,16 @@ export class ChainsCollection {
     firstMonomersInCycledChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
+
+    if (
+      firstMonomersInRegularChains.length === 0 &&
+      firstMonomersInCycledChains.length === 0
+    ) {
+      const topLeftMonomer =
+        this.getMonomerWithLowerCoordsFromMonomerList(filteredMonomers);
+
+      chainsCollection.add(new Chain(topLeftMonomer));
+    }
 
     return chainsCollection;
   }

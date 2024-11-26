@@ -86,3 +86,17 @@ export enum SequenceType {
   DNA = 'DNA',
   PEPTIDE = 'PEPTIDE',
 }
+
+export enum PeptideType {
+  oneLetterCode = '1-letter code',
+  threeLetterCode = '3-letter code',
+}
+
+export enum MacroFileType {
+  Ket = 'Ket',
+  MOLv3000 = 'MDL Molfile V3000',
+  Sequence = 'Sequence',
+  FASTA = 'FASTA',
+  IDT = 'IDT',
+  HELM = 'HELM',
+}

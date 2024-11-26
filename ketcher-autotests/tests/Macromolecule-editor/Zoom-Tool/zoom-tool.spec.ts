@@ -12,6 +12,7 @@ import {
   MacromoleculesTopPanelButton,
   moveMouseAway,
   selectMacroBond,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -274,5 +275,21 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.down('Shift');
     await page.mouse.wheel(0, wheelDelta);
     await page.keyboard.up('Shift');
+  });
+
+  test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence', async () => {
+    /*
+     *  Test case: https://github.com/epam/ketcher/issues/5590
+     *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+     *               corner of the most top and left monomer in the sequence
+     *  Case:
+     *        1. Load canvas with monomer chains
+     *        2. Take screenshot to witness initial state
+     *        3. Zoom In using button
+     *        4. Take screenshot to witness the result
+     *        5. Zoom out twice
+     *        6. Take screenshot to witness the result
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(page, 'HELM', '');
   });
 });

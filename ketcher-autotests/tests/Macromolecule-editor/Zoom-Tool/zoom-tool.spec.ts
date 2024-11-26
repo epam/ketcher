@@ -13,6 +13,7 @@ import {
   moveMouseAway,
   selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -41,7 +42,6 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await takeEditorScreenshot(page);
   await page.keyboard.press('Control+0');
   await selectClearCanvasTool(page);
 });
@@ -98,6 +98,7 @@ test.describe('Zoom Tool', () => {
     await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {
@@ -109,6 +110,8 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out attachment points with menu buttons', async () => {
@@ -131,6 +134,8 @@ test.describe('Zoom Tool', () => {
     await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
@@ -146,6 +151,8 @@ test.describe('Zoom Tool', () => {
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out bond with menu buttons', async () => {
@@ -175,6 +182,8 @@ test.describe('Zoom Tool', () => {
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out bond with mouse wheel and CTRL', async () => {
@@ -197,6 +206,8 @@ test.describe('Zoom Tool', () => {
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out selection rectangle with menu buttons', async () => {
@@ -239,6 +250,8 @@ test.describe('Zoom Tool', () => {
       selectionEnd.x,
       selectionEnd.y,
     );
+
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In & Out selection rectangle with mouse wheel and CTRL', async () => {
@@ -259,6 +272,8 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     await zoomWithMouseWheel(page, -ZOOM_STEP);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Scroll canvas by mouse wheel', async () => {
@@ -267,6 +282,8 @@ test.describe('Zoom Tool', () => {
     const deltaY = 750;
 
     await page.mouse.wheel(deltaX, deltaY);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Scroll canvas horizontally with Shift pressed', async () => {
@@ -275,6 +292,8 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.down('Shift');
     await page.mouse.wheel(0, wheelDelta);
     await page.keyboard.up('Shift');
+
+    await takeEditorScreenshot(page);
   });
 
   test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence', async () => {
@@ -290,6 +309,25 @@ test.describe('Zoom Tool', () => {
      *        5. Zoom out twice
      *        6. Take screenshot to witness the result
      */
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(page, 'HELM', '');
+    await selectClearCanvasTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+
+    const numberOfZooms = 5;
+    await page.getByTestId('zoom-selector').click();
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    }
+    await takeEditorScreenshot(page);
+
+    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    for (let i = 0; i < numberOfZooms; i++) {
+      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    }
+    await takeEditorScreenshot(page);
   });
 });

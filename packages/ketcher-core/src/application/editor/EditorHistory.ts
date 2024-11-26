@@ -35,16 +35,12 @@ export class EditorHistory {
     }
     this.editor = editor;
     this.historyPointer = 0;
-    this.ketcherInstance = ketcherProvider.getKetcher();
-    EditorHistory._instance = this;
 
+    EditorHistory._instance = this;
     return this;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
-    console.log('update macro', this.ketcherInstance);
-
-    this.ketcherInstance?.changeEvent?.dispatch();
     const latestCommand = this.historyStack[this.historyStack.length - 1];
     if (megreWithLatestHistoryCommand && latestCommand) {
       latestCommand.merge(command);
@@ -55,13 +51,14 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
+    ketcherProvider.getKetcher().changeEvent.dispatch();
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-    this.ketcherInstance?.changeEvent?.dispatch();
+    ketcherProvider.getKetcher().changeEvent.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -76,7 +73,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-    this.ketcherInstance?.changeEvent?.dispatch();
+    ketcherProvider.getKetcher().changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

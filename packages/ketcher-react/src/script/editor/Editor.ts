@@ -140,7 +140,6 @@ class Editor implements KetcherEditor {
   lastCursorPosition: { x: number; y: number };
   contextMenu: ContextMenuInfo;
   rotateController: RotateController;
-  ketcherInstance: any;
   event: {
     message: Subscription;
     elementEdit: PipelineSubscription;
@@ -181,7 +180,6 @@ class Editor implements KetcherEditor {
       ),
       options.reuseRestructIfExist !== false,
     );
-    console.log('Class Editor run');
 
     this._selection = null; // eslint-disable-line
     this._tool = null; // eslint-disable-line
@@ -193,7 +191,6 @@ class Editor implements KetcherEditor {
       this.renderAndRecoordinateStruct.bind(this);
     this.setOptions = this.setOptions.bind(this);
     this.setServerSettings(serverSettings);
-    this.ketcherInstance = ketcherProvider.getKetcher();
     this.lastCursorPosition = {
       x: 0,
       y: 0,
@@ -358,7 +355,7 @@ class Editor implements KetcherEditor {
     ) {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
-      this.ketcherInstance.changeEvent.dispatch('force');
+      ketcherProvider.getKetcher().changeEvent.dispatch('force');
     }
   }
 
@@ -546,7 +543,7 @@ class Editor implements KetcherEditor {
           this.historyStack.shift();
         }
         this.historyPtr = this.historyStack.length;
-        this.ketcherInstance.changeEvent.dispatch(action); // TODO: stoppable here
+        ketcherProvider.getKetcher().changeEvent.dispatch(action); // TODO: stoppable here
       }
       this.render.update(false, null);
     }
@@ -576,9 +573,9 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
 
     if (this._tool instanceof toolsMap.paste) {
-      this.ketcherInstance.changeEvent.dispatch();
+      ketcherProvider.getKetcher().changeEvent.dispatch();
     } else {
-      this.ketcherInstance.changeEvent.dispatch(action);
+      ketcherProvider.getKetcher().changeEvent.dispatch(action);
     }
 
     this.render.update();
@@ -600,9 +597,9 @@ class Editor implements KetcherEditor {
     this.historyPtr++;
 
     if (this._tool instanceof toolsMap.paste) {
-      this.ketcherInstance.changeEvent.dispatch();
+      ketcherProvider.getKetcher().changeEvent.dispatch();
     } else {
-      this.ketcherInstance.changeEvent.dispatch(action);
+      ketcherProvider.getKetcher().changeEvent.dispatch(action);
     }
 
     this.render.update();
@@ -612,15 +609,13 @@ class Editor implements KetcherEditor {
     const subscriber = {
       handler,
     };
-    console.log('subscribe run working in molecule', subscriber);
-    console.log('log of ketcherInstance in micro', this.ketcherInstance);
 
     switch (eventName) {
       case 'change': {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        this.ketcherInstance.changeEvent.add(subscribeFuncWrapper);
+        ketcherProvider.getKetcher().changeEvent.add(subscribeFuncWrapper);
         break;
       }
 

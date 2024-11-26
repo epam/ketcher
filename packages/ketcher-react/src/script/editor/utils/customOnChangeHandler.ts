@@ -40,7 +40,9 @@ type Data = {
 
 export function customOnChangeHandler(action, handler) {
   const data: Data[] = [];
-
+  if (!action) {
+    return handler();
+  }
   action.operations.reverse().forEach((operation) => {
     const op = operation._inverted;
     switch (op.type) {

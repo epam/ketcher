@@ -19,7 +19,6 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
-  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
 } from 'ketcher-core';
@@ -92,11 +91,7 @@ import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContex
 import { EditorEvents } from './EditorEvents';
 
 const muiTheme = createTheme(muiOverrides);
-declare global {
-  export interface Window {
-    ketcherMacro?: CoreEditor;
-  }
-}
+
 interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
@@ -197,7 +192,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   }, [editor]);
 
   useEffect(() => {
-    window.ketcherMacro = editor;
     editor?.zoomTool.observeCanvasResize();
     return () => {
       editor?.zoomTool.destroy();

@@ -84,7 +84,6 @@ export class Ketcher {
     assert(editor != null);
     assert(structService != null);
     assert(formatterFactory != null);
-    console.log('Run Ketcher as Class', editor);
     this.changeEvent = new Subscription();
     this.#editor = editor;
     this.structService = structService;
@@ -96,7 +95,6 @@ export class Ketcher {
       level: LogLevel.ERROR,
       showTrace: false,
     };
-    console.log('run changeEvent', this.changeEvent);
   }
 
   get formatterFactory() {

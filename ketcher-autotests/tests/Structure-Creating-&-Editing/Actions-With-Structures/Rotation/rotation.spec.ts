@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import {
+  clickOnCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
@@ -47,7 +48,8 @@ test.describe('Rotation', () => {
       COORDINATES_TO_PERFORM_ROTATION.x,
       COORDINATES_TO_PERFORM_ROTATION.y,
     );
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       COORDINATES_TO_PERFORM_ROTATION.x,
       COORDINATES_TO_PERFORM_ROTATION.y,
       { button: 'right' },
@@ -337,7 +339,7 @@ test.describe('Rotation', () => {
     await addStructureAndSelect(page);
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
-    await page.mouse.click(rotationHandleX, rotationHandleY);
+    await clickOnCanvas(page, rotationHandleX, rotationHandleY);
     const { x, y } = await getRotationHandleCoordinates(page);
     expect(x).toEqual(rotationHandleX);
     expect(y).toEqual(rotationHandleY);

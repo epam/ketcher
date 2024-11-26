@@ -8,6 +8,7 @@ import {
   takeEditorScreenshot,
   RingButton,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('S-Group Properties', () => {
@@ -26,7 +27,7 @@ test.describe('S-Group Properties', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();
     await takeEditorScreenshot(page);
   });
@@ -41,7 +42,7 @@ test.describe('S-Group Properties', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Superatom' }).click();
     await page.getByLabel('Name').click();
@@ -66,7 +67,7 @@ test.describe('S-Group Properties', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByPlaceholder('Enter name').click();
     await page.getByPlaceholder('Enter name').fill(testName);
     await page.getByPlaceholder('Enter value').click();
@@ -83,7 +84,7 @@ test.describe('S-Group Properties', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Query component' }).click();
 

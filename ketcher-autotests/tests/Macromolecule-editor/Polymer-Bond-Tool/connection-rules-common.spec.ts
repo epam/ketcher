@@ -17,6 +17,7 @@ import {
   receiveFileComparisonData,
   getMolfile,
   delay,
+  clickOnCanvas,
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -171,7 +172,7 @@ test.describe('Common connection rules: ', () => {
       .first();
 
     // removing selections
-    await page.mouse.click(100, 100);
+    await clickOnCanvas(page, 100, 100);
 
     await monomerLocator.click();
     await selectEraseTool(page);

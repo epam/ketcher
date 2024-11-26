@@ -49,6 +49,7 @@ import {
   copyToClipboardByKeyboard,
   selectRingButton,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -507,7 +508,7 @@ test.describe('Template Manupulations', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
     await takeEditorScreenshot(page);
   });
 });

@@ -34,6 +34,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectMacroBond,
+  clickOnCanvas,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -800,7 +801,7 @@ test.describe('Import-Saving .idt Files', () => {
     const secondMonomer = await page.getByText('1Nal').locator('..').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -830,7 +831,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -852,7 +853,7 @@ test.describe('Import-Saving .idt Files', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -892,7 +893,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -934,7 +935,7 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('1Nal').locator('..').first().click();
     await page.mouse.down();
@@ -954,7 +955,7 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('1Nal').locator('..').first().click();
@@ -976,7 +977,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe-dC').locator('..').click();
     await page.mouse.down();

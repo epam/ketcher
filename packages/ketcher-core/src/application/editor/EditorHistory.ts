@@ -17,6 +17,7 @@
 import { Command } from 'domain/entities/Command';
 import { CoreEditor } from './Editor';
 import assert from 'assert';
+import { ketcherProvider } from 'application/utils';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -25,6 +26,7 @@ export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;
   editor: CoreEditor | undefined;
+  ketcherInstance;
 
   private static _instance;
   constructor(editor: CoreEditor) {
@@ -33,13 +35,15 @@ export class EditorHistory {
     }
     this.editor = editor;
     this.historyPointer = 0;
-
+    this.ketcherInstance = ketcherProvider.getKetcher();
     EditorHistory._instance = this;
 
     return this;
   }
 
   update(command: Command, megreWithLatestHistoryCommand?: boolean) {
+    console.log('update macro', this.ketcherInstance);
+
     const latestCommand = this.historyStack[this.historyStack.length - 1];
     if (megreWithLatestHistoryCommand && latestCommand) {
       latestCommand.merge(command);
@@ -50,13 +54,14 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
+    this.ketcherInstance.changeEvent.dispatch(command.operations);
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-
+    this.ketcherInstance.changeEvent.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -71,7 +76,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-
+    this.ketcherInstance.changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

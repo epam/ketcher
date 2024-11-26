@@ -450,3 +450,112 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
   });
 });
+
+test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Flex mode)', async () => {
+  /*
+   *  Test case: https://github.com/epam/ketcher/issues/5590
+   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+   *               corner of the most top and left monomer in the sequence (in Flex mode)
+   *  Case:
+   *        1. Load canvas with monomer chains
+   *        2. Take screenshot to witness initial state
+   *        3. Zoom In using keyboard shortcut "Ctrl+=" 5 times
+   *        4. Take screenshot to witness the result
+   *        5. Reset Zoom to initial using keyboard shortcut "Ctrl+0"
+   *        6. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
+   *        7. Take screenshot to witness the result
+   */
+  await selectClearCanvasTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+  );
+  await takeEditorScreenshot(page);
+
+  const numberOfZooms = 5;
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+=');
+  }
+  await takeEditorScreenshot(page);
+
+  await page.keyboard.press('Control+0');
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+-');
+  }
+  await takeEditorScreenshot(page);
+});
+
+test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Snake mode)', async () => {
+  /*
+   *  Test case: https://github.com/epam/ketcher/issues/5590
+   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+   *               corner of the most top and left monomer in the sequence (in Snake mode)
+   *  Case:
+   *        1. Load canvas with monomer chains
+   *        2. Switch to Snake mode
+   *        3. Take screenshot to witness initial state
+   *        4. Zoom In using keyboard shortcut "Ctrl+=" 5 times
+   *        5. Take screenshot to witness the result
+   *        6. Reset Zoom to initial using keyboard shortcut "Ctrl+0"
+   *        7. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
+   *        8. Take screenshot to witness the result
+   */
+  await selectClearCanvasTool(page);
+  await selectSnakeLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+  );
+  await takeEditorScreenshot(page);
+
+  const numberOfZooms = 5;
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+=');
+  }
+  await takeEditorScreenshot(page);
+
+  await page.keyboard.press('Control+0');
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+-');
+  }
+  await takeEditorScreenshot(page);
+});
+
+test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ctrl- for zoom out ) and ensure that the zoom focus is correct (Sequence mode)', async () => {
+  /*
+   *  Test case: https://github.com/epam/ketcher/issues/5590
+   *  Description: Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left
+   *               corner of the most top and left monomer in the sequence (in Sequence mode)
+   *  Case:
+   *        1. Load canvas with monomer chains
+   *        2. Switch to Sequence mode
+   *        3. Take screenshot to witness initial state
+   *        4. Zoom In using keyboard shortcut "Ctrl+=" 5 times
+   *        5. Take screenshot to witness the result
+   *        6. Reset Zoom to initial using keyboard shortcut "Ctrl+0"
+   *        7. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
+   *        8. Take screenshot to witness the result
+   */
+  await selectClearCanvasTool(page);
+  await selectSequenceLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{G.F.E.D.C.A}|PEPTIDE2{M.L.K.I.H}|PEPTIDE3{Q.P.O.N}|PEPTIDE4{T.S.R}|PEPTIDE5{V.U}|PEPTIDE6{W}$$$$V2.0',
+  );
+  await takeEditorScreenshot(page);
+
+  const numberOfZooms = 5;
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+=');
+  }
+  await takeEditorScreenshot(page);
+
+  await page.keyboard.press('Control+0');
+  for (let i = 0; i < numberOfZooms; i++) {
+    await page.keyboard.press('Control+-');
+  }
+  await takeEditorScreenshot(page);
+});

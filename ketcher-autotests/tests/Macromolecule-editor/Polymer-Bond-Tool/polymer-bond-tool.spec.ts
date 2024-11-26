@@ -31,6 +31,7 @@ import {
   waitForIndigoToLoad,
   selectClearCanvasTool,
   selectOptionInTypeDropdown2,
+  clickOnCanvas,
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -204,8 +205,8 @@ test('Create bond between two chems', async () => {
   await page.getByTestId(Chems.hxy).click();
 
   // Create 2 chems on canvas
-  await page.mouse.click(300, 300);
-  await page.mouse.click(400, 400);
+  await clickOnCanvas(page, 300, 300);
+  await clickOnCanvas(page, 400, 400);
 
   // Get 2 chems locators
   const chems = await page.getByText('hxy').locator('..');
@@ -279,7 +280,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   await page.getByTestId(Peptides.BetaAlanine).click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId(Peptides.Ethylthiocysteine).click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['Bal', 'Edc']);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
@@ -299,7 +300,7 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   await page.getByTestId('MOE(A)P_A_MOE_P').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('dR(U)P_U_dR_P').click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
@@ -319,7 +320,7 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   await page.getByTestId('A6OH___6-amino-hexanol').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await page
     .locator('div')
@@ -737,7 +738,7 @@ test('Verify behaviour when a non-bond is right-clicked', async () => {
     Description: Nothing happen.
     */
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
-  await page.mouse.click(200, 200, { button: 'right' });
+  await clickOnCanvas(page, 200, 200, { button: 'right' });
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });

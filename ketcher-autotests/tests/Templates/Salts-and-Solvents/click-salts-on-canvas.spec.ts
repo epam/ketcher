@@ -14,6 +14,7 @@ import {
   resetCurrentTool,
   SaltsAndSolvents,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Click Salts and Solvents on canvas', () => {
@@ -102,7 +103,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
-    await page.mouse.click(coordinatesWithShift, y);
+    await clickOnCanvas(page, coordinatesWithShift, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

@@ -16,6 +16,7 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 
 const X_DELTA_ONE = 100;
@@ -38,7 +39,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     const oxygenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
-    await page.mouse.click(oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
@@ -61,7 +62,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await page.mouse.click(nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
@@ -82,7 +83,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
 
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await page.mouse.click(nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(nitrogenCoordinates.x, nitrogenCoordinates.y);
@@ -109,7 +110,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await page.mouse.click(oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);
@@ -138,7 +139,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const oxygenCoordinates = { x: x + X_DELTA_TWO, y };
-    await page.mouse.click(oxygenCoordinates.x, oxygenCoordinates.y);
+    await clickOnCanvas(page, oxygenCoordinates.x, oxygenCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(oxygenCoordinates.x, oxygenCoordinates.y);

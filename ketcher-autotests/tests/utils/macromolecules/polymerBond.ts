@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { moveMouseAway, selectMacroBond } from '..';
+import { clickOnCanvas, moveMouseAway, selectMacroBond } from '..';
 import { DropdownToolIds } from '@utils/clicks/types';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -279,7 +279,8 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
   // Simple click on element doesn't work always because only black pixels of bond are clickable (what? YES!)
   // So, bonds with empty space in the center (for example - double bond) are not clickable
   if (boundingBox) {
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       boundingBox.x + boundingBox.width / 2 + 2,
       boundingBox.y + boundingBox.height / 2 + 2,
     );

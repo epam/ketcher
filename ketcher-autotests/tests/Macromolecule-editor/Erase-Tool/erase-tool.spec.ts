@@ -21,6 +21,7 @@ import {
   selectRectangleSelectionTool,
   Bases,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -316,7 +317,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

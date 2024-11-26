@@ -10,6 +10,7 @@ import {
 } from '@utils/canvas/bonds';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   dragMouseTo,
   LeftPanelButton,
   moveMouseAway,
@@ -34,26 +35,27 @@ async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
   // Attaching Second Ring By Atom
   await selectButtonByTitle(type, page);
   const point = await getAtomByIndex(page, { label: 'C' }, 2);
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
 }
 
 async function mergeRingByBond(type: RingButton, page: Page) {
   await selectButtonByTitle(type, page);
   const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await selectButtonByTitle(type, page);
   let point = await getAtomByIndex(page, { label: 'C' }, 2);
   const selectionRange = point.x / 4;
-  await page.mouse.click(
+  await clickOnCanvas(
+    page,
     selectionRange + selectionRange,
     selectionRange + selectionRange,
   );
   point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
   await selectTool(LeftPanelButton.RectangleSelection, page);
-  await page.mouse.click(point.x + selectionRange, point.y + selectionRange);
+  await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
   await page.mouse.move(point.x - 1, point.y - 1);
@@ -67,7 +69,7 @@ async function deleteRightBondInRing(page: Page) {
   });
   await moveMouseAway(page);
   await page.keyboard.press('Escape');
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
   await page.keyboard.press('Delete');
 }
 

@@ -68,6 +68,7 @@ export async function chooseFileFormat(
     | 'FASTA'
     | 'Sequence'
     | 'Sequence (1-letter code)'
+    | 'Sequence (3-letter code)'
     | 'IDT'
     | 'HELM'
     | 'SVG Document',

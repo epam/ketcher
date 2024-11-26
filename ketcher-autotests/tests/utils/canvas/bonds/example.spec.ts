@@ -1,6 +1,6 @@
 export {};
 // import { test } from '@playwright/test';
-// import { drawElementByTitle, waitForPageInit } from '@utils';
+// import { drawElementByTitle, waitForPageInit, clickOnCanvas, } from '@utils';
 // import {
 //   getRightBondByAttributes,
 //   getBottomBondByAttributes,
@@ -32,7 +32,7 @@ export {};
 //     { type: BondType.HYDROGEN },
 //     searchedIndex,
 //   );
-//   await page.mouse.click(bondByIndex.x, bondByIndex.y);
+//   await clickOnCanvas(page, bondByIndex.x, bondByIndex.y);
 
 //   const leftBond = await getLeftBondByAttributes(page, {
 //     topology: 1,
@@ -40,19 +40,19 @@ export {};
 //     sb: 2,
 //     reactingCenterStatus: 2,
 //   });
-//   await page.mouse.click(leftBond.x, leftBond.y);
+//   await clickOnCanvas(page, leftBond.x, leftBond.y);
 
 //   const rBond = await getRightBondByAttributes(page, {
 //     stereo: 2,
 //     type: BondType.DATIVE,
 //   });
-//   await page.mouse.click(rBond.x, rBond.y);
+//   await clickOnCanvas(page, rBond.x, rBond.y);
 
 //   const bottomBond = await getBottomBondByAttributes(page, { sa: 1 });
-//   await page.mouse.click(bottomBond.x, bottomBond.y);
+//   await clickOnCanvas(page, bottomBond.x, bottomBond.y);
 
 //   const topBond = await getTopBondByAttributes(page, { type: BondType.DOUBLE });
-//   await page.mouse.click(topBond.x, topBond.y);
+//   await clickOnCanvas(page, topBond.x, topBond.y);
 // });
 
 // test(`ATOM`, async ({ page }) => {
@@ -60,26 +60,26 @@ export {};
 //   await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, OFFSET_X, OFFSET_Y);
 
 //   const firstAtom = await getAtomByIndex(page, { label: 'C', valence: 1 }, 0);
-//   await page.mouse.click(firstAtom.x, firstAtom.y);
+//   await clickOnCanvas(page, firstAtom.x, firstAtom.y);
 
 //   const leftAtom = await getLeftAtomByAttributes(page, {
 //     stereoParity: 1,
 //   });
-//   await page.mouse.click(leftAtom.x, leftAtom.y);
+//   await clickOnCanvas(page, leftAtom.x, leftAtom.y);
 
 //   const rightAtom = await getRightAtomByAttributes(page, {
 //     exactChangeFlag: 2,
 //     hCount: 1,
 //     charge: 2,
 //   });
-//   await page.mouse.click(rightAtom.x, rightAtom.y);
+//   await clickOnCanvas(page, rightAtom.x, rightAtom.y);
 
 //   const bottomAtom = await getBottomAtomByAttributes(page, { charge: 1 });
-//   await page.mouse.click(bottomAtom.x, bottomAtom.y);
+//   await clickOnCanvas(page, bottomAtom.x, bottomAtom.y);
 
 //   const topAtom = await getTopAtomByAttributes(page, {
 //     substitutionCount: 1,
 //     valence: 3,
 //   });
-//   await page.mouse.click(topAtom.x, topAtom.y);
+//   await clickOnCanvas(page, topAtom.x, topAtom.y);
 // });

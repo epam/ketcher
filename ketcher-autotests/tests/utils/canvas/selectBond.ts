@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { clickOnCanvas } from '@tests/utils';
 
 export enum BondTypeName {
   Single = 'Single Bond',
@@ -40,14 +41,14 @@ export async function selectBond(type: BondTypeName, page: Page) {
   // Move mouse to empty space
   await page.mouse.move(MOUSE_COORDS.x1, MOUSE_COORDS.y1);
   // Click on canvas to clear selection
-  await page.mouse.click(MOUSE_COORDS.x1, MOUSE_COORDS.y1);
+  await clickOnCanvas(page, MOUSE_COORDS.x1, MOUSE_COORDS.y1);
   // Click on Bond button
-  await page.mouse.click(MOUSE_COORDS.x2, MOUSE_COORDS.y2);
+  await clickOnCanvas(page, MOUSE_COORDS.x2, MOUSE_COORDS.y2);
 
   try {
     await page.click(targetSelector, { timeout: TIMEOUT_MS });
   } catch (e) {
-    await page.mouse.click(MOUSE_COORDS.x2, MOUSE_COORDS.y2);
+    await clickOnCanvas(page, MOUSE_COORDS.x2, MOUSE_COORDS.y2);
     await page.click(targetSelector, { timeout: TIMEOUT_MS });
   }
 }

@@ -90,7 +90,7 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
 }
 
 async function addTail(page: Page, x: number, y: number) {
-  await page.mouse.click(x, y, { button: 'right' });
+  await clickOnCanvas(page, x, y, { button: 'right' });
   await waitForRender(page, async () => {
     await page.getByText('Add new tail').click();
   });
@@ -142,9 +142,9 @@ async function hoverOverArrowSpine(
     await page.mouse.move(x - 5, y);
 
     if (clickType === 'right') {
-      await page.mouse.click(x - 5, y, { button: 'right' });
+      await clickOnCanvas(page, x - 5, y, { button: 'right' });
     } else if (clickType === 'left') {
-      await page.mouse.click(x - 5, y, { button: 'left' });
+      await clickOnCanvas(page, x - 5, y, { button: 'left' });
     }
   }
 }

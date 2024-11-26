@@ -15,6 +15,7 @@ import {
   waitForRender,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
@@ -87,7 +88,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await takeEditorScreenshot(page);
 
     const blankAreaAxis = { x: 200, y: 200 };
-    await page.mouse.click(blankAreaAxis.x, blankAreaAxis.y);
+    await clickOnCanvas(page, blankAreaAxis.x, blankAreaAxis.y);
     await takeEditorScreenshot(page);
   });
 
@@ -206,7 +207,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

@@ -24,6 +24,7 @@ import {
   dragMouseTo,
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -194,7 +195,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -213,7 +214,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByTitle('Copy as KET (Ctrl+Shift+K)').click();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
   });
 

@@ -25,6 +25,7 @@ import {
   setAttachmentPoints,
   waitForPageInit,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -197,7 +198,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

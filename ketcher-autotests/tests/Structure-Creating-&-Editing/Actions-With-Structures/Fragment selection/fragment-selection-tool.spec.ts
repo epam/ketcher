@@ -1,6 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
   clickOnAtom,
+  clickOnCanvas,
   doubleClickOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
@@ -110,7 +111,7 @@ test.describe('Fragment selection tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     const point = await getRightAtomByAttributes(page, { label: 'N' });
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
   });

@@ -16,6 +16,7 @@ import {
   waitForRender,
   receiveFileComparisonData,
   selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
@@ -177,7 +178,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

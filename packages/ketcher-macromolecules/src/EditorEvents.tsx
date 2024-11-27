@@ -46,6 +46,7 @@ import {
   PreviewType,
 } from 'state/types';
 import { calculateBondPreviewPosition } from 'ketcher-react';
+import { loadMonomerLibrary } from 'state/library';
 
 const noPreviewTools = ['bond-single'];
 
@@ -54,6 +55,18 @@ export const EditorEvents = () => {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
+
+  const handleMonomersLibraryUpdate = useCallback(() => {
+    dispatch(loadMonomerLibrary(editor?.monomersLibrary));
+  }, [editor]);
+
+  useEffect(() => {
+    editor?.events.updateMonomersLibrary.add(handleMonomersLibraryUpdate);
+
+    return () => {
+      editor?.events.updateMonomersLibrary.remove(handleMonomersLibraryUpdate);
+    };
+  }, [editor]);
 
   useEffect(() => {
     const handler = (toolName: string) => {

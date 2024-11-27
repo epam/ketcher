@@ -970,7 +970,7 @@ test(`Verify layout adjustments when expanding multiple monomers in a straight c
 test(`Verify layout adjustments when expanding multiple monomers in a ring structure`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/5773
-   * Description: Verify that "Expand monomer" does not break cyclic structures when the ring is expanded
+   * Description: Verify layout adjustments when expanding multiple monomers in a ring structure
    *
    * Case: 1. Load monomer cycle on Molecules canvas
    *       2. Take screenshot to witness initial state
@@ -987,6 +987,35 @@ test(`Verify layout adjustments when expanding multiple monomers in a ring struc
   await takeEditorScreenshot(page);
   await selectAllStructuresOnCanvas(page);
   await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});
+
+test(`Verify expansion behavior when monomers are connected by multiple bonds`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify expansion behavior when monomers are connected by multiple bonds
+   *
+   * Case: 1. Load monomer cycle connected by multiple bonds on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Select all monomers on the canvas (using Ctrl+A)
+   *       4. Expand all monomers at once
+   *       5. Take screenshot to witness final position
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers cycled and cross bonded.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await expandMonomer(page, 'nC6n5U');
   await takeEditorScreenshot(page);
 
   test.fixme(

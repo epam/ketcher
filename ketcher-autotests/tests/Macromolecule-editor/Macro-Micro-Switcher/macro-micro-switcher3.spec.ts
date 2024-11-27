@@ -24,6 +24,7 @@ import {
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -935,3 +936,33 @@ test(
     }
   },
 );
+
+test(`Verify layout adjustments when expanding multiple monomers in a straight chain`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6019
+   * Description: Verify layout adjustments when expanding multiple monomers in a straight chain
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Select all monomers on the canvas (using Ctrl+A)
+   *       4. Expand all monomers from  chain (from right to left)
+   *       5. Take screenshot to witness final position
+   */
+  await pageReload(page);
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});

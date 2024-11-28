@@ -12,7 +12,7 @@ import {
   openPasteFromClipboard,
   pressButton,
 } from '@utils';
-import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
+import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
 import { getCdx } from '@utils/formats';
 
 test.describe('CDX files', () => {
@@ -475,9 +475,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/reactant-single-reaction-expected.cdx',
       'tests/test-data/CDX/reactant-single-reaction-expected.cdx',
       FileType.CDX,
     );
@@ -501,9 +500,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/products-single-reaction-expected.cdx',
       'tests/test-data/CDX/products-single-reaction-expected.cdx',
       FileType.CDX,
     );
@@ -527,9 +525,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
       'tests/test-data/CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
       FileType.CDX,
     );
@@ -553,9 +550,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/multiple-individual-reactions-expected.cdx',
       'tests/test-data/CDX/multiple-individual-reactions-expected.cdx',
       FileType.CDX,
     );
@@ -579,9 +575,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/several-cascade-reactions-expected.cdx',
       'tests/test-data/CDX/several-cascade-reactions-expected.cdx',
       FileType.CDX,
     );
@@ -605,9 +600,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/combination-of-single-and-cascade-reactions-expected.cdx',
       'tests/test-data/CDX/combination-of-single-and-cascade-reactions-expected.cdx',
       FileType.CDX,
     );
@@ -631,9 +625,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/cascade-of-multiple-reactions-expected.cdx',
       'tests/test-data/CDX/cascade-of-multiple-reactions-expected.cdx',
       FileType.CDX,
     );
@@ -657,9 +650,8 @@ test.describe('CDX files without screenshots', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
       'tests/test-data/CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
       FileType.CDX,
     );

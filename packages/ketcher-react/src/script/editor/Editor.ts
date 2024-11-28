@@ -575,8 +575,10 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
 
     if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
       ketcherChangeEvent.dispatch();
     } else {
+      this.event.change.dispatch(action);
       ketcherChangeEvent.dispatch(action);
     }
 
@@ -600,8 +602,10 @@ class Editor implements KetcherEditor {
     this.historyPtr++;
 
     if (this._tool instanceof toolsMap.paste) {
+      this.event.change.dispatch();
       ketcherChangeEvent.dispatch();
     } else {
+      this.event.change.dispatch(action);
       ketcherChangeEvent.dispatch(action);
     }
 

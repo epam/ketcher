@@ -26,7 +26,6 @@ export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;
   editor: CoreEditor | undefined;
-  ketcherInstance;
 
   private static _instance;
   constructor(editor: CoreEditor) {

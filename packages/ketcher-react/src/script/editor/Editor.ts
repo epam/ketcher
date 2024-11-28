@@ -557,6 +557,7 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
+    const ketcherProviderEditor = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -573,15 +574,16 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
 
     if (this._tool instanceof toolsMap.paste) {
-      ketcherProvider.getKetcher().changeEvent.dispatch();
+      ketcherProviderEditor.dispatch();
     } else {
-      ketcherProvider.getKetcher().changeEvent.dispatch(action);
+      ketcherProviderEditor.dispatch(action);
     }
 
     this.render.update();
   }
 
   redo() {
+    const ketcherProviderEditor = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -597,9 +599,9 @@ class Editor implements KetcherEditor {
     this.historyPtr++;
 
     if (this._tool instanceof toolsMap.paste) {
-      ketcherProvider.getKetcher().changeEvent.dispatch();
+      ketcherProviderEditor.dispatch();
     } else {
-      ketcherProvider.getKetcher().changeEvent.dispatch(action);
+      ketcherProviderEditor.dispatch(action);
     }
 
     this.render.update();

@@ -41,7 +41,7 @@ type Data = {
 export function customOnChangeHandler(action, handler) {
   const data: Data[] = [];
   if (action === undefined) {
-    return handler;
+    return handler();
   } else {
     if (window.isPolymerEditorTurnedOn) {
       return handleMacroChanges(handler);

@@ -65,6 +65,7 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

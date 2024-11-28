@@ -15,6 +15,7 @@ import {
   saveToFile,
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
+  moveMouseAway,
 } from '@utils';
 import {
   clickOnFileFormatDropdown,
@@ -325,6 +326,7 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -543,7 +543,8 @@ class Editor implements KetcherEditor {
           this.historyStack.shift();
         }
         this.historyPtr = this.historyStack.length;
-        ketcherProvider.getKetcher().changeEvent.dispatch(action); // TODO: stoppable here
+        this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
+        ketcherProvider.getKetcher().changeEvent.dispatch(action);
       }
       this.render.update(false, null);
     }
@@ -557,7 +558,7 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
-    const ketcherProviderEditor = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -574,16 +575,16 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
 
     if (this._tool instanceof toolsMap.paste) {
-      ketcherProviderEditor.dispatch();
+      ketcherChangeEvent.dispatch();
     } else {
-      ketcherProviderEditor.dispatch(action);
+      ketcherChangeEvent.dispatch(action);
     }
 
     this.render.update();
   }
 
   redo() {
-    const ketcherProviderEditor = ketcherProvider.getKetcher().changeEvent;
+    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -599,9 +600,9 @@ class Editor implements KetcherEditor {
     this.historyPtr++;
 
     if (this._tool instanceof toolsMap.paste) {
-      ketcherProviderEditor.dispatch();
+      ketcherChangeEvent.dispatch();
     } else {
-      ketcherProviderEditor.dispatch(action);
+      ketcherChangeEvent.dispatch(action);
     }
 
     this.render.update();

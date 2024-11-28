@@ -87,6 +87,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(

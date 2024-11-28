@@ -21,6 +21,7 @@ import {
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];
@@ -212,5 +213,12 @@ export class Chain {
 
   public get isNewSequenceChain() {
     return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
+  }
+
+  public get monomers() {
+    return this.nodes.reduce(
+      (monomers: BaseMonomer[], node) => [...monomers, ...node.monomers],
+      [],
+    );
   }
 }

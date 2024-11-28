@@ -408,7 +408,7 @@ export class CoreEditor {
   }
 
   private onCreateAntisenseStrand() {
-    const modelChanges = this.drawingEntitiesManager.createAntisenseStrand();
+    const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
     const history = new EditorHistory(this);
 
     this.renderersContainer.update(modelChanges);

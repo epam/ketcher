@@ -338,14 +338,14 @@ export class RenderersManager {
     }
   }
 
-  public static getRenderedStructuresBbox() {
+  public static getRenderedStructuresBbox(monomers?: BaseMonomer[]) {
     let left;
     let right;
     let top;
     let bottom;
     const editor = CoreEditor.provideEditorInstance();
 
-    editor.drawingEntitiesManager.monomers.forEach((monomer) => {
+    (monomers || editor.drawingEntitiesManager.monomers).forEach((monomer) => {
       const monomerPosition = monomer.renderer?.scaledMonomerPosition;
 
       assert(monomerPosition);

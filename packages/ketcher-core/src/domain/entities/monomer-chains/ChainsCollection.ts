@@ -127,8 +127,9 @@ export class ChainsCollection {
       firstMonomersInRegularChains.length === 0 &&
       firstMonomersInCycledChains.length === 0
     ) {
-      const topLeftMonomer =
-        this.getMonomerWithLowerCoordsFromMonomerList(filteredMonomers);
+      const topLeftMonomer = this.getMonomerWithLowerCoordsFromMonomerList(
+        filteredMonomers.filter((monomer) => !(monomer instanceof RNABase)),
+      );
 
       chainsCollection.add(new Chain(topLeftMonomer));
     }
@@ -304,8 +305,8 @@ export class ChainsCollection {
     });
   }
 
-  public getAntisenseChains(chain: Chain) {
-    const antisenseChains: Set<Chain> = new Set();
+  public getComplementaryChains(chain: Chain) {
+    const complementaryChains: Set<Chain> = new Set();
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node }) => {
@@ -313,17 +314,17 @@ export class ChainsCollection {
         return;
       }
 
-      const antisenseRnaBase = node.getAntisenseRnaBase();
-      const antisenseChain =
-        antisenseRnaBase && monomerToChain.get(antisenseRnaBase);
+      const complementaryRnaBase = node.getAntisenseRnaBase();
+      const complementaryChain =
+        complementaryRnaBase && monomerToChain.get(complementaryRnaBase);
 
-      if (!antisenseChain) {
+      if (!complementaryChain) {
         return;
       }
 
-      antisenseChains.add(antisenseChain);
+      complementaryChains.add(complementaryChain);
     });
 
-    return antisenseChains;
+    return complementaryChains;
   }
 }

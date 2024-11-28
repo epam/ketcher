@@ -75,16 +75,14 @@ export class Nucleotide {
 
     const { command: modelChanges, monomers } =
       editor.drawingEntitiesManager.addRnaPreset({
-        sugar: { ...sugarLibraryItem, isAntisense },
-        sugarPosition: isAntisense ? bottomItemPosition : topLeftItemPosition,
-        rnaBase: { ...rnaBaseLibraryItem, isAntisense },
-        rnaBasePosition: isAntisense ? topLeftItemPosition : bottomItemPosition,
-        phosphate: { ...phosphateLibraryItem, isAntisense },
-        phosphatePosition: (isAntisense
-          ? bottomItemPosition
-          : topLeftItemPosition
-        ).add(Coordinates.canvasToModel(new Vec2(SNAKE_LAYOUT_CELL_WIDTH, 0))),
-        isAntisense,
+        sugar: sugarLibraryItem,
+        sugarPosition: topLeftItemPosition,
+        rnaBase: rnaBaseLibraryItem,
+        rnaBasePosition: bottomItemPosition,
+        phosphate: phosphateLibraryItem,
+        phosphatePosition: topLeftItemPosition.add(
+          Coordinates.canvasToModel(new Vec2(SNAKE_LAYOUT_CELL_WIDTH, 0)),
+        ),
       });
 
     const sugar = monomers.find((monomer) => monomer instanceof Sugar) as Sugar;

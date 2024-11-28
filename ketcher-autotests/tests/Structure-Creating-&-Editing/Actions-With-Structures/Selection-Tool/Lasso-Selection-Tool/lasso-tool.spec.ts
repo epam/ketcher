@@ -29,7 +29,7 @@ test.describe('Lasso Selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const xAxis = 300;
+  const xAxis = 250;
   const yAxis = 200;
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {

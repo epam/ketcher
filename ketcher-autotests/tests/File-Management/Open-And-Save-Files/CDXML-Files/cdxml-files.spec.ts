@@ -22,7 +22,7 @@ import {
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
+import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
@@ -675,9 +675,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/reactant-single-reaction-expected.cdxml',
       'tests/test-data/CDXML/reactant-single-reaction-expected.cdxml',
       FileType.CDXML,
     );
@@ -700,9 +699,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/products-single-reaction-expected.cdxml',
       'tests/test-data/CDXML/products-single-reaction-expected.cdxml',
       FileType.CDXML,
     );
@@ -725,9 +723,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
       'tests/test-data/CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
       FileType.CDXML,
     );
@@ -750,9 +747,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/multiple-individual-reactions-expected.cdxml',
       'tests/test-data/CDXML/multiple-individual-reactions-expected.cdxml',
       FileType.CDXML,
     );
@@ -775,9 +771,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/several-cascade-reactions-expected.cdxml',
       'tests/test-data/CDXML/several-cascade-reactions-expected.cdxml',
       FileType.CDXML,
     );
@@ -800,9 +795,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
       'tests/test-data/CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
       FileType.CDXML,
     );
@@ -825,9 +819,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
       'tests/test-data/CDXML/cascade-of-multiple-reactions-expected.cdxml',
       FileType.CDXML,
     );
@@ -850,9 +843,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile(
+    await verifyFile2(
       page,
-      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
       'tests/test-data/CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
       FileType.CDXML,
     );

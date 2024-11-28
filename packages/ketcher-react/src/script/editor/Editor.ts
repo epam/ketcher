@@ -575,10 +575,10 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
 
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
+      this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
       ketcherChangeEvent.dispatch();
     } else {
-      this.event.change.dispatch(action);
+      this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
       ketcherChangeEvent.dispatch(action);
     }
 
@@ -602,10 +602,10 @@ class Editor implements KetcherEditor {
     this.historyPtr++;
 
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
+      this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
       ketcherChangeEvent.dispatch();
     } else {
-      this.event.change.dispatch(action);
+      this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
       ketcherChangeEvent.dispatch(action);
     }
 

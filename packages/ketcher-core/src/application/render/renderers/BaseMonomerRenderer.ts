@@ -540,6 +540,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       const useElement = this.rootElement
         ?.append('use')
         .attr('xlink:href', config.backgroundId)
+        .attr('pointer-events', 'none')
         .attr('class', 'modification-background');
 
       if (fillColor) {

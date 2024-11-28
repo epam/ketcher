@@ -10,6 +10,7 @@ import {
   pasteFromClipboard,
   waitForLoad,
   waitForPageInit,
+  moveMouseAway,
 } from '@utils';
 import { clickOnFileFormatDropdown, getSmarts } from '@utils/formats';
 
@@ -52,6 +53,7 @@ test.describe('Reagents SMARTS format', () => {
     expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

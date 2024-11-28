@@ -49,7 +49,7 @@ export const PeptideAvatar = () => (
       width="30"
       height="20"
       x="2.5"
-      y="5.5"
+      y="5"
     >
       <path
         xmlns="http://www.w3.org/2000/svg"

@@ -67,8 +67,8 @@ export const RNABaseAvatar = () => (
       viewBox="0 0 32 10"
       width="30"
       height="9"
-      x="1"
-      y="11"
+      x="0.8"
+      y="10.8"
     >
       <path
         fillRule="evenodd"

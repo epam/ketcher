@@ -1501,13 +1501,11 @@ export class DrawingEntitiesManager {
         if (rearrangeResult.lastPosition.y > lastPosition.y) {
           rowsUsedByAntisense++;
         }
-        console.log(lastPosition, node);
 
         lastPosition = rearrangeResult.lastPosition;
         maxVerticalDistance = rearrangeResult.maxVerticalDistance;
         command.merge(rearrangeResult.command);
       } else {
-        console.log(lastPosition, node);
         node.monomers.forEach((monomer) => {
           const rearrangeResult = this.reArrangeChain(
             monomer,
@@ -1595,6 +1593,8 @@ export class DrawingEntitiesManager {
     const command = new Command();
     let chainsCollection: ChainsCollection;
 
+    command.merge(this.recalculateAntisenseChains());
+
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
@@ -1678,7 +1678,6 @@ export class DrawingEntitiesManager {
             node.lastMonomerInNode.attachmentPointsToBonds[
               AttachmentPointName.R2
             ];
-          console.log(restOfRowsWithAntisense, node, lastPosition);
 
           if (r2PolymerBond) {
             r2PolymerBond.restOfRowsWithAntisense = restOfRowsWithAntisense;
@@ -2791,16 +2790,11 @@ export class DrawingEntitiesManager {
       lastAddedMonomer = undefined;
     });
 
-    command.merge(this.recalculateAntisenseChains());
+    command.merge(
+      this.reArrangeChains(editor.canvas.width.baseVal.value, true, true),
+    );
 
-    const needLayout =
-      editor.mode instanceof SnakeMode || editor.mode instanceof SequenceMode;
-
-    if (needLayout) {
-      command.addOperation(new ReinitializeModeOperation());
-    } else {
-      this.snakeLayoutMatrix = undefined;
-    }
+    command.setUndoOperationsByPriority();
 
     return command;
   }

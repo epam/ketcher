@@ -14,6 +14,9 @@ import {
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
@@ -78,7 +81,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 });

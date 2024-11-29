@@ -21,6 +21,9 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn } from '@utils/formats';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -92,7 +95,7 @@ test.describe('Mapping Tools', () => {
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
   });
 
   test.describe('Mapping reactions', () => {
@@ -108,7 +111,7 @@ test.describe('Mapping Tools', () => {
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
 
     test('Unmap the mapped reaction', async ({ page }) => {

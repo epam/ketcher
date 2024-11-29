@@ -12,6 +12,10 @@ import {
   waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,9 +47,9 @@ test.describe('Clear canvas', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
+      await pressRedoButton(page);
+      await pressUndoButton(page);
     });
     await takeEditorScreenshot(page);
   });
@@ -94,13 +98,13 @@ test.describe('Clear canvas', () => {
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await page.keyboard.press('Control+Delete');
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressUndoButton(page);
+      await pressUndoButton(page);
+      await pressRedoButton(page);
+      await pressRedoButton(page);
     });
     await takeEditorScreenshot(page);
   });

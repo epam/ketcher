@@ -24,6 +24,9 @@ import {
 } from '@utils';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -115,7 +118,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });

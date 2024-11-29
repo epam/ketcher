@@ -46,6 +46,10 @@ import {
 import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -626,11 +630,11 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -647,11 +651,11 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -680,7 +684,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
@@ -698,7 +702,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
@@ -716,7 +720,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await spressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
@@ -732,7 +736,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);

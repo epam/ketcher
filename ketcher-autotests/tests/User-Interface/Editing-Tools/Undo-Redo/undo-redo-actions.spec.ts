@@ -41,6 +41,10 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -574,12 +578,12 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'Apply');
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -685,12 +689,12 @@ test.describe('Undo/Redo Actions', () => {
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -712,9 +716,9 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await expect(page).toHaveScreenshot();
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await expect(page).toHaveScreenshot();
   });
 

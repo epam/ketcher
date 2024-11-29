@@ -66,6 +66,10 @@ import {
 } from '@utils/macromolecules/library';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -1201,13 +1205,13 @@ test.describe('RNA Library', () => {
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(x, y, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
       await selectEraseTool(page);
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
 
       // Reset to default state

@@ -8,6 +8,10 @@ import {
   AtomButton,
   clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,13 +48,13 @@ test.describe('Track Changes', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

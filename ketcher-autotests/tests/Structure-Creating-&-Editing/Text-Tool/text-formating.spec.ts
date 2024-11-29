@@ -20,6 +20,10 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContents(filename);
@@ -187,14 +191,14 @@ test.describe('Text tools test cases', () => {
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
     await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressUndoButton(page);
+      await pressRedoButton(page);
     });
     await takeEditorScreenshot(page);
   });

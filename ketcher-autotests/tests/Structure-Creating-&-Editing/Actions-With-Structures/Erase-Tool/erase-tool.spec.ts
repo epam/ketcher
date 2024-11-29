@@ -15,6 +15,9 @@ import {
 } from '@utils';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -97,7 +100,7 @@ test.describe('Erase Tool', () => {
 
     expect(plusDeleted).toEqual(plusAfterDelete);
 
-    await selectAction(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     const plusOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -133,7 +136,7 @@ test.describe('Erase Tool', () => {
     });
     expect(arrowDeleted).toEqual(arrowAfterDelete);
 
-    await selectAction(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     const arrowOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

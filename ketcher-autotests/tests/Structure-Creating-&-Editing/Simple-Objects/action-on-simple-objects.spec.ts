@@ -24,6 +24,9 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -160,13 +163,13 @@ test.describe('Action on simples objects', () => {
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await cutAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });

@@ -32,6 +32,9 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getKet, getMolfile } from '@utils/formats';
+import {
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -103,7 +106,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -306,7 +309,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -348,7 +351,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -371,7 +374,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 

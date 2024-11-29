@@ -1,17 +1,10 @@
-import {
-  BaseMonomer,
-  MonomerToAtomBond,
-  Nucleoside,
-  Nucleotide,
-  SubChainNode,
-} from 'domain/entities';
+import { BaseMonomer, MonomerToAtomBond, SubChainNode } from 'domain/entities';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
-import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 
 interface MatrixConfig {
   initialMatrix: Matrix<Cell>;
@@ -33,10 +26,6 @@ export class CanvasMatrix {
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
-  }
-
-  private get chains() {
-    return this.chainsCollection.chains;
   }
 
   private fillConnectionsOffset(
@@ -214,7 +203,10 @@ export class CanvasMatrix {
         );
 
         this.matrix.set(rowNumber, columnNumber, cell);
-        this.monomerToCell.set(initialMatrixCell.monomer, cell);
+
+        if (initialMatrixCell.monomer) {
+          this.monomerToCell.set(initialMatrixCell.monomer, cell);
+        }
       }
     }
 

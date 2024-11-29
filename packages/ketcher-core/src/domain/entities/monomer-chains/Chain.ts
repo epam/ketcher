@@ -21,7 +21,6 @@ import {
 } from 'domain/helpers/monomers';
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class Chain {
   public subChains: BaseSubChain[] = [];

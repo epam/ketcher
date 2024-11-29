@@ -18,14 +18,15 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { HydrogenBond } from 'domain/entities';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
   public priority = 1;
   constructor(
     private addPolymerBondChangeModel: (
-      polymerBond?: PolymerBond,
-    ) => PolymerBond,
+      polymerBond?: PolymerBond | HydrogenBond,
+    ) => PolymerBond | HydrogenBond,
     private deletePolymerBondChangeModel: (polymerBond) => void,
   ) {
     this.polymerBond = this.addPolymerBondChangeModel();
@@ -45,11 +46,11 @@ export class PolymerBondAddOperation implements Operation {
 export class PolymerBondDeleteOperation implements Operation {
   public priority = -1;
   constructor(
-    public polymerBond: PolymerBond,
+    public polymerBond: PolymerBond | HydrogenBond,
     private deletePolymerBondChangeModel: () => void,
     private finishPolymerBondCreationModelChange: (
-      polymerBond?: PolymerBond,
-    ) => PolymerBond,
+      polymerBond?: PolymerBond | HydrogenBond,
+    ) => PolymerBond | HydrogenBond,
   ) {
     this.deletePolymerBondChangeModel();
   }

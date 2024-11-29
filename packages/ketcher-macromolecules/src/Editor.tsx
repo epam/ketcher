@@ -153,7 +153,7 @@ function Editor({
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
-  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>();
+  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });

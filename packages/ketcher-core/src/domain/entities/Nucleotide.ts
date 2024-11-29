@@ -52,7 +52,6 @@ export class Nucleotide {
     rnaBaseName: string,
     position: Vec2,
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
-    isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);

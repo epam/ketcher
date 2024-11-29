@@ -38,6 +38,7 @@ import {
   peptideNaturalAnalogues,
   RNA_DNA_NON_MODIFIED_PART,
   rnaDnaNaturalAnalogues,
+  RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
@@ -495,7 +496,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private handleRnaDnaNodeAddition(
-    enteredSymbol: string,
+    enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     currentNode: SubChainNode,
     newNodePosition: Vec2,
   ) {

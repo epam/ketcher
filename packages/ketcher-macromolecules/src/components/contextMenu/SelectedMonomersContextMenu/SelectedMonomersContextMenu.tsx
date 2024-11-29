@@ -2,11 +2,10 @@ import { ItemParams } from 'react-contexify';
 import { CONTEXT_MENU_ID } from '../types';
 import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import {
   BaseMonomer,
-  BaseSequenceItemRenderer,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   RNABase,
@@ -47,8 +46,8 @@ export const SelectedMonomersContextMenu = ({
       title: 'Create Antisense Strand',
       separator: true,
       disabled: isAntisenseCreationDisabled,
-      hidden: ({ props }: { props?: { selectedMonomers: BaseMonomer[] } }) => {
-        return !props?.selectedMonomers.some((selectedMonomer) => {
+      hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
+        return !props?.selectedMonomers?.some((selectedMonomer) => {
           return (
             (selectedMonomer instanceof RNABase &&
               getSugarFromRnaBase(selectedMonomer)) ||

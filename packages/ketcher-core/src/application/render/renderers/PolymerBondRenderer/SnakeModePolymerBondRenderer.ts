@@ -427,7 +427,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .isAntisense
       ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
       : this.polymerBond.firstMonomer.monomerItem.isSense &&
-        this.polymerBond.restOfRowsWithAntisense > 0
+        (this.polymerBond.restOfRowsWithAntisense || 0) > 0
       ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
       : isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH

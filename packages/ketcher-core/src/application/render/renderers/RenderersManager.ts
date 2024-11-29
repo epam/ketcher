@@ -1,11 +1,5 @@
 import { CoreEditor } from 'application/editor/Editor';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import {
-  PeptideRenderer,
-  PhosphateRenderer,
-  SugarRenderer,
-  UnsplitNucleotideRenderer,
-} from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
@@ -13,12 +7,9 @@ import { PolymerBondRendererFactory } from 'application/render/renderers/Polymer
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import {
-  MonomerSequenceNode,
+  HydrogenBond,
   Nucleoside,
   Nucleotide,
-  Peptide,
-  Phosphate,
-  Sugar,
   UnsplitNucleotide,
 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -26,14 +17,6 @@ import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import {
-  checkIsR2R1Connection,
-  getNextMonomerInChain,
-  getRnaBaseFromSugar,
-  isMonomerBeginningOfChain,
-  isPeptideOrAmbiguousPeptide,
-  isRnaBaseOrAmbiguousRnaBase,
-} from 'domain/helpers/monomers';
 import { AttachmentPointName } from 'domain/types';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { AmbiguousMonomerRenderer } from 'application/render/renderers/AmbiguousMonomerRenderer';
@@ -138,7 +121,7 @@ export class RenderersManager {
     this.markForReEnumeration();
   }
 
-  public addPolymerBond(polymerBond: PolymerBond): void {
+  public addPolymerBond(polymerBond: PolymerBond | HydrogenBond): void {
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
@@ -166,7 +149,7 @@ export class RenderersManager {
   }
 
   public deletePolymerBond(
-    polymerBond: PolymerBond,
+    polymerBond: PolymerBond | HydrogenBond,
     recalculateEnumeration = true,
   ) {
     polymerBond.renderer?.remove();

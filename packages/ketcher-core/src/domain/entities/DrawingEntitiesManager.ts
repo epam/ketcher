@@ -39,7 +39,6 @@ import {
   PolymerBondCancelCreationOperation,
   PolymerBondDeleteOperation,
   PolymerBondFinishCreationOperation,
-  PolymerBondModifyAttributesOperation,
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
@@ -51,13 +50,11 @@ import {
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
-  getPhosphateFromSugar,
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
@@ -94,9 +91,6 @@ import {
 } from 'domain/constants/monomers';
 import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
-import { ReinitializeModeOperation } from 'application/editor/operations/modes';
-import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -115,7 +109,6 @@ type RnaPresetAdditionParams = {
   phosphate: MonomerItemType | undefined;
   phosphatePosition: Vec2 | undefined;
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
-  isAntisense: boolean;
 };
 
 export class DrawingEntitiesManager {
@@ -646,7 +639,7 @@ export class DrawingEntitiesManager {
     startPosition,
     endPosition,
     bondType = MACROMOLECULES_BOND_TYPES.SINGLE,
-    _polymerBond?: PolymerBond,
+    _polymerBond?: PolymerBond | HydrogenBond,
   ) {
     if (_polymerBond) {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
@@ -693,7 +686,7 @@ export class DrawingEntitiesManager {
     return { command, polymerBond: operation.polymerBond };
   }
 
-  public deletePolymerBondChangeModel(polymerBond: PolymerBond) {
+  public deletePolymerBondChangeModel(polymerBond: PolymerBond | HydrogenBond) {
     if (this.polymerBonds.get(polymerBond.id) !== polymerBond) {
       return;
     }
@@ -1542,14 +1535,14 @@ export class DrawingEntitiesManager {
 
   private calculateSnakeLayoutMatrix(chainsCollection: ChainsCollection) {
     const snakeLayoutMatrix = new Matrix<Cell>();
-    const monomersGroupedByY = new Map<string, Map<string, BaseMonomer>>();
+    const monomersGroupedByY = new Map<number, Map<number, BaseMonomer>>();
 
     this.monomers.forEach((monomer) => {
-      const x = monomer.position.x.toFixed();
-      const y = monomer.position.y.toFixed();
+      const x = Number(monomer.position.x.toFixed());
+      const y = Number(monomer.position.y.toFixed());
 
       if (!monomersGroupedByY.has(y)) {
-        monomersGroupedByY.set(y, new Map<string, BaseMonomer>());
+        monomersGroupedByY.set(y, new Map<number, BaseMonomer>());
       }
 
       const monomersGroupedByX = monomersGroupedByY.get(y);
@@ -1557,14 +1550,21 @@ export class DrawingEntitiesManager {
       monomersGroupedByX?.set(x, monomer);
     });
 
-    const sortedGroupedMonomers = [...monomersGroupedByY.entries()].sort(
-      (a, b) => a[0] - b[0],
-    );
+    const sortedGroupedMonomers = [...monomersGroupedByY.entries()]
+      .map(([y, groupedByX]) => {
+        const groupedByYArray: [number, [number, BaseMonomer][]] = [
+          y,
+          [...groupedByX.entries()],
+        ];
+
+        return groupedByYArray;
+      })
+      .sort((a, b) => a[0] - b[0]);
 
     sortedGroupedMonomers.forEach(([y, groupedByY], index) => {
       sortedGroupedMonomers[index] = [
         y,
-        [...groupedByY.entries()].sort((a, b) => a[0] - b[0]),
+        groupedByY.sort((a, b) => Number(a[0]) - Number(b[0])),
       ];
     });
 
@@ -1574,7 +1574,7 @@ export class DrawingEntitiesManager {
       monomerXToIndexInMatrix[x] = index;
     });
 
-    sortedGroupedMonomers.forEach(([y, groupedByX], indexY) => {
+    sortedGroupedMonomers.forEach(([, groupedByX], indexY) => {
       groupedByX.forEach(([x, monomer]) => {
         snakeLayoutMatrix.set(
           Number(indexY),
@@ -1694,7 +1694,7 @@ export class DrawingEntitiesManager {
               AttachmentPointName.R2
             ];
 
-          if (r2PolymerBond) {
+          if (r2PolymerBond instanceof PolymerBond) {
             r2PolymerBond.restOfRowsWithAntisense = restOfRowsWithAntisense;
           }
 

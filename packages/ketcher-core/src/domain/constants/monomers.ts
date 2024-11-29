@@ -28,7 +28,7 @@ export const rnaDnaNaturalAnalogues = [
   RnaDnaNaturalAnaloguesEnum.GUANINE,
   RnaDnaNaturalAnaloguesEnum.CYTOSINE,
   RnaDnaNaturalAnaloguesEnum.URACIL,
-];
+] as string[];
 export const unknownNaturalAnalogues = ['.', 'X'];
 export const peptideNaturalAnalogues = [
   'A',

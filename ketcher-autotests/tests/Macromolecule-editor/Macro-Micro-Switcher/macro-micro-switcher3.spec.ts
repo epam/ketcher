@@ -25,6 +25,8 @@ import {
   clickOnCanvas,
   waitForRender,
   selectAllStructuresOnCanvas,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -1016,6 +1018,46 @@ test(`Verify expansion behavior when monomers are connected by multiple bonds`, 
   await takeEditorScreenshot(page);
   await selectAllStructuresOnCanvas(page);
   await expandMonomer(page, 'nC6n5U');
+  await takeEditorScreenshot(page);
+
+  test.fixme(
+    // eslint-disable-next-line no-self-compare
+    true === true,
+    `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
+  );
+});
+
+test(`Verify undo/redo functionality after expanding multiple monomers`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6019
+   * Description: Verify layout adjustments when expanding multiple monomers in a straight chain
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Select all monomers on the canvas (using Ctrl+A)
+   *       4. Expand all monomers from  chain at once
+   *       5. Take screenshot to witness the result
+   *       6. Press Undo button
+   *       7. Take screenshot to witness the Undo rolled structures back to collapsed state
+   *       8. Press Redo button
+   *       9. Take screenshot to witness the Redo rolled structures back to expanded state
+   */
+  await pageReload(page);
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
+
+  await pressRedoButton(page);
   await takeEditorScreenshot(page);
 
   test.fixme(

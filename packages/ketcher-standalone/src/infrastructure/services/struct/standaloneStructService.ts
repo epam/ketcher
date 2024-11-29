@@ -143,6 +143,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.SEQUENCE;
       break;
     }
+    case ChemicalMimeType.PeptideSequenceThreeLetter: {
+      format = SupportedFormat.SEQUENCE_3_LETTER;
+      break;
+    }
     case ChemicalMimeType.IDT: {
       format = SupportedFormat.IDT;
       break;

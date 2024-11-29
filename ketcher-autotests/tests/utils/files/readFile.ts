@@ -342,16 +342,16 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
         .click();
       await page.getByText(PeptideType.threeLetterCode).click();
     }
+  }
 
-    await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
 
-    if (!errorExpected) {
-      await waitForLoad(page, async () => {
-        await pressButton(page, 'Add to Canvas');
-      });
-    } else {
+  if (!errorExpected) {
+    await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
-    }
+    });
+  } else {
+    await pressButton(page, 'Add to Canvas');
   }
 }
 // export async function pasteFromClipboardAndAddToMacromoleculesCanvas2(

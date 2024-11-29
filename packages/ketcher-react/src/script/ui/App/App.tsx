@@ -64,7 +64,7 @@ const App = (props: Props) => {
     checkServer();
     dispatch(initFGTemplates());
     dispatch(initSaltsAndSolventsTemplates());
-    window.scrollTo(0, 0);
+
     return () => {
       dispatch(initLib([]));
       dispatch(initSaltsAndSolvents([]));

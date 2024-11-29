@@ -105,6 +105,7 @@ const App = () => {
             },
             '*',
           );
+          window.scrollTo(0, 0);
         }}
         togglerComponent={togglerComponent}
       />

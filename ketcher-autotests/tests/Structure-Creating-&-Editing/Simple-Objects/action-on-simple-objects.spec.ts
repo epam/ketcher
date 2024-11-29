@@ -24,9 +24,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;

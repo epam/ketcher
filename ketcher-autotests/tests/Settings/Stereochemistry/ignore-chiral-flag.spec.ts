@@ -8,15 +8,11 @@ import {
   cutAndPaste,
   openSettings,
   pressButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();

@@ -11,8 +11,6 @@ import {
   saveToFile,
   pressButton,
   resetCurrentTool,
-  TopPanelButton,
-  selectTopPanelButton,
   selectBond,
   BondTypeName,
   selectLeftPanelButton,

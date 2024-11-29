@@ -2,11 +2,9 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectLeftPanelButton,
-  selectTopPanelButton,
   waitForPageInit,
   pressButton,
   LeftPanelButton,
-  TopPanelButton,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,

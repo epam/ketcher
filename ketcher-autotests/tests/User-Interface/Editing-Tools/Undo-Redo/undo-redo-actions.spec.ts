@@ -9,8 +9,6 @@ import {
   pressButton,
   selectLeftPanelButton,
   LeftPanelButton,
-  TopPanelButton,
-  selectTopPanelButton,
   selectAtomInToolbar,
   AtomButton,
   doubleClickOnAtom,

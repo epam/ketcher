@@ -32,8 +32,6 @@ import {
   takeTopToolbarScreenshot,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectTopPanelButton,
-  TopPanelButton,
   selectClearCanvasTool,
   Peptides,
   clickOnCanvas,

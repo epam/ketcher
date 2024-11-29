@@ -60,9 +60,7 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 let page: Page;
 

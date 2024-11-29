@@ -8,8 +8,6 @@ import {
   selectRingButton,
   RingButton,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectTopPanelButton,
-  TopPanelButton,
   dragMouseTo,
   waitForPageInit,
   mapTwoAtoms,
@@ -21,9 +19,7 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn } from '@utils/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {

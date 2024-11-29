@@ -2,11 +2,9 @@ import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
-  TopPanelButton,
   clickOnCanvas,
   getControlModifier,
   openFileAndAddToCanvas,
-  selectTopPanelButton,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';

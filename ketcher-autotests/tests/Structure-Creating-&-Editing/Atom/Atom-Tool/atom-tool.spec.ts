@@ -26,8 +26,6 @@ import {
   receiveFileComparisonData,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectTopPanelButton,
-  TopPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
@@ -35,9 +33,7 @@ import {
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const X_DELTA_ONE = 100;
 

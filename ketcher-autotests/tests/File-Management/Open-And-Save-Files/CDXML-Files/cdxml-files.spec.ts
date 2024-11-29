@@ -24,9 +24,7 @@ import {
 } from '@utils';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {

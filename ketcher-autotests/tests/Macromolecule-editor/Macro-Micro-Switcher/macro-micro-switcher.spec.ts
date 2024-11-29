@@ -91,9 +91,7 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const topLeftCorner = {
   x: -325,

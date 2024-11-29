@@ -1,7 +1,5 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   selectAtomInToolbar,

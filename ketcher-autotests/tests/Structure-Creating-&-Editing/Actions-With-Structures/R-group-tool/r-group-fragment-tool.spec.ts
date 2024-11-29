@@ -27,9 +27,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);

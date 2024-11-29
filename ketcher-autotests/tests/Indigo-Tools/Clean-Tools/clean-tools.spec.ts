@@ -19,9 +19,7 @@ import {
   saveToFile,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
-import {
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {

@@ -720,7 +720,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
-    await spressUndoButton(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);

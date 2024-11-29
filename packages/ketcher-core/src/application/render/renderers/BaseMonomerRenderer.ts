@@ -495,15 +495,15 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.enumeration);
   }
 
-  public redrawEnumeration(subChainLength: number) {
-    this.redrawChainBeginning(subChainLength);
+  public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
+    this.redrawChainTerminalIndicator(needToDrawTerminalIndicator);
 
     if (!this.enumerationElement) return;
 
     this.enumerationElement.text(this.enumeration);
   }
 
-  public redrawChainBeginning(subChainLength: number) {
+  public redrawChainTerminalIndicator(needToDraw: boolean) {
     if (
       !this.rootElement ||
       !this.CHAIN_START_TERMINAL_INDICATOR_TEXT ||
@@ -514,11 +514,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     this.terminalIndicatorElement?.remove();
 
-    if (
-      (this.enumeration !== 1 && !this.monomer.monomerItem.isAntisense) ||
-      (this.enumeration !== subChainLength &&
-        this.monomer.monomerItem.isAntisense)
-    ) {
+    if (!needToDraw) {
       return;
     }
 

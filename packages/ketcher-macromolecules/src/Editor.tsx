@@ -19,6 +19,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
+  BaseMonomer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
 } from 'ketcher-core';
@@ -152,6 +153,7 @@ function Editor({
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>();
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
@@ -197,12 +199,15 @@ function Editor({
         });
       },
     );
-    editor?.events.rightClickSelectedMonomers.add((event) => {
-      showSelectedMonomersContextMenu({
-        event,
-        props: {},
-      });
-    });
+    editor?.events.rightClickSelectedMonomers.add(
+      (event, selectedMonomers: BaseMonomer[]) => {
+        setSelectedMonomers(selectedMonomers);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers },
+        });
+      },
+    );
     editor?.events.rightClickCanvas.add((event) => {
       showSequenceContextMenu({
         event,
@@ -303,7 +308,7 @@ function Editor({
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />
-      <SelectedMonomersContextMenu />
+      <SelectedMonomersContextMenu selectedMonomers={selectedMonomers} />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

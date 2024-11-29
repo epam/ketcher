@@ -4,48 +4,95 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { BaseSequenceItemRenderer } from 'ketcher-core';
+import {
+  BaseMonomer,
+  BaseSequenceItemRenderer,
+  getRnaBaseFromSugar,
+  getSugarFromRnaBase,
+  RNABase,
+  Sugar,
+} from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 
-type SelectedMonomersContextMenuType = {};
+type SelectedMonomersContextMenuType = {
+  selectedMonomers: BaseMonomer[];
+};
 
-export const SelectedMonomersContextMenu =
-  ({}: SelectedMonomersContextMenuType) => {
-    const editor = useAppSelector(selectEditor);
-    const dispatch = useAppDispatch();
+export const SelectedMonomersContextMenu = ({
+  selectedMonomers,
+}: SelectedMonomersContextMenuType) => {
+  const editor = useAppSelector(selectEditor);
+  const isAntisenseCreationDisabled = selectedMonomers?.some(
+    (selectedMonomer) => {
+      return (
+        (selectedMonomer instanceof RNABase &&
+          (selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === '' ||
+            selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode ===
+              'X' ||
+            selectedMonomer.hydrogenBonds.length > 0 ||
+            selectedMonomer.covalentBonds.length > 1)) ||
+        (selectedMonomer instanceof Sugar &&
+          (getRnaBaseFromSugar(selectedMonomer)?.hydrogenBonds.length || 0) > 0)
+      );
+    },
+  );
 
-    const menuItems = [
-      {
-        name: 'create_antisense_strand',
-        title: 'Create Antisense Strand',
-        disabled: false,
-        hidden: ({
-          props,
-        }: {
-          props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-        }) => {
-          return false;
-        },
+  const menuItems = [
+    {
+      name: 'copy',
+      title: 'Copy',
+    },
+    {
+      name: 'create_antisense_strand',
+      title: 'Create Antisense Strand',
+      separator: true,
+      disabled: isAntisenseCreationDisabled,
+      hidden: ({ props }: { props?: { selectedMonomers: BaseMonomer[] } }) => {
+        return !props?.selectedMonomers.some((selectedMonomer) => {
+          return (
+            (selectedMonomer instanceof RNABase &&
+              getSugarFromRnaBase(selectedMonomer)) ||
+            (selectedMonomer instanceof Sugar &&
+              getRnaBaseFromSugar(selectedMonomer))
+          );
+        });
       },
-    ];
+    },
+    {
+      name: 'delete',
+      title: 'Delete',
+    },
+  ];
 
-    const handleMenuChange = ({ id, props }: ItemParams) => {
-      editor.events.createAntisenseStrand.dispatch();
-    };
-
-    const ketcherEditorRootElement = document.querySelector(
-      KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-    );
-
-    return (
-      ketcherEditorRootElement &&
-      createPortal(
-        <ContextMenu
-          id={CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS}
-          handleMenuChange={handleMenuChange}
-          menuItems={menuItems}
-        ></ContextMenu>,
-        ketcherEditorRootElement,
-      )
-    );
+  const handleMenuChange = ({ id }: ItemParams) => {
+    switch (id) {
+      case 'copy':
+        editor.events.copySelectedStructure.dispatch();
+        break;
+      case 'create_antisense_strand':
+        editor.events.createAntisenseStrand.dispatch();
+        break;
+      case 'delete':
+        editor.events.deleteSelectedStructure.dispatch();
+        break;
+      default:
+        break;
+    }
   };
+
+  const ketcherEditorRootElement = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  );
+
+  return (
+    ketcherEditorRootElement &&
+    createPortal(
+      <ContextMenu
+        id={CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS}
+        handleMenuChange={handleMenuChange}
+        menuItems={menuItems}
+      ></ContextMenu>,
+      ketcherEditorRootElement,
+    )
+  );
+};

@@ -39,6 +39,7 @@ import {
   PolymerBondCancelCreationOperation,
   PolymerBondDeleteOperation,
   PolymerBondFinishCreationOperation,
+  PolymerBondModifyAttributesOperation,
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
@@ -95,6 +96,7 @@ import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -114,13 +116,6 @@ type RnaPresetAdditionParams = {
   phosphatePosition: Vec2 | undefined;
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
   isAntisense: boolean;
-};
-
-type NucleotideOrNucleoside = {
-  sugar: Sugar;
-  phosphate?: Phosphate;
-  rnaBase: RNABase | AmbiguousMonomer;
-  baseMonomer: Sugar | Phosphate;
 };
 
 export class DrawingEntitiesManager {
@@ -1589,6 +1584,10 @@ export class DrawingEntitiesManager {
     isSnakeMode: boolean,
     needRedrawBonds = true,
   ) {
+    if (this.monomers.size === 0) {
+      return new Command();
+    }
+
     const previousSnakeLayoutMatrix = this.snakeLayoutMatrix;
     const command = new Command();
     let chainsCollection: ChainsCollection;
@@ -2701,10 +2700,22 @@ export class DrawingEntitiesManager {
       .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
       .map(([, monomer]) => monomer as BaseMonomer);
     const chainsCollection = ChainsCollection.fromMonomers(selectedMonomers);
+    const chainsForAntisenseCreation = chainsCollection.chains.filter(
+      (chain) => {
+        return chain.subChains.some((subChain) =>
+          subChain.nodes.some(
+            (node) =>
+              (node instanceof Nucleotide || node instanceof Nucleoside) &&
+              node.monomer.selected,
+          ),
+        );
+      },
+    );
+
     let lastAddedNode;
     let lastAddedMonomer;
 
-    chainsCollection.chains.forEach((chain) => {
+    chainsForAntisenseCreation.forEach((chain) => {
       chain.forEachNode(({ node }) => {
         if (!node.monomer.selected) {
           lastAddedMonomer = undefined;
@@ -2712,9 +2723,12 @@ export class DrawingEntitiesManager {
 
           return;
         }
+
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
           const { modelChanges: addNucleotideCommand, node: addedNode } = (
-            node instanceof Nucleotide ? Nucleotide : Nucleoside
+            node instanceof Nucleotide && node.phosphate.selected
+              ? Nucleotide
+              : Nucleoside
           ).createOnCanvas(
             this.antisenseStrandBasesMap[
               node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode

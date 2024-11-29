@@ -332,7 +332,12 @@ export class CoreEditor {
         eventData instanceof BaseMonomerRenderer &&
         eventData.monomer.selected
       ) {
-        this.events.rightClickSelectedMonomers.dispatch(event);
+        this.events.rightClickSelectedMonomers.dispatch(
+          event,
+          this.drawingEntitiesManager.selectedEntities
+            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+        );
       } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -376,6 +381,17 @@ export class CoreEditor {
     );
     this.events.createAntisenseStrand.add(() => {
       this.onCreateAntisenseStrand();
+    });
+    this.events.copySelectedStructure.add(() => {
+      this.mode.onCopy();
+    });
+    this.events.deleteSelectedStructure.add(() => {
+      const command = new Command();
+      const history = new EditorHistory(this);
+
+      command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
+      history.update(command);
+      this.renderersContainer.update(command);
     });
   }
 
@@ -740,6 +756,9 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+    modelChanges.merge(
+      this.drawingEntitiesManager.recalculateAntisenseChains(),
+    );
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
     this._type = EditorType.Macromolecules;

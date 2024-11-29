@@ -56,6 +56,8 @@ export function resetEditorEvents() {
     mouseUpAtom: new Subscription(),
     updateMonomersLibrary: new Subscription(),
     createAntisenseStrand: new Subscription(),
+    copySelectedStructure: new Subscription(),
+    deleteSelectedStructure: new Subscription(),
   };
 }
 resetEditorEvents();

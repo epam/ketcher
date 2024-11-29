@@ -45,6 +45,7 @@ import { MonomerToAtomBondRenderer } from 'application/render/renderers/MonomerT
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
+import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -185,34 +186,49 @@ export class RenderersManager {
       const monomerEnumeration = node.monomer.monomerItem.isAntisense
         ? subChain.length - currentEnumeration + 1
         : currentEnumeration;
+      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+        ? monomerEnumeration === subChain.length
+        : monomerEnumeration === 1;
 
       if (!monomerRenderer) {
         return;
       }
 
       monomerRenderer.setEnumeration(monomerEnumeration);
-      monomerRenderer.redrawEnumeration(subChain.length);
+      monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
       currentEnumeration++;
     });
   }
 
   private recalculateRnaChainEnumeration(subChain: RnaSubChain) {
     let currentEnumeration = 1;
+    const nucleotidesAmount = subChain.nodes.reduce(
+      (nucleotidesAmount, node) =>
+        node instanceof Nucleotide ||
+        node instanceof Nucleoside ||
+        node.monomer instanceof UnsplitNucleotide
+          ? nucleotidesAmount + 1
+          : nucleotidesAmount,
+      0,
+    );
 
     subChain.nodes.forEach((node) => {
       const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? subChain.length - currentEnumeration + 1
+        ? nucleotidesAmount - currentEnumeration + 1
         : currentEnumeration;
+      const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
+        ? monomerEnumeration === nucleotidesAmount
+        : monomerEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
         node.rnaBase.renderer?.setEnumeration(monomerEnumeration);
-        node.rnaBase.renderer?.redrawEnumeration(subChain.length);
+        node.rnaBase.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         node.sugar.renderer?.setEnumeration(monomerEnumeration);
-        node.sugar.renderer?.redrawEnumeration(subChain.length);
+        node.sugar.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
-      } else if (node instanceof MonomerSequenceNode) {
+      } else if (node.monomer instanceof UnsplitNucleotide) {
         node.monomer.renderer?.setEnumeration(monomerEnumeration);
-        node.monomer.renderer?.redrawEnumeration(subChain.length);
+        node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
       }
     });
@@ -228,7 +244,10 @@ export class RenderersManager {
       chain.subChains.forEach((subChain) => {
         if (subChain instanceof PeptideSubChain) {
           this.recalculatePeptideChainEnumeration(subChain);
-        } else if (subChain instanceof RnaSubChain) {
+        } else if (
+          subChain instanceof RnaSubChain ||
+          subChain instanceof PhosphateSubChain
+        ) {
           this.recalculateRnaChainEnumeration(subChain);
         }
       });

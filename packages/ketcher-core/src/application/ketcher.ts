@@ -84,7 +84,7 @@ export class Ketcher {
     assert(editor != null);
     assert(structService != null);
     assert(formatterFactory != null);
-    this.changeEvent = new Subscription();
+    this.changeEvent = editor.event.change;
     this.#editor = editor;
     this.structService = structService;
     this.#formatterFactory = formatterFactory;

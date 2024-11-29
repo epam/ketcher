@@ -9,7 +9,6 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasMacro,
   selectRectangleArea,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
@@ -22,7 +21,13 @@ import {
   zoomWithMouseWheel,
   selectEraseTool,
   Bases,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
@@ -71,7 +76,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -209,7 +214,7 @@ test.describe('Undo-Redo tests', () => {
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId(Peptides.BetaAlanine).click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;
@@ -249,7 +254,7 @@ test.describe('Undo-Redo tests', () => {
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();
       await page.getByTestId('SMPEG2___SM(PEG)2').click();
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;
@@ -431,10 +436,10 @@ test.describe('Undo-Redo tests', () => {
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('C_C_R_P').click();
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('undo').click();

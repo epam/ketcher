@@ -21,6 +21,8 @@ import {
   selectBond,
   waitForRender,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
@@ -39,7 +41,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -63,7 +65,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
@@ -81,7 +83,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R4');
     await pressButton(page, 'R5');
     await pressButton(page, 'R6');
@@ -101,7 +103,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -122,7 +124,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -145,7 +147,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
 
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Multiple group' }).click();
@@ -157,7 +159,7 @@ test.describe('R-Group Label Tool', () => {
     let point: { x: number; y: number };
     // eslint-disable-next-line no-magic-numbers, prefer-const
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await pressButton(page, 'R5');
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
@@ -175,11 +177,11 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Vertical Flip (Alt+V)');
     });
@@ -196,7 +198,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -225,7 +227,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -233,7 +235,7 @@ test.describe('R-Group Label Tool', () => {
     let point: { x: number; y: number };
     // eslint-disable-next-line no-magic-numbers, prefer-const
     point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await pressButton(page, 'R5');
 
     await waitForRender(page, async () => {
@@ -252,7 +254,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -283,7 +285,7 @@ test.describe('R-Group Label Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
@@ -317,7 +319,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -361,7 +363,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -376,9 +378,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -391,7 +391,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

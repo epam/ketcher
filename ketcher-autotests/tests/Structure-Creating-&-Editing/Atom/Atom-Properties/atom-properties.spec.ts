@@ -11,7 +11,6 @@ import {
   saveToFile,
   pressButton,
   resetCurrentTool,
-  getControlModifier,
   TopPanelButton,
   selectTopPanelButton,
   selectBond,
@@ -26,6 +25,8 @@ import {
   waitForRender,
   waitForAtomPropsModal,
   drawBenzeneRing,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 import {
@@ -266,8 +267,7 @@ test.describe('Atom Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await takeEditorScreenshot(page);
@@ -1451,7 +1451,7 @@ test.describe('Atom Properties', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

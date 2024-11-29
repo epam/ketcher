@@ -20,6 +20,8 @@ import {
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -45,7 +47,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };
   const point1 = { x: 83, y: 207 };
   await openFileAndAddToCanvas('KET/simple-objects.ket', page);
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.mouse.move(point.x, point.y);
   await page.mouse.down();
   await dragMouseTo(point1.x, point1.y, page);
@@ -113,8 +115,8 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await clickOnCanvas(page, point2.x, point2.y);
     await waitForRender(page, async () => {
-      await page.mouse.click(point2.x, point2.y);
       await dragMouseTo(point3.x, point3.y, page);
     });
     await takeEditorScreenshot(page);
@@ -125,7 +127,7 @@ test.describe('Action on simples objects', () => {
   }) => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
@@ -135,7 +137,7 @@ test.describe('Action on simples objects', () => {
   }) => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
   });
@@ -155,13 +157,13 @@ test.describe('Action on simples objects', () => {
       });
     }
     await copyAndPaste(page);
-    await page.mouse.click(anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
     await cutAndPaste(page);
-    await page.mouse.click(anyPointX, anyPointY);
+    await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);

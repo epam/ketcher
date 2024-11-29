@@ -1,19 +1,22 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
+  waitForPageInit,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import {
+  bondMonomerPointToMoleculeAtom,
+  bondTwoMonomersPointToPoint,
+} from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for peptides: ', () => {
   let page: Page;
@@ -21,41 +24,54 @@ test.describe('Connection rules for peptides: ', () => {
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
+    const context = await browser.newContext();
+    page = await context.newPage();
 
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 
   test.afterAll(async ({ browser }) => {
-    const cntxt = page.context();
-    await page.close();
-    await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
-      someContext.close();
-    });
-    // await browser.close();
+    await Promise.all(browser.contexts().map((context) => context.close()));
   });
+
+  interface IMolecule {
+    moleculeType: string;
+    fileName: string;
+    alias: string;
+    atomLocatorSelectors: string[];
+    connectionPointShifts: { x: number; y: number }[];
+  }
+
+  const molecules: { [moleculeName: string]: IMolecule } = {
+    'Benzene ring': {
+      moleculeType: 'Molecule',
+      fileName: 'KET/Molecule-Templates/1 - Benzene ring.ket',
+      alias: 'Benzene ring',
+      atomLocatorSelectors: [
+        'g > circle',
+        'g:nth-child(2) > circle',
+        'g:nth-child(3) > circle',
+        'g:nth-child(4) > circle',
+        'g:nth-child(5) > circle',
+        'g:nth-child(6) > circle',
+      ],
+      connectionPointShifts: [
+        { x: 0, y: 2 },
+        { x: -2, y: 2 },
+        { x: 2, y: 2 },
+        { x: 0, y: -2 },
+        { x: 2, y: -2 },
+        { x: -2, y: -2 },
+      ],
+    },
+  };
 
   interface IMonomer {
     monomerType: string;
@@ -380,33 +396,6 @@ test.describe('Connection rules for peptides: ', () => {
       );
     }
   }
-
-  // async function prepareCanvasNoR1R2APLeft(page: Page, peptide: IMonomer) {
-  //   await openFileAndAddToCanvasMacro(
-  //     tmpPeptideMonomers['Test-6-P-1'].fileName,
-  //     page,
-  //   );
-
-  //   await openFileAndAddToCanvasMacro(peptide.fileName, page);
-  //   const peptideLocator = page.getByText(peptide.alias).locator('..').first();
-  //   await peptideLocator.hover();
-  //   await dragMouseTo(550, 370, page);
-  //   await moveMouseAway(page);
-
-  //   for await (const peptideConnectionPoint of Object.values(['R1', 'R2'])) {
-  //     if (peptideConnectionPoint in peptide.connectionPoints) {
-  //       const tmppeptide =
-  //         tmpPeptideMonomers[`Test-6-P-${peptideConnectionPoint[1]}`];
-  //       await bondTwoMonomersByPointToPoint(
-  //         page,
-  //         peptide,
-  //         tmppeptide,
-  //         peptideConnectionPoint,
-  //         peptideConnectionPoint,
-  //       );
-  //     }
-  //   }
-  // }
 
   async function loadTwoMonomers(
     page: Page,
@@ -1235,6 +1224,155 @@ test.describe('Connection rules for peptides: ', () => {
         await zoomWithMouseWheel(page, -600);
 
         await hoverOverConnectionLine(page);
+
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
+      });
+    });
+  });
+
+  async function loadMonomer(page: Page, leftMonomer: IMonomer) {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const canvasLocator = page.getByTestId('ketcher-canvas').first();
+    const leftMonomerLocator = canvasLocator
+      .locator(`text=${leftMonomer.alias}`)
+      .locator('..')
+      .first();
+    await leftMonomerLocator.hover();
+    await dragMouseTo(300, 380, page);
+    await moveMouseAway(page);
+  }
+
+  async function loadMolecule(page: Page, molecule: IMolecule) {
+    await openFileAndAddToCanvasMacro(molecule.fileName, page);
+    await moveMouseAway(page);
+  }
+
+  async function bondMonomerCenterToAtom(
+    page: Page,
+    leftPeptide: IMonomer,
+    rightMolecule: IMolecule,
+    atomIndex: number,
+  ) {
+    const leftPeptideLocator = page
+      .getByText(leftPeptide.alias, { exact: true })
+      .locator('..')
+      .first();
+
+    const rightMoleculeLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
+
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      leftPeptideLocator,
+      rightMoleculeLocator,
+      undefined,
+      rightMolecule.connectionPointShifts[atomIndex],
+    );
+  }
+
+  async function bondMonomerPointToAtom(
+    page: Page,
+    leftPeptide: IMonomer,
+    rightMolecule: IMolecule,
+    attachmentPoint: string,
+    atomIndex: number,
+  ) {
+    const leftPeptideLocator = page
+      .getByText(leftPeptide.alias, { exact: true })
+      .locator('..')
+      .first();
+
+    const rightMoleculeLocator = page
+      .getByTestId('ketcher-canvas')
+      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
+      .first();
+
+    await bondMonomerPointToMoleculeAtom(
+      page,
+      leftPeptideLocator,
+      rightMoleculeLocator,
+      attachmentPoint,
+      rightMolecule.connectionPointShifts[atomIndex],
+    );
+  }
+
+  Object.values(peptideMonomers).forEach((leftPeptide) => {
+    Object.values(molecules).forEach((rightMolecule) => {
+      /*
+       *  Test task: https://github.com/epam/ketcher/issues/5960
+       *  Description: Verify that connection points between monomers and molecules can be created by drawing bonds in macro mode
+       *  Case: Monomer center to molecule atom connection
+       *  Step: 1. Load monomer (peptide) and shift it to the left
+       *        2. Load molecule (system loads it at the center)
+       *        3. Drag center of monomer to first (0th) atom of molecule
+       *        Expected result: No connection should be establiched
+       *  WARNING: That test tesults are wrong because of bug: https://github.com/epam/ketcher/issues/5976
+       *  Screenshots must be updated after fix and fixme should be removed
+       */
+
+      test(`Case 11: Connect Center of Peptide(${leftPeptide.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+        test.setTimeout(30000);
+
+        await loadMonomer(page, leftPeptide);
+        await loadMolecule(page, rightMolecule);
+
+        await bondMonomerCenterToAtom(page, leftPeptide, rightMolecule, 0);
+
+        await takeEditorScreenshot(page, {
+          masks: [page.getByTestId('polymer-library-preview')],
+        });
+
+        test.fixme(
+          // eslint-disable-next-line no-self-compare
+          true === true,
+          `That test results are wrong because of https://github.com/epam/ketcher/issues/5976 issue(s).`,
+        );
+      });
+    });
+  });
+
+  Object.values(peptideMonomers).forEach((leftPeptide) => {
+    Object.values(molecules).forEach((rightMolecule) => {
+      /*
+       *  Test task: https://github.com/epam/ketcher/issues/5960
+       *  Description: Verify that connection points between monomers and molecules can be created by drawing bonds in macro mode
+       *  Case: Connect monomer all commection points to moleule atoms
+       *  Step: 1. Load monomer (peptide) and shift it to the left
+       *        2. Load molecule (system loads it at the center)
+       *        3. Drag every connection point of monomer to any free atom of molecule
+       *        Expected result: Connection should be established
+       */
+
+      test(`Case 12: Connect evey connection point of Peptide(${leftPeptide.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
+        test.setTimeout(30000);
+
+        await loadMonomer(page, leftPeptide);
+        await loadMolecule(page, rightMolecule);
+
+        const attachmentPointCount = Object.keys(
+          leftPeptide.connectionPoints,
+        ).length;
+        const atomCount = Object.keys(
+          rightMolecule.atomLocatorSelectors,
+        ).length;
+
+        for (
+          let atomIndex = 0;
+          atomIndex < Math.min(attachmentPointCount, atomCount);
+          atomIndex++
+        ) {
+          await bondMonomerPointToAtom(
+            page,
+            leftPeptide,
+            rightMolecule,
+            Object.keys(leftPeptide.connectionPoints)[atomIndex],
+            atomIndex,
+          );
+        }
 
         await takeEditorScreenshot(page, {
           masks: [page.getByTestId('polymer-library-preview')],

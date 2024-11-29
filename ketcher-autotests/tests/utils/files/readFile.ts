@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
@@ -14,6 +15,9 @@ import {
   selectMacromoleculesPanelButton,
   selectImageTool,
   clickOnCanvas,
+  SequenceType,
+  MacroFileType,
+  PeptideType,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -254,30 +258,95 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   }
 }
 
+/**
+ *  Usage examples:
+ *  1. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    MacroFileType.Ket,
+ *    'Some KET content',
+ *  );
+ *
+ *  2. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.FASTA, SequenceType.DNA],
+ *    'Some FASTA content of DNA type',
+ *  );
+ *  3. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.Sequence, SequenceType.RNA],
+ *    'Some Sequence content of RNA type',
+ *  );
+ *  4. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *    page,
+ *    [MacroFileType.Sequence, [SequenceType.PEPTIDE, PeptideType.threeLetterCode]],
+ *    'Some Sequence content of Peptide type of 3-letter code',
+ *  );
+ * @param {Page} page - The Playwright page instance where the button is located.
+ * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceType], if SequenceType === Peptide - requre [MacroFileType, [SequenceType, PeptideType]]
+ * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
+ * @param {errorExpected}  errorExpected - have to be true if you know if error should occure
+ */
 export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   page: Page,
-  structureFormat: string,
-  sequenceFormat: string,
+  structureFormat:
+    | Exclude<MacroFileType, MacroFileType.Sequence | MacroFileType.FASTA>
+    | [MacroFileType.FASTA, SequenceType]
+    | [MacroFileType.Sequence, Exclude<SequenceType, SequenceType.PEPTIDE>]
+    | [MacroFileType.Sequence, [SequenceType.PEPTIDE, PeptideType]],
   fillStructure: string,
-  needToWait = true,
+  errorExpected = false,
 ) {
+  let structureType: MacroFileType = MacroFileType.Ket;
+  let sequenceOrFastaType: SequenceType = SequenceType.RNA;
+  let peptideType: PeptideType = PeptideType.oneLetterCode;
+
+  if (Array.isArray(structureFormat)) {
+    const [tmpFastaOrSequenceStructureType, tmpSequenceOrFastaType] =
+      structureFormat;
+    structureType = tmpFastaOrSequenceStructureType;
+    if (Array.isArray(tmpSequenceOrFastaType)) {
+      const [tmpSequenceType, tmpPetideType] = tmpSequenceOrFastaType;
+      sequenceOrFastaType = tmpSequenceType;
+      peptideType = tmpPetideType;
+    } else {
+      sequenceOrFastaType = tmpSequenceOrFastaType;
+    }
+  } else {
+    structureType = structureFormat;
+  }
+
   await selectMacromoleculesPanelButton(
     MacromoleculesTopPanelButton.Open,
     page,
   );
   await page.getByText('Paste from clipboard').click();
-  if (!(structureFormat === 'Ket')) {
+  if (structureFormat !== MacroFileType.Ket) {
     await page.getByRole('combobox').click();
-    await page.getByText(structureFormat).click();
+    await page.getByText(structureType).click();
   }
-  if (!(sequenceFormat === 'RNA')) {
+
+  if (
+    structureType === MacroFileType.Sequence ||
+    structureType === MacroFileType.FASTA
+  ) {
     await page.getByTestId('dropdown-select-type').click();
-    const lowCaseSequenceFormat = sequenceFormat.toLowerCase();
+    const lowCaseSequenceFormat = sequenceOrFastaType.toLowerCase();
     await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
+    if (
+      sequenceOrFastaType === SequenceType.PEPTIDE &&
+      peptideType === PeptideType.threeLetterCode
+    ) {
+      await page
+        .getByTestId('dropdown-select-peptide-letters-format')
+        .getByRole('combobox')
+        .click();
+      await page.getByText(PeptideType.threeLetterCode).click();
+    }
   }
 
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
-  if (needToWait) {
+
+  if (!errorExpected) {
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
@@ -285,6 +354,59 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     await pressButton(page, 'Add to Canvas');
   }
 }
+// export async function pasteFromClipboardAndAddToMacromoleculesCanvas2(
+//   page: Page,
+//   structureFormat: MacroFileType,
+//   sequenceFormat: SequenceType | [SequenceType, PeptideType?],
+//   fillStructure: string,
+//   needToWait = true,
+// ) {
+//   await selectMacromoleculesPanelButton(
+//     MacromoleculesTopPanelButton.Open,
+//     page,
+//   );
+//   await page.getByText('Paste from clipboard').click();
+//   if (structureFormat !== MacroFileType.Ket) {
+//     await page.getByRole('combobox').click();
+//     await page.getByText(structureFormat).click();
+//   }
+
+//   let sequenceType: SequenceType = SequenceType.RNA;
+//   let peptideType: PeptideType = PeptideType.oneLetterCode;
+
+//   if (Array.isArray(sequenceFormat) && sequenceFormat[1]) {
+//     [sequenceType, peptideType] = sequenceFormat;
+//   }
+//   if (!Array.isArray(sequenceFormat)) {
+//     sequenceType = sequenceFormat;
+//   }
+
+//   if (sequenceType !== SequenceType.RNA) {
+//     await page.getByTestId('dropdown-select-type').click();
+//     const lowCaseSequenceFormat = sequenceType.toLowerCase();
+//     await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
+
+//     if (
+//       sequenceType === SequenceType.PEPTIDE &&
+//       peptideType !== PeptideType.oneLetterCode
+//     ) {
+//       await page
+//         .getByTestId('dropdown-select-peptide-letters-format')
+//         .getByRole('combobox')
+//         .click();
+//       await page.getByText(PeptideType.threeLetterCode).click();
+//     }
+//   }
+
+//   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+//   if (needToWait) {
+//     await waitForLoad(page, async () => {
+//       await pressButton(page, 'Add to Canvas');
+//     });
+//   } else {
+//     await pressButton(page, 'Add to Canvas');
+//   }
+// }
 
 export async function receiveMolFileComparisonData(
   page: Page,

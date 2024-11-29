@@ -7,6 +7,7 @@ import {
 import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
+  clickOnCanvas,
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
@@ -97,7 +98,7 @@ export async function drawElementByTitle(
   const topBarHeight = await getTopToolBarHeight(page);
   await page.getByTitle(elementTitle, { exact: true }).click();
 
-  await page.mouse.click(leftBarWidth + offsetX, topBarHeight + offsetY);
+  await clickOnCanvas(page, leftBarWidth + offsetX, topBarHeight + offsetY);
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
@@ -314,7 +315,7 @@ export async function addSingleMonomerToCanvas(
   index: number,
 ) {
   await page.getByTestId(monomerFullName).click();
-  await page.mouse.click(positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
@@ -380,7 +381,7 @@ export async function addRnaPresetOnCanvas(
   phosphateIndex: number,
 ) {
   await page.getByTestId(presetId).click();
-  await page.mouse.click(positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
   const sugar = await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)

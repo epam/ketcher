@@ -23,6 +23,8 @@ import {
   selectDropdownTool,
   waitForRender,
   resetCurrentTool,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -32,7 +34,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 
   await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
   const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-  await page.mouse.click(x, y);
+  await clickOnCanvas(page, x, y);
 
   return { x, y };
 }
@@ -104,7 +106,7 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectRGroup(page, rGroupFromFile);
     await page.getByTestId('OK').click();
     await takeEditorScreenshot(page);
@@ -119,7 +121,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('OK').click();
 
     await page.keyboard.press('Control+r');
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByTestId('OK').click();
     await takeEditorScreenshot(page);
@@ -207,14 +209,14 @@ test.describe('Open Ketcher', () => {
 
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await page.getByTestId('OK').click();
 
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectRGroup(page, 'R5');
     await page.getByTestId('OK').click();
     await takeEditorScreenshot(page);
@@ -261,7 +263,7 @@ test.describe('Open Ketcher', () => {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     });
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
@@ -293,7 +295,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -309,7 +311,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 });

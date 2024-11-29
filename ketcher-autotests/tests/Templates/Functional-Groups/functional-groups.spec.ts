@@ -30,6 +30,8 @@ import {
   selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -124,7 +126,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 
@@ -154,9 +156,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 
@@ -376,7 +376,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -392,7 +392,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-contracted.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -573,14 +573,10 @@ test.describe('Functional Groups', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await waitForRender(page, async () => {
-      await page.mouse.click(point.x, point.y);
-    });
+    await clickOnCanvas(page, point.x, point.y);
 
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -702,7 +698,7 @@ test.describe('Functional Groups', () => {
 
     await drawFGAndDrag(FunctionalGroups.Boc, MAX_BOND_LENGTH, page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -748,9 +744,7 @@ test.describe('Functional Groups', () => {
       await page.getByText('Expand Abbreviation').click();
     });
     await page.keyboard.press('n');
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 });

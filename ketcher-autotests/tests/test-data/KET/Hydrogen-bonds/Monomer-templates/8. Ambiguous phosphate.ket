@@ -1,0 +1,254 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer16"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-alternatives__cm___Carbonylmethyl__P___Phosphate_"
+            },
+            {
+                "$ref": "monomerTemplate-cm___Carbonylmethyl"
+            },
+            {
+                "$ref": "monomerTemplate-P___Phosphate"
+            }
+        ]
+    },
+    "monomer16": {
+        "type": "ambiguousMonomer",
+        "id": "16",
+        "position": {
+            "x": 68.57950000000002,
+            "y": -36.233499999999985
+        },
+        "alias": "%",
+        "templateId": "alternatives__cm___Carbonylmethyl__P___Phosphate_"
+    },
+    "ambiguousMonomerTemplate-alternatives__cm___Carbonylmethyl__P___Phosphate_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "alternatives__cm___Carbonylmethyl__P___Phosphate_",
+        "alias": "%",
+        "subtype": "alternatives",
+        "options": [
+            {
+                "templateId": "cm___Carbonylmethyl"
+            },
+            {
+                "templateId": "P___Phosphate"
+            }
+        ]
+    },
+    "monomerTemplate-cm___Carbonylmethyl": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    -1.2,
+                    1.0394,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.4504,
+                    -0.2599,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.2013,
+                    -1.5584,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0504,
+                    -0.2599,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.8013,
+                    1.0387,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "cm___Carbonylmethyl",
+        "fullName": "Carbonylmethyl",
+        "alias": "cm",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 3,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        4
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomerTemplate-P___Phosphate": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "P",
+                "location": [
+                    -0.2399,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.4399,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.3598,
+                    -1.0394,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.9601,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    0.3598,
+                    1.0394,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    0,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "P___Phosphate",
+        "fullName": "Phosphate",
+        "alias": "P",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        1
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "idtAliases": {
+            "base": "Phos",
+            "modifications": {
+                "endpoint3": "3Phos",
+                "endpoint5": "5Phos"
+            }
+        },
+        "naturalAnalogShort": "P"
+    }
+}

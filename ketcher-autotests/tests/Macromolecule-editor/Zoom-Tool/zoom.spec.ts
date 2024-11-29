@@ -9,14 +9,16 @@ import {
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
   moveMouseToTheMiddleOfTheScreen,
-  selectSingleBondTool,
   takePageScreenshot,
   moveMouseAway,
   openStructurePasteFromClipboard,
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
+  clickOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
@@ -318,7 +320,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await waitForRender(page, async () => {
@@ -326,7 +328,7 @@ test.describe('Zoom Tool', () => {
       });
     }
     await page.getByTestId('meD___N-Methyl-Aspartic acid').click();
-    await page.mouse.click(x1, y1);
+    await clickOnCanvas(page, x1, y1);
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
   });
@@ -342,7 +344,7 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
@@ -402,7 +404,7 @@ test.describe('Zoom Tool', () => {
         1,
       );
     }
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('(R').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });

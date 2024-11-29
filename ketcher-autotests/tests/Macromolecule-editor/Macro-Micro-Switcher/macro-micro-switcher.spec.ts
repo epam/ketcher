@@ -34,7 +34,6 @@ import {
   FunctionalGroups,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
-  selectSingleBondTool,
   drawBenzeneRing,
   selectSnakeLayoutModeTool,
   selectEraseTool,
@@ -67,7 +66,9 @@ import {
   readFileContents,
   openPasteFromClipboard,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectMacroBond,
   selectOpenTool,
 } from '@utils';
 import {
@@ -90,6 +91,7 @@ import {
   togglePhosphatesAccordion,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 const topLeftCorner = {
   x: -325,
@@ -339,7 +341,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Edc').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -933,7 +935,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -970,7 +972,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -988,7 +990,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await removeSuperatomAttachmentPoint(page, 'C', 2);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -2028,7 +2030,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await enterSequence(page, 'a');
         await page.keyboard.press('Escape');
         await selectSnakeLayoutModeTool(page);
-        await selectSingleBondTool(page);
+        await selectMacroBond(page, MacroBondTool.SINGLE);
         await page.getByText('F1').locator('..').hover();
         await takeEditorScreenshot(page);
       },

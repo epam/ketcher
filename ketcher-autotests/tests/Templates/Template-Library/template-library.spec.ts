@@ -1,11 +1,13 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
   openSettings,
   pressButton,
+  selectAllStructuresOnCanvas,
   selectFunctionalGroups,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
@@ -45,7 +47,7 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   }
   await waitForRender(page, async () => {
     await phenylalanineLocator.first().click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
   });
 }
 
@@ -76,7 +78,7 @@ async function editAndClearTemplateName(
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
   await page.getByTestId('name-input').click();
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.keyboard.press('Delete');
 }
 

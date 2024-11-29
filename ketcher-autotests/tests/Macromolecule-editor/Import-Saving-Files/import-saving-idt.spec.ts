@@ -20,7 +20,6 @@ import {
   selectMacromoleculesPanelButton,
   MacromoleculesTopPanelButton,
   selectClearCanvasTool,
-  selectSingleBondTool,
   waitForRender,
   takePolymerEditorScreenshot,
   openStructurePasteFromClipboard,
@@ -31,7 +30,13 @@ import {
   resetZoomLevelToDefault,
   waitForSpinnerFinishedWork,
   openFileAndAddToCanvasAsNewProjectMacro,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  selectMacroBond,
+  clickOnCanvas,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   closeErrorMessage,
   closeOpenStructure,
@@ -556,7 +561,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/32MOErT/`,
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondLine.hover();
     await takeEditorScreenshot(page);
   });
@@ -747,6 +752,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -779,7 +785,7 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').nth(1).hover();
     await takeEditorScreenshot(page);
   });
@@ -795,7 +801,7 @@ test.describe('Import-Saving .idt Files', () => {
     const secondMonomer = await page.getByText('1Nal').locator('..').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -803,7 +809,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R2',
       'R1',
     );
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -825,7 +831,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -833,7 +839,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R3',
       'R4',
     );
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -847,7 +853,7 @@ test.describe('Import-Saving .idt Files', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -887,7 +893,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,
@@ -913,10 +919,10 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await page.mouse.move(x, y);
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -929,8 +935,8 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
-    await selectSingleBondTool(page);
+    await clickOnCanvas(page, x, y);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('1Nal').locator('..').first().click();
     await page.mouse.down();
     await page.getByText('iMe-dC').locator('..').first().hover();
@@ -949,9 +955,9 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('1Nal').locator('..').first().click();
     await page.mouse.down();
     await page.getByText('iMe-dC').locator('..').first().hover();
@@ -971,8 +977,8 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await chooseTab(page, Tabs.Chem);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
-    await page.mouse.click(x, y);
-    await selectSingleBondTool(page);
+    await clickOnCanvas(page, x, y);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe-dC').locator('..').click();
     await page.mouse.down();
     await page.getByText('Test-6-Ch').locator('..').first().hover();
@@ -1641,6 +1647,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occur)
           4. Take screenshot to make sure export is correct
     */
+    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,

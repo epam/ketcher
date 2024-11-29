@@ -12,9 +12,10 @@ import {
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
   selectClearCanvasTool,
-  selectSingleBondTool,
+  selectMacroBond,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -353,7 +354,7 @@ test.describe('Monomer APs checks: ', () => {
       await zoomWithMouseWheel(page, -600);
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
-      await selectSingleBondTool(page);
+      await selectMacroBond(page, MacroBondTool.SINGLE);
       await hoverMouseOverMonomer(page, ambiguousMonomer.monomerLocatorIndex);
       await takeEditorScreenshot(page, {
         masks: [page.getByTestId('polymer-library-preview')],

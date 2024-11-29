@@ -55,9 +55,29 @@ export async function clickInTheMiddleOfTheScreen(
   });
 }
 
-export async function clickOnCanvas(page: Page, x: number, y: number) {
+export async function clickOnCanvas(
+  page: Page,
+  x: number,
+  y: number,
+  options?: {
+    /**
+     * Defaults to `left`.
+     */
+    button?: 'left' | 'right' | 'middle';
+
+    /**
+     * defaults to 1. See [UIEvent.detail].
+     */
+    clickCount?: number;
+
+    /**
+     * Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
+     */
+    delay?: number;
+  },
+) {
   await waitForRender(page, async () => {
-    await page.mouse.click(x, y);
+    await page.mouse.click(x, y, options);
   });
 }
 
@@ -93,6 +113,7 @@ export function selectOption(page: Page, name = '') {
 export function selectOptionByText(page: Page, text = '') {
   return page.getByText(text, { exact: true }).click();
 }
+
 /* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */
@@ -122,7 +143,8 @@ export async function clickOnTheCanvas(
     page,
   );
   await waitForRender(page, async () => {
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       secondStructureCoordinates.x + xOffsetFromCenter,
       secondStructureCoordinates.y + yOffsetFromCenter,
     );
@@ -131,9 +153,7 @@ export async function clickOnTheCanvas(
 
 export async function clickOnMiddleOfCanvas(page: Page) {
   const middleOfCanvas = await getCoordinatesOfTheMiddleOfTheCanvas(page);
-  await waitForRender(page, async () => {
-    await page.mouse.click(middleOfCanvas.x, middleOfCanvas.y);
-  });
+  await clickOnCanvas(page, middleOfCanvas.x, middleOfCanvas.y);
 }
 
 export async function clickByLink(page: Page, url: string) {
@@ -147,9 +167,7 @@ export async function clickOnBond(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.click(point.x, point.y, { button: buttonSelect });
-  });
+  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
 }
 
 export async function clickOnBondById(
@@ -158,9 +176,7 @@ export async function clickOnBondById(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondById(page, bondId);
-  await waitForRender(page, async () => {
-    await page.mouse.click(point.x, point.y, { button: buttonSelect });
-  });
+  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
 }
 
 export async function clickOnAtom(
@@ -170,9 +186,7 @@ export async function clickOnAtom(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await waitForRender(page, async () => {
-    await page.mouse.click(point.x, point.y, { button: buttonSelect });
-  });
+  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
 }
 
 export async function clickOnAtomById(
@@ -181,9 +195,7 @@ export async function clickOnAtomById(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getAtomById(page, atomId);
-  await waitForRender(page, async () => {
-    await page.mouse.click(point.x, point.y, { button: buttonSelect });
-  });
+  await clickOnCanvas(page, point.x, point.y, { button: buttonSelect });
 }
 
 export async function doubleClickOnAtom(
@@ -214,7 +226,7 @@ export async function rightClickOnBond(
   bondNumber: number,
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.click(point.x, point.y, { button: 'right' });
+  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
 }
 
 export async function moveOnAtom(
@@ -241,7 +253,7 @@ export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
   const button = page.getByTestId(dropdownElementId);
   await button.isVisible();
   await button.click({ delay: 200, clickCount: 2 });
-  const dropdown = await page.locator('.default-multitool-dropdown');
+  const dropdown = page.locator('.default-multitool-dropdown');
   if (!(await dropdown.isVisible({ timeout: 200 }))) {
     await button.click();
   }

@@ -16,6 +16,7 @@ import {
   pasteFromClipboard,
   pressButton,
   resetCurrentTool,
+  selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectBond,
   selectDropdownTool,
@@ -25,6 +26,7 @@ import {
   takeEditorScreenshot,
   waitForLoad,
   waitForPageInit,
+  clickOnCanvas,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
 
@@ -47,10 +49,10 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await resetCurrentTool(page);
 
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
-  await page.mouse.click;
+  await clickOnCanvas;
 
   await selectAtomInToolbar(AtomButton.Oxygen, page);
-  await page.mouse.click(x + shiftForOxygen, y, {
+  await clickOnCanvas(page, x + shiftForOxygen, y, {
     button: 'left',
   });
 }
@@ -96,7 +98,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type').first().click();
     await page.getByRole('option', { name: 'Query component' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
@@ -116,9 +118,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await selectAtomInToolbar(AtomButton.Carbon, page);
-    await page.mouse.click(x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await creatingComponentGroup(page);
     await takeEditorScreenshot(page);
@@ -138,7 +140,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await selectAtomInToolbar(AtomButton.Carbon, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAtomInToolbar(AtomButton.Fluorine, page);
-    await page.mouse.click(x + shiftValue, y);
+    await clickOnCanvas(page, x + shiftValue, y);
     await page.keyboard.press('Escape');
 
     await selectDropdownTool(page, 'reaction-map', 'reaction-map');

@@ -18,6 +18,7 @@ import {
   waitForSpinnerFinishedWork,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
+  clickOnCanvas,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 import {
@@ -164,7 +165,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -184,7 +185,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });

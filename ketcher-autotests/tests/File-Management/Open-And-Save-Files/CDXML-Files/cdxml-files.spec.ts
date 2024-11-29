@@ -20,6 +20,7 @@ import {
   openSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
@@ -86,7 +87,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Open/Import structure while openning a CDXML file
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4714.cdxml', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
@@ -97,7 +98,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Open/Import structure while openning a CDXML file
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4715.cdxml', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });

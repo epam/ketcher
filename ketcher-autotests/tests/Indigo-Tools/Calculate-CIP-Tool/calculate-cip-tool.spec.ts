@@ -25,6 +25,8 @@ import {
   waitForRender,
   clickOnBond,
   openFileAndAddToCanvasAsNewProject,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -121,9 +123,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -143,7 +143,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -367,7 +367,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
 
     await takeEditorScreenshot(page);
 
@@ -394,7 +394,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
@@ -424,7 +424,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await takeEditorScreenshot(page);
   });
 

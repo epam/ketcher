@@ -27,6 +27,8 @@ import {
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -184,7 +186,11 @@ test.describe('Attachment Point Tool', () => {
     const clickToOutsideStructureY = 100;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
+    await clickOnCanvas(
+      page,
+      clickToOutsideStructureX,
+      clickToOutsideStructureY,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -327,7 +333,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -340,7 +346,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -358,7 +364,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -375,7 +381,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
 
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -583,7 +589,7 @@ test.describe('Attachment Point Tool', () => {
     };
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
@@ -610,12 +616,12 @@ test.describe('Attachment Point Tool', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await page.mouse.click(point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y);
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 
@@ -697,12 +703,12 @@ test.describe('Attachment Point Tool', () => {
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
 
     const point2 = await getAtomByIndex(page, { label: 'L#' }, 0);
-    await page.mouse.click(point2.x, point2.y);
+    await clickOnCanvas(page, point2.x, point2.y);
     const coordinatesWithShift2 = point.y + yDelta;
     await dragMouseTo(point2.x, coordinatesWithShift2, page);
 

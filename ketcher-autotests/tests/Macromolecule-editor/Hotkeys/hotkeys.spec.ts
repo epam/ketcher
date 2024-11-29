@@ -2,14 +2,16 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  selectSingleBondTool,
   selectSequenceLayoutModeTool,
   typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
@@ -74,7 +76,7 @@ test.describe('Hotkeys', () => {
     */
     await page.keyboard.press('Delete');
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');
@@ -140,7 +142,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -155,7 +157,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);

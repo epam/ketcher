@@ -21,6 +21,9 @@ import {
   getFasta,
   getKet,
   saveToFile,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 
 import {
@@ -810,7 +813,7 @@ async function selectAndReplaceSymbolInEditMode(
     await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseToTheMiddleOfTheScreen(page);
-  await page.mouse.click(400, 400);
+  await clickOnCanvas(page, 400, 400);
 }
 
 async function selectAndReplaceSymbolInEditModeWithError(
@@ -2207,8 +2210,8 @@ test(`26. Copy and paste replaced monomers`, async () => {
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
   await takeEditorScreenshot(page);
   await selectAllSymbols(page, sequence);
-  await page.keyboard.press('Control+c');
-  await page.keyboard.press('Control+v');
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);
   await takeEditorScreenshot(page);

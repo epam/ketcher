@@ -589,10 +589,6 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     'Peptide',
   );
 
-  // await selectTopPanelButton(TopPanelButton.Open, page);
-  // await openFile('Sequence/two-peptides-connected-expected.seq', page);
-  // await selectOptionInTypeDropdown('Peptide', page);
-  // await pressButton(page, 'Open as New');
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await bondLine.hover();
   await takeEditorScreenshot(page, {

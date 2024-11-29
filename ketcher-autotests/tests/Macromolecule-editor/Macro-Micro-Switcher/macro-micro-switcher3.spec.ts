@@ -25,8 +25,6 @@ import {
   clickOnCanvas,
   waitForRender,
   selectAllStructuresOnCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -35,8 +33,12 @@ import {
 } from '@utils/macromolecules/topToolBar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 
-async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
-  await clickOnAtomById(page, atomId);
+async function clickOnAtomOfExpandedMonomer(
+  page: Page,
+  atomId: number,
+  buttonSelect?: 'left' | 'right' | 'middle',
+) {
+  await clickOnAtomById(page, atomId, buttonSelect);
 }
 
 async function selectExpandedMonomer(
@@ -45,6 +47,33 @@ async function selectExpandedMonomer(
   bondNumber = 1,
 ) {
   await clickOnBond(page, bondType, bondNumber);
+}
+
+async function collapseMonomer(page: Page) {
+  // await clickInTheMiddleOfTheScreen(page, 'right');
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  const attachmentPoint = canvasLocator
+    .getByText('R2', { exact: true })
+    .first();
+
+  if (await attachmentPoint.isVisible()) {
+    await attachmentPoint.click({
+      button: 'right',
+    });
+  } else {
+    await canvasLocator.getByText('R1', { exact: true }).first().click({
+      button: 'right',
+    });
+  }
+
+  const collapseMonomerMenu = page.getByText('Collapse monomer');
+  if (await collapseMonomerMenu.isVisible()) {
+    await page.getByText('Collapse monomer').click();
+  } else {
+    // This hack should be removed after https://github.com/epam/ketcher/issues/5809 fix.
+    // Only Collapse monomer menu should remain
+    await page.getByText('Contract abbreviation').click();
+  }
 }
 
 async function callContexMenu(page: Page, locatorText: string) {
@@ -1030,7 +1059,7 @@ test(`Verify expansion behavior when monomers are connected by multiple bonds`, 
 test(`Verify undo/redo functionality after expanding multiple monomers`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6019
-   * Description: Verify layout adjustments when expanding multiple monomers in a straight chain
+   * Description: Verify undo/redo functionality after expanding multiple monomers
    *
    * Case: 1. Load monomer chain on Molecules canvas
    *       2. Take screenshot to witness initial state
@@ -1065,4 +1094,33 @@ test(`Verify undo/redo functionality after expanding multiple monomers`, async (
     true === true,
     `That test results are wrong because of https://github.com/epam/ketcher/issues/5670 issue(s).`,
   );
+});
+
+test(`Verify collapse functionality for multiple expanded monomers in chain structures`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify collapse functionality for multiple expanded monomers in chain structures
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Select all monomers on the canvas (using Ctrl+A)
+   *       4. Expand all monomers from  chain at once
+   *       5. Take screenshot to witness the result
+   *       6. Right click on any atom to call context menu and click Collapse monomer
+   *       7. Take screenshot to witness all monomers moved to collapsed state
+   */
+  await pageReload(page);
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  await collapseMonomer(page);
+  await takeEditorScreenshot(page);
 });

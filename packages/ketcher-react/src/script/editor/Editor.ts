@@ -355,6 +355,7 @@ class Editor implements KetcherEditor {
     ) {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
+      this.event.change.dispatch('force');
       ketcherProvider.getKetcher().changeEvent.dispatch('force');
     }
   }

@@ -1233,7 +1233,7 @@ export class DrawingEntitiesManager {
     rearrangedMonomersSet: Set<number>,
     maxVerticalDistance: number,
     restOfRowsWithAntisense = 0,
-    isAntisense = false,
+    needRepositionMonomers = true,
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
@@ -1250,15 +1250,18 @@ export class DrawingEntitiesManager {
     monomer.isMonomerInRnaChainRow =
       maxVerticalDistance > heightMonomerWithBond;
     const oldMonomerPosition = monomer.position;
-    const operation = new MonomerMoveOperation(
-      this.rearrangeChainModelChange.bind(
-        this,
-        monomer,
-        Coordinates.canvasToModel(lastPosition),
-      ),
-      this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
-    );
-    command.addOperation(operation);
+
+    if (needRepositionMonomers) {
+      const operation = new MonomerMoveOperation(
+        this.rearrangeChainModelChange.bind(
+          this,
+          monomer,
+          Coordinates.canvasToModel(lastPosition),
+        ),
+        this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
+      );
+      command.addOperation(operation);
+    }
     rearrangedMonomersSet.add(monomer.id);
 
     const nextPositionAndVerticalDistance =
@@ -1290,6 +1293,7 @@ export class DrawingEntitiesManager {
     maxVerticalDistance: number,
     restOfRowsWithAntisense = 0,
     isAntisense = false,
+    needRepositionMonomers = true,
     firstMonomer?: BaseMonomer,
   ) {
     const command = new Command();
@@ -1304,18 +1308,22 @@ export class DrawingEntitiesManager {
       lastPosition.x,
       lastPosition.y + (isAntisense ? -1 : 1) * SNAKE_LAYOUT_CELL_WIDTH,
     );
-    this.addRnaOperations(
-      command,
-      oldSugarPosition,
-      lastPosition,
-      nucleotideOrNucleoside.sugar,
-    );
-    this.addRnaOperations(
-      command,
-      nucleotideOrNucleoside.rnaBase?.position,
-      rnaBasePosition,
-      nucleotideOrNucleoside.rnaBase,
-    );
+
+    if (needRepositionMonomers) {
+      this.addRnaOperations(
+        command,
+        oldSugarPosition,
+        lastPosition,
+        nucleotideOrNucleoside.sugar,
+      );
+      this.addRnaOperations(
+        command,
+        nucleotideOrNucleoside.rnaBase?.position,
+        rnaBasePosition,
+        nucleotideOrNucleoside.rnaBase,
+      );
+    }
+
     rearrangedMonomersSet.add(nucleotideOrNucleoside.sugar.id);
     rearrangedMonomersSet.add(nucleotideOrNucleoside.rnaBase?.id);
 
@@ -1325,12 +1333,16 @@ export class DrawingEntitiesManager {
         lastPosition.x + SNAKE_LAYOUT_CELL_WIDTH,
         lastPosition.y,
       );
-      this.addRnaOperations(
-        command,
-        nucleotideOrNucleoside.phosphate?.position,
-        phosphatePosition,
-        nucleotideOrNucleoside.phosphate,
-      );
+
+      if (needRepositionMonomers) {
+        this.addRnaOperations(
+          command,
+          nucleotideOrNucleoside.phosphate?.position,
+          phosphatePosition,
+          nucleotideOrNucleoside.phosphate,
+        );
+      }
+
       rearrangedMonomersSet.add(nucleotideOrNucleoside.phosphate?.id);
     }
 
@@ -1474,6 +1486,7 @@ export class DrawingEntitiesManager {
     canvasWidth: number,
     rearrangedMonomersSet: Set<number>,
     maxVerticalDistance: number,
+    needRepositionMonomers = true,
   ) {
     const command = new Command();
     let lastPosition = startPosition.add(
@@ -1491,6 +1504,7 @@ export class DrawingEntitiesManager {
           maxVerticalDistance,
           1,
           true,
+          needRepositionMonomers,
         );
 
         if (rearrangeResult.lastPosition.y > lastPosition.y) {
@@ -1509,7 +1523,7 @@ export class DrawingEntitiesManager {
             rearrangedMonomersSet,
             maxVerticalDistance,
             1,
-            true,
+            needRepositionMonomers,
           );
 
           if (rearrangeResult.lastPosition.y > lastPosition.y) {
@@ -1579,10 +1593,11 @@ export class DrawingEntitiesManager {
     return snakeLayoutMatrix;
   }
 
-  public reArrangeChains(
+  public applySnakeLayout(
     canvasWidth: number,
     isSnakeMode: boolean,
     needRedrawBonds = true,
+    needRepositionMonomers = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -1666,6 +1681,7 @@ export class DrawingEntitiesManager {
                 canvasWidth,
                 rearrangedMonomersSet,
                 maxVerticalDistance,
+                needRepositionMonomers,
               );
 
             restOfRowsWithAntisense = rowsUsedByAntisense;
@@ -1691,6 +1707,7 @@ export class DrawingEntitiesManager {
               maxVerticalDistance,
               restOfRowsWithAntisense,
               false,
+              needRepositionMonomers,
             );
 
             if (
@@ -1712,7 +1729,7 @@ export class DrawingEntitiesManager {
                 rearrangedMonomersSet,
                 maxVerticalDistance,
                 restOfRowsWithAntisense,
-                false,
+                needRepositionMonomers,
               );
 
               if (rearrangeResult.lastPosition.y > lastPosition.y) {
@@ -2805,7 +2822,7 @@ export class DrawingEntitiesManager {
     });
 
     command.merge(
-      this.reArrangeChains(editor.canvas.width.baseVal.value, true, true),
+      this.applySnakeLayout(editor.canvas.width.baseVal.value, true, true),
     );
 
     command.setUndoOperationsByPriority();

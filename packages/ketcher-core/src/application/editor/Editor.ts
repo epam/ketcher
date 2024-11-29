@@ -756,9 +756,18 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
-    modelChanges.merge(
-      this.drawingEntitiesManager.recalculateAntisenseChains(),
-    );
+
+    if (this.mode instanceof SnakeMode) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.applySnakeLayout(
+          this.canvas.width.baseVal.value,
+          true,
+          true,
+          false,
+        ),
+      );
+    }
+
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
     this._type = EditorType.Macromolecules;

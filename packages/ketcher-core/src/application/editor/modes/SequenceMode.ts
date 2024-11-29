@@ -107,7 +107,7 @@ export class SequenceMode extends BaseMode {
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
     const modelChanges = needReArrangeChains
-      ? editor.drawingEntitiesManager.reArrangeChains(
+      ? editor.drawingEntitiesManager.applySnakeLayout(
           editor.canvas.width.baseVal.value,
           true,
           false,

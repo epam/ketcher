@@ -42,7 +42,7 @@ export const SelectedMonomersContextMenu = ({
       title: 'Copy',
     },
     {
-      name: 'create_antisense_strand',
+      name: 'create_antisense_chain',
       title: 'Create Antisense Strand',
       separator: true,
       disabled: isAntisenseCreationDisabled,
@@ -68,8 +68,8 @@ export const SelectedMonomersContextMenu = ({
       case 'copy':
         editor.events.copySelectedStructure.dispatch();
         break;
-      case 'create_antisense_strand':
-        editor.events.createAntisenseStrand.dispatch();
+      case 'create_antisense_chain':
+        editor.events.createAntisenseChain.dispatch();
         break;
       case 'delete':
         editor.events.deleteSelectedStructure.dispatch();

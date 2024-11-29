@@ -379,8 +379,8 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
-    this.events.createAntisenseStrand.add(() => {
-      this.onCreateAntisenseStrand();
+    this.events.createAntisenseChain.add(() => {
+      this.onCreateAntisenseChain();
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
@@ -423,7 +423,7 @@ export class CoreEditor {
     this.sequenceTypeEnterMode = mode;
   }
 
-  private onCreateAntisenseStrand() {
+  private onCreateAntisenseChain() {
     const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
     const history = new EditorHistory(this);
 

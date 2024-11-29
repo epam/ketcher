@@ -2581,7 +2581,7 @@ export class DrawingEntitiesManager {
     };
   }
 
-  private get antisenseStrandBasesMap() {
+  private get antisenseChainBasesMap() {
     return {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.THYMINE,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
@@ -2747,7 +2747,7 @@ export class DrawingEntitiesManager {
               ? Nucleotide
               : Nucleoside
           ).createOnCanvas(
-            this.antisenseStrandBasesMap[
+            this.antisenseChainBasesMap[
               node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode
             ],
             node.monomer.position.add(new Vec2(0, 3)),

@@ -55,7 +55,7 @@ export function resetEditorEvents() {
     openConfirmationDialog: new Subscription(),
     mouseUpAtom: new Subscription(),
     updateMonomersLibrary: new Subscription(),
-    createAntisenseStrand: new Subscription(),
+    createAntisenseChain: new Subscription(),
     copySelectedStructure: new Subscription(),
     deleteSelectedStructure: new Subscription(),
   };

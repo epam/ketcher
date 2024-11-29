@@ -422,7 +422,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     // check if there is nucleotide in current row
     const isBondConnectedWithNucleotide =
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
-    console.log(this.polymerBond.restOfRowsWithAntisense);
     const verticalLineLength = this.polymerBond.firstMonomer.monomerItem
       .isAntisense
       ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH

@@ -49,14 +49,16 @@ async function selectExpandedMonomer(
   await clickOnBond(page, bondType, bondNumber);
 }
 
-async function collapseMonomer(page: Page) {
+async function collapseMonomer(page: Page, atomId?: number) {
   // await clickInTheMiddleOfTheScreen(page, 'right');
   const canvasLocator = page.getByTestId('ketcher-canvas');
   const attachmentPoint = canvasLocator
     .getByText('R2', { exact: true })
     .first();
 
-  if (await attachmentPoint.isVisible()) {
+  if (atomId) {
+    await clickOnAtomById(page, atomId, 'right');
+  } else if (await attachmentPoint.isVisible()) {
     await attachmentPoint.click({
       button: 'right',
     });
@@ -1122,5 +1124,34 @@ test(`Verify collapse functionality for multiple expanded monomers in chain stru
   await takeEditorScreenshot(page);
 
   await collapseMonomer(page);
+  await takeEditorScreenshot(page);
+});
+
+test(`Verify collapse functionality for multiple expanded monomers in ring structure`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/5773
+   * Description: Verify collapse functionality for multiple expanded monomers in ring structure
+   *
+   * Case: 1. Load monomer chain on Molecules canvas
+   *       2. Take screenshot to witness initial state
+   *       3. Select all monomers on the canvas (using Ctrl+A)
+   *       4. Expand all monomers from  chain at once
+   *       5. Take screenshot to witness the result
+   *       6. Right click on any atom to call context menu and click Collapse monomer
+   *       7. Take screenshot to witness all monomers moved to collapsed state
+   */
+  await pageReload(page);
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await expandMonomer(page, '12ddR');
+  await takeEditorScreenshot(page);
+
+  await collapseMonomer(page, 70);
   await takeEditorScreenshot(page);
 });

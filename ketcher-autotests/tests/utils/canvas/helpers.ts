@@ -157,11 +157,18 @@ export async function screenshotDialog(page: Page, dialogId: string) {
 export async function takeElementScreenshot(
   page: Page,
   elementId: string,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+  },
 ) {
   const maxTimeout = 1500;
   const element = page.getByTestId(elementId).first();
   await waitForRender(page, emptyFunction, maxTimeout);
+  if (options?.hideMonomerPreview) {
+    await page.keyboard.press('Shift');
+  }
   await expect(element).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
@@ -229,7 +236,11 @@ export async function takeMonomerLibraryScreenshot(
 
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+  },
 ) {
   await takeElementScreenshot(page, 'ketcher-canvas', options);
 }

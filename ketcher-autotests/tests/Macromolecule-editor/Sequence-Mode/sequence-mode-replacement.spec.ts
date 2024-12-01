@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   receiveFileComparisonData,
-  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   getMolfile,
   getSequence,
@@ -564,20 +563,20 @@ async function createTestPresets(page: Page) {
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
   await page.getByTestId('R___Ribose').click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('P___Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset without phosphate
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
   await page.getByTestId('R___Ribose').click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('A___Adenine').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
@@ -586,13 +585,13 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)
@@ -601,10 +600,10 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r()Test-6-Ph
@@ -613,10 +612,10 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 }
 
@@ -670,7 +669,6 @@ async function selectAndReplaceSymbol(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceSymbolWithError(
@@ -681,7 +679,6 @@ async function selectAndReplaceSymbolWithError(
   await selectSequenceLayoutModeTool(page);
   await clickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbols(
@@ -710,7 +707,6 @@ async function selectAndReplaceAllSymbols(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAllSymbols(page: Page, sequence: ISequence) {
@@ -730,7 +726,6 @@ async function selectAllSymbols(page: Page, sequence: ISequence) {
     sequence.ReplacementPositions.RightEnd,
   );
   await page.keyboard.up('Shift');
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsWithError(
@@ -741,8 +736,6 @@ async function selectAndReplaceAllSymbolsWithError(
   await selectSequenceLayoutModeTool(page);
   await selectAllSymbols(page, sequence);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsInEditMode(
@@ -771,7 +764,6 @@ async function selectAndReplaceAllSymbolsInEditMode(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsInEditModeWithError(
@@ -797,7 +789,6 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceSymbolInEditMode(
@@ -824,7 +815,6 @@ async function selectAndReplaceSymbolInEditModeWithError(
   await selectSequenceLayoutModeTool(page);
   await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 function addAnnotation(message: string) {
@@ -896,10 +886,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -934,10 +924,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -972,10 +962,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1010,10 +1000,9 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1048,10 +1037,11 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1086,10 +1076,11 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1417,10 +1408,11 @@ for (const replaceMonomer of replaceMonomers) {
       */
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1454,10 +1446,11 @@ for (const replaceMonomer of replaceMonomers) {
         replaceMonomer,
         sequence,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1795,10 +1788,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1836,10 +1830,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1877,10 +1872,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1916,10 +1912,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1955,10 +1952,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1994,10 +1992,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -2054,8 +2053,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2119,8 +2117,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2160,9 +2157,11 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2208,13 +2207,16 @@ test(`26. Copy and paste replaced monomers`, async () => {
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await selectAllSymbols(page, sequence);
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await selectFlexLayoutModeTool(page);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await checkForKnownBugs(
     replaceMonomer,
     sequence,
@@ -2255,11 +2257,12 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await turnOnMicromoleculesEditor(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await turnOnMacromoleculesEditor(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2302,7 +2305,8 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedKetFile = await getKet(page);
   await saveToFile(
@@ -2357,7 +2361,8 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getMolfile(page, 'v3000');
   await saveToFile(
@@ -2416,7 +2421,8 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getSequence(page);
   await saveToFile(
@@ -2473,7 +2479,8 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getFasta(page);
   await saveToFile(
@@ -2535,7 +2542,8 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getIdt(page);
   await saveToFile(

@@ -20,6 +20,14 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     );
   }
 
+  public get textColor() {
+    return this.monomer.isModification ? '#fff' : '#333333';
+  }
+
+  protected get modificationConfig() {
+    return { backgroundId: '#rna-base-modified-background' };
+  }
+
   protected appendBody(
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,

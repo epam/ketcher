@@ -23,7 +23,11 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    return '#fff';
+    return this.monomer.isModification ? '#333333' : '#fff';
+  }
+
+  protected get modificationConfig() {
+    return { backgroundId: '#sugar-modified-background' };
   }
 
   protected getMonomerColor(theme) {

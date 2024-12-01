@@ -10,9 +10,16 @@ import { notifyRenderComplete } from 'application/render/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { PolymerBondRendererFactory } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRendererFactory';
+import { SnakeModeHydrogenBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModeHydrogenBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
-import { Peptide, Phosphate, Sugar, UnsplitNucleotide } from 'domain/entities';
+import {
+  HydrogenBond,
+  Peptide,
+  Phosphate,
+  Sugar,
+  UnsplitNucleotide,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -48,7 +55,7 @@ export class RenderersManager {
 
   public polymerBonds = new Map<
     number,
-    FlexModeOrSnakeModePolymerBondRenderer
+    FlexModeOrSnakeModePolymerBondRenderer | SnakeModeHydrogenBondRenderer
   >();
 
   public atoms = new Map<number, AtomRenderer>();
@@ -136,7 +143,9 @@ export class RenderersManager {
 
   public addPolymerBond(polymerBond: PolymerBond): void {
     const polymerBondRenderer =
-      PolymerBondRendererFactory.createInstance(polymerBond);
+      polymerBond instanceof HydrogenBond
+        ? new SnakeModeHydrogenBondRenderer(polymerBond)
+        : PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
@@ -392,7 +401,9 @@ export class RenderersManager {
     assert(polymerBond.secondMonomer);
 
     const polymerBondRenderer =
-      PolymerBondRendererFactory.createInstance(polymerBond);
+      polymerBond instanceof HydrogenBond
+        ? new SnakeModeHydrogenBondRenderer(polymerBond)
+        : PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
     this.markForRecalculateBegin();

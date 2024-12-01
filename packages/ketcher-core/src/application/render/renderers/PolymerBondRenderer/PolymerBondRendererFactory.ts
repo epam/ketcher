@@ -2,7 +2,6 @@ import { CoreEditor, SnakeMode } from 'application/editor';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
 export enum LayoutMode {
   Flex = 'Flex',
@@ -25,15 +24,13 @@ const polymerBondRendererMap = new Map<
 
 export class PolymerBondRendererFactory {
   public static createInstance(
-    polymerBond: PolymerBond | HydrogenBond,
+    polymerBond: PolymerBond,
   ): PolymerBondRendererClass {
     const mode = checkIfIsSnakeMode() ? LayoutMode.Snake : LayoutMode.Flex;
-    return polymerBond instanceof HydrogenBond
-      ? new SnakeModePolymerBondRenderer(polymerBond)
-      : (PolymerBondRendererFactory.createInstanceByMode(
-          mode,
-          polymerBond,
-        ) as PolymerBondRendererClass);
+    return PolymerBondRendererFactory.createInstanceByMode(
+      mode,
+      polymerBond,
+    ) as PolymerBondRendererClass;
   }
 
   public static createInstanceByMode(

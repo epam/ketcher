@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Page, test } from '@playwright/test';
 import {
   doubleClickOnAtom,

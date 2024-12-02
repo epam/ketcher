@@ -19,10 +19,8 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
-  receiveFileComparisonData,
   resetCurrentTool,
   RingButton,
-  saveToFile,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
@@ -40,11 +38,11 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { FileType, verifyFile } from '@utils/files/receiveFileComparisonData';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   clickOnFileFormatDropdown,
   FileFormatOption,
-  getKet,
   selectSaveFileFormat,
 } from '@utils/formats';
 import { openStructureLibrary } from '@utils/templates';
@@ -108,25 +106,6 @@ async function removeTail(page: Page, tailName: string, index?: number) {
   });
 }
 
-async function verifyFile(
-  page: Page,
-  filename: string,
-  expectedFilename: string,
-) {
-  const expectedFile = await getKet(page);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-    });
-
-  expect(ketFile).toEqual(ketFileExpected);
-  await openFileAndAddToCanvasAsNewProject(filename, page);
-  await takeEditorScreenshot(page);
-}
-
 async function hoverOverArrowSpine(
   page: Page,
   index = 0,
@@ -187,6 +166,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-to-compare.ket',
       'tests/test-data/KET/multi-tailed-arrow-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -207,6 +187,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/three-different-multi-tail-arrows-expected.ket',
       'tests/test-data/KET/three-different-multi-tail-arrows-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -227,6 +208,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/three-different-multi-tail-arrows-with-elements-expected.ket',
       'tests/test-data/KET/three-different-multi-tail-arrows-with-elements-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -253,6 +235,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-from-two-different-files-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -274,6 +257,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -842,6 +826,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/reaction-arrow-multitail-to-compare.ket',
       'tests/test-data/KET/reaction-arrow-multitail-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -866,6 +851,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/three-reaction-arrow-multitail-to-compare.ket',
       'tests/test-data/KET/three-reaction-arrow-multitail-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -894,6 +880,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
       'tests/test-data/KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -1042,6 +1029,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/modified-multitail-arrow-expected.ket',
       'tests/test-data/KET/modified-multitail-arrow-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1091,6 +1079,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/modified-multitail-arrow-with-added-tails-expected.ket',
       'tests/test-data/KET/modified-multitail-arrow-with-added-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1294,6 +1283,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-spine-0.7-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-spine-0.7-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1320,6 +1310,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-spine-1.39-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-spine-1.39-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1348,6 +1339,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-spine-1.4-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-spine-1.4-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1379,6 +1371,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1410,6 +1403,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-with-elements-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-with-elements-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1443,6 +1437,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-2-tails-spine-0.7-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-2-tails-spine-0.7-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1481,6 +1476,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-5-tails-spine-1.4-new-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-5-tails-spine-1.4-new-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1509,6 +1505,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-removed-tails-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-removed-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1537,6 +1534,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1569,6 +1567,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -1711,6 +1710,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/three-reaction-arrow-with-added-tails-to-compare.ket',
       'tests/test-data/KET/three-reaction-arrow-with-added-tails-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -1753,6 +1753,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/two-reaction-arrow-with-removed-tails-to-compare.ket',
       'tests/test-data/KET/two-reaction-arrow-with-removed-tails-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -1791,6 +1792,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/one-reaction-arrow-with-six-tails-to-compare.ket',
       'tests/test-data/KET/one-reaction-arrow-with-six-tails-to-compare.ket',
+      FileType.KET,
     );
   });
 
@@ -2015,6 +2017,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-default-head-up-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-default-head-up-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2039,6 +2042,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-default-head-down-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-default-head-down-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2063,6 +2067,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-default-head-minimal-size-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-default-head-minimal-size-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2087,6 +2092,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-default-head-increase-size-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-default-head-increase-size-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2113,6 +2119,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-default-head-up-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-default-head-up-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2139,6 +2146,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-default-head-down-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-default-head-down-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2165,6 +2173,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-default-head-minimal-size-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-default-head-minimal-size-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2191,6 +2200,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-default-head-increase-size-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-default-head-increase-size-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2230,6 +2240,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2274,6 +2285,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2652,6 +2664,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/moved-toptail-and-bottomtail-expected.ket',
       'tests/test-data/KET/moved-toptail-and-bottomtail-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2679,6 +2692,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/moved-toptail-and-bottomtail-to-head-expected.ket',
       'tests/test-data/KET/moved-toptail-and-bottomtail-to-head-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2703,6 +2717,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-2-tails-reduced-1-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2727,6 +2742,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-default-increased-to-left-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-default-increased-to-left-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2757,6 +2773,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-moved-toptail-and-bottomtail-expected.ket',
       'tests/test-data/KET/button-added-moved-toptail-and-bottomtail-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2786,6 +2803,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-moved-toptail-and-bottomtail-to-head-expected.ket',
       'tests/test-data/KET/button-added-moved-toptail-and-bottomtail-to-head-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2815,6 +2833,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-2-tails-reduced-1-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-2-tails-reduced-1-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2853,6 +2872,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-tails-expected.ket',
       'tests/test-data/KET/multi-tailed-arrows-3-with-elements-moved-and-resized-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -2897,6 +2917,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrows-3-moved-and-resized-tails-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrows-3-moved-and-resized-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3301,6 +3322,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-up-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-3-tails-default-middle-tail-up-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3325,6 +3347,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-down-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-3-tails-default-middle-tail-down-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3352,6 +3375,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
       'tests/test-data/KET/multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3384,6 +3408,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3419,6 +3444,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-tails-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3463,6 +3489,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-extra-tails-expected.ket',
       'tests/test-data/KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-extra-tails-expected.ket',
+      FileType.KET,
     );
   });
 
@@ -3559,6 +3586,37 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that reactions with MTA and Benzene Rings are in the same positions after Aromatize/Dearomatize actions', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2236
+     * Description: Verify that added to Canvas from KET reactions with Multi-Tailed and single arrows (3-1-2-1-1, 2:2) 
+     and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions for Benzene Rings 
+     and can be saved to .ket file with correct positions, after that loaded from .ket file with correct positions
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+    await verifyFile(
+      page,
+      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
+      'tests/test-data/KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

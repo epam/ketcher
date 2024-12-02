@@ -58,7 +58,7 @@ export async function verifyFile2(
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: expectedFilename,
+    expectedFileName: `tests/test-data/${expectedFilename}`,
   });
 
   expect(file).toEqual(fileExpected);

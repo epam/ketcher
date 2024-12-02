@@ -30,6 +30,10 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -142,12 +146,12 @@ test.describe('Attachment Point Tool', () => {
     );
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -628,7 +632,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -653,7 +657,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -683,7 +687,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -715,7 +719,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -740,7 +744,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -773,7 +777,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -908,7 +912,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
 
     await waitForSpinnerFinishedWork(page, async () => {

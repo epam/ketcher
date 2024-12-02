@@ -43,6 +43,10 @@ import {
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -491,13 +495,13 @@ test('Verify that changes made in the "Edit Connection Points" dialog can be und
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
-  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await pressUndoButton(page);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     masks: [page.getByTestId('polymer-library-preview')],
   });
-  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await pressRedoButton(page);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await bondLine.hover();
   await takeEditorScreenshot(page, {

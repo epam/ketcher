@@ -57,6 +57,10 @@ import {
   selectSelection,
 } from '@utils/canvas/selectSelection';
 import { DropdownToolIds } from '@utils/clicks/types';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
@@ -217,7 +221,7 @@ test.describe(`Bond tool:`, () => {
       });
       expect(chainSize).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const chainSizeAfterUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -239,28 +243,28 @@ test.describe(`Bond tool:`, () => {
       });
       expect(editedChain).toEqual(chainSizeAfterMultipleEditing);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const editedChainUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndo).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const editedChainUndoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndoTwice).toEqual(chainSizeWithoutBondAfterUndo);
 
-      await selectAction(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
 
       const editedChainRedo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedo).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
 
       const editedChainRedoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -354,7 +358,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await moveMouseToTheMiddleOfTheScreen(page);
         await dragMouseTo(point.x + DELTA_X, point.y, page);
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectSelection(SelectionType.Rectangle, page);
@@ -370,7 +374,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await clickInTheMiddleOfTheScreen(page);
@@ -378,17 +382,17 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await pasteFromClipboardByKeyboard(page);
         await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectTool(LeftPanelButton.Erase, page);
         await clickInTheMiddleOfTheScreen(page);
 
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectAtom(AtomButton.Oxygen, page);
@@ -396,7 +400,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await waitForRender(page, async () => {
           await clickOnCanvas(page, point.x, point.y);
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectRing(RingButton.Cyclohexane, page);

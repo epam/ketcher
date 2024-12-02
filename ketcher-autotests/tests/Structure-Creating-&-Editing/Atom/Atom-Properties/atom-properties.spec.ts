@@ -11,8 +11,6 @@ import {
   saveToFile,
   pressButton,
   resetCurrentTool,
-  TopPanelButton,
-  selectTopPanelButton,
   selectBond,
   BondTypeName,
   selectLeftPanelButton,
@@ -54,6 +52,10 @@ import {
   selectRingSizeOption,
   selectConnectivityOption,
 } from './utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1102,12 +1104,12 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '3', 'Apply');
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

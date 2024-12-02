@@ -92,6 +92,7 @@ import {
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const topLeftCorner = {
   x: -325,
@@ -1497,7 +1498,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await page.getByText(data.monomer).click();
       await takeEditorScreenshot(page);
       await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await pressUndoButton(page);
       });
       await takeEditorScreenshot(page);
     });
@@ -1536,7 +1537,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const canvasLocator = page.getByTestId('ketcher-canvas');
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
